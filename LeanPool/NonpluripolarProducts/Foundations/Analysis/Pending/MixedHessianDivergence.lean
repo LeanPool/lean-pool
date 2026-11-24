@@ -147,28 +147,9 @@ theorem sum_sign_col_symm_eq_zero (K : Fin m → Matrix (Fin (m + 1)) (Fin (m + 
     (hT : ∀ l a b c, T l a b c = T l c b a) (π : Equiv.Perm (Fin (m + 1))) (l : Fin m) :
     ∑ ρ : Equiv.Perm (Fin (m + 1)), (Equiv.Perm.sign ρ : ℂ) *
       (T l (ρ 0) (π l.succ) (ρ l.succ) *
-        ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)) = 0 := by
-  set S := ∑ ρ : Equiv.Perm (Fin (m + 1)), (Equiv.Perm.sign ρ : ℂ) *
-      (T l (ρ 0) (π l.succ) (ρ l.succ) *
-        ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)) with hS
-  have hne : (0 : Fin (m + 1)) ≠ l.succ := (Fin.succ_ne_zero l).symm
-  have h : S = -S := by
-    conv_lhs => rw [hS, ← Equiv.sum_comp (Equiv.mulRight (Equiv.swap 0 l.succ))]
-    rw [hS, ← Finset.sum_neg_distrib]
-    refine Finset.sum_congr rfl fun ρ _ ↦ ?_
-    have hprod : ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ (Equiv.swap 0 l.succ i.succ)) =
-        ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ) := by
-      refine Finset.prod_congr rfl fun i hi ↦ ?_
-      have hil : i ≠ l := Finset.ne_of_mem_erase hi
-      rw [Equiv.swap_apply_of_ne_of_ne (Fin.succ_ne_zero i)
-        (fun h ↦ hil (Fin.succ_injective _ h))]
-    simp only [Equiv.coe_mulRight, Equiv.Perm.sign_mul, Equiv.Perm.sign_swap hne,
-      Equiv.Perm.mul_apply, Equiv.swap_apply_left, Equiv.swap_apply_right]
-    rw [hprod, hT]
-    push_cast
-    ring
-  have h2 : (2 : ℂ) * S = 0 := by linear_combination h
-  simpa using h2
+        ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)) = 0 :=
+  sum_sign_row_symm_eq_zero (fun i ↦ (K i).transpose) (fun l a b c ↦ T l a c b)
+    (fun l a b c ↦ hT l a c b) π l
 
 end Cofactor
 

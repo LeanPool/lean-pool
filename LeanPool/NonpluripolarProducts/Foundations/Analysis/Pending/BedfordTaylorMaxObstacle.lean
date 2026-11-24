@@ -60,29 +60,6 @@ theorem integral_mul_maxObstacleWeight_eq {U : Opens (ComplexModel n)}
   JointDecreasingMaxWeight.integral_mul_jointMaxWeight_eq i₀
     (isDecApprox_const hg) hμc hμf hμ hμ'c hμ'f hμ' hex hχ hχc hχU
 
-/-- The strict superlevel set over a smooth obstacle is measurable. -/
-theorem IsDecApprox.measurableSet_lt_obstacle {U : Opens (ComplexModel n)}
-    {w g : ComplexModel n → ℝ} {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox U w G)
-    (hg : ContinuousOn g U) : MeasurableSet {z | z ∈ U ∧ g z < w z} := by
-  have heq : {z | z ∈ U ∧ g z < w z} =
-      ⋃ m : ℕ, ⋂ k : ℕ, ((U : Set (ComplexModel n)) ∩
-        (fun z ↦ G k z - g z) ⁻¹' Ioi (1 / ((m : ℝ) + 1))) := by
-    ext z
-    simp only [mem_ofPred_eq, mem_iUnion, mem_iInter, mem_inter_iff, mem_preimage, mem_Ioi]
-    constructor
-    · rintro ⟨hzU, hz⟩
-      obtain ⟨m, hm⟩ := exists_nat_one_div_lt (sub_pos.2 hz)
-      exact ⟨m, fun k ↦ ⟨hzU, by linarith [hG.le_of_mem hzU k]⟩⟩
-    · rintro ⟨m, hm⟩
-      obtain ⟨hzU, -⟩ := hm 0
-      have hpos : (0 : ℝ) < 1 / ((m : ℝ) + 1) := by positivity
-      refine ⟨hzU, ?_⟩
-      have := ge_of_tendsto' ((hG.2.2.1 z hzU).sub_const (g z)) fun k ↦ (hm k).2.le
-      linarith
-  rw [heq]
-  exact MeasurableSet.iUnion fun m ↦ MeasurableSet.iInter fun k ↦
-    (((hG.1 k).1.continuousOn.sub hg).isOpen_inter_preimage U.isOpen isOpen_Ioi).measurableSet
-
 /-- **Locality for one slot over a smooth obstacle.** On `{u i₀ > g}` the limit
 measures for `u` and for `u` with `max(u i₀, g)` in slot `i₀` coincide. -/
 theorem restrict_eq_of_max_slot_obstacle {U : Opens (ComplexModel n)}

@@ -14,6 +14,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Bedfor
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ChartPartition
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalNonPluripolar
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
+public import LeanPool.NonpluripolarProducts.Foundations.FiniteTuple
 
 /-!
 # Reducing the BEGZ patch-mass estimate to bounded potentials
@@ -109,29 +111,21 @@ def addPrefix (v : Fin n → ComplexModel n → ℝ) (s : ComplexModel n → ℝ
   fun i => if (i : ℕ) < m then (fun z => v i z + s z) else v i
 
 theorem addPrefix_zero (v : Fin n → ComplexModel n → ℝ) (s : ComplexModel n → ℝ) :
-    addPrefix v s 0 = v := by
-  funext i
-  simp [addPrefix]
+    addPrefix v s 0 = v :=
+  FiniteTuple.replacePrefix_zero v (fun i z ↦ v i z + s z)
 
 theorem addPrefix_full (v : Fin n → ComplexModel n → ℝ) (s : ComplexModel n → ℝ) :
-    addPrefix v s n = fun i z => v i z + s z := by
-  funext i
-  simp [addPrefix, i.isLt]
+    addPrefix v s n = fun i z => v i z + s z :=
+  FiniteTuple.replacePrefix_full v (fun i z ↦ v i z + s z)
 
 theorem addPrefix_succ (v : Fin n → ComplexModel n → ℝ) (s : ComplexModel n → ℝ)
     {m : ℕ} (hm : m < n) :
     addPrefix v s (m + 1) =
       Function.update (addPrefix v s m) ⟨m, hm⟩
         (fun z => addPrefix v s m ⟨m, hm⟩ z + s z) := by
-  classical
-  funext i
-  by_cases h : i = ⟨m, hm⟩
-  · subst h
-    simp [addPrefix]
-  · have hne : (i : ℕ) ≠ m := fun hc => h (Fin.ext hc)
-    have : ((i : ℕ) < m + 1) = ((i : ℕ) < m) := by
-      simp only [Nat.lt_succ_iff_lt_or_eq, hne, or_false]
-    simp [addPrefix, Function.update_of_ne h, this]
+  have hslot : addPrefix v s m ⟨m, hm⟩ = v ⟨m, hm⟩ := by simp [addPrefix]
+  rw [hslot]
+  exact FiniteTuple.replacePrefix_succ v (fun i z ↦ v i z + s z) hm
 
 theorem isLocallyBoundedMixedPshOn_addPrefix {Ω : Opens (ComplexModel n)}
     {v : Fin n → ComplexModel n → ℝ} {s : ComplexModel n → ℝ}
@@ -199,24 +193,16 @@ theorem contDiff_cutoff_extend {Ω : Opens (ComplexModel n)} {β p : ComplexMode
     (hβ : ContDiff ℝ ∞ β) (hβΩ : tsupport β ⊆ (Ω : Set (ComplexModel n)))
     (hp : ContDiffOn ℝ ∞ p Ω) :
     ContDiff ℝ ∞ ((Ω : Set (ComplexModel n)).indicator fun z => β z * p z) := by
-  classical
-  rw [contDiff_iff_contDiffAt]
-  intro z
-  by_cases hz : z ∈ (Ω : Set (ComplexModel n))
-  · have hloc : (Ω : Set (ComplexModel n)).indicator (fun w => β w * p w) =ᶠ[𝓝 z]
-        fun w => β w * p w := by
-      filter_upwards [Ω.isOpen.mem_nhds hz] with w hw
-      exact indicator_of_mem hw _
-    refine ContDiffAt.congr_of_eventuallyEq ?_ hloc
-    exact (hβ.contDiffAt).mul ((hp z hz).contDiffAt (Ω.isOpen.mem_nhds hz))
-  · have hzs : z ∉ tsupport β := fun hc => hz (hβΩ hc)
-    have hloc : (Ω : Set (ComplexModel n)).indicator (fun w => β w * p w) =ᶠ[𝓝 z]
-        fun _ => (0 : ℝ) := by
-      filter_upwards [(isClosed_tsupport β).isOpen_compl.mem_nhds hzs] with w hw
-      by_cases hwΩ : w ∈ (Ω : Set (ComplexModel n))
-      · rw [indicator_of_mem hwΩ, image_eq_zero_of_notMem_tsupport hw, zero_mul]
-      · rw [indicator_of_notMem hwΩ]
-    exact ContDiffAt.congr_of_eventuallyEq contDiffAt_const hloc
+  have heq : (Ω : Set (ComplexModel n)).indicator (fun z => β z * p z) =
+      fun z => β z * p z := by
+    funext z
+    by_cases hz : z ∈ (Ω : Set (ComplexModel n))
+    · exact indicator_of_mem hz _
+    · have hzs : z ∉ tsupport β := fun h ↦ hz (hβΩ h)
+      rw [indicator_of_notMem hz, image_eq_zero_of_notMem_tsupport hzs, zero_mul]
+  rw [heq]
+  simpa only [smul_eq_mul] using
+    SmoothCutoff.contDiff_smul_of_tsupport_subset Ω.isOpen hβ hβΩ hp
 
 /-- Local boundedness and plurisubharmonicity survive adding a smooth
 plurisubharmonic function. -/

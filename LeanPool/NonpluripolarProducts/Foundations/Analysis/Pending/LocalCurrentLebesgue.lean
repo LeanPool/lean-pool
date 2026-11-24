@@ -159,24 +159,30 @@ theorem ae_density_nonneg (hT : IsPositive T) {γ : formSpan n q} (hγ : γ ∈ 
     (IsPositive.measurableEmbedding_val (U := U)).ae_map_iff]
   exact h
 
+/-- Nonnegativity on the strongly positive cone, almost everywhere for all forms at once (a
+countable dense subset of the cone and continuity of linear forms). -/
+theorem ae_forall_posCone_nonneg {ν : Measure (ComplexModel n)} {g : (ComplexModel n)
+    → formSpan n q →ₗ[ℝ] ℝ}
+    (hgp : ∀ γ ∈ posCone n q, ∀ᵐ x ∂ν, 0 ≤ g x γ) :
+    ∀ᵐ x ∂ν, ∀ γ ∈ posCone n q, 0 ≤ g x γ := by
+  obtain ⟨D, hDC, hDc, hCD⟩ :=
+    (IsSeparable.of_separableSpace (posCone n q)).exists_countable_dense_subset
+  have _ := hDc.to_subtype
+  have h : ∀ᵐ x ∂ν, ∀ γ : D, 0 ≤ g x γ := by
+    rw [ae_all_iff]
+    exact fun γ => hgp γ (hDC γ.2)
+  filter_upwards [h] with x hx γ hγ
+  have hcont : Continuous (g x) := (g x).continuous_of_finiteDimensional
+  have hclosed : IsClosed {γ : formSpan n q | 0 ≤ g x γ} := isClosed_le continuous_const hcont
+  exact closure_minimal (fun γ hγD => hx ⟨γ, hγD⟩) hclosed (hCD hγ)
+
 /-- **The density form is nonnegative on the strongly positive cone**, for `σ_T`-almost every
 point (a countable dense subset of the cone, then continuity of `L_x`). -/
 theorem ae_densityForm_nonneg (hT : IsPositive T) :
     ∀ᵐ x ∂hT.traceMeasure, ∀ γ ∈ posCone n q, 0 ≤ densityForm hT x γ := by
-  obtain ⟨D, hDC, hDc, hCD⟩ :=
-    (IsSeparable.of_separableSpace (posCone n q)).exists_countable_dense_subset
-  have _ := hDc.to_subtype
-  have h : ∀ᵐ x ∂hT.traceMeasure, ∀ γ : D, 0 ≤ densityForm hT x γ := by
-    rw [ae_all_iff]
-    intro γ
-    filter_upwards [densityForm_ae hT γ, ae_density_nonneg hT (hDC γ.2)] with x h1 h2
-    rw [h1]
-    exact h2
-  filter_upwards [h] with x hx γ hγ
-  have hcont : Continuous (densityForm hT x) := (densityForm hT x).continuous_of_finiteDimensional
-  have hclosed : IsClosed {γ : formSpan n q | 0 ≤ densityForm hT x γ} :=
-    isClosed_le continuous_const hcont
-  exact closure_minimal (fun γ hγD => hx ⟨γ, hγD⟩) hclosed (hCD hγ)
+  refine ae_forall_posCone_nonneg fun γ hγ => ?_
+  filter_upwards [densityForm_ae hT γ, ae_density_nonneg hT hγ] with x h1 h2
+  rwa [h1]
 
 /-! ### Parts of a positive current carried by a measure below its trace measure -/
 

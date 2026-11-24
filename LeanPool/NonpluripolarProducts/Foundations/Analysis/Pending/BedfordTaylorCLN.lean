@@ -88,7 +88,7 @@ theorem exists_cln_constant (z₀ : ComplexModel n) {R M : ℝ} (hR : 0 < R) (hM
   have hθs : ContDiff ℝ ∞ (θ : ComplexModel n → ℝ) := θ.contDiff
   have hglob {f : ComplexModel n → ℝ} (hf : ContDiffOn ℝ ∞ f V) :
       ContDiff ℝ ∞ (fun y ↦ θ y • f y) :=
-    _root_.SGPT.Foundations.Analysis.Pending.LocalPotentials.contDiff_smul_of_tsupport_subset
+    _root_.SGPT.Foundations.Analysis.SmoothCutoff.contDiff_smul_of_tsupport_subset
       V.isOpen hθs θ.tsupport_subset hf
   have hθW (z : ComplexModel n) (hz : z ∈ W) (f : ComplexModel n → ℝ) :
       (fun y ↦ θ y • f y) =ᶠ[𝓝 z] f :=

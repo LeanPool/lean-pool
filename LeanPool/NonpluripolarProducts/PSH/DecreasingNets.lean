@@ -111,9 +111,10 @@ theorem discPshOn_iInf_of_antitone {u : I → E → EReal} {U : Set E}
       (fun x hx m n hmn ↦ hanti x hx (ha hmn))
   exact hseq.congr (fun x hx ↦ heq ⟨x, hx⟩)
 
-/-- The source non-bottom condition turns the actual decreasing-net disc
-limit into a source PSH function. This is the Euclidean-domain stability
-part of `prop:pshfunction_closedseq(2)`, without its local `L¹` conclusion. -/
+/-- The PSH membership part of Xia's `prop:pshfunction_closedseq(2)` in the
+Euclidean-domain `PSHOn` convention. The Lean statement uses one global
+non-bottom witness. The manuscript requires one on each connected component
+and also proves local `L¹` convergence. -/
 theorem pshOn_iInf_of_antitone {u : I → E → EReal} {U : Set E}
     (hu : ∀ i, PSHOn (u i) U)
     (hanti : ∀ x ∈ U, Antitone (fun i ↦ u i x))

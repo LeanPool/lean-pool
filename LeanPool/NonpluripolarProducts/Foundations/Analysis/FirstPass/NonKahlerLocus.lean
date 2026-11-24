@@ -21,10 +21,12 @@ This file introduces the definitions needed to state the analytic main theorem:
 * `lelongNumber u x`: the Lelong number of an extended-real potential at `x`,
   computed in the preferred holomorphic chart at `x` as
   `sup {γ ≥ 0 : u ≤ γ log ‖z - x‖ + O(1)` on a punctured neighbourhood`}`.
-  For quasi-plurisubharmonic `u` this is the classical Lelong number
-  (Demailly, *Complex analytic and differential geometry*, III.6), and it is
-  the Lelong number of the current `θ + ddᶜ u` for every smooth `θ`.
-  Invariance under holomorphic coordinate changes is a theorem, not used here.
+  For quasi-plurisubharmonic `u` this is the logarithmic coefficient in
+  [Demailly, III.6.9(e)](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=165).
+  With Xia's normalization of `ddᶜ`, that coefficient is twice Demailly's Lelong number
+  of the associated current `θ + ddᶜ u` for smooth `θ`. For `u(z) = log ‖z‖²` on the line,
+  the coefficient is 2 and the associated Dirac current has Lelong number 1 in Demailly's
+  convention. This definition uses the preferred chart.
 * `KahlerCurrent alpha`: a Kähler current in the Bott--Chern class `alpha`,
   presented as `θ + ddᶜ u` with `θ` a closed smooth representative, together
   with a Kähler form `ω'` with `θ + ddᶜ u ≥ ω'`.  Dominating some Kähler form

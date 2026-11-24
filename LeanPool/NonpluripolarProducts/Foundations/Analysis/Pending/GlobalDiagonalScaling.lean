@@ -11,6 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotLinear
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalMeasureInvariance
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ManifoldPluripolar
+public import LeanPool.NonpluripolarProducts.Foundations.FiniteTuple
 
 /-!
 # Diagonal scaling of global mixed measures
@@ -135,21 +136,15 @@ theorem globalMixedMeasure_diagonal_add_smul_le {θ : ClosedRealOneOneForm n M}
     induction m with
     | zero =>
       intro _ S
-      have e : x 0 = fun _ => a := by funext i; simp [x]
+      have e : x 0 = fun _ => a := FiniteTuple.replacePrefix_zero _ _
       rw [pow_zero, ENNReal.ofReal_one, one_mul,
         globalMixedMeasure_congr rfl e (hx 0) (fun _ => ha.1)]
     | succ m ih =>
       intro hm S
       have hmn : m < n := hm
       set i₀ : Fin n := ⟨m, hmn⟩ with hi₀
-      have e1 : x (m + 1) = Function.update (x m) i₀ w := by
-        funext i
-        by_cases h : i = i₀
-        · rw [h, Function.update_self]; simp [x, i₀]
-        · rw [Function.update_of_ne h]
-          have him : (i : ℕ) ≠ m := fun h' => h (Fin.ext h')
-          simp only [x]
-          split_ifs <;> first | rfl | omega
+      have e1 : x (m + 1) = Function.update (x m) i₀ w :=
+        FiniteTuple.replacePrefix_succ (fun _ ↦ a) (fun _ ↦ w) hmn
       have e2 : Function.update (x m) i₀ a = x m := by
         funext i
         by_cases h : i = i₀
@@ -197,7 +192,7 @@ theorem globalMixedMeasure_diagonal_add_smul_le {θ : ClosedRealOneOneForm n M}
             gcongr
             exact ih (Nat.le_of_succ_le hm) S
         _ ≤ _ := le_self_add
-  have hfull : x n = fun _ => w := by funext i; simp [x, i.isLt]
+  have hfull : x n = fun _ => w := FiniteTuple.replacePrefix_full _ _
   calc ENNReal.ofReal (t ^ n) *
         globalMixedMeasure (fun _ => θ) (fun _ => a) (fun _ => ha.1) S
       ≤ globalMixedMeasure (fun _ => θ) (x n) (hx n) S := step n le_rfl S

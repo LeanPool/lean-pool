@@ -30,6 +30,9 @@ open FirstPass FirstPass.MixedMongeAmpere Matrix
 
 variable {n : ℕ}
 
+/-- The diagonal unit matrix `E_k = diag(e_k)`. -/
+noncomputable def unitDiag (k : Fin n) : Matrix (Fin n) (Fin n) ℂ := diagonal (Pi.single k 1)
+
 /-- Row extraction as a linear map. -/
 def matrixRowLinear (j : Fin n) : Matrix (Fin n) (Fin n) ℂ →ₗ[ℂ] (Fin n → ℂ) where
   toFun A := A j

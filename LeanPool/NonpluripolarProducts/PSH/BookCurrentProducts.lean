@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DirectionalLeviDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.FullPositiveScalarCurrentLeviConverse
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ClosedProductCurrents
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ConcentrationEigenvalueBound
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientCongruence
 
 /-!
 # The forms `i β ∧ βBar` and the Levi test of weak positivity
@@ -54,7 +54,6 @@ open SGPT.Foundations.Analysis.Pending
 open SGPT.Foundations.Analysis.Pending.StronglyPositiveForms
 open SGPT.Foundations.Analysis.Pending.TopDegreeDensity
 open SGPT.Foundations.Analysis.Pending.DirectionalLeviDensity
-open SGPT.Foundations.Analysis.Pending.SemiconcaveHessian
 open SGPT.Foundations.Analysis.Pending.ClosedProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
@@ -66,7 +65,6 @@ open SGPT.Foundations.Analysis.Pending.ScalarFullTestTranspose
 open SGPT.Foundations.Analysis.Pending.ConstantFormProducts
 open SGPT.Foundations.Analysis.Pending.LocalCurrentLebesgue
 open SGPT.Foundations.Analysis.Pending.MixedMongeAmpere
-open SGPT.Foundations.Analysis.Pending.ConcentrationEigenvalueBound
 
 attribute [local instance] LocalCurrentLebesgue.addCommGroupFormSpan
 
@@ -303,7 +301,8 @@ theorem topDensity_cons_unitaryBetaProduct {f : ComplexModel (m + 1) → ℝ}
     refine Finset.sum_congr rfl fun k _ => Finset.sum_congr rfl fun l _ => ?_
     simp only [Pi.star_apply]
     ring
-  rw [hprod, hK00, dotProduct_mulVec_complexHessian_eq_leviForm hf, coordCombination_star]
+  rw [hprod, hK00, complexHessian_dotProduct_mulVec_eq_leviForm hf,
+    conjugateCoordinateCombination_star]
   simp only [Complex.mul_re, Complex.ofReal_re, Complex.ofReal_im, mul_zero, sub_zero]
   rw [← Complex.ofReal_pow, Complex.ofReal_re]
   ring

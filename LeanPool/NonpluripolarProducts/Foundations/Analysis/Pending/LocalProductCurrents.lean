@@ -14,6 +14,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Positi
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDegreeDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HermitianGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Upstream.KahlerClosed
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
 
 /-!
 # Local currents of bidimension `(q,q)` against constant product forms
@@ -731,13 +732,7 @@ smooth everywhere. -/
 theorem contDiff_mul_of_tsupport_subset {D : Set (ComplexModel n)} (hD : IsOpen D)
     {ψ ρ : ComplexModel n → ℝ} (hψ : ContDiff ℝ ∞ ψ) (hψD : tsupport ψ ⊆ D)
     (hρ : ContDiffOn ℝ ∞ ρ D) : ContDiff ℝ ∞ (fun z => ψ z * ρ z) := by
-  rw [contDiff_iff_contDiffAt]
-  intro z
-  by_cases hz : z ∈ D
-  · exact hψ.contDiffAt.mul (hρ.contDiffAt (hD.mem_nhds hz))
-  · refine (contDiffAt_const (c := (0 : ℝ))).congr_of_eventuallyEq ?_
-    filter_upwards [notMem_tsupport_iff_eventuallyEq.mp fun h => hz (hψD h)] with y hy
-    simp [hy]
+  simpa only [smul_eq_mul] using SmoothCutoff.contDiff_smul_of_tsupport_subset hD hψ hψD hρ
 
 /-- The test function `φ u` for `u` smooth on an open set `A` containing the support of `φ`. -/
 def smoothMulTest {A : Set (ComplexModel n)} (hA : IsOpen A) {u : ComplexModel n → ℝ}

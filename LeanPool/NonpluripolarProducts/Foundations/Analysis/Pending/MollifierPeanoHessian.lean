@@ -23,8 +23,12 @@ Hessian of `q ∗ ρ_j` is exactly `A`; and the error term is estimated by the e
 relation `ρ_j(x) = (j+1)^d ρ_0((j+1) x)` between the kernels, which converts the `o(‖x - z₀‖²)`
 Peano remainder into an arbitrarily small contribution.
 
-Source: Błocki, *The complex Monge–Ampère operator in pluripotential theory*, lecture notes,
-Proposition 2.1.6 and the proof of Theorem 2.3.1.
+The related determinant convergence uses local `L¹` convergence for Sobolev PSH data in
+[Błocki, Proposition 2.1.6](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=37).
+The proof of [Theorem 2.3.1](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=52)
+uses the Taylor expansion of a `C¹,¹` potential at a point of twice differentiability.
+Here the separate pointwise lemma assumes a Peano expansion and proves convergence
+of each Hessian pairing.
 -/
 
 @[expose] public section
@@ -71,15 +75,7 @@ theorem abs_realHessian_le {f : ComplexModel n → ℝ} (x v w : ComplexModel n)
 /-! ### Moments of an even kernel -/
 
 theorem integral_linear_mul_of_even {ℓ : ComplexModel n →L[ℝ] ℝ} {κ : ComplexModel n → ℝ}
-    (hκs : HasCompactSupport κ) (hκc : Continuous κ) (hκeven : ∀ y, κ (-y) = κ y) :
-    ∫ y, ℓ y * κ y = 0 := by
-  have hint : Integrable (fun y ↦ ℓ y * κ y) (volume : Measure (ComplexModel n)) := by
-    refine Continuous.integrable_of_hasCompactSupport (by fun_prop) ?_
-    exact hκs.mono (by
-      intro x hx
-      simp only [Function.mem_support, ne_eq] at hx ⊢
-      intro h
-      exact hx (by simp [h]))
+    (hκeven : ∀ y, κ (-y) = κ y) : ∫ y, ℓ y * κ y = 0 := by
   have h1 : (∫ y : ComplexModel n, ℓ (-y) * κ (-y)) = ∫ y : ComplexModel n, ℓ y * κ y :=
     integral_neg_eq_self (fun y ↦ ℓ y * κ y) volume
   have h2 : (∫ y : ComplexModel n, ℓ (-y) * κ (-y)) = -∫ y : ComplexModel n, ℓ y * κ y := by
@@ -136,7 +132,7 @@ theorem translationPairing_quadratic {A : ComplexModel n →L[ℝ] ComplexModel 
       = (∫ y : ComplexModel n, q z * κ y) + ∫ y : ComplexModel n, ℓ y * κ y :=
     integral_add hint1 hint2
   rw [hshift, integral_congr_ae (Eventually.of_forall hexp), e1, e2,
-    integral_linear_mul_of_even hκs hκc hκeven, integral_const_mul, hκ1]
+    integral_linear_mul_of_even hκeven, integral_const_mul, hκ1]
   simp [hq]
 
 /-- The real Hessian of a quadratic polynomial is its (symmetric) quadratic coefficient. -/

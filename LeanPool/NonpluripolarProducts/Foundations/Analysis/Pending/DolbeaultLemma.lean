@@ -203,7 +203,7 @@ theorem exists_dbar_primitive_aux (k : ℕ) :
     have hsuppU : tsupport χ ⊆ U := fun z hz ↦
       hpoly z (tsupport_polydiscCutoff_subset x₀ hr hz)
     let b : EuclideanSpace ℂ (Fin n) → ℂ := fun z ↦ χ z • a j z
-    have hb : ContDiff ℝ ∞ b := LocalPotentials.contDiff_smul_of_tsupport_subset hU
+    have hb : ContDiff ℝ ∞ b := SmoothCutoff.contDiff_smul_of_tsupport_subset hU
       (contDiff_polydiscCutoff x₀ hr) hsuppU (ha j)
     have hbc : HasCompactSupport b := (hasCompactSupport_polydiscCutoff x₀ hr).smul_right
     have hej : basisVec j ≠ 0 := by simp [basisVec]

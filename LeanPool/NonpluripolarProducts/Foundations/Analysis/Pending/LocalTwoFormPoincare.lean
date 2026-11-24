@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TwoFormPoincare
 public import Mathlib.Analysis.Calculus.BumpFunction.FiniteDimension
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
 
 /-!
 # The smooth Poincaré lemma for two-forms on a ball
@@ -68,25 +69,6 @@ theorem contDiff_radialTwoFormPrimitive
     ContDiff ℝ ∞ (radialTwoFormPrimitive a z) :=
   contDiff_intervalIntegral_of_contDiff (contDiff_radialTwoFormIntegrand a z ha) 0 1
 
-/-- A function smooth on an open set becomes globally smooth after
-multiplication by a smooth cutoff whose support lies in that set. -/
-theorem contDiff_smul_of_tsupport_subset
-    {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [NormedAddCommGroup F] [NormedSpace ℝ F]
-    {U : Set E} (hU : IsOpen U) {χ : E → ℝ} (hχ : ContDiff ℝ ∞ χ)
-    (hsupp : tsupport χ ⊆ U) {f : E → F} (hf : ContDiffOn ℝ ∞ f U) :
-    ContDiff ℝ ∞ (fun x ↦ χ x • f x) := by
-  rw [contDiff_iff_contDiffAt]
-  intro x
-  by_cases hx : x ∈ U
-  · exact hχ.contDiffAt.smul (hf.contDiffAt (hU.mem_nhds hx))
-  · have hmem : (tsupport χ)ᶜ ∈ 𝓝 x :=
-      (isClosed_tsupport χ).isOpen_compl.mem_nhds fun h ↦ hx (hsupp h)
-    have hzero : (fun x ↦ χ x • f x) =ᶠ[𝓝 x] fun _ ↦ 0 := by
-      filter_upwards [hmem] with y hy
-      simp [image_eq_zero_of_notMem_tsupport hy]
-    exact contDiffAt_const.congr_of_eventuallyEq hzero
-
 /-- **Smooth Poincaré lemma for two-forms.**  A two-form that is smooth and
 closed on an open set has, on some ball about any of its points, a primitive
 given by a globally smooth one-form. -/
@@ -104,7 +86,7 @@ theorem exists_smooth_local_twoForm_primitive
   have hsupp : tsupport χ ⊆ U := by
     rw [χ.tsupport_eq]
     exact (closedBall_subset_ball (by simp [χ]; linarith)).trans hδU
-  have hb : ContDiff ℝ ∞ b := contDiff_smul_of_tsupport_subset hU χ.contDiff hsupp ha
+  have hb : ContDiff ℝ ∞ b := SmoothCutoff.contDiff_smul_of_tsupport_subset hU χ.contDiff hsupp ha
   have heq : EqOn b a (ball z (δ / 4)) := fun y hy ↦ by
     simp [b, χ.one_of_mem_closedBall (ball_subset_closedBall hy)]
   have hsmall : ball z (δ / 4) ⊆ U := (ball_subset_ball (by linarith)).trans hδU

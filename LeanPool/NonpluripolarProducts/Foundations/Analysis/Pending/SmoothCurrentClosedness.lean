@@ -12,6 +12,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Closed
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothCurrentTraceMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedHessianDivergence
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotStokes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
 
 /-!
 # Closedness of the smooth currents `[M] ∧ γ₁ ∧ ⋯ ∧ γ_p`
@@ -229,13 +230,7 @@ smooth everywhere. -/
 theorem contDiff_mul_of_tsupport_subset {D : Set E} (hD : IsOpen D) {ψ ρ : E → ℝ}
     (hψ : ContDiff ℝ ∞ ψ) (hψD : tsupport ψ ⊆ D) (hρ : ContDiffOn ℝ ∞ ρ D) :
     ContDiff ℝ ∞ (fun z => ψ z * ρ z) := by
-  rw [contDiff_iff_contDiffAt]
-  intro z
-  by_cases hz : z ∈ D
-  · exact hψ.contDiffAt.mul (hρ.contDiffAt (hD.mem_nhds hz))
-  · refine (contDiffAt_const (c := (0 : ℝ))).congr_of_eventuallyEq ?_
-    filter_upwards [notMem_tsupport_iff_eventuallyEq.mp fun h => hz (hψD h)] with y hy
-    simp [hy]
+  simpa only [smul_eq_mul] using SmoothCutoff.contDiff_smul_of_tsupport_subset hD hψ hψD hρ
 
 end Cutoff
 

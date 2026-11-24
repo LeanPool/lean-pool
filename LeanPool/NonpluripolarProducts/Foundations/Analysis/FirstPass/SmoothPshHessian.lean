@@ -41,6 +41,14 @@ def conjugateCoordinateCombination (x : Fin n → ℂ) : ComplexModel n :=
   ∑ j, ((x j).re • coordinateVector j -
     (x j).im • (Complex.I • coordinateVector j))
 
+theorem conjugateCoordinateCombination_star (v : ComplexModel n) :
+    conjugateCoordinateCombination (fun i ↦ star (v i)) = v := by
+  ext i
+  simp only [conjugateCoordinateCombination, coordinateVector, WithLp.ofLp_sub, WithLp.ofLp_sum,
+    WithLp.ofLp_smul, Finset.sum_apply, Pi.sub_apply, Pi.smul_apply]
+  rw [Finset.sum_eq_single i (fun b _ hb ↦ by simp [Ne.symm hb]) (by simp)]
+  simp [Complex.re_add_im]
+
 private theorem I_smul_conjugateCoordinateCombination (x : Fin n → ℂ) :
     Complex.I • conjugateCoordinateCombination x =
       ∑ j, ((x j).im • coordinateVector j +

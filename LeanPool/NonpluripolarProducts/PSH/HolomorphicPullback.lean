@@ -38,8 +38,10 @@ theorem discPshOn_comp_holomorphic {k n : ℕ}
   (SGPT.Foundations.Analysis.Pending.HolomorphicPullback.plurisubharmonicOn_comp_holomorphic
     hU hF hFV (hu.disc.plurisubharmonicOn hV)).discPshOn
 
-/-- SGPT `prop:func_domain`: source PSH pulls back to source PSH or the
-identically bottom function on the actual source domain. -/
+/-- The pullback dichotomy of Xia's `prop:func_domain`, using the Lean
+`PSHOn` convention on arbitrary opens. A witness anywhere in the source
+suffices for the PSH alternative. For disconnected manifolds, the manuscript's
+`prop:pullbackpsh` tests for an identically bottom component. -/
 theorem pshOn_comp_holomorphic_or_eqOn_bot {k n : ℕ}
     {F : ComplexModel k → ComplexModel n} {u : ComplexModel n → EReal}
     {U : Set (ComplexModel k)} {V : Set (ComplexModel n)}

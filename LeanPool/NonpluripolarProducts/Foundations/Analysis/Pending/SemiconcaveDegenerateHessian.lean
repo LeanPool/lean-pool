@@ -63,23 +63,6 @@ theorem leviFormOfBilin_smul (A : ComplexModel n →L[ℝ] ComplexModel n →L[�
   simp only [leviFormOfBilin, hIt, map_smul, _root_.smul_apply, smul_eq_mul]
   ring
 
-/-- The vector with prescribed conjugate coordinates. -/
-def coordCombination (y : Fin n → ℂ) : ComplexModel n :=
-  ∑ j, ((y j).re • coordinateVector j - (y j).im • (Complex.I • coordinateVector j))
-
-theorem coordCombination_star (v : ComplexModel n) :
-    coordCombination (fun i ↦ star (v i)) = v := by
-  ext i
-  simp only [coordCombination, coordinateVector, WithLp.ofLp_sub, WithLp.ofLp_sum,
-    WithLp.ofLp_smul, Finset.sum_apply, Pi.sub_apply, Pi.smul_apply]
-  rw [Finset.sum_eq_single i (fun b _ hb ↦ by simp [Ne.symm hb]) (by simp)]
-  simp [Complex.re_add_im]
-
-theorem dotProduct_mulVec_complexHessian_eq_leviForm {f : ComplexModel n → ℝ}
-    {z : ComplexModel n} (hf : ContDiffAt ℝ 2 f z) (y : Fin n → ℂ) :
-    star y ⬝ᵥ ((complexHessian f z).mulVec y) = ((leviForm f z (coordCombination y) : ℝ) : ℂ) :=
-  complexHessian_dotProduct_mulVec_eq_leviForm hf y
-
 theorem tendsto_ofReal {f : ℕ → ℝ} {a : ℝ} (h : Tendsto f atTop (𝓝 a)) :
     Tendsto (fun k ↦ ((f k : ℝ) : ℂ)) atTop (𝓝 ((a : ℝ) : ℂ)) :=
   (Complex.continuous_ofReal.tendsto a).comp h
@@ -123,16 +106,17 @@ theorem tendsto_det_complexHessian_zero {Ω : Opens (ComplexModel n)} {u : Compl
     ge_of_tendsto (hℓ v) (Eventually.of_forall fun k ↦ hlevi k v)
   -- the limit matrix is positive semidefinite
   have hquad : ∀ y : Fin n → ℂ,
-      star y ⬝ᵥ (H.mulVec y) = ((leviFormOfBilin A (coordCombination y) : ℝ) : ℂ) := by
+      star y ⬝ᵥ (H.mulVec y) =
+        ((leviFormOfBilin A (conjugateCoordinateCombination y) : ℝ) : ℂ) := by
     intro y
     have h1 := tendsto_dotProduct_mulVec hmat y
     have h2 : ∀ k, star y ⬝ᵥ ((complexHessian (F k) z₀).mulVec y)
-        = ((leviForm (F k) z₀ (coordCombination y) : ℝ) : ℂ) := fun k ↦
-      dotProduct_mulVec_complexHessian_eq_leviForm ((hF k).contDiffAt) y
+        = ((leviForm (F k) z₀ (conjugateCoordinateCombination y) : ℝ) : ℂ) := fun k ↦
+      complexHessian_dotProduct_mulVec_eq_leviForm ((hF k).contDiffAt) y
     have h3 : Tendsto (fun k ↦ star y ⬝ᵥ ((complexHessian (F k) z₀).mulVec y)) atTop
-        (𝓝 ((leviFormOfBilin A (coordCombination y) : ℝ) : ℂ)) := by
+        (𝓝 ((leviFormOfBilin A (conjugateCoordinateCombination y) : ℝ) : ℂ)) := by
       simp only [h2]
-      exact tendsto_ofReal (hℓ (coordCombination y))
+      exact tendsto_ofReal (hℓ (conjugateCoordinateCombination y))
     exact tendsto_nhds_unique h1 h3
   have hherm : H.IsHermitian := by
     have hk : ∀ k, (complexHessian (F k) z₀).IsHermitian := fun k ↦
@@ -209,7 +193,7 @@ theorem tendsto_det_complexHessian_zero {Ω : Opens (ComplexModel n)} {u : Compl
     rw [hv] at hv₀norm
     simp at hv₀norm
   have hxzero : star x ⬝ᵥ (H.mulVec x) = 0 := by
-    rw [hquad x, hxdef, coordCombination_star v₀, hv₀]
+    rw [hquad x, hxdef, conjugateCoordinateCombination_star v₀, hv₀]
     simp
   have hdet0 : H.det = 0 := by
     by_contra hne

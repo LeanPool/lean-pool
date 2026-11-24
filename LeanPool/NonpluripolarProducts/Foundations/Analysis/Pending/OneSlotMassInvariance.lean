@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UniformBoundedGlobalMass
+public import LeanPool.NonpluripolarProducts.Foundations.FiniteTuple
 
 /-!
 # One-slot mass invariance is the whole remaining obligation
@@ -83,30 +84,20 @@ def swapPrefix (v v' : Fin n → M → EReal) (m : ℕ) : Fin n → M → EReal 
 
 omit [TopologicalSpace M] [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] [CompactSpace M] in
-theorem swapPrefix_zero (v v' : Fin n → M → EReal) : swapPrefix v v' 0 = v := by
-  funext i
-  simp [swapPrefix]
+theorem swapPrefix_zero (v v' : Fin n → M → EReal) : swapPrefix v v' 0 = v :=
+  FiniteTuple.replacePrefix_zero v v'
 
 omit [TopologicalSpace M] [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] [CompactSpace M] in
-theorem swapPrefix_full (v v' : Fin n → M → EReal) : swapPrefix v v' n = v' := by
-  funext i
-  simp [swapPrefix, i.isLt]
+theorem swapPrefix_full (v v' : Fin n → M → EReal) : swapPrefix v v' n = v' :=
+  FiniteTuple.replacePrefix_full v v'
 
 omit [TopologicalSpace M] [MeasurableSpace M] [BorelSpace M]
   [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] [CompactSpace M] in
 theorem swapPrefix_succ (v v' : Fin n → M → EReal) {m : ℕ} (hm : m < n) :
     swapPrefix v v' (m + 1) =
-      Function.update (swapPrefix v v' m) ⟨m, hm⟩ (v' ⟨m, hm⟩) := by
-  classical
-  funext i
-  by_cases h : i = ⟨m, hm⟩
-  · subst h
-    simp [swapPrefix]
-  · have hne : (i : ℕ) ≠ m := fun hc => h (Fin.ext hc)
-    have hiff : ((i : ℕ) < m + 1) = ((i : ℕ) < m) := by
-      simp only [Nat.lt_succ_iff_lt_or_eq, hne, or_false]
-    simp [swapPrefix, Function.update_of_ne h, hiff]
+      Function.update (swapPrefix v v' m) ⟨m, hm⟩ (v' ⟨m, hm⟩) :=
+  FiniteTuple.replacePrefix_succ v v' hm
 
 omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] in
 theorem thetaPlurisubharmonic_swapPrefix {v v' : Fin n → M → EReal}

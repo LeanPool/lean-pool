@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 
 /-!
 # Semicontinuity of the absolutely continuous part of positive currents (Boucksom)
@@ -71,6 +72,7 @@ open scoped Topology Distributions ENNReal Convolution
 namespace SGPT.Foundations.Analysis.Pending.LocalCurrentSemicontinuity
 
 open FirstPass StronglyPositiveForms LocalProductCurrents LocalCurrentLebesgue
+  SGPT.Foundations.Analysis.MeasureLocality
 
 variable {n : ℕ}
 
@@ -166,29 +168,6 @@ theorem eventually_closedBall_subset {U : Opens E} {x : E} (hx : x ∈ U) :
   exact (closedBall_subset_ball hm).trans hεU
 
 end Mollifier
-
-/-! ### From balls to an open set -/
-
-section Cover
-
-/-- **A property holding almost everywhere near every point of an open set holds almost everywhere
-    on it** (a countable
-subcover). -/
-theorem ae_of_forall_ball {U : Set E} {P : E → Prop}
-    (h : ∀ z ∈ U, ∃ r > 0, ∀ᵐ x, x ∈ ball z r → P x) : ∀ᵐ x, x ∈ U → P x := by
-  choose! r hr hP using h
-  obtain ⟨S, hSc, hSU⟩ := TopologicalSpace.isOpen_iUnion_countable (fun z : U => ball (z : E)
-    (r z))
-    (fun _ => isOpen_ball)
-  have hS : ∀ᵐ x, ∀ z ∈ S, x ∈ ball ((z : U) : E) (r z) → P x :=
-    (ae_ball_iff hSc).mpr fun z _ => hP z z.2
-  filter_upwards [hS] with x hx hxU
-  have hx' : x ∈ ⋃ z : U, ball (z : E) (r z) := mem_iUnion.mpr ⟨⟨x, hxU⟩, mem_ball_self (hr x hxU)⟩
-  rw [← hSU] at hx'
-  obtain ⟨z, hz, hxz⟩ := mem_iUnion₂.mp hx'
-  exact hx z hz hxz
-
-end Cover
 
 /-! ### Mollified functions and measures -/
 

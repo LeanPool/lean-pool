@@ -61,10 +61,10 @@ theorem isHermitian_complexHessianOfBilin {Q : ComplexModel n →L[ℝ] ComplexM
       hsymm (coordinateVector k) (Complex.I • coordinateVector j),
       hsymm (Complex.I • coordinateVector k) (coordinateVector j)]
 
-theorem I_smul_coordCombination (y : Fin n → ℂ) :
-    Complex.I • coordCombination y =
+theorem I_smul_conjugateCoordinateCombination (y : Fin n → ℂ) :
+    Complex.I • conjugateCoordinateCombination y =
       ∑ j, ((y j).im • coordinateVector j + (y j).re • (Complex.I • coordinateVector j)) := by
-  unfold coordCombination
+  unfold conjugateCoordinateCombination
   rw [Finset.smul_sum]
   apply Finset.sum_congr rfl
   intro j _
@@ -78,11 +78,11 @@ conjugate coordinates. -/
 theorem dotProduct_mulVec_complexHessianOfBilin {Q : ComplexModel n →L[ℝ] ComplexModel n →L[ℝ] ℝ}
     (hsymm : ∀ x y, Q x y = Q y x) (y : Fin n → ℂ) :
     star y ⬝ᵥ ((complexHessianOfBilin Q).mulVec y) =
-      ((leviFormOfBilin Q (coordCombination y) : ℝ) : ℂ) := by
+      ((leviFormOfBilin Q (conjugateCoordinateCombination y) : ℝ) : ℂ) := by
   apply Complex.ext
   · simp only [leviFormOfBilin, Complex.ofReal_re]
-    rw [I_smul_coordCombination y]
-    simp [dotProduct, Matrix.mulVec, complexHessianOfBilin, coordCombination,
+    rw [I_smul_conjugateCoordinateCombination y]
+    simp [dotProduct, Matrix.mulVec, complexHessianOfBilin, conjugateCoordinateCombination,
       Finset.mul_sum, Finset.sum_add_distrib, Finset.sum_sub_distrib, smul_eq_mul]
     ring_nf
     simp_rw [Finset.mul_sum]
@@ -99,10 +99,10 @@ theorem dotProduct_mulVec_complexHessianOfBilin {Q : ComplexModel n →L[ℝ] Co
     ring
   · simpa using (isHermitian_complexHessianOfBilin hsymm).im_star_dotProduct_mulVec_self y
 
-/-- `coordCombination y` is the vector with coordinates `conj (y j)`. -/
-theorem coordCombination_eq_toLp (y : Fin n → ℂ) :
-    coordCombination y = WithLp.toLp 2 (fun j => star (y j)) := by
-  have h := coordCombination_star (n := n) (WithLp.toLp 2 (fun j => star (y j)))
+/-- `conjugateCoordinateCombination y` is the vector with coordinates `conj (y j)`. -/
+theorem conjugateCoordinateCombination_eq_toLp (y : Fin n → ℂ) :
+    conjugateCoordinateCombination y = WithLp.toLp 2 (fun j => star (y j)) := by
+  have h := conjugateCoordinateCombination_star (n := n) (WithLp.toLp 2 (fun j => star (y j)))
   simpa using h
 
 theorem real_inner_eq_re (u v : ComplexModel n) : ⟪u, v⟫_ℝ = (⟪u, v⟫_ℂ).re := by
@@ -141,11 +141,11 @@ theorem det_le_four_pow_mul_sq {ι : Type*} [Fintype ι] [DecidableEq ι]
   set w := hH.eigenvectorBasis with hw
   set ev := hH.eigenvalues with hev
   -- the conjugate eigenvectors
-  set x : Fin n → ComplexModel n := fun l => coordCombination (⇑(w l)) with hxdef
+  set x : Fin n → ComplexModel n := fun l => conjugateCoordinateCombination (⇑(w l)) with hxdef
   have hxinner : ∀ l m, ⟪x l, x m⟫_ℂ = if l = m then 1 else 0 := by
     intro l m
     have hwo := (orthonormal_iff_ite.mp w.orthonormal) m l
-    simp only [hxdef, coordCombination_eq_toLp, EuclideanSpace.inner_toLp_toLp]
+    simp only [hxdef, conjugateCoordinateCombination_eq_toLp, EuclideanSpace.inner_toLp_toLp]
     rw [EuclideanSpace.inner_eq_star_dotProduct] at hwo
     have : (fun j => star ((w m : Fin n → ℂ) j)) ⬝ᵥ star (fun j => star ((w l : Fin n → ℂ) j)) =
         (WithLp.ofLp (w l)) ⬝ᵥ star (WithLp.ofLp (w m)) := by
@@ -205,10 +205,10 @@ theorem re_det_nonneg {Q : ComplexModel n →L[ℝ] ComplexModel n →L[ℝ] ℝ
   have hpsd : (complexHessianOfBilin Q).PosSemidef := by
     refine Matrix.PosSemidef.of_dotProduct_mulVec_nonneg hH fun y => ?_
     rw [dotProduct_mulVec_complexHessianOfBilin hsymm y]
-    have : 0 ≤ leviFormOfBilin Q (coordCombination y) := by
+    have : 0 ≤ leviFormOfBilin Q (conjugateCoordinateCombination y) := by
       unfold leviFormOfBilin
-      have := hpos (coordCombination y)
-      have := hpos (Complex.I • coordCombination y)
+      have := hpos (conjugateCoordinateCombination y)
+      have := hpos (Complex.I • conjugateCoordinateCombination y)
       positivity
     exact_mod_cast this
   exact (Complex.nonneg_iff.mp hpsd.det_nonneg).1

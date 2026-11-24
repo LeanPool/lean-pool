@@ -10,7 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDegreeDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ProductTestForms
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.FullSpacePatchMeasure
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalNonPluripolarDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothDDCHessianPositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPotentials
 
@@ -34,7 +34,7 @@ in which `ConcentrationEigenvalueBound` (TN.4, step B3) is stated.
 *Proof.*  Near a point of the target each `θᵢ` has a smooth local potential `ρᵢ` (`ddᶜρᵢ = θᵢ`)
 which is psh; the patch whose corrections are the `ρᵢ` identifies the global measure on
 inverse images of a small ball with the smooth mixed Monge--Ampère measure of `(ρᵢ)`
-(`FullSpacePatchMeasure.globalMixedMeasure_coordinate_inverse_image_eq_smoothMixedMeasure`), whose
+(`globalMixedMeasure_coordinate_inverse_image_eq_smoothMixedMeasure`). Its
 density is `D` (`actualMixedTopDensity_smoothDDC`).  An arbitrary measurable piece is a disjoint
 countable union of pieces inside such balls (second countability).
 
@@ -218,7 +218,7 @@ theorem exists_ball_globalMixedMeasure_image_eq {θ : Fin n → ClosedRealOneOne
       exact actualMixedTopDensity_nonneg fun i =>
         isSemipositiveOneOne_coeff (hθ i) (htarget y hy)
   refine ⟨r, hr, fun y hy => htarget y hy, fun K hK hKB => ?_⟩
-  rw [FullSpacePatchMeasure.globalMixedMeasure_coordinate_inverse_image_eq_smoothMixedMeasure
+  rw [LocalNonPluripolarDensity.globalMixedMeasure_coordinate_inverse_image_eq_smoothMixedMeasure
     hθ Q B hBD k hBrel hBk hsm hKB]
   rw [smoothMixedMeasure, withDensity_apply _ hK, Measure.restrict_restrict hK,
     show K ∩ (B : Set (ComplexModel n)) = K from inter_eq_left.mpr hKB]

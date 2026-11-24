@@ -82,10 +82,10 @@ theorem integral_mul_mixedC_swap_of_contDiffOn {V : Set (ComplexModel (m + 1))} 
   have hχV : tsupport (χ : ComplexModel (m + 1) → ℝ) ⊆ V := χ.tsupport_subset
   have ha' : ContDiff ℝ ∞ a := contDiff_of_contDiffOn_of_tsupport_subset hV ha haV
   have hb' : ContDiff ℝ ∞ (fun y ↦ χ y • b y) :=
-    _root_.SGPT.Foundations.Analysis.Pending.LocalPotentials.contDiff_smul_of_tsupport_subset
+    _root_.SGPT.Foundations.Analysis.SmoothCutoff.contDiff_smul_of_tsupport_subset
       hV hχs hχV hb
   have hg' (i : Fin m) : ContDiff ℝ ∞ (fun y ↦ χ y • g i y) :=
-    _root_.SGPT.Foundations.Analysis.Pending.LocalPotentials.contDiff_smul_of_tsupport_subset
+    _root_.SGPT.Foundations.Analysis.SmoothCutoff.contDiff_smul_of_tsupport_subset
       hV hχs hχV (hg i)
   have h := integral_mul_mixedCoefficient_swap (g := fun i y ↦ χ y • g i y) hg' ha' hb' hac
   have hev (z : ComplexModel (m + 1)) (hz : z ∈ tsupport a) (f : ComplexModel (m + 1) → ℝ) :

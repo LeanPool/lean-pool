@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointDecreasingMaxWeight
+public import LeanPool.NonpluripolarProducts.Foundations.FiniteTuple
 
 /-!
 # Plurifine locality of Bedford–Taylor measures for a maximum with a constant
@@ -52,25 +53,6 @@ theorem integral_mul_maxWeight_eq {U : Opens (ComplexModel n)} {u : Fin n → Co
     ⟨contDiffOn_const, fun z _ => by rw [complexHessian_const]; exact Matrix.PosSemidef.zero⟩
   exact JointDecreasingMaxWeight.integral_mul_jointMaxWeight_eq i₀
     (isDecApprox_const hconst) hμc hμf hμ hμ'c hμ'f hμ' hex hχ hχc hχU
-
-theorem IsDecApprox.measurableSet_lt {U : Opens (ComplexModel n)} {w : ComplexModel n → ℝ}
-    {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox U w G) (c : ℝ) :
-    MeasurableSet {z | z ∈ U ∧ c < w z} := by
-  have heq : {z | z ∈ U ∧ c < w z} =
-      ⋃ m : ℕ, ⋂ k : ℕ, ((U : Set (ComplexModel n)) ∩ G k ⁻¹' Ioi (c + 1 / ((m : ℝ) + 1))) := by
-    ext z
-    simp only [mem_ofPred_eq, mem_iUnion, mem_iInter, mem_inter_iff, mem_preimage, mem_Ioi]
-    constructor
-    · rintro ⟨hzU, hz⟩
-      obtain ⟨m, hm⟩ := exists_nat_one_div_lt (sub_pos.2 hz)
-      exact ⟨m, fun k ↦ ⟨hzU, by linarith [hG.le_of_mem hzU k]⟩⟩
-    · rintro ⟨m, hm⟩
-      obtain ⟨hzU, -⟩ := hm 0
-      refine ⟨hzU, lt_of_lt_of_le (by linarith [show (0 : ℝ) < 1 / ((m : ℝ) + 1) by positivity])
-        (ge_of_tendsto' (hG.2.2.1 z hzU) fun k ↦ (hm k).2.le)⟩
-  rw [heq]
-  exact MeasurableSet.iUnion fun m ↦ MeasurableSet.iInter fun k ↦
-    ((hG.1 k).1.continuousOn.isOpen_inter_preimage U.isOpen isOpen_Ioi).measurableSet
 
 open scoped Distributions in
 /-- If the measures agree against tests weighted by `max a b - b`, division by the
@@ -227,21 +209,16 @@ def maxTupleObstacle (u g : Fin n → ComplexModel n → ℝ) (k : ℕ) :
   fun i ↦ if i.val < k then fun z ↦ max (u i z) (g i z) else u i
 
 theorem maxTupleObstacle_zero (u g : Fin n → ComplexModel n → ℝ) :
-    maxTupleObstacle u g 0 = u := by
-  funext i; simp [maxTupleObstacle]
+    maxTupleObstacle u g 0 = u :=
+  FiniteTuple.replacePrefix_zero u (fun i z ↦ max (u i z) (g i z))
 
 theorem maxTupleObstacle_succ (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
     maxTupleObstacle u g (k + 1) =
       Function.update (maxTupleObstacle u g k) ⟨k, hk⟩
         (fun z ↦ max (maxTupleObstacle u g k ⟨k, hk⟩ z) (g ⟨k, hk⟩ z)) := by
-  funext i
-  by_cases h : i = ⟨k, hk⟩
-  · subst h; simp [maxTupleObstacle]
-  · have hik : i.val ≠ k := fun h' ↦ h (Fin.ext h')
-    simp only [maxTupleObstacle, Function.update_of_ne h]
-    by_cases hlt : i.val < k
-    · simp [hlt, show i.val < k + 1 by omega]
-    · simp [hlt, show ¬ i.val < k + 1 by omega]
+  have hslot : maxTupleObstacle u g k ⟨k, hk⟩ = u ⟨k, hk⟩ := by simp [maxTupleObstacle]
+  rw [hslot]
+  exact FiniteTuple.replacePrefix_succ u (fun i z ↦ max (u i z) (g i z)) hk
 
 theorem maxTupleObstacle_apply_self (u g : Fin n → ComplexModel n → ℝ) {k : ℕ} (hk : k < n) :
     maxTupleObstacle u g k ⟨k, hk⟩ = u ⟨k, hk⟩ := by

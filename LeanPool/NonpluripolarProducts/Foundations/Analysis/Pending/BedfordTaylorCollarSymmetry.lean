@@ -22,8 +22,9 @@ limit of the tuple with `w` in slot `i₀`, we prove
   `∫ (u₀ - g) dμ(u₁) - ∫ (u₀ - g) dμ(g) = ∫ (u₁ - g) dμ(u₀) - ∫ (u₁ - g) dμ(g)`,
 
 that is `∫ a ddᶜb ∧ R = ∫ b ddᶜa ∧ R` for the compactly supported differences
-`a = u₀ - g`, `b = u₁ - g` (Błocki, *The complex Monge–Ampère operator in
-pluripotential theory*, Prop. 2.1.3).
+`a = u₀ - g`, `b = u₁ - g`. This is the compactly supported difference version of the
+symmetry in [Błocki, Proposition 2.1.3](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=35),
+which uses nonpositive potentials with zero boundary limits and finite mass.
 
 Proof. All three functions are regularized by one radial mollifier. The
 regularizations decrease to `u₀`, `u₁`, `g`, and, the kernel having support in a
@@ -237,9 +238,9 @@ theorem update_apply_seq_update {F : Fin n → ℕ → ComplexModel n → ℝ} (
   · subst h; simp
   · simp [Function.update_of_ne h]
 
-/-- **Symmetric integration by parts** for Bedford–Taylor measures (Błocki,
-Prop. 2.1.3): if `u₀`, `u₁` agree with the smooth PSD function `g` off a compact
-subset of `Ω`, then `∫ (u₀ - g) ddᶜ(u₁ - g) ∧ R = ∫ (u₁ - g) ddᶜ(u₀ - g) ∧ R`,
+/-- **Symmetric integration by parts for compactly supported differences.**
+If `u₀`, `u₁` agree with the smooth PSD function `g` off a compact subset of `Ω`, then
+`∫ (u₀ - g) ddᶜ(u₁ - g) ∧ R = ∫ (u₁ - g) ddᶜ(u₀ - g) ∧ R`,
 where `R` is the Bedford–Taylor product of the other slots. -/
 theorem integral_sub_eq_integral_sub_of_eqOn_compl
     {Ω : Opens (ComplexModel n)} {v : Fin n → ComplexModel n → ℝ} (i₀ : Fin n)

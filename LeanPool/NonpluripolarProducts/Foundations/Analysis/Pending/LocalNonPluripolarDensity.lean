@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothPshHessian
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedNonPluripolar
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalNonPluripolar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothBedfordTaylorMeasure
 
 /-!
@@ -154,5 +154,70 @@ theorem mixedTruncationLimitMeasure_restrict_smooth_of_original
     _ = smoothMixedMeasure W (fun i z => (u i z).toReal) hsm :=
       smoothMixedMeasure_eq_of_eqOn htrunc hsm fun i z hz =>
         mixedTruncationReal_eq_on_commonStrictLocus k i (hWk hz)
+
+open FirstPass.PositiveClasses FirstPass.GlobalPotentialPatches GlobalNonPluripolar
+
+variable {M : Type*} [TopologicalSpace M] [MeasurableSpace M] [BorelSpace M]
+  [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] [CompactSpace M]
+
+/-- Restricting the global measure to one concrete patch, followed by the
+literal `Patch.pushMeasure` evaluation, identifies an inverse-chart image with
+the smooth mixed measure obtained from the stabilized truncation limit. -/
+theorem globalMixedMeasure_coordinate_inverse_image_eq_smoothMixedMeasure
+    {theta : Fin n → ClosedRealOneOneForm n M} {u : Fin n → M → EReal}
+    (hu : ∀ i, ThetaPlurisubharmonic (theta i).val (u i))
+    (Q : Patch theta u) (W : Opens (ComplexModel n)) (hWQ : W ≤ Q.domain)
+    (k : ℕ) (hW : RelativelyCompactIn W Q.domain)
+    (hWk : (W : Set (ComplexModel n)) ⊆ commonStrictLocus Q.domain Q.corrected k)
+    (hsm : IsSmoothMixedPshOn W (fun i z => (Q.corrected i z).toReal))
+    {S : Set (ComplexModel n)} (hSW : S ⊆ W) :
+    globalMixedMeasure theta u hu (Q.chart.val.symm '' S) =
+      smoothMixedMeasure W (fun i z => (Q.corrected i z).toReal) hsm S := by
+  have hSQ : S ⊆ Q.domain := hSW.trans hWQ
+  have hsource : Q.chart.val.symm '' S ⊆ (Q.source : Set M) := by
+    rintro x ⟨z, hz, rfl⟩
+    exact Q.map_target (hSQ hz)
+  have hpreimage : (Q.domain : Set (ComplexModel n)) ∩
+      Q.chart.val.symm ⁻¹' (Q.chart.val.symm '' S) = S := by
+    ext z
+    constructor
+    · rintro ⟨hzD, y, hyS, hy⟩
+      have hyD : y ∈ Q.domain := hSQ hyS
+      have hzy : z = y := by
+        calc
+          z = Q.chart.val (Q.chart.val.symm z) :=
+            (Q.chart.val.right_inv (Q.domain_le_target hzD)).symm
+          _ = Q.chart.val (Q.chart.val.symm y) := congrArg Q.chart.val hy.symm
+          _ = y := Q.chart.val.right_inv (Q.domain_le_target hyD)
+      exact hzy.symm ▸ hyS
+    · intro hz
+      exact ⟨hSQ hz, ⟨z, hz, rfl⟩⟩
+  have hpatch : patchMeasure Q (Q.chart.val.symm '' S) =
+      mixedTruncationLimitMeasure Q.domain Q.corrected Q.plurisubharmonic S := by
+    rw [patchMeasure, Q.pushMeasure_apply, hpreimage]
+  have hrestrict :
+      mixedTruncationLimitMeasure Q.domain Q.corrected Q.plurisubharmonic S =
+        (mixedTruncationLimitMeasure Q.domain Q.corrected Q.plurisubharmonic).restrict
+          (W : Set (ComplexModel n)) S := by
+    symm
+    rw [Measure.restrict_apply' W.isOpen.measurableSet,
+      inter_eq_self_of_subset_left hSW]
+  have hlocal := mixedTruncationLimitMeasure_restrict_smooth_of_original
+    Q.plurisubharmonic k hW hWk hsm
+  calc
+    globalMixedMeasure theta u hu (Q.chart.val.symm '' S) =
+        (globalMixedMeasure theta u hu).restrict (Q.source : Set M)
+          (Q.chart.val.symm '' S) := by
+      symm
+      rw [Measure.restrict_apply' Q.source.isOpen.measurableSet,
+        inter_eq_self_of_subset_left hsource]
+    _ = patchMeasure Q (Q.chart.val.symm '' S) :=
+      congrArg (fun mu : Measure M => mu (Q.chart.val.symm '' S))
+        (globalMixedMeasure_restrict_patch hu Q)
+    _ = mixedTruncationLimitMeasure Q.domain Q.corrected Q.plurisubharmonic S := hpatch
+    _ = (mixedTruncationLimitMeasure Q.domain Q.corrected Q.plurisubharmonic).restrict
+          (W : Set (ComplexModel n)) S := hrestrict
+    _ = smoothMixedMeasure W (fun i z => (Q.corrected i z).toReal) hsm S :=
+      congrArg (fun mu : Measure (ComplexModel n) => mu S) hlocal
 
 end SGPT.Foundations.Analysis.Pending.LocalNonPluripolarDensity

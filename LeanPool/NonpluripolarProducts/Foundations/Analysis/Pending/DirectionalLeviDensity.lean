@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientCongruence
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoordinateDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDegreeDensity
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SemiconcaveDegenerateHessian
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothPshHessian
 
 /-!
 # The directional Levi form as the density of `ddᶜ f ∧ (ddᶜ q_a)^{n-1}`
@@ -39,7 +39,7 @@ open scoped Topology ContDiff InnerProductSpace
 
 namespace SGPT.Foundations.Analysis.Pending.DirectionalLeviDensity
 
-open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere TopDegreeDensity SemiconcaveHessian
+open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere TopDegreeDensity
   StronglyPositiveForms
 
 noncomputable section
@@ -266,7 +266,7 @@ theorem topDensity_smoothDDC_perpQuadratic {f : ComplexModel (m + 1) → ℝ}
     refine Finset.sum_congr rfl fun j _ => ?_
     rw [Complex.star_def, Complex.mul_conj', Complex.ofReal_pow]
   rw [hfun, mixedCoefficient_cons_projection _ y hy,
-    dotProduct_mulVec_complexHessian_eq_leviForm hf y, hydef, coordCombination_star]
+    complexHessian_dotProduct_mulVec_eq_leviForm hf y, hydef, conjugateCoordinateCombination_star]
   simp only [Complex.mul_re, Complex.natCast_re, Complex.ofReal_re, Complex.natCast_im,
     Complex.ofReal_im, mul_zero, sub_zero]
   ring

@@ -11,6 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PshSupremumRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.IncreasingPshBallSubmean
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.IncreasingPshGapCapacityZero
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 
 /-!
 # The capacity-zero regularization gap of a normalized increasing PSH sequence
@@ -29,28 +30,10 @@ open scoped Topology ENNReal
 
 namespace SGPT.Foundations.Analysis.Pending.RegularizedIncreasingPshGapCapacityZero
 
-open FirstPass FirstPass.MongeAmpere
+open FirstPass FirstPass.MongeAmpere SGPT.Foundations.Analysis.MeasureLocality
 open SGPT.Foundations.Analysis.Pending.BedfordTaylor
 
 variable {n : ℕ}
-
-private theorem ae_of_forall_ball {U : Set (ComplexModel n)}
-    {Q : ComplexModel n → Prop}
-    (h : ∀ z ∈ U, ∃ r > 0, ∀ᵐ x ∂volume, x ∈ ball z r → Q x) :
-    ∀ᵐ x ∂volume, x ∈ U → Q x := by
-  classical
-  choose! r hr hQ using h
-  obtain ⟨S, hSc, hSU⟩ := TopologicalSpace.isOpen_iUnion_countable
-    (fun z : U ↦ ball (z : ComplexModel n) (r z)) (fun _ ↦ isOpen_ball)
-  have hS : ∀ᵐ x ∂volume, ∀ z ∈ S,
-      x ∈ ball ((z : U) : ComplexModel n) (r z) → Q x :=
-    (ae_ball_iff hSc).mpr fun z _ ↦ hQ z z.2
-  filter_upwards [hS] with x hx hxU
-  have hx' : x ∈ ⋃ z : U, ball (z : ComplexModel n) (r z) :=
-    mem_iUnion.mpr ⟨⟨x, hxU⟩, mem_ball_self (hr x hxU)⟩
-  rw [← hSU] at hx'
-  obtain ⟨z, hz, hxz⟩ := mem_iUnion₂.mp hx'
-  exact hx z hz hxz
 
 /-- The genuine increasing approximation and all-subdomain capacity-zero gap
 are produced from the original PSH sequence and its normalized local bounds. -/

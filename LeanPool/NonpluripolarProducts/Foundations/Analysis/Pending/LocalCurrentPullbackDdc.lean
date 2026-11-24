@@ -20,10 +20,13 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Consta
 Blueprint `ana:current-pullback-ddc` (`blueprint/src/analytic.tex`; TN.5, toward
     `ana:volume-semicontinuity`, route item 2:
 the chart readings of `θ + dd^c u` are related by the pull-back of
-    `Pending.LocalCurrentPullback`).  Source: Boucksom 2002
-(`bou02-volume`), Lemma 4.2 (pull-backs of currents along holomorphic maps), which uses the
-    standard identity
-`f^*(dd^c w) = dd^c(w ∘ f)` proved here for biholomorphisms and locally bounded psh `w`.
+    `Pending.LocalCurrentPullback`). [Boucksom, Lemma 4.2](
+https://arxiv.org/pdf/math/0201031#page=12) supplies context for transporting integrable
+forms and the absolutely continuous part of a current. Smooth `dd^c` naturality is the
+calculation preceding [Demailly, Theorem I.5.11](
+https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=40).
+The Lean proof passes from the smooth identity to locally bounded PSH potentials
+under a biholomorphism using Bedford–Taylor convergence.
 
 For `τ : A → B` biholomorphic with inverse `σ` (`BedfordTaylor.IsBiholomorphicPair A B τ σ`),
     `n = m + 1`:
