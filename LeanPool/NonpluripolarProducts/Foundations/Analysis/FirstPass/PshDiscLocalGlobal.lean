@@ -70,7 +70,7 @@ theorem PlurisubharmonicOn.circleSubmean_of_closedBall_subset_of_harmonicApproxi
   have hg : ∀ n, Continuous (g n) := fun n =>
     continuous_uscSupConvolution hKne htop hCK n
   have hgu : ∀ n z, z ∈ K → u z ≤ (g n z : EReal) := fun n z hz =>
-    le_coe_uscSupConvolution hKne htop hCK n hz
+    le_coe_uscSupConvolution htop hCK n hz
   have hgC : ∀ n z, g n z ≤ C := fun n z =>
     uscSupConvolution_le hKne htop hCK n z
   have hganti : ∀ z, Antitone fun n => g n z := fun z =>

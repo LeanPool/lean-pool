@@ -148,7 +148,7 @@ theorem continuous_uscSupConvolution {K : Set X} {u : X → EReal} {C : ℝ}
   (uscSupConvolution_lipschitz hne htop hC n).continuous
 
 theorem le_coe_uscSupConvolution {K : Set X} {u : X → EReal} {C : ℝ}
-    (_hne : K.Nonempty) (htop : ∀ y ∈ K, u y ≠ ⊤)
+    (htop : ∀ y ∈ K, u y ≠ ⊤)
     (hC : ∀ y ∈ K, u y ≤ (C : EReal)) (n : ℕ) {x : X} (hx : x ∈ K) :
     u x ≤ (uscSupConvolution K u C n x : EReal) := by
   let y : K := ⟨x, hx⟩
@@ -222,7 +222,7 @@ theorem iInf_coe_uscSupConvolution {K : Set X} {u : X → EReal} {C : ℝ}
     obtain ⟨n, hn⟩ := exists_uscSupConvolution_le hne hu htop hC hx huA
     exact (iInf_le (fun k : ℕ => (uscSupConvolution K u C k x : EReal)) n).trans_lt <|
       (EReal.coe_le_coe_iff.mpr hn).trans_lt hAb
-  · exact le_iInf fun n => le_coe_uscSupConvolution hne htop hC n hx
+  · exact le_iInf fun n => le_coe_uscSupConvolution htop hC n hx
 
 /-- A compact upper-semicontinuous `EReal` function without `⊤` admits a
 decreasing sequence of continuous real-valued majorants.  Its pointwise
@@ -244,7 +244,7 @@ theorem exists_continuous_antitone_majorants_on_compact {K : Set X}
     fun x hx => (hmax hx).trans hyC.le
   refine ⟨(C : ℝ), uscSupConvolution K u (C : ℝ), ?_, ?_, ?_, ?_, ?_⟩
   · exact fun n => continuous_uscSupConvolution hne htop hC n
-  · exact fun n x hx => le_coe_uscSupConvolution hne htop hC n hx
+  · exact fun n x hx => le_coe_uscSupConvolution htop hC n hx
   · exact fun n x => uscSupConvolution_le hne htop hC n x
   · exact fun x => uscSupConvolution_antitone hne htop hC x
   · exact fun x hx => iInf_coe_uscSupConvolution hne hu htop hC hx

@@ -119,25 +119,19 @@ theorem HasDiscSubmeanOn.circleAverage_deficit_pairing_le {u : E → EReal} {U K
     (contDiff_translationPairing_complexLine hf hφs hφ v).continuous hn r
       (by simpa only [zero_smul] using hm)
 
-/-- A uniform admissible family of weighted discs forces the actual Levi
-pairing of the localized deficit to be nonpositive. Only the disc submean
-inequality and measurability of the localized deficit are used. -/
-theorem HasDiscSubmeanOn.integral_deficit_mul_leviForm_nonpos {u : E → EReal} {U K : Set E}
-    (hu : HasDiscSubmeanOn u U) (hKU : K ⊆ U) (C : ℝ)
-    (hC : ∀ y ∈ K, u y ≤ (C : EReal))
-    (hDm : Measurable (K.indicator (fun y => ((C : EReal) - u y).toENNReal))) {f φ : E → ℝ}
-    (hD : K.indicator (fun y => ((C : EReal) - u y).toENNReal) =ᵐ[μ]
-      fun y => ENNReal.ofReal (f y))
-    (hf : LocallyIntegrable f μ) (hfn : ∀ x, 0 ≤ f x)
-    (hφs : HasCompactSupport φ) (hφ : ContDiff ℝ 2 φ) (hφn : ∀ x, 0 ≤ φ x)
+/-- A circle supermean bound for the translated pairing implies a nonpositive Levi pairing. -/
+theorem integral_mul_leviForm_nonpos_of_circleAverage_le
+    {f φ : E → ℝ} (hf : LocallyIntegrable f μ)
+    (hφs : HasCompactSupport φ) (hφ : ContDiff ℝ 2 φ)
     (v : E) {R : ℝ} (hR : 0 < R)
-    (hdisc : ∀ r ∈ Ioo 0 R, ∀ x ∈ Function.support φ, affineClosedDisc x v r ⊆ K) :
+    (haverage : ∀ r ∈ Ioo 0 R,
+      Real.circleAverage (fun z : ℂ => translationPairing μ f φ (z • v)) 0 r ≤
+        translationPairing μ f φ 0) :
     (∫ x, f x * leviForm φ x v ∂μ) ≤ 0 := by
   let h : ℂ → ℝ := fun z => translationPairing μ f φ (z • v)
   have hh : ContDiff ℝ 2 h := contDiff_translationPairing_complexLine hf hφs hφ v
   have hmean (r : ℝ) (hr : r ∈ Ioo 0 R) : (-h) 0 ≤ Real.circleAverage (-h) 0 r := by
-    have hm := hu.circleAverage_deficit_pairing_le hKU C hC hDm hD hf hfn hφs hφ hφn
-      v hr.1 (hdisc r hr)
+    have hm := haverage r hr
     have hneg : Real.circleAverage (-h) 0 r = -Real.circleAverage h 0 r := by
       simpa only [neg_one_smul] using
         (Real.circleAverage_smul (f := h) (c := 0) (R := r) (a := (-1 : ℝ)))
@@ -154,6 +148,23 @@ theorem HasDiscSubmeanOn.integral_deficit_mul_leviForm_nonpos {u : E → EReal} 
   change 0 ≤ -Δ (fun z : ℂ => translationPairing μ f φ (z • v)) 0 at hΔ
   rw [hline] at hΔ
   linarith
+
+/-- A uniform admissible family of weighted discs forces the actual Levi
+pairing of the localized deficit to be nonpositive. Only the disc submean
+inequality and measurability of the localized deficit are used. -/
+theorem HasDiscSubmeanOn.integral_deficit_mul_leviForm_nonpos {u : E → EReal} {U K : Set E}
+    (hu : HasDiscSubmeanOn u U) (hKU : K ⊆ U) (C : ℝ)
+    (hC : ∀ y ∈ K, u y ≤ (C : EReal))
+    (hDm : Measurable (K.indicator (fun y => ((C : EReal) - u y).toENNReal))) {f φ : E → ℝ}
+    (hD : K.indicator (fun y => ((C : EReal) - u y).toENNReal) =ᵐ[μ]
+      fun y => ENNReal.ofReal (f y))
+    (hf : LocallyIntegrable f μ) (hfn : ∀ x, 0 ≤ f x)
+    (hφs : HasCompactSupport φ) (hφ : ContDiff ℝ 2 φ) (hφn : ∀ x, 0 ≤ φ x)
+    (v : E) {R : ℝ} (hR : 0 < R)
+    (hdisc : ∀ r ∈ Ioo 0 R, ∀ x ∈ Function.support φ, affineClosedDisc x v r ⊆ K) :
+    (∫ x, f x * leviForm φ x v ∂μ) ≤ 0 :=
+  integral_mul_leviForm_nonpos_of_circleAverage_le hf hφs hφ v hR fun r hr =>
+    hu.circleAverage_deficit_pairing_le hKU C hC hDm hD hf hfn hφs hφ hφn v hr.1 (hdisc r hr)
 
 /-- The smooth pairing with a real representative of a singular deficit
 satisfies the supermean inequality whenever the weighted discs are admissible. -/

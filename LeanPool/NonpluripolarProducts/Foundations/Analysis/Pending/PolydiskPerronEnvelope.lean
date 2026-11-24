@@ -576,7 +576,7 @@ theorem IsPerronData.isPerronCompetitor_perronEnvelope {v : ComplexModel n → �
     exact EReal.coe_le_coe_iff.mpr (hw.le_of_forall_le hMle hy ⟨0, hv.pos⟩)
   set g : ComplexModel n → EReal := uscRegularization (sSup (perronFamily v)) with hgdef
   have hgpsh : PlurisubharmonicOn g (unitPolydisk n) :=
-    plurisubharmonicOn_uscRegularization_sSup isOpen_unitPolydisk hFne hFpsh hFbdd
+    plurisubharmonicOn_uscRegularization_sSup isOpen_unitPolydisk hFpsh hFbdd
   have hgle : ∀ z ∈ unitPolydisk n, g z ≤ (M : EReal) := by
     intro z hz
     refine uscRegularization_le_of_eventually_le upperSemicontinuousAt_const ?_

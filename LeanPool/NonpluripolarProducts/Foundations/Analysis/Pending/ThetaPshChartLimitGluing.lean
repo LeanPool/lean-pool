@@ -109,69 +109,15 @@ theorem restrictDistribution_add {U : Opens E} (S T : 𝓓'(Ω, ℝ)) (h : U ≤
 
 omit [OpensMeasurableSpace E] in
 omit [MeasurableSpace E] in
-/-- **Locality of distributions**: two distributions agreeing on an open cover are equal
-(smooth partitions of unity; the same argument as in `Pending.PshRepresentativeGluing`). -/
+/-- Restrictions to a chart cover determine the distribution on the domain. -/
 theorem distribution_eq_of_restrict_eq [FiniteDimensional ℝ E]
     {T S : 𝓓'(Ω, ℝ)} {ι : Type*}
     (U : ι → Opens E) (hUΩ : ∀ i, U i ≤ Ω)
     (hcover : ∀ x ∈ Ω, ∃ i, x ∈ U i)
     (hlocal : ∀ i,
       restrictDistribution T (hUΩ i) = restrictDistribution S (hUΩ i)) :
-    T = S := by
-  classical
-  ext φ
-  obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate
-    (I := 𝓘(ℝ, E)) isClosed_closure (fun i ↦ (U i : Set E))
-    (fun i ↦ (U i).isOpen) (by
-      intro x hx
-      obtain ⟨i, hi⟩ := hcover x (φ.tsupport_subset hx)
-      exact mem_iUnion.mpr ⟨i, hi⟩)
-  let active : Set ι := {i | (Function.support (ρ i) ∩ tsupport φ).Nonempty}
-  have hactive : active.Finite :=
-    by simpa only [active] using
-      ρ.locallyFinite.finite_nonempty_inter_compact φ.hasCompactSupport
-  let ψ (i : ι) : 𝓓(U i, ℝ) :=
-    ⟨fun x ↦ ρ i x * φ x,
-      (ρ i).contMDiff.contDiff.mul φ.contDiff,
-      φ.hasCompactSupport.mul_left,
-      (tsupport_mul_subset_left
-        (f := fun x ↦ ρ i x) (g := fun x ↦ φ x)).trans (hρ i)⟩
-  let Ψ (i : ι) : 𝓓(Ω, ℝ) := TestFunction.monoCLM ℝ (ψ i)
-  have hφsum : φ = ∑ i ∈ hactive.toFinset, Ψ i := by
-    apply TestFunction.ext
-    intro x
-    have hsum_apply' : ∀ s : Finset ι,
-        (∑ i ∈ s, Ψ i) x = ∑ i ∈ s, ρ i x * φ x := by
-      intro s
-      induction s using Finset.induction_on with
-      | empty => rfl
-      | @insert i s hi hs =>
-          rw [Finset.sum_insert hi, Finset.sum_insert hi]
-          change (Ψ i) x + (∑ j ∈ s, Ψ j) x =
-            ρ i x * φ x + ∑ j ∈ s, ρ j x * φ x
-          rw [hs]
-          exact congrArg₂ (· + ·)
-            (congrFun (testFunction_inclusion_coe (hUΩ i) (ψ i)) x) rfl
-    by_cases hx : x ∈ tsupport φ
-    · have hsupp : Function.support (fun i ↦ ρ i x) ⊆ active := by
-        intro i hi
-        exact ⟨x, hi, hx⟩
-      rw [hsum_apply', ← Finset.sum_mul,
-        ← finsum_eq_finsetSum_of_support_subset (fun i ↦ ρ i x)
-          (by simpa only [Set.Finite.coe_toFinset] using hsupp),
-        ρ.sum_eq_one hx, one_mul]
-    · have hφx : φ x = 0 := image_eq_zero_of_notMem_tsupport hx
-      rw [hsum_apply', hφx]
-      simp
-  calc
-    T φ = T (∑ i ∈ hactive.toFinset, Ψ i) := congrArg T hφsum
-    _ = ∑ i ∈ hactive.toFinset, T (Ψ i) := by simp only [map_sum]
-    _ = ∑ i ∈ hactive.toFinset, S (Ψ i) := by
-      apply Finset.sum_congr rfl
-      intro i _
-      exact congrArg (fun R : 𝓓'(U i, ℝ) ↦ R (ψ i)) (hlocal i)
-    _ = S (∑ i ∈ hactive.toFinset, Ψ i) := by simp only [map_sum]
-    _ = S φ := congrArg S hφsum.symm
+    T = S :=
+  SGPT.Foundations.Analysis.Pending.distribution_eq_of_restrict_eq_on_openCover U hUΩ hcover hlocal
 
 end Helpers
 

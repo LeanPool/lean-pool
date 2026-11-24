@@ -31,6 +31,24 @@ and is not asserted here.
 open Set Filter MeasureTheory TopologicalSpace Metric
 open scoped ENNReal Topology ContDiff
 
+namespace SGPT.Foundations.Analysis
+
+/-! ### Congruence of plurisubharmonicity on an open set -/
+
+variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
+
+/-- **Plurisubharmonicity on an open set only depends on the values there.**
+The germ at a point of `U` may be tested on `V ∩ U`, and `DiscPshOn.congr`
+transports the disc criterion across an `EqOn`. -/
+theorem plurisubharmonicOn_congr {u w : E → EReal} {U : Set E} (hU : IsOpen U)
+    (hu : PlurisubharmonicOn u U) (heq : EqOn u w U) : PlurisubharmonicOn w U := by
+  intro x hx
+  obtain ⟨V, hVopen, hxV, hV⟩ := hu x hx
+  exact ⟨V ∩ U, hVopen.inter hU, ⟨hxV, hx⟩,
+    (hV.mono inter_subset_left).congr (heq.mono inter_subset_right)⟩
+
+end SGPT.Foundations.Analysis
+
 namespace SGPT.Foundations.Analysis.Pending.BoundedGlobalProduct
 
 open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
@@ -81,18 +99,29 @@ theorem coe_correctedReal {i : Fin n} (hb : IsBoundedPotential (u i)) (P : Patch
   change _ = (u i (P.chart.val.symm z)) + ((P.potential i z : ℝ) : EReal)
   rw [EReal.coe_add, EReal.coe_toReal (hb.ne_top _) (hb.ne_bot _)]
 
-/-- **The corrected potential of a bounded tuple is real locally bounded PSH.**
-Plurisubharmonicity is the patch's own hypothesis; the local bound combines the
-global bound on `u i` with the smoothness of the local potential of `θ i`. -/
-theorem correctedReal_isLocallyBoundedPshOn {i : Fin n} (hb : IsBoundedPotential (u i))
-    (P : Patch θ u) : IsLocallyBoundedPshOn P.domain (correctedReal P i) := by
-  obtain ⟨a, b, hab⟩ := hb
-  have hb' : IsBoundedPotential (u i) := ⟨a, b, hab⟩
+/-- Bounds on the chart values of a patch potential suffice for local boundedness. -/
+theorem correctedReal_isLocallyBoundedPshOn_of_bounds {i : Fin n} (P : Patch θ u)
+    {a b : ℝ} (hab : ∀ w ∈ P.domain,
+      (a : EReal) ≤ u i (P.chart.val.symm w) ∧ u i (P.chart.val.symm w) ≤ (b : EReal)) :
+    IsLocallyBoundedPshOn P.domain (correctedReal P i) := by
+  have hcoe (w : ComplexModel n) (hw : w ∈ P.domain) :
+      ((u i (P.chart.val.symm w)).toReal : EReal) = u i (P.chart.val.symm w) :=
+    EReal.coe_toReal (ne_of_lt ((hab w hw).2.trans_lt (EReal.coe_lt_top b)))
+      (ne_of_gt ((EReal.bot_lt_coe a).trans_le (hab w hw).1))
+  have hsplit (w : ComplexModel n) (hw : w ∈ P.domain) :
+      P.corrected i w =
+        (((u i (P.chart.val.symm w)).toReal + P.potential i w : ℝ) : EReal) := by
+    change u i (P.chart.val.symm w) + (P.potential i w : EReal) = _
+    rw [EReal.coe_add, hcoe w hw]
+  have hreal (w : ComplexModel n) (hw : w ∈ P.domain) :
+      correctedReal P i w = (u i (P.chart.val.symm w)).toReal + P.potential i w := by
+    rw [correctedReal, hsplit w hw, EReal.toReal_coe]
   refine ⟨?_, ?_⟩
-  · have hfun : (fun z => ((correctedReal P i z : ℝ) : EReal)) = P.corrected i :=
-      funext (coe_correctedReal hb' P)
-    rw [hfun]
-    exact P.plurisubharmonic i
+  · refine plurisubharmonicOn_congr P.domain.isOpen (P.plurisubharmonic i) ?_
+    intro z hz
+    change P.corrected i z = ((correctedReal P i z : ℝ) : EReal)
+    rw [hreal z hz]
+    exact hsplit z hz
   · intro z hz
     obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp (P.domain.isOpen.mem_nhds hz)
     have hclosed : closedBall z (r / 2) ⊆ (P.domain : Set (ComplexModel n)) :=
@@ -102,19 +131,25 @@ theorem correctedReal_isLocallyBoundedPshOn {i : Fin n} (hb : IsBoundedPotential
     refine ⟨⟨ball z (r / 2), isOpen_ball⟩, mem_ball_self (by linarith),
       ball_subset_closedBall.trans hclosed, max |a| |b| + C, ?_⟩
     intro w hw
+    have hwdom := hclosed (ball_subset_closedBall hw)
     have hwC : |P.potential i w| ≤ C := by
       simpa [Real.norm_eq_abs] using hC w (ball_subset_closedBall hw)
-    set s : ℝ := (u i (P.chart.val.symm w)).toReal with hs_def
-    have hcoe : ((s : ℝ) : EReal) = u i (P.chart.val.symm w) :=
-      EReal.coe_toReal (hb'.ne_top _) (hb'.ne_bot _)
-    have hsa : a ≤ s := EReal.coe_le_coe_iff.mp (hcoe ▸ (hab _).1)
-    have hsb : s ≤ b := EReal.coe_le_coe_iff.mp (hcoe ▸ (hab _).2)
+    set s : ℝ := (u i (P.chart.val.symm w)).toReal
+    have hsa : a ≤ s := EReal.coe_le_coe_iff.mp (hcoe w hwdom ▸ (hab w hwdom).1)
+    have hsb : s ≤ b := EReal.coe_le_coe_iff.mp (hcoe w hwdom ▸ (hab w hwdom).2)
     have habs : |s| ≤ max |a| |b| := by
       refine abs_le.mpr ⟨?_, hsb.trans ((le_abs_self b).trans (le_max_right _ _))⟩
       exact (neg_le_neg (le_max_left |a| |b|)).trans ((neg_abs_le a).trans hsa)
-    calc |correctedReal P i w| = |s + P.potential i w| := by rw [correctedReal_eq hb' P w]
-      _ ≤ |s| + |P.potential i w| := abs_add_le _ _
-      _ ≤ max |a| |b| + C := add_le_add habs hwC
+    rw [hreal w hwdom]
+    exact (abs_add_le _ _).trans (add_le_add habs hwC)
+
+/-- **The corrected potential of a bounded tuple is real locally bounded PSH.**
+Plurisubharmonicity is the patch's own hypothesis; the local bound combines the
+global bound on `u i` with the smoothness of the local potential of `θ i`. -/
+theorem correctedReal_isLocallyBoundedPshOn {i : Fin n} (hb : IsBoundedPotential (u i))
+    (P : Patch θ u) : IsLocallyBoundedPshOn P.domain (correctedReal P i) := by
+  obtain ⟨a, b, hab⟩ := hb
+  exact correctedReal_isLocallyBoundedPshOn_of_bounds P fun w _ => hab (P.chart.val.symm w)
 
 theorem correctedReal_isLocallyBoundedMixedPshOn (hb : ∀ i, IsBoundedPotential (u i))
     (P : Patch θ u) : IsLocallyBoundedMixedPshOn P.domain (correctedReal P) :=

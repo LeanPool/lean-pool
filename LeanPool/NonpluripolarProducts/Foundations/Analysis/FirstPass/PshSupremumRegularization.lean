@@ -118,7 +118,6 @@ theorem LocallyUniformlyBoundedAbove.exists_uniform_upper_bound_on_moving_discs
 family of germwise PSH functions is again germwise PSH on an open domain. -/
 theorem plurisubharmonicOn_uscRegularization_sSup
     {F : Set (E → EReal)} {Ω : Set E} (hΩ : IsOpen Ω)
-    (_hne : F.Nonempty)
     (hpsh : ∀ f ∈ F, PlurisubharmonicOn f Ω)
     (hF : LocallyUniformlyBoundedAbove F Ω) :
     PlurisubharmonicOn (uscRegularization (sSup F)) Ω := by
@@ -190,10 +189,12 @@ theorem plurisubharmonicOn_uscRegularization_sSup
       intro b hwb
       filter_upwards [hzseq.eventually (hwusc z b hwb)] with n hn
       exact (hle n).trans_lt hn
+    let approximation : MovingDiscPshApproximation w x v r :=
+      ⟨Ω, potential, centers, B, hdiscPsh, hdisc, hpotentialB, fun y hy =>
+        (hC y hy).trans (EReal.coe_le_coe_iff.mpr hCB), hcenter, hboundary⟩
     have hFatou : circleDeficit w x v r B ≤
         ENNReal.ofReal (2 * Real.pi) * ((B : EReal) - w x).toENNReal :=
-      circleSubmean_of_moving_discPsh hdiscPsh x centers v hr hdisc B
-        hpotentialB hcenter hboundary
+      approximation.circleSubmean hr
     have hshift : 0 ≤ B - C := sub_nonneg.mpr hCB
     apply (discSubmean_add_bound_iff x v hr.le C (B - C) hshift hC).mp
     convert hFatou using 1

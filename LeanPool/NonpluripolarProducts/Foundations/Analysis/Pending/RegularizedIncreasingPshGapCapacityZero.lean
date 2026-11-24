@@ -85,7 +85,6 @@ theorem regularized_isIncApprox_and_relCapacity_gap_eq_zero
     exact EReal.coe_le_coe_iff.mpr (hb k y hy.2).2
   have hPpsh : PlurisubharmonicOn P B := by
     have h := plurisubharmonicOn_uscRegularization_sSup B.isOpen
-      (show F.Nonempty from ⟨e 0, ⟨0, rfl⟩⟩)
       (fun _ hf ↦ by obtain ⟨k, rfl⟩ := hf; exact (hg k).mono hBΩ) hF
     simpa only [hs] using h
   have hpb : ∀ x ∈ B, ((-1 : ℝ) : EReal) ≤ p x ∧ p x ≤ (1 : EReal) := by

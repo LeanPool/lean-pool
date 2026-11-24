@@ -255,7 +255,7 @@ theorem manifoldPSH_uscSup_of_locallyBounded {I : Type*} [Nonempty I]
       rintro f ⟨i, rfl⟩
       exact (hu i).chartPlurisubharmonic e
     have hr := SGPT.Foundations.Analysis.FirstPass.plurisubharmonicOn_uscRegularization_sSup
-      e.val.open_target (Set.range_nonempty (fun i ↦ chartFunction (u i) e)) hpsh
+      e.val.open_target hpsh
       (locallyUniformlyBoundedAbove_range_iff.mpr (locallyBounded_chartFamily hb e))
     rw [sSup_range_eq] at hr
     exact (hr.discPshOn.congr (uscSup_chartFamily u e)).plurisubharmonicOn e.val.open_target

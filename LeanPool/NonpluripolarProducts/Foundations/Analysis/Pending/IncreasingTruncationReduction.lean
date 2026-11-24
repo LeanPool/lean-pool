@@ -392,7 +392,7 @@ theorem truncationMeasure_le_liminf_of_increasingConvergence {Ω : Opens (Comple
 
 /-- **Lower semicontinuity of the non-pluripolar Monge–Ampère measure along increasing
 sequences, from bounded increasing Bedford–Taylor convergence.** -/
-theorem truncationLimitMeasure_le_liminf_of_increasingConvergence (_hn : 0 < n)
+theorem truncationLimitMeasure_le_liminf_of_increasingConvergence
     {Ω : Opens (ComplexModel n)}
     (hconv : ∀ (w : ℕ → ComplexModel n → ℝ) (W : ComplexModel n → ℝ)
       (hw : ∀ j, IsLocallyBoundedPshOn Ω (w j)) (hW : IsLocallyBoundedPshOn Ω W),

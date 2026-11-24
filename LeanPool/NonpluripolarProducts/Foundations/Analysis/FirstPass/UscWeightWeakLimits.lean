@@ -73,7 +73,7 @@ theorem uscWeight_weakLimit_integral_le
     (hfusc : ∀ k, UpperSemicontinuous (f k))
     (hfanti : ∀ x, Antitone (fun k => f k x))
     (hflim : ∀ x, Tendsto (fun k => f k x) atTop (𝓝 (fLim x)))
-    (_hC : 0 ≤ C) (hfbound : ∀ k x, |f k x| ≤ C)
+    (hfbound : ∀ k x, |f k x| ≤ C)
     (hφcont : Continuous φ) (hφnonneg : ∀ x, 0 ≤ φ x)
     (hμweak : ∀ g : X → ℝ, Continuous g →
       Tendsto (fun k => ∫ x, g x ∂(μs k)) atTop (𝓝 (∫ x, g x ∂μ)))

@@ -306,7 +306,7 @@ theorem isAnalyticGerm_chart_translate {A : Set M} {x : M}
 local decomposition data.  Blueprint `lag:local-statement`; the remaining inputs are
 `IrreducibleGermLocal.exists_pure_nhds` and `IrreducibleGermLocal.exists_thin_nhds`. -/
 theorem exists_localDecomposition {A : Set M} (hA : IsComplexAnalyticSubset (n := n) A)
-    {p : M} (_hp : p ∈ A) : Nonempty (LocalDecomposition (n := n) A p) := by
+    {p : M} : Nonempty (LocalDecomposition (n := n) A p) := by
   obtain ⟨P⟩ := hA p
   let e := (complexChartAt (n := n) p).val
   let q := e p

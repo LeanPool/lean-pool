@@ -354,7 +354,7 @@ theorem isComplexAnalyticSubset_closure_regularStratum {A : Set M}
     IsComplexAnalyticSubset (n := n) (closure (regularStratum (n := n) A P)) := by
   intro x
   by_cases hx : x ∈ A
-  · obtain ⟨D⟩ := exists_localDecomposition hA hx
+  · obtain ⟨D⟩ := exists_localDecomposition (p := x) hA
     exact nonempty_presentation_of_inter_nbhd_eq D (fun i => P (D.dim i))
       (D.closure_inter_nbhd_eq P)
   · exact nonempty_presentation_of_not_mem hA.isClosed

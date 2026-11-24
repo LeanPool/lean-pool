@@ -358,47 +358,8 @@ theorem isGLB_topDensity_wedge_formPower_of_posSemidef {α : RealForm (m + 1) 2}
       β).PosDef ∧
         (normalizedHermitianMatrix β).det = 1 ∧ s = topDensity (coordinateWedge (formPower β m) α)}
       (((m + 1).factorial / Real.pi ^ (m + 1) : ℝ) *
-        (normalizedHermitianMatrix α).det.re ^ (((m + 1 : ℕ) : ℝ)⁻¹)) := by
-  set A := normalizedHermitianMatrix α with hAdef
-  set c : ℝ := ((m + 1).factorial / Real.pi ^ (m + 1) : ℝ) with hcdef
-  have hc : 0 < c := by positivity
-  have hGLB := isGLB_re_trace_div hA
-  rw [Fintype.card_fin] at hGLB
-  have hval : ∀ β : RealForm (m + 1) 2, IsSemipositiveOneOne β → (normalizedHermitianMatrix
-    β).PosDef →
-      (normalizedHermitianMatrix β).det = 1 →
-      topDensity (coordinateWedge (formPower β m) α) =
-        c * (((normalizedHermitianMatrix β)⁻¹ * A).trace.re / ((m + 1 : ℕ) : ℝ)) := by
-    intro β hβ hpd hdet
-    have hadj : adjugate (normalizedHermitianMatrix β) = (normalizedHermitianMatrix β)⁻¹ := by
-      rw [Matrix.inv_def, hdet, Ring.inverse_one, one_smul]
-    rw [topDensity_wedge_formPower α β hα hβ.1, hadj, Matrix.trace_mul_comm, hcdef,
-      Nat.factorial_succ]
-    push_cast
-    field_simp
-    rfl
-  refine ⟨?_, fun b hb => ?_⟩
-  · rintro s ⟨β, hβ, hpd, hdet, rfl⟩
-    rw [hval β hβ hpd hdet]
-    refine mul_le_mul_of_nonneg_left (hGLB.1 ⟨_, hpd.inv, ?_, rfl⟩) hc.le
-    rw [Matrix.det_nonsing_inv, hdet, Ring.inverse_one]
-  · have hlow : b / c ∈ lowerBounds {s : ℝ | ∃ B : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ,
-    B.PosDef ∧ B.det = 1 ∧
-        s = (B * A).trace.re / ((m + 1 : ℕ) : ℝ)} := by
-      rintro s ⟨B, hB, hdetB, rfl⟩
-      obtain ⟨β, hβ, hHβ⟩ := exists_isSemipositiveOneOne_normalizedHermitianMatrix_eq
-        hB.inv.posSemidef
-      have hunit : IsUnit B.det := by rw [hdetB]; exact isUnit_one
-      have hpd : (normalizedHermitianMatrix β).PosDef := by rw [hHβ]; exact hB.inv
-      have hdet : (normalizedHermitianMatrix β).det = 1 := by
-        rw [hHβ, Matrix.det_nonsing_inv, hdetB, Ring.inverse_one]
-      have h := hb ⟨β, hβ, hpd, hdet, rfl⟩
-      rw [hval β hβ hpd hdet, hHβ, Matrix.nonsing_inv_nonsing_inv B hunit] at h
-      rw [div_le_iff₀ hc, mul_comm]
-      exact h
-    have := hGLB.2 hlow
-    rw [div_le_iff₀ hc, mul_comm] at this
-    exact this
+        (normalizedHermitianMatrix α).det.re ^ (((m + 1 : ℕ) : ℝ)⁻¹)) :=
+  OneOneFormMixedTrace.isGLB_topDensity_wedge_formPower_of_posSemidef hα hA
 
 end OneOne
 

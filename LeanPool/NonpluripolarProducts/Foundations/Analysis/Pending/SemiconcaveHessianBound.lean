@@ -21,8 +21,10 @@ Let `f` be a `C²` function on `ℂⁿ`.
   plurisubharmonic), then `D²f(z)(v,v) ≥ -D²f(z)(iv,iv) ≥ -K ‖v‖²`, so
   `|D²f(z)(v,v)| ≤ K ‖v‖²`, and by polarization `‖D²f(z)‖ ≤ 2K`.
 
-This is the pointwise core of Błocki, *The complex Monge–Ampère operator in pluripotential
-theory*, lecture notes, Proposition 2.3.3.
+This is a smooth pointwise variant of the directional Hessian estimates in the proof of
+[Błocki's Proposition 2.3.3](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=51).
+The proposition derives `C^{1,1}` regularity and a Hessian bound of `K`. The argument
+here assumes `C²` regularity and yields the operator-norm bound of `2K` by polarization.
 -/
 
 @[expose] public section

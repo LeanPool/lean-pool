@@ -31,7 +31,8 @@ open scoped Distributions Manifold ContDiff
 
 namespace SGPT.Foundations.Analysis.Pending
 
-private theorem distribution_eq_of_restrict_eq_on_openCover
+/-- Restrictions to an open cover determine a distribution. -/
+theorem distribution_eq_of_restrict_eq_on_openCover
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     [FiniteDimensional ℝ E]
     {Ω : Opens E} {T S : 𝓓'(Ω, ℝ)} {ι : Type*}

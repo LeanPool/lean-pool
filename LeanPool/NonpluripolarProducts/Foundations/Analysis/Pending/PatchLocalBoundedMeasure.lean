@@ -51,24 +51,6 @@ only reads values on that set, so `DiscPshOn.congr` transports it.
 open Set Filter MeasureTheory TopologicalSpace Metric
 open scoped ENNReal Topology
 
-namespace SGPT.Foundations.Analysis
-
-/-! ### Congruence of plurisubharmonicity on an open set -/
-
-variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-
-/-- **Plurisubharmonicity on an open set only depends on the values there.**
-The germ at a point of `U` may be tested on `V ∩ U`, and `DiscPshOn.congr`
-transports the disc criterion across an `EqOn`. -/
-theorem plurisubharmonicOn_congr {u w : E → EReal} {U : Set E} (hU : IsOpen U)
-    (hu : PlurisubharmonicOn u U) (heq : EqOn u w U) : PlurisubharmonicOn w U := by
-  intro x hx
-  obtain ⟨V, hVopen, hxV, hV⟩ := hu x hx
-  exact ⟨V ∩ U, hVopen.inter hU, ⟨hxV, hx⟩,
-    (hV.mono inter_subset_left).congr (heq.mono inter_subset_right)⟩
-
-end SGPT.Foundations.Analysis
-
 namespace SGPT.Foundations.Analysis.Pending.PatchLocalBoundedMeasure
 
 open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
@@ -148,37 +130,8 @@ theorem correctedReal_isLocallyBoundedPshOn_of_boundedOn
     (hb : IsBoundedPotentialOn (u i) P.source) :
     IsLocallyBoundedPshOn P.domain (correctedReal P i) := by
   obtain ⟨a, b, hab⟩ := hb
-  have hb' : IsBoundedPotentialOn (u i) P.source := ⟨a, b, hab⟩
-  refine ⟨?_, ?_⟩
-  · refine plurisubharmonicOn_congr P.domain.isOpen (P.plurisubharmonic i) ?_
-    intro z hz
-    exact (coe_correctedReal_of_boundedOn hb' hz).symm
-  · intro z hz
-    obtain ⟨r, hr, hball⟩ := Metric.mem_nhds_iff.mp (P.domain.isOpen.mem_nhds hz)
-    have hclosed : closedBall z (r / 2) ⊆ (P.domain : Set (ComplexModel n)) :=
-      (closedBall_subset_ball (by linarith)).trans hball
-    obtain ⟨C, hC⟩ := (isCompact_closedBall z (r / 2)).exists_bound_of_continuousOn
-      (((P.localPotential i).2.2.1.continuousOn).mono hclosed)
-    refine ⟨⟨ball z (r / 2), isOpen_ball⟩, mem_ball_self (by linarith),
-      ball_subset_closedBall.trans hclosed, max |a| |b| + C, ?_⟩
-    intro w hw
-    have hwdom : w ∈ (P.domain : Set (ComplexModel n)) :=
-      hclosed (ball_subset_closedBall hw)
-    have hwsrc : P.chart.val.symm w ∈ P.source := P.map_target hwdom
-    have hwC : |P.potential i w| ≤ C := by
-      simpa [Real.norm_eq_abs] using hC w (ball_subset_closedBall hw)
-    set s : ℝ := (u i (P.chart.val.symm w)).toReal with hs_def
-    have hcoe : ((s : ℝ) : EReal) = u i (P.chart.val.symm w) :=
-      EReal.coe_toReal (hb'.ne_top hwsrc) (hb'.ne_bot hwsrc)
-    have hsa : a ≤ s := EReal.coe_le_coe_iff.mp (hcoe ▸ (hab _ hwsrc).1)
-    have hsb : s ≤ b := EReal.coe_le_coe_iff.mp (hcoe ▸ (hab _ hwsrc).2)
-    have habs : |s| ≤ max |a| |b| := by
-      refine abs_le.mpr ⟨?_, hsb.trans ((le_abs_self b).trans (le_max_right _ _))⟩
-      exact (neg_le_neg (le_max_left |a| |b|)).trans ((neg_abs_le a).trans hsa)
-    calc |correctedReal P i w| = |s + P.potential i w| := by
-          rw [correctedReal_eq_of_boundedOn hb' hwdom]
-      _ ≤ |s| + |P.potential i w| := abs_add_le _ _
-      _ ≤ max |a| |b| + C := add_le_add habs hwC
+  exact correctedReal_isLocallyBoundedPshOn_of_bounds P fun w hw =>
+    hab (P.chart.val.symm w) (P.map_target hw)
 
 end Patch
 

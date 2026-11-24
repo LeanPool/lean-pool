@@ -8,40 +8,24 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaCapacityChart
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaCapacity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotStokes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorCapacity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PatchLocalBoundedMeasure
 
 /-!
-# The chart bridge for the global capacity, from a bound on one chart only
+# Comparing global non-pluripolar and local Bedford–Taylor capacity
 
-`Pending.ThetaCapacityChart.thetaCapacity_le_relCapacity` compares Xia's
-`Cap_theta(-, V)` with Blocki's relative capacity in a chart, but only for a
-reference `V` that is bounded on **all** of `M`.  I-0282 records why that is
-not a technicality: `V_theta` is unbounded below exactly when
-`nK({theta}) != emptyset`, and then *every* `theta`-PSH potential is unbounded
-below (`Pending.ThetaCapacityBoundedDegeneracy`), so the hypothesis
-`IsBoundedPotential` is unsatisfiable and the whole Section 2.3 stack is
-vacuous in the only case Nakamaye's theorem is about.
+On a coordinate chart, a two-sided bound on the reference potential and a
+bound on the chart potential yield a uniform oscillation estimate for every
+competitor. The local model from `PatchLocalBoundedMeasure` identifies each
+competitor's diagonal non-pluripolar measure with its Bedford–Taylor measure
+on the chart. The capacity comparison then follows from Błocki's estimate
+`canonicalBedfordTaylorMeasure_le_relCapacity_of_bounds`.
 
-`Pending.PatchLocalBoundedMeasure` removed the same global bound from the
-*measure* half: a bound on the source of a single patch already puts
-`globalMixedMeasure` in honest Bedford--Taylor form there.  This module carries
-that through the *capacity* half, which is what its own header says was left
-open.  Every statement below is the corresponding statement of
-`Pending.ThetaCapacityChart` with `IsBoundedPotential` replaced by a bound on
-the slot-chart source.
-
-Why that is enough for Xia.  His Theorem 2.4.4 runs on open sets
-`G' <<- G <<- X \ nK({theta})`, and there both `V_theta` and `P_theta(f)` are
-locally bounded by his Lemma 2.4.1 -- available here as
-`Pending.BigClassEnvelopeContact.exists_isBoundedPotentialOn_offNonKahlerLocus`.
-Local boundedness is exactly the hypothesis below.
-
-No new analysis is introduced: the Bedford--Taylor / Blocki estimate
-`canonicalBedfordTaylorMeasure_le_relCapacity_of_bounds` is used unchanged, and
-the only genuinely new step is that the local model of the global measure is
-taken from `PatchLocalBoundedMeasure` rather than from
-`GlobalSlotStokes.SlotChart.exists_isBTLimit`.
+The chart-local comparison applies off the non-Kähler locus, where the
+reference and envelope are locally bounded in Xia's Theorem 2.4.4. The
+corollaries for globally bounded references use the same comparison.
 -/
 
 @[expose] public section
@@ -49,7 +33,7 @@ taken from `PatchLocalBoundedMeasure` rather than from
 open Set MeasureTheory TopologicalSpace
 open scoped ENNReal
 
-namespace SGPT.Foundations.Analysis.Pending.ThetaCapacityChartLocal
+namespace SGPT.Foundations.Analysis.Pending
 
 open FirstPass FirstPass.PositiveClasses FirstPass.GlobalPotentialPatches
 open FirstPass.MongeAmpere
@@ -60,13 +44,48 @@ open SGPT.Foundations.Analysis.Pending.DiagonalMass
 open SGPT.Foundations.Analysis.Pending.GlobalSlotStokes
 open SGPT.Foundations.Analysis.Pending.PatchLocalBoundedMeasure
 open SGPT.Foundations.Analysis.Pending.ThetaCapacity
-open SGPT.Foundations.Analysis.Pending.ThetaCapacityChart
 
 noncomputable section
 
 variable {n : ℕ} {M : Type*} [TopologicalSpace M] [MeasurableSpace M]
   [BorelSpace M] [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M]
   [CompactSpace M]
+
+namespace ThetaCapacityChart
+
+/-- The slot chart in which every slot carries the same background `theta` and
+the same smooth local potential `rho`. -/
+def diagSlotChart (theta : ClosedRealOneOneForm n M) (e : ComplexChart n M)
+    (D : Opens (ComplexModel n)) (hD : (D : Set (ComplexModel n)) ⊆ e.val.target)
+    (rho : ComplexModel n → ℝ)
+    (hrho : IsSmoothLocalPotential theta.val e D rho) :
+    SlotChart (fun _ : Fin n => theta) theta where
+  chart := e
+  domain := D
+  domain_le_target := hD
+  potential := fun _ => rho
+  localPotential := fun _ => hrho
+  kahler := rho
+  kahlerLocal := hrho
+
+/-- The real corrected chart potential of a bounded potential: the potential
+read in the chart plus a smooth local potential of the background.
+
+This is the same function as `BoundedGlobalProduct.correctedReal` for the
+patch of `diagSlotChart`, and the proof of
+`diagonalPotentialMeasure_le_relCapacity` uses that identification (`hfam`,
+by `rfl`).  It is kept as a separate chart-level definition only because
+`correctedReal` is indexed by a `Patch`, which the quasi-continuity arguments
+downstream would otherwise have to build merely to name this function. -/
+def correctedChartReal (u : M → EReal) (e : ComplexChart n M)
+    (rho : ComplexModel n → ℝ) : ComplexModel n → ℝ :=
+  fun z => (u (e.val.symm z)).toReal + rho z
+
+end ThetaCapacityChart
+
+namespace ThetaCapacityChartLocal
+
+open ThetaCapacityChart
 
 omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] in
 /-- **The corrected chart potential is real locally bounded plurisubharmonic,
@@ -242,6 +261,136 @@ theorem thetaCapacity_le_relCapacity_of_boundedOn
   have harith : d - (c - 1) + 2 * L + 1 = d - c + 2 * L + 2 := by ring
   rwa [harith] at hmain
 
+end ThetaCapacityChartLocal
+
+namespace ThetaCapacityChart
+
+omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] [IsComplexManifold n M] in
+theorem coe_correctedChartReal {u : M → EReal} (hub : IsBoundedPotential u)
+    (e : ComplexChart n M) (rho : ComplexModel n → ℝ) (z : ComplexModel n) :
+    ((correctedChartReal u e rho z : ℝ) : EReal) =
+      chartFunction u e z + (rho z : EReal) := by
+  change ((((u (e.val.symm z)).toReal + rho z : ℝ)) : EReal) = _
+  rw [EReal.coe_add, EReal.coe_toReal (hub.ne_top _) (hub.ne_bot _)]
+  rfl
+
+omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] [IsComplexManifold n M] in
+/-- Two-sided bounds for the corrected chart potential. -/
+theorem correctedChartReal_bounds {u : M → EReal} (hub : IsBoundedPotential u)
+    {e : ComplexChart n M} {rho : ComplexModel n → ℝ} {c d L : ℝ}
+    (hbd : ∀ x, (c : EReal) ≤ u x ∧ u x ≤ (d : EReal))
+    {S : Set (ComplexModel n)} (hL : ∀ z ∈ S, |rho z| ≤ L) (z : ComplexModel n)
+    (hz : z ∈ S) :
+    c - L ≤ correctedChartReal u e rho z ∧
+      correctedChartReal u e rho z ≤ d + L := by
+  have hru : ((u (e.val.symm z)).toReal : EReal) = u (e.val.symm z) :=
+    EReal.coe_toReal (hub.ne_top _) (hub.ne_bot _)
+  have h1 : c ≤ (u (e.val.symm z)).toReal :=
+    EReal.coe_le_coe_iff.mp (hru ▸ (hbd (e.val.symm z)).1)
+  have h2 : (u (e.val.symm z)).toReal ≤ d :=
+    EReal.coe_le_coe_iff.mp (hru ▸ (hbd (e.val.symm z)).2)
+  have h3 := abs_le.mp (hL z hz)
+  constructor <;> simp only [correctedChartReal] <;> linarith
+
+omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] in
+/-- **The corrected chart potential is real locally bounded plurisubharmonic.**
+Plurisubharmonicity is the `theta`-PSH property read in the chart; the bound
+combines the global bound on `u` with the assumed bound on `rho`. -/
+theorem correctedChartReal_isLocallyBoundedPshOn {theta : ClosedRealOneOneForm n M}
+    {u : M → EReal} (hu : ThetaPlurisubharmonic theta.val u)
+    {e : ComplexChart n M}
+    {D : Opens (ComplexModel n)} {rho : ComplexModel n → ℝ}
+    (hrho : IsSmoothLocalPotential theta.val e D rho) {c d L : ℝ}
+    (hbd : ∀ x, (c : EReal) ≤ u x ∧ u x ≤ (d : EReal))
+    (hL : ∀ z ∈ (D : Set (ComplexModel n)), |rho z| ≤ L) :
+    IsLocallyBoundedPshOn D (correctedChartReal u e rho) :=
+  ThetaCapacityChartLocal.correctedChartReal_isLocallyBoundedPshOn_of_boundedOn hu hrho
+    (fun z _ => hbd (e.val.symm z)) hL
+
+/-- **One competitor.**  The diagonal non-pluripolar measure of a globally
+bounded `theta`-PSH potential is dominated on a chart neighbourhood by the
+relative Monge--Ampere capacity of the coordinate image. -/
+theorem diagonalPotentialMeasure_le_relCapacity
+    {theta : ClosedRealOneOneForm n M} {u : M → EReal}
+    (hu : IsThetaPshPotential theta.val u)
+    (e : ComplexChart n M) (D : Opens (ComplexModel n))
+    (hD : (D : Set (ComplexModel n)) ⊆ e.val.target)
+    (rho : ComplexModel n → ℝ)
+    (hrho : IsSmoothLocalPotential theta.val e D rho)
+    {c d L : ℝ} (hcd : c ≤ d) (hL0 : 0 ≤ L)
+    (hbd : ∀ x, (c : EReal) ≤ u x ∧ u x ≤ (d : EReal))
+    (hL : ∀ z ∈ (D : Set (ComplexModel n)), |rho z| ≤ L)
+    (E : Set M)
+    (hE : E ⊆ (diagSlotChart theta e D hD rho hrho).source) :
+    diagonalPotentialMeasure theta u hu E ≤
+      ENNReal.ofReal ((d - c + 2 * L + 1) ^ n) * relCapacity D (e.val '' E) :=
+  ThetaCapacityChartLocal.diagonalPotentialMeasure_le_relCapacity_of_boundedOn hu e D hD rho hrho
+    hcd hL0 (fun x _ => hbd x) hL E hE
+
+omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] in
+/-- Every competitor of the capacity relative to `V` inherits the lower bound
+of `V`, shifted by one.  The pole case is excluded: `V x <= u x + 1` with
+`c <= V x` forces `u x` finite. -/
+theorem competitor_ge_of_reference_ge {theta : ClosedRealOneOneForm n M}
+    {V u : M → EReal} (hu : IsThetaPshPotential theta.val u) {c : ℝ}
+    (hc : ∀ x, (c : EReal) ≤ V x) (h2 : ∀ x, V x ≤ u x + 1) (x : M) :
+    ((c - 1 : ℝ) : EReal) ≤ u x := by
+  have hchain : (c : EReal) ≤ u x + 1 := (hc x).trans (h2 x)
+  have hne : u x ≠ ⊥ := by
+    intro hbot
+    rw [hbot] at hchain
+    simp at hchain
+  have hnt : u x ≠ ⊤ :=
+    SGPT.Foundations.Analysis.Pending.DominationPrincipleBarrier.ne_top_of_isThetaPshPotential hu x
+  obtain ⟨r, hr⟩ : ∃ r : ℝ, u x = (r : EReal) :=
+    ⟨(u x).toReal, (EReal.coe_toReal hnt hne).symm⟩
+  rw [hr] at hchain ⊢
+  rw [← EReal.coe_one, ← EReal.coe_add, EReal.coe_le_coe_iff] at hchain
+  exact EReal.coe_le_coe_iff.mpr (by linarith)
+
+/-- **The global capacity is controlled by the chart capacity.**  On a chart
+neighbourhood carrying a bounded smooth local potential of `theta`, and for a
+globally bounded reference `V`, Xia's `Cap_theta(-, V)` is dominated by a
+constant multiple of the relative Monge--Ampere capacity of the coordinate
+image.  The constant depends only on the oscillation bound of `V` and the
+bound on the local potential, not on the competitor. -/
+theorem thetaCapacity_le_relCapacity
+    {theta : ClosedRealOneOneForm n M} {V : M → EReal}
+    (e : ComplexChart n M) (D : Opens (ComplexModel n))
+    (hD : (D : Set (ComplexModel n)) ⊆ e.val.target)
+    (rho : ComplexModel n → ℝ)
+    (hrho : IsSmoothLocalPotential theta.val e D rho)
+    {c d L : ℝ} (hcd : c ≤ d) (hL0 : 0 ≤ L)
+    (hVbd : ∀ x, (c : EReal) ≤ V x ∧ V x ≤ (d : EReal))
+    (hL : ∀ z ∈ (D : Set (ComplexModel n)), |rho z| ≤ L)
+    (E : Set M)
+    (hE : E ⊆ (diagSlotChart theta e D hD rho hrho).source) :
+    thetaCapacity theta V E ≤
+      ENNReal.ofReal ((d - c + 2 * L + 2) ^ n) * relCapacity D (e.val '' E) :=
+  ThetaCapacityChartLocal.thetaCapacity_le_relCapacity_of_boundedOn e D hD rho hrho
+    hcd hL0 (fun x _ => hVbd x) hL E hE
+
+/-- A set inside a chart neighbourhood whose coordinate image has zero relative
+capacity has zero global capacity. -/
+theorem thetaCapacity_eq_zero_of_relCapacity_eq_zero
+    {theta : ClosedRealOneOneForm n M} {V : M → EReal}
+    (e : ComplexChart n M) (D : Opens (ComplexModel n))
+    (hD : (D : Set (ComplexModel n)) ⊆ e.val.target)
+    (rho : ComplexModel n → ℝ)
+    (hrho : IsSmoothLocalPotential theta.val e D rho)
+    {c d L : ℝ} (hcd : c ≤ d) (hL0 : 0 ≤ L)
+    (hVbd : ∀ x, (c : EReal) ≤ V x ∧ V x ≤ (d : EReal))
+    (hL : ∀ z ∈ (D : Set (ComplexModel n)), |rho z| ≤ L)
+    (E : Set M)
+    (hE : E ⊆ (diagSlotChart theta e D hD rho hrho).source)
+    (hzero : relCapacity D (e.val '' E) = 0) :
+    thetaCapacity theta V E = 0 := by
+  refine le_antisymm ?_ zero_le
+  simpa [hzero] using
+    thetaCapacity_le_relCapacity e D hD rho hrho hcd hL0 hVbd hL E hE
+
+end ThetaCapacityChart
+
 end
 
-end SGPT.Foundations.Analysis.Pending.ThetaCapacityChartLocal
+end SGPT.Foundations.Analysis.Pending

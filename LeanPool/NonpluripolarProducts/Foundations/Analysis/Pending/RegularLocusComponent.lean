@@ -369,8 +369,8 @@ theorem exists_isOpen_inter_subset {A : Set M} {c y : M} {j : ℕ}
   exact ⟨F.nbhd, F.isOpen_nbhd, F.mem_nbhd, F.inter_nbhd_subset_component hy,
     fun x hx => F.regularAtDim_of_mem hx.1 hx.2, F.nbhd_inter_closure_subset⟩
 
-theorem exists_open_inter_subset_component {A : Set M} {c : M} {k : ℕ}
-    (_hc : RegularAtDim (n := n) A c k) {y : M} (hy : y ∈ component (n := n) A c) :
+theorem exists_open_inter_subset_component {A : Set M} {c y : M}
+    (hy : y ∈ component (n := n) A c) :
     ∃ W : Set M, IsOpen W ∧ y ∈ W ∧ A ∩ W ⊆ component (n := n) A c := by
   obtain ⟨j, hj⟩ := component_subset_regularPoints (n := n) A c hy
   obtain ⟨W, hW, hyW, hWC, -, -⟩ := exists_isOpen_inter_subset hy hj
@@ -411,8 +411,7 @@ theorem regularAtDim_of_mem_component {A : Set M} {c : M} {k : ℕ}
     exact hjk (RegularPointDimension.eq_of_regularAtDim (hW'j ⟨hc.2.1, hcW'⟩) hc)
 
 theorem isComplexAnalyticSubset_closure_component {A : Set M}
-    (hA : IsComplexAnalyticSubset (n := n) A) {c : M} {k : ℕ}
-    (_hc : RegularAtDim (n := n) A c k) :
+    (hA : IsComplexAnalyticSubset (n := n) A) {c : M} :
     IsComplexAnalyticSubset (n := n) (closure (component (n := n) A c)) := by
   classical
   have hCA := component_subset (n := n) A c
@@ -421,7 +420,7 @@ theorem isComplexAnalyticSubset_closure_component {A : Set M}
   swap
   · exact PureDimension.nonempty_presentation_of_not_mem hA.isClosed
       (closure_minimal hCA hA.isClosed) hp
-  obtain ⟨D, ⟨G⟩⟩ := LocalStatementConnected.exists_connectedParts hA hp
+  obtain ⟨D, ⟨G⟩⟩ := LocalStatementConnected.exists_connectedParts (p := p) hA
   have hΩo : IsOpen (D.nbhd ∩ ⋂ i, G.core i) :=
     D.isOpen_nbhd.inter (isOpen_iInter_of_finite G.isOpen_core)
   have hpΩ : p ∈ D.nbhd ∩ ⋂ i, G.core i := ⟨D.mem_nbhd, mem_iInter.mpr G.mem_core⟩
@@ -533,7 +532,7 @@ theorem isComplexAnalyticallyIrreducible_closure_component {A : Set M}
     (hc : RegularAtDim (n := n) A c k) :
     IsComplexAnalyticallyIrreducible (n := n) (closure (component (n := n) A c)) := by
   have hcC := mem_component_self hc
-  refine ⟨isComplexAnalyticSubset_closure_component hA hc, ⟨c, subset_closure hcC⟩, ?_⟩
+  refine ⟨isComplexAnalyticSubset_closure_component hA, ⟨c, subset_closure hcC⟩, ?_⟩
   intro B₁ B₂ hB₁ hB₂ hB₁C hB₂C hunion
   by_cases h₁ : ∃ O : Set M, IsOpen O ∧ (O ∩ component (n := n) A c).Nonempty ∧
       O ∩ component (n := n) A c ⊆ B₁

@@ -128,19 +128,18 @@ theorem chartCorrectedFamily_locallyUniformlyBoundedAbove
 theta-PSH. -/
 theorem thetaPlurisubharmonic_uscRegularization_sSup
     {θ : SmoothRealForm n M 2} {F : Set (M → EReal)}
-    (hlocal : HasSmoothLocalPotentials θ) (hne : F.Nonempty)
+    (hlocal : HasSmoothLocalPotentials θ)
     (hF : ∀ u ∈ F, IsThetaPshPotential θ u) (hF0 : ∀ u ∈ F, u ≤ 0) :
     ThetaPlurisubharmonic θ (uscRegularization (sSup F)) := by
   intro e z hz
   obtain ⟨W, ρ, hzW, hρ⟩ := hlocal e z hz
   refine ⟨W, ρ, hzW, hρ, ?_⟩
   let G := chartCorrectedFamily F e ρ
-  have hGne : G.Nonempty := chartCorrectedFamily_nonempty hne e ρ
   have hGpsh : ∀ g ∈ G, PlurisubharmonicOn g W :=
     chartCorrectedFamily_plurisubharmonicOn hF e hρ
   have hGbound : LocallyUniformlyBoundedAbove G W :=
     chartCorrectedFamily_locallyUniformlyBoundedAbove hF0 e hρ.1 hρ.2.2.1
-  have hp := plurisubharmonicOn_uscRegularization_sSup hρ.1 hGne hGpsh hGbound
+  have hp := plurisubharmonicOn_uscRegularization_sSup hρ.1 hGpsh hGbound
   intro x hx
   apply (hp x hx).congr
   filter_upwards [hρ.1.mem_nhds hx] with y hy
@@ -165,7 +164,7 @@ theorem thetaPshSupremum_isThetaPshPotential
       (uscRegularization (thetaPshSupremum θ)) := by
     refine ⟨?_, ?_⟩
     · simpa only [thetaPshSupremum] using
-        thetaPlurisubharmonic_uscRegularization_sSup hlocal hcomp
+        thetaPlurisubharmonic_uscRegularization_sSup (F := thetaPshCompetitors θ) hlocal
           (fun _ hu ↦ hu.1) (fun _ hu ↦ hu.2)
     · exact (thetaPshSupremum_locallyNondegenerate hcomp).mono
         (le_uscRegularization (thetaPshSupremum θ))
@@ -201,7 +200,7 @@ theorem singularityEnvelope_isThetaPshPotential
     singularityCompetitors_nonempty hφ
   refine ⟨?_, singularityEnvelope_locallyNondegenerate hcomp⟩
   simpa only [singularityEnvelope, singularitySupremum] using
-    thetaPlurisubharmonic_uscRegularization_sSup hlocal hcomp
+    thetaPlurisubharmonic_uscRegularization_sSup (F := singularityCompetitors θ φ) hlocal
       (fun _ hu ↦ hu.1.1) (fun _ hu ↦ hu.1.2)
 
 end

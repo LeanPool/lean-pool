@@ -245,8 +245,8 @@ theorem exists_connectedParts_zero {S : Set (ComplexModel n)} (hS : IsAnalyticGe
   exact hR2
 
 /-- **(LS) with connected regular parts.** -/
-theorem exists_connectedParts {A : Set M} (hA : IsComplexAnalyticSubset (n := n) A) {p : M}
-    (_hp : p ∈ A) : ∃ D : LocalDecomposition (n := n) A p, Nonempty (ConnectedParts D) := by
+theorem exists_connectedParts {A : Set M} (hA : IsComplexAnalyticSubset (n := n) A) {p : M} :
+    ∃ D : LocalDecomposition (n := n) A p, Nonempty (ConnectedParts D) := by
   obtain ⟨P⟩ := hA p
   let e := (complexChartAt (n := n) p).val
   let q := e p

@@ -635,8 +635,7 @@ approximate-identity fields are proved separately. -/
 theorem antitone_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
     {Ω : Opens (ComplexModel n)} {p : ComplexModel n → ℝ}
     (hp : IsLocallyBoundedPshOn Ω p) {R : ℝ} (hR : 0 < R)
-    {N K : Set (ComplexModel n)} (_hN : IsOpen N) (_hNΩ : N ⊆ Ω)
-    (_hK : IsCompact K) (hKΩ : K ⊆ Ω)
+    {N K : Set (ComplexModel n)} (hKΩ : K ⊆ Ω)
     (hball : ∀ x ∈ N, closedBall x R ⊆ K) :
     ∀ z ∈ N, Antitone (fun j ↦ translationPairing volume (K.indicator p)
       (explicitRadialKernel R hR j) z) := by
@@ -789,7 +788,7 @@ differentiation theorem. -/
 theorem exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
     {Ω : Opens (ComplexModel n)} {p : ComplexModel n → ℝ}
     (hp : IsLocallyBoundedPshOn Ω p) {R : ℝ} (hR : 0 < R)
-    {N K : Set (ComplexModel n)} (hN : IsOpen N) (hNΩ : N ⊆ Ω)
+    {N K : Set (ComplexModel n)} (hN : IsOpen N)
     (hK : IsCompact K) (hKΩ : K ⊆ Ω)
     (hball : ∀ x ∈ N, closedBall x R ⊆ K) :
     ∃ S : RadialConvolutionSystem ⟨N, hN⟩ K p R,
@@ -824,7 +823,7 @@ theorem exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
               (hball z hz))
       antitone_pairing :=
         antitone_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
-          hp hR hN hNΩ hK hKΩ hball
+          hp hR hKΩ hball
       ae_tendsto_pairing := hae }
   exact ⟨S, fun _ _ ↦ rfl⟩
 
@@ -848,7 +847,7 @@ theorem exists_decreasingMollifierApproximation
     hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hp.1
   obtain ⟨S, _hSkernel⟩ :=
     exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
-      hp hR hN (hNK.trans hKΩ) hK hKΩ hball
+      hp hR hN hK hKΩ hball
   let f : ℕ → ComplexModel n → ℝ := fun j ↦
     translationPairing volume (K.indicator p) (S.kernel j)
   have hg : LocallyIntegrable (K.indicator p) volume :=

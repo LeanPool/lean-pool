@@ -193,33 +193,19 @@ theorem exists_isSemipositiveOneOne_normalizedHermitianMatrix_eq {n : ℕ} {M : 
       RingHomCompTriple.comp_apply, RingHom.id_apply]
     field_simp
 
-/-- **`det^{1/n}` of a semipositive `(1,1)`-form as an infimum** (`n = m + 1`): for a semipositive
-    real `(1,1)`-form `α`, the
-infimum of `topDensity (β^m ∧ α)` over the semipositive `(1,1)`-forms `β` whose coefficient matrix
-    is positive definite of
-determinant `1` is `(n!/πⁿ) (πⁿ/n! · topDensity(αⁿ))^{1/n}`, that is, `(n!/πⁿ) det(H_α)^{1/n}`. -/
-theorem isGLB_topDensity_wedge_formPower {α : RealForm (m + 1) 2} (hα : IsSemipositiveOneOne α) :
+/-- The wedge-density infimum expressed in terms of the Hermitian determinant. -/
+theorem isGLB_topDensity_wedge_formPower_of_posSemidef {α : RealForm (m + 1) 2} (hα : IsOneOne α)
+    (hA : (normalizedHermitianMatrix α).PosSemidef) :
     IsGLB {s : ℝ | ∃ β : RealForm (m + 1) 2, IsSemipositiveOneOne β ∧ (normalizedHermitianMatrix
       β).PosDef ∧
         (normalizedHermitianMatrix β).det = 1 ∧ s = topDensity (coordinateWedge (formPower β m) α)}
       (((m + 1).factorial / Real.pi ^ (m + 1) : ℝ) *
-        (Real.pi ^ (m + 1) / (m + 1).factorial * actualTopPowerDensity α) ^ (((m + 1 : ℕ) : ℝ)⁻¹))
-          := by
+        (normalizedHermitianMatrix α).det.re ^ (((m + 1 : ℕ) : ℝ)⁻¹)) := by
   set A := normalizedHermitianMatrix α with hAdef
-  have hA : A.PosSemidef := normalizedHermitianMatrix_posSemidef hα
   set c : ℝ := ((m + 1).factorial / Real.pi ^ (m + 1) : ℝ) with hcdef
   have hc : 0 < c := by positivity
-  have hpi : (0 : ℝ) < Real.pi ^ (m + 1) := by positivity
-  -- `det A` through the top density of `α`
-  have hdetA : A.det.re = Real.pi ^ (m + 1) / (m + 1).factorial * actualTopPowerDensity α := by
-    rw [actualTopPowerDensity_eq_normalizedTopPowerDensity α hα.1, normalizedTopPowerDensity,
-      complexTopCoefficient_eq,
-      ← hAdef, Complex.re_ofReal_mul]
-    field_simp
   have hGLB := isGLB_re_trace_div hA
   rw [Fintype.card_fin] at hGLB
-  rw [← hdetA]
-  -- the value on a form of the family
   have hval : ∀ β : RealForm (m + 1) 2, IsSemipositiveOneOne β → (normalizedHermitianMatrix
     β).PosDef →
       (normalizedHermitianMatrix β).det = 1 →
@@ -228,7 +214,7 @@ theorem isGLB_topDensity_wedge_formPower {α : RealForm (m + 1) 2} (hα : IsSemi
     intro β hβ hpd hdet
     have hadj : adjugate (normalizedHermitianMatrix β) = (normalizedHermitianMatrix β)⁻¹ := by
       rw [Matrix.inv_def, hdet, Ring.inverse_one, one_smul]
-    rw [topDensity_wedge_formPower α β hα.1 hβ.1, hadj, Matrix.trace_mul_comm, hcdef,
+    rw [topDensity_wedge_formPower α β hα hβ.1, hadj, Matrix.trace_mul_comm, hcdef,
       Nat.factorial_succ]
     push_cast
     field_simp
@@ -238,9 +224,8 @@ theorem isGLB_topDensity_wedge_formPower {α : RealForm (m + 1) 2} (hα : IsSemi
     rw [hval β hβ hpd hdet]
     refine mul_le_mul_of_nonneg_left (hGLB.1 ⟨_, hpd.inv, ?_, rfl⟩) hc.le
     rw [Matrix.det_nonsing_inv, hdet, Ring.inverse_one]
-  · -- `b / c` is a lower bound of the traces
-    have hlow : b / c ∈ lowerBounds {s : ℝ | ∃ B : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ,
-      B.PosDef ∧ B.det = 1 ∧
+  · have hlow : b / c ∈ lowerBounds {s : ℝ | ∃ B : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ,
+    B.PosDef ∧ B.det = 1 ∧
         s = (B * A).trace.re / ((m + 1 : ℕ) : ℝ)} := by
       rintro s ⟨B, hB, hdetB, rfl⟩
       obtain ⟨β, hβ, hHβ⟩ := exists_isSemipositiveOneOne_normalizedHermitianMatrix_eq
@@ -256,6 +241,29 @@ theorem isGLB_topDensity_wedge_formPower {α : RealForm (m + 1) 2} (hα : IsSemi
     have := hGLB.2 hlow
     rw [div_le_iff₀ hc, mul_comm] at this
     exact this
+
+/-- **`det^{1/n}` of a semipositive `(1,1)`-form as an infimum** (`n = m + 1`): for a semipositive
+    real `(1,1)`-form `α`, the
+infimum of `topDensity (β^m ∧ α)` over the semipositive `(1,1)`-forms `β` whose coefficient matrix
+    is positive definite of
+determinant `1` is `(n!/πⁿ) (πⁿ/n! · topDensity(αⁿ))^{1/n}`, that is, `(n!/πⁿ) det(H_α)^{1/n}`. -/
+theorem isGLB_topDensity_wedge_formPower {α : RealForm (m + 1) 2} (hα : IsSemipositiveOneOne α) :
+    IsGLB {s : ℝ | ∃ β : RealForm (m + 1) 2, IsSemipositiveOneOne β ∧ (normalizedHermitianMatrix
+      β).PosDef ∧
+        (normalizedHermitianMatrix β).det = 1 ∧ s = topDensity (coordinateWedge (formPower β m) α)}
+      (((m + 1).factorial / Real.pi ^ (m + 1) : ℝ) *
+        (Real.pi ^ (m + 1) / (m + 1).factorial * actualTopPowerDensity α) ^ (((m + 1 : ℕ) : ℝ)⁻¹))
+          := by
+  set A := normalizedHermitianMatrix α with hAdef
+  -- `det A` through the top density of `α`
+  have hdetA : A.det.re = Real.pi ^ (m + 1) / (m + 1).factorial * actualTopPowerDensity α := by
+    rw [actualTopPowerDensity_eq_normalizedTopPowerDensity α hα.1, normalizedTopPowerDensity,
+      complexTopCoefficient_eq,
+      ← hAdef, Complex.re_ofReal_mul]
+    field_simp
+  rw [← hdetA]
+  exact isGLB_topDensity_wedge_formPower_of_posSemidef hα.1
+    (normalizedHermitianMatrix_posSemidef hα)
 
 end Forms
 

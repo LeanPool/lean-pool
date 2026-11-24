@@ -410,7 +410,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Strong
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SymmetricMultilinearDiagonal
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TestFunctionRadialApproximateIdentity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaCapacity
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaCapacityChart
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaCapacityChartLocal
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaPshChartLimitGluing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ThetaPshConvexCombination

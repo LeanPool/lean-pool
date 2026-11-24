@@ -184,7 +184,7 @@ theorem exists_uniformlyBounded_smoothPsh_aeApproximation_on_compact
   · intro j
     exact (hfdisc j).plurisubharmonicOn hU
   · intro j x
-    exact abs_mollify_le_of_ae_abs_le volume hgint.locallyIntegrable hC
+    exact abs_mollify_le_of_ae_abs_le volume hgint.locallyIntegrable
       (ae_of_all volume hgC) (shrinkingBump R hR j) x
   · simpa only [f] using ae_tendsto_mollify volume hgint.locallyIntegrable R hR
 

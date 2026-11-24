@@ -141,7 +141,7 @@ theorem exists_common_mollifier {Ω A : Opens (ComplexModel n)} (hA : Relatively
       hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hp.1
     obtain ⟨S, hSk⟩ :=
       HolomorphicPullback.exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
-        hp hR hN (hNK.trans hKcΩ) hKc hKcΩ hball
+        hp hR hN hKc hKcΩ hball
     have hker : S.kernel = fun j ↦ HolomorphicPullback.explicitRadialKernel (min R₀ δ) hR j :=
       funext fun j ↦ funext (hSk j)
     let f : ℕ → ComplexModel n → ℝ := fun j ↦

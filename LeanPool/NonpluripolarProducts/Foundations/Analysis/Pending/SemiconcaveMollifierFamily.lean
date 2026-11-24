@@ -21,10 +21,12 @@ needed for the `C^{1,1}` estimates:
 * `F j` is globally smooth, the family is a decreasing approximation of `u` on `A`, and each
   `F j` has nonnegative Levi form there;
 * `F j` inherits the second-difference bound `u(z+h) + u(z-h) - 2u(z) ≤ K‖h‖²` of `u`;
-* consequently, by Błocki's Proposition 2.3.3, `‖D²(F j)‖ ≤ 2K` on `A`.
+* the smooth pointwise estimate below gives `‖D²(F j)‖ ≤ 2K` on `A`.
 
-Source: Błocki, *The complex Monge–Ampère operator in pluripotential theory*, lecture notes,
-Proposition 2.3.3.
+The estimate is a variant of the Hessian argument in the proof of
+[Błocki's Proposition 2.3.3](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=51).
+The proposition derives `C^{1,1}` regularity and a Hessian bound of `K` for the original
+plurisubharmonic function. Here the functions are already `C²` and the bound is `2K`.
 -/
 
 @[expose] public section
@@ -75,7 +77,7 @@ theorem exists_mollifier_family {Ω A : Opens (ComplexModel n)} (hA : Relatively
     hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hu.1
   obtain ⟨S, hSk⟩ :=
     exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh hu hR hN
-      (hNK.trans hKcΩ) hKc hKcΩ hball
+      hKc hKcΩ hball
   have hker : ∀ j, S.kernel j = explicitRadialKernel R hR j := fun j ↦ funext (hSk j)
   set g : ComplexModel n → ℝ := Kc.indicator u with hgdef
   set f : ℕ → ComplexModel n → ℝ := fun j ↦ translationPairing volume g (S.kernel j) with hfdef
@@ -133,8 +135,9 @@ theorem fderiv_fderiv_symm {F : ComplexModel n → ℝ} (hF : ContDiff ℝ 2 F) 
     ((hcd.differentiable (by norm_num)).differentiableAt).hasFDerivAt
   exact second_derivative_symmetric_of_eventually (Eventually.of_forall hd1) hd2 v w
 
-/-- **Błocki, Proposition 2.3.3.**  A `C²` plurisubharmonic function satisfying a one-sided
-second-difference bound has second derivative bounded by `2K`. -/
+/-- A smooth pointwise variant of the Hessian estimate in the proof of Błocki's
+Proposition 2.3.3. For a `C²` function, a one-sided second-difference bound and a
+nonnegative Levi form at the point give a bound of `2K` on the second derivative. -/
 theorem norm_fderiv_fderiv_le_of_secondDifference {F : ComplexModel n → ℝ} (hF : ContDiff ℝ 2 F)
     {z : ComplexModel n} {K : ℝ} (hK0 : 0 ≤ K)
     (hsd : ∀ᶠ h in 𝓝 (0 : ComplexModel n), F (z + h) + F (z - h) - 2 * F z ≤ K * ‖h‖ ^ 2)

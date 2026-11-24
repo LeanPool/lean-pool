@@ -79,27 +79,9 @@ theorem integral_mul_leviForm_nonpos_of_pointwise_circle_lintegral
     (hpoint : ∀ r ∈ Ioo 0 R, ∀ x ∈ Function.support φ,
       (∫⁻ t in Ioc 0 (2 * Real.pi), D (x + circleMap 0 r t • v)) ≤
         ENNReal.ofReal (2 * Real.pi) * D x) :
-    (∫ x, f x * leviForm φ x v ∂μ) ≤ 0 := by
-  let h : ℂ → ℝ := fun z => translationPairing μ f φ (z • v)
-  have hh : ContDiff ℝ 2 h := contDiff_translationPairing_complexLine hf hφs hφ v
-  have hmean (r : ℝ) (hr : r ∈ Ioo 0 R) : (-h) 0 ≤ Real.circleAverage (-h) 0 r := by
-    have hm := circleAverage_pairing_le_of_pointwise_circle_lintegral
-      hDm hDf hf hfn hφs hφ hφn v r (hpoint r hr)
-    have hneg : Real.circleAverage (-h) 0 r = -Real.circleAverage h 0 r := by
-      simpa only [neg_one_smul] using
-        (Real.circleAverage_smul (f := h) (c := 0) (R := r) (a := (-1 : ℝ)))
-    rw [hneg]
-    simpa only [h, Pi.neg_apply, zero_smul] using neg_le_neg hm
-  have hΔ := laplacian_nonneg_of_circleAverage_submean hh.neg 0 hR hmean
-  have hline := laplacian_complexLine (contDiff_translationPairing hf hφs hφ)
-    (0 : E) v (0 : ℂ)
-  simp only [zero_add, zero_smul] at hline
-  rw [leviForm_translationPairing hf hφs hφ] at hline
-  simp only [sub_zero] at hline
-  change 0 ≤ Δ (-h) 0 at hΔ
-  rw [InnerProductSpace.laplacian_neg, Pi.neg_apply] at hΔ
-  change 0 ≤ -Δ (fun z : ℂ => translationPairing μ f φ (z • v)) 0 at hΔ
-  rw [hline] at hΔ
-  linarith
+    (∫ x, f x * leviForm φ x v ∂μ) ≤ 0 :=
+  integral_mul_leviForm_nonpos_of_circleAverage_le hf hφs hφ v hR fun r hr =>
+    circleAverage_pairing_le_of_pointwise_circle_lintegral hDm hDf hf hfn hφs hφ hφn
+      v r (hpoint r hr)
 
 end SGPT.Foundations.Analysis

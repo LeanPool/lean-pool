@@ -57,30 +57,17 @@ theorem restrict_eq_joint_maxTuple {U : Opens (ComplexModel n)}
       (∀ F, IsAdmissible n U (maxTupleObstacle u g k) F → TendstoMixed U F μ') →
       μ'.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} =
         μ.restrict {z | z ∈ U ∧ ∀ i, g i z < u i z} := by
-  obtain ⟨F, hF⟩ := id hex
-  set P := {z | z ∈ U ∧ ∀ i, g i z < u i z} with hP_def
-  have hPU : P ⊆ U := fun z hz ↦ hz.1
-  intro k
-  induction k with
-  | zero =>
-    intro _ μ' _ hμ'f hμ'
-    rw [maxTupleObstacle_zero] at hμ'
-    have h := restrict_eq_of_claims le_rfl hμ'f hμf hμ' hμ hex
-    rw [← Measure.restrict_restrict_of_subset hPU, h, Measure.restrict_restrict_of_subset hPU]
-  | succ k ih =>
-    intro hk μ' hμ'c hμ'f hμ'
-    have hkn : k < n := hk
-    obtain ⟨μk, hμkc, hμkf, hμkT⟩ := pClaim_all (n := n) U (maxTupleObstacle u g k)
-    have hIH := ih hkn.le μk hμkc hμkf hμkT
-    rw [maxTupleObstacle_succ u g hkn] at hμ'
-    have hslot := JointDecreasingMaxLocality.restrict_eq_of_joint_max_slot (u := maxTupleObstacle
-      u g k) ⟨k, hkn⟩
-      (hJ ⟨k, hkn⟩) hμkc hμkf hμkT hμ'c hμ'f hμ'
+  obtain ⟨F, hF⟩ := hex
+  refine restrict_eq_of_tuple_steps (U := U) (P := {z | z ∈ U ∧ ∀ i, g i z < u i z})
+    (S := fun i => {z | z ∈ U ∧ g i z < maxTupleObstacle u g i i z})
+    (fun _ hz => hz.1) (maxTupleObstacle u g) (maxTupleObstacle_zero u g) ?_ hμf hμ ⟨F, hF⟩ ?_
+  · intro i z hz
+    exact ⟨hz.1, by rw [maxTupleObstacle_apply_self]; exact hz.2 i⟩
+  · intro k hk μk μ' hμkc hμkf hμkT hμ'c hμ'f hμ'
+    rw [maxTupleObstacle_succ u g hk] at hμ'
+    exact JointDecreasingMaxLocality.restrict_eq_of_joint_max_slot
+      (u := maxTupleObstacle u g k) ⟨k, hk⟩ (hJ ⟨k, hk⟩) hμkc hμkf hμkT hμ'c hμ'f hμ'
       (exists_isAdmissible_joint_maxTuple hF hJ k)
-    have hPS : P ⊆ {z | z ∈ U ∧ g ⟨k, hkn⟩ z < maxTupleObstacle u g k ⟨k, hkn⟩ z} := fun z hz ↦
-      ⟨hz.1, by rw [maxTupleObstacle_apply_self]; exact hz.2 _⟩
-    rw [← hIH, ← Measure.restrict_restrict_of_subset hPS, ← hslot,
-      Measure.restrict_restrict_of_subset hPS]
 
 /-- Genuine original BT limits are local above arbitrary locally bounded PSH obstacles. -/
 theorem restrict_eq_of_bounded_pair_max {Ω : Opens (ComplexModel n)}

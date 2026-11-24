@@ -97,7 +97,7 @@ theorem exists_isIrreducibleComponent_pos_dim_of_accPt {A : Set M}
     (hacc : AccPt x (𝓟 A)) :
     ∃ V : ClosedIrreducibleAnalyticSubvariety n M,
       IsIrreducibleComponent V A ∧ 0 < V.dim ∧ x ∈ V.carrier := by
-  obtain ⟨D, ⟨P⟩⟩ := exists_connectedParts hA hx
+  obtain ⟨D, ⟨P⟩⟩ := exists_connectedParts (p := x) hA
   have hpieceA : ∀ i, D.piece i ⊆ A := fun i y hy =>
     (D.inter_nbhd_eq.symm ▸ mem_iUnion.mpr ⟨i, hy⟩ : y ∈ A ∩ D.nbhd).1
   have hgoodA : ∀ i, P.good i ⊆ A := fun i =>
@@ -145,9 +145,9 @@ theorem exists_isIrreducibleComponent_pos_dim_of_accPt {A : Set M}
       dim_le := hcreg.1
       regularLocus_nonempty := ⟨c, regularAtDim_closure_component hcreg hcC⟩ }
   refine ⟨V, ⟨hVA, fun Z hVZ hZA => ?_⟩, hi, closure_mono hgoodC hxcl⟩
-  obtain ⟨W, hW, hcW, hAW⟩ := exists_open_inter_subset_component hcreg hcC
+  obtain ⟨W, hW, hcW, hAW⟩ := exists_open_inter_subset_component hcC
   refine (ClosureDifferenceAnalytic.eq_of_subset_of_inter_open_subset
-    (isComplexAnalyticSubset_closure_component hA hcreg) Z.irreducible_carrier hVZ hW
+    (isComplexAnalyticSubset_closure_component hA) Z.irreducible_carrier hVZ hW
     ⟨c, hVZ (subset_closure hcC), hcW⟩ ?_).symm
   intro z hz
   exact subset_closure (hAW ⟨hZA hz.1, hz.2⟩)

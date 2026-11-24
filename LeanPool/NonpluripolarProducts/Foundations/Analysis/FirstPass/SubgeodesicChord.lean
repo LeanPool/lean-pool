@@ -224,7 +224,6 @@ theorem PlurisubharmonicOn.le_eRealChord_of_endpoint_sequences
     {v : ℝ → EReal} {a b : ℕ → ℝ} {u₀ u₁ : EReal} {t : ℝ}
     (hv : PlurisubharmonicOn (fun τ : ℂ => v τ.re)
       (Complex.re ⁻¹' Ioo (0 : ℝ) 1))
-    (_ht : t ∈ Ioo (0 : ℝ) 1)
     (ha_mem : ∀ k, a k ∈ Ioo (0 : ℝ) t)
     (hb_mem : ∀ k, b k ∈ Ioo t 1)
     (ha : Tendsto a atTop (𝓝 0)) (hb : Tendsto b atTop (𝓝 1))
@@ -430,7 +429,7 @@ theorem le_eRealChord
       (v := fun s => chartFunction (curve s) e q + (ρ q : EReal))
       (a := fun k => a (ns k)) (b := fun k => b (ns k))
       (u₀ := chartFunction u₀ e q + (ρ q : EReal))
-      (u₁ := chartFunction u₁ e q + (ρ q : EReal)) htime ht
+      (u₁ := chartFunction u₁ e q + (ρ q : EReal)) htime
       (fun k => ha_mem (ns k)) (fun k => hb_mem (ns k)) ha0 hb1
       hconv₀ hconv₁ (fun k => hcorrFinite (hqfina k))
       (hcorrFinite hqfint) (fun k => hcorrFinite (hqfinb k))

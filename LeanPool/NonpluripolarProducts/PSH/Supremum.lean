@@ -81,7 +81,7 @@ theorem pshOn_uscSup_of_locallyBounded [Nonempty I] {u : I → E → EReal}
     rintro f ⟨i, rfl⟩
     exact (hu i).disc.plurisubharmonicOn hU
   have hreg := SGPT.Foundations.Analysis.FirstPass.plurisubharmonicOn_uscRegularization_sSup
-    hU (Set.range_nonempty u) hpsh (locallyUniformlyBoundedAbove_range_iff.mpr hb)
+    hU hpsh (locallyUniformlyBoundedAbove_range_iff.mpr hb)
   rw [sSup_range_eq] at hreg
   refine ⟨hreg.discPshOn, ?_⟩
   obtain ⟨x, hx, hn⟩ := (hu (Classical.arbitrary I)).nontrivial

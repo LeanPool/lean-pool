@@ -25,8 +25,9 @@ Mobius pullbacks, and generally anything with poles — are not globally `C²`.
 `Pending.SemiconcaveTaylor.abs_sub_fderiv_le_of_norm_second_le` is the
 `U = univ` case of the first statement and is derived from it there.
 
-Source: Z. Blocki, *The complex Monge--Ampere operator in pluripotential
-theory*, lecture notes, Proposition 2.3.3 and Theorem 2.3.2.
+These Taylor bounds support the second-difference argument used in the proof of
+[Błocki's Theorem 2.3.2](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=50).
+They start from a `C²` Hessian bound and give an upper bound for the second difference.
 -/
 
 @[expose] public section

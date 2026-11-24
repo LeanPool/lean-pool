@@ -26,8 +26,9 @@ bounded values and uniformly bounded second derivatives `‖D²(F j)‖ ≤ M` o
   `u` admits a second-order (Peano) expansion with the symmetric bilinear form
   `A = D(Du)(x)`.
 
-This is the classical `C^{1,1}` half of Błocki, *The complex Monge–Ampère operator in
-pluripotential theory*, lecture notes, Proposition 2.3.3 and the proof of Theorem 2.3.1.
+The limit argument starts with smooth approximants and a Hessian bound, as in the final
+step of the proof of [Błocki's Proposition 2.3.3](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=51).
+It also supplies the almost-everywhere Taylor expansion used in the proof of Theorem 2.3.1.
 -/
 
 @[expose] public section

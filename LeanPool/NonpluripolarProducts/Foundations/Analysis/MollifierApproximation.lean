@@ -91,7 +91,7 @@ theorem contDiff_mollify {u : E → ℝ} (hu : LocallyIntegrable u μ)
 /-- Averaging against a normalized nonnegative bump preserves a uniform
 almost-everywhere absolute bound. -/
 theorem abs_mollify_le_of_ae_abs_le
-    {u : E → ℝ} (hu : LocallyIntegrable u μ) {C : ℝ} (_hC : 0 ≤ C)
+    {u : E → ℝ} (hu : LocallyIntegrable u μ) {C : ℝ}
     (huC : ∀ᵐ x ∂μ, |u x| ≤ C) (φ : ContDiffBump (0 : E)) (z : E) :
     |mollify μ u φ z| ≤ C := by
   have hpair : Integrable
