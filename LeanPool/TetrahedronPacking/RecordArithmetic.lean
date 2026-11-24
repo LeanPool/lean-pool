@@ -9,10 +9,7 @@ Authors: Mike Lady
 module
 
 public import LeanPool.TetrahedronPacking.IntegerProjections
-public import Mathlib.Data.Fintype.Prod
 public import Mathlib.Data.Fin.VecNotation
-public import Mathlib.Tactic.FinCases
-public import Mathlib.Tactic.NormNum
 
 /-!
 # Exact arithmetic for the Chen–Engel–Glotzer record
@@ -40,10 +37,12 @@ def recordVertex : Fin 4 → Fin 4 → Fin 3 → ℤ :=
 def recordPeriod : Fin 3 → Fin 3 → ℤ :=
   ![![384, 576, 192], ![90, 291, 573], ![576, 36, 360]]
 
-private def separates (n : Fin 3 → ℤ) (i j : Fin 4) (x y z : ℤ) : Bool :=
-  let offset := x * integerDot n (recordPeriod 0) + y * integerDot n (recordPeriod 1) +
-    z * integerDot n (recordPeriod 2)
-  integerSeparates n (recordVertex i) (recordVertex j) offset
+/-- The integer-scaled translation corresponding to the period coordinates `k`. -/
+def recordIntegerShift (k : Fin 3 → ℤ) (r : Fin 3) : ℤ :=
+  k 0 * recordPeriod 0 r + k 1 * recordPeriod 1 r + k 2 * recordPeriod 2 r
+
+private def separates (n : Fin 3 → ℤ) (i j : Fin 4) (k : Fin 3 → ℤ) : Bool :=
+  integerSeparates n (recordVertex i) (recordVertex j) (integerDot n (recordIntegerShift k))
 
 private def axes : List (Fin 3 → ℤ) :=
   [![1, 1, 1], ![1, -5, 1], ![1, 1, -5], ![5, -1, -1], ![1, 1, -1],
@@ -57,26 +56,25 @@ example : integerProjectionBounds ![1, 1, 1] (recordVertex 0) = (0, 960) := by d
 example : integerProjectionBounds ![1, 1, 1] (recordVertex 0) ≠ (1, 960) := by decide
 example : integerSeparates ![1, 1, 1] (recordVertex 0) (recordVertex 1) 0 = true := by decide
 example : integerSeparates ![0, 0, 0] (recordVertex 0) (recordVertex 1) 0 = false := by decide
-example : separates ![1, 1, 1] 0 1 0 0 0 = true := by decide
-example : separates ![1, 1, 1] 0 0 0 0 0 = false := by decide
-example : axes.any (fun n => separates n 0 1 0 0 0) = true := by decide
-example : axes.any (fun n => separates n 0 0 0 0 0) = false := by decide
+example : separates ![1, 1, 1] 0 1 0 = true := by decide
+example : separates ![1, 1, 1] 0 0 0 = false := by decide
+example : axes.any (fun n => separates n 0 1 0) = true := by decide
+example : axes.any (fun n => separates n 0 0 0) = false := by decide
 
-private theorem record_bounded_separations (i j : Fin 4) (x y z : Fin 5) :
-    (i = j ∧ x = 2 ∧ y = 2 ∧ z = 2) ∨
-    axes.any (fun n => separates n i j (x.val - (2 : ℤ)) (y.val - (2 : ℤ))
-      (z.val - (2 : ℤ))) = true := by
-  revert i j x y z
+private theorem record_bounded_separations (i j : Fin 4)
+    (k : integerShiftBox (fun _ => -2) (fun _ => 2)) :
+    (i = j ∧ (k : Fin 3 → ℤ) = 0) ∨ axes.any (fun n => separates n i j k) = true := by
+  revert i j k
   decide +kernel
 
-theorem record_integer_separator (i j : Fin 4) (x y z : Fin 5)
-    (h : ¬ (i = j ∧ x = 2 ∧ y = 2 ∧ z = 2)) :
+theorem record_integer_separator (i j : Fin 4) (k : Fin 3 → ℤ)
+    (hk : k ∈ integerShiftBox (fun _ => -2) (fun _ => 2)) (h : i ≠ j ∨ k ≠ 0) :
     ∃ n, integerSeparates n (recordVertex i) (recordVertex j)
-      ((x.val - (2 : ℤ)) * integerDot n (recordPeriod 0) +
-       (y.val - (2 : ℤ)) * integerDot n (recordPeriod 1) +
-       (z.val - (2 : ℤ)) * integerDot n (recordPeriod 2)) = true := by
-  obtain ⟨n, _, hs⟩ := List.any_eq_true.mp ((record_bounded_separations i j x y z).resolve_left h)
-  exact ⟨n, hs⟩
+      (integerDot n (recordIntegerShift k)) = true := by
+  have hneq : ¬ (i = j ∧ k = 0) := fun he => h.elim (fun hi => hi he.1) (fun hk => hk he.2)
+  have hchecked := (record_bounded_separations i j ⟨k, hk⟩).resolve_left hneq
+  obtain ⟨n, _, hn⟩ := List.any_eq_true.mp hchecked
+  exact ⟨n, hn⟩
 
 theorem record_integer_edge_lengths (i a b : Fin 4) (h : a ≠ b) :
     integerDot (fun t => recordVertex i a t - recordVertex i b t)

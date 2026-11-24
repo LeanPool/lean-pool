@@ -63,7 +63,7 @@ theorem disjoint_interiors_of_separating_plane
   exact (not_lt_of_ge (hull_ge (f := f.toLinearMap) hw (interior_subset hx'))) hlt
 
 theorem separator_of_vertex_comparisons {E : Type*}
-    [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [AddCommGroup E] [Module ℝ E] [TopologicalSpace E]
     {ι κ : Type*} [Finite ι] [Nonempty ι]
     {v : ι → E} {w : κ → E} (f : E →L[ℝ] ℝ) (hf : f ≠ 0)
     (h : (∀ i j, f (v i) ≤ f (w j)) ∨ (∀ i j, f (w j) ≤ f (v i))) :

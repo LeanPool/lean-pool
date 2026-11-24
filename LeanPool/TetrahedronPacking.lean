@@ -63,30 +63,20 @@ theorem packing_density :
       atTop (𝓝 (4000 / 4671 : ℝ)) := by
   classical
   have hs (k : Fin 3 → ℤ) :
-      periodShift k = recordCoordinates.symm (fun r => (k r : ℝ)) := by
+      periodShift k = recordRealShift k := by
     ext r
-    simp [periodShift, periodVector, recordCoordinates_symm_apply, mul_comm]
+    simp [periodShift, periodVector, recordRealShift, recordCoordinates_symm_apply, mul_comm]
   have hp (p : Fin 4 × (Fin 3 → ℤ)) : piece p = periodShift p.2 +ᵥ recordHull p.1 := by
     rw [recordHull_translate]
     rfl
   refine ⟨?_, ?_, ?_⟩
   · exact record_squared_edge_lengths
-  · simpa only [hp, hs, recordHull_translate] using record_pairwise_disjoint_interiors
-  · have hcoord (x : Fin 3 → ℝ) :
-        x ∈ recordLattice ↔ ∃ k : Fin 3 → ℤ, periodShift k = x := by
-      simpa only [hs] using mem_recordLattice_iff x
+  · simpa only [hp, hs] using record_pairwise_disjoint_interiors
+  · let e := (Equiv.refl (Fin 4)).prodCongr recordLatticeEquiv
     have hu : (⋃ p, piece p) =
         (⋃ p : Fin 4 × recordLattice, (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1) := by
-      ext x
-      simp only [mem_iUnion]
-      constructor
-      · rintro ⟨⟨i, k⟩, hx⟩
-        exact ⟨⟨i, ⟨periodShift k, (hcoord _).2 ⟨k, rfl⟩⟩⟩, hp (i, k) ▸ hx⟩
-      · rintro ⟨⟨i, p⟩, hx⟩
-        obtain ⟨k, hk⟩ := (hcoord _).1 p.property
-        refine ⟨(i, k), ?_⟩
-        rw [hp, hk]
-        exact hx
+      simpa [e, hp, hs, recordLatticeEquiv_apply] using e.surjective.iUnion_comp
+        (fun p => (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1)
     rw [hu]
     exact record_spatial_density
 

@@ -11,10 +11,11 @@ module
 public import Mathlib.Data.Int.Basic
 import Mathlib.Algebra.Order.Group.Int
 import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Fin.VecNotation
+public import Mathlib.Data.Pi.Interval
+public import Mathlib.Data.Int.Interval
 import Mathlib.Tactic.FinCases
 
-/-! # Integer projection bounds for tetrahedra
+/-! # Integer projections and shift boxes
 A nonzero axis with ordered projection intervals certifies separation.
 -/
 
@@ -66,5 +67,13 @@ theorem integerSeparates_sound (n : Fin 3 → ℤ) (v w : Fin 4 → Fin 3 → �
     intro a b
     exact (add_le_add_left (integerProjectionBounds_spec n w b).2 _).trans
       (hw.trans (integerProjectionBounds_spec n v a).1)
+
+/-- Enumerate the integer points in an inclusive coordinate box. -/
+def integerShiftBox (lo hi : Fin 3 → ℤ) : Finset (Fin 3 → ℤ) :=
+  Finset.Icc lo hi
+
+theorem mem_integerShiftBox (lo hi k : Fin 3 → ℤ) :
+    k ∈ integerShiftBox lo hi ↔ ∀ j, lo j ≤ k j ∧ k j ≤ hi j := by
+  simp only [integerShiftBox, Finset.mem_Icc, Pi.le_def, forall_and]
 
 end TetrahedronPacking

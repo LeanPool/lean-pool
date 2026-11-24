@@ -11,7 +11,6 @@ module
 public import LeanPool.TetrahedronPacking.PackingMeasure
 public import Mathlib.Analysis.SpecificLimits.Basic
 public import Mathlib.Tactic.FieldSimp
-public import Mathlib.Tactic.Ring
 
 /-!
 # Density of a periodic convex packing

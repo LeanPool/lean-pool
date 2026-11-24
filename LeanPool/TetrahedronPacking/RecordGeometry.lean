@@ -103,6 +103,25 @@ theorem mem_recordLattice_iff (x : Fin 3 → ℝ) :
   · rintro ⟨k, rfl⟩ r
     exact ⟨k r, by simp [recordBasis]⟩
 
+/-- The Cartesian translation at the integer period coordinates `k`. -/
+noncomputable def recordRealShift (k : Fin 3 → ℤ) : Fin 3 → ℝ :=
+  recordCoordinates.symm (fun r => (k r : ℝ))
+
+/-- The integer period coordinates parametrize the lattice without repetitions. -/
+noncomputable def recordLatticeEquiv : (Fin 3 → ℤ) ≃ recordLattice := by
+  refine Equiv.ofBijective (fun k => ⟨recordRealShift k, (mem_recordLattice_iff _).mpr ⟨k, rfl⟩⟩)
+    ⟨?_, ?_⟩
+  · intro k l h
+    have he := recordCoordinates.symm.injective (congrArg Subtype.val h)
+    ext r
+    exact_mod_cast congrFun he r
+  · intro x
+    obtain ⟨k, hk⟩ := (mem_recordLattice_iff _).mp x.property
+    exact ⟨k, Subtype.ext hk⟩
+
+theorem recordLatticeEquiv_apply (k : Fin 3 → ℤ) :
+    (recordLatticeEquiv k : Fin 3 → ℝ) = recordRealShift k := rfl
+
 /-- The convex hull of one of the four tetrahedra in the motif. -/
 def recordHull (i : Fin 4) : Set (Fin 3 → ℝ) :=
   convexHull ℝ (range (recordRealVertex i))
@@ -175,9 +194,6 @@ private theorem record_coordinate_bounds (i a : Fin 4) (j : Fin 3) :
   rw [hcoord]
   exact ⟨by linarith, by linarith⟩
 
-private def recordIntegerShift (k : Fin 3 → ℤ) (r : Fin 3) : ℤ :=
-  k 0 * recordPeriod 0 r + k 1 * recordPeriod 1 r + k 2 * recordPeriod 2 r
-
 example : recordIntegerShift ![1, 0, 0] 2 = 192 := by decide
 example : recordIntegerShift ![1, 0, 0] 2 ≠ 0 := by decide
 
@@ -190,38 +206,10 @@ private theorem record_integer_shift_cast (k : Fin 3 → ℤ) :
     Int.cast_add, Int.cast_mul]
   ring
 
-private theorem record_integer_separation (i j : Fin 4) (k : Fin 3 → ℤ)
-    (h : i ≠ j ∨ k ≠ 0) (hk : ∀ r, -2 ≤ k r ∧ k r ≤ 2) :
-    ∃ n, integerSeparates n (recordVertex i) (recordVertex j)
-      (integerDot n (recordIntegerShift k)) = true := by
-  let idx (r : Fin 3) : Fin 5 := ⟨(k r + 2).toNat, by have := hk r; omega⟩
-  have hidx (r : Fin 3) : ((idx r).val : ℤ) - 2 = k r := by
-    change ((k r + 2).toNat : ℤ) - 2 = k r
-    have := hk r
-    omega
-  have hexc : ¬ (i = j ∧ idx 0 = 2 ∧ idx 1 = 2 ∧ idx 2 = 2) := by
-    rintro ⟨heq, h₀, h₁, h₂⟩
-    have hz : k = 0 := by
-      ext r
-      fin_cases r
-      · simpa [h₀] using (hidx 0).symm
-      · simpa [h₁] using (hidx 1).symm
-      · simpa [h₂] using (hidx 2).symm
-    exact h.elim (fun hne => hne heq) (fun hne => hne hz)
-  obtain ⟨n, hn⟩ := record_integer_separator i j (idx 0) (idx 1) (idx 2) hexc
-  simp only [hidx] at hn
-  refine ⟨n, ?_⟩
-  have hproj : integerDot n (recordIntegerShift k) =
-      k 0 * integerDot n (recordPeriod 0) + k 1 * integerDot n (recordPeriod 1) +
-      k 2 * integerDot n (recordPeriod 2) := by
-    simp only [integerDot, recordIntegerShift]
-    ring
-  rwa [hproj]
-
 theorem record_disjoint_interiors (i j : Fin 4) (k : Fin 3 → ℤ) (h : i ≠ j ∨ k ≠ 0) :
-    Disjoint (interior (convexHull ℝ (range (recordRealVertex i))))
-      (interior (convexHull ℝ (range (fun b =>
-        recordRealVertex j b + recordCoordinates.symm (fun r => (k r : ℝ)))))) := by
+    Disjoint (interior (recordHull i)) (interior (recordRealShift k +ᵥ recordHull j)) := by
+  rw [recordHull_translate]
+  unfold recordHull recordRealShift
   rw [record_integer_shift_cast k]
   apply integer_shift_certificates_of_box recordCoordinates recordIntegerShift
     record_integer_shift_cast
@@ -230,33 +218,32 @@ theorem record_disjoint_interiors (i j : Fin 4) (k : Fin 3 → ℤ) (h : i ≠ j
     (fun _ => -2) (fun _ => 2) (record_coordinate_bounds i) (record_coordinate_bounds j)
     (fun _ => by norm_num) (fun _ => by norm_num) _ k h
   intro shift hb hs
-  exact record_integer_separation i j shift hs ((mem_integerShiftBox _ _ _).mp hb)
+  exact record_integer_separator i j shift hb hs
+
+private theorem recordRealShift_sub (l k : Fin 3 → ℤ) :
+    recordRealShift (l - k) = recordRealShift l - recordRealShift k := by
+  have h : (fun r : Fin 3 => (↑((l - k) r) : ℝ)) =
+      (fun r => (l r : ℝ)) - (fun r => (k r : ℝ)) := by
+    ext r
+    exact Int.cast_sub _ _
+  simp only [recordRealShift, h, map_sub]
 
 theorem record_pairwise_disjoint_interiors :
-    let piece (p : Fin 4 × (Fin 3 → ℤ)) :=
-      convexHull ℝ (range (fun b =>
-        recordRealVertex p.1 b + recordCoordinates.symm (fun r => (p.2 r : ℝ))))
-    Pairwise fun p q => Disjoint (interior (piece p)) (interior (piece q)) := by
-  dsimp only
+    Pairwise fun p q : Fin 4 × (Fin 3 → ℤ) =>
+      Disjoint (interior (recordRealShift p.2 +ᵥ recordHull p.1))
+        (interior (recordRealShift q.2 +ᵥ recordHull q.1)) := by
   rintro ⟨i, k⟩ ⟨j, l⟩ h
   have hne : i ≠ j ∨ l - k ≠ 0 := by
     by_contra! heq
     exact h (Prod.ext heq.1 (sub_eq_zero.mp heq.2).symm)
-  let e := Homeomorph.addRight (recordCoordinates.symm (fun r => (k r : ℝ)))
+  let e := Homeomorph.addLeft (recordRealShift k)
   have hd := disjoint_image_of_injective e.injective (record_disjoint_interiors i j (l - k) hne)
   simp only [e.image_interior] at hd
-  have shift_eq : (fun r : Fin 3 => (↑((l - k) r) : ℝ)) =
-      (fun r => (l r : ℝ)) - (fun r => (k r : ℝ)) := by
-    ext r
-    exact Int.cast_sub _ _
-  have translate_hull (v : Fin 4 → Fin 3 → ℝ) :
-      e '' convexHull ℝ (range v) =
-        convexHull ℝ (range fun b => v b + recordCoordinates.symm (fun r => (k r : ℝ))) := by
-    simpa [e, ← range_comp, Function.comp_def, add_comm] using
-      AffineMap.image_convexHull
-        (AffineEquiv.vaddConst ℝ (recordCoordinates.symm (fun r => (k r : ℝ)))).toAffineMap
-        (range v)
-  rw [translate_hull, translate_hull] at hd
-  simpa only [shift_eq, map_sub, add_assoc, sub_add_cancel] using hd
+  change Disjoint (interior (recordRealShift k +ᵥ recordHull i))
+    (interior (recordRealShift k +ᵥ (recordRealShift (l - k) +ᵥ recordHull j))) at hd
+  have hshift : recordRealShift k + recordRealShift (l - k) = recordRealShift l := by
+    rw [recordRealShift_sub]
+    abel
+  simpa only [← add_vadd, hshift] using hd
 
 end TetrahedronPacking

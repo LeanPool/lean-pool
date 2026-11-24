@@ -10,8 +10,7 @@ module
 
 public import LeanPool.TetrahedronPacking.PeriodicSeparation
 public import LeanPool.TetrahedronPacking.IntegerProjections
-public import Mathlib.Data.Pi.Interval
-public import Mathlib.Data.Int.Interval
+import Mathlib.Data.Fin.VecNotation
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 public import Mathlib.Tactic.NormNum
 
@@ -95,14 +94,6 @@ theorem integer_shift_certificates
   obtain ⟨n, hn⟩ := cert l hl hb
   rw [ht l]
   exact integer_separator_plane n v w (translation l) hn
-
-/-- Enumerate the integer points in an inclusive coordinate box. -/
-def integerShiftBox (lo hi : Fin 3 → ℤ) : Finset (Fin 3 → ℤ) :=
-  Finset.Icc lo hi
-
-theorem mem_integerShiftBox (lo hi k : Fin 3 → ℤ) :
-    k ∈ integerShiftBox lo hi ↔ ∀ j, lo j ≤ k j ∧ k j ≤ hi j := by
-  simp only [integerShiftBox, Finset.mem_Icc, Pi.le_def, forall_and]
 
 example : (![0, 0, 0] : Fin 3 → ℤ) ∈ integerShiftBox ![-1, 0, 0] ![1, 0, 0] := by decide
 example : (![2, 0, 0] : Fin 3 → ℤ) ∉ integerShiftBox ![-1, 0, 0] ![1, 0, 0] := by decide

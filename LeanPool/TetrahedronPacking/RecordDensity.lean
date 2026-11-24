@@ -41,18 +41,10 @@ theorem record_spatial_density :
   have hd : Pairwise fun p q : Fin 4 × recordLattice =>
       Disjoint (interior ((p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1))
         (interior ((q.2 : Fin 3 → ℝ) +ᵥ recordHull q.1)) := by
+    let e := (Equiv.refl (Fin 4)).prodCongr recordLatticeEquiv
     intro p q hpq
-    obtain ⟨k, hk⟩ := (mem_recordLattice_iff _).mp p.2.property
-    obtain ⟨l, hl⟩ := (mem_recordLattice_iff _).mp q.2.property
-    have hn : (p.1, k) ≠ (q.1, l) := by
-      intro he
-      obtain ⟨hi, hj⟩ := Prod.mk.inj he
-      apply hpq
-      refine Prod.ext hi (Subtype.ext ?_)
-      rw [← hk, ← hl, hj]
-    have h := record_pairwise_disjoint_interiors hn
-    rw [recordHull_translate, recordHull_translate, ← hk, ← hl]
-    exact h
+    simpa [e, ← recordLatticeEquiv_apply] using
+      record_pairwise_disjoint_interiors (e.symm.injective.ne hpq)
   have hbounded : Bornology.IsBounded (⋃ i, recordHull i) :=
     Bornology.isBounded_iUnion.mpr fun i =>
       ((finite_range (recordRealVertex i)).isCompact_convexHull ℝ).isBounded
