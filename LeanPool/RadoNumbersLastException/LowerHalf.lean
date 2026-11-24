@@ -7,10 +7,10 @@ Authors: Tyler B. Hughes
 module
 
 /-!
-# Lower Half for Two-Colour Rado Numbers (Martinelli and Schaal 2007, Lemma 3)
+# The Boundary Colouring for Two-Colour Rado Numbers
 
-Defines the Martinelli–Schaal lower bound `LB(c, k)` and the exact last-exception
-formula `c*(k) = k(k^2 + k - 4)/2` (odd `k`) and `k(k^2 - 2)/2` (even `k`), and proves
+Defines the lower bound `LB(c, k)` from Martinelli and Schaal (2007, Lemma 2)
+and the exact last-exception formula `c*(k) = k(k^2 + k - 4)/2` (odd `k`) and `k(k^2 - 2)/2` (even `k`), and proves
 that for every `k ≥ 3`, `[1, LB(c*(k), k)]` admits a 2-colouring with no monochromatic
 solution of `x + y + c*(k) = k z` (`exists_good_col_cstar`).
 -/
@@ -316,7 +316,7 @@ theorem lower_col_valid (k : Nat) (hk : 3 ≤ k) (x y z : Nat)
     rw [hc x, hc y, hc z]
     exact even_case hkj hj x y z hx1 hxN hy1 hyN hzN h
 
-/-- Martinelli and Schaal (2007), Lemma 3: for every `k ≥ 3`, some 2-colouring of
+/-- For every `k ≥ 3`, some 2-colouring of
 `[1, LB(c*(k), k)]` has no monochromatic solution of `x + y + c*(k) = k z`. -/
 theorem exists_good_col_cstar (k : Nat) (hk : 3 ≤ k) :
     ∃ col : Nat → Bool, ∀ x y z : Nat,

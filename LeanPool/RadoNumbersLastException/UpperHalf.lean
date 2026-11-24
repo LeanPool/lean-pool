@@ -14,7 +14,7 @@ public import LeanPool.RadoNumbersLastException.LowerHalf
 Pure core Lean 4 formalization (no Mathlib imports) proving the upper half
 `R(c, k) = LB(c, k)` for every `k ≥ 3` and every valid `c > c*(k)` via the reflection
 `x ↦ N + 1 - x` combined with Martinelli and Schaal's lower bound, and combining it
-with `LowerHalf.exists_good_col_cstar` (Martinelli and Schaal 2007, Lemma 3) to obtain:
+with the boundary colouring `LowerHalf.exists_good_col_cstar` to obtain:
 * `RadoNu.rado_last_exception`: complete both-halves characterization with expanded quantifiers;
 * `RadoNu.rado_eq_LB`, `RadoNu.not_forced_cstar`, `RadoNu.rado_last_exception_rado`;
 * `RadoNu.nu_iff` and `RadoNu.nu_5_eq_66` (settling Kim, Song, and Hwang 2023, `ν(5) = 66`).
@@ -877,7 +877,7 @@ theorem rado_eq_LB {k c : Nat} (hk : 3 ≤ k) (hc : cstar k < c)
     (hval : Valid c k) : IsRado c k (LB c k) :=
   ⟨upper hk hc hval, fun _ hn => lower (by omega) hn⟩
 
-/-- Non-forcing at `[1, LB(c*(k), k)]` (Martinelli and Schaal 2007, Lemma 3):
+/-- Non-forcing at `[1, LB(c*(k), k)]`:
 some 2-colouring of `[1, LB(c*(k), k)]` has no monochromatic solution. -/
 theorem not_forced_cstar {k : Nat} (hk : 3 ≤ k) :
     ¬ Forced (cstar k) k (LB (cstar k) k) := by
@@ -900,7 +900,7 @@ For every `k ≥ 3`:
 `[1, LB(c, k)]` has a monochromatic solution of `x + y + c = k z`, and some
 2-colouring of `[1, LB(c, k) - 1]` has none, so `R(c, k) = LB(c, k)`;
 (2) some 2-colouring of `[1, LB(c*(k), k)]` has no monochromatic solution of
-`x + y + c*(k) = k z` (Martinelli and Schaal 2007, Lemma 3). -/
+`x + y + c*(k) = k z`. -/
 theorem rado_last_exception (k : Nat) (hk : 3 ≤ k) :
     (∀ c : Nat, cstar k < c → (k % 2 = 1 ∨ c % 2 = 0) →
       (∀ col : Nat → Bool, ∃ x y z : Nat,
