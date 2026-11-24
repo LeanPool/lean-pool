@@ -1,0 +1,51 @@
+slug: suzuki-cancellation
+title: Cancellation-aware error bounds for the fourth-order Suzuki formula
+summary: In complete normed algebras with two-sided contractive exponentials, the binary
+  fourth-order Suzuki splitting has a global error expansion through the centered
+  septic term and an eighth-order remainder at fixed nonnegative time. For skew-adjoint
+  generators in a complete C*-algebra, the integral of the transported quintic
+  coefficient determines the leading error norm.
+branch: functional analysis
+entry_module: LeanPool.SuzukiCancellation
+authors:
+- Bingyu Xia
+- Jue Xu
+- Yue Wang
+source:
+  title: Trotter Error Bounds in Lean 4 with a Cancellation-Aware Analysis of the Fourth-Order Suzuki Formula
+  arxiv: '2611.27359'
+  url: https://github.com/BryceT233/Foresight-Quantum-Formalization-Projects/tree/40b042ff69f569bbc8d94273620ee0b59d272455
+  github_repo: BryceT233/Foresight-Quantum-Formalization-Projects
+  commit: 40b042ff69f569bbc8d94273620ee0b59d272455
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- FQFP.BCH.norm_suzukiProduct_pow_sub_septic_midpoint_le_of_skewAdjoint
+- FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
+- FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
+main_results:
+- declaration: FQFP.BCH.norm_suzukiProduct_pow_sub_septic_midpoint_le_of_skewAdjoint
+  informal: For two skew-adjoint generators in a complete C*-algebra with compatible
+    real scalars, a nonnegative final time, and any positive number of steps, the
+    left-normalized Suzuki product error differs from the sum of the transported
+    quintic and centered septic terms by at most an explicit remainder.
+- declaration: FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
+  informal: In a complete normed algebra, with the Suzuki cubic relation and
+    contractive exponentials for both generators and their sum at every real time,
+    the refined operator remainder at fixed nonnegative final time is big O of the
+    inverse eighth power of the number of steps.
+- declaration: FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
+  informal: For skew-adjoint generators in a complete C*-algebra with compatible
+    real scalars and fixed nonnegative final time, the global Suzuki error norm
+    scaled by the fourth power of the step count converges to the fourth power
+    of the final time times the norm of the integrated conjugated quintic coefficient
+    as the natural-number step count tends to infinity.
+tags:
+- functional-analysis
+- product-formulas
+- normed-algebras
+msc:
+- 47D06
+- 65J10
+- 46H30
