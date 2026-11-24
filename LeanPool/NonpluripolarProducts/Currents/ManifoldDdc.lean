@@ -121,19 +121,6 @@ theorem isPSHOn_of_manifoldPSH {φ : M → EReal} (hφ : SGPT.PSH.ManifoldPSH (n
 
 /-! ### The current `dd^c φ` -/
 
-omit [IsManifold (𝓘(ℂ, ComplexModel (m + 1))) ∞ M] in
-/-- On an overlap, `φ ∘ e⁻¹ = (φ ∘ f⁻¹) ∘ (f ∘ e⁻¹)`. -/
-theorem chart_comp_transition {α : Type*} (φ : M → α) (e f : ComplexChart (m + 1) M) :
-    ∀ x ∈ overlapSource e f, φ (e.val.symm x) = φ (f.val.symm (chartTransition e f x)) := by
-  intro x hx
-  have hx' : x ∈ (chartTransition e f).source := hx
-  have hxf : e.val.symm x ∈ f.val.source := by
-    simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-      OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
-    exact hx'.2
-  simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
-    f.val.left_inv hxf]
-
 /-- `ddcL1` only depends on the function on the open set. -/
 theorem ddcL1_congr {W : Opens (ComplexModel (m + 1))} {u v : ComplexModel (m + 1) → EReal}
     (hu : LocallyIntegrableOn (fun x => (u x).toReal) W volume)

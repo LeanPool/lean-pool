@@ -23,9 +23,9 @@ competitor's diagonal non-pluripolar measure with its Bedford–Taylor measure
 on the chart. The capacity comparison then follows from Błocki's estimate
 `canonicalBedfordTaylorMeasure_le_relCapacity_of_bounds`.
 
-The chart-local comparison applies off the non-Kähler locus, where the
-reference and envelope are locally bounded in Xia's Theorem 2.4.4. The
-corollaries for globally bounded references use the same comparison.
+The comparison can use the local bounds off the non-Kähler locus in
+[Xia's envelope concentration proof](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L769-L796).
+The corollaries for globally bounded references use the same comparison.
 -/
 
 @[expose] public section

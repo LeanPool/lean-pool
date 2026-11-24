@@ -24,9 +24,9 @@ module proves that the Bedford–Taylor measures converge:
   test function `φ` with `tsupport φ ⊆ Ω`.
 
 This is the diagonal top-degree case of [Błocki, Theorem 2.1.5](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=36)
-and Demailly, CADG III.3.7. The balayage argument of Xia's Lemma 2.4.3 uses
-this convergence to pass from decreasing smooth approximations of boundary data
-to the corresponding upper semicontinuous data.
+and Demailly, CADG III.3.7. It supplies the local convergence needed to pass
+from decreasing smooth approximations of boundary data to upper semicontinuous
+data in the Bedford–Taylor balayage used in [Xia's balayage lemma](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L662-L688).
 
 ## The proof
 

@@ -31,12 +31,9 @@ identifies that truncation limit with the bounded mixed Bedford--Taylor measure
 from data on the chart domain alone.  So a bound on the **source of a single
 patch** already puts the global measure in honest Bedford--Taylor form there.
 
-This is what Xia's Lemma 2.4.3 (`xia-sgpt:page-0079`) needs: its datum
-`P_theta(f)` is locally bounded on `X \ nK({theta})` by Lemma 2.4.1, never on
-`X`, and (2.21) is a statement about the measure on an open subset of that
-complement.  The bound is *used* only through the local model, so the I-0282
-architecture objection applies to the capacity half of the Section 2.3 stack,
-not to the measure half.
+The bounded-patch statement is suited to [Xia's balayage lemma](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L662-L688).
+That argument uses [the local bound for the reference potential](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L448-L455)
+to bound the envelope locally off the non-Kähler locus.
 
 Nothing in this module is new analysis: it is the bounded patch argument of
 `Pending.BoundedGlobalProduct` with `IsBoundedPotential` replaced by

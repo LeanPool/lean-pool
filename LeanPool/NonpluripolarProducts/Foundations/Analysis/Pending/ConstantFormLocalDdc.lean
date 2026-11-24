@@ -33,13 +33,9 @@ theorem localDc_smul_const_form_at {n q : ℕ}
     localDc (fun y => f y • (γ : RealForm n (2 * q))) x =
       oneWedge ((-1 / (4 * Real.pi) : ℝ) •
         (fderiv ℝ f x).comp (modelComplexStructure n)) (γ : RealForm n (2 * q)) := by
-  have hJ : complexJ n = modelComplexStructure n := by
-    ext v
-    rfl
   have hγ : (γ : RealForm n (2 * q)).compContinuousLinearMap
-      (modelComplexStructure n) = γ := by
-    rw [← hJ]
-    exact (mem_jInvariant_iff _).mp (formSpan_le_jInvariant q γ.property)
+      (modelComplexStructure n) = γ :=
+    (mem_jInvariant_iff _).mp (formSpan_le_jInvariant q γ.property)
   have hfield : (fun y => (f y • (γ : RealForm n (2 * q))).compContinuousLinearMap
       (modelComplexStructure n)) = fun y => f y • (γ : RealForm n (2 * q)) := by
     funext y

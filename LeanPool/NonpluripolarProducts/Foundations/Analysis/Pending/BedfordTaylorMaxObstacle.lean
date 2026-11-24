@@ -94,40 +94,12 @@ theorem restrict_eq_of_max_slot_obstacle {U : Opens (ComplexModel n)}
     (hμ' : ∀ F, IsAdmissible n U (Function.update u i₀ fun z ↦ max (u i₀ z) (g z)) F →
       TendstoMixed U F μ')
     (hex : ∃ F, IsAdmissible n U u F) :
-    μ.restrict {z | z ∈ U ∧ g z < u i₀ z} = μ'.restrict {z | z ∈ U ∧ g z < u i₀ z} := by
-  classical
-  obtain ⟨F, hF⟩ := id hex
-  have hGw := hF.1 i₀
-  set P := {z | z ∈ U ∧ g z < u i₀ z}
-  have hPm : MeasurableSet P := hGw.measurableSet_lt_obstacle hg.1.continuousOn
-  have hUm := U.isOpen.measurableSet
-  set f : ComplexModel n → ENNReal := fun z ↦ ENNReal.ofReal (max (u i₀ z) (g z) - g z)
-  have hfm (ν : Measure (ComplexModel n)) : AEMeasurable f (ν.restrict U) := by
-    refine (aemeasurable_of_tendsto_metrizable_ae atTop
-      (f := fun j z ↦ max (F i₀ j z) (g z) - g z) (fun j ↦ ?_) ?_).ennreal_ofReal
-    · exact (((hGw.1 j).1.continuousOn.sup hg.1.continuousOn).sub
-        hg.1.continuousOn).aemeasurable hUm
-    · filter_upwards [ae_restrict_mem hUm] with z hz
-      exact ((hGw.2.2.1 z hz).max tendsto_const_nhds).sub_const (g z)
-  refine restrict_eq_of_max_weight_test_integral_eq hPm hfm ?_ ?_ hμf hμ'f ?_
-  · intro K hK hKU
-    obtain ⟨C, hC⟩ := hGw.exists_abs_le hK hKU
-    exact ⟨C, fun _ hz => hGw.abs_le_of_mem hKU hC hz⟩
-  · intro K hK hKU
-    obtain ⟨D, hD⟩ := hK.exists_bound_of_continuousOn (hg.1.continuousOn.mono hKU)
-    exact ⟨D, fun z hz => by simpa only [Real.norm_eq_abs] using hD z hz⟩
-  · intro φ
-    exact integral_mul_maxObstacleWeight_eq i₀ hg hμc hμf hμ hμ'c hμ'f hμ' hex
-      φ.continuous φ.hasCompactSupport φ.tsupport_subset
+    μ.restrict {z | z ∈ U ∧ g z < u i₀ z} = μ'.restrict {z | z ∈ U ∧ g z < u i₀ z} :=
+  restrict_eq_of_joint_max_slot i₀ (isDecApprox_const hg) hμc hμf hμ hμ'c hμ'f hμ' hex
 
 theorem IsSmoothPsdOn.mono {U V : Opens (ComplexModel n)} {g : ComplexModel n → ℝ}
     (hg : IsSmoothPsdOn U g) (hVU : V ≤ U) : IsSmoothPsdOn V g :=
   ⟨hg.1.mono hVU, fun z hz ↦ hg.2 z (hVU hz)⟩
-
-/-- The tuple with `max(·, g i)` applied in the slots of index below `k`. -/
-def maxTupleObstacle (u g : Fin n → ComplexModel n → ℝ) (k : ℕ) :
-    Fin n → ComplexModel n → ℝ :=
-  fun i ↦ if i.val < k then fun z ↦ max (u i z) (g i z) else u i
 
 theorem maxTupleObstacle_zero (u g : Fin n → ComplexModel n → ℝ) :
     maxTupleObstacle u g 0 = u := by

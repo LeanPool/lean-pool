@@ -308,26 +308,6 @@ theorem topDensity_cons_unitaryBetaProduct {f : ComplexModel (m + 1) → ℝ}
   rw [← Complex.ofReal_pow, Complex.ofReal_re]
   ring
 
-private def leviScalarTest {U : TopologicalSpace.Opens (ComplexModel (m + 1))}
-    (a : ComplexModel (m + 1)) (φ : 𝓓(U, ℝ)) : 𝓓(U, ℝ) :=
-  (1 / 4 : ℝ) •
-    (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a
-      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a φ) +
-     TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a)
-      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a) φ))
-
-private theorem leviScalarTest_apply {U : TopologicalSpace.Opens (ComplexModel (m + 1))}
-    (a : ComplexModel (m + 1)) (φ : 𝓓(U, ℝ)) (x : ComplexModel (m + 1)) :
-    leviScalarTest a φ x = leviForm φ x a := by
-  simp only [leviScalarTest, _root_.smul_apply, _root_.add_apply, smul_eq_mul,
-    testFunction_lineDerivCLM_lineDerivCLM_apply, leviForm]
-  ring
-
-private theorem apply_leviScalarTest {U : TopologicalSpace.Opens (ComplexModel (m + 1))}
-    (T : 𝓓'(U, ℝ)) (a : ComplexModel (m + 1)) (φ : 𝓓(U, ℝ)) :
-    T (leviScalarTest a φ) = distributionalLeviCLM a T φ := by
-  simp only [leviScalarTest, map_smul, map_add, smul_eq_mul, distributionalLeviCLM_apply]
-
 /-- **The directional β-product test**: for a unit vector `a` there are constant `(1,0)`-forms
 `β₁, …, β_m` such that the pairing of `dd^c T` with `φ · ∏ i β_j ∧ βBar_j` is
 `((2π)^m/π^{m+1})` times the distributional Levi form of `T` in the direction `a`,
@@ -353,26 +333,17 @@ theorem exists_directional_betaProduct_test {U : TopologicalSpace.Opens (Complex
     TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
       (γ : RealForm (m + 1) (2 * m))) φ
   have hαval (z : ComplexModel (m + 1)) : α z = φ z • betaProduct β := rfl
-  have hαspan (z : ComplexModel (m + 1)) : α z ∈ formSpan (m + 1) m :=
-    (formSpan (m + 1) m).smul_mem (φ z) γ.property
   have hαadj : scalarAdjointTest α =
       ((2 * Real.pi) ^ m / Real.pi ^ (m + 1)) • leviScalarTest a φ := by
-    ext z
-    rw [scalarAdjointTest_apply_eq_actual_density α hαspan z]
-    change topDensity (castForm _ (localDdcTestCLM
-      (TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
-        (γ : RealForm (m + 1) (2 * m))) φ) z)) = _
-    rw [localDdcTestCLM_constForm_apply, castForm_wedgeTo _ _
-      (by omega : 2 + 2 * m = 2 * (m + 1))]
-    rw [← wedgeTo_comm_of_mem_formSpan γ.property (smoothDDC φ z)
-      (rfl : 2 * m + 2 = 2 * (m + 1)) (by omega)]
+    refine scalarAdjointTest_constForm_eq_leviScalarTest γ φ a
+      ((2 * Real.pi) ^ m / Real.pi ^ (m + 1)) ?_
+    intro z
     change topDensity (coordinateWedge (wedgeProd m fun j => oneOneSquare (β j))
       (smoothDDC φ z)) = _
     rw [← wedgeProd_snoc, NormalDirectionVanishing.wedgeProd_snoc_eq_cons,
       topDensity_cons_unitaryBetaProduct
         (φ.contDiff.contDiffAt.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) a W
         hWW' (fun i => hW0 i)]
-    simp only [_root_.smul_apply, smul_eq_mul, leviScalarTest_apply]
   refine ⟨β, α, hαval, ?_⟩
   rw [ddc_scalarTopCurrent_full_test_transpose, hαadj, map_smul, smul_eq_mul,
     apply_leviScalarTest]

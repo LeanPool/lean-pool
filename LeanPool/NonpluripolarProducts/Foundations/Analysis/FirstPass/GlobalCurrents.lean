@@ -155,6 +155,18 @@ theorem overlapSource_le (e f : ComplexChart n M) : overlapSource e f ≤ chartT
 theorem overlapTarget_le (e f : ComplexChart n M) : overlapTarget e f ≤ chartTarget f :=
   fun _ hz => hz.1
 
+/-- On an overlap, `φ ∘ e⁻¹ = (φ ∘ f⁻¹) ∘ (f ∘ e⁻¹)`. -/
+theorem chart_comp_transition {α : Type*} (φ : M → α) (e f : ComplexChart n M) :
+    ∀ x ∈ overlapSource e f, φ (e.val.symm x) = φ (f.val.symm (chartTransition e f x)) := by
+  intro x hx
+  have hx' : x ∈ (chartTransition e f).source := hx
+  have hxf : e.val.symm x ∈ f.val.source := by
+    simp only [chartTransition, OpenPartialHomeomorph.trans_source,
+      OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
+    exact hx'.2
+  simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
+    f.val.left_inv hxf]
+
 /-- The complete pullback equation for a pair of actual overlap test forms.
 Their bundled domains already require compact support in the source and target. -/
 def OverlapTestRelated (e f : ComplexChart n M) {q : ℕ}

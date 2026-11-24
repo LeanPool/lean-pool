@@ -18,9 +18,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Glob
 
 `PSH(X, θ)` is a convex set: for `t ∈ (0,1)` and `u`, `v` genuine `θ`-PSH
 potentials, `t·u + (1-t)·v` is again one.  This is the elementary closure
-property behind Xia's `ε`-barrier constructions (SGPT, Corollary 2.4.3,
-`xia-sgpt:page-0087`), which produce a
-common lower barrier for two potentials as an explicit convex combination.
+property used when forming the convex combination in
+[Xia's equal-mass envelope corollary](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L1046-L1055).
 
 Two points need care in this formalization.
 

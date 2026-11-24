@@ -15,8 +15,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Polydi
 
 `Pending.PolydiskPerronSemiconcave` discharges Blocki's `C^{1,1}` estimate on
 the `C²` stratum, and its module docstring names the two ingredients that the
-passage from `C²` data to the bounded upper semicontinuous data of Xia's Lemma
-2.4.3 still costs:
+passage from `C²` data to bounded upper semicontinuous data for the local balayage used in
+[Xia's balayage lemma](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L662-L688) requires:
 
 1. monotonicity of `perronEnvelope` in the data, and the identification of the
    decreasing limit of the envelopes;
@@ -63,9 +63,8 @@ module could not express — is
 `Pending.PolydiskPerronDecreasingLimit.perronEnvelope_iInf_eq_of_antitone`: it
 works with the competitor class of the usc datum directly, so no `IsPerronData`
 hypothesis on the limit is needed.  Both ingredients of Błocki's passage are
-therefore in place, and what remains between here and Xia's Lemma 2.4.3 is the
-*existence* of the approximation — that a bounded usc datum on the distinguished
-boundary is the decreasing limit of `C²` Perron data.
+therefore in place. The remaining step is to approximate bounded upper semicontinuous
+data on the distinguished boundary by decreasing `C²` Perron data.
 
 One general fact is proved on the way and stated in the root namespace, since
 it is missing from `SGPT.Foundations.Analysis.Plurisubharmonic`: a

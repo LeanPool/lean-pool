@@ -108,12 +108,8 @@ theorem complexTwist_exteriorProduct (A : SmoothRealForm n M p) (B : SmoothRealF
 theorem complexTwist_geometricallyEq_of_formSpan (G : SmoothRealForm n M (2 * q))
     (hG : ∀ e z, z ∈ e.val.target → G.coeff e z ∈ formSpan n q) :
     (complexTwist G).GeometricallyEq G := by
-  have hJ : modelComplexStructure n = complexJ n := by
-    ext v
-    rfl
   intro e z hz
   change (G.coeff e z).compContinuousLinearMap (modelComplexStructure n) = G.coeff e z
-  rw [hJ]
   exact formSpan_le_jInvariant q (hG e z hz)
 
 /-- Strong positivity of actual chart tensors supplies complex invariance. -/

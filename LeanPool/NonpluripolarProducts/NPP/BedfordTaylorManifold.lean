@@ -299,13 +299,7 @@ theorem bedfordTaylorInChart_compatible (hqp : q + p = n) {u : Fin p → M → �
     LocalBedfordTaylorBiholomorphicProducts.pullback_btProduct hqp
       (chartTransition_isBiholomorphicPair e f) huB]
   refine LocalBedfordTaylorDecreasing.btProduct_congr p q _ _ _ fun i x hx => ?_
-  have hx' : x ∈ (chartTransition e f).source := hx
-  have hxf : e.val.symm x ∈ f.val.source := by
-    simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-      OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
-    exact hx'.2
-  simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
-    f.val.left_inv hxf]
+  exact chart_comp_transition (u i) e f x hx
 
 /-- **The Bedford–Taylor product** `dd^c u₁ ∧ ⋯ ∧ dd^c u_p` of locally bounded psh functions on
 the complex manifold `M` (source `def:npp:L22`), a positive current of bidimension `(q,q)`, i.e.

@@ -235,7 +235,7 @@ theorem tendsto_integral_mul_of_tsupport_subset_ball {q : ℕ} (hP : IncPClaim n
     have ht2 : ‖z - z₀‖ ^ 2 < R ^ 2 := pow_lt_pow_left₀ ht (norm_nonneg _) two_ne_zero
     have hAR : A * (3 * R ^ 2) = 2 * M + 1 := by
       rw [hA_def]; field_simp
-    simp only [hg_def, collar]
+    simp only [hg_def, SmoothMax.quadraticCollar]
     nlinarith
   have hg_ge : ∀ z ∈ (Ω' : Set (ComplexModel n)) \ K, -1 ≤ g z := by
     rintro z ⟨hz1, hz2⟩
@@ -246,7 +246,7 @@ theorem tendsto_integral_mul_of_tsupport_subset_ball {q : ℕ} (hP : IncPClaim n
     have hδA : 4 * R * A * δ ≤ 1 := by
       rw [le_div_iff₀ (by positivity)] at hδ1; linarith
     have ht0 : 0 ≤ ‖z - z₀‖ := norm_nonneg _
-    simp only [hg_def, collar]
+    simp only [hg_def, SmoothMax.quadraticCollar]
     have h1 : 0 ≤ 2 * R - ‖z - z₀‖ := by linarith
     have h2 : 2 * R - ‖z - z₀‖ ≤ δ := by linarith
     have h3 : 2 * R + ‖z - z₀‖ ≤ 4 * R := by linarith

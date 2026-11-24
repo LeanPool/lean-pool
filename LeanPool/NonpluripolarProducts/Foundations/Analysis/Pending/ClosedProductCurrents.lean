@@ -68,8 +68,8 @@ variable {n : ℕ}
 
 variable (n) in
 /-- Multiplication by `i`, as a real-linear map of the model space. -/
-def complexJ : ComplexModel n →L[ℝ] ComplexModel n :=
-  Complex.I • ContinuousLinearMap.id ℝ (ComplexModel n)
+abbrev complexJ : ComplexModel n →L[ℝ] ComplexModel n :=
+  modelComplexStructure n
 
 @[simp] theorem complexJ_apply (v : ComplexModel n) : complexJ n v = Complex.I • v := rfl
 

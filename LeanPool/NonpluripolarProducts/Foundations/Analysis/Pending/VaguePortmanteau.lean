@@ -35,11 +35,11 @@ Borel measures which are finite on the compact subsets of `Ω` and satisfy
 The open-set inequality is first proved in a form involving only lower integrals
 of nonnegative tests, which needs no finiteness hypothesis at all.
 
-These are the measure-theoretic inputs of the lower semicontinuity of
-non-pluripolar Monge–Ampère measures along increasing sequences (Darvas–Di
-Nezza–Lu, Theorem 2.6; Xia, SGPT, Theorem 2.4.2) and of the increasing
-Bedford–Taylor convergence theorem (Błocki, *The complex Monge–Ampère operator
-in pluripotential theory*, Theorem 2.2.5).
+These lemmas are used in the increasing Bedford–Taylor convergence argument
+(Błocki, Theorem 2.2.5) and in a local open-set counterpart of
+[Xia's semicontinuity theorem](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L459-L478).
+The global weighted inequality in [Darvas–Di Nezza–Lu, Theorem 2.6](https://arxiv.org/html/2303.11584#S2.Thmtheorem6)
+uses convergence in capacity and uniformly bounded quasi-continuous weights.
 -/
 
 @[expose] public section

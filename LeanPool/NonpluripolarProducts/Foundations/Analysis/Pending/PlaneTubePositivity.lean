@@ -9,7 +9,6 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositivityPerturbation
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.OTChenWeights
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.LocalPotentialIndependence
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ComplexAnalyticSubvarieties
 
@@ -89,21 +88,44 @@ theorem planeDistSq_eq_zero_iff (z : ComplexModel n) :
     rw [h i (mem_normalIndices.mp hi)]
     simp
 
+/-- The squared modulus of the `i`-th coordinate. -/
+def coordSq (i : Fin n) (z : ComplexModel n) : ℝ := ‖z i‖ ^ 2
+
+/-- The `i`-th coordinate as a real continuous linear map. -/
+private def coordCLM (i : Fin n) : ComplexModel n →L[ℝ] ℂ :=
+  ((EuclideanSpace.proj (𝕜 := ℂ) i : ComplexModel n →L[ℂ] ℂ)).restrictScalars ℝ
+
+@[simp] private theorem coordCLM_apply (i : Fin n) (z : ComplexModel n) : coordCLM i z = z i := rfl
+
+private theorem coordSq_eq (i : Fin n) : coordSq i = fun z ↦ ‖(0 : ℂ) + coordCLM i z‖ ^ 2 := by
+  funext z; simp [coordSq]
+
+/-- The squared modulus of a coordinate is smooth. -/
+theorem contDiff_coordSq (i : Fin n) : ContDiff ℝ ∞ (coordSq i) := by
+  rw [coordSq_eq]
+  exact (contDiff_norm_sq ℝ).comp (contDiff_const.add (coordCLM i).contDiff)
+
+/-- The real Hessian of a coordinate square is twice the coordinate pairing. -/
+theorem realHessian_coordSq (i : Fin n) (x a b : ComplexModel n) :
+    realHessian (coordSq i) x a b = 2 * inner ℝ (a i) (b i) := by
+  rw [coordSq_eq]
+  rw [realHessian_comp_affine (contDiff_norm_sq ℝ) (coordCLM i) 0 x a b]
+  simp [realHessian_norm_sq]
+
 theorem planeDistSq_eq_sum_coordSq :
-    planeDistSq n k = fun z => ∑ i ∈ normalIndices n k, OTChen.coordSq i z := rfl
+    planeDistSq n k = fun z => ∑ i ∈ normalIndices n k, coordSq i z := rfl
 
 theorem contDiff_planeDistSq : ContDiff ℝ ∞ (planeDistSq n k) := by
   rw [planeDistSq_eq_sum_coordSq]
-  exact ContDiff.sum fun i _ => OTChen.contDiff_coordSq i
+  exact ContDiff.sum fun i _ => contDiff_coordSq i
 
 /-- The Levi form of the single coordinate square. -/
 theorem leviForm_coordSq (i : Fin n) (x v : ComplexModel n) :
-    leviForm (OTChen.coordSq i) x v = ‖v i‖ ^ 2 := by
-  have h := OTChen.leviForm_comp_coordSq (G := fun t : ℝ => t) (x := x) i
-    (contDiff_id.contDiffAt.of_le (WithTop.coe_le_coe.mpr le_top)) v
-  rw [show (fun z => OTChen.coordSq i z) = OTChen.coordSq i from rfl] at h
-  rw [h, deriv_id'']
-  simp
+    leviForm (coordSq i) x v = ‖v i‖ ^ 2 := by
+  have hI : (Complex.I • v) i = Complex.I • v i := rfl
+  rw [leviForm, realHessian_coordSq, realHessian_coordSq, hI,
+    real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq, norm_smul, Complex.norm_I, one_mul]
+  ring
 
 /-- The Levi form of a finite sum. -/
 theorem leviForm_finsetSum {ι : Type*} (s : Finset ι) {f : ι → ComplexModel n → ℝ}
@@ -127,7 +149,7 @@ theorem leviForm_planeDistSq (x v : ComplexModel n) :
     leviForm (planeDistSq n k) x v = ∑ i ∈ normalIndices n k, ‖v i‖ ^ 2 := by
   rw [planeDistSq_eq_sum_coordSq,
     leviForm_finsetSum _ v
-      (fun i => (OTChen.contDiff_coordSq i).of_le (WithTop.coe_le_coe.mpr le_top))]
+      (fun i => (contDiff_coordSq i).of_le (WithTop.coe_le_coe.mpr le_top))]
   exact Finset.sum_congr rfl fun i _ => leviForm_coordSq i x v
 
 theorem leviForm_planeDistSq_nonneg (x v : ComplexModel n) :

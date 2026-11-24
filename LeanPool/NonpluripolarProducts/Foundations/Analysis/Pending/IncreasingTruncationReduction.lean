@@ -25,8 +25,11 @@ assuming the Bedford–Taylor convergence theorem for *bounded* increasing seque
 if locally bounded plurisubharmonic `w_j` increase almost everywhere to a locally
 bounded plurisubharmonic `W`, then `(ddᶜ w_j)ⁿ → (ddᶜ W)ⁿ` and
 `w_j (ddᶜ w_j)ⁿ → W (ddᶜ W)ⁿ` vaguely on `Ω` (Błocki, *The complex Monge–Ampère
-operator in pluripotential theory*, Theorem 2.2.5).  This is the reduction in the
-proof of Darvas–Di Nezza–Lu, Theorem 2.6 (Xia, SGPT, Theorem 2.4.2).
+operator in pluripotential theory*, Theorem 2.2.5).
+The truncation argument is a local adaptation of
+[Darvas–Di Nezza–Lu, Theorem 2.6](https://arxiv.org/html/2303.11584#S2.Thmtheorem6),
+which assumes convergence in capacity and bounded quasi-continuous weights. It concerns
+the unweighted local version of [Xia's semicontinuity theorem](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L459-L478).
 
 **Proof.**  Fix levels `k < K` and put `W = max(V, -K)`, `w_j = max(v_j, -K)`.  Since
 `sup_j v_j = V` Lebesgue-almost everywhere (`ae_uscRegularization_iSup_eq_on_ball`),

@@ -36,24 +36,6 @@ attribute [local instance] LocalCurrentLebesgue.addCommGroupFormSpan
 
 variable {m : ℕ} {U : Opens (ComplexModel (m + 1))}
 
-private def leviScalarTest (a : ComplexModel (m + 1)) (φ : 𝓓(U, ℝ)) : 𝓓(U, ℝ) :=
-  (1 / 4 : ℝ) •
-    (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a
-      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a φ) +
-     TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a)
-      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a) φ))
-
-private theorem leviScalarTest_apply (a : ComplexModel (m + 1))
-    (φ : 𝓓(U, ℝ)) (x : ComplexModel (m + 1)) :
-    leviScalarTest a φ x = leviForm φ x a := by
-  simp only [leviScalarTest, _root_.smul_apply, _root_.add_apply, smul_eq_mul,
-    testFunction_lineDerivCLM_lineDerivCLM_apply, leviForm]
-  ring
-
-private theorem apply_leviScalarTest (T : 𝓓'(U, ℝ)) (a : ComplexModel (m + 1))
-    (φ : 𝓓(U, ℝ)) : T (leviScalarTest a φ) = distributionalLeviCLM a T φ := by
-  simp only [leviScalarTest, map_smul, map_add, smul_eq_mul, distributionalLeviCLM_apply]
-
 private theorem smoothDDC_perpQuadratic_constant (a z : ComplexModel (m + 1)) :
     smoothDDC (perpQuadratic a) z = smoothDDC (perpQuadratic a) 0 := by
   have hsplit : perpQuadratic a = (fun y : ComplexModel (m + 1) => ‖y‖ ^ 2) +
@@ -107,15 +89,9 @@ theorem exists_directional_full_test (T : 𝓓'(U, ℝ)) (φ : 𝓓(U, ℝ))
     (formSpan (m + 1) m).smul_mem (φ z) γ.property
   have hαadj : scalarAdjointTest α =
       ((m.factorial : ℝ) / Real.pi ^ (m + 1)) • leviScalarTest a φ := by
-    ext z
-    rw [scalarAdjointTest_apply_eq_actual_density α hαspan z]
-    change topDensity (castForm _ (localDdcTestCLM
-      (TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
-        (γ : RealForm (m + 1) (2 * m))) φ) z)) = _
-    rw [localDdcTestCLM_constForm_apply, castForm_wedgeTo _ _
-      (by omega : 2 + 2 * m = 2 * (m + 1))]
-    rw [← wedgeTo_comm_of_mem_formSpan γ.property (smoothDDC φ z)
-      (rfl : 2 * m + 2 = 2 * (m + 1)) (by omega)]
+    refine scalarAdjointTest_constForm_eq_leviScalarTest γ φ a
+      ((m.factorial : ℝ) / Real.pi ^ (m + 1)) ?_
+    intro z
     change topDensity (coordinateWedge
       (formPower (smoothDDC (perpQuadratic a) 0) m) (smoothDDC φ z)) = _
     rw [formPower_eq_wedgeProd, ← wedgeProd_snoc,
@@ -123,7 +99,6 @@ theorem exists_directional_full_test (T : 𝓓'(U, ℝ)) (φ : 𝓓(U, ℝ))
       ← smoothDDC_perpQuadratic_constant a z,
       topDensity_smoothDDC_perpQuadratic
         (φ.contDiff.contDiffAt.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) a ha]
-    simp only [_root_.smul_apply, smul_eq_mul, leviScalarTest_apply]
   refine ⟨α, hαval, hαspan, ?_, ?_⟩
   · intro hφ z
     rw [hαval]

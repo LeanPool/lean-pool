@@ -52,13 +52,13 @@ theorem exists_collar_constants (z₀ : ComplexModel n) {R M : ℝ} (hR : 0 < R)
   · exact (Real.sqrt_lt' hR).2 (by linarith)
   · have h1 : ‖z - z₀‖ ^ 2 < (R / 2) ^ 2 := by
       exact pow_lt_pow_left₀ hz (norm_nonneg _) two_ne_zero
-    unfold collar
+    unfold collar SmoothMax.quadraticCollar
     nlinarith
   · have hρ0 : 0 ≤ R ^ 2 - δ := by nlinarith
     have h1 : R ^ 2 - δ < ‖z - z₀‖ ^ 2 := by
       have := pow_lt_pow_left₀ hz (Real.sqrt_nonneg _) two_ne_zero
       rwa [Real.sq_sqrt hρ0] at this
-    unfold collar
+    unfold collar SmoothMax.quadraticCollar
     have hAδ : A * δ = 1 / 2 := by rw [hδ]; field_simp
     nlinarith
 

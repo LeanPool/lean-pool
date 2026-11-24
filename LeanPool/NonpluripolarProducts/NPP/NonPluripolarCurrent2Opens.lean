@@ -407,13 +407,7 @@ def truncatedCurrent (φ : Fin p → M → EReal) (hφ : ∀ i, SGPT.PSH.Manifol
     have hcongr : ∀ i, ∀ x ∈ overlapSource e f,
         φ i (e.val.symm x) = φ i (f.val.symm (chartTransition e f x)) := by
       intro i x hx
-      have hx' : x ∈ (chartTransition e f).source := hx
-      have hxf : e.val.symm x ∈ f.val.source := by
-        simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-          OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
-        exact hx'.2
-      simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
-        f.val.left_inv hxf]
+      exact chart_comp_transition (φ i) e f x hx
     rw [← truncatedBT_restrict hqp (chartPlurisubharmonicOn hφ e) (overlapSource_le e f),
       pullback_congr_current hh _ (isPositive_truncatedBT hqp hφB k).1
         (truncatedBT_restrict hqp hφf (overlapTarget_le e f) k).symm,

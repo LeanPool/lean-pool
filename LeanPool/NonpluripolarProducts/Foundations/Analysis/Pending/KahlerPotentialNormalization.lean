@@ -52,8 +52,8 @@ open FirstPass FirstPass.MongeAmpere
 variable {n : ℕ}
 
 /-- Multiplication by `i` as a real continuous linear map. -/
-noncomputable def mulI : ComplexModel n →L[ℝ] ComplexModel n :=
-  (Complex.I • ContinuousLinearMap.id ℂ (ComplexModel n)).restrictScalars ℝ
+noncomputable abbrev mulI : ComplexModel n →L[ℝ] ComplexModel n :=
+  modelComplexStructure n
 
 @[simp] theorem mulI_apply (v : ComplexModel n) : mulI v = Complex.I • v := rfl
 

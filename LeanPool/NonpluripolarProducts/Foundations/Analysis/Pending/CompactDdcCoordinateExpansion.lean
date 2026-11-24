@@ -119,4 +119,56 @@ theorem exists_full_transpose_test {m : ℕ} {U : Opens (ComplexModel (m + 1))}
   rw [← localDdcTestCLM_apply]
   exact scalarAdjointTest_apply_eq_actual_density α hα x
 
+section
+
+variable {m : ℕ} {U : Opens (ComplexModel (m + 1))}
+
+/-- The compact scalar test for a directional Levi pairing. -/
+def leviScalarTest (a : ComplexModel (m + 1)) (φ : 𝓓(U, ℝ)) : 𝓓(U, ℝ) :=
+  (1 / 4 : ℝ) •
+    (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a
+      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ a φ) +
+     TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a)
+      (TestFunction.lineDerivCLM (n := ⊤) (k := ⊤) ℝ (Complex.I • a) φ))
+
+/-- The scalar test evaluates pointwise to the Levi form of the test function. -/
+theorem leviScalarTest_apply (a : ComplexModel (m + 1))
+    (φ : 𝓓(U, ℝ)) (x : ComplexModel (m + 1)) :
+    leviScalarTest a φ x = leviForm φ x a := by
+  simp only [leviScalarTest, _root_.smul_apply, _root_.add_apply, smul_eq_mul,
+    testFunction_lineDerivCLM_lineDerivCLM_apply, leviForm]
+  ring
+
+/-- Applying a distribution to the scalar test gives its directional Levi pairing. -/
+theorem apply_leviScalarTest (T : 𝓓'(U, ℝ)) (a : ComplexModel (m + 1))
+    (φ : 𝓓(U, ℝ)) : T (leviScalarTest a φ) = distributionalLeviCLM a T φ := by
+  simp only [leviScalarTest, map_smul, map_add, smul_eq_mul, distributionalLeviCLM_apply]
+
+/-- A constant form with a directional top-density formula gives the corresponding
+compact scalar adjoint test. -/
+theorem scalarAdjointTest_constForm_eq_leviScalarTest (γ : formSpan (m + 1) m)
+    (φ : 𝓓(U, ℝ)) (a : ComplexModel (m + 1)) (c : ℝ)
+    (hDensity : ∀ z, topDensity (coordinateWedge (γ : RealForm (m + 1) (2 * m))
+      (smoothDDC φ z)) = c * leviForm φ z a) :
+    scalarAdjointTest (TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
+      (γ : RealForm (m + 1) (2 * m))) φ) = c • leviScalarTest a φ := by
+  let α : 𝓓(U, RealForm (m + 1) (2 * m)) :=
+    TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
+      (γ : RealForm (m + 1) (2 * m))) φ
+  have hαspan (z : ComplexModel (m + 1)) : α z ∈ formSpan (m + 1) m :=
+    (formSpan (m + 1) m).smul_mem (φ z) γ.property
+  change scalarAdjointTest α = _
+  ext z
+  rw [scalarAdjointTest_apply_eq_actual_density α hαspan z]
+  change topDensity (castForm _ (localDdcTestCLM
+    (TestFunction.postcompCLM ((ContinuousLinearMap.id ℝ ℝ).smulRight
+      (γ : RealForm (m + 1) (2 * m))) φ) z)) = _
+  rw [localDdcTestCLM_constForm_apply, castForm_wedgeTo _ _
+    (by omega : 2 + 2 * m = 2 * (m + 1))]
+  rw [← wedgeTo_comm_of_mem_formSpan γ.property (smoothDDC φ z)
+    (rfl : 2 * m + 2 = 2 * (m + 1)) (by omega)]
+  exact (hDensity z).trans (by simp only [_root_.smul_apply, smul_eq_mul, leviScalarTest_apply])
+
+end
+
 end SGPT.Foundations.Analysis.Pending.CompactDdcCoordinateExpansion

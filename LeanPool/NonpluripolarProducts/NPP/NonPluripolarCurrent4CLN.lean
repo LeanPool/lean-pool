@@ -145,7 +145,7 @@ theorem smoothDDC_ballPot (A : ℝ) (z₀ : (ComplexModel n)) (R : ℝ) (z : (Co
     smoothDDC (ballPot A z₀ R) z = (A / Real.pi) • kahlerForm n := by
   have e : ballPot A z₀ R = fun y => A • ((fun y => ‖y - z₀‖ ^ 2) y - (fun _ => R ^ 2) y) := by
     funext y
-    simp [ballPot, smul_eq_mul]
+    simp [SmoothMax.quadraticCollar, smul_eq_mul]
   have h1 : ContDiffOn ℝ ∞ (fun y : (ComplexModel n) => ‖y - z₀‖ ^ 2) univ :=
     ((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).contDiffOn
   rw [e, smoothDDC_smul isOpen_univ (h1.sub contDiffOn_const) A (mem_univ z),
@@ -201,14 +201,8 @@ theorem traceMeasure_ddcWedge_ballPot {S : LocalProductCurrent n U (m + 1)} (hS 
 
 /-- The ball `B(z₀, R)` is relatively compact in `U` when `BBar(z₀, R) ⊆ U`. -/
 theorem relativelyCompactIn_ballOpens {z₀ : (ComplexModel n)} {R : ℝ} (hR : 0 < R)
-    (hBU : closedBall z₀ R ⊆ U) : RelativelyCompactIn ⟨ball z₀ R, isOpen_ball⟩ U := by
-  refine ⟨?_, ?_⟩
-  · change IsCompact (closure (ball z₀ R))
-    rw [closure_ball z₀ hR.ne']
-    exact isCompact_closedBall _ _
-  · change closure (ball z₀ R) ⊆ U
-    rw [closure_ball z₀ hR.ne']
-    exact hBU
+    (hBU : closedBall z₀ R ⊆ U) : RelativelyCompactIn ⟨ball z₀ R, isOpen_ball⟩ U :=
+  LocalBedfordTaylorDecreasing.relativelyCompactIn_ball hR hBU
 
 /-- A function continuous on `U`, vanishing off `B(z₀, R)`, is integrable for the trace measure. -/
 theorem integrable_of_continuousOn_of_vanishing {q : ℕ} {T : LocalProductCurrent n U q}

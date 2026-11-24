@@ -168,6 +168,17 @@ theorem complexHessian_comp {φ : ℝ → ℝ} (hφ : ContDiff ℝ ∞ φ) {k : 
   rw [I_sq]
   ring
 
+/-- The quadratic collar vanishes at distance `R` from its center. -/
+def quadraticCollar {V : Type*} [NormedAddCommGroup V] (center : V)
+    (amplitude radius : ℝ) (z : V) : ℝ :=
+  amplitude * (‖z - center‖ ^ 2 - radius ^ 2)
+
+/-- The quadratic collar is smooth on a real inner product space. -/
+theorem contDiff_quadraticCollar {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V]
+    (center : V) (amplitude radius : ℝ) : ContDiff ℝ ∞ (quadraticCollar center amplitude radius) :=
+  contDiff_const.mul (((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).sub
+    contDiff_const)
+
 /-- The regularized maximum `smoothMax f g = g + P(f - g)`. -/
 def smoothMax {E : Type*} (f g : E → ℝ) : E → ℝ := fun z ↦ g z + posPart (f z - g z)
 

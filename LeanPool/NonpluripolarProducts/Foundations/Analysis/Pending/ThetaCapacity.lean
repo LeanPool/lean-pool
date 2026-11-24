@@ -16,23 +16,20 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Envelo
 /-!
 # The global Monge--Ampere capacity of a big class
 
-Xia, SGPT, Section 2.3 works throughout with the Monge--Ampere capacity
-attached to a closed real `(1,1)`-form `theta`,
+[Xia's capacity definition](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L299-L306)
+associates a Monge–Ampère capacity with a closed real `(1,1)`-form `theta`:
 
   `Cap_theta(E) = sup { int_E theta^n_u : u in PSH(X, theta), V_theta - 1 <= u <= V_theta }`,
 
-and the proof of Theorem 2.4.4 (`xia-sgpt:page-0080`--`xia-sgpt:page-0082`)
-uses exactly three of its properties: monotonicity, countable subadditivity,
-and the domination of the non-pluripolar measure of a potential lying within
-distance `C` of the reference by `C^n Cap_theta`.  This module supplies all
-three, over the actual `diagonalPotentialMeasure` of the workspace.
+This module proves monotonicity, countable subadditivity and a domination
+bound for `diagonalPotentialMeasure` using a fixed explicit reference. The
+scaling estimate is related to [Xia's envelope concentration proof](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L769-L796),
+where the background in the capacity is rescaled by `C⁻¹`.
 
 The reference potential is an explicit argument `V` rather than hard-wired to
 `V_theta`.  Xia's `Cap_theta` is the instance `V = thetaPshSupremum theta`,
 which `Pending.thetaPshSupremum_isThetaPshPotential` makes a genuine
-`theta`-PSH potential as soon as `PSH(X, theta)` is nonempty; the relative
-form is what the proof of Theorem 2.4.4 actually iterates, since there the
-reference changes with the truncation level.  The normalization is written
+`theta`-PSH potential as soon as `PSH(X, theta)` is nonempty. The normalization is written
 `u <= V` together with `V <= u + 1` instead of `V - 1 <= u <= V`, so that no
 subtraction of extended reals occurs: on the pole set of `V` both readings
 degenerate to `u = V = -infinity`.
@@ -139,9 +136,9 @@ theorem convexComb_self {N : Type*} {t : ℝ} (ht0 : 0 < t) (ht1 : t < 1)
 
 /-- **Domination of the non-pluripolar measure by the capacity.**  If `u` is a
 genuine `theta`-PSH potential with `V - C <= u <= V` for some `C >= 1`, then
-`theta^n_u(E) <= C^n Cap_theta(E, V)` for every `E`.  This is the estimate
-Xia uses repeatedly in the proof of Theorem 2.4.4 (for instance the bound
-`<= C^n eps` following (2.27) on `xia-sgpt:page-0081`).
+`theta^n_u(E) <= C^n Cap_theta(E, V)` for every `E`. This is an explicit-reference
+estimate in the original background, related to the use of the rescaled capacity in
+[Xia's envelope concentration proof](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L769-L796).
 
 The competitor is `C^{-1} u + (1 - C^{-1}) V`, which is squeezed between
 `V - 1` and `V`; the scaling

@@ -14,8 +14,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Thet
 /-!
 # The Perron barrier family of Xia's domination principle
 
-In the ordered case `phi ≤ psi` of Xia's Theorem 2.4.5 the barriers are the
-Perron envelopes
+In the ordered case of [Xia's domination principle](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L1083-L1132),
+the barriers are the Perron envelopes
 
   `eta a := P_theta (a * phi + (1 - a) * psi)`,  `a > 1`,
 
@@ -31,10 +31,10 @@ family are unconditional facts about that envelope and are proved here:
 * every member **lies below `phi`**, since the obstacle at `a = 1` is `phi`
   itself and the rooftop envelope of a genuine potential is that potential.
 
-The remaining two — that each member is a genuine `theta`-PSH potential of the
-reference mass (Xia's Lemma 2.4.4 and Corollary 2.4.3), and that each meets
-`phi` off a `theta^n_phi`-null set (the measure chain built from Theorem 2.4.4
-and Lemma 2.4.2) — are the analytic middle stage and are not addressed here.
+[Xia's equal-mass envelope corollary](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L1046-L1055)
+supplies the mass assertion in the manuscript, and the domination proof uses
+the concentration theorem and measure comparison on the contact set. This file
+proves the antitone and upper-bound assertions.
 -/
 
 @[expose] public section
@@ -60,7 +60,7 @@ theorem convexComb_one (u v : M → EReal) : convexComb (1 : ℝ) u v = u := by
   norm_num
 
 omit [TopologicalSpace M] [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] in
-/-- **The Perron obstacle of Theorem 2.4.5 is antitone in `a`.**  Below the
+/-- **The Perron obstacle in the domination proof is antitone in `a`.** Below the
 pole set of `phi` both sides are `-∞`; elsewhere both are finite and the
 inequality is `(b - a)(phi - psi) ≤ 0`. -/
 theorem convexComb_antitone_of_le {phi psi : M → EReal} (hle : phi ≤ psi)

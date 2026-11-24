@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointDecreasingMaxLocality
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorMaxObstacle
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorGauge
 
 /-! # Mixed maximum locality for arbitrary locally bounded PSH obstacles
@@ -65,7 +65,7 @@ theorem restrict_eq_joint_maxTuple {U : Opens (ComplexModel n)}
     exact ⟨hz.1, by rw [maxTupleObstacle_apply_self]; exact hz.2 i⟩
   · intro k hk μk μ' hμkc hμkf hμkT hμ'c hμ'f hμ'
     rw [maxTupleObstacle_succ u g hk] at hμ'
-    exact JointDecreasingMaxLocality.restrict_eq_of_joint_max_slot
+    exact restrict_eq_of_joint_max_slot
       (u := maxTupleObstacle u g k) ⟨k, hk⟩ (hJ ⟨k, hk⟩) hμkc hμkf hμkT hμ'c hμ'f hμ'
       (exists_isAdmissible_joint_maxTuple hF hJ k)
 

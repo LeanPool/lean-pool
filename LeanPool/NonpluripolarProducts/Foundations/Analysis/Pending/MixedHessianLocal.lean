@@ -200,37 +200,57 @@ theorem mixedC_re_nonneg {a : ComplexModel (m + 1) → ℝ} {g : Fin m → Compl
   · simpa using ha
   · simpa using hg i
 
-/-- **Comparison with a common collar.** Increasing the first Hessian slot
-increases the weighted integral against a positive semidefinite weight: after
-swapping the weight into the slot, positivity of the mixed coefficient applies. -/
-theorem setIntegral_mul_mixedC_re_mono_collar {g : Fin m → ComplexModel (m + 1) → ℝ}
-    (hg : ∀ i, ContDiff ℝ ∞ (g i)) {a b b' h : ComplexModel (m + 1) → ℝ}
-    (ha : ContDiff ℝ ∞ a) (hb : ContDiff ℝ ∞ b) (hb' : ContDiff ℝ ∞ b') (hh : ContDiff ℝ ∞ h)
+/-- **Comparison under a compact raise of one slot.** Raising the first slot
+by a function supported in a compact `K ⊆ W` raises the weighted integral over
+`W` against a positive semidefinite weight; the weight is unrestricted off `K`. -/
+theorem setIntegral_mul_mixedC_re_mono_of_compact {g : Fin m → ComplexModel (m + 1) → ℝ}
+    (hg : ∀ i, ContDiff ℝ ∞ (g i)) {a b b' : ComplexModel (m + 1) → ℝ}
+    (ha : ContDiff ℝ ∞ a) (hb : ContDiff ℝ ∞ b) (hb' : ContDiff ℝ ∞ b')
     {K W : Set (ComplexModel (m + 1))} (hK : IsCompact K) (hKW : K ⊆ W) (hWm : MeasurableSet W)
-    (hWc : IsCompact (closure W)) (hah : ∀ z ∉ K, a z = h z) (hbh : ∀ z ∉ K, b z = h z)
-    (hb'h : ∀ z ∉ K, b' z = h z)
+    (hWc : IsCompact (closure W)) (hbb' : ∀ z ∉ K, b z = b' z)
     (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef)
     (hgpsd : ∀ i, ∀ z ∈ W, (complexHessian (g i) z).PosSemidef)
     (hle : ∀ z ∈ W, b z ≤ b' z) :
     ∫ z in W, a z * (mixedC b g z).re ≤ ∫ z in W, a z * (mixedC b' g z).re := by
+  have h2 : (2 : WithTop ℕ∞) ≤ ∞ := WithTop.coe_le_coe.mpr le_top
+  set t : ComplexModel (m + 1) → ℝ := b' - b with ht
+  have htm : ContDiff ℝ ∞ t := hb'.sub hb
+  have htK : tsupport t ⊆ K := closure_minimal (fun z hz ↦ by
+    by_contra hzK
+    exact hz (by simp [ht, hbb' z hzK])) hK.isClosed
+  have htc : HasCompactSupport t := hK.of_isClosed_subset (isClosed_tsupport t) htK
   have hcont (f : ComplexModel (m + 1) → ℝ) (hf : ContDiff ℝ ∞ f) :
       Continuous (mixedC f g) := continuous_mixedCoefficient_cons hg hf
+  have hsplit (z : ComplexModel (m + 1)) : mixedC b' g z = mixedC t g z + mixedC b g z := by
+    rw [← mixedC_add_left (htm.contDiffAt.of_le h2) (hb.contDiffAt.of_le h2)]
+    simp [ht]
   have hI (f k : ComplexModel (m + 1) → ℝ) (hf : ContDiff ℝ ∞ f) (hk : ContDiff ℝ ∞ k) :
       IntegrableOn (fun z ↦ (f z : ℂ) * mixedC k g z) W :=
     integrableOn_of_continuous_of_isCompact_closure
-      ((continuous_ofReal.comp hf.continuous).mul (hcont k hk)) hWc
+      ((Complex.continuous_ofReal.comp hf.continuous).mul (hcont k hk)) hWc
   have hre (f k : ComplexModel (m + 1) → ℝ) (hf : ContDiff ℝ ∞ f) (hk : ContDiff ℝ ∞ k) :
       ∫ z in W, f z * (mixedC k g z).re = (∫ z in W, (f z : ℂ) * mixedC k g z).re := by
     have h1 := integral_re (hI f k hf hk)
     simpa [RCLike.re_to_complex, Complex.mul_re] using h1
-  rw [hre a b ha hb, hre a b' ha hb', setIntegral_mul_mixedC_swap_collar hg ha hb hh hK hKW hWc
-    hah hbh, setIntegral_mul_mixedC_swap_collar hg ha hb' hh hK hKW hWc hah hb'h,
-    ← hre b a hb ha, ← hre b' a hb' ha]
-  refine setIntegral_mono_on ?_ ?_ hWm fun z hz ↦ ?_
-  · exact ((hI b a hb ha).re).congr (Eventually.of_forall fun z ↦ by simp)
-  · exact ((hI b' a hb' ha).re).congr (Eventually.of_forall fun z ↦ by simp)
-  · exact mul_le_mul_of_nonneg_right (hle z hz)
-      (mixedC_re_nonneg (hapsd z hz) fun i ↦ hgpsd i z hz)
+  have ht0 (z) (hz : z ∉ K) : t z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hz (htK h)
+  have hMt0 (z) (hz : z ∉ K) : mixedC t g z = 0 :=
+    mixedC_eq_zero_of_notMem_tsupport fun h ↦ hz (htK h)
+  have hglob {F : ComplexModel (m + 1) → ℂ} (hF : ∀ z ∉ K, F z = 0) :
+      ∫ z in W, F z = ∫ z, F z :=
+    setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦ hF z fun hzK ↦ hz (hKW hzK)
+  have hswap : ∫ z in W, (a z : ℂ) * mixedC t g z = ∫ z in W, (t z : ℂ) * mixedC a g z := by
+    rw [hglob fun z hz ↦ by simp [hMt0 z hz], hglob fun z hz ↦ by simp [ht0 z hz]]
+    exact (integral_mul_mixedCoefficient_swap hg htm ha htc).symm
+  have heq : ∫ z in W, (a z : ℂ) * mixedC b' g z =
+      (∫ z in W, (t z : ℂ) * mixedC a g z) + ∫ z in W, (a z : ℂ) * mixedC b g z := by
+    rw [← hswap, ← integral_add (hI a t ha htm) (hI a b ha hb)]
+    congr 1; funext z; rw [hsplit]; ring
+  have hnonneg : 0 ≤ ∫ z in W, t z * (mixedC a g z).re := by
+    refine setIntegral_nonneg hWm fun z hz ↦ mul_nonneg ?_ (mixedC_re_nonneg (hapsd z hz)
+      fun i ↦ hgpsd i z hz)
+    simpa [ht] using hle z hz
+  rw [hre a b ha hb, hre a b' ha hb', heq, Complex.add_re, ← hre t a htm ha]
+  linarith
 
 end
 

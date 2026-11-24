@@ -169,7 +169,7 @@ theorem IsBTLimit.exists_add_pluriharmonic {Ω : Opens (ComplexModel n)}
   obtain ⟨F, hF, -⟩ := (hμ.add_pluriharmonic hh).2.2 U hU
   obtain ⟨F', hF'⟩ := exists_isAdmissible_maxTuple hF c n
   refine ⟨F', fun i ↦ ?_, hF'.2⟩
-  simpa [maxTuple] using hF'.1 i
+  simpa [maxTupleObstacle] using hF'.1 i
 
 /-- **Locality for a pluriharmonic obstacle.** -/
 theorem IsBTLimit.restrict_max_pluriharmonic {Ω : Opens (ComplexModel n)}

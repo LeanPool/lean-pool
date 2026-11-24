@@ -15,10 +15,10 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.VagueP
 /-!
 # The diagonal measure along a decreasing sequence: the open-set portmanteau
 
-Xia's proof of Theorem 2.4.4 (`xia-sgpt:page-0081`) lets `j -> infinity` in an
-integral against `theta^n_{P_theta(f_j)}` for a *decreasing* sequence of
-potentials.  The measure-theoretic content of that passage is the
-Bedford--Taylor convergence theorem for decreasing sequences, which the
+[Xia's envelope concentration proof](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L769-L796)
+passes to a limit against weights converging in capacity. This module gives a
+related unweighted result on open sets inside a bounded chart. The
+Bedford–Taylor convergence theorem for decreasing sequences is the input, which the
 workspace has in the model (`Pending.BedfordTaylorDecreasingLimit`) but not for
 the global non-pluripolar measure.  This module supplies the half the proof
 actually uses, on one slot chart:
@@ -27,8 +27,8 @@ actually uses, on one slot chart:
 
 for `O` open inside the slot-chart source and `u_k` decreasing to `w`, all
 bounded there.  Nothing is assumed away from that chart, so the statement is
-usable exactly where Xia uses it -- on an open set relatively compact in
-`X \ nK({theta})`, where Lemma 2.4.1 supplies the bounds.
+applicable on relatively compact subsets off the non-Kähler locus when
+the bounds follow from [the local bound for the reference potential](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L448-L455).
 
 The proof is a translation.  `ThetaCapacityChartLocal.exists_isBTLimit_of_boundedOn`
 identifies the restriction of the global measure to the slot-chart source with
@@ -140,7 +140,7 @@ then for every open `O` inside that source,
 This is the chartwise portmanteau consequence of Bedford–Taylor
 decreasing convergence ([Błocki, Theorem 2.1.5](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=36)). The
 boundedness hypotheses identify the global non-pluripolar measures with their
-local Bedford–Taylor representatives, as used in Xia's Theorem 2.4.4. -/
+local Bedford–Taylor representatives. The open-set inequality is unweighted. -/
 theorem diagonalPotentialMeasure_le_liminf_of_antitone {theta : ClosedRealOneOneForm n M}
     {e : ComplexChart n M} {D : Opens (ComplexModel n)}
     {hD : (D : Set (ComplexModel n)) ⊆ e.val.target} {rho : ComplexModel n → ℝ}

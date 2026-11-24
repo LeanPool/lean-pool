@@ -139,6 +139,72 @@ theorem restrict_eq_of_max_weight_test_integral_eq {U : Opens (ComplexModel n)}
     · exact Eventually.of_forall fun _ => ENNReal.ofReal_ne_top
   rw [hinv μ, hinv μ', hρ]
 
+/-- Borel strict comparison is constructed from the original two finite limits. -/
+theorem measurableSet_lt_of_joint_decApprox {U : Opens (ComplexModel n)}
+    {u v : ComplexModel n → ℝ} {F G : ℕ → ComplexModel n → ℝ}
+    (hF : IsDecApprox U u F) (hG : IsDecApprox U v G) :
+    MeasurableSet {z | z ∈ U ∧ v z < u z} := by
+  classical
+  have hmeas {w : ComplexModel n → ℝ} {H : ℕ → ComplexModel n → ℝ}
+      (hH : IsDecApprox U w H) :
+      Measurable ((U : Set (ComplexModel n)).piecewise w (fun _ ↦ 0)) := by
+    refine measurable_of_tendsto_metrizable
+      (f := fun j ↦ (U : Set (ComplexModel n)).piecewise (H j) (fun _ ↦ 0))
+      (fun j ↦ ((hH.1 j).1.continuousOn).measurable_piecewise
+        continuousOn_const U.isOpen.measurableSet) (tendsto_pi_nhds.2 fun z ↦ ?_)
+    by_cases hz : z ∈ (U : Set (ComplexModel n))
+    · simpa only [Set.piecewise, ite_eq_left hz] using hH.2.2.1 z hz
+    · simp only [Set.piecewise, ite_eq_right hz]
+      exact tendsto_const_nhds
+  have hlt := measurableSet_lt (hmeas hG) (hmeas hF)
+  have heq : {z | z ∈ U ∧ v z < u z} = (U : Set (ComplexModel n)) ∩
+      {z | (U : Set (ComplexModel n)).piecewise v (fun _ ↦ 0) z <
+        (U : Set (ComplexModel n)).piecewise u (fun _ ↦ 0) z} := by
+    ext z
+    change (z ∈ (U : Set (ComplexModel n)) ∧ v z < u z) ↔
+      (z ∈ (U : Set (ComplexModel n)) ∧
+        (U : Set (ComplexModel n)).piecewise v (fun _ ↦ 0) z <
+          (U : Set (ComplexModel n)).piecewise u (fun _ ↦ 0) z)
+    by_cases hz : z ∈ (U : Set (ComplexModel n)) <;> simp [hz]
+  rw [heq]
+  exact U.isOpen.measurableSet.inter hlt
+
+/-- The original positive comparison gap internally yields maximum slot locality. -/
+theorem restrict_eq_of_joint_max_slot {U : Opens (ComplexModel n)}
+    {u : Fin n → ComplexModel n → ℝ} (i₀ : Fin n) {g : ComplexModel n → ℝ}
+    {J : ℕ → ComplexModel n → ℝ} (hg : IsDecApprox U g J) {μ μ' : Measure (ComplexModel n)}
+    (hμc : μ (U : Set (ComplexModel n))ᶜ = 0) (hμf : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤)
+    (hμ : ∀ F, IsAdmissible n U u F → TendstoMixed U F μ)
+    (hμ'c : μ' (U : Set (ComplexModel n))ᶜ = 0) (hμ'f : ∀ K, IsCompact K → K ⊆ U → μ' K < ⊤)
+    (hμ' : ∀ F, IsAdmissible n U (Function.update u i₀ fun z ↦ max (u i₀ z) (g z)) F →
+      TendstoMixed U F μ')
+    (hex : ∃ F, IsAdmissible n U u F) :
+    μ.restrict {z | z ∈ U ∧ g z < u i₀ z} = μ'.restrict {z | z ∈ U ∧ g z < u i₀ z} := by
+  classical
+  obtain ⟨F, hF⟩ := id hex
+  have hGw := hF.1 i₀
+  set P := {z | z ∈ U ∧ g z < u i₀ z}
+  have hPm : MeasurableSet P := measurableSet_lt_of_joint_decApprox hGw hg
+  have hUm := U.isOpen.measurableSet
+  set f : ComplexModel n → ENNReal := fun z ↦ ENNReal.ofReal (max (u i₀ z) (g z) - g z)
+  have hfm (ν : Measure (ComplexModel n)) : AEMeasurable f (ν.restrict U) := by
+    refine (aemeasurable_of_tendsto_metrizable_ae atTop
+      (f := fun j z ↦ max (F i₀ j z) (J j z) - J j z) (fun j ↦ ?_) ?_).ennreal_ofReal
+    · exact (((hGw.1 j).1.continuousOn.sup (hg.1 j).1.continuousOn).sub
+        (hg.1 j).1.continuousOn).aemeasurable hUm
+    · filter_upwards [ae_restrict_mem hUm] with z hz
+      exact ((hGw.2.2.1 z hz).max (hg.2.2.1 z hz)).sub (hg.2.2.1 z hz)
+  refine restrict_eq_of_max_weight_test_integral_eq hPm hfm ?_ ?_ hμf hμ'f ?_
+  · intro K hK hKU
+    obtain ⟨C, hC⟩ := hGw.exists_abs_le hK hKU
+    exact ⟨C, fun _ hz => hGw.abs_le_of_mem hKU hC hz⟩
+  · intro K hK hKU
+    obtain ⟨D, hD⟩ := hg.exists_abs_le hK hKU
+    exact ⟨D, fun _ hz => hg.abs_le_of_mem hKU hD hz⟩
+  · intro φ
+    exact JointDecreasingMaxWeight.integral_mul_jointMaxWeight_eq i₀ hg hμc hμf hμ hμ'c hμ'f hμ' hex
+      φ.continuous φ.hasCompactSupport φ.tsupport_subset
+
 /-- **Locality for one slot.** On `{u i₀ > c}` the limit measures for `u` and for
 `u` with `max(u i₀, c)` in slot `i₀` coincide. -/
 theorem restrict_eq_of_max_slot {U : Opens (ComplexModel n)} {u : Fin n → ComplexModel n → ℝ}
@@ -150,51 +216,39 @@ theorem restrict_eq_of_max_slot {U : Opens (ComplexModel n)} {u : Fin n → Comp
       TendstoMixed U F μ')
     (hex : ∃ F, IsAdmissible n U u F) :
     μ.restrict {z | z ∈ U ∧ c < u i₀ z} = μ'.restrict {z | z ∈ U ∧ c < u i₀ z} := by
-  classical
-  obtain ⟨F, hF⟩ := id hex
-  have hGw := hF.1 i₀
-  set P := {z | z ∈ U ∧ c < u i₀ z}
-  have hPm : MeasurableSet P := hGw.measurableSet_lt c
-  have hUm := U.isOpen.measurableSet
-  set f : ComplexModel n → ENNReal := fun z ↦ ENNReal.ofReal (max (u i₀ z) c - c)
-  have hfm (ν : Measure (ComplexModel n)) : AEMeasurable f (ν.restrict U) := by
-    refine (aemeasurable_of_tendsto_metrizable_ae atTop
-      (f := fun j z ↦ max (F i₀ j z) c - c) (fun j ↦ ?_) ?_).ennreal_ofReal
-    · exact ((ContinuousOn.sup (hGw.1 j).1.continuousOn continuousOn_const).sub
-        continuousOn_const).aemeasurable hUm
-    · filter_upwards [ae_restrict_mem hUm] with z hz
-      exact ((hGw.2.2.1 z hz).max tendsto_const_nhds).sub_const c
-  refine restrict_eq_of_max_weight_test_integral_eq hPm hfm ?_ ?_ hμf hμ'f ?_
-  · intro K hK hKU
-    obtain ⟨C, hC⟩ := hGw.exists_abs_le hK hKU
-    exact ⟨C, fun _ hz => hGw.abs_le_of_mem hKU hC hz⟩
-  · exact fun _ _ _ => ⟨|c|, fun _ _ => le_rfl⟩
-  · intro φ
-    exact integral_mul_maxWeight_eq i₀ c hμc hμf hμ hμ'c hμ'f hμ' hex
-      φ.continuous φ.hasCompactSupport φ.tsupport_subset
+  have hconst : IsSmoothPsdOn U (fun _ => c) :=
+    ⟨contDiffOn_const, fun z _ => by rw [complexHessian_const]; exact Matrix.PosSemidef.zero⟩
+  exact restrict_eq_of_joint_max_slot i₀ (isDecApprox_const hconst)
+    hμc hμf hμ hμ'c hμ'f hμ' hex
+
+/-- The tuple with `max(·, g i)` applied in the slots of index below `k`. -/
+def maxTupleObstacle (u g : Fin n → ComplexModel n → ℝ) (k : ℕ) :
+    Fin n → ComplexModel n → ℝ :=
+  fun i ↦ if i.val < k then fun z ↦ max (u i z) (g i z) else u i
 
 /-- The tuple with `max(·, c)` applied in the slots of index below `k`. -/
-def maxTuple (u : Fin n → ComplexModel n → ℝ) (c : ℝ) (k : ℕ) : Fin n → ComplexModel n → ℝ :=
-  fun i ↦ if i.val < k then fun z ↦ max (u i z) c else u i
+abbrev maxTuple (u : Fin n → ComplexModel n → ℝ) (c : ℝ) (k : ℕ) :
+    Fin n → ComplexModel n → ℝ :=
+  maxTupleObstacle u (fun _ _ => c) k
 
 theorem maxTuple_zero (u : Fin n → ComplexModel n → ℝ) (c : ℝ) : maxTuple u c 0 = u := by
-  funext i; simp [maxTuple]
+  funext i; simp [maxTupleObstacle]
 
 theorem maxTuple_succ (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
     maxTuple u c (k + 1) =
       Function.update (maxTuple u c k) ⟨k, hk⟩ fun z ↦ max (maxTuple u c k ⟨k, hk⟩ z) c := by
   funext i
   by_cases h : i = ⟨k, hk⟩
-  · subst h; simp [maxTuple]
+  · subst h; simp [maxTupleObstacle]
   · have hik : i.val ≠ k := fun h' ↦ h (Fin.ext h')
-    simp only [maxTuple, Function.update_of_ne h]
+    simp only [maxTupleObstacle, Function.update_of_ne h]
     by_cases hlt : i.val < k
     · simp [hlt, show i.val < k + 1 by omega]
     · simp [hlt, show ¬ i.val < k + 1 by omega]
 
 theorem maxTuple_apply_self (u : Fin n → ComplexModel n → ℝ) (c : ℝ) {k : ℕ} (hk : k < n) :
     maxTuple u c k ⟨k, hk⟩ = u ⟨k, hk⟩ := by
-  simp [maxTuple]
+  simp [maxTupleObstacle]
 
 theorem exists_isAdmissible_maxTuple {U : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} {F : Fin n → ℕ → ComplexModel n → ℝ}
@@ -204,8 +258,8 @@ theorem exists_isAdmissible_maxTuple {U : Opens (ComplexModel n)}
     (fun j z ↦ scaledPosPart (maxScale j) (F i j z - c) + c) else F i,
     fun i ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
   by_cases h : i.val < k
-  · simpa [maxTuple, h] using ((hF.1 i).scaledMax c).add_const c
-  · simpa [maxTuple, h] using hF.1 i
+  · simpa [maxTupleObstacle, h] using ((hF.1 i).scaledMax c).add_const c
+  · simpa [maxTupleObstacle, h] using hF.1 i
 
 /-- A tuple comparison follows from the one-slot comparisons on sets containing `P`. -/
 theorem restrict_eq_of_tuple_steps {U : Opens (ComplexModel n)}
@@ -343,7 +397,7 @@ theorem restrict_eq_of_max_const {Ω : Opens (ComplexModel n)} {v w : Fin n → 
   refine restrict_eq_of_relativelyCompact_model (model := maxTuple v c n)
     {z | ∀ i, c < v i z} hμf hνf hμT hνT ?_ ?_
   · intro i z hz
-    simpa [maxTuple] using hmax i hz
+    simpa [maxTupleObstacle] using hmax i hz
   · intro V hV μV νV hμVf hμVT hF hνVc hνVf hνVT
     exact restrict_eq_maxTuple c hμVf hμVT hF n le_rfl νV hνVc hνVf hνVT
 

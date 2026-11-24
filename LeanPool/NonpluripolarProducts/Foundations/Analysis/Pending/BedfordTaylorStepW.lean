@@ -128,13 +128,13 @@ theorem eventually_weighted_integral_le {U : Opens (ComplexModel n)}
   rw [hL, hR] at hk
   exact hk
 
-/-- One-slot collar comparison for the mixed density. -/
-theorem setIntegral_mul_mixedDensity_update_le {a h : ComplexModel n → ℝ} (ha : ContDiff ℝ ∞ a)
-    (hh : ContDiff ℝ ∞ h) {f : Fin n → ComplexModel n → ℝ} (hf : ∀ i, ContDiff ℝ ∞ (f i))
+/-- One-slot compact raise for the mixed density against a PSD weight. -/
+theorem setIntegral_mul_mixedDensity_update_le_of_compact {a : ComplexModel n → ℝ}
+    (ha : ContDiff ℝ ∞ a) {f : Fin n → ComplexModel n → ℝ} (hf : ∀ i, ContDiff ℝ ∞ (f i))
     (j : Fin n) {c c' : ComplexModel n → ℝ} (hc : ContDiff ℝ ∞ c) (hc' : ContDiff ℝ ∞ c')
     {K W : Set (ComplexModel n)} (hK : IsCompact K) (hKW : K ⊆ W) (hWm : MeasurableSet W)
-    (hWc : IsCompact (closure W)) (hah : ∀ z ∉ K, a z = h z) (hch : ∀ z ∉ K, c z = h z)
-    (hc'h : ∀ z ∉ K, c' z = h z) (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef)
+    (hWc : IsCompact (closure W)) (hcc' : ∀ z ∉ K, c z = c' z)
+    (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef)
     (hfpsd : ∀ i, ∀ z ∈ W, (complexHessian (f i) z).PosSemidef) (hle : ∀ z ∈ W, c z ≤ c' z) :
     ∫ z in W, a z * mixedDensity (Function.update f j c) z ≤
       ∫ z in W, a z * mixedDensity (Function.update f j c') z := by
@@ -144,19 +144,18 @@ theorem setIntegral_mul_mixedDensity_update_le {a h : ComplexModel n → ℝ} (h
     simp only [mixedDensity_update_eq_cons, mixedDensity_cons_eq, ← mul_div_assoc]
     rw [integral_div, integral_div]
     refine div_le_div_of_nonneg_right ?_ (pow_nonneg Real.pi_pos.le _)
-    exact MixedHessian.setIntegral_mul_mixedC_re_mono_collar (fun i ↦ hf _) ha hc hc' hh hK hKW
-      hWm hWc hah hch hc'h hapsd (fun i z hz ↦ hfpsd _ z hz) hle
+    exact MixedHessian.setIntegral_mul_mixedC_re_mono_of_compact (fun i ↦ hf _) ha hc hc' hK hKW
+      hWm hWc hcc' hapsd (fun i z hz ↦ hfpsd _ z hz) hle
 
-/-- **Collar comparison in several slots.** Raising the slots in `S`, all equal
-to `h` off `K`, raises the weighted integral over `W`. -/
-theorem setIntegral_mul_mixedDensity_le_of_le {a h : ComplexModel n → ℝ}
-    (ha : ContDiff ℝ ∞ a) (hh : ContDiff ℝ ∞ h) {K W : Set (ComplexModel n)} (hK : IsCompact K)
+/-- **Compact raise in several slots.** Raising the slots in `S`, each by a
+function supported in `K`, raises the integral against a PSD weight over `W`. -/
+theorem setIntegral_mul_mixedDensity_le_of_compact {a : ComplexModel n → ℝ}
+    (ha : ContDiff ℝ ∞ a) {K W : Set (ComplexModel n)} (hK : IsCompact K)
     (hKW : K ⊆ W) (hWm : MeasurableSet W) (hWc : IsCompact (closure W))
-    (hah : ∀ z ∉ K, a z = h z) (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef)
-    (S : Finset (Fin n)) :
+    (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef) (S : Finset (Fin n)) :
     ∀ (b b' : Fin n → ComplexModel n → ℝ), (∀ i, ContDiff ℝ ∞ (b i)) →
       (∀ i, ContDiff ℝ ∞ (b' i)) → (∀ i ∉ S, b i = b' i) →
-      (∀ i ∈ S, ∀ z ∉ K, b i z = h z) → (∀ i ∈ S, ∀ z ∉ K, b' i z = h z) →
+      (∀ i ∈ S, ∀ z ∉ K, b i z = b' i z) →
       (∀ i, ∀ z ∈ W, (complexHessian (b i) z).PosSemidef) →
       (∀ i, ∀ z ∈ W, (complexHessian (b' i) z).PosSemidef) →
       (∀ i ∈ S, ∀ z ∈ W, b i z ≤ b' i z) →
@@ -164,20 +163,19 @@ theorem setIntegral_mul_mixedDensity_le_of_le {a h : ComplexModel n → ℝ}
   classical
   induction S using Finset.induction_on with
   | empty =>
-    intro b b' _ _ hS _ _ _ _ _
+    intro b b' _ _ hS _ _ _ _
     have : b = b' := funext fun i ↦ hS i (Finset.notMem_empty i)
     rw [this]
   | insert j S hjS ih =>
-    intro b b' hb hb' hS hbh hb'h hbpsd hb'psd hle
+    intro b b' hb hb' hS hbb' hbpsd hb'psd hle
     set b'' := Function.update b j (b' j) with hb''
     have hstep : ∫ z in W, a z * mixedDensity b z ≤ ∫ z in W, a z * mixedDensity b'' z := by
       conv_lhs => rw [← Function.update_eq_self j b]
-      exact setIntegral_mul_mixedDensity_update_le ha hh hb j (hb j) (hb' j) hK hKW hWm hWc hah
-        (hbh j (Finset.mem_insert_self j S)) (hb'h j (Finset.mem_insert_self j S)) hapsd hbpsd
+      exact setIntegral_mul_mixedDensity_update_le_of_compact ha hb j (hb j) (hb' j) hK hKW hWm
+        hWc (hbb' j (Finset.mem_insert_self j S)) hapsd hbpsd
         (hle j (Finset.mem_insert_self j S))
     refine hstep.trans (ih b'' b' (fun i ↦ ?_) hb' (fun i hi ↦ ?_) (fun i hi z hz ↦ ?_)
-      (fun i hi ↦ hb'h i (Finset.mem_insert_of_mem hi)) (fun i z hz ↦ ?_) hb'psd
-      (fun i hi z hz ↦ ?_))
+      (fun i z hz ↦ ?_) hb'psd (fun i hi z hz ↦ ?_))
     · by_cases h' : i = j
       · subst h'; simpa [hb''] using hb' i
       · simpa [hb'', Function.update_of_ne h'] using hb i
@@ -186,12 +184,31 @@ theorem setIntegral_mul_mixedDensity_le_of_le {a h : ComplexModel n → ℝ}
       · simpa [hb'', Function.update_of_ne h'] using
           hS i (by simp [Finset.mem_insert, h', hi])
     · have h' : i ≠ j := fun h ↦ hjS (h ▸ hi)
-      simpa [hb'', Function.update_of_ne h'] using hbh i (Finset.mem_insert_of_mem hi) z hz
+      simpa [hb'', Function.update_of_ne h'] using hbb' i (Finset.mem_insert_of_mem hi) z hz
     · by_cases h' : i = j
       · subst h'; simpa [hb''] using hb'psd i z hz
       · simpa [hb'', Function.update_of_ne h'] using hbpsd i z hz
     · have h' : i ≠ j := fun h ↦ hjS (h ▸ hi)
       simpa [hb'', Function.update_of_ne h'] using hle i (Finset.mem_insert_of_mem hi) z hz
+
+/-- **Collar comparison in several slots.** Raising the slots in `S`, all equal
+to `h` off `K`, raises the weighted integral over `W`. -/
+theorem setIntegral_mul_mixedDensity_le_of_le {a h : ComplexModel n → ℝ}
+    (ha : ContDiff ℝ ∞ a) {K W : Set (ComplexModel n)} (hK : IsCompact K)
+    (hKW : K ⊆ W) (hWm : MeasurableSet W) (hWc : IsCompact (closure W))
+    (hapsd : ∀ z ∈ W, (complexHessian a z).PosSemidef)
+    (S : Finset (Fin n)) :
+    ∀ (b b' : Fin n → ComplexModel n → ℝ), (∀ i, ContDiff ℝ ∞ (b i)) →
+      (∀ i, ContDiff ℝ ∞ (b' i)) → (∀ i ∉ S, b i = b' i) →
+      (∀ i ∈ S, ∀ z ∉ K, b i z = h z) → (∀ i ∈ S, ∀ z ∉ K, b' i z = h z) →
+      (∀ i, ∀ z ∈ W, (complexHessian (b i) z).PosSemidef) →
+      (∀ i, ∀ z ∈ W, (complexHessian (b' i) z).PosSemidef) →
+      (∀ i ∈ S, ∀ z ∈ W, b i z ≤ b' i z) →
+      ∫ z in W, a z * mixedDensity b z ≤ ∫ z in W, a z * mixedDensity b' z := by
+  intro b b' hb hb' hS hbh hb'h hbpsd hb'psd hle
+  exact setIntegral_mul_mixedDensity_le_of_compact ha hK hKW hWm hWc hapsd S
+    b b' hb hb' hS (fun i hi z hz => (hbh i hi z hz).trans (hb'h i hi z hz).symm)
+    hbpsd hb'psd hle
 
 section Collar
 
@@ -215,12 +232,11 @@ theorem complexHessian_sub_const (f : ComplexModel n → ℝ) (c : ℝ) (z : Com
   simp [complexHessian, h]
 
 /-- The collar potential `A(‖z - z₀‖² - R²)`. -/
-def collar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexModel n) : ℝ := A * (‖z - z₀‖ ^ 2 - R ^ 2)
+abbrev collar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexModel n) : ℝ :=
+  SmoothMax.quadraticCollar z₀ A R z
 
-theorem contDiff_collar (z₀ : ComplexModel n) (A R : ℝ) : ContDiff ℝ ∞ (collar z₀ A R) := by
-  unfold collar
-  exact contDiff_const.mul (((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).sub
-    contDiff_const)
+theorem contDiff_collar (z₀ : ComplexModel n) (A R : ℝ) : ContDiff ℝ ∞ (collar z₀ A R) :=
+  SmoothMax.contDiff_quadraticCollar z₀ A R
 
 theorem complexHessian_collar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexModel n) :
     complexHessian (collar z₀ A R) z = (A : ℂ) • 1 := by
@@ -228,7 +244,7 @@ theorem complexHessian_collar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexMo
   have hq : ContDiff ℝ 2 (fun y : ComplexModel n ↦ ‖y‖ ^ 2) := (contDiff_norm_sq ℝ).of_le h2
   have hsplit : collar z₀ A R = A • ((fun y ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) +
       fun _ ↦ -R ^ 2) := by
-    funext y; simp [collar, sub_eq_add_neg, add_comm]
+    funext y; simp [SmoothMax.quadraticCollar, sub_eq_add_neg, add_comm]
   have hsh : ContDiff ℝ 2
       (fun y : ComplexModel n ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) :=
     hq.comp (contDiff_const.add (ContinuousLinearMap.id ℝ _).contDiff)
@@ -326,11 +342,7 @@ theorem integral_cutoff_weight_le {q : ℕ} {V : Opens (ComplexModel n)}
       ∫ z in W, G l z * mixedDensity (fun i ↦ F i k) z ≤
         ∫ z in W, G l z * mixedDensity (fun i ↦ F i l) z := by
     have hmain := setIntegral_mul_mixedDensity_le_of_le (a := fun y ↦ θ y • G l y)
-      (h := fun y ↦ θ y • h y) (hglob (hG.1 l).1) (hglob hh.1) hK hKW hWo.measurableSet hWc
-      (fun z hz ↦ by
-        by_cases hzV : z ∈ (V : Set (ComplexModel n))
-        · simp [hGh l z hzV hz]
-        · simp [hθ0 z hzV])
+      (h := fun y ↦ θ y • h y) (hglob (hG.1 l).1) hK hKW hWo.measurableSet hWc
       (fun z hz ↦ by
         rw [MixedHessian.complexHessian_congr (hθW z hz _)]; exact (hG.1 l).2 z (hWV' hz))
       (Finset.univ.filter fun i : Fin n ↦ i.val < q)

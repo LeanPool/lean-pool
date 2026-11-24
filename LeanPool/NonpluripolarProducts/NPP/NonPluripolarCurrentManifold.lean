@@ -107,13 +107,7 @@ theorem nonPluripolarProduct_overlap {φ : Fin p → M → EReal}
   have hcongr : ∀ i, ∀ x ∈ overlapSource e f,
       φ i (e.val.symm x) = φ i (f.val.symm (chartTransition e f x)) := by
     intro i x hx
-    have hx' : x ∈ (chartTransition e f).source := hx
-    have hxf : e.val.symm x ∈ f.val.source := by
-      simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-        OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
-      exact hx'.2
-    simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
-      f.val.left_inv hxf]
+    exact chart_comp_transition (φ i) e f x hx
   have hc := nonPluripolarProduct_congr hqp (U := overlapSource e f) hcongr
   refine ⟨hc.1.mpr hpb.1, ?_⟩
   rw [pullback_congr_current hh _ (isPositive_nonPluripolarProduct hqp hφB hWB) e1, hpb.2,

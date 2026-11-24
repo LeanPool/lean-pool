@@ -127,7 +127,8 @@ theorem btProduct_two {m : ℕ} (S : LocalProductCurrent n U (m + 2)) (a b : E �
     btProduct 2 m ![a, b] S = ddcMul (ddcMul S b) a := rfl
 
 /-- **Two locally bounded PSH potentials commute**: `dd^c(a dd^c(b S)) = dd^c(b dd^c(a S))` for
-`S` positive closed (`demailly-cadg:III.3.2`, by decreasing continuity from the smooth case). -/
+`S` positive closed. This is the two-slot case of
+[Demailly, Corollary III.3.10](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=149). -/
 theorem ddcMul_ddcMul_comm {m : ℕ} {S : LocalProductCurrent n U (m + 2)} (hS : IsPositive S)
     (hSc : IsClosedAny (m + 2) S) {a b : E → ℝ} (ha : IsLocallyBoundedPshOn U a)
     (hb : IsLocallyBoundedPshOn U b) : ddcMul (ddcMul S b) a = ddcMul (ddcMul S a) b := by
@@ -257,7 +258,7 @@ theorem btProduct_comp_swap_succ (q r : ℕ)
   rw [e0, et, IH (r + 1) (castLPC h1 T) (isPositive_castLPC h1 hT) (isClosedAny_castLPC h1 hTc)
     (Fin.tail v) (fun i => hv _) (Equiv.swap x y)]
 
-/-- **Symmetry of the recursive product** (`gnpp:bounded-calculus`, `demailly-cadg:III.3.2`):
+/-- **Symmetry of the recursive product** ([Demailly, Corollary III.3.10](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=149)).
 `B(u_{σ(1)}, …, u_{σ(q)}; T) = B(u_1, …, u_q; T)` for every permutation `σ`, `T` positive closed
     and
 `u_i` locally bounded PSH. -/

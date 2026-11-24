@@ -746,11 +746,11 @@ theorem formPower_smoothDDC_norm_sub_sq (z₀ z : E) (m : ℕ) :
       coordinateWedge_smul_right, smul_smul, pow_succ]
 
 /-- **The collar potential** `h = A(|z - z₀|² - R²)`. -/
-def ballPot (A : ℝ) (z₀ : E) (R : ℝ) (z : E) : ℝ := A * (‖z - z₀‖ ^ 2 - R ^ 2)
+abbrev ballPot (A : ℝ) (z₀ : E) (R : ℝ) (z : E) : ℝ :=
+  SmoothMax.quadraticCollar z₀ A R z
 
 theorem contDiff_ballPot (A : ℝ) (z₀ : E) (R : ℝ) : ContDiff ℝ ∞ (ballPot A z₀ R) :=
-  contDiff_const.mul (((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).sub
-    contDiff_const)
+  SmoothMax.contDiff_quadraticCollar z₀ A R
 
 theorem leviForm_ballPot (A : ℝ) (z₀ : E) (R : ℝ) (x v : E) :
     leviForm (ballPot A z₀ R) x v = A * ‖v‖ ^ 2 := by
@@ -919,13 +919,13 @@ theorem exists_isCollarApprox {A' : Opens (ComplexModel n)} (hA'U : RelativelyCo
     have hzA : z ∈ (A' : Set E) := hBA (ball_subset_closedBall hz)
     have hz' : ‖z - z₀‖ < R := by rw [← dist_eq_norm]; exact hz
     have hh0 : h z < 0 := by
-      simp only [h_def, ballPot]
+      simp only [h_def, SmoothMax.quadraticCollar]
       have : ‖z - z₀‖ ^ 2 < R ^ 2 := by
         have := norm_nonneg (z - z₀)
         nlinarith
       nlinarith
     have hhl : -(A * R ^ 2) ≤ h z := by
-      simp only [h_def, ballPot]
+      simp only [h_def, SmoothMax.quadraticCollar]
       nlinarith [sq_nonneg ‖z - z₀‖]
     have hlo := (le_max_left (h z) (f (j + j₀) z)).trans
       (ScaledSmoothMax.max_le_scaledSmoothMax (hδpos j) h (f (j + j₀)) z)
@@ -1049,7 +1049,7 @@ theorem collarMax_eq_of_le {z₀ : E} {R : ℝ} (hR : 0 < R) {K : Set E} (hK : I
     nlinarith
   have hA0 : 0 ≤ A := (zero_le_one.trans (le_max_left _ _)).trans hA
   apply max_eq_right
-  simp only [ballPot]
+  simp only [SmoothMax.quadraticCollar]
   nlinarith
 
 end Ball
