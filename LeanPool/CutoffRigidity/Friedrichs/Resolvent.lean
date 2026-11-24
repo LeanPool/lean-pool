@@ -11,6 +11,7 @@ module
 public import LeanPool.CutoffRigidity.Friedrichs.EnergyForm
 public import LeanPool.CutoffRigidity.Friedrichs.SemigroupDerivative
 public import LeanPool.CutoffRigidity.Friedrichs.SemigroupPowers
+public import LeanPool.CutoffRigidity.PositiveResolventOperator
 
 /-! # Friedrichs resolvents `R_λ` for all `λ > 0` and the canonical semigroup of a `FormData`
 
@@ -25,7 +26,7 @@ all the properties of `FunctionalCalculusSemigroup`/`SemigroupDerivative`.
 @[expose] public section
 
 open Filter Topology Set
-open scoped NNReal InnerProductSpace
+open scoped NNReal InnerProductSpace LinearPMap
 
 namespace CutoffRigidity.Riemann.Diff
 
@@ -288,29 +289,35 @@ theorem R_eigen_of_weak {c : ℝ} (hc : 1 + c ≠ 0) {u : H} (hu : u ∈ S.Q)
 
 /-! ### Domain and action of the Friedrichs generator -/
 
-/-- Domain of the Friedrichs generator `A_F = R⁻¹ - 1`. -/
-noncomputable abbrev domAF : Submodule ℝ H := LinearMap.range S.R.toLinearMap
+/-- The Friedrichs generator `A_F = R⁻¹ - 1` as a densely defined operator. -/
+noncomputable abbrev AF : H →ₗ.[ℝ] H := CutoffRigidity.positiveResolventOperator S.R
 
-/-- `A_F` on its domain: `A_F (R g) = g - R g`. -/
-noncomputable def AF : S.domAF →ₗ[ℝ] H :=
-  (LinearMap.id - S.R.toLinearMap) ∘ₗ
-    (LinearEquiv.ofInjective S.R.toLinearMap S.R_injective).symm.toLinearMap
+/-- Domain of the Friedrichs generator. -/
+noncomputable abbrev domAF : Submodule ℝ H := S.AF.domain
 
-lemma AF_R (g : H) : S.AF ⟨S.R g, ⟨g, rfl⟩⟩ = g - S.R g := by
-  unfold AF
-  have : (LinearEquiv.ofInjective S.R.toLinearMap S.R_injective).symm ⟨S.R g, ⟨g, rfl⟩⟩ = g := by
-    rw [LinearEquiv.symm_apply_eq]; rfl
-  simp [this]
+lemma domAF_eq_range : S.domAF = LinearMap.range S.R.toLinearMap :=
+  Submodule.ext fun u => CutoffRigidity.positiveResolventOperator_mem_domain S.R S.R_injective u
 
-lemma D_subset_domAF (f : S.D) : (f : H) ∈ S.domAF :=
-  ⟨(f : H) + S.A f, S.R_resolvent ⟨f, f.2⟩⟩
+lemma R_mem_domAF (g : H) : S.R g ∈ S.domAF := by
+  rw [S.domAF_eq_range]
+  exact ⟨g, rfl⟩
+
+lemma AF_R (g : H) : S.AF ⟨S.R g, S.R_mem_domAF g⟩ = g - S.R g :=
+  CutoffRigidity.positiveResolventOperator_apply S.R S.R_injective g _
+
+lemma D_subset_domAF (f : S.D) : (f : H) ∈ S.domAF := by
+  rw [S.domAF_eq_range]
+  exact ⟨(f : H) + S.A f, S.R_resolvent ⟨f, f.2⟩⟩
 
 lemma AF_extends (f : S.D) : S.AF ⟨f, S.D_subset_domAF f⟩ = S.A f := by
-  have h := S.R_resolvent ⟨f, f.2⟩
-  have h' : S.R ((f : H) + S.A f) = f := h
-  have e : (⟨(f : H), S.D_subset_domAF f⟩ : S.domAF) =
-      ⟨S.R ((f : H) + S.A f), ⟨(f : H) + S.A f, rfl⟩⟩ := Subtype.ext h'.symm
-  rw [e, AF_R, h']; abel
+  symm
+  apply (S.AF.image_iff (S.D_subset_domAF f)).mpr
+  rw [CutoffRigidity.mem_positiveResolventOperator_graph_iff S.R S.R_injective]
+  exact S.R_resolvent ⟨f, f.2⟩
+
+lemma AF_isSelfAdjoint : IsSelfAdjoint S.AF :=
+  CutoffRigidity.positiveResolventOperator_selfAdjoint S.R S.R_injective
+    (ContinuousLinearMap.isSelfAdjoint_iff_isSymmetric.mp S.R_isSelfAdjoint)
 
 /-- Smoothing: for `t > 0`, `T_t = R^k B` (so `T_t H ⊆ D(A_F^{k-1})`). -/
 theorem semigroup_eq_pow_mul {t : ℝ≥0} (ht : t ≠ 0) (k : ℕ) :

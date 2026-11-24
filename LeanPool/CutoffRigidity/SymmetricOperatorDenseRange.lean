@@ -8,9 +8,9 @@ Authors: Djalil Chafaï
 
 module
 
-public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
 
-/-! # Dense range of symmetric Hilbert-space operators -/
+/-! # Dense range and injectivity for Hilbert-space operators -/
 
 public section
 
@@ -32,5 +32,15 @@ theorem denseRange_of_injective_symmetric (R : H →L[ℝ] H) (hR : Function.Inj
     have hxy := ((R.range.mem_orthogonal x).mp hx) (R y) ⟨y, rfl⟩
     simpa only [inner_zero_left, real_inner_comm] using hxy
   exact hR (by simpa only [map_zero] using hzero)
+
+/-- The product of a densely ranged operator with its adjoint is injective. -/
+theorem self_comp_adjoint_injective_of_denseRange {K : Type*} [NormedAddCommGroup K]
+    [InnerProductSpace ℝ K] [CompleteSpace K] (J : K →L[ℝ] H) (hJ : DenseRange J) :
+    Function.Injective (J.comp J.adjoint) := by
+  apply J.self_comp_adjoint_injective_iff.mpr
+  intro f g h
+  apply hJ.eq_of_inner_left ℝ
+  intro u
+  rw [← ContinuousLinearMap.adjoint_inner_left, ← ContinuousLinearMap.adjoint_inner_left, h]
 
 end CutoffRigidity

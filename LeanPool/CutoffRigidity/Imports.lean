@@ -108,6 +108,7 @@ public import LeanPool.CutoffRigidity.OperatorEigenDistributionRigidity
 public import LeanPool.CutoffRigidity.OperatorEigenEqualityCutoffs
 public import LeanPool.CutoffRigidity.OperatorEigenLocalizationTools
 public import LeanPool.CutoffRigidity.OrthogonalGibbsProduct
+public import LeanPool.CutoffRigidity.PositiveResolventOperator
 public import LeanPool.CutoffRigidity.PotentialSplitting
 public import LeanPool.CutoffRigidity.ProductProbabilityNormalization
 public import LeanPool.CutoffRigidity.QuadraticLangevinPotential

@@ -9,7 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import Mathlib.Analysis.InnerProductSpace.Completion
-public import Mathlib.Analysis.InnerProductSpace.Adjoint
+public import LeanPool.CutoffRigidity.SymmetricOperatorDenseRange
 public import Mathlib.Analysis.Normed.Operator.Extend
 
 /-! # Friedrichs construction on an abstract real Hilbert space
@@ -239,22 +239,11 @@ lemma norm_R_le : ‖S.R‖ ≤ 1 := by
     _ = 1 := one_mul 1
 
 lemma R_injective : Function.Injective S.R := by
-  rw [injective_iff_map_eq_zero]
+  apply CutoffRigidity.self_comp_adjoint_injective_of_denseRange
+  apply S.dense.mono
   intro u hu
-  have h1 : inner ℝ (S.R u) u = 0 := by rw [hu, inner_zero_left]
-  rw [inner_R] at h1
-  have h2 : ContinuousLinearMap.adjoint S.ι u = 0 := inner_self_eq_zero.mp h1
-  have h3 : ∀ x : S.K, inner ℝ u (S.ι x) = 0 := fun x => by
-    rw [← ContinuousLinearMap.adjoint_inner_left, h2, inner_zero_left]
-  have h4 : ∀ f : S.Dom, inner ℝ u (S.emb f) = 0 := fun f => by
-    rw [← S.ι_coe]; exact h3 _
-  have hc : Continuous fun y : H => inner ℝ u y := by fun_prop
-  have h5 : ∀ y ∈ closure (S.D : Set H), inner ℝ u y = 0 := by
-    intro y hy
-    have : IsClosed {y : H | inner ℝ u y = 0} := isClosed_eq hc continuous_const
-    exact (closure_minimal (fun z hz => h4 ⟨z, hz⟩) this) hy
-  have := h5 u (by rw [S.dense.closure_eq]; trivial)
-  exact inner_self_eq_zero.mp this
+  let f : S.Dom := ⟨u, hu⟩
+  exact ⟨(f : S.K), S.ι_coe f⟩
 
 /-- `R (f + A f) = f` on the domain. -/
 lemma R_resolvent (f : S.Dom) : S.R (S.emb f + S.opA f) = S.emb f := by

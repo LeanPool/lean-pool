@@ -439,6 +439,22 @@ lemma resolventLam_apply_eigen {lam a : ℝ} (hlam : 0 < lam) (ha : 0 < a) (ha1 
     rw [← h, smul_smul, inv_mul_cancel₀ hd.ne', one_smul]
   rw [this, smul_smul, div_eq_inv_mul]
 
+/-- The implicit Euler operator acts by the scalar Euler function on eigenvectors. -/
+lemma eulerOp_apply_eigen {t a : ℝ} (ht : 0 < t) (ha : 0 < a) (ha1 : a ≤ 1)
+    {u : H} (hu : R u = a • u) (n : ℕ) :
+    eulerOp R t n u = eulerFun t n a • u := by
+  let lam : ℝ := (n + 1) / t
+  have hlam : 0 < lam := by dsimp [lam]; positivity
+  have hstep : (lam • resolventLam R lam) u = (lam * resFun lam a) • u := by
+    rw [smul_apply, resolventLam_apply_eigen hR hlam ha ha1 hu, smul_smul]
+    rfl
+  have hpow (k : ℕ) : ((lam • resolventLam R lam) ^ k) u = (lam * resFun lam a) ^ k • u := by
+    induction k with
+    | zero => simp
+    | succ k ih =>
+      rw [pow_succ', mul_apply_eq_comp, ih, map_smul, hstep, smul_smul, pow_succ]
+  exact hpow (n + 1)
+
 /-- On an eigenvector of `R` with eigenvalue `(1+c)⁻¹`, `T_t u = exp(-c t) u`. -/
 theorem cfcSemigroup_eigen {c : ℝ} (hc : 0 ≤ c) {u : H} (hu : R u = (1 + c)⁻¹ • u) (t : ℝ≥0) :
     cfcSemigroup R t u = Real.exp (-c * t) • u := by
@@ -447,55 +463,16 @@ theorem cfcSemigroup_eigen {c : ℝ} (hc : 0 ≤ c) {u : H} (hu : R u = (1 + c)�
   have htp : (0 : ℝ) < t := by positivity
   have ha : 0 < (1 + c)⁻¹ := by positivity
   have ha1 : (1 + c)⁻¹ ≤ 1 := inv_le_one_of_one_le₀ (by linarith)
-  -- the Euler operators act by scalars
-  have hscal : ∀ n : ℕ, eulerOp R (t : ℝ) n u =
-      ((1 + (c * t) / ((n : ℝ) + 1)) ^ (n + 1))⁻¹ • u := by
-    intro n
-    have hlam : (0 : ℝ) < ((n : ℝ) + 1) / t := by positivity
-    have hres := resolventLam_apply_eigen hR hlam ha ha1 hu
-    set κ : ℝ := (1 + (c * t) / ((n : ℝ) + 1))⁻¹ with hκ
-    have hstep : ((((n : ℝ) + 1) / t) • resolventLam R (((n : ℝ) + 1) / t)) u = κ • u := by
-      rw [smul_apply, hres, smul_smul]
-      congr 1
-      rw [hκ]
-      have hn : (0 : ℝ) < (n : ℝ) + 1 := by positivity
-      have h1 : (1 + c) ≠ 0 := by positivity
-      have h2 : 1 + (((n : ℝ) + 1) / t - 1) * (1 + c)⁻¹ ≠ 0 :=
-        (den_pos hlam ⟨ha.le, ha1⟩).ne'
-      have h3 : (1 + c) + (((n : ℝ) + 1) / t - 1) ≠ 0 := by
-        have : (1 + c) + (((n : ℝ) + 1) / t - 1) = c + ((n : ℝ) + 1) / t := by ring
-        rw [this]; positivity
-      have h4 : 1 + (c * t) / ((n : ℝ) + 1) ≠ 0 := by positivity
-      field_simp
-      have h6 : (t : ℝ) * (1 + c) + ((n : ℝ) + 1 - t) ≠ 0 := by
-        have : (t : ℝ) * (1 + c) + ((n : ℝ) + 1 - t) = (n : ℝ) + 1 + t * c := by ring
-        rw [this]; positivity
-      rw [div_eq_one_iff_eq h6]; ring
-    set A : H →L[ℝ] H := (((n : ℝ) + 1) / t) • resolventLam R (((n : ℝ) + 1) / t) with hA
-    have hpow : ∀ k : ℕ, (A ^ k) u = κ ^ k • u := by
-      intro k
-      induction k with
-      | zero => simp
-      | succ k ih =>
-        rw [pow_succ', mul_apply_eq_comp, ih, map_smul, hstep, smul_smul, pow_succ', mul_comm]
-    unfold eulerOp
-    rw [hpow (n + 1), hκ, inv_pow]
-  have hlim1 : Tendsto (fun n => eulerOp R (t : ℝ) n u) atTop (𝓝 (cfcSemigroup R t u)) :=
-    ((ContinuousLinearMap.apply ℝ H u).continuous.tendsto _).comp (tendsto_eulerOp hR t ht)
-  have hlim2 : Tendsto (fun n : ℕ => eulerOp R (t : ℝ) n u) atTop
-      (𝓝 (Real.exp (-c * t) • u)) := by
-    have h1 := Real.tendsto_one_add_div_pow_exp (c * t)
-    have h2 : Tendsto (fun n : ℕ => (1 + (c * t) / ((n + 1 : ℕ) : ℝ)) ^ (n + 1)) atTop
-        (𝓝 (Real.exp (c * t))) := h1.comp (tendsto_add_atTop_nat 1)
-    have h3 := h2.inv₀ (Real.exp_pos _).ne'
-    have e : Real.exp (-c * t) = (Real.exp (c * t))⁻¹ := by
-      rw [← Real.exp_neg]; congr 1; ring
-    rw [e]
-    refine (h3.smul_const u).congr (fun n => ?_)
-    rw [hscal n]
-    push_cast
-    rfl
-  exact tendsto_nhds_unique hlim1 hlim2
+  have hlim := ((ContinuousLinearMap.apply ℝ H u).continuous.tendsto _).comp
+    (tendsto_eulerOp hR t ht)
+  have hscalar := (tendsto_eulerFun ht ⟨ha.le, ha1⟩).smul_const u
+  have heq : hfun t (1 + c)⁻¹ = Real.exp (-c * t) := by
+    rw [hfun_of_pos ht ha, inv_inv]
+    congr 1
+    ring
+  rw [heq] at hscalar
+  exact tendsto_nhds_unique hlim (hscalar.congr (fun n =>
+    (eulerOp_apply_eigen hR htp ha ha1 hu n).symm))
 
 end Operators
 
