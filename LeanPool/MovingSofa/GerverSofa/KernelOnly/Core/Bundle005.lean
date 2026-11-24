@@ -15,6 +15,7 @@ public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Ring
 import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.NewtonImageCertificates
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.SparseJacobian
 /-!
 # Gerver sofa: related certificate and semantic modules
 
@@ -3929,6 +3930,20 @@ def jacobianCache (i j : Fin 22) : IntervalRat :=
   | 19 => jacobianRow19 j
   | 20 => jacobianRow20 j
   | _ => jacobianRow21 j
+
+/-- Compare the cached row using sparse derivatives while certifying the original Jacobian. -/
+@[instance_reducible] private def decideJacobianRow (row : Fin 22) :
+    Decidable (∀ j : Fin 22,
+      intervalJacobian fullExpr (unitBox (n := 22)) cfg row j = jacobianCache row j) :=
+  decidable_of_iff
+    (∀ j : Fin 22,
+      (SparseJacobian.derivative (finBoxEnv (unitBox (n := 22))) j.val cfg (fullExpr row)).getD
+        (IntervalRat.singleton 0) = jacobianCache row j)
+    (forall_congr' fun j => by
+      rw [SparseJacobian.derivative_eq]
+      rfl)
+
+attribute [local instance 1100] decideJacobianRow
 
 theorem jacobianRow00_eq : ∀ j : Fin 22,
     intervalJacobian fullExpr (unitBox (n := 22)) cfg (0 : Fin 22) j =
