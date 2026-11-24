@@ -21,6 +21,10 @@ Main declarations: `SGPT.NPP.currentProduct_restrict`,
   `SGPT.Foundations.Analysis.Pending.GlobalNonPluripolar.globalMixedMeasure_isFiniteMeasure`
 Tags: pluripotential-theory, complex-analysis, measure-theory, monge-ampere
 MSC: 32U05, 32W20, 32J27
+-/
+
+/-!
+## Earlier complex geometry formalization
 
 The compact Kähler finiteness proof, its one-slot mass argument, and supporting complex geometry
 reuse material from
