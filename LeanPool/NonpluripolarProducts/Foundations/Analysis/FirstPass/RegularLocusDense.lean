@@ -477,80 +477,8 @@ theorem regularAtDim_of_flattening_of_mem {A : Set M} {x y : M} {k : ℕ} (hk : 
         (y ∈ A ↔ Φ.toFun ((complexChartAt (n := n) x).val y) ∈ complexCoordinatePlane n k))
     (hyA : y ∈ A) (hy : y ∈ (complexChartAt (n := n) x).val.source)
     (hyΦ : (complexChartAt (n := n) x).val y ∈ Φ.source) :
-    RegularAtDim (n := n) A y k := by
-  set ey := (complexChartAt (n := n) y).val with hey
-  set T := chartTransition (complexChartAt (n := n) y) (complexChartAt (n := n) x) with hT
-  set c := Φ.toFun ((complexChartAt (n := n) x).val y) with hc
-  have hcPlane : c ∈ complexCoordinatePlane n k := (hflat hy hyΦ).1 hyA
-  have hTsource :
-      T.source = ey.target ∩ ey.symm ⁻¹' (complexChartAt (n := n) x).val.source := by
-    simp [hT, chartTransition, hey]
-  have hTapply : ∀ z, T z = (complexChartAt (n := n) x).val (ey.symm z) := fun z => rfl
-  have hTholo := differentiableOn_chartTransition (complexChartAt (n := n) y)
-    (complexChartAt (n := n) x)
-  have hTsymmholo := differentiableOn_chartTransition_symm (complexChartAt (n := n) y)
-    (complexChartAt (n := n) x)
-  have hyey : y ∈ ey.source := mem_complexChartAt_source y
-  let Ψ : LocalHolomorphicEquivAt (n := n) (ey y) :=
-    { source := T.source ∩ T ⁻¹' Φ.source
-      target := (fun v => v + c) ⁻¹' (Φ.target ∩ Φ.invFun ⁻¹' T.target)
-      isOpen_source := T.isOpen_inter_preimage Φ.isOpen_source
-      isOpen_target :=
-        (Φ.invFun_holomorphic.continuousOn.isOpen_inter_preimage Φ.isOpen_target
-          T.open_target).preimage (continuous_id.add continuous_const)
-      center_mem_source := by
-        refine ⟨?_, ?_⟩
-        · rw [hTsource]
-          exact ⟨ey.map_source hyey, by simpa [ey.left_inv hyey] using hy⟩
-        · simpa [mem_preimage, hTapply, ey.left_inv hyey] using hyΦ
-      toFun := fun z => Φ.toFun (T z) - c
-      invFun := fun v => T.symm (Φ.invFun (v + c))
-      toFun_holomorphic := by
-        refine DifferentiableOn.sub_const ?_ c
-        exact Φ.toFun_holomorphic.comp (hTholo.mono inter_subset_left)
-          (fun z hz => hz.2)
-      invFun_holomorphic := by
-        refine hTsymmholo.comp ?_ (fun v hv => hv.2)
-        exact Φ.invFun_holomorphic.comp ((differentiableOn_id.add_const c))
-          (fun v hv => hv.1)
-      mapsTo_toFun := by
-        intro z hz
-        refine ⟨?_, ?_⟩
-        · simpa using Φ.mapsTo_toFun hz.2
-        · simp only [mem_preimage, sub_add_cancel, Φ.left_inv _ hz.2]
-          exact T.map_source hz.1
-      mapsTo_invFun := by
-        intro v hv
-        refine ⟨T.map_target hv.2, ?_⟩
-        simp only [mem_preimage, T.right_inv hv.2]
-        exact Φ.mapsTo_invFun hv.1
-      left_inv := by
-        intro z hz
-        simp only [sub_add_cancel, Φ.left_inv _ hz.2]
-        exact T.left_inv hz.1
-      right_inv := by
-        intro v hv
-        simp only [T.right_inv hv.2, Φ.right_inv _ hv.1, add_sub_cancel_right] }
-  refine ⟨hk, hyA, Ψ, ?_, ?_, ?_⟩
-  · intro z hz
-    have := hz.1
-    rw [hTsource] at this
-    exact this.1
-  · change Φ.toFun (T (ey y)) - c = 0
-    rw [hTapply, ey.left_inv hyey, sub_self]
-  · intro y' hy' hy'Ψ
-    change ey y' ∈ T.source ∩ T ⁻¹' Φ.source at hy'Ψ
-    change y' ∈ A ↔ Φ.toFun (T (ey y')) - c ∈ complexCoordinatePlane n k
-    have hTy' : T (ey y') = (complexChartAt (n := n) x).val y' := by
-      rw [hTapply, ey.left_inv hy']
-    have hsrc := hy'Ψ.1
-    rw [hTsource] at hsrc
-    have hy'ex : y' ∈ (complexChartAt (n := n) x).val.source := by
-      simpa [mem_preimage, ey.left_inv hy'] using hsrc.2
-    have hy'Φ : (complexChartAt (n := n) x).val y' ∈ Φ.source := by
-      simpa [mem_preimage, hTy'] using hy'Ψ.2
-    rw [hTy', sub_mem_complexCoordinatePlane_iff hcPlane]
-    exact hflat hy'ex hy'Φ
+    RegularAtDim (n := n) A y k :=
+  RegularPatchNeighborhood.regularAtDim_of_flattening_of_mem (x := x) hk Φ hflat hyA hy hyΦ
 
 /-- **The regular locus of an analytic subset is dense.**  Every neighbourhood of a point of
 an analytic subset `A` contains a point at which `A` is regular of some dimension. -/

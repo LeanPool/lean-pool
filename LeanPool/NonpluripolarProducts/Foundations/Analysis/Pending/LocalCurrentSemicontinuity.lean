@@ -15,11 +15,11 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalC
 
 Blueprint `ana:ac-density-liminf` (`blueprint/src/analytic.tex`; TN.5, route item 5 of
     `ana:volume-semicontinuity`).
-Source: Boucksom 2002 (`bou02-volume`), Lemma 3.5 of the arXiv text (published Proposition 2.1):
-    if positive
-`(1,1)`-currents `T_k` converge weakly to `T`, then
-    `det(T_ac)^{1/n} ≥ liminf_k det(T_{k,ac})^{1/n}` almost everywhere
-(the proof: convolution, concavity of `det^{1/n}`, Fatou, Lebesgue's differentiation theorem).
+Source: Boucksom, *On the volume of a line bundle* (2002), proof of
+[Lemma 3.5](https://arxiv.org/pdf/math/0201031#page=11) (published Proposition 2.1).
+The proof first shows `det(T_ac)^{1/n} ≥ liminf_k det(T_{k,ac})^{1/n}` almost everywhere
+for weakly convergent positive `(1,1)`-currents. The proposition states a `limsup` bound.
+This file generalizes the `liminf` estimate to infima over strongly positive test forms.
 
 Let `U ⊆ ℂⁿ` be open and `T` a positive current of bidimension `(q,q)` on `U`
     (`LocalProductCurrents.IsPositive`), with the
@@ -55,8 +55,8 @@ singular part is positive, and `acInf ≤ w L(c)` pointwise), so by Fatou
 the liminf is locally integrable) and the right side to `w(x) L_x(c)`.  The concavity of
     `det^{1/n}` used by Boucksom is
 replaced by the infimum over `C`: an infimum of linear functionals passes through integrals and
-    limits directly.  The
-conclusion is the `liminf` form, which is what Boucksom's argument proves.
+    limits directly. The conclusion is the `liminf` estimate obtained before the
+subsequence step in Boucksom's proof.
 
 Sorry-free.
 -/
@@ -426,7 +426,7 @@ theorem lintegral_mol_mul_acInf_le (hT : IsPositive T) {C : Set (formSpan n q)} 
         rfl
     _ ≤ ENNReal.ofReal (T c (bumpTest U m x h)) := ENNReal.ofReal_le_ofReal hTc
 
-/-- **Semicontinuity of the absolutely continuous part** (Boucksom; `ana:ac-density-liminf`): let
+/-- **Liminf estimate for the absolutely continuous part** (`ana:ac-density-liminf`): let
     positive currents
 `T_k` of bidimension `(q,q)` on `U` converge weakly to the positive current `T` (`T_k(γ)(φ)
     → T(γ)(φ)` for every constant form

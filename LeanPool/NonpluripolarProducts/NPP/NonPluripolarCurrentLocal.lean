@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.NPP.BedfordTaylorTopDegree
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
+public import LeanPool.NonpluripolarProducts.Currents.LayeredCurrent
 
 /-!
 # The non-pluripolar product of arbitrary degree as a current: the local theory
@@ -62,6 +62,7 @@ open scoped Topology Distributions ContDiff ENNReal
 
 namespace SGPT.NPP.NonPluripolarCurrent
 
+open SGPT.Currents
 open SGPT.Foundations.Analysis
 open SGPT.Foundations.Analysis.FirstPass
 open SGPT.Foundations.Analysis.FirstPass.MongeAmpere
@@ -75,143 +76,6 @@ open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorForms
 attribute [local instance] addCommGroupFormSpan
 
 variable {n : ℕ}
-
-/-! ### Uniform bounds of density forms -/
-
-section Density
-
-variable {U : Opens (ComplexModel n)} {q : ℕ} {T : LocalProductCurrent n U q}
-
-/-- The density of the trace form `ω₀^q` with respect to the trace measure is `1`. -/
-theorem density_kahlerPower_ae (hT : IsPositive T) :
-    hT.density (kahlerPower n q) =ᵐ[hT.traceMeasure] fun _ => (1 : ℝ) := by
-  obtain ⟨C, -, hC⟩ := hT.exists_abs_density_le (kahlerPower n q)
-  refine hT.ae_eq_of_forall_integral_eq (hT.measurable_density _) measurable_const ⟨C, hC⟩
-    ⟨1, fun _ => by simp⟩ fun φ => ?_
-  rw [← hT.apply_eq_integral_density, ← hT.integral_traceMeasure]
-  simp
-
-/-- The pointwise density form takes the value `1` on `ω₀^q`, almost everywhere. -/
-theorem densityForm_kahlerPower_ae (hT : IsPositive T) :
-    ∀ᵐ x ∂hT.traceMeasure, densityForm hT x (kahlerPower n q) = 1 := by
-  filter_upwards [densityForm_ae hT (kahlerPower n q), density_kahlerPower_ae hT] with x h1 h2
-  rw [h1, h2]
-
-/-- The order-unit constant of a constant form: `C ω₀^q ± γ` are strongly positive. -/
-def orderUnitConst (γ : formSpan n q) : ℝ := Classical.choose (exists_orderUnit γ.2)
-
-theorem orderUnitConst_nonneg (γ : formSpan n q) : 0 ≤ orderUnitConst γ :=
-  (Classical.choose_spec (exists_orderUnit γ.2)).1
-
-/-- **The density forms of all positive currents are bounded by the same constant** on a given
-constant form, almost everywhere: `|L_x(γ)| ≤ C_γ`. -/
-theorem ae_abs_densityForm_le (hT : IsPositive T) (γ : formSpan n q) :
-    ∀ᵐ x ∂hT.traceMeasure, |densityForm hT x γ| ≤ orderUnitConst γ := by
-  obtain ⟨-, h₁, h₂⟩ := Classical.choose_spec (exists_orderUnit γ.2)
-  filter_upwards [ae_densityForm_nonneg hT, densityForm_kahlerPower_ae hT] with x hpos hone
-  have e₁ : (orderUnitConst γ • kahlerPower n q - γ : formSpan n q) ∈ posCone n q := by
-    change ((orderUnitConst γ • kahlerPower n q - γ : formSpan n q) : RealForm n (2 * q)) ∈
-      spCone q
-    simpa [kahlerPower, orderUnitConst] using h₁
-  have e₂ : (orderUnitConst γ • kahlerPower n q + γ : formSpan n q) ∈ posCone n q := by
-    change ((orderUnitConst γ • kahlerPower n q + γ : formSpan n q) : RealForm n (2 * q)) ∈
-      spCone q
-    simpa [kahlerPower, orderUnitConst] using h₂
-  have a₁ := hpos _ e₁
-  have a₂ := hpos _ e₂
-  rw [map_sub, map_smul, hone, smul_eq_mul, mul_one] at a₁
-  rw [map_add, map_smul, hone, smul_eq_mul, mul_one] at a₂
-  rw [abs_le]
-  constructor <;> linarith
-
-end Density
-
-/-! ### Layers of an increasing sequence of sets -/
-
-section Layers
-
-variable {O : ℕ → Set (ComplexModel n)}
-
-/-- The `k`-th layer `O_k \ ⋃_{j < k} O_j`. -/
-def layer (O : ℕ → Set (ComplexModel n)) (k : ℕ) : Set (ComplexModel n) := {x | x ∈ O k ∧ ∀ j < k,
-    x ∉ O j}
-
-theorem layer_subset (k : ℕ) : layer O k ⊆ O k := fun _ hx => hx.1
-
-theorem measurableSet_layer (hO : ∀ k, MeasurableSet (O k)) (k : ℕ) :
-    MeasurableSet (layer O k) := by
-  have e : layer O k = O k ∩ ⋂ j, ⋂ (_ : j < k), (O j)ᶜ := by
-    ext x
-    simp [layer]
-  rw [e]
-  exact (hO k).inter (MeasurableSet.iInter fun j => MeasurableSet.iInter fun _ => (hO j).compl)
-
-theorem notMem_of_mem_layer {j k : ℕ} (_hO : Monotone O) (hkj : k < j) {x : (ComplexModel n)}
-    (hx : x ∈ layer O j) : x ∉ O k :=
-  hx.2 k hkj
-
-theorem disjoint_layer {j k : ℕ} (hjk : j ≠ k) : Disjoint (layer O j) (layer O k) := by
-  rw [Set.disjoint_left]
-  intro x hj hk
-  rcases lt_or_gt_of_ne hjk with h | h
-  · exact hk.2 j h hj.1
-  · exact hj.2 k h hk.1
-
-theorem exists_mem_layer {k : ℕ} {x : (ComplexModel n)} (hx : x ∈ O k) : ∃ j ≤ k,
-    x ∈ layer O j := by
-  classical
-  have h : ∃ j, x ∈ O j := ⟨k, hx⟩
-  refine ⟨Nat.find h, Nat.find_min' h hx, Nat.find_spec h, fun j hj => Nat.find_min h hj⟩
-
-/-- For an increasing sequence, `1_{O_k} = ∑_{j ≤ k} 1_{layer j}`. -/
-theorem indicator_eq_sum_layer (hO : Monotone O) (k : ℕ) (x : (ComplexModel n)) :
-    (O k).indicator (fun _ => (1 : ℝ)) x =
-      ∑ j ∈ Finset.range (k + 1), (layer O j).indicator (fun _ => (1 : ℝ)) x := by
-  classical
-  by_cases hx : x ∈ O k
-  · obtain ⟨j, hjk, hj⟩ := exists_mem_layer hx
-    rw [Set.indicator_of_mem hx, Finset.sum_eq_single j]
-    · rw [Set.indicator_of_mem hj]
-    · intro i _ hij
-      exact Set.indicator_of_notMem (fun hi => Set.disjoint_left.mp (disjoint_layer hij) hi hj) _
-    · intro hj'
-      exact absurd (Finset.mem_range.mpr (Nat.lt_succ_of_le hjk)) hj'
-  · rw [Set.indicator_of_notMem hx]
-    refine (Finset.sum_eq_zero fun j hj => Set.indicator_of_notMem (fun hj' => hx ?_) _).symm
-    exact hO (Nat.le_of_lt_succ (Finset.mem_range.mp hj)) hj'.1
-
-theorem exists_mem_of_notMem_compl {x : (ComplexModel n)} : ∃ k, x ∈ O k ∨ ∀ j, x ∉ O j := by
-  by_cases h : ∃ k, x ∈ O k
-  · obtain ⟨k, hk⟩ := h
-    exact ⟨k, Or.inl hk⟩
-  · exact ⟨0, Or.inr fun j hj => h ⟨j, hj⟩⟩
-
-/-- The first level `k` with `x ∈ O_k` (and `0` if there is none). -/
-@[irreducible] def level (O : ℕ → Set (ComplexModel n)) (x : (ComplexModel n)) : ℕ :=
-  @Nat.find (fun k => x ∈ O k ∨ ∀ j, x ∉ O j) (fun _ => Classical.propDecidable _)
-    exists_mem_of_notMem_compl
-
-theorem level_eq_of_mem_layer {k : ℕ} {x : (ComplexModel n)} (hx : x ∈ layer O k)
-    : level O x = k := by
-  unfold level
-  rw [@Nat.find_eq_iff]
-  refine ⟨Or.inl hx.1, fun j hj h => ?_⟩
-  rcases h with h | h
-  · exact hx.2 j hj h
-  · exact h k hx.1
-
-theorem measurable_level (hO : ∀ k, MeasurableSet (O k)) : Measurable (level O) := by
-  unfold level
-  refine @measurable_find _ _ (fun x k => x ∈ O k ∨ ∀ j, x ∉ O j)
-    (fun _ => fun _ => Classical.propDecidable _) (fun _ => exists_mem_of_notMem_compl)
-    fun k => ?_
-  have e : {x | x ∈ O k ∨ ∀ j, x ∉ O j} = O k ∪ ⋂ j, (O j)ᶜ := by
-    ext x
-    simp
-  rw [e]
-  exact (hO k).union (MeasurableSet.iInter fun j => (hO j).compl)
-
-end Layers
 
 /-! ### Truncation families and the glued current -/
 
@@ -319,38 +183,22 @@ theorem setIntegral_layer_consistent {j k : ℕ} (hjk : j ≤ k) (γ : formSpan 
 
 /-- The glued measure `μ = ∑ₖ σ_{B_k}|_{layer k}`. -/
 def glueMeasure : Measure (ComplexModel n) :=
-  Measure.sum fun k => ((hF.isPositive k).traceMeasure).restrict (layer O k)
-
-/-- The density form of `B_k` at `x`, as a function of `(x, k)`. -/
-def layerDensity (z : (ComplexModel n) × ℕ) : formSpan n q →ₗ[ℝ] ℝ :=
-  densityForm (hF.isPositive z.2) z.1
+  LayeredCurrent.measure hF.isPositive O
 
 /-- The glued density form: on the `k`-th layer, the density form of `B_k`. -/
-def glueDensity (x : (ComplexModel n)) : formSpan n q →ₗ[ℝ] ℝ :=
-  hF.layerDensity (x, level O x)
+def glueDensity (x : ComplexModel n) : formSpan n q →ₗ[ℝ] ℝ :=
+  LayeredCurrent.density hF.isPositive O x
 
-theorem densityForm_congr_level {k l : ℕ} (h : k = l) (x : (ComplexModel n)) :
-    densityForm (hF.isPositive k) x = densityForm (hF.isPositive l) x := by
-  subst h
-  rfl
-
-theorem glueDensity_of_mem_layer {k : ℕ} {x : (ComplexModel n)} (hx : x ∈ layer O k) :
+theorem glueDensity_of_mem_layer {k : ℕ} {x : ComplexModel n} (hx : x ∈ layer O k) :
     hF.glueDensity x = densityForm (hF.isPositive k) x :=
-  hF.densityForm_congr_level (level_eq_of_mem_layer hx) x
+  LayeredCurrent.density_of_mem_layer hF.isPositive O hx
 
-theorem measurable_glueDensity (γ : formSpan n q) : Measurable fun x => hF.glueDensity x γ := by
-  have h : Measurable fun z : (ComplexModel n) × ℕ => hF.layerDensity z γ := by
-    apply measurable_from_prod_countable_left
-    intro k
-    exact measurable_densityForm (hF.isPositive k) γ
-  have hl : Measurable fun x : (ComplexModel n) => (x, level O x) :=
-    measurable_id.prodMk (measurable_level hF.measurableSet)
-  exact h.comp hl
+theorem measurable_glueDensity (γ : formSpan n q) : Measurable fun x => hF.glueDensity x γ :=
+  LayeredCurrent.measurable_density hF.isPositive O hF.measurableSet γ
 
 theorem glueMeasure_apply {s : Set (ComplexModel n)} (hs : MeasurableSet s) :
-    hF.glueMeasure s = ∑' k, (hF.isPositive k).traceMeasure (s ∩ layer O k) := by
-  rw [glueMeasure, Measure.sum_apply _ hs]
-  simp only [Measure.restrict_apply hs]
+    hF.glueMeasure s = ∑' k, (hF.isPositive k).traceMeasure (s ∩ layer O k) :=
+  LayeredCurrent.measure_apply hF.isPositive O hs
 
 theorem glueMeasure_compl : hF.glueMeasure ((U : Set (ComplexModel n))ᶜ) = 0 := by
   rw [hF.glueMeasure_apply U.isOpen.measurableSet.compl, tsum_eq_zero_iff]
@@ -358,19 +206,14 @@ theorem glueMeasure_compl : hF.glueMeasure ((U : Set (ComplexModel n))ᶜ) = 0 :
   exact measure_mono_null inter_subset_left (hF.isPositive k).traceMeasure_compl
 
 theorem ae_glueMeasure_mem : ∀ᵐ x ∂hF.glueMeasure, ∃ k, x ∈ O k := by
-  rw [glueMeasure, Measure.ae_sum_iff]
+  rw [glueMeasure, LayeredCurrent.measure, Measure.ae_sum_iff]
   intro k
   filter_upwards [ae_restrict_mem (measurableSet_layer hF.measurableSet k)] with x hx
   exact ⟨k, hx.1⟩
 
 theorem ae_abs_glueDensity_le (γ : formSpan n q) :
-    ∀ᵐ x ∂hF.glueMeasure, |hF.glueDensity x γ| ≤ orderUnitConst γ := by
-  rw [glueMeasure, Measure.ae_sum_iff]
-  intro k
-  rw [ae_restrict_iff' (measurableSet_layer hF.measurableSet k)]
-  filter_upwards [ae_abs_densityForm_le (hF.isPositive k) γ] with x hx hmem
-  rw [hF.glueDensity_of_mem_layer hmem]
-  exact hx
+    ∀ᵐ x ∂hF.glueMeasure, |hF.glueDensity x γ| ≤ orderUnitConst γ :=
+  LayeredCurrent.ae_abs_density_le hF.isPositive O hF.measurableSet γ
 
 /-- **The local mass condition**: the glued measure is finite on the compact subsets of `U`. -/
 def HasLocallyFiniteMass : Prop :=
@@ -398,48 +241,21 @@ theorem integrable_test_mul_glueDensity (hm : hF.HasLocallyFiniteMass) (γ : for
   exact hon.integrable_of_forall_notMem_eq_zero fun x hx => by
     rw [image_eq_zero_of_notMem_tsupport hx, zero_mul]
 
-theorem locallyIntegrableOn_glueDensity (hm : hF.HasLocallyFiniteMass) (γ : formSpan n q) :
-    LocallyIntegrableOn (fun x => hF.glueDensity x γ) U hF.glueMeasure := by
-  intro x hx
-  obtain ⟨K, hK, hKn, hKU⟩ := exists_compact_subset U.isOpen hx
-  refine ⟨K, nhdsWithin_le_nhds (mem_interior_iff_mem_nhds.mp hKn), ?_⟩
-  refine Measure.integrableOn_of_bounded (M := orderUnitConst γ) (hm K hK hKU).ne
-    (hF.measurable_glueDensity γ).aestronglyMeasurable (ae_restrict_of_ae ?_)
-  filter_upwards [hF.ae_abs_glueDensity_le γ] with x hx
-  rwa [Real.norm_eq_abs]
+theorem isMeasureDensity (hm : hF.HasLocallyFiniteMass) :
+    IsMeasureDensity U hF.glueMeasure hF.glueDensity :=
+  ⟨hF.glueMeasure_compl, hm, hF.measurable_glueDensity, hF.ae_abs_glueDensity_le⟩
 
-open Classical in
-/-- **The glued current** `S(γ) = L_x(γ) μ` (and `0` when the mass condition fails). -/
+theorem locallyIntegrableOn_glueDensity (hm : hF.HasLocallyFiniteMass) (γ : formSpan n q) :
+    LocallyIntegrableOn (fun x => hF.glueDensity x γ) U hF.glueMeasure :=
+  (hF.isMeasureDensity hm).locallyIntegrableOn γ
+
+/-- The glued current `S(γ) = L_x(γ) μ`, with value zero when the mass condition fails. -/
 def glue : LocalProductCurrent n U q :=
-  if hm : hF.HasLocallyFiniteMass then
-    { toFun := fun γ => regularDistribution hF.glueMeasure (fun x => hF.glueDensity x γ)
-        (hF.locallyIntegrableOn_glueDensity hm γ)
-      map_add' := fun γ γ' => by
-        ext φ
-        have h1 := hF.integrable_test_mul_glueDensity hm γ (c := fun _ => 1) measurable_const
-          (fun _ => by simp) φ
-        have h2 := hF.integrable_test_mul_glueDensity hm γ' (c := fun _ => 1) measurable_const
-          (fun _ => by simp) φ
-        simp only [one_mul] at h1 h2
-        rw [_root_.add_apply, regularDistribution_apply, regularDistribution_apply,
-          regularDistribution_apply, ← integral_add h1 h2]
-        congr 1
-        funext x
-        rw [map_add, mul_add]
-      map_smul' := fun c γ => by
-        ext φ
-        rw [RingHom.id_apply, _root_.smul_apply, regularDistribution_apply,
-          regularDistribution_apply, smul_eq_mul, ← integral_const_mul]
-        congr 1
-        funext x
-        rw [map_smul, smul_eq_mul]
-        ring }
-  else 0
+  ofMeasureDensity U hF.glueMeasure hF.glueDensity
 
 theorem glue_apply (hm : hF.HasLocallyFiniteMass) (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
-    hF.glue γ φ = ∫ x, φ x * hF.glueDensity x γ ∂hF.glueMeasure := by
-  rw [glue, dite_eq_left hm]
-  exact regularDistribution_apply _ _ (hF.locallyIntegrableOn_glueDensity hm γ) φ
+    hF.glue γ φ = ∫ x, φ x * hF.glueDensity x γ ∂hF.glueMeasure :=
+  ofMeasureDensity_apply (hF.isMeasureDensity hm) γ φ
 
 theorem integrable_test (hm : hF.HasLocallyFiniteMass) (φ : 𝓓(U, ℝ)) :
     Integrable (fun x => φ x) hF.glueMeasure := by
@@ -470,13 +286,13 @@ theorem truncAt_apply (hm : hF.HasLocallyFiniteMass) (k : ℕ) (γ : formSpan n 
       rw [Set.indicator_of_mem (hF.mono hjk (layer_subset j hx)), one_mul,
         hF.glueDensity_of_mem_layer hx]
     · refine setIntegral_eq_zero_of_forall_eq_zero fun x hx => ?_
-      rw [Set.indicator_of_notMem (notMem_of_mem_layer hF.mono (not_le.mp hjk) hx), zero_mul,
+      rw [Set.indicator_of_notMem (notMem_of_mem_layer (not_le.mp hjk) hx), zero_mul,
         mul_zero]
   have hR : ∫ x, φ x * ((O k).indicator (fun _ => (1 : ℝ)) x * hF.glueDensity x γ)
       ∂hF.glueMeasure = ∑ j ∈ Finset.range (k + 1),
         ∫ x in layer O j, φ x * densityForm (hF.isPositive j) x γ
           ∂(hF.isPositive j).traceMeasure := by
-    rw [glueMeasure] at hint ⊢
+    rw [glueMeasure, LayeredCurrent.measure] at hint ⊢
     rw [integral_sum_measure hint]
     simp_rw [hterm]
     rw [tsum_eq_sum (s := Finset.range (k + 1)) fun j hj => by

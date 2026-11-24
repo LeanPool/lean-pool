@@ -304,6 +304,22 @@ theorem one_le_comboLevel (a b : ℝ) : 1 ≤ comboLevel a b := by
 theorem le_comboLevel_mul (a b : ℝ) (k : ℕ) : k ≤ comboLevel a b * k :=
   Nat.le_mul_of_pos_left k (one_le_comboLevel a b)
 
+private theorem neg_comboLevel_lt_combo {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
+    {u w : EReal} {k : ℕ} (hu : ((-(k : ℝ) : ℝ) : EReal) < u) (hut : u ≠ ⊤)
+    (hw : ((-(k : ℝ) : ℝ) : EReal) < w) (hwt : w ≠ ⊤) :
+    ((-((comboLevel a b * k : ℕ) : ℝ) : ℝ) : EReal) < (a : EReal) * u + (b : EReal) * w := by
+  lift u to ℝ using ⟨hut, ne_bot_of_gt hu⟩
+  lift w to ℝ using ⟨hwt, ne_bot_of_gt hw⟩
+  rw [← EReal.coe_mul, ← EReal.coe_mul, ← EReal.coe_add, EReal.coe_lt_coe_iff]
+  have hu' := EReal.coe_lt_coe_iff.mp hu
+  have hw' := EReal.coe_lt_coe_iff.mp hw
+  have h1 := mul_lt_mul_of_pos_left hu' ha
+  have h2 := mul_lt_mul_of_pos_left hw' hb
+  have h3 : (a + b) * k ≤ (comboLevel a b : ℝ) * k :=
+    mul_le_mul_of_nonneg_right (le_comboLevel a b) (Nat.cast_nonneg k)
+  push_cast
+  nlinarith only [h1, h2, h3]
+
 /-- On `{u > -k} ∩ {w > -k}`: `(a u + b w) ∨ (-Nk) = a (u ∨ (-k)) + b (w ∨ (-k))`. -/
 theorem truncationReal_combo {u w : (ComplexModel n) → EReal} {a b : ℝ} (ha : 0 < a) (hb : 0 < b)
     {k : ℕ}
@@ -313,30 +329,13 @@ theorem truncationReal_combo {u w : (ComplexModel n) → EReal} {a b : ℝ} (ha 
       a * truncationReal u k x + b * truncationReal w k x := by
   have eu : u x = ((u x).toReal : EReal) := (EReal.coe_toReal hut (ne_bot_of_gt hu)).symm
   have ew : w x = ((w x).toReal : EReal) := (EReal.coe_toReal hwt (ne_bot_of_gt hw)).symm
-  have hr : -(k : ℝ) < (u x).toReal := by
-    have h := hu
-    rw [eu] at h
-    exact EReal.coe_lt_coe_iff.mp h
-  have hs : -(k : ℝ) < (w x).toReal := by
-    have h := hw
-    rw [ew] at h
-    exact EReal.coe_lt_coe_iff.mp h
   have hsum : (a : EReal) * u x + (b : EReal) * w x =
       ((a * (u x).toReal + b * (w x).toReal : ℝ) : EReal) := by
     rw [eu, ew]
     simp only [EReal.toReal_coe]
     norm_cast
-  have hlt : ((-((comboLevel a b * k : ℕ) : ℝ) : ℝ) : EReal) <
-      (fun z => (a : EReal) * u z + (b : EReal) * w z) x := by
-    simp only
-    rw [hsum, EReal.coe_lt_coe_iff]
-    have h1 : -(a * k) < a * (u x).toReal := by nlinarith
-    have h2 : -(b * k) < b * (w x).toReal := by nlinarith
-    have h3 : (a + b) * k ≤ (comboLevel a b : ℝ) * k :=
-      mul_le_mul_of_nonneg_right (le_comboLevel a b) (Nat.cast_nonneg k)
-    push_cast
-    nlinarith
-  rw [truncationReal_of_lt hlt, truncationReal_of_lt hu, truncationReal_of_lt hw]
+  rw [truncationReal_of_lt (neg_comboLevel_lt_combo ha hb hu hut hw hwt),
+    truncationReal_of_lt hu, truncationReal_of_lt hw]
   change ((a : EReal) * u x + (b : EReal) * w x).toReal = _
   rw [hsum, EReal.toReal_coe]
 
@@ -427,30 +426,10 @@ theorem commonLocus_subset_combo (hφ : ∀ i, PlurisubharmonicOn (φ i) U) {a b
   refine ⟨hx.1.1, fun i => ?_⟩
   by_cases hij : i = j
   · subst hij
-    have h := truncationReal_combo (u := φ i) (w := ψ) ha hb (hx.1.2 i)
+    simp only [comboTuple, Function.update_self]
+    exact neg_comboLevel_lt_combo ha hb (hx.1.2 i)
       (ne_top_of_plurisubharmonicOn (hφ i) hx.1.1) (lt_of_mem_commonLocus hx)
       (ne_top_of_plurisubharmonicOn hψ hx.1.1)
-    simp only [comboTuple, Function.update_self]
-    have hu := hx.1.2 i
-    have hw := lt_of_mem_commonLocus hx
-    have hut := ne_top_of_plurisubharmonicOn (hφ i) hx.1.1
-    have hwt := ne_top_of_plurisubharmonicOn hψ hx.1.1
-    have eu : φ i x = ((φ i x).toReal : EReal) := (EReal.coe_toReal hut (ne_bot_of_gt hu)).symm
-    have ew : ψ x = ((ψ x).toReal : EReal) := (EReal.coe_toReal hwt (ne_bot_of_gt hw)).symm
-    rw [eu] at hu
-    rw [ew] at hw
-    have hr := EReal.coe_lt_coe_iff.mp hu
-    have hs := EReal.coe_lt_coe_iff.mp hw
-    rw [eu, ew]
-    have hsum : (a : EReal) * ((φ i x).toReal : EReal) + (b : EReal) * ((ψ x).toReal : EReal) =
-        ((a * (φ i x).toReal + b * (ψ x).toReal : ℝ) : EReal) := by norm_cast
-    rw [hsum, EReal.coe_lt_coe_iff]
-    have h1 : -(a * k) < a * (φ i x).toReal := by nlinarith
-    have h2 : -(b * k) < b * (ψ x).toReal := by nlinarith
-    have h3 : (a + b) * k ≤ (comboLevel a b : ℝ) * k :=
-      mul_le_mul_of_nonneg_right (le_comboLevel a b) (Nat.cast_nonneg k)
-    push_cast
-    nlinarith
   · simp only [comboTuple, Function.update_of_ne hij]
     exact neg_lt_of_le (le_comboLevel_mul a b k) (hx.1.2 i)
 

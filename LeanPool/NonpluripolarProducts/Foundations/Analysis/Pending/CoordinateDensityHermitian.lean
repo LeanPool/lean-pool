@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateDensityGeneral
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeightedDiagonalPfaffian
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.StandardKahlerTopPower
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateDensityFrame
 
 /-!

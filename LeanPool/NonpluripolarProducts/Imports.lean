@@ -10,6 +10,7 @@ public import LeanPool.NonpluripolarProducts
 public import LeanPool.NonpluripolarProducts.Currents.GradientCauchySchwarz
 public import LeanPool.NonpluripolarProducts.Currents.GradientChainRule
 public import LeanPool.NonpluripolarProducts.Currents.GradientCutoff
+public import LeanPool.NonpluripolarProducts.Currents.LayeredCurrent
 public import LeanPool.NonpluripolarProducts.Currents.LocalCurrentGluing
 public import LeanPool.NonpluripolarProducts.Currents.ManifoldDdc
 public import LeanPool.NonpluripolarProducts.Currents.PluriharmonicPotential
@@ -423,7 +424,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UscWei
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.VaguePortmanteau
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeierstrassDivisionAbstract
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeierstrassDivisionUniqueness
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeightedDiagonalPfaffian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WeightedWirtingerAdjoint
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WirtingerCalculus
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WirtingerIntegrationByParts

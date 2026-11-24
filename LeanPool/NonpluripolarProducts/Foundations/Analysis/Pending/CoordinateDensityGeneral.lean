@@ -19,7 +19,7 @@ evaluated on the standard interleaved real frame, and `normalizedTopPowerDensity
 is the determinant of the complex coefficient matrix recovered from `A`.  The two
 were previously known to agree only in complex dimensions `0`, `1` and `2`
 (`CoordinateDensityLowDim`, `CoordinateDensityTwo`), and in every dimension for a
-form with diagonal real-frame blocks (`WeightedDiagonalPfaffian`).
+form with diagonal real-frame blocks (`StandardKahlerTopPower`).
 
 This file proves the identity in every dimension for a real `(1,1)`-form with
 semipositive coefficients — the case in which the restricted-mass densities of

@@ -382,8 +382,13 @@ theorem exists_bound_forms (d N : ℕ) :
 theorem polydisc_subset_polydisc {n d : ℕ} {r₁ r₁' r₂ : ℝ} (h : r₁ ≤ r₁') :
     polydisc n d r₁ r₂ ⊆ polydisc n d r₁' r₂ := polydisc_mono h
 
-theorem nonempty_localParametrization (P : ParametrizationData A) (S : SetsData P) :
-    Nonempty (GermParametrization.LocalParametrization A) := by
+/-- The points off the projection discriminant are dense in a sufficiently small
+polydisc. The same radius can be used to build a local parametrization or a
+connected regular part. -/
+theorem exists_radius_subset_closure (S : SetsData P) :
+    ∃ ρ₀ > 0, ρ₀ ≤ S.r₁ ∧ A ∩ polydisc n P.dim ρ₀ S.r₂ ⊆
+      closure (A ∩ polydisc n P.dim ρ₀ S.r₂ ∩
+        coordinateProjection n P.dim ⁻¹' {x | P.disc x ≠ 0}) := by
   classical
   set N := P.deg * (n - P.dim) + 1 with hN
   have hcan : ∀ i : ℕ, ∃ F : ℕ → ComplexModel P.dim → ℂ,
@@ -520,6 +525,12 @@ theorem nonempty_localParametrization (P : ParametrizationData A) (S : SetsData 
     · change P.disc (coordinateProjection n P.dim b₀) ≠ 0
       rw [hb₀π']; exact hxd'
     · rw [dist_eq_norm]; exact lt_of_le_of_lt hbd hKδ
+  exact ⟨ρ₀, hρ₀0, hρ₀r₁, hdense⟩
+
+theorem nonempty_localParametrization (P : ParametrizationData A) (S : SetsData P) :
+    Nonempty (GermParametrization.LocalParametrization A) := by
+  obtain ⟨ρ₀, hρ₀0, hρ₀r₁, hdense⟩ := exists_radius_subset_closure S
+  have hsub := polydisc_mono (n := n) (d := P.dim) (r₂ := S.r₂) hρ₀r₁
   have hABeq : A ∩ polydisc n P.dim S.r₁ S.r₂ ∩ polydisc n P.dim ρ₀ S.r₂ =
       A ∩ polydisc n P.dim ρ₀ S.r₂ ∩ polydisc n P.dim ρ₀ S.r₂ :=
     Set.ext fun z => ⟨fun h => ⟨⟨h.1.1, h.2⟩, h.2⟩, fun h => ⟨⟨h.1.1, hsub h.2⟩, h.2⟩⟩

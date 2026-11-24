@@ -79,8 +79,8 @@ theorem sub_mem_complexCoordinatePlane_iff {k : ℕ} {z c : ComplexModel n}
 /-- **Regularity propagates along a flattening.**  If `Φ` flattens `A` in the preferred
 chart at `x`, then `A` is regular of the same dimension at every point `y ∈ A` of the chart
 source with `e_x y` in the source of `Φ`. -/
-theorem regularAtDim_of_flattening {A : Set M} {x y : M} {k : ℕ} (hk : k ≤ n)
-    (Φ : LocalHolomorphicEquivAt (n := n) ((complexChartAt (n := n) x).val x))
+theorem regularAtDim_of_flattening_of_mem {A : Set M} {x y : M} {k : ℕ} (hk : k ≤ n)
+    {p : ComplexModel n} (Φ : LocalHolomorphicEquivAt (n := n) p)
     (hflat : ∀ {y : M},
       y ∈ (complexChartAt (n := n) x).val.source →
       (complexChartAt (n := n) x).val y ∈ Φ.source →
@@ -160,6 +160,18 @@ theorem regularAtDim_of_flattening {A : Set M} {x y : M} {k : ℕ} (hk : k ≤ n
       simpa [mem_preimage, hTy'] using hy'Ψ.2
     rw [hTy', sub_mem_complexCoordinatePlane_iff hcPlane]
     exact hflat hy'ex hy'Φ
+
+/-- Regularity propagates along a flattening centered at the preferred chart point. -/
+theorem regularAtDim_of_flattening {A : Set M} {x y : M} {k : ℕ} (hk : k ≤ n)
+    (Φ : LocalHolomorphicEquivAt (n := n) ((complexChartAt (n := n) x).val x))
+    (hflat : ∀ {y : M},
+      y ∈ (complexChartAt (n := n) x).val.source →
+      (complexChartAt (n := n) x).val y ∈ Φ.source →
+        (y ∈ A ↔ Φ.toFun ((complexChartAt (n := n) x).val y) ∈ complexCoordinatePlane n k))
+    (hyA : y ∈ A) (hy : y ∈ (complexChartAt (n := n) x).val.source)
+    (hyΦ : (complexChartAt (n := n) x).val y ∈ Φ.source) :
+    RegularAtDim (n := n) A y k :=
+  regularAtDim_of_flattening_of_mem (x := x) hk Φ hflat hyA hy hyΦ
 
 /-- **Regularity is relatively open.**  Near a regular point, every point of `A` is regular
 of the same dimension. -/

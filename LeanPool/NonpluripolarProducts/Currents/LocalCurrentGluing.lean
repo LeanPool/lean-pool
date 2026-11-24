@@ -116,79 +116,12 @@ theorem traceMeasure_restrict_eq_and_ae_densityForm {A B V : Opens (ComplexModel
   filter_upwards [a1, a2] with x h1 h2
   rw [← h1, ← h2, e4]
 
-/-! ### A current from a measure and a bounded density form -/
+/-! ### Restriction of a current given by density forms -/
 
 section OfMeasure
 
-variable {U : Opens (ComplexModel n)}
-
-/-- The data of a positive-current-like object on `U`: a measure `μ` carried by `U` and finite on
-the compact subsets of `U`, and a measurable density form `g` with `|g x γ| ≤ C_γ` almost
-everywhere. -/
-structure IsMeasureDensity (U : Opens (ComplexModel n)) (μ : Measure (ComplexModel n))
-    (g : (ComplexModel n) → formSpan n q →ₗ[ℝ] ℝ) : Prop where
-  compl : μ ((U : Set (ComplexModel n))ᶜ) = 0
-  lt_top : ∀ K : Set (ComplexModel n), IsCompact K → K ⊆ U → μ K < ⊤
-  measurable : ∀ γ, Measurable fun x => g x γ
-  bounded : ∀ γ, ∀ᵐ x ∂μ, |g x γ| ≤ orderUnitConst γ
-
-variable {μ : Measure (ComplexModel n)} {g : (ComplexModel n) → formSpan n q →ₗ[ℝ] ℝ}
-
-theorem IsMeasureDensity.integrable_test (hμ : IsMeasureDensity U μ g) (γ : formSpan n q)
-    (φ : 𝓓(U, ℝ)) : Integrable (fun x => φ x * g x γ) μ := by
-  obtain ⟨Cφ, hCφ⟩ := φ.continuous.bounded_above_of_compact_support φ.hasCompactSupport
-  have hon : IntegrableOn (fun x => φ x * g x γ) (tsupport φ) μ := by
-    refine Measure.integrableOn_of_bounded (M := Cφ * orderUnitConst γ)
-      (hμ.lt_top _ φ.hasCompactSupport φ.tsupport_subset).ne
-      (φ.continuous.measurable.mul (hμ.measurable γ)).aestronglyMeasurable
-      (ae_restrict_of_ae ?_)
-    filter_upwards [hμ.bounded γ] with x hx
-    rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-    have h1 : ‖φ x‖ ≤ Cφ := hCφ x
-    rw [Real.norm_eq_abs] at h1
-    exact mul_le_mul h1 hx (abs_nonneg _) ((abs_nonneg _).trans h1)
-  exact hon.integrable_of_forall_notMem_eq_zero fun x hx => by
-    rw [image_eq_zero_of_notMem_tsupport hx, zero_mul]
-
-theorem IsMeasureDensity.locallyIntegrableOn (hμ : IsMeasureDensity U μ g) (γ : formSpan n q) :
-    LocallyIntegrableOn (fun x => g x γ) U μ := by
-  intro x hx
-  obtain ⟨K, hK, hKn, hKU⟩ := exists_compact_subset U.isOpen hx
-  refine ⟨K, nhdsWithin_le_nhds (mem_interior_iff_mem_nhds.mp hKn), ?_⟩
-  refine Measure.integrableOn_of_bounded (M := orderUnitConst γ) (hμ.lt_top K hK hKU).ne
-    (hμ.measurable γ).aestronglyMeasurable (ae_restrict_of_ae ?_)
-  filter_upwards [hμ.bounded γ] with x hx
-  rwa [Real.norm_eq_abs]
-
-open Classical in
-/-- **The current `γ ↦ g(γ) μ`** (and `0` when the data are not admissible). -/
-def ofMeasureDensity (U : Opens (ComplexModel n)) (μ : Measure (ComplexModel n))
-    (g : (ComplexModel n) → formSpan n q →ₗ[ℝ] ℝ) :
-    LocalProductCurrent n U q :=
-  if hμ : IsMeasureDensity U μ g then
-    { toFun := fun γ => regularDistribution μ (fun x => g x γ) (hμ.locallyIntegrableOn γ)
-      map_add' := fun γ γ' => by
-        ext φ
-        rw [_root_.add_apply, regularDistribution_apply, regularDistribution_apply,
-          regularDistribution_apply, ← integral_add (hμ.integrable_test γ φ)
-            (hμ.integrable_test γ' φ)]
-        congr 1
-        funext x
-        rw [map_add, mul_add]
-      map_smul' := fun c γ => by
-        ext φ
-        rw [RingHom.id_apply, _root_.smul_apply, regularDistribution_apply,
-          regularDistribution_apply, smul_eq_mul, ← integral_const_mul]
-        congr 1
-        funext x
-        rw [map_smul, smul_eq_mul]
-        ring }
-  else 0
-
-theorem ofMeasureDensity_apply (hμ : IsMeasureDensity U μ g) (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
-    ofMeasureDensity U μ g γ φ = ∫ x, φ x * g x γ ∂μ := by
-  rw [ofMeasureDensity, dite_eq_left hμ]
-  exact regularDistribution_apply _ _ (hμ.locallyIntegrableOn γ) φ
+variable {U : Opens (ComplexModel n)} {μ : Measure (ComplexModel n)}
+  {g : ComplexModel n → formSpan n q →ₗ[ℝ] ℝ}
 
 /-- The restriction of `g(γ) μ` to an open `V ≤ U` is a positive current `T` on `V` as soon as
 `μ|_V` is the trace measure of `T` and `g` is its density form almost everywhere. -/
@@ -261,48 +194,29 @@ section Seq
 variable {W : ℕ → Opens (ComplexModel n)} {T : ∀ k, LocalProductCurrent n (W k) q}
   (hF : IsCompatibleFamily W T)
 
-/-- The glued measure `μ = ∑ₖ σ_{T k}|_{L_k}` on the layers `L_k = W k \ ⋃_{j<k} W j`. -/
+/-- The glued measure on the first-occurrence layers of the open cover. -/
 def glueMeasure : Measure (ComplexModel n) :=
-  Measure.sum fun k => ((hF.isPositive k).traceMeasure).restrict (layer (fun k => (W k : Set
-    (ComplexModel n))) k)
+  LayeredCurrent.measure hF.isPositive fun k => (W k : Set (ComplexModel n))
 
-/-- The density forms as a function of `(x, k)`. -/
-def layerDensity (z : (ComplexModel n) × ℕ) : formSpan n q →ₗ[ℝ] ℝ :=
-  densityForm (hF.isPositive z.2) z.1
+/-- The glued density form uses the first member of the cover containing the point. -/
+def glueDensity (x : ComplexModel n) : formSpan n q →ₗ[ℝ] ℝ :=
+  LayeredCurrent.density hF.isPositive (fun k => (W k : Set (ComplexModel n))) x
 
-/-- The glued density form: on the `k`-th layer, the density form of `T k`. -/
-def glueDensity (x : (ComplexModel n)) : formSpan n q →ₗ[ℝ] ℝ :=
-  layerDensity hF (x, level (fun k => (W k : Set (ComplexModel n))) x)
-
-theorem densityForm_congr_index {k l : ℕ} (h : k = l) (x : (ComplexModel n)) :
-    densityForm (hF.isPositive k) x = densityForm (hF.isPositive l) x := by
-  subst h
-  rfl
-
-theorem glueDensity_of_mem_layer {k : ℕ} {x : (ComplexModel n)} (hx : x ∈ layer (fun k => (W k :
-    Set (ComplexModel n))) k) :
+theorem glueDensity_of_mem_layer {k : ℕ} {x : ComplexModel n}
+    (hx : x ∈ layer (fun j => (W j : Set (ComplexModel n))) k) :
     glueDensity hF x = densityForm (hF.isPositive k) x :=
-  densityForm_congr_index hF (level_eq_of_mem_layer hx) x
+  LayeredCurrent.density_of_mem_layer hF.isPositive _ hx
 
 theorem measurableSet_W (k : ℕ) : MeasurableSet ((fun k => (W k : Set (ComplexModel n))) k) :=
   (W k).isOpen.measurableSet
 
-theorem measurable_glueDensity (γ : formSpan n q) : Measurable fun x => glueDensity hF x γ := by
-  have h : Measurable fun z : (ComplexModel n) × ℕ => layerDensity hF z γ := by
-    apply measurable_from_prod_countable_left
-    intro k
-    exact measurable_densityForm (hF.isPositive k) γ
-  have hl : Measurable fun x : (ComplexModel n) => (x, level (fun k => (W k : Set (ComplexModel
-    n))) x) :=
-    measurable_id.prodMk (measurable_level (measurableSet_W (W := W)))
-  exact h.comp hl
+theorem measurable_glueDensity (γ : formSpan n q) : Measurable fun x => glueDensity hF x γ :=
+  LayeredCurrent.measurable_density hF.isPositive _ (measurableSet_W (W := W)) γ
 
 theorem glueMeasure_apply {s : Set (ComplexModel n)} (hs : MeasurableSet s) :
     glueMeasure hF s =
-      ∑' k, (hF.isPositive k).traceMeasure (s ∩ layer (fun k => (W k : Set (ComplexModel n))) k)
-        := by
-  rw [glueMeasure, Measure.sum_apply _ hs]
-  simp only [Measure.restrict_apply hs]
+      ∑' k, (hF.isPositive k).traceMeasure (s ∩ layer (fun k => (W k : Set (ComplexModel n))) k) :=
+  LayeredCurrent.measure_apply hF.isPositive _ hs
 
 /-- **The restriction of the glued measure to `W a` is the trace measure of `T a`.** -/
 theorem glueMeasure_restrict (a : ℕ) :
@@ -361,13 +275,8 @@ theorem ae_glueDensity (a : ℕ) :
   rw [glueDensity_of_mem_layer hF hj, hx j (layer_subset j hj)]
 
 theorem ae_abs_glueDensity_le (γ : formSpan n q) :
-    ∀ᵐ x ∂glueMeasure hF, |glueDensity hF x γ| ≤ orderUnitConst γ := by
-  rw [glueMeasure, Measure.ae_sum_iff]
-  intro k
-  rw [ae_restrict_iff' (measurableSet_layer (fun k => (W k).isOpen.measurableSet) k)]
-  filter_upwards [ae_abs_densityForm_le (hF.isPositive k) γ] with x hx hmem
-  rw [glueDensity_of_mem_layer hF hmem]
-  exact hx
+    ∀ᵐ x ∂glueMeasure hF, |glueDensity hF x γ| ≤ orderUnitConst γ :=
+  LayeredCurrent.ae_abs_density_le hF.isPositive _ (measurableSet_W (W := W)) γ
 
 /-- **The glued data define a current on any open `U` covered by the `W k`.** -/
 theorem isMeasureDensity_glue (hWU : ∀ k, W k ≤ U) (hcov : ∀ x ∈ U, ∃ k, x ∈ W k) :

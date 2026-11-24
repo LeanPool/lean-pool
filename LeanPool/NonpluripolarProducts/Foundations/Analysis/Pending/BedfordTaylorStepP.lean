@@ -226,18 +226,17 @@ theorem integrable_mul_of_continuousOn {U : Opens (ComplexModel n)} {D : Complex
       (hf.continuousOn.mul hD) fun z hz ↦ by simp [image_eq_zero_of_notMem_tsupport hz]
   exact hcont.integrable_of_hasCompactSupport hc.mul_right
 
-/-- **From smooth to continuous tests.** Weak convergence of nonnegative
-continuous densities on `U` against smooth tests implies convergence against
-all continuous compactly supported tests in `U`. -/
-theorem tendsto_of_tendsto_contDiff_tests {U : Opens (ComplexModel n)}
-    {D : ℕ → ComplexModel n → ℝ} (hD : ∀ k, ContinuousOn (D k) U)
-    (hD0 : ∀ k, ∀ z ∈ U, 0 ≤ D k z) {μ : Measure (ComplexModel n)}
+/-- **From smooth to continuous tests, for measures.** Convergence of the integrals of
+all smooth tests with compact support in `U` implies convergence for continuous tests. -/
+theorem tendsto_integral_of_tendsto_contDiff_tests {U : Opens (ComplexModel n)}
+    {μs : ℕ → Measure (ComplexModel n)} {μ : Measure (ComplexModel n)}
+    (hμsf : ∀ k K, IsCompact K → K ⊆ U → μs k K < ⊤)
     (hμf : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤)
     (hsm : ∀ ψ : ComplexModel n → ℝ, ContDiff ℝ ∞ ψ → HasCompactSupport ψ → tsupport ψ ⊆ U →
-      Tendsto (fun k ↦ ∫ z, ψ z * D k z) atTop (𝓝 (∫ z, ψ z ∂μ)))
+      Tendsto (fun k ↦ ∫ z, ψ z ∂(μs k)) atTop (𝓝 (∫ z, ψ z ∂μ)))
     {φ : ComplexModel n → ℝ} (hφ : Continuous φ) (hφc : HasCompactSupport φ)
     (hφU : tsupport φ ⊆ U) :
-    Tendsto (fun k ↦ ∫ z, φ z * D k z) atTop (𝓝 (∫ z, φ z ∂μ)) := by
+    Tendsto (fun k ↦ ∫ z, φ z ∂(μs k)) atTop (𝓝 (∫ z, φ z ∂μ)) := by
   obtain ⟨V, hVo, hKV, hVU, hVc⟩ :=
     exists_open_between_and_isCompact_closure hφc U.isOpen hφU
   obtain ⟨ρ, hρ0, hρ1⟩ := exists_nonneg_testFunction_one_le_on_compact hVc hVU
@@ -265,46 +264,62 @@ theorem tendsto_of_tendsto_contDiff_tests {U : Opens (ComplexModel n)}
       rw [image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hKV h),
         image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hψV h), sub_zero, abs_zero]
       exact mul_nonneg hη.le (hρ0 z)
-  have hIφ := integrable_mul_of_continuousOn (hD k) hφ hφc hφU
-  have hIψ := integrable_mul_of_continuousOn (hD k) hψ.continuous hψc hψU
-  have hIρ := integrable_mul_of_continuousOn (hD k) ρ.continuous ρ.hasCompactSupport
-    ρ.tsupport_subset
-  have hbound1 : |(∫ z, φ z * D k z) - ∫ z, ψ z * D k z| ≤ η * ∫ z, ρ z * D k z := by
-    rw [← integral_sub hIφ hIψ, ← integral_const_mul, ← Real.norm_eq_abs]
-    refine norm_integral_le_of_norm_le (hIρ.const_mul η) (Eventually.of_forall fun z ↦ ?_)
-    rw [← sub_mul, Real.norm_eq_abs, abs_mul]
-    by_cases hz : z ∈ U
-    · rw [abs_of_nonneg (hD0 k z hz), ← mul_assoc]
-      exact mul_le_mul_of_nonneg_right (hpt z) (hD0 k z hz)
-    · have hzρ : ρ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hz (ρ.tsupport_subset h)
-      have hzφ : φ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)
-      have hzψ : ψ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hz (hψU h)
-      simp [hzρ, hzφ, hzψ]
-  have hμφ := integrable_of_tsupport_subset hμf hφ hφc hφU
-  have hμψ := integrable_of_tsupport_subset hμf hψ.continuous hψc hψU
-  have hμρ := integrable_of_tsupport_subset hμf ρ.continuous ρ.hasCompactSupport
-    ρ.tsupport_subset
-  have hbound2 : |(∫ z, φ z ∂μ) - ∫ z, ψ z ∂μ| ≤ η * R := by
-    rw [← integral_sub hμφ hμψ, ← integral_const_mul, ← Real.norm_eq_abs]
-    exact norm_integral_le_of_norm_le (hμρ.const_mul η)
+  have hbound : ∀ ν : Measure (ComplexModel n), (∀ K, IsCompact K → K ⊆ U → ν K < ⊤) →
+      |(∫ z, φ z ∂ν) - ∫ z, ψ z ∂ν| ≤ η * ∫ z, ρ z ∂ν := by
+    intro ν hν
+    have hνφ := integrable_of_tsupport_subset hν hφ hφc hφU
+    have hνψ := integrable_of_tsupport_subset hν hψ.continuous hψc hψU
+    have hνρ := integrable_of_tsupport_subset hν ρ.continuous ρ.hasCompactSupport
+      ρ.tsupport_subset
+    rw [← integral_sub hνφ hνψ, ← integral_const_mul, ← Real.norm_eq_abs]
+    exact norm_integral_le_of_norm_le (hνρ.const_mul η)
       (Eventually.of_forall fun z ↦ by simpa [Real.norm_eq_abs] using hpt z)
-  have hρk : ∫ z, ρ z * D k z ≤ R + 1 := by
+  have hbound1 := hbound (μs k) (hμsf k)
+  have hbound2 := hbound μ hμf
+  have hρk : ∫ z, ρ z ∂(μs k) ≤ R + 1 := by
     have := (abs_lt.mp hk₂).2; linarith
   have hsum : η * (R + 1) + η * R < 2 * ε / 3 := by
     have : η * (6 * R + 6) = ε := by
       rw [hη_def]; field_simp
     nlinarith
-  calc |(∫ z, φ z * D k z) - ∫ z, φ z ∂μ|
-      ≤ |(∫ z, φ z * D k z) - ∫ z, ψ z * D k z| + |(∫ z, ψ z * D k z) - ∫ z, ψ z ∂μ| +
+  calc |(∫ z, φ z ∂(μs k)) - ∫ z, φ z ∂μ|
+      ≤ |(∫ z, φ z ∂(μs k)) - ∫ z, ψ z ∂(μs k)| + |(∫ z, ψ z ∂(μs k)) - ∫ z, ψ z ∂μ| +
           |(∫ z, φ z ∂μ) - ∫ z, ψ z ∂μ| := by
-        have := abs_sub_le (∫ z, φ z * D k z) (∫ z, ψ z * D k z) (∫ z, φ z ∂μ)
-        have h2 := abs_sub_le (∫ z, ψ z * D k z) (∫ z, ψ z ∂μ) (∫ z, φ z ∂μ)
+        have := abs_sub_le (∫ z, φ z ∂(μs k)) (∫ z, ψ z ∂(μs k)) (∫ z, φ z ∂μ)
+        have h2 := abs_sub_le (∫ z, ψ z ∂(μs k)) (∫ z, ψ z ∂μ) (∫ z, φ z ∂μ)
         rw [abs_sub_comm (∫ z, ψ z ∂μ) (∫ z, φ z ∂μ)] at h2
         linarith
     _ ≤ η * (R + 1) + ε / 3 + η * R := by
         have := hbound1.trans (mul_le_mul_of_nonneg_left hρk hη.le)
         linarith [hk₁.le]
     _ < ε := by linarith
+
+/-- **From smooth to continuous tests.** Weak convergence of nonnegative
+continuous densities on `U` against smooth tests implies convergence against
+all continuous compactly supported tests in `U`. -/
+theorem tendsto_of_tendsto_contDiff_tests {U : Opens (ComplexModel n)}
+    {D : ℕ → ComplexModel n → ℝ} (hD : ∀ k, ContinuousOn (D k) U)
+    (hD0 : ∀ k, ∀ z ∈ U, 0 ≤ D k z) {μ : Measure (ComplexModel n)}
+    (hμf : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤)
+    (hsm : ∀ ψ : ComplexModel n → ℝ, ContDiff ℝ ∞ ψ → HasCompactSupport ψ → tsupport ψ ⊆ U →
+      Tendsto (fun k ↦ ∫ z, ψ z * D k z) atTop (𝓝 (∫ z, ψ z ∂μ)))
+    {φ : ComplexModel n → ℝ} (hφ : Continuous φ) (hφc : HasCompactSupport φ)
+    (hφU : tsupport φ ⊆ U) :
+    Tendsto (fun k ↦ ∫ z, φ z * D k z) atTop (𝓝 (∫ z, φ z ∂μ)) := by
+  let μs := fun k => (volume.restrict (U : Set (ComplexModel n))).withDensity
+    fun z => ENNReal.ofReal (D k z)
+  have e (k : ℕ) {f : ComplexModel n → ℝ} (hf : tsupport f ⊆ U) :
+      ∫ z, f z ∂(μs k) = ∫ z, f z * D k z :=
+    integral_ofReal_density (hD k) (hD0 k) hf
+  have ht : Tendsto (fun k => ∫ z, φ z ∂(μs k)) atTop (𝓝 (∫ z, φ z ∂μ)) :=
+    tendsto_integral_of_tendsto_contDiff_tests
+      (fun k K hK hKU => ofReal_density_lt_top (hD k) hK hKU) hμf
+      (fun ψ hψ hψc hψU => by
+        change Tendsto (fun k => ∫ z, ψ z ∂(μs k)) atTop (𝓝 (∫ z, ψ z ∂μ))
+        simp_rw [e _ hψU]
+        exact hsm ψ hψ hψc hψU)
+      hφ hφc hφU
+  simpa only [e _ hφU] using ht
 
 open scoped Distributions in
 /-- **The unweighted induction step.** -/

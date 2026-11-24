@@ -122,7 +122,7 @@ theorem IsTruncationFamily.traceMeasure_glue (hF : IsTruncationFamily B O)
   rw [hS.integral_traceMeasure, hF.glue_apply hm]
   refine integral_congr_ae ?_
   have h1 : ∀ᵐ x ∂hF.glueMeasure, hF.glueDensity x (kahlerPower n q) = 1 := by
-    rw [IsTruncationFamily.glueMeasure, Measure.ae_sum_iff]
+    rw [IsTruncationFamily.glueMeasure, Currents.LayeredCurrent.measure, Measure.ae_sum_iff]
     intro k
     rw [ae_restrict_iff' (measurableSet_layer hF.measurableSet k)]
     filter_upwards [densityForm_kahlerPower_ae (hF.isPositive k)] with x hx hmem
@@ -134,7 +134,8 @@ theorem IsTruncationFamily.traceMeasure_glue (hF : IsTruncationFamily B O)
 theorem IsTruncationFamily.glueMeasure_eq_zero (hF : IsTruncationFamily B O) {s : Set
     (ComplexModel n)}
     (hs : ∀ k, (hF.isPositive k).traceMeasure s = 0) : hF.glueMeasure s = 0 := by
-  rw [IsTruncationFamily.glueMeasure, Measure.sum_apply_of_countable, tsum_eq_zero_iff]
+  rw [IsTruncationFamily.glueMeasure, Currents.LayeredCurrent.measure,
+    Measure.sum_apply_of_countable, tsum_eq_zero_iff]
   exact fun k => le_antisymm ((Measure.le_iff'.mp Measure.restrict_le_self s).trans (hs k).le)
     zero_le
 

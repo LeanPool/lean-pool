@@ -128,15 +128,6 @@ theorem PlurisubharmonicOn.discPshOn_of_harmonicApproximation
   rw [circleDeficit_comp_affine u L x] at hsub
   simpa [L] using hsub
 
-/-- Open-domain spelling of the local-to-global theorem. -/
-theorem PlurisubharmonicOn.discPshOn_of_isOpen_of_harmonicApproximation
-    (hHA : HasGlobalHarmonicCircleApproximation)
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {u : E → EReal} {U : Set E} (hu : PlurisubharmonicOn u U)
-    (_hU : IsOpen U) : DiscPshOn u U :=
-  SGPT.Foundations.Analysis.FirstPass.PlurisubharmonicOn.discPshOn_of_harmonicApproximation
-    hHA hu
-
 /-- Fourier density on the additive circle supplies the harmonic
 approximation input used above, for either sign of the nonzero radius. -/
 theorem hasGlobalHarmonicCircleApproximation :
@@ -156,13 +147,6 @@ theorem PlurisubharmonicOn.discPshOn
   SGPT.Foundations.Analysis.FirstPass.PlurisubharmonicOn.discPshOn_of_harmonicApproximation
     hasGlobalHarmonicCircleApproximation hu
 
-/-- Open-domain spelling of the unconditional local-to-global bridge. -/
-theorem PlurisubharmonicOn.discPshOn_of_isOpen
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {u : E → EReal} {U : Set E} (hu : PlurisubharmonicOn u U)
-    (_hU : IsOpen U) : DiscPshOn u U :=
-  SGPT.Foundations.Analysis.FirstPass.PlurisubharmonicOn.discPshOn hu
-
 end
 
 end SGPT.Foundations.Analysis.FirstPass
@@ -175,13 +159,6 @@ theorem PlurisubharmonicOn.discPshOn
     {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
     {u : E → EReal} {U : Set E} (hu : PlurisubharmonicOn u U) :
     DiscPshOn u U :=
-  FirstPass.PlurisubharmonicOn.discPshOn hu
-
-/-- Open-domain public spelling used by the PSH supremum theorem. -/
-theorem PlurisubharmonicOn.discPshOn_of_isOpen
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {u : E → EReal} {U : Set E} (hu : PlurisubharmonicOn u U)
-    (_hU : IsOpen U) : DiscPshOn u U :=
   FirstPass.PlurisubharmonicOn.discPshOn hu
 
 end SGPT.Foundations.Analysis

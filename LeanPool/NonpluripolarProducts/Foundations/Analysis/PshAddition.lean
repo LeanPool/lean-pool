@@ -27,25 +27,28 @@ namespace SGPT.Foundations.Analysis
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
+/-- Deficits below finite majorants add. -/
+theorem ereal_coe_add_sub_add {C D : ℝ} {a b : EReal} (ha : a ≤ (C : EReal))
+    (hb : b ≤ (D : EReal)) :
+    ((C + D : ℝ) : EReal) - (a + b) = ((C : EReal) - a) + ((D : EReal) - b) := by
+  have ha' : a ≠ ⊤ := ne_of_lt (ha.trans_lt (EReal.coe_lt_top C))
+  have hb' : b ≠ ⊤ := ne_of_lt (hb.trans_lt (EReal.coe_lt_top D))
+  rw [EReal.coe_add, sub_eq_add_neg, EReal.neg_add (Or.inr hb') (Or.inl ha')]
+  simp only [sub_eq_add_neg]
+  ac_rfl
+
 /-- Deficits below separate finite upper bounds add, including at poles. -/
 theorem finiteDeficit_add (C D : ℝ) {z w : EReal}
     (hz : z ≤ (C : EReal)) (hw : w ≤ (D : EReal)) :
     (((C + D : ℝ) : EReal) - (z + w)).toENNReal =
       ((C : EReal) - z).toENNReal + ((D : EReal) - w).toENNReal := by
-  have hzT : z ≠ ⊤ := ne_of_lt (hz.trans_lt (EReal.coe_lt_top C))
-  have hwT : w ≠ ⊤ := ne_of_lt (hw.trans_lt (EReal.coe_lt_top D))
   have hzN : 0 ≤ (C : EReal) - z :=
     (EReal.sub_nonneg (Or.inl (EReal.coe_ne_top C))
       (Or.inl (EReal.coe_ne_bot C))).mpr hz
   have hwN : 0 ≤ (D : EReal) - w :=
     (EReal.sub_nonneg (Or.inl (EReal.coe_ne_top D))
       (Or.inl (EReal.coe_ne_bot D))).mpr hw
-  have heq : ((C + D : ℝ) : EReal) - (z + w) =
-      ((C : EReal) - z) + ((D : EReal) - w) := by
-    rw [EReal.coe_add, sub_eq_add_neg, EReal.neg_add (Or.inr hwT) (Or.inl hzT)]
-    simp only [sub_eq_add_neg]
-    ac_rfl
-  rw [heq, EReal.toENNReal_add hzN hwN]
+  rw [ereal_coe_add_sub_add hz hw, EReal.toENNReal_add hzN hwN]
 
 /-- The angular deficit of a sum is the sum of its measurable deficits. -/
 theorem DiscPshOn.circleDeficit_add {u w : E → EReal} {U : Set E}

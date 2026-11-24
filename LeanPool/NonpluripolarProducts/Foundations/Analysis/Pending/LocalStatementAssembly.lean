@@ -169,9 +169,15 @@ theorem isIrreducibleGerm_congr {A B : Set (ComplexModel n)} (hA : IsIrreducible
   · exact Or.inl (hAB.symm.trans h)
   · exact Or.inr (hAB.symm.trans h)
 
-/-- **(LS) at the origin of the model space.** -/
-theorem exists_localDecomposition_zero {S : Set (ComplexModel n)} (hS : IsAnalyticGerm S) :
-    Nonempty (LocalDecomposition (n := n) (M := ComplexModel n) S 0) := by
+/-- Construct local decomposition data together with irreducible germ representatives
+and the dimension comparison on smaller open neighborhoods. -/
+theorem exists_localDecomposition_germs {S : Set (ComplexModel n)} (hS : IsAnalyticGerm S) :
+    ∃ (D : LocalDecomposition (n := n) (M := ComplexModel n) S 0)
+      (B : Fin D.count → Set (ComplexModel n)),
+      (∀ i, D.piece i = B i ∩ D.nbhd) ∧ (∀ i, IsIrreducibleGerm (B i)) ∧
+      (∀ i, (0 : ComplexModel n) ∈ B i) ∧ (∀ i l, i ≠ l → ¬ B i ≤ᶠ[𝓝 0] B l) ∧
+      ∀ i Ω, IsOpen Ω → Ω ⊆ D.nbhd → ∀ {y k},
+        RegularAtDim (n := n) (M := ComplexModel n) (B i ∩ Ω) y k → k = D.dim i := by
   classical
   obtain ⟨r, B, hBirr, -, hSB, hpw⟩ := exists_irreducible_decomposition_euclidean hS
   choose s g hg hBg using fun i => (hBirr i).1
@@ -216,7 +222,19 @@ theorem exists_localDecomposition_zero {S : Set (ComplexModel n)} (hS : IsAnalyt
       mem_iInter.2 fun i => mem_iInter.2 fun l => hΩ₂0 i l⟩
   have hΩ1 : ∀ i, Ω ⊆ Ω₁ i := fun i z hz => mem_iInter.1 hz.1.2 i
   have hΩ2 : ∀ i l, Ω ⊆ Ω₂ i l := fun i l z hz => mem_iInter.1 (mem_iInter.1 hz.2 i) l
-  exact ⟨{
+  have hB'0 : ∀ i, (0 : ComplexModel n) ∈ B' i := by
+    intro i
+    by_contra h0
+    obtain ⟨j, hj⟩ : ∃ j, g i j 0 ≠ 0 := by
+      by_contra h
+      push Not at h
+      exact h0 h
+    apply (hirr' i).2.1
+    have hc : ContinuousAt (g i j) 0 := (hg i j).self_of_nhds.continuousAt
+    refine eventuallyEqSet_iff.2 ?_
+    filter_upwards [hc.eventually_ne hj] with z hz
+    exact ⟨fun h => hz (h j), fun h => h.elim⟩
+  let D : LocalDecomposition (n := n) (M := ComplexModel n) S 0 := {
     nbhd := Ω
     isOpen_nbhd := hΩo
     mem_nbhd := hΩ0
@@ -247,7 +265,15 @@ theorem exists_localDecomposition_zero {S : Set (ComplexModel n)} (hS : IsAnalyt
       obtain ⟨y₀, hy₀O, hy₀i, hy₀Ω⟩ := hne
       obtain ⟨y, ⟨⟨hyO, hyΩ⟩, hyi, -⟩, hyl⟩ := hΩ₂ i l hil (O ∩ Ω) (hO.inter hΩo)
         ⟨y₀, ⟨hy₀O, hy₀Ω⟩, hy₀i, hΩ2 i l hy₀Ω⟩
-      exact ⟨y, ⟨hyO, hyi, hyΩ⟩, fun h => hyl h.1⟩ }⟩
+      exact ⟨y, ⟨hyO, hyi, hyΩ⟩, fun h => hyl h.1⟩ }
+  refine ⟨D, B', fun _ => rfl, hirr', hB'0, hpw', ?_⟩
+  exact fun i Ω' hΩ'o hΩ' _ _ hreg => (hΩ₁ i Ω' hΩ'o (hΩ'.trans (hΩ1 i))).1 hreg
+
+/-- The local decomposition at the origin of the model space. -/
+theorem exists_localDecomposition_zero {S : Set (ComplexModel n)} (hS : IsAnalyticGerm S) :
+    Nonempty (LocalDecomposition (n := n) (M := ComplexModel n) S 0) := by
+  obtain ⟨D, -⟩ := exists_localDecomposition_germs hS
+  exact ⟨D⟩
 
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
   [IsComplexManifold n M]

@@ -165,27 +165,64 @@ private theorem sign_fin_two_eq (τ : Equiv.Perm (Fin 2)) :
   push_cast
   ring
 
-/-- The block permutation `(i, b) ↦ (π i, ε i b)` has sign `∏ᵢ sign (ε i)`. -/
+/-- The sign of an interleaved block permutation is the product of its
+within-block signs. -/
 private theorem sign_prodShear {k : ℕ} (π : Equiv.Perm (Fin k))
     (ε : Fin k → Equiv.Perm (Fin 2)) :
     Equiv.Perm.sign (Equiv.prodShear π ε) = ∏ i, Equiv.Perm.sign (ε i) := by
   have h : (Equiv.prodShear π ε : Equiv.Perm (Fin k × Fin 2)) =
       Equiv.prodCongrLeft (fun _ : Fin 2 => π) * Equiv.prodCongrRight ε := by
     ext x <;> rfl
-  rw [h, Equiv.Perm.sign_mul, Equiv.Perm.sign_prodCongrLeft, Equiv.Perm.sign_prodCongrRight,
-    Fin.prod_univ_two, Int.units_mul_self, one_mul]
+  rw [h, Equiv.Perm.sign_mul, Equiv.Perm.sign_prodCongrLeft,
+    Equiv.Perm.sign_prodCongrRight, Fin.prod_univ_two, Int.units_mul_self, one_mul]
 
-/-- The Pfaffian-type sum of the standard Kähler form on the standard frame. -/
-theorem coordinatePairingSum_frame_of_apply_eq_im (A : CoordinateRealTwoForm n)
-    (hA : ∀ v w : ComplexModel n, A ![v, w] = (inner ℂ v w).im) :
+/-- For a block permutation, the orientation of every `2 × 2` block cancels
+its permutation sign, while the outer block permutation merely reindexes the
+weights. -/
+private theorem diagonal_prodShear_term (π : Equiv.Perm (Fin n))
+    (ε : Fin n → Equiv.Perm (Fin 2)) (d : Fin n → ℝ) :
+    ((Equiv.Perm.sign (Equiv.prodShear π ε) : ℤ) : ℝ) *
+        ∏ i : Fin n, d (π i) *
+          ((((ε i) 1 : ℕ) : ℝ) - (((ε i) 0 : ℕ) : ℝ)) =
+      ∏ i : Fin n, d i := by
+  rw [sign_prodShear, Units.coe_prod, Int.cast_prod,
+    ← Finset.prod_mul_distrib]
+  calc
+    (∏ i : Fin n, ((Equiv.Perm.sign (ε i) : ℤ) : ℝ) *
+        (d (π i) * ((((ε i) 1 : ℕ) : ℝ) - (((ε i) 0 : ℕ) : ℝ)))) =
+        (∏ i : Fin n, d (π i)) * ∏ i : Fin n,
+          ((Equiv.Perm.sign (ε i) : ℤ) : ℝ) *
+            ((((ε i) 1 : ℕ) : ℝ) - (((ε i) 0 : ℕ) : ℝ)) := by
+      rw [← Finset.prod_mul_distrib]
+      apply Finset.prod_congr rfl
+      intro i _
+      ring
+    _ = ∏ i : Fin n, d (π i) := by
+      have hone : ∏ i : Fin n, ((Equiv.Perm.sign (ε i) : ℤ) : ℝ) *
+          ((((ε i) 1 : ℕ) : ℝ) - (((ε i) 0 : ℕ) : ℝ)) = 1 := by
+        apply Finset.prod_eq_one
+        intro i _
+        rw [sign_fin_two_eq, ← Int.cast_mul, ← Units.val_mul,
+          Int.units_mul_self]
+        simp
+      rw [hone, mul_one]
+    _ = ∏ i : Fin n, d i := Equiv.prod_comp π d
+
+/-- The pairing sum of a diagonal collection of real `2 × 2` blocks.  The
+hypothesis is a coefficient-level statement, so this result can be used after
+any analytic argument which identifies a form with such a diagonal frame. -/
+theorem coordinatePairingSum_frame_of_diagonal_weights (A : CoordinateRealTwoForm n)
+    (d : Fin n → ℝ)
+    (hA : ∀ a c : Fin n × Fin 2,
+      A ![coordinateRealFrame (finProdFinEquiv a), coordinateRealFrame (finProdFinEquiv c)] =
+        if a.1 = c.1 then d a.1 * (((c.2 : ℕ) : ℝ) - ((a.2 : ℕ) : ℝ)) else 0) :
     coordinatePairingSum A (id : Fin n × Fin 2 → Fin n × Fin 2)
         (coordinateRealFrame ∘ finProdFinEquiv) =
-      (n.factorial : ℝ) * 2 ^ n := by
-  have hM := apply_coordinateRealFrame_of_apply_eq_im A hA
+      (n.factorial : ℝ) * 2 ^ n * ∏ j, d j := by
   unfold coordinatePairingSum
-  simp only [id, Function.comp_apply, hM]
-  set Φ : Equiv.Perm (Fin n) × (Fin n → Equiv.Perm (Fin 2)) → Equiv.Perm (Fin n × Fin 2) :=
-    fun x => Equiv.prodShear x.1 x.2 with hΦ
+  simp only [id, Function.comp_apply, hA]
+  set Φ : Equiv.Perm (Fin n) × (Fin n → Equiv.Perm (Fin 2)) →
+      Equiv.Perm (Fin n × Fin 2) := fun x => Equiv.prodShear x.1 x.2 with hΦ
   have hΦinj : Function.Injective Φ := by
     rintro ⟨π, ε⟩ ⟨π', ε'⟩ hx
     have hx' : ∀ i b, (π i, ε i b) = (π' i, ε' i b) := fun i b =>
@@ -195,7 +232,7 @@ theorem coordinatePairingSum_frame_of_apply_eq_im (A : CoordinateRealTwoForm n)
     exact Equiv.ext fun b => congrArg Prod.snd (hx' i b)
   refine ((Finset.sum_of_injOn Φ hΦinj.injOn
     (fun _ _ => Finset.mem_coe.2 (Finset.mem_univ _)) ?_ (s := Finset.univ)
-    (f := fun _ => (1 : ℝ)) ?_).symm).trans ?_
+    (f := fun _ => ∏ j : Fin n, d j) ?_).symm).trans ?_
   · intro σ _ hσ
     by_contra hne
     apply hσ
@@ -246,25 +283,42 @@ theorem coordinatePairingSum_frame_of_apply_eq_im (A : CoordinateRealTwoForm n)
     · obtain ⟨i, b⟩ := x
       simp [hΦ, Equiv.prodShear]
   · rintro ⟨π, ε⟩ _
-    simp only [hΦ, Equiv.prodShear_apply, ite_true, sign_fin_two_eq, sign_prodShear,
-      Units.coe_prod, Int.cast_prod, ← Finset.prod_mul_distrib]
-    symm
-    refine Finset.prod_eq_one fun i _ => ?_
-    rw [← Int.cast_mul, ← Units.val_mul, Int.units_mul_self]
-    simp
-  · simp [Fintype.card_perm, Fintype.card_pi]
+    simpa only [hΦ, Equiv.prodShear_apply, ite_true] using
+      (diagonal_prodShear_term π ε d).symm
+  · simp [Fintype.card_perm, Fintype.card_pi, nsmul_eq_mul]
 
-/-- The top exterior power of the standard Kähler form `Im ⟪v, w⟫_ℂ` has
-density `n!` in the standard complex orientation. -/
+/-- The corresponding genuine exterior-power density.  This is the analytic
+interface of the combinatorial computation: diagonal real-frame coefficients
+can be inserted directly into `actualTopPowerDensity`. -/
+theorem actualTopPowerDensity_eq_factorial_mul_prod_of_diagonal_weights
+    (A : CoordinateRealTwoForm n) (d : Fin n → ℝ)
+    (hA : ∀ a c : Fin n × Fin 2,
+      A ![coordinateRealFrame (finProdFinEquiv a), coordinateRealFrame (finProdFinEquiv c)] =
+        if a.1 = c.1 then d a.1 * (((c.2 : ℕ) : ℝ) - ((a.2 : ℕ) : ℝ)) else 0) :
+    actualTopPowerDensity A = (n.factorial : ℝ) * ∏ j, d j := by
+  have h := coordinatePairingSum_equiv A
+    (finProdFinEquiv : Fin n × Fin 2 ≃ Fin (n * 2)) id coordinateRealFrame
+  rw [Function.comp_id] at h
+  rw [actualTopPowerDensity, coordinateWedgePower_apply_eq_pairingSum, h,
+    coordinatePairingSum_frame_of_diagonal_weights A d hA]
+  field_simp
+
+/-- The standard Kähler form has diagonal weights equal to one. -/
+theorem coordinatePairingSum_frame_of_apply_eq_im (A : CoordinateRealTwoForm n)
+    (hA : ∀ v w : ComplexModel n, A ![v, w] = (inner ℂ v w).im) :
+    coordinatePairingSum A (id : Fin n × Fin 2 → Fin n × Fin 2)
+        (coordinateRealFrame ∘ finProdFinEquiv) =
+      (n.factorial : ℝ) * 2 ^ n := by
+  simpa using coordinatePairingSum_frame_of_diagonal_weights A (fun _ => 1)
+    (by simpa only [one_mul] using apply_coordinateRealFrame_of_apply_eq_im A hA)
+
+/-- The top exterior power of the standard Kähler form has density `n!` in the
+standard complex orientation. -/
 theorem actualTopPowerDensity_eq_factorial_of_apply_eq_im {n : ℕ} (A : CoordinateRealTwoForm n)
     (hA : ∀ v w : ComplexModel n, A ![v, w] = (inner ℂ v w).im) :
     actualTopPowerDensity A = n.factorial := by
-  have h := coordinatePairingSum_equiv A (finProdFinEquiv : Fin n × Fin 2 ≃ Fin (n * 2)) id
-    coordinateRealFrame
-  rw [Function.comp_id] at h
-  rw [actualTopPowerDensity, coordinateWedgePower_apply_eq_pairingSum, h,
-    coordinatePairingSum_frame_of_apply_eq_im A hA]
-  field_simp
+  simpa using actualTopPowerDensity_eq_factorial_mul_prod_of_diagonal_weights A (fun _ => 1)
+    (by simpa only [one_mul] using apply_coordinateRealFrame_of_apply_eq_im A hA)
 
 /-- The top exterior power of the standard Kähler form has positive density. -/
 theorem actualTopPowerDensity_pos_of_apply_eq_im {n : ℕ} (A : CoordinateRealTwoForm n)

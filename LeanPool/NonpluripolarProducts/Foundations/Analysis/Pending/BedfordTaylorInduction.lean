@@ -105,32 +105,44 @@ theorem densityMeasure_compl (U : Opens (ComplexModel n)) (f : Fin n → Complex
     Measure.restrict_restrict U.isOpen.measurableSet.compl]
   simp
 
-theorem densityMeasure_lt_top {U : Opens (ComplexModel n)} {f : Fin n → ComplexModel n → ℝ}
-    (hf : ∀ i, ContDiffOn ℝ ∞ (f i) U) {K : Set (ComplexModel n)} (hK : IsCompact K)
-    (hKU : K ⊆ U) : densityMeasure U f K < ⊤ := by
-  have hint : IntegrableOn (mixedDensity f) K :=
-    ((continuousOn_mixedDensity hf).mono hKU).integrableOn_compact hK
-  rw [densityMeasure, withDensity_apply _ hK.measurableSet,
-    Measure.restrict_restrict_of_subset hKU]
-  refine lt_of_le_of_lt (lintegral_mono fun z ↦ ?_) hint.2
+/-- A continuous density gives finite mass to compact subsets of the open domain. -/
+theorem ofReal_density_lt_top {U : Opens (ComplexModel n)} {D : ComplexModel n → ℝ}
+    (hD : ContinuousOn D U) {K : Set (ComplexModel n)} (hK : IsCompact K) (hKU : K ⊆ U) :
+    ((volume.restrict (U : Set (ComplexModel n))).withDensity (fun z => ENNReal.ofReal (D z))) K
+      < ⊤ := by
+  have hint : IntegrableOn D K := (hD.mono hKU).integrableOn_compact hK
+  rw [withDensity_apply _ hK.measurableSet, Measure.restrict_restrict_of_subset hKU]
+  refine lt_of_le_of_lt (lintegral_mono fun z => ?_) hint.2
   rw [Real.eNorm_eq_ofReal_abs]
   exact ENNReal.ofReal_le_ofReal (le_abs_self _)
 
+theorem densityMeasure_lt_top {U : Opens (ComplexModel n)} {f : Fin n → ComplexModel n → ℝ}
+    (hf : ∀ i, ContDiffOn ℝ ∞ (f i) U) {K : Set (ComplexModel n)} (hK : IsCompact K)
+    (hKU : K ⊆ U) : densityMeasure U f K < ⊤ :=
+  ofReal_density_lt_top (continuousOn_mixedDensity hf) hK hKU
+
+/-- Integrate a supported test function against a nonnegative continuous density. -/
+theorem integral_ofReal_density {U : Opens (ComplexModel n)} {D : ComplexModel n → ℝ}
+    (hD : ContinuousOn D U) (hD0 : ∀ z ∈ U, 0 ≤ D z)
+    {φ : ComplexModel n → ℝ} (hφU : tsupport φ ⊆ U) :
+    ∫ z, φ z ∂((volume.restrict (U : Set (ComplexModel n))).withDensity
+      (fun z => ENNReal.ofReal (D z))) = ∫ z, φ z * D z := by
+  have hw : AEMeasurable (fun z => ENNReal.ofReal (D z))
+      (volume.restrict (U : Set (ComplexModel n))) :=
+    (hD.aemeasurable U.isOpen.measurableSet).ennreal_ofReal
+  rw [integral_withDensity_eq_integral_toReal_smul₀ hw (ae_of_all _ fun _ => ENNReal.ofReal_lt_top)]
+  have hzero : ∀ z ∉ (U : Set (ComplexModel n)), φ z * D z = 0 := fun z hz => by
+    simp [image_eq_zero_of_notMem_tsupport fun h => hz (hφU h)]
+  rw [← setIntegral_eq_integral_of_forall_compl_eq_zero hzero]
+  refine setIntegral_congr_fun U.isOpen.measurableSet fun z hz => ?_
+  simp only [smul_eq_mul]
+  rw [ENNReal.toReal_ofReal (hD0 z hz), mul_comm]
+
 theorem integral_densityMeasure {U : Opens (ComplexModel n)} {f : Fin n → ComplexModel n → ℝ}
     (hf : ∀ i, IsSmoothPsdOn U (f i)) {φ : ComplexModel n → ℝ} (hφU : tsupport φ ⊆ U) :
-    ∫ z, φ z ∂(densityMeasure U f) = ∫ z, φ z * mixedDensity f z := by
-  have hcont := continuousOn_mixedDensity fun i ↦ (hf i).1
-  have hw : AEMeasurable (fun z ↦ ENNReal.ofReal (mixedDensity f z))
-      (volume.restrict (U : Set (ComplexModel n))) :=
-    (hcont.aemeasurable U.isOpen.measurableSet).ennreal_ofReal
-  rw [densityMeasure, integral_withDensity_eq_integral_toReal_smul₀ hw
-    (ae_of_all _ fun _ ↦ ENNReal.ofReal_lt_top)]
-  have hzero : ∀ z ∉ (U : Set (ComplexModel n)), φ z * mixedDensity f z = 0 := fun z hz ↦ by
-    simp [image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)]
-  rw [← setIntegral_eq_integral_of_forall_compl_eq_zero hzero]
-  refine setIntegral_congr_fun U.isOpen.measurableSet fun z hz ↦ ?_
-  simp only [smul_eq_mul]
-  rw [ENNReal.toReal_ofReal (mixedDensity_nonneg fun i ↦ (hf i).2 z hz), mul_comm]
+    ∫ z, φ z ∂(densityMeasure U f) = ∫ z, φ z * mixedDensity f z :=
+  integral_ofReal_density (continuousOn_mixedDensity fun i => (hf i).1)
+    (fun z hz => mixedDensity_nonneg fun i => (hf i).2 z hz) hφU
 
 /-- Weak convergence on `U` of the mixed densities of a family of sequences. -/
 def TendstoMixed (U : Opens (ComplexModel n)) (F : Fin n → ℕ → ComplexModel n → ℝ)

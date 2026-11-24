@@ -127,10 +127,8 @@ section Comparison
 /-- **Mixed total-mass monotonicity in the singularity order**
 (Darvas--Di Nezza--Lu, arXiv:1705.05796v3, `thm: BEGZ_monotonicity_full`;
 Witt Nyström, arXiv:1703.01950, `compthm`, in the diagonal case).
-No small-unbounded-locus, big-class, positive-mass or connectedness assumption is
-imposed; the positivity of the dimension is kept only for the existing callers.
-No order inequality between the underlying measures is asserted. -/
-theorem globalMixedMass_mono (_hn : 0 < n) (omega : KahlerBackground n M)
+The comparison concerns total masses and applies in every dimension. -/
+theorem globalMixedMass_mono (omega : KahlerBackground n M)
     (hu : ∀ i, IsThetaPshPotential (θ i).val (u i))
     (hv : ∀ i, IsThetaPshPotential (θ i).val (v i))
     (huv : ∀ i, MoreSingularOn (u i) (v i) univ) :
@@ -143,35 +141,33 @@ theorem globalMixedMass_mono (_hn : 0 < n) (omega : KahlerBackground n M)
 
 /-- Equality of singularity type yields equality of total mass by applying
 monotonicity in both directions; it does not yield equality of measures. -/
-theorem globalMixedMass_eq_of_sameSingularityType (hn : 0 < n)
-    (omega : KahlerBackground n M)
+theorem globalMixedMass_eq_of_sameSingularityType (omega : KahlerBackground n M)
     (hu : ∀ i, IsThetaPshPotential (θ i).val (u i))
     (hv : ∀ i, IsThetaPshPotential (θ i).val (v i))
     (huv : ∀ i, SameSingularityTypeOn (u i) (v i) univ) :
     globalMixedMass θ u (fun i => (hu i).1) =
       globalMixedMass θ v (fun i => (hv i).1) :=
   le_antisymm
-    (globalMixedMass_mono hn omega hu hv (fun i => (huv i).1))
-    (globalMixedMass_mono hn omega hv hu (fun i => (huv i).2))
+    (globalMixedMass_mono omega hu hv (fun i => (huv i).1))
+    (globalMixedMass_mono omega hv hu (fun i => (huv i).2))
 
 /-- The upper mass is finite before transferring its order to real numbers. -/
-theorem globalMixedMassReal_mono (hn : 0 < n) (omega : KahlerBackground n M)
+theorem globalMixedMassReal_mono (omega : KahlerBackground n M)
     (hu : ∀ i, IsThetaPshPotential (θ i).val (u i))
     (hv : ∀ i, IsThetaPshPotential (θ i).val (v i))
     (huv : ∀ i, MoreSingularOn (u i) (v i) univ) :
     globalMixedMassReal θ u (fun i => (hu i).1) ≤
       globalMixedMassReal θ v (fun i => (hv i).1) :=
   ENNReal.toReal_mono (globalMixedMass_lt_top omega (fun i => (hv i).1)).ne
-    (globalMixedMass_mono hn omega hu hv huv)
+    (globalMixedMass_mono omega hu hv huv)
 
-theorem globalMixedMassReal_eq_of_sameSingularityType (hn : 0 < n)
-    (omega : KahlerBackground n M)
+theorem globalMixedMassReal_eq_of_sameSingularityType (omega : KahlerBackground n M)
     (hu : ∀ i, IsThetaPshPotential (θ i).val (u i))
     (hv : ∀ i, IsThetaPshPotential (θ i).val (v i))
     (huv : ∀ i, SameSingularityTypeOn (u i) (v i) univ) :
     globalMixedMassReal θ u (fun i => (hu i).1) =
       globalMixedMassReal θ v (fun i => (hv i).1) :=
-  congrArg ENNReal.toReal (globalMixedMass_eq_of_sameSingularityType hn omega hu hv huv)
+  congrArg ENNReal.toReal (globalMixedMass_eq_of_sameSingularityType omega hu hv huv)
 
 end Comparison
 

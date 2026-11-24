@@ -17,9 +17,10 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Consta
 
 Blueprint `ana:one-one-density-duality`, `ana:ac-determinant-semicontinuity`
     (`blueprint/src/analytic.tex`; TN.5, toward
-`ana:volume-semicontinuity`).  Source: Boucksom 2002 (`bou02-volume`), Lemma 3.5 (arXiv)
-    / Prop. 2.1 (published): the
-semicontinuity of `det(T_ac)^{1/n}` under weak convergence.
+`ana:volume-semicontinuity`). Source: Boucksom, *On the volume of a line bundle* (2002),
+proof of [Lemma 3.5](https://arxiv.org/pdf/math/0201031#page=11) (published Proposition 2.1).
+The proof gives the `liminf` estimate for `det(T_ac)^{1/n}` before passing to the
+`limsup` statement of the proposition.
 
 On `ℂⁿ`, `n = m + 1`, a current of bidimension `(m, m)` is recorded on the constant forms `Λ_m`
     (`LocalProductCurrents`), and
@@ -48,7 +49,7 @@ its absolutely continuous part has the pointwise density `acWeight(x) L_x`, a li
     every `x`, `H_{α_x} ≥ 0` and
   the infimum `D_C(T)(x)` of `ana:ac-density-liminf` over `C = detCone m` is
     `(n!/πⁿ) det(H_{α_x})^{1/n}`), and
-  **`ae_liminf_rpow_det_le`**: Boucksom's semicontinuity
+  **`ae_liminf_rpow_det_le`**: the liminf estimate from Boucksom's proof
     `det(H_{α_x}(T))^{1/n} ≥ liminf_k det(H_{α_x}(T_k))^{1/n}` for
   almost every `x ∈ U` when `T_k → T` weakly;
 * the same with a chosen representative: `acForm`, **`acMatrix`** (the density matrix `A_x` of
@@ -481,8 +482,8 @@ theorem ae_acInf_detCone_eq {T : LocalProductCurrent (m + 1) U m} (hT : IsPositi
     exact iInf₂_le c hc
   · exact le_iInf₂ fun c hc => iInf₂_le _ (hmemS c hc)
 
-/-- **Boucksom's semicontinuity of `det(T_ac)^{1/n}`** (Lemma 3.5 of `bou02-volume`,
-    liminf form): if positive currents
+/-- **Liminf estimate for `det(T_ac)^{1/n}`** from the proof of Boucksom's Lemma 3.5.
+If positive currents
 `T_k → T` of bidimension `(m, m)` on `U ⊆ ℂ^{m+1}` weakly, then for almost every `x ∈ U` and all
     `(1,1)`-forms `α_k`, `α`
 representing the densities `acWeight(x) L_x` of `T_k`, `T` at `x`,
@@ -561,7 +562,7 @@ theorem ae_acInf_detCone_eq_acMatrix (hT : IsPositive T) :
   filter_upwards [ae_acInf_detCone_eq hT] with x hx
   exact (hx _ (isOneOne_acForm hT x) (acWeight_mul_densityForm_eq hT x)).2
 
-/-- **Boucksom's semicontinuity of `det(T_ac)^{1/n}`**, with the density matrices: if positive
+/-- **Liminf estimate for `det(T_ac)^{1/n}`** in terms of density matrices. If positive
     currents `T_k → T`
 weakly, then `det(A_x(T))^{1/n} ≥ liminf_k det(A_x(T_k))^{1/n}` for almost every `x ∈ U`. -/
 theorem ae_liminf_rpow_det_acMatrix_le {T : ℕ → LocalProductCurrent (m + 1) U m}
