@@ -1,0 +1,611 @@
+/-
+Copyright (c) 2026 MohammadTaghi Hajiaghayi and Mahdi JafariRaviz. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
+-/
+
+/- Modified by Lean Pool contributors for the Lean 4.36 port. -/
+
+module
+
+public import LeanPool.GraphMinor.GM14.Section10Translation1
+public import LeanPool.GraphMinor.GM14.Section7
+public import LeanPool.GraphMinor.GM14.SegregationDrawing
+import LeanPool.GraphMinor.GM11.Section810
+
+/-!
+# Graph Minors XIV – Section 10 Translation (Part 2: Extending the Drawing from a 3-Segregation)
+
+This file proves the 3-segregation extension step of Section 10 of Graph Minors XIV (pages 49–50):
+if `G` is a 4-connected graph, `H` is a rigid 2-cell drawing in a connected closed
+non-spherical surface `S` with respectful tangle `T` of order `θ`, and `G` admits a `T`-local
+3-segregation `S_seg` with an `H`-compatible arrangement `(α_disc, α_pt)` in `S`, then `G` has a
+drawing `Γ_G : GraphDrawing G S` in `S` extending `H` (`H.IsSubdrawing Γ_G.drawing`).
+-/
+
+@[expose] public section
+
+namespace GraphMinor.GM14
+
+open Set Function Topology Metric Graph Hypergraph
+open GraphMinor GraphMinor.Surface GraphMinor.GM06 GraphMinor.GM09 GraphMinor.GM10
+open GraphMinor.GM11 GraphMinor.GM14.Whitney
+
+universe u v w
+
+variable {α : Type u} {β : Type v} {S : Type w} [TopologicalSpace S] [T2Space S]
+
+/-! ## 1. Finite Graphs on at Most 3 Vertices Have a Boundary Drawing and Piece Drawing -/
+
+omit [T2Space S] in
+/-- In a cyclic permutation `Ω` of at most 3 elements, for any two distinct `u, w ∈ Ω.bar`,
+one of the two intervals `Ω.interval u w` or `Ω.interval w u` is empty. -/
+theorem interval_eq_empty_or_swap_of_ncard_le_three (Ω : CyclicPerm α)
+    (hcard : Ω.bar.ncard ≤ 3) {u w : α} (hu : u ∈ Ω.bar) (hw : w ∈ Ω.bar) (huw : u ≠ w) :
+    Ω.interval u w = ∅ ∨ Ω.interval w u = ∅ := by
+  by_contra! h
+  obtain ⟨⟨x, hx⟩, ⟨y, hy⟩⟩ := h
+  have hxy : x ≠ y := fun h => Set.disjoint_left.mp (Ω.disjoint_interval_swap u w) hx (h ▸ hy)
+  have hxu : x ≠ u := fun h => Ω.not_mem_interval_left u w (h ▸ hx)
+  have hxw : x ≠ w := fun h => Ω.not_mem_interval_right u w (h ▸ hx)
+  have hyu : y ≠ u := fun h => Ω.not_mem_interval_right w u (h ▸ hy)
+  have hyw : y ≠ w := fun h => Ω.not_mem_interval_left w u (h ▸ hy)
+  have hsub : ({x, y, u, w} : Set α) ⊆ Ω.bar := by
+    rintro z (rfl | rfl | rfl | rfl)
+    · exact Ω.interval_subset_bar u w hx
+    · exact Ω.interval_subset_bar w u hy
+    · exact hu
+    · exact hw
+  have hc4 : ({x, y, u, w} : Set α).ncard = 4 := by
+    rw [Set.ncard_insert_of_notMem, Set.ncard_insert_of_notMem, Set.ncard_pair huw]
+    · simp [hyu, hyw]
+    · simp [hxy, hxu, hxw]
+  have hle := Set.ncard_le_ncard hsub Ω.finite_bar
+  omega
+
+omit [T2Space S] in
+/-- Every finite graph `K` with a vertex and `V(K).ncard ≤ 3` has a rural drawing with all its
+vertices on the boundary. -/
+theorem exists_boundaryRural_of_ncard_le_three {K : Graph α β}
+    (hV : V(K).Finite) (hE : E(K).Finite) (hc : V(K).ncard ≤ 3) (hne : V(K).Nonempty) :
+    ∃ L, BoundaryRural K L := by
+  let K₀ : Graph α β := K.restrict ∅
+  have hVK₀ : V(K₀) = V(K) := vertexSet_restrict K ∅
+  have hEK₀ : E(K₀) = ∅ := by simp [K₀, edgeSet_restrict]
+  have hc₀ : {C : Graph α β | IsGraphCircuit K₀ C}.ncard ≤ 1 := by
+    have hemp : {C : Graph α β | IsGraphCircuit K₀ C} = ∅ := by
+      refine eq_empty_of_forall_notMem fun C hC => ?_
+      obtain ⟨hCK₀, u, W, _, hpos, _, _⟩ := hC
+      cases W with
+      | nil _ => simp [GraphWalk.length, GraphWalk.edges] at hpos
+      | cons hl _ =>
+        have he : _ ∈ E(K₀) := hCK₀.edgeSet_mono hl.edge_mem
+        rw [hEK₀] at he
+        exact he
+    rw [hemp, Set.ncard_empty]
+    omega
+  obtain ⟨L, hL₀⟩ := exists_boundaryRural (hVK₀ ▸ hV) (hEK₀ ▸ finite_empty) hc₀ (hVK₀ ▸ hne)
+  suffices hstep : ∀ (n : ℕ) (F : Set β), F ⊆ E(K) → F.ncard = n →
+      BoundaryRural (K.restrict F) L by
+    have hK_eq : K.restrict E(K) = K :=
+      le_antisymm restrict_le ⟨by simp, fun {_ _ _} hl => ⟨hl.edge_mem, hl⟩⟩
+    exact ⟨L, hK_eq ▸ hstep E(K).ncard E(K) Subset.rfl rfl⟩
+  intro n
+  induction n with
+  | zero =>
+    intro F hF hn
+    have hF_fin : F.Finite := hE.subset hF
+    have hF_empty : F = ∅ := (Set.ncard_eq_zero hF_fin).mp hn
+    subst hF_empty
+    exact hL₀
+  | succ n ih =>
+    intro F hF hn
+    have hF_fin : F.Finite := hE.subset hF
+    obtain ⟨e, heF⟩ := (Set.ncard_pos hF_fin).mp (by omega)
+    let F' : Set β := F \ {e}
+    have hF'_sub : F' ⊆ E(K) := sdiff_subset.trans hF
+    have hF'_card : F'.ncard = n := by
+      change (F \ {e}).ncard = n
+      rw [Set.ncard_sdiff_singleton_of_mem heF, hn]
+      omega
+    have ih' := ih F' hF'_sub hF'_card
+    let K' : Graph α β := K.restrict F'
+    let K₁ : Graph α β := K.restrict F
+    have hle : K' ≤ K₁ := ⟨by simp [K', K₁], fun {_ _ _} hl => ⟨sdiff_subset hl.1, hl.2⟩⟩
+    have hV_eq : V(K₁) = V(K') := by simp [K', K₁, vertexSet_restrict]
+    have hE_eq : E(K₁) = insert e E(K') := by
+      ext f
+      simp only [K', K₁, F', edgeSet_restrict, mem_inter_iff, mem_insert_iff, mem_sdiff,
+        mem_singleton_iff]
+      by_cases hfe : f = e
+      · subst hfe
+        exact ⟨fun _ => Or.inl rfl, fun _ => ⟨hF heF, heF⟩⟩
+      · tauto
+    have he_not : e ∉ E(K') := by simp [K', F', edgeSet_restrict]
+    have hV₁_fin : V(K₁).Finite := by simpa [K₁, vertexSet_restrict] using hV
+    have hE₁_fin : E(K₁).Finite := hE.subset (by simp [K₁, edgeSet_restrict])
+    obtain ⟨u, w, hlK⟩ := K.exists_isLink_of_mem_edgeSet (hF heF)
+    have hl₁ : K₁.IsLink e u w := ⟨heF, hlK⟩
+    by_cases huw : u = w
+    · subst huw
+      exact ih'.add_loop hV₁_fin hE₁_fin hle hV_eq hE_eq he_not hl₁
+    · obtain ⟨hLV, hnd, hne', _⟩ := id ih'
+      have hbar_eq : (CyclicPerm.ofNodupList L hnd hne').bar = V(K) := by
+        change {x | x ∈ L} = V(K)
+        rw [hLV]
+        exact vertexSet_restrict K F'
+      have hu_bar : u ∈ (CyclicPerm.ofNodupList L hnd hne').bar := hbar_eq.symm ▸ hlK.left_mem
+      have hw_bar : w ∈ (CyclicPerm.ofNodupList L hnd hne').bar := hbar_eq.symm ▸ hlK.right_mem
+      rcases interval_eq_empty_or_swap_of_ncard_le_three
+          (CyclicPerm.ofNodupList L hnd hne') (hbar_eq.symm ▸ hc) hu_bar hw_bar huw with hgap | hgap
+      · exact ih'.add_edge hV₁_fin hE₁_fin hle hV_eq hE_eq he_not hl₁ huw (fun _ _ => hgap)
+      · exact ih'.add_edge hV₁_fin hE₁_fin hle hV_eq hE_eq he_not hl₁.symm (Ne.symm huw) (fun _ _
+          => hgap)
+
+omit [T2Space S] in
+/-- Every finite graph `K` with `V(K).ncard ≤ 3` can be drawn in the plane inside a closed disc `Δ`
+with all its vertices on `subBd Δ`. -/
+theorem exists_boundary_drawing_of_ncard_le_three {K : Graph α β}
+    (hV : V(K).Finite) (hE : E(K).Finite) (hc : V(K).ncard ≤ 3) :
+    ∃ (Γ : GraphDrawing K EuclideanPlane) (Δ : Set EuclideanPlane), IsClosedDisc Δ ∧
+      Γ.drawing.U ⊆ Δ ∧ Γ.drawing.V ⊆ subBd Δ := by
+  by_cases hne : V(K).Nonempty
+  · obtain ⟨L, hL, hnd, hne', N, rfl, hΩ, -, Γ, Δ, Δ₀, hΔ, -, hU, hbd, -⟩ :=
+      exists_boundaryRural_of_ncard_le_three hV hE hc hne
+    refine ⟨Γ, Δ, hΔ, fun x hx => (hU hx).1, ?_⟩
+    intro x hx
+    let v := Γ.iso.vertexEquiv.symm ⟨x, hx⟩
+    have hv : v.1 ∈ N.Ω.bar := by
+      rw [hΩ]
+      change v.1 ∈ {x | x ∈ L}
+      rw [hL]
+      exact v.2
+    have hsub := (hbd v.1 v.2).mpr hv
+    apply hsub
+    refine ⟨v.2, ?_⟩
+    simp [v]
+  · have hVe : V(K) = ∅ := not_nonempty_iff_eq_empty.mp hne
+    have hEe : E(K) = ∅ := by
+      refine eq_empty_of_forall_notMem fun f hf => ?_
+      obtain ⟨x, y, hxy⟩ := K.exists_isLink_of_mem_edgeSet hf
+      exact hne ⟨x, hxy.left_mem⟩
+    obtain ⟨Γ, hU, _⟩ := GraphDrawing.of_edgeless (S := EuclideanPlane) hV hEe
+      (ν := fun _ => 0) (by rw [hVe]; exact injOn_empty _)
+    refine ⟨Γ, ClosedUnitDisc, ⟨Homeomorph.refl ClosedUnitDisc⟩, ?_, ?_⟩
+    · rw [hU, hVe]
+      simp
+    · have : Γ.drawing.V ⊆ Γ.drawing.U := Γ.drawing.V_subset_U
+      rw [hU, hVe, image_empty] at this
+      exact this.trans (empty_subset _)
+
+/-- A finite graph `K` with `V(K).ncard ≤ 3` can be drawn in a closed disc `D`, with a subset
+`X ⊆ V(K)` of at most three vertices at given points of `discBd D` and nothing else on `discBd D`.
+-/
+theorem exists_disc_drawing_of_ncard_le_three {K : Graph α β}
+    (hV : V(K).Finite) (hE : E(K).Finite) (hc : V(K).ncard ≤ 3)
+    {D : Set S} (hD : IsClosedDisc D) {X : Set α}
+    (hXK : X ⊆ V(K)) (hX : X.ncard ≤ 3) {g : α → S} (hg : InjOn g X)
+    (hgD : MapsTo g X (discBd D)) :
+    ∃ Γ : GraphDrawing K S, Γ.drawing.U ⊆ D ∧ Γ.drawing.U ∩ discBd D = g '' X ∧
+      ∀ v : V(K), v.1 ∈ X → (Γ.iso.vertexEquiv v).1 = g v.1 := by
+  classical
+  obtain ⟨Y, Δ, hΔ, hYU, hYV⟩ := exists_boundary_drawing_of_ncard_le_three hV hE hc
+  have hpt : ∀ v (hv : v ∈ V(K)), vertexPt Y v = (Y.iso.vertexEquiv ⟨v, hv⟩).1 := fun v hv => by
+    simp [vertexPt, hv]
+  have hptV : ∀ v ∈ V(K), vertexPt Y v ∈ Y.drawing.V := fun v hv => by
+    rw [hpt v hv]
+    exact (Y.iso.vertexEquiv ⟨v, hv⟩).2
+  have hptinj : InjOn (vertexPt Y) V(K) := vertexPt_injOn Y
+  let F : Set EuclideanPlane := vertexPt Y '' X
+  have hXf : X.Finite := hV.subset hXK
+  have hFf : F.Finite := hXf.image _
+  have hFbd : F ⊆ discBd Δ := by
+    rintro _ ⟨v, hv, rfl⟩
+    rw [← subBd_eq_discBd_plane hΔ]
+    exact hYV (hptV v (hXK hv))
+  have hFc : F.ncard ≤ 3 := (ncard_image_le hXf).trans hX
+  obtain ⟨Ψ, Ψ', hΨc, -, _, hΨi, hΨD, hΨF, hΨin⟩ :=
+    exists_disc_shrink_map hΔ hFf.isClosed hFbd
+  obtain ⟨x₀, -⟩ := hD.nonempty_discInt
+  let g' : EuclideanPlane → S := fun y =>
+    if h : ∃ v ∈ X, vertexPt Y v = y then g h.choose else x₀
+  have hg'e : ∀ v ∈ X, g' (vertexPt Y v) = g v := by
+    intro v hv
+    have h : ∃ w ∈ X, vertexPt Y w = vertexPt Y v := ⟨v, hv, rfl⟩
+    have hs := h.choose_spec
+    change (if h : ∃ w ∈ X, vertexPt Y w = vertexPt Y v then g h.choose else x₀) = g v
+    rw [dite_eq_left_of_eq_true (eq_true h), hptinj (hXK hs.1) (hXK hv) hs.2]
+  have hg'i : InjOn g' F := by
+    rintro _ ⟨v, hv, rfl⟩ _ ⟨w, hw, rfl⟩ h
+    rw [hg'e v hv, hg'e w hw] at h
+    rw [hg hv hw h]
+  have hg'm : MapsTo g' F (discBd D) := by
+    rintro _ ⟨v, hv, rfl⟩
+    rw [hg'e v hv]
+    exact hgD hv
+  obtain ⟨φ, φ', hφ, hφg, -, hφb'⟩ := exists_disc_points hΔ hD hFf hFbd hFc hg'i hg'm
+  let f : EuclideanPlane → S := fun x => φ (Ψ x)
+  have hΨm : MapsTo Ψ Δ Δ := fun x hx => hΨD (mem_image_of_mem Ψ hx)
+  have hfc : ContinuousOn f Δ := hφ.2.2.2.2.1.comp hΨc hΨm
+  have hfi : InjOn f Δ := fun x hx y hy h =>
+    hΨi hx hy (hφ.injOn (hΨm hx) (hΨm hy) h)
+  have hUc : IsCompact Y.drawing.U := hΔ.isCompact.of_isClosed_subset Y.drawing.isClosed_U hYU
+  obtain ⟨Γ, hU, -, hv, -, -, -⟩ :=
+    GM09.GraphDrawing.transportOn Y hUc (hfc.mono hYU) (hfi.mono hYU)
+  have hfF : ∀ v ∈ X, f (vertexPt Y v) = g v := fun v hv => by
+    have hm : vertexPt Y v ∈ F := mem_image_of_mem _ hv
+    change φ (Ψ _) = g v
+    rw [hΨF _ hm, hφg _ hm]
+    exact hg'e v hv
+  refine ⟨Γ, ?_, ?_, fun v hvX => ?_⟩
+  · rw [hU]
+    rintro _ ⟨x, hx, rfl⟩
+    exact hφ.1 (hΨm (hYU hx))
+  · rw [hU]
+    refine subset_antisymm ?_ ?_
+    · rintro _ ⟨⟨x, hx, rfl⟩, hb⟩
+      by_cases hxF : x ∈ F
+      · obtain ⟨v, hv', rfl⟩ := hxF
+        exact ⟨v, hv', (hfF v hv').symm⟩
+      · have hin := hΨin x ⟨hYU hx, hxF⟩
+        have hb' := hφb' hb
+        rw [show φ' (f x) = Ψ x from hφ.2.2.1 hin.1] at hb'
+        exact (hin.2 hb').elim
+    · rintro _ ⟨v, hv', rfl⟩
+      refine ⟨⟨vertexPt Y v, ?_, hfF v hv'⟩, hgD hv'⟩
+      exact Y.drawing.V_subset_U (hptV v (hXK hv'))
+  · rw [hv v, ← hpt v.1 v.2]
+    exact hfF v.1 hvX
+
+/-- Suppose `H₁` is drawn in the closed disc `D`, is a subgraph `η(H₁)` of `K`, is rigid in `D`,
+and `V(K).ncard ≤ 3`. Then `K` has a drawing in `D` extending `H₁`, with the vertices of `X` at
+given points of `subBd D` and nothing else on `subBd D`. -/
+theorem exists_piece_drawing_of_ncard_le_three {H₁ : Drawing S} {K : Graph α β}
+    (η : SpanEmbedding H₁ K) (hV : V(K).Finite) (hE : E(K).Finite) (hc : V(K).ncard ≤ 3)
+    {D : Set S} (hD : IsClosedDisc D) (hbdD : subBd D = discBd D)
+    (hH₁D : H₁.U ⊆ D) (hH₁bd : H₁.U ∩ subBd D ⊆ H₁.V)
+    {X : Set α} (hXK : X ⊆ V(K)) (hX : X.ncard ≤ 3) {g : α → S} (hg : InjOn g X)
+    (hgD : MapsTo g X (subBd D)) (hXH : ∀ v ∈ H₁.V, v ∈ subBd D ↔ η.vMap v ∈ X)
+    (hgH : ∀ v ∈ H₁.V, η.vMap v ∈ X → g (η.vMap v) = v)
+    (hrigid : ∀ F : Set S, F ⊆ D → IsOArc F → F ∩ H₁.U ⊆ H₁.V →
+      (F ∩ H₁.V).ncard ≤ 2 → ∃ Δ' : Set S, Δ' ⊆ D ∧ IsDial H₁ F Δ') :
+    ∃ Γ : GraphDrawing K S, Γ.drawing.U ⊆ D ∧ Γ.drawing.U ∩ subBd D = g '' X ∧
+      (∀ v : V(K), v.1 ∈ X → (Γ.iso.vertexEquiv v).1 = g v.1) ∧
+      (∀ v ∈ H₁.V, graphDrawingVertexSet Γ (η.vMap v) = {v}) ∧
+      ∀ e ∈ H₁.E, graphDrawingEdgeSet Γ (η.eMap e) = e := by
+  obtain ⟨Y, hYU, hYbd, hYg⟩ := exists_disc_drawing_of_ncard_le_three hV hE hc hD hXK hX hg
+    (by rw [← hbdD]; exact hgD)
+  rw [← hbdD] at hYbd
+  obtain ⟨ι, hιv, hιe⟩ := η.exists_iso
+  obtain ⟨Y₀, -, hY₀U, hY₀s, hY₀v, -, hY₀e, -⟩ := GM09.GraphDrawing.ofSubgraph Y η.imageGraph_le
+  let φ : Iso H₁.toGraph Y₀.drawing.toGraph := isoTrans ι Y₀.iso
+  have hle := η.imageGraph_le
+  have hmem : ∀ v ∈ H₁.V, η.vMap v ∈ V(K) := fun v hv =>
+    hle.vertexSet_mono (η.bijOn_v.mapsTo hv)
+  have hφv : ∀ v : V(H₁.toGraph), (φ.vertexEquiv v).1 =
+      (Y.iso.vertexEquiv ⟨η.vMap v.1, hmem v.1 v.2⟩).1 := by
+    intro v
+    have h1 : (φ.vertexEquiv v).1 = (Y₀.iso.vertexEquiv (ι.vertexEquiv v)).1 := rfl
+    rw [h1, hY₀v]
+    congr 3
+    exact hιv v
+  have hφe : ∀ e : E(H₁.toGraph), (φ.edgeEquiv e).1 = graphDrawingEdgeSet Y (η.eMap e.1) := by
+    intro e
+    have h1 : (φ.edgeEquiv e).1 = (Y₀.iso.edgeEquiv (ι.edgeEquiv e)).1 := rfl
+    have hm : η.eMap e.1 ∈ E(η.imageGraph) := η.bijOn_e.mapsTo e.2
+    rw [← hY₀e _ hm, graphDrawingEdgeSet_eq Y₀ hm, h1]
+    congr 3
+    exact Subtype.ext (hιe e)
+  have hbar : ∀ v (hv : v ∈ H₁.V), v ∈ subBd D →
+      (Y.iso.vertexEquiv ⟨η.vMap v, hmem v hv⟩).1 = v := by
+    intro v hv hb
+    have hX' := (hXH v hv).mp hb
+    rw [hYg ⟨_, hmem v hv⟩ hX']
+    exact hgH v hv hX'
+  have hY₀V : ∀ x ∈ Y₀.drawing.V, ∃ (v : S) (hv : v ∈ H₁.V),
+      x = (Y.iso.vertexEquiv ⟨η.vMap v, hmem v hv⟩).1 := by
+    intro x hx
+    obtain ⟨v, hv, hw⟩ := η.bijOn_v.surjOn (Y₀.iso.vertexEquiv.symm ⟨x, hx⟩).2
+    refine ⟨v, hv, ?_⟩
+    have h := hY₀v (Y₀.iso.vertexEquiv.symm ⟨x, hx⟩)
+    rw [Equiv.apply_symm_apply] at h
+    refine h.trans ?_
+    congr 3
+    exact hw.symm
+  have hYpt : ∀ a (ha : a ∈ X), (Y.iso.vertexEquiv ⟨a, hXK ha⟩).1 = g a := fun a ha => hYg _ ha
+  have hH₂bd : Y₀.drawing.U ∩ subBd D ⊆ Y₀.drawing.V := by
+    rintro x ⟨hxU, hxb⟩
+    by_contra hxV
+    obtain ⟨e, he, hxe⟩ := Y₀.drawing.exists_edge_of_mem hxU hxV
+    have heY : e ∈ Y.drawing.E := hY₀s.2 he
+    have hx' : x ∈ Y.drawing.U ∩ subBd D := ⟨hY₀U hxU, hxb⟩
+    rw [hYbd] at hx'
+    obtain ⟨a, ha, rfl⟩ := hx'
+    have hgaV : g a ∈ Y.drawing.V := hYpt a ha ▸ (Y.iso.vertexEquiv ⟨a, hXK ha⟩).2
+    exact (heY.2.1 hxe).2 hgaV
+  have hbdV : H₁.V ∩ subBd D = Y₀.drawing.V ∩ subBd D := by
+    ext x
+    constructor
+    · rintro ⟨hxV, hxb⟩
+      have h1 := hφv ⟨x, hxV⟩
+      rw [hbar x hxV hxb] at h1
+      exact ⟨h1 ▸ (φ.vertexEquiv ⟨x, hxV⟩).2, hxb⟩
+    · rintro ⟨hxV, hxb⟩
+      obtain ⟨v, hv, rfl⟩ := hY₀V x hxV
+      have hx' : (Y.iso.vertexEquiv ⟨η.vMap v, hmem v hv⟩).1 ∈ Y.drawing.U ∩ subBd D :=
+        ⟨Y.drawing.V_subset_U (Y.iso.vertexEquiv _).2, hxb⟩
+      rw [hYbd] at hx'
+      obtain ⟨a, ha, hax⟩ := hx'
+      have hinj : (⟨a, hXK ha⟩ : V(K)) = ⟨η.vMap v, hmem v hv⟩ := by
+        apply Y.iso.vertexEquiv.injective
+        apply Subtype.ext
+        rw [hYpt a ha, hax]
+      have hav : a = η.vMap v := congrArg Subtype.val hinj
+      have hvb : v ∈ subBd D := (hXH v hv).mpr (hav ▸ ha)
+      rw [hbar v hv hvb]
+      exact ⟨hv, hvb⟩
+  have hφbd : ∀ v : V(H₁.toGraph), v.1 ∈ subBd D → (φ.vertexEquiv v).1 = v.1 := fun v hb => by
+    rw [hφv v]
+    exact hbar v.1 v.2 hb
+  obtain ⟨ψ, hψD, hψv, hψe, -, -, -, hψbd⟩ := theorem_6_4_proof hD hbdD hH₁D (hY₀U.trans hYU) hH₁bd
+    hH₂bd hbdV φ hφbd hrigid
+  obtain ⟨x₀, -⟩ := hD.nonempty_discInt
+  have hSne : Nonempty S := ⟨x₀⟩
+  have hUc : IsCompact Y.drawing.U := hD.isCompact.of_isClosed_subset Y.drawing.isClosed_U hYU
+  obtain ⟨Γ, hU, -, hv, hvs, hes, -⟩ := GM09.GraphDrawing.transportOn Y hUc
+    ψ.symm.continuous.continuousOn ψ.symm.injective.injOn
+  have hsymm : ∀ x ∈ subBd D, ψ.symm x = x := fun x hx => by
+    rw [Homeomorph.symm_apply_eq]
+    exact (hψbd x hx).symm
+  refine ⟨Γ, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hU]
+    rintro _ ⟨y, hy, rfl⟩
+    have : y ∈ ψ '' D := by rw [hψD]; exact hYU hy
+    obtain ⟨z, hz, rfl⟩ := this
+    simpa using hz
+  · rw [hU, ← hYbd]
+    refine subset_antisymm ?_ ?_
+    · rintro _ ⟨⟨y, hy, rfl⟩, hb⟩
+      have h1 := hψbd _ hb
+      rw [Homeomorph.apply_symm_apply] at h1
+      rw [← h1]
+      exact ⟨hy, h1 ▸ hb⟩
+    · rintro y ⟨hy, hb⟩
+      exact ⟨⟨y, hy, hsymm y hb⟩, hb⟩
+  · intro v hvX
+    rw [hv v, hYg v hvX]
+    exact hsymm _ (hgD hvX)
+  · intro v hvH
+    have hk := hmem v hvH
+    rw [hvs, graphDrawingVertexSet_eq_singleton Y hk, image_singleton, ← hφv ⟨v, hvH⟩,
+      ← hψv ⟨v, hvH⟩]
+    simp
+  · intro e he
+    rw [hes, ← hφe ⟨e, he⟩, ← hψe ⟨e, he⟩]
+    simp [image_image]
+
+/-! ## 2. Global Rigidity Restricted to a Closed Disc on a Non-Spherical Surface -/
+
+/-- If `H` is rigid on a connected closed non-spherical surface `S` and `d ⊆ S` is a closed disc
+with `subBd d ∩ H.U ⊆ H.V`, then `H.interSet d` is rigid inside `d`. -/
+theorem isRigidIn_interSet_of_isRigid [ConnectedSpace S]
+    (hS : IsClosedSurface S) (hns : ¬ IsSphere S) {H : Drawing S} (hrig : IsRigid H)
+    {d : Set S} (hd : IsClosedDisc d) (hbd : subBd d ∩ H.U ⊆ H.V) :
+    ∀ F : Set S, F ⊆ d → IsOArc F → F ∩ (H.interSet d).U ⊆ (H.interSet d).V →
+      (F ∩ (H.interSet d).V).ncard ≤ 2 → ∃ Δ' : Set S, Δ' ⊆ d ∧ IsDial (H.interSet d) F Δ' := by
+  have hcl : IsClosed d := hd.isClosed
+  obtain ⟨hV, hU⟩ := interSet_V_and_U hcl hbd
+  intro F hFd hF hFn hFc
+  have hFV : F ∩ (H.interSet d).V = F ∩ H.V := by
+    rw [hV]
+    ext x
+    exact ⟨fun h => ⟨h.1, h.2.1⟩, fun h => ⟨h.1, h.2, hFd h.1⟩⟩
+  have hFn' : F ∩ H.U ⊆ H.V := by
+    rintro x ⟨hx, hxU⟩
+    have : x ∈ F ∩ (H.interSet d).U := ⟨hx, hU.superset ⟨hxU, hFd hx⟩⟩
+    have := hFn this
+    rw [hV] at this
+    exact this.1
+  obtain ⟨Δ, hΔd, hΔb, hor⟩ := hrig F hF hFn' (hFV ▸ hFc)
+  have hbdΔ : discBd Δ = F := (IsClosedDisc.subBd_eq_discBd hS hΔd).symm.trans hΔb
+  obtain ⟨D', ⟨hD'd, hD'disc, hbD', -⟩, -⟩ := disc_oArc d F hd hFd hF
+  have hD'_eq : D' = Δ :=
+    eq_of_discBd_eq (IsClosedSurface.isSurface hS) hns hD'disc hΔd (hbD'.trans hbdΔ.symm)
+  have hsub : Δ ⊆ d := hD'_eq ▸ hD'd
+  refine ⟨Δ, hsub, hΔd, hΔb, ?_⟩
+  rcases hor with h | ⟨u, v, huv, hcap, hp⟩
+  · left
+    rw [hU]
+    exact fun x hx => h ⟨hx.1, hx.2.1⟩
+  · right
+    refine ⟨u, v, huv, hFV.trans hcap, ?_⟩
+    have heq : (H.interSet d).interSet Δ = H.interSet Δ := by
+      have hE₁ : ((H.interSet d).interSet Δ).E = (H.interSet Δ).E := by
+        rw [Whitney.interSet_E, Whitney.interSet_E, Whitney.interSet_E]
+        ext e
+        exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, h.2.trans hsub⟩, h.2⟩⟩
+      refine Drawing.ext_of_V_E ?_ hE₁
+      ext x
+      rw [GM11.mem_interSet_V_iff hΔd.isClosed, GM11.mem_interSet_V_iff hΔd.isClosed, hV]
+      exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, hsub h.2⟩, h.2⟩⟩
+    rwa [heq]
+
+/-! ## 3. Extending the Drawing across a `T`-Local 3-Segregation -/
+
+/-- **Lemma 3 (`exists_extending_drawing_of_threeSegregation`):** Under the hypotheses of (1.1),
+if `G` is a 4-connected graph, `H` is rigid with a respectful tangle `T` of order `θ`, and
+`S_seg` is a `T`-local 3-segregation of `G` with an `H`-compatible arrangement `(α_disc, α_pt)` in
+`S`, then `G` has a drawing `Γ_G : GraphDrawing G S` in `S` such that `H.IsSubdrawing Γ_G.drawing`.
+-/
+theorem exists_extending_drawing_of_threeSegregation [ConnectedSpace S]
+    (hS : IsClosedSurface S) (hns : ¬ IsSphere S)
+    {G : Graph α β} {H : Drawing S} {η : SpanEmbedding H G}
+    (hG_4conn : 5 ≤ V(G).ncard ∧
+      ∀ A B : Graph α β, IsGraphSeparation G A B → (V(A) ∩ V(B)).ncard < 4 →
+        V(A) = V(G) ∨ V(B) = V(G))
+    (hrig : IsRigid H) {θ : ℕ}
+    {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
+    (hT : IsRespectfulDrawingTangle H θ T)
+    {S_seg : Set (Society α β)} {α_disc : Society α β → Set S} {α_pt : α → S}
+    (hseg : IsThreeSegregation G S_seg)
+    (hloc : IsTangleLocal G H η T S_seg)
+    (harr : IsSurfaceArrangement S_seg α_disc α_pt)
+    (hcompat : IsCompatibleWith G H η S_seg α_disc α_pt) :
+    ∃ Γ_G : GraphDrawing G S, H.IsSubdrawing Γ_G.drawing := by
+  obtain ⟨hs, h3⟩ := id hseg
+  have hmember : ∀ S₀ ∈ S_seg,
+      ∃ Γ : GraphDrawing S₀.G S, Γ.drawing.U ⊆ α_disc S₀ ∧
+        Γ.drawing.U ∩ subBd (α_disc S₀) = α_pt '' S₀.Ω.bar ∧
+        (∀ v : V(S₀.G), v.1 ∈ S₀.Ω.bar → (Γ.iso.vertexEquiv v).1 = α_pt v.1) ∧
+        (∀ v ∈ H.V, v ∈ α_disc S₀ → graphDrawingVertexSet Γ (η.vMap v) = {v}) ∧
+        ∀ e ∈ H.E, e ⊆ α_disc S₀ → graphDrawingEdgeSet Γ (η.eMap e) = e := by
+    intro S₀ hS₀
+    have hle₀ : S₀.G ≤ G := hs.le S₀ hS₀
+    obtain ⟨B, hsepB, hV_inter, _, _⟩ := exists_separation_of_segregation hs hS₀
+    have hcard_lt : (V(S₀.G) ∩ V(B)).ncard < 4 := by
+      rw [hV_inter]
+      exact Nat.lt_succ_of_le (h3 S₀ hS₀)
+    have hVB_eq : V(B) = V(G) := by
+      rcases hG_4conn.2 S₀.G B hsepB hcard_lt with hVS₀ | hVB
+      · exfalso
+        obtain ⟨A_H, B_H, _, hAV, _, _, _, _, hmemT⟩ :=
+          exists_tangle_separation_of_threeSegregation hseg hloc hS₀
+        have hAV_eq : A_H.vertexSet = H.V := by
+          rw [hAV]
+          ext v
+          simp only [mem_ofPred_eq, and_iff_left_iff_imp]
+          intro hv
+          rw [hVS₀]
+          exact η.imageGraph_le.vertexSet_mono (η.bijOn_v.mapsTo hv)
+        exact hT.2.1.axiom3 hmemT hAV_eq
+      · exact hVB
+    have hVS₀_eq : V(S₀.G) = S₀.Ω.bar := by
+      rw [← hV_inter, hVB_eq, eq_comm, inter_eq_left]
+      exact hle₀.vertexSet_mono
+    have hVS₀_card : V(S₀.G).ncard ≤ 3 := hVS₀_eq ▸ h3 S₀ hS₀
+    obtain ⟨hd, hbarpt⟩ := harr.isClosedDisc S₀ hS₀
+    have hbdd : subBd (α_disc S₀) = discBd (α_disc S₀) := IsClosedDisc.subBd_eq_discBd hS hd
+    have hcl : IsClosed (α_disc S₀) := hd.isClosed
+    have hbd : subBd (α_disc S₀) ∩ H.U ⊆ H.V := by
+      rintro x ⟨h₁, h₂⟩
+      have : x ∈ H.U ∩ subBd (α_disc S₀) := ⟨h₂, h₁⟩
+      rw [hcompat.bd_inter_eq S₀ hS₀] at this
+      exact this.1
+    obtain ⟨η₁, _, hv, he⟩ := exists_pieceEmbedding η hle₀ hcl hbd
+      (hcompat.inter_V_iff S₀ hS₀) (hcompat.inter_E_iff S₀ hS₀)
+    obtain ⟨hIV, hIU⟩ := interSet_V_and_U hcl hbd
+    have hrig₁ := isRigidIn_interSet_of_isRigid hS hns hrig hd hbd
+    have hU : (H.interSet (α_disc S₀)).U ⊆ α_disc S₀ := by
+      rw [hIU]
+      exact inter_subset_right
+    have hn : (H.interSet (α_disc S₀)).U ∩ subBd (α_disc S₀) ⊆ (H.interSet (α_disc S₀)).V := by
+      rw [hIU, hIV]
+      rintro x ⟨⟨h₁, h₂⟩, h₃⟩
+      exact ⟨hbd ⟨h₃, h₁⟩, h₂⟩
+    have hXH : ∀ v ∈ (H.interSet (α_disc S₀)).V, v ∈ subBd (α_disc S₀) ↔ η₁.vMap v ∈ S₀.Ω.bar := by
+      intro v hv'
+      rw [hIV] at hv'
+      rw [hv]
+      constructor
+      · intro h
+        have : v ∈ H.U ∩ subBd (α_disc S₀) := ⟨H.V_subset_U hv'.1, h⟩
+        rw [hcompat.bd_inter_eq S₀ hS₀] at this
+        exact this.2
+      · intro h
+        have : v ∈ {v ∈ H.V | η.vMap v ∈ S₀.Ω.bar} := ⟨hv'.1, h⟩
+        rw [← hcompat.bd_inter_eq S₀ hS₀] at this
+        exact this.2
+    obtain ⟨Γ, h₁, h₂, h₃', h₄, h₅⟩ := exists_piece_drawing_of_ncard_le_three η₁
+      S₀.finite_V S₀.finite_E hVS₀_card hd hbdd hU hn
+      S₀.bar_subset (h3 S₀ hS₀)
+      (harr.injOn_pts.mono fun x hx => mem_iUnion₂.mpr ⟨S₀, hS₀, hx⟩) hbarpt hXH
+      (fun v hv' h => by
+        rw [hIV] at hv'
+        rw [hv] at h ⊢
+        exact hcompat.pt_eq v hv'.1 (mem_iUnion₂.mpr ⟨S₀, hS₀, h⟩))
+      hrig₁
+    refine ⟨Γ, h₁, h₂, h₃', fun v hv' hvd => ?_, fun e he' hed => ?_⟩
+    · have := h₄ v (by rw [hIV]; exact ⟨hv', hvd⟩)
+      rwa [hv] at this
+    · have := h₅ e (by rw [Whitney.interSet_E]; exact ⟨he', hed⟩)
+      rwa [he] at this
+  choose Γs h₁ _ h₃ h₄ h₅ using hmember
+  have hpick : ∀ v : α, ∃ p : S, ∀ S₀ (h : S₀ ∈ S_seg) (hv : v ∈ V(S₀.G)),
+      ((Γs S₀ h).iso.vertexEquiv ⟨v, hv⟩).1 = p := by
+    intro v
+    by_cases hv : ∃ S₀ ∈ S_seg, v ∈ V(S₀.G)
+    · obtain ⟨S₀, h, hv₀⟩ := hv
+      refine ⟨((Γs S₀ h).iso.vertexEquiv ⟨v, hv₀⟩).1, fun S₁ h' hv₁ => ?_⟩
+      by_cases he : S₁ = S₀
+      · subst he
+        rfl
+      · obtain ⟨hb₁, hb₀⟩ := hs.vertex_inter_subset S₁ h' S₀ h he ⟨hv₁, hv₀⟩
+        rw [h₃ S₁ h' ⟨v, hv₁⟩ hb₁, h₃ S₀ h ⟨v, hv₀⟩ hb₀]
+    · refine ⟨α_pt v, fun S₀ h hv₀ => absurd ⟨S₀, h, hv₀⟩ hv⟩
+  choose ν hν using hpick
+  have hVG : V(G) = ⋃ S₁ ∈ S_seg, V(S₁.G) := by
+    conv_lhs => rw [← hs.union_eq]
+    simp [vertexSet_subgraphSUnion]
+  have hEG : E(G) = ⋃ S₁ ∈ S_seg, E(S₁.G) := by
+    conv_lhs => rw [← hs.union_eq]
+    rw [edgeSet_subgraphSUnion (by rintro _ ⟨S₁, hS₁, rfl⟩; exact hs.le S₁ hS₁)]
+    simp
+  have hbarν : ∀ S₀ (h : S₀ ∈ S_seg), ∀ b ∈ S₀.Ω.bar, ν b = α_pt b := fun S₀ h b hb =>
+    (hν b S₀ h (S₀.bar_subset hb)).symm.trans (h₃ S₀ h ⟨b, S₀.bar_subset hb⟩ hb)
+  have hνU : ∀ S₀ (h : S₀ ∈ S_seg) (v : α), v ∈ V(S₀.G) → ν v ∈ (Γs S₀ h).drawing.U := by
+    intro S₀ h v hv
+    rw [← hν v S₀ h hv]
+    exact (Γs S₀ h).drawing.V_subset_U ((Γs S₀ h).iso.vertexEquiv ⟨v, hv⟩).2
+  have hinj₀ : ∀ S₀ (h : S₀ ∈ S_seg), InjOn ν V(S₀.G) := by
+    intro S₀ h a ha b hb hab
+    rw [← hν a S₀ h ha, ← hν b S₀ h hb] at hab
+    exact congrArg Subtype.val ((Γs S₀ h).iso.vertexEquiv.injective (Subtype.ext hab))
+  have hinj : InjOn ν V(G) := by
+    intro a ha b hb hab
+    rw [hVG] at ha hb
+    obtain ⟨S₁, h₁', ha'⟩ := mem_iUnion₂.mp ha
+    obtain ⟨S₂, h₂', hb'⟩ := mem_iUnion₂.mp hb
+    by_cases he : S₁ = S₂
+    · subst he
+      exact hinj₀ S₁ h₁' ha' hb' hab
+    · have hp : ν a ∈ α_disc S₁ ∩ α_disc S₂ :=
+        ⟨h₁ S₁ h₁' (hνU S₁ h₁' a ha'), hab ▸ h₁ S₂ h₂' (hνU S₂ h₂' b hb')⟩
+      obtain ⟨c, ⟨hc₁, hc₂⟩, hc⟩ := harr.inter_discs S₁ h₁' S₂ h₂' he hp
+      have e₁ : a = c := hinj₀ S₁ h₁' ha' (S₁.bar_subset hc₁)
+        ((hc.symm.trans (hbarν S₁ h₁' c hc₁).symm).symm ▸ rfl)
+      have e₂ : b = c := hinj₀ S₂ h₂' hb' (S₂.bar_subset hc₂)
+        (by rw [← hab, ← hc, hbarν S₂ h₂' c hc₂])
+      rw [e₁, e₂]
+  obtain ⟨Γ, _, hv, he⟩ := exists_glued_drawing hs hinj Γs
+    (fun S₀ h v => hν v.1 S₀ h v.2)
+    (fun S₁ h₁' S₂ h₂' hne x hx => by
+      have hp : x ∈ α_disc S₁ ∩ α_disc S₂ := ⟨h₁ S₁ h₁' hx.1, h₁ S₂ h₂' hx.2⟩
+      obtain ⟨c, ⟨hc₁, hc₂⟩, rfl⟩ := harr.inter_discs S₁ h₁' S₂ h₂' hne hp
+      exact ⟨c, ⟨S₁.bar_subset hc₁, S₂.bar_subset hc₂⟩, hbarν S₁ h₁' c hc₁⟩)
+  have hηv : ∀ v ∈ H.V, ν (η.vMap v) = v := by
+    intro v hv'
+    have hx := η.imageGraph_le.vertexSet_mono (η.bijOn_v.mapsTo hv')
+    rw [hVG] at hx
+    obtain ⟨S₀, h, hx⟩ := mem_iUnion₂.mp hx
+    have hvd := (hcompat.inter_V_iff S₀ h v hv').mpr hx
+    have h₆ := h₄ S₀ h v hv' hvd
+    rw [graphDrawingVertexSet_eq_singleton (Γs S₀ h) hx, hν _ S₀ h hx] at h₆
+    exact singleton_eq_singleton_iff.mp h₆
+  have hηe : ∀ e ∈ H.E, graphDrawingEdgeSet Γ (η.eMap e) = e := by
+    intro e he'
+    have hx := η.imageGraph_le.edgeSet_mono (η.bijOn_e.mapsTo he')
+    rw [hEG] at hx
+    obtain ⟨S₀, h, hx⟩ := mem_iUnion₂.mp hx
+    rw [he S₀ h _ hx]
+    exact h₅ S₀ h e he' ((hcompat.inter_E_iff S₀ h e he').mpr hx)
+  refine ⟨Γ, ⟨?_, ?_⟩⟩
+  · intro v hv'
+    have hvG : η.vMap v ∈ V(G) := η.imageGraph_le.vertexSet_mono (η.bijOn_v.mapsTo hv')
+    have heq := (hv ⟨η.vMap v, hvG⟩).trans (hηv v hv')
+    exact heq ▸ (Γ.iso.vertexEquiv ⟨η.vMap v, hvG⟩).2
+  · intro e he'
+    have heG : η.eMap e ∈ E(G) := η.imageGraph_le.edgeSet_mono (η.bijOn_e.mapsTo he')
+    have heq := (graphDrawingEdgeSet_eq Γ heG).symm.trans (hηe e he')
+    exact heq ▸ (Γ.iso.edgeEquiv ⟨η.eMap e, heG⟩).2
+
+end GraphMinor.GM14

@@ -1,0 +1,46 @@
+slug: robertson-seymour-graph-minor
+title: The Robertson–Seymour graph minor theorem
+summary: >-
+  In every infinite sequence of finite multigraphs, an earlier graph is
+  isomorphic to a minor of a later one. The proof uses Mathlib multigraphs
+  and develops supporting theory for graph drawings on surfaces, tangles
+  and well-quasi-ordering.
+branch: structural graph theory
+entry_module: LeanPool.GraphMinor
+authors:
+- MohammadTaghi Hajiaghayi
+- Mahdi JafariRaviz
+source:
+  title: Graph Minors. XX. Wagner's conjecture
+  authors:
+  - Neil Robertson
+  - Paul D. Seymour
+  doi: 10.1016/j.jctb.2004.08.001
+  url: https://github.com/mahdi-jfri/GraphMinor/tree/89c19b2fd07130fe6fc0fb7df2743ad99558c939
+  github_repo: mahdi-jfri/GraphMinor
+  commit: 89c19b2fd07130fe6fc0fb7df2743ad99558c939
+  initial_release: https://github.com/mahdi-jfri/GraphMinor/commit/04a7046c000043c02c6a3351f4d7d9a4b24b2b34
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339/near/640335582
+  announcement_date: '2026-11-14T15:56:45Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The upstream formalization.yaml identifies agent automation. MohammadTaghi
+  Hajiaghayi and Mahdi JafariRaviz are the attributed formalization authors.
+main_declarations:
+- GraphMinor.graph_minor_theorem
+main_results:
+- declaration: GraphMinor.graph_minor_theorem
+  informal: >-
+    In any infinite sequence of multigraphs with finite vertex and edge sets,
+    there are indices i < j such that graph i is isomorphic to a subgraph
+    of graph j after contracting a subset of that subgraph's edges.
+tags:
+- graph-theory
+- graph-minors
+- multigraphs
+- well-quasi-ordering
+msc:
+- 05C83
+- 05C10
