@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateDensityHermitian
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
 
 /-!
 # The exterior product of finitely many DIFFERENT real two-forms

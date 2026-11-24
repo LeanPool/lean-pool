@@ -40,6 +40,29 @@ namespace SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 
 variable {n : ℕ}
 
+/-- The Pfaffian-type sum of a two-form over all permutations of an index type
+`ι`, where `q` picks out `k` ordered pairs of indices. -/
+def coordinatePairingSum {ι : Type*} [Fintype ι] [DecidableEq ι] {k : ℕ}
+    (A : CoordinateRealTwoForm n) (q : Fin k × Fin 2 → ι) (v : ι → ComplexModel n) : ℝ :=
+  ∑ σ : Equiv.Perm ι, ((Equiv.Perm.sign σ : ℤ) : ℝ) *
+    ∏ i : Fin k, A ![v (σ (q (i, 0))), v (σ (q (i, 1)))]
+
+theorem coordinatePairingSum_equiv {ι κ : Type*} [Fintype ι] [DecidableEq ι]
+    [Fintype κ] [DecidableEq κ] {k : ℕ}
+    (A : CoordinateRealTwoForm n) (e : ι ≃ κ) (q : Fin k × Fin 2 → ι)
+    (v : κ → ComplexModel n) :
+    coordinatePairingSum A (e ∘ q) v = coordinatePairingSum A q (v ∘ e) := by
+  unfold coordinatePairingSum
+  refine (Equiv.sum_comp (e.permCongr) _).symm.trans ?_
+  refine Finset.sum_congr rfl fun σ _ => ?_
+  simp [Equiv.permCongr_apply]
+
+theorem twoForm_apply_eq (A : CoordinateRealTwoForm n) (v : Fin 2 → ComplexModel n) :
+    A v = A ![v 0, v 1] := by
+  congr 1
+  funext i
+  fin_cases i <;> rfl
+
 /-- The Pfaffian-type sum of a FAMILY of two-forms over all permutations of an index type
 `ι`, where `q` picks out `k` ordered pairs of indices and the `i`-th pair is tested against
 `A i`.  For a constant family this is `coordinatePairingSum`. -/

@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateWedgeFamilyPairing
 
 /-!
 # The top power of the standard Kähler form
@@ -35,29 +35,6 @@ namespace SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 
 variable {n : ℕ}
 
-/-- The Pfaffian-type sum of a two-form over all permutations of an index type
-`ι`, where `q` picks out `k` ordered pairs of indices. -/
-def coordinatePairingSum {ι : Type*} [Fintype ι] [DecidableEq ι] {k : ℕ}
-    (A : CoordinateRealTwoForm n) (q : Fin k × Fin 2 → ι) (v : ι → ComplexModel n) : ℝ :=
-  ∑ σ : Equiv.Perm ι, ((Equiv.Perm.sign σ : ℤ) : ℝ) *
-    ∏ i : Fin k, A ![v (σ (q (i, 0))), v (σ (q (i, 1)))]
-
-theorem coordinatePairingSum_equiv {ι κ : Type*} [Fintype ι] [DecidableEq ι]
-    [Fintype κ] [DecidableEq κ] {k : ℕ}
-    (A : CoordinateRealTwoForm n) (e : ι ≃ κ) (q : Fin k × Fin 2 → ι)
-    (v : κ → ComplexModel n) :
-    coordinatePairingSum A (e ∘ q) v = coordinatePairingSum A q (v ∘ e) := by
-  unfold coordinatePairingSum
-  refine (Equiv.sum_comp (e.permCongr) _).symm.trans ?_
-  refine Finset.sum_congr rfl fun σ _ => ?_
-  simp [Equiv.permCongr_apply]
-
-theorem twoForm_apply_eq (A : CoordinateRealTwoForm n) (v : Fin 2 → ComplexModel n) :
-    A v = A ![v 0, v 1] := by
-  congr 1
-  funext i
-  fin_cases i <;> rfl
-
 theorem coordinateWedge_apply_eq_pairingSum (A : CoordinateRealTwoForm n) {j : ℕ}
     (P : (ComplexModel n) [⋀^Fin (j * 2)]→L[ℝ] ℝ)
     (hP : ∀ u, P u = ((2 : ℝ) ^ j)⁻¹ *
@@ -65,79 +42,16 @@ theorem coordinateWedge_apply_eq_pairingSum (A : CoordinateRealTwoForm n) {j : �
     (v : Fin ((j + 1) * 2) → ComplexModel n) :
     coordinateWedge P A (v ∘ Fin.cast (show j * 2 + 2 = (j + 1) * 2 by ring)) =
       ((2 : ℝ) ^ (j + 1))⁻¹ *
-        coordinatePairingSum A (finProdFinEquiv : Fin (j + 1) × Fin 2 → Fin ((j + 1) * 2)) v := by
-  have h : j * 2 + 2 = (j + 1) * 2 := by ring
-  set e : Fin (j * 2) ⊕ Fin 2 ≃ Fin ((j + 1) * 2) := finSumFinEquiv.trans (finCongr h) with he
-  set q : Fin (j + 1) × Fin 2 → Fin (j * 2) ⊕ Fin 2 := fun x =>
-    Fin.lastCases (Sum.inr x.2) (fun i => Sum.inl (finProdFinEquiv (i, x.2))) x.1 with hq
-  have hfp : (finProdFinEquiv : Fin (j + 1) × Fin 2 → Fin ((j + 1) * 2)) = e ∘ q := by
-    funext x
-    obtain ⟨x, b⟩ := x
-    induction x using Fin.lastCases with
-    | last => ext; simp [e, q, finProdFinEquiv]; ring
-    | cast i => ext; simp [e, q, finProdFinEquiv]
-  rw [hfp, coordinatePairingSum_equiv, coordinateWedge_apply, coordinateWedgeSum_apply]
-  have hwe : (v ∘ Fin.cast h) ∘ finSumFinEquiv = v ∘ e := rfl
-  rw [hwe]
-  set w : Fin (j * 2) ⊕ Fin 2 → ComplexModel n := v ∘ e with hw
-  clear_value w q
-  set F : Equiv.Perm (Fin (j * 2) ⊕ Fin 2) → ℝ := fun σ => ((Equiv.Perm.sign σ : ℤ) : ℝ) *
-    ∏ i : Fin (j + 1), A ![w (σ (q (i, 0))), w (σ (q (i, 1)))] with hF
-  have key : ∀ τ : Equiv.Perm (Fin (j * 2) ⊕ Fin 2),
-      ((Equiv.Perm.sign τ : ℤ) : ℝ) * (P (w ∘ ⇑τ ∘ Sum.inl) * A (w ∘ ⇑τ ∘ Sum.inr)) =
-        ((2 : ℝ) ^ j)⁻¹ * ∑ ρ : Equiv.Perm (Fin (j * 2)), F (τ * Equiv.Perm.sumCongr ρ 1) := by
-    intro τ
-    rw [hP, coordinatePairingSum, twoForm_apply_eq A]
-    simp only [hF, Finset.mul_sum, Finset.sum_mul, Fin.prod_univ_castSucc, hq,
-      Fin.lastCases_castSucc, Fin.lastCases_last, Equiv.Perm.sign_mul,
-      Equiv.Perm.sign_sumCongr, Equiv.Perm.coe_mul, Function.comp_apply,
-      Equiv.Perm.sumCongr_apply, Sum.map_inl, Sum.map_inr, Equiv.Perm.coe_one, id,
-      map_one, mul_one, Units.val_mul, Int.cast_mul]
-    refine Finset.sum_congr rfl fun ρ _ => ?_
-    ring
-  simp only [key, ← Finset.mul_sum]
-  rw [Finset.sum_comm]
-  have hinner : ∀ ρ : Equiv.Perm (Fin (j * 2)),
-      ∑ x : Equiv.Perm (Fin (j * 2) ⊕ Fin 2), F (x * ρ.sumCongr 1) = ∑ x, F x :=
-    fun ρ => Equiv.sum_comp (Equiv.mulRight (Equiv.Perm.sumCongr ρ 1)) F
-  simp only [hinner, Finset.sum_const, Finset.card_univ, Fintype.card_perm, Fintype.card_fin,
-    nsmul_eq_mul]
-  have hS : coordinatePairingSum A q w = ∑ x, F x := rfl
-  rw [hS, Nat.factorial_two, pow_succ]
-  have : ((j * 2).factorial : ℝ) ≠ 0 := by positivity
-  field_simp
-  ring
+        coordinatePairingSum A (finProdFinEquiv : Fin (j + 1) × Fin 2 → Fin ((j + 1) * 2)) v :=
+  coordinateWedgeFamily_step_eq_pairingSum (fun _ => A) P hP v
 
 /-- Pfaffian-type formula for the exterior powers of a real two-form. -/
 theorem coordinateWedgePower_apply_eq_pairingSum (A : CoordinateRealTwoForm n) (k : ℕ)
     (v : Fin (k * 2) → ComplexModel n) :
     coordinateWedgePower A k v = ((2 : ℝ) ^ k)⁻¹ *
       coordinatePairingSum A (finProdFinEquiv : Fin k × Fin 2 → Fin (k * 2)) v := by
-  induction k using Nat.strong_induction_on with
-  | _ k ih =>
-    match k, ih with
-    | 0, _ =>
-      simp [coordinatePairingSum, coordinateWedgePower, coordinateWedgeUnit]
-    | 1, _ =>
-      have hterm : ∀ σ : Equiv.Perm (Fin (1 * 2)), ((Equiv.Perm.sign σ : ℤ) : ℝ) *
-          ∏ i : Fin 1, A ![v (σ (finProdFinEquiv (i, 0))), v (σ (finProdFinEquiv (i, 1)))] =
-            A v := by
-        intro σ
-        rw [Fin.prod_univ_one]
-        have hv : A ![v (σ (finProdFinEquiv ((0 : Fin 1), (0 : Fin 2)))),
-            v (σ (finProdFinEquiv ((0 : Fin 1), (1 : Fin 2))))] = A (v ∘ σ) := by
-          rw [twoForm_apply_eq A (v ∘ σ)]
-          rfl
-        rw [hv, ← A.coe_toAlternatingMap, AlternatingMap.map_perm, Units.smul_def,
-          zsmul_eq_mul, ← mul_assoc, ← Int.cast_mul, ← Units.val_mul, Int.units_mul_self]
-        simp
-      simp only [coordinatePairingSum, hterm, Finset.sum_const, Finset.card_univ,
-        Fintype.card_perm, Fintype.card_fin, nsmul_eq_mul]
-      change A v = _
-      ring
-    | k + 2, ih =>
-      rw [coordinateWedgePower_add_two_apply]
-      exact coordinateWedge_apply_eq_pairingSum A _ (ih (k + 1) (by omega)) v
+  rw [← coordinateWedgeFamily_const]
+  exact coordinateWedgeFamily_apply_eq_pairingSum k (fun _ => A) v
 
 theorem coordinateRealFrame_finProdFinEquiv (j : Fin n) (b : Fin 2) :
     coordinateRealFrame (finProdFinEquiv (j, b)) =

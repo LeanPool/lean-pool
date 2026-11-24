@@ -187,11 +187,11 @@ theorem eq_univ_of_isClosedConnectedSubmanifold_self [ConnectedSpace M] {W : Set
 analytic subset `A` which is not isolated in `A` lies on a positive-dimensional
 irreducible component of `A`. -/
 theorem exists_isIrreducibleComponent_pos_dim_of_accPt {A : Set M}
-    (hA : IsComplexAnalyticSubset (n := n) A) {x : M} (hx : x ∈ A)
+    (hA : IsComplexAnalyticSubset (n := n) A) {x : M}
     (hacc : AccPt x (𝓟 A)) :
     ∃ V : ClosedIrreducibleAnalyticSubvariety n M,
       IsIrreducibleComponent V A ∧ 0 < V.dim ∧ x ∈ V.carrier :=
-  PositiveDimensionalComponent.exists_isIrreducibleComponent_pos_dim_of_accPt hA hx hacc
+  PositiveDimensionalComponent.exists_isIrreducibleComponent_pos_dim_of_accPt hA hacc
 
 /-- **Irreducible analytic sets are pure-dimensional.**
 At every point where an irreducible analytic subvariety `V` is regular, its dimension is

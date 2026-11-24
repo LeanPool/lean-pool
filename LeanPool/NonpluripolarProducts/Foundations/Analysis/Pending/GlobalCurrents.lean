@@ -130,7 +130,7 @@ theorem smoothCurrentFamily_apply_eq_integral_smoothWedgeDensity
       (Filter.Eventually.of_forall fun x => by simp [mul_comm])
 
 /-- The scalar exterior product used by the smooth current density. -/
-private def scalarWedge {E : Type*} [TopologicalSpace E] [AddCommGroup E] [Module ℝ E]
+def scalarWedge {E : Type*} [TopologicalSpace E] [AddCommGroup E] [Module ℝ E]
     {r q : ℕ} (α : E [⋀^Fin r]→L[ℝ] ℝ) (β : E [⋀^Fin q]→L[ℝ] ℝ) :
     E [⋀^(Fin r ⊕ Fin q)]→ₗ[ℝ] ℝ :=
   (LinearMap.mul' ℝ ℝ).compAlternatingMap
@@ -138,7 +138,7 @@ private def scalarWedge {E : Type*} [TopologicalSpace E] [AddCommGroup E] [Modul
 
 /-- Evaluation of the scalar exterior product is the normalized shuffle sum,
 including the endpoint degrees. -/
-private theorem scalarWedge_apply {E : Type*} [TopologicalSpace E]
+theorem scalarWedge_apply {E : Type*} [TopologicalSpace E]
     [AddCommGroup E] [Module ℝ E]
     {r q : ℕ} (α : E [⋀^Fin r]→L[ℝ] ℝ) (β : E [⋀^Fin q]→L[ℝ] ℝ)
     (v : Fin r ⊕ Fin q → E) :
@@ -157,6 +157,30 @@ private theorem scalarWedge_apply {E : Type*} [TopologicalSpace E]
     simp [LinearMap.mul'_apply]
   · rw [hs]
     simp [LinearMap.mul'_apply]
+
+/-- Pulling both factors of a top-degree scalar wedge back by the same linear
+map multiplies its value on the basis by the determinant. -/
+theorem scalarWedge_comp_basis {n r q : ℕ}
+    (B : Module.Basis (Fin r ⊕ Fin q) ℝ (ComplexModel n))
+    (D : ComplexModel n →L[ℝ] ComplexModel n)
+    (α : ComplexModel n [⋀^Fin r]→L[ℝ] ℝ) (β : ComplexModel n [⋀^Fin q]→L[ℝ] ℝ) :
+    scalarWedge (α.compContinuousLinearMap D) (β.compContinuousLinearMap D) B =
+      D.det * scalarWedge α β B := by
+  let W := scalarWedge α β
+  have hpull : scalarWedge (α.compContinuousLinearMap D) (β.compContinuousLinearMap D) B =
+      W (D ∘ B) := by
+    rw [scalarWedge_apply, scalarWedge_apply]
+    rfl
+  rw [hpull]
+  have htop := congrArg
+    (fun A : ComplexModel n [⋀^(Fin r ⊕ Fin q)]→ₗ[ℝ] ℝ ↦ A (D ∘ B)) (W.eq_smul_basis_det B)
+  have hdet : B.det (D ∘ B) = LinearMap.det D.toLinearMap := by
+    change B.det (D.toLinearMap ∘ B) = LinearMap.det D.toLinearMap
+    rw [B.det_comp, B.det_self, mul_one]
+  calc
+    W (D ∘ B) = ((W B) • B.det) (D ∘ B) := htop
+    _ = W B * B.det (D ∘ B) := by simp
+    _ = LinearMap.det D.toLinearMap * W B := by rw [hdet, mul_comm]
 
 /-- The concrete density is evaluation of the scalar exterior product on the
 ordered current-pairing basis. -/
@@ -193,31 +217,12 @@ theorem smoothWedgeDensity_overlap_pointwise
     LocalCurrents.testForm_inclusion_apply (overlapSource_le e f),
     LocalCurrents.testForm_inclusion_apply (overlapTarget_le e f)]
   let D := chartTransitionDerivative e f x
-  let B := currentPairingBasis b k
-  let W := scalarWedge (a.coeff f (chartTransition e f x))
-    (θ (chartTransition e f x))
-  have hpull (v : Fin k.val ⊕
-      Fin (Module.finrank ℝ (ComplexModel n) - k.val) → ComplexModel n) :
-      scalarWedge (a.coeff e x) (η x) v = W (D ∘ v) := by
-    rw [scalarWedge_apply, scalarWedge_apply]
-    apply Finset.sum_congr rfl
-    intro s _
-    rw [a.compatible e f x hx, h x hx]
-    rfl
-  rw [hpull B]
-  have htop := congrArg
-    (fun A : (ComplexModel n) [⋀^(Fin k.val ⊕
-        Fin (Module.finrank ℝ (ComplexModel n) - k.val))]→ₗ[ℝ] ℝ ↦ A (D ∘ B))
-    (W.eq_smul_basis_det B)
-  have hdet : B.det (D ∘ B) = LinearMap.det D.toLinearMap := by
-    change B.det (D.toLinearMap ∘ B) = LinearMap.det D.toLinearMap
-    rw [B.det_comp]
-    rw [B.det_self, mul_one]
-  calc
-    W (D ∘ B) = ((W B) • B.det) (D ∘ B) := htop
-    _ = W B * B.det (D ∘ B) := by simp
-    _ = W B * LinearMap.det D.toLinearMap := by rw [hdet]
-    _ = LinearMap.det D.toLinearMap * W B := mul_comm _ _
+  have ha : a.coeff e x = (a.coeff f (chartTransition e f x)).compContinuousLinearMap D :=
+    ContinuousAlternatingMap.ext (a.compatible e f x hx)
+  have hη : η x = (θ (chartTransition e f x)).compContinuousLinearMap D :=
+    ContinuousAlternatingMap.ext (h x hx)
+  rw [ha, hη]
+  exact scalarWedge_comp_basis (currentPairingBasis b k) (chartTransitionDerivative e f x) _ _
 
 /-- A test form vanishes away from its declared open domain. -/
 private theorem testForm_eq_zero_of_not_mem

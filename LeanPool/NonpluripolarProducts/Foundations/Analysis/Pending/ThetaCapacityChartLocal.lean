@@ -81,6 +81,21 @@ def correctedChartReal (u : M → EReal) (e : ComplexChart n M)
     (rho : ComplexModel n → ℝ) : ComplexModel n → ℝ :=
   fun z => (u (e.val.symm z)).toReal + rho z
 
+omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] [IsComplexManifold n M] in
+/-- Two-sided bounds at a coordinate point survive passage to the real corrected potential. -/
+theorem correctedChartReal_bounds_at {u : M → EReal} {e : ComplexChart n M}
+    {rho : ComplexModel n → ℝ} {c d L : ℝ} {z : ComplexModel n}
+    (hbd : (c : EReal) ≤ u (e.val.symm z) ∧ u (e.val.symm z) ≤ (d : EReal))
+    (hL : |rho z| ≤ L) :
+    c - L ≤ correctedChartReal u e rho z ∧ correctedChartReal u e rho z ≤ d + L := by
+  have hcoe : ((u (e.val.symm z)).toReal : EReal) = u (e.val.symm z) :=
+    EReal.coe_toReal (ne_of_lt (hbd.2.trans_lt (EReal.coe_lt_top d)))
+      (ne_of_gt ((EReal.bot_lt_coe c).trans_le hbd.1))
+  have hc := EReal.coe_le_coe_iff.mp (hcoe ▸ hbd.1)
+  have hd := EReal.coe_le_coe_iff.mp (hcoe ▸ hbd.2)
+  obtain ⟨hrhoLower, hrhoUpper⟩ := abs_le.mp hL
+  constructor <;> simp only [correctedChartReal] <;> linarith
+
 end ThetaCapacityChart
 
 namespace ThetaCapacityChartLocal
@@ -121,15 +136,14 @@ theorem correctedChartReal_isLocallyBoundedPshOn_of_boundedOn
     SGPT.Foundations.Analysis.plurisubharmonicOn_congr D.isOpen hpsh0 heq
   refine isLocallyBoundedPshOn_of_abs_le hpsh (C := |c - L| + |d + L|) ?_
   intro z hz
-  obtain ⟨h1, h2⟩ := hbd z hz
-  have hr : ((u (e.val.symm z)).toReal : EReal) = u (e.val.symm z) := hcoe z hz
-  have hc1 : c ≤ (u (e.val.symm z)).toReal := EReal.coe_le_coe_iff.mp (hr ▸ h1)
-  have hc2 : (u (e.val.symm z)).toReal ≤ d := EReal.coe_le_coe_iff.mp (hr ▸ h2)
-  have h3 := abs_le.mp (hL z hz)
-  have hval : correctedChartReal u e rho z = (u (e.val.symm z)).toReal + rho z := rfl
+  obtain ⟨hlower, hupper⟩ := correctedChartReal_bounds_at (hbd z hz) (hL z hz)
   refine abs_le.mpr ⟨?_, ?_⟩
-  · have := neg_abs_le (c - L); have := abs_nonneg (d + L); rw [hval]; linarith
-  · have := le_abs_self (d + L); have := abs_nonneg (c - L); rw [hval]; linarith
+  · have := neg_abs_le (c - L)
+    have := abs_nonneg (d + L)
+    linarith
+  · have := le_abs_self (d + L)
+    have := abs_nonneg (c - L)
+    linarith
 
 /-- **The local Bedford--Taylor model of the global measure on a slot chart,
 from a bound on the slot-chart source only.**  Compare
@@ -185,15 +199,8 @@ theorem diagonalPotentialMeasure_le_relCapacity_of_boundedOn
     correctedChartReal_isLocallyBoundedPshOn_of_boundedOn hu.1 hrho hbD hL
   have hgbd : ∀ z ∈ (D : Set (ComplexModel n)), c - L ≤ g z ∧ g z ≤ d + L + 1 := by
     intro z hz
-    obtain ⟨h1, h2⟩ := hbD z hz
-    have hr : ((u (e.val.symm z)).toReal : EReal) = u (e.val.symm z) :=
-      EReal.coe_toReal (ne_of_lt (h2.trans_lt (EReal.coe_lt_top d)))
-        (ne_of_gt ((EReal.bot_lt_coe c).trans_le h1))
-    have hc1 : c ≤ (u (e.val.symm z)).toReal := EReal.coe_le_coe_iff.mp (hr ▸ h1)
-    have hc2 : (u (e.val.symm z)).toReal ≤ d := EReal.coe_le_coe_iff.mp (hr ▸ h2)
-    have h3 := abs_le.mp (hL z hz)
-    have hval : g z = (u (e.val.symm z)).toReal + rho z := rfl
-    constructor <;> rw [hval] <;> linarith
+    obtain ⟨hlower, hupper⟩ := correctedChartReal_bounds_at (hbD z hz) (hL z hz)
+    exact ⟨hlower, hupper.trans (le_add_of_nonneg_right zero_le_one)⟩
   obtain ⟨mu, hmuBT, hmueq⟩ :=
     exists_isBTLimit_of_boundedOn J (u := fun _ => u) (fun _ => hu.1) (fun _ => hbsrc)
   have hfam : (fun (i : Fin n) (z : ComplexModel n) =>
@@ -276,21 +283,14 @@ theorem coe_correctedChartReal {u : M → EReal} (hub : IsBoundedPotential u)
 
 omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] [IsComplexManifold n M] in
 /-- Two-sided bounds for the corrected chart potential. -/
-theorem correctedChartReal_bounds {u : M → EReal} (hub : IsBoundedPotential u)
+theorem correctedChartReal_bounds {u : M → EReal}
     {e : ComplexChart n M} {rho : ComplexModel n → ℝ} {c d L : ℝ}
     (hbd : ∀ x, (c : EReal) ≤ u x ∧ u x ≤ (d : EReal))
     {S : Set (ComplexModel n)} (hL : ∀ z ∈ S, |rho z| ≤ L) (z : ComplexModel n)
     (hz : z ∈ S) :
     c - L ≤ correctedChartReal u e rho z ∧
       correctedChartReal u e rho z ≤ d + L := by
-  have hru : ((u (e.val.symm z)).toReal : EReal) = u (e.val.symm z) :=
-    EReal.coe_toReal (hub.ne_top _) (hub.ne_bot _)
-  have h1 : c ≤ (u (e.val.symm z)).toReal :=
-    EReal.coe_le_coe_iff.mp (hru ▸ (hbd (e.val.symm z)).1)
-  have h2 : (u (e.val.symm z)).toReal ≤ d :=
-    EReal.coe_le_coe_iff.mp (hru ▸ (hbd (e.val.symm z)).2)
-  have h3 := abs_le.mp (hL z hz)
-  constructor <;> simp only [correctedChartReal] <;> linarith
+  exact correctedChartReal_bounds_at (hbd (e.val.symm z)) (hL z hz)
 
 omit [MeasurableSpace M] [BorelSpace M] [CompactSpace M] in
 /-- **The corrected chart potential is real locally bounded plurisubharmonic.**

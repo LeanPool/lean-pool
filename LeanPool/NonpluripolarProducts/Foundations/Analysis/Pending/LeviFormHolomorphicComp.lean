@@ -73,33 +73,8 @@ theorem leviForm_comp {F : ComplexModel k → ComplexModel n} {ρ : ComplexModel
     (hU : IsOpen U) (hV : IsOpen V) (hF : ContDiffOn ℂ ∞ F U)
     (hρ : ContDiffOn ℝ ∞ ρ V) (hFV : MapsTo F U V) {z : ComplexModel k} (hz : z ∈ U)
     (v : ComplexModel k) :
-    leviForm (fun y => ρ (F y)) z v = leviForm ρ (F z) (fderiv ℝ F z v) := by
-  have hFz : DifferentiableAt ℂ F z :=
-    ((hF z hz).contDiffAt (hU.mem_nhds hz)).differentiableAt (by simp)
-  have hq2 : ContDiffAt ℝ 2 (fun y => ρ (F y)) z := by
-    have hqSmooth : ContDiffOn ℝ ∞ (fun y => ρ (F y)) U :=
-      hρ.comp (hF.restrict_scalars ℝ) hFV
-    exact ((hqSmooth z hz).contDiffAt (hU.mem_nhds hz)).of_le
-      (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  have hp2 : ContDiffAt ℝ 2 ρ (F z) :=
-    ((hρ (F z) (hFV hz)).contDiffAt (hV.mem_nhds (hFV hz))).of_le
-      (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  have hnatural := congrArg
-    (fun A : (ComplexModel k) [⋀^Fin 2]→L[ℝ] ℝ => A ![v, Complex.I • v])
-    (FirstPass.HolomorphicDDC.smoothDDC_comp hU hV hF hρ hFV hz)
-  have hmapI : fderiv ℝ F z (Complex.I • v) = Complex.I • fderiv ℝ F z v := by
-    rw [hFz.fderiv_restrictScalars ℝ]
-    exact (fderiv ℂ F z).map_smul Complex.I v
-  have hvec : (fun i => fderiv ℝ F z (![v, Complex.I • v] i)) =
-      ![fderiv ℝ F z v, fderiv ℝ F z (Complex.I • v)] := by
-    ext i
-    fin_cases i <;> rfl
-  simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply] at hnatural
-  change smoothDDC (fun y => ρ (F y)) z ![v, Complex.I • v] =
-    smoothDDC ρ (F z) (fun i => fderiv ℝ F z (![v, Complex.I • v] i)) at hnatural
-  rw [hvec, hmapI, FirstPass.smoothDDC_complexDiagonal_eq_leviForm hq2 v,
-    FirstPass.smoothDDC_complexDiagonal_eq_leviForm hp2 (fderiv ℝ F z v)] at hnatural
-  exact (div_left_inj₀ Real.pi_ne_zero).mp hnatural
+    leviForm (fun y => ρ (F y)) z v = leviForm ρ (F z) (fderiv ℝ F z v) :=
+  FirstPass.HolomorphicDDC.leviForm_comp hU hV hF hρ hFV hz v
 
 /-! ### The tube function of a holomorphic flattening -/
 

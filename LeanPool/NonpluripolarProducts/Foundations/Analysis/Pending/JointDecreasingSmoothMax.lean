@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorNonCharging
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ScaledSmoothMax
 
 /-! # Joint decreasing genuine smooth approximations of a maximum
 
@@ -25,28 +26,11 @@ open scoped Topology ContDiff ComplexOrder
 
 namespace SGPT.Foundations.Analysis.Pending.SmoothMax
 
-theorem le_posPart (t : ℝ) : t ≤ posPart t := by
-  rcases le_total t 1 with h | h
-  · have := sub_posPart_monotone h
-    simp only [posPart_eq_self le_rfl, sub_self] at this
-    linarith
-  · rw [posPart_eq_self h]
-
-theorem posPart_nonneg' (t : ℝ) : 0 ≤ posPart t := by
-  rcases le_total t (-1) with h | h
-  · rw [posPart_eq_zero h]
-  · have := posPart_monotone h
-    rwa [posPart_eq_zero le_rfl] at this
-
-theorem posPart_le_one {t : ℝ} (ht : t ≤ 1) : posPart t ≤ 1 := by
-  have := posPart_monotone ht
-  rwa [posPart_eq_self le_rfl] at this
-
 /-- The scaled regularized positive part `ε P(t / ε)`. -/
 def scaledPosPart (ε t : ℝ) : ℝ := ε * posPart (t / ε)
 
 theorem scaledPosPart_nonneg {ε : ℝ} (hε : 0 ≤ ε) (t : ℝ) : 0 ≤ scaledPosPart ε t :=
-  mul_nonneg hε (posPart_nonneg' _)
+  mul_nonneg hε (posPart_nonneg _)
 
 theorem le_scaledPosPart {ε : ℝ} (hε : 0 < ε) (t : ℝ) : t ≤ scaledPosPart ε t := by
   have := mul_le_mul_of_nonneg_left (le_posPart (t / ε)) hε.le
@@ -72,7 +56,7 @@ theorem scaledPosPart_le_max_add {ε : ℝ} (hε : 0 < ε) (t : ℝ) :
 /-- The intercept of the tangent line of `P` at `s` is nonnegative. -/
 theorem posPart_sub_mul_trans_nonneg (s : ℝ) : 0 ≤ posPart s - s * trans s := by
   rcases le_total s 0 with h | h
-  · nlinarith [posPart_nonneg' s, trans_nonneg s]
+  · nlinarith [posPart_nonneg s, trans_nonneg s]
   · nlinarith [le_posPart s, trans_le_one s]
 
 theorem scaledPosPart_mono_left {ε ε' : ℝ} (hε : 0 < ε) (hεε' : ε ≤ ε') (t : ℝ) :
@@ -175,18 +159,15 @@ theorem IsDecApprox.add_const {U : Opens (ComplexModel n)} {w : ComplexModel n �
   exact ⟨m + c, by rintro _ ⟨z, hz, rfl⟩; simpa using hm ⟨z, hz, rfl⟩⟩
 
 /-- The regularized maximum of `f` with the obstacle `g`, at scale `ε`. -/
-def scaledSmoothMax (ε : ℝ) (f g : ComplexModel n → ℝ) : ComplexModel n → ℝ :=
-  fun z ↦ g z + scaledPosPart ε (f z - g z)
+abbrev scaledSmoothMax (ε : ℝ) (f g : ComplexModel n → ℝ) : ComplexModel n → ℝ :=
+  ScaledSmoothMax.scaledSmoothMax ε f g
 
 theorem scaledSmoothMax_apply (ε : ℝ) (f g : ComplexModel n → ℝ) (z : ComplexModel n) :
     scaledSmoothMax ε f g z = g z + scaledPosPart ε (f z - g z) := rfl
 
 theorem scaledSmoothMax_eq_smul {ε : ℝ} (hε : 0 < ε) (f g : ComplexModel n → ℝ) :
-    scaledSmoothMax ε f g = ε • smoothMax (ε⁻¹ • f) (ε⁻¹ • g) := by
-  funext z
-  simp only [scaledSmoothMax, smoothMax, scaledPosPart, Pi.smul_apply, smul_eq_mul,
-    div_eq_inv_mul, mul_add, ← mul_sub]
-  rw [← mul_assoc, mul_inv_cancel₀ hε.ne', one_mul]
+    scaledSmoothMax ε f g = ε • smoothMax (ε⁻¹ • f) (ε⁻¹ • g) :=
+  ScaledSmoothMax.scaledSmoothMax_eq_smul hε f g
 
 theorem contDiffAt_scaledSmoothMax {f g : ComplexModel n → ℝ} {z : ComplexModel n}
     (hf : ContDiffAt ℝ 2 f z) (hg : ContDiffAt ℝ 2 g z) (ε : ℝ) :
@@ -201,22 +182,8 @@ Hessians has a positive semidefinite complex Hessian. -/
 theorem complexHessian_scaledSmoothMax_posSemidef {f g : ComplexModel n → ℝ}
     {z : ComplexModel n} (hf : ContDiffAt ℝ 2 f z) (hg : ContDiffAt ℝ 2 g z)
     (hHf : (complexHessian f z).PosSemidef) (hHg : (complexHessian g z).PosSemidef)
-    {ε : ℝ} (hε : 0 < ε) : (complexHessian (scaledSmoothMax ε f g) z).PosSemidef := by
-  have hf' : ContDiffAt ℝ 2 (ε⁻¹ • f) z := by simpa [Pi.smul_def] using hf.const_smul ε⁻¹
-  have hg' : ContDiffAt ℝ 2 (ε⁻¹ • g) z := by simpa [Pi.smul_def] using hg.const_smul ε⁻¹
-  have hHf' : (complexHessian (ε⁻¹ • f) z).PosSemidef := by
-    rw [complexHessian_smul hf]
-    exact hHf.smul (by exact_mod_cast (inv_pos.2 hε).le)
-  have hHg' : (complexHessian (ε⁻¹ • g) z).PosSemidef := by
-    rw [complexHessian_smul hg]
-    exact hHg.smul (by exact_mod_cast (inv_pos.2 hε).le)
-  have hsm : ContDiffAt ℝ 2 (smoothMax (ε⁻¹ • f) (ε⁻¹ • g)) z := by
-    have hP : ContDiffAt ℝ 2 (SmoothMax.posPart ∘ ((ε⁻¹ • f) - (ε⁻¹ • g))) z :=
-      (contDiff_posPart.of_le (WithTop.coe_le_coe.mpr le_top)).contDiffAt.comp z (hf'.sub hg')
-    exact hg'.add hP
-  rw [scaledSmoothMax_eq_smul hε, complexHessian_smul hsm]
-  exact (complexHessian_smoothMax_posSemidef hf' hg' hHf' hHg').smul
-    (by exact_mod_cast hε.le)
+    {ε : ℝ} (hε : 0 < ε) : (complexHessian (scaledSmoothMax ε f g) z).PosSemidef :=
+  ScaledSmoothMax.complexHessian_scaledSmoothMax_posSemidef hf hg hHf hHg hε
 
 theorem max_eq_add_max_sub (a b : ℝ) : max a b = b + max (a - b) 0 := by
   rcases le_total a b with h | h
@@ -325,19 +292,6 @@ open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere SmoothMax Bedfor
 
 variable {n : ℕ}
 
-private theorem scaledSmoothMax_joint_mono {ε : ℝ} (hε : 0 < ε)
-    {f f' g g' : ComplexModel n → ℝ} {z : ComplexModel n}
-    (hf : f z ≤ f' z) (hg : g z ≤ g' z) :
-    BedfordTaylor.scaledSmoothMax ε f g z ≤ BedfordTaylor.scaledSmoothMax ε f' g' z := by
-  rw [BedfordTaylor.scaledSmoothMax_eq_smul hε, BedfordTaylor.scaledSmoothMax_eq_smul hε]
-  change ε * smoothMax (ε⁻¹ • f) (ε⁻¹ • g) z ≤
-    ε * smoothMax (ε⁻¹ • f') (ε⁻¹ • g') z
-  refine mul_le_mul_of_nonneg_left (smoothMax_mono ?_ ?_) hε.le
-  · simpa only [Pi.smul_apply, smul_eq_mul] using
-      mul_le_mul_of_nonneg_left hf (inv_nonneg.2 hε.le)
-  · simpa only [Pi.smul_apply, smul_eq_mul] using
-      mul_le_mul_of_nonneg_left hg (inv_nonneg.2 hε.le)
-
 /-- Two genuine decreasing smooth approximations produce a genuine approximation
 of their maximum, with both branches varying at every stage. -/
 theorem isDecApprox_joint_scaledSmoothMax {U : Opens (ComplexModel n)}
@@ -354,7 +308,7 @@ theorem isDecApprox_joint_scaledSmoothMax {U : Opens (ComplexModel n)}
       (((hF.1 j).1.contDiffAt (U.isOpen.mem_nhds hz)).of_le h2)
       (((hG.1 j).1.contDiffAt (U.isOpen.mem_nhds hz)).of_le h2)
       ((hF.1 j).2 z hz) ((hG.1 j).2 z hz) (maxScale_pos j)
-  · have hbranches := scaledSmoothMax_joint_mono (maxScale_pos l)
+  · have hbranches := ScaledSmoothMax.scaledSmoothMax_mono (maxScale_pos l)
       (hF.2.1 z hz hjl) (hG.2.1 z hz hjl)
     have hscale := scaledPosPart_mono_left (maxScale_pos l)
       (maxScale_antitone hjl) (F j z - G j z)

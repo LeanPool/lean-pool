@@ -93,7 +93,7 @@ theorem subset_singleton_of_isPreconnected {A G : Set M} (hGA : G ⊆ A)
 analytic subset `A` which is not isolated in `A` lies on a positive-dimensional
 irreducible component of `A`. -/
 theorem exists_isIrreducibleComponent_pos_dim_of_accPt {A : Set M}
-    (hA : IsComplexAnalyticSubset (n := n) A) {x : M} (hx : x ∈ A)
+    (hA : IsComplexAnalyticSubset (n := n) A) {x : M}
     (hacc : AccPt x (𝓟 A)) :
     ∃ V : ClosedIrreducibleAnalyticSubvariety n M,
       IsIrreducibleComponent V A ∧ 0 < V.dim ∧ x ∈ V.carrier := by

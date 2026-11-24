@@ -56,15 +56,16 @@ def HasManifoldSmoothAnalyticSingularities (u : M → EReal) : Prop :=
 coordinate representative is `c log \sum_j |f_j|^2 + b` with `c > 0` real, the `f_j`
 holomorphic, and `b` bounded near the point and `C^\infty` off the pole set.
 
-This is the convention the human authorised in `I-0489` for CT22's "analytic
-singularities"; `HasManifoldSmoothAnalyticSingularities` is the stronger form that also asks
-`b` to be smooth ACROSS the poles, which Demailly's regularization does not supply. -/
+This predicate is the chartwise bounded, off-pole smooth variant of
+[Collins–Tosatti, §2](https://www.numdam.org/item/10.5802/afst.1708.pdf#page=8). The local expression in the paper
+has a remainder smooth on the whole neighbourhood. The corresponding chartwise
+smoothness predicate is `HasManifoldSmoothAnalyticSingularities`. -/
 def HasManifoldAnalyticSingularitiesSmoothOffPole (u : M → EReal) : Prop :=
   ∀ (e : ComplexChart n M) (z : ComplexModel n), z ∈ e.val.target →
     HasAnalyticSingularitiesSmoothOffPoleAt (chartFunction u e) z
 
 omit [IsComplexManifold n M] in
-/-- The strong convention implies the one of `I-0489`, chart by chart. -/
+/-- A presentation with smooth remainder satisfies the off-pole smoothness criterion. -/
 theorem HasManifoldSmoothAnalyticSingularities.smoothOffPole {u : M → EReal}
     (hu : HasManifoldSmoothAnalyticSingularities (n := n) u) :
     HasManifoldAnalyticSingularitiesSmoothOffPole (n := n) u :=

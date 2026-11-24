@@ -23,12 +23,10 @@ module proves that the Bedford–Taylor measures converge:
   `∫ φ d(ddᶜ w i)ⁿ → ∫ φ d(ddᶜ v)ⁿ` for every compactly supported continuous
   test function `φ` with `tsupport φ ⊆ Ω`.
 
-This is Bedford–Taylor's convergence theorem for decreasing sequences (Błocki,
-*The complex Monge–Ampère operator in pluripotential theory*, Thm. 2.2.1;
-Demailly, CADG III.3.7), in the form the balayage argument of Xia's Lemma 2.4.3
-needs: Błocki reaches the Dirichlet problem for bounded upper semicontinuous
-data by solving it for a decreasing sequence of *smooth* data and passing to the
-limit, and it is this passage that the workspace lacked.
+This is the diagonal top-degree case of [Błocki, Theorem 2.1.5](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=36)
+and Demailly, CADG III.3.7. The balayage argument of Xia's Lemma 2.4.3 uses
+this convergence to pass from decreasing smooth approximations of boundary data
+to the corresponding upper semicontinuous data.
 
 ## The proof
 
@@ -415,9 +413,8 @@ bounded plurisubharmonic functions `w i` decrease pointwise to a locally bounded
 plurisubharmonic `v` on `Ω`, then their Bedford--Taylor measures converge weakly
 against every compactly supported continuous test function on `Ω`.
 
-This is the passage Błocki's solution of the Dirichlet problem for bounded upper
-semicontinuous data rests on (Błocki, lecture notes, Thm. 2.2.1; Demailly, CADG
-III.3.7), and the input still missing from the local half of Xia's Lemma 2.4.3.
+This is the diagonal top-degree measure consequence of [Błocki, Theorem 2.1.5](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=36).
+The proof extends smooth test convergence to continuous tests using locally uniform mass bounds.
 
 The whole proof is the diagonal of `exists_isDecApprox_diagonal`: it is
 simultaneously a decreasing approximation of `v`, so the *right*-hand side is

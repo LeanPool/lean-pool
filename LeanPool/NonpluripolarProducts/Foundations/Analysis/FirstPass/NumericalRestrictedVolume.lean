@@ -14,18 +14,19 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Coor
 /-!
 # Numerical restricted volume and the null locus
 
-Source: Copy-4, `eq:def-restricted-volume` and `eq:null-locus`
-(`transcendental-nakamaye-copy4-20260911`), following CT22, Section 2.
-
-This file replaces the two placeholder inputs of
-`NumericalRestrictedVolumeScaffold` by actual constructions and defines the
-manuscript's restricted volume by its literal right limit.
+The right-limit construction is modeled on the SGPT manuscript's restricted volume
+and [Collins–Tosatti, §2](https://www.numdam.org/item/10.5802/afst.1708.pdf#page=8). The Lean admissible family
+uses chartwise logarithmic presentations with a bounded remainder smooth off the poles.
+The paper uses local generators of a coherent ideal and a remainder smooth throughout
+the neighbourhood. The Lean definition uses the weaker admissibility criterion specified in
+`NumericalRestrictedVolumeScaffold`.
 
 ## The absolutely continuous restricted top mass
 
 Let `T = θ + ddᶜ u` be admissible at error `ε`
-(`AdmissibleRestrictedCurrentPresentation`): `u` has smooth analytic
-singularities, `T + εω ≥ 0`, and the pole set `P` of `u` does not contain `V`.
+(`AdmissibleRestrictedCurrentPresentation`). The potential `u` has the chartwise
+bounded, off-pole smooth logarithmic presentations, `T + εω ≥ 0`, and the pole set
+`P` of `u` does not contain `V`.
 Off `P` the potential is smooth, so `(T + εω)|_{V_reg \ P}` is a smooth
 semipositive `(1,1)`-form.  Since `P ∩ V_reg` is a proper analytic subset of
 the connected manifold part of `V_reg`, it is Lebesgue-null, and the absolutely

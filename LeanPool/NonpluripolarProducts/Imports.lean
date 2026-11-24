@@ -257,7 +257,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Holomo
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicGermNoetherian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicGermRing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicGermWeierstrassPreparation
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicHessianTwo
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicMixedDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicZeroSetThin

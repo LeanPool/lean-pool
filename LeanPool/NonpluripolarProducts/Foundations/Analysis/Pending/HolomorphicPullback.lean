@@ -893,43 +893,10 @@ theorem plurisubharmonicOn_coe_comp_of_smooth
     hpSmooth.comp (hF.restrict_scalars ℝ) hFV
   have hqLevi : ∀ y ∈ U, ∀ v : ComplexModel k, 0 ≤ leviForm q y v := by
     intro y hy v
-    have hFy : DifferentiableAt ℂ F y :=
-      ((hF y hy).contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp)
-    have hq2 : ContDiffAt ℝ 2 q y :=
-      ((hqSmooth y hy).contDiffAt (hU.mem_nhds hy)).of_le
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-    have hp2 : ContDiffAt ℝ 2 p (F y) :=
-      ((hpSmooth (F y) (hFV hy)).contDiffAt (hV.mem_nhds (hFV hy))).of_le
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-    have hnatural := congrArg
-      (fun A : (ComplexModel k) [⋀^Fin 2]→L[ℝ] ℝ =>
-        A ![v, Complex.I • v])
-      (FirstPass.HolomorphicDDC.smoothDDC_comp hU hV hF hpSmooth hFV hy)
-    have hmapI : fderiv ℝ F y (Complex.I • v) =
-        Complex.I • fderiv ℝ F y v := by
-      rw [hFy.fderiv_restrictScalars ℝ]
-      exact (fderiv ℂ F y).map_smul Complex.I v
-    have hvec : (fun i => fderiv ℝ F y (![v, Complex.I • v] i)) =
-        ![fderiv ℝ F y v, fderiv ℝ F y (Complex.I • v)] := by
-      ext i
-      fin_cases i <;> rfl
-    simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply] at hnatural
-    change smoothDDC (fun x => p (F x)) y ![v, Complex.I • v] =
-      smoothDDC p (F y) (fun i => fderiv ℝ F y (![v, Complex.I • v] i)) at hnatural
-    rw [hvec] at hnatural
-    change smoothDDC q y ![v, Complex.I • v] =
-      smoothDDC p (F y) ![fderiv ℝ F y v,
-        fderiv ℝ F y (Complex.I • v)] at hnatural
-    rw [hmapI, FirstPass.smoothDDC_complexDiagonal_eq_leviForm hq2 v,
-      FirstPass.smoothDDC_complexDiagonal_eq_leviForm hp2 (fderiv ℝ F y v)] at hnatural
-    have hpLevi : 0 ≤ leviForm p (F y) (fderiv ℝ F y v) :=
-      FirstPass.leviForm_nonneg_of_contDiffOn_plurisubharmonicOn
-        (U := ⟨V, hV⟩) hpSmooth hp (hFV hy) _
-    have hqDiv : 0 ≤ leviForm q y v / Real.pi := by
-      rw [hnatural]
-      exact div_nonneg hpLevi Real.pi_pos.le
-    have hmul := mul_nonneg hqDiv Real.pi_pos.le
-    rwa [div_mul_cancel₀ _ Real.pi_ne_zero] at hmul
+    rw [show leviForm q y v = leviForm p (F y) (fderiv ℝ F y v) from
+      FirstPass.HolomorphicDDC.leviForm_comp hU hV hF hpSmooth hFV hy v]
+    exact FirstPass.leviForm_nonneg_of_contDiffOn_plurisubharmonicOn
+      (U := ⟨V, hV⟩) hpSmooth hp (hFV hy) _
   intro y hy
   obtain ⟨g, hg, heq⟩ :=
     FirstPass.exists_contDiff_eventuallyEq_of_contDiffOn hU hqSmooth hy

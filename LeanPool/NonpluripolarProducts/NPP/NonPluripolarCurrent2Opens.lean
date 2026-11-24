@@ -487,10 +487,6 @@ theorem chartWedgeMeasure_truncated_le {U : Opens M} (θ : SemipositiveFormOn n 
     :=
     ((e.val.continuousOn.isOpen_inter_preimage e.val.open_source
       Metric.isOpen_ball).measurableSet).inter (measurableSet_strictLocusM hφ k)
-  have hCm : MeasurableSet (Metric.closedBall z₀ (r / 2) ∩
-      BedfordTaylorTopDegree.strictLocus (chartTarget e) (fun i z => φ i (e.val.symm z)) k) :=
-    Metric.isClosed_closedBall.measurableSet.inter
-      (BedfordTaylorTopDegree.measurableSet_strictLocus (chartPlurisubharmonicOn hφ e) k)
   rw [chartWedgeMeasure_apply _ θ e hWm]
   refine measure_mono fun w hw => ?_
   obtain ⟨⟨⟨-, hw1⟩, hw2⟩, hwD⟩ := hw

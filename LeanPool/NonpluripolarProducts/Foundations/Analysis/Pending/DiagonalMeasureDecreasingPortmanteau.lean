@@ -137,9 +137,10 @@ then for every open `O` inside that source,
 
   `theta^n_w (O) <= liminf_k theta^n_{u_k} (O)`.
 
-This is the Bedford--Taylor decreasing convergence theorem (Blocki, Thm. 2.2.1;
-Demailly, CADG III.3.7) for the global non-pluripolar measure, in the only form
-Xia's Theorem 2.4.4 uses it. -/
+This is the chartwise portmanteau consequence of Bedford–Taylor
+decreasing convergence ([Błocki, Theorem 2.1.5](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=36)). The
+boundedness hypotheses identify the global non-pluripolar measures with their
+local Bedford–Taylor representatives, as used in Xia's Theorem 2.4.4. -/
 theorem diagonalPotentialMeasure_le_liminf_of_antitone {theta : ClosedRealOneOneForm n M}
     {e : ComplexChart n M} {D : Opens (ComplexModel n)}
     {hD : (D : Set (ComplexModel n)) ⊆ e.val.target} {rho : ComplexModel n → ℝ}

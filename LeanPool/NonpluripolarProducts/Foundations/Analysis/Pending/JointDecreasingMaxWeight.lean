@@ -147,7 +147,7 @@ theorem integral_mul_jointMaxWeight_eq {U : Opens (ComplexModel n)}
                 (U.isOpen.mem_nhds hzU)
             filter_upwards [hc.eventually (lt_mem_nhds (show maxScale k < F i k z - J k z by
               linarith))] with y hy
-            simp only [hF'_def, Function.update_self, hG_def, scaledSmoothMax]
+            simp only [hF'_def, Function.update_self, hG_def, scaledSmoothMax_apply]
             rw [scaledPosPart_eq_self (maxScale_pos k) hy.le]
             ring
           · simp [hF'_def, Function.update_of_ne h]
@@ -158,12 +158,12 @@ theorem integral_mul_jointMaxWeight_eq {U : Opens (ComplexModel n)}
         exact hR0
       · have hG0 : 0 ≤ G k z - J k z := by
           have := scaledPosPart_nonneg (maxScale_pos k).le (F i₀ k z - J k z)
-          simp only [hG_def, scaledSmoothMax]
+          simp only [hG_def, scaledSmoothMax_apply]
           linarith
         have hGe : G k z - J k z ≤ maxScale k := by
           have := scaledPosPart_le (maxScale_pos k)
             (show F i₀ k z - J k z ≤ maxScale k by linarith [not_lt.mp hz])
-          simp only [hG_def, scaledSmoothMax]
+          simp only [hG_def, scaledSmoothMax_apply]
           linarith
         rw [← mul_sub, abs_mul, abs_mul, abs_of_nonneg hG0]
         calc |χ z| * (G k z - J k z) * |mixedDensity (fun i ↦ F i k) z -

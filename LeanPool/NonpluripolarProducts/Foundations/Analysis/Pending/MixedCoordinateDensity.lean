@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateWedgeFamilyPairing
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateDensityHermitian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SymmetricMultilinearDiagonal
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.MixedMongeAmpere
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.KahlerCurrentPerturbation

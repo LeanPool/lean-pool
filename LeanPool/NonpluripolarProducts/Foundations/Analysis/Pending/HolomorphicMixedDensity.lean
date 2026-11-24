@@ -186,24 +186,24 @@ theorem hessForm_eq_smoothDDC {u : ComplexModel n → ℝ} {z : ComplexModel n}
     field_simp [Real.pi_ne_zero]
     ring
 
-/-- **Chain rule for holomorphic maps.** -/
-theorem hessForm_comp_holomorphic {k : ℕ} {F : ComplexModel k → ComplexModel n}
+/-- **Chain rule for the complex Hessian of a `C²` function under a holomorphic map.** -/
+theorem hessForm_comp_holomorphic_two {k : ℕ} {F : ComplexModel k → ComplexModel n}
     {p : ComplexModel n → ℝ} {U : Set (ComplexModel k)} {V : Set (ComplexModel n)}
-    (hU : IsOpen U) (hV : IsOpen V) (hF : ContDiffOn ℂ ∞ F U) (hp : ContDiffOn ℝ ∞ p V)
+    (hU : IsOpen U) (hV : IsOpen V) (hF : ContDiffOn ℂ ∞ F U) (hp : ContDiffOn ℝ 2 p V)
     (hFV : MapsTo F U V) {y : ComplexModel k} (hy : y ∈ U) (v w : ComplexModel k) :
     hessForm (fun x ↦ p (F x)) y v w = hessForm p (F y) (fderiv ℝ F y v) (fderiv ℝ F y w) := by
-  have h2 : (2 : WithTop ℕ∞) ≤ ∞ := ENat.natCast_le_of_coe_top_le_withTop le_rfl 2
   have hFy : DifferentiableAt ℂ F y :=
     ((hF y hy).contDiffAt (hU.mem_nhds hy)).differentiableAt (by simp)
   have hq2 : ContDiffAt ℝ 2 (fun x ↦ p (F x)) y :=
-    (((hp.comp (hF.restrict_scalars ℝ) hFV) y hy).contDiffAt (hU.mem_nhds hy)).of_le h2
-  have hp2 : ContDiffAt ℝ 2 p (F y) :=
-    ((hp (F y) (hFV hy)).contDiffAt (hV.mem_nhds (hFV hy))).of_le h2
+    ((hp.comp ((hF.restrict_scalars ℝ).of_le (by
+      simp)) hFV) y hy).contDiffAt
+      (hU.mem_nhds hy)
+  have hp2 : ContDiffAt ℝ 2 p (F y) := (hp (F y) (hFV hy)).contDiffAt (hV.mem_nhds (hFV hy))
   have hnat (a b : ComplexModel k) :
       smoothDDC (fun x ↦ p (F x)) y ![a, b] =
         smoothDDC p (F y) ![fderiv ℝ F y a, fderiv ℝ F y b] := by
     have h := congrArg (fun A : (ComplexModel k) [⋀^Fin 2]→L[ℝ] ℝ ↦ A ![a, b])
-      (HolomorphicDDC.smoothDDC_comp hU hV hF hp hFV hy)
+      (HolomorphicDDC.smoothDDC_comp_two hU hV hF hp hFV hy)
     simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply] at h
     rw [h]
     congr 1
@@ -214,10 +214,37 @@ theorem hessForm_comp_holomorphic {k : ℕ} {F : ComplexModel k → ComplexModel
     exact (fderiv ℂ F y).map_smul I w
   rw [hessForm_eq_smoothDDC hq2, hessForm_eq_smoothDDC hp2, hnat, hnat, hmapI]
 
+/-- **Chain rule for holomorphic maps.** -/
+theorem hessForm_comp_holomorphic {k : ℕ} {F : ComplexModel k → ComplexModel n}
+    {p : ComplexModel n → ℝ} {U : Set (ComplexModel k)} {V : Set (ComplexModel n)}
+    (hU : IsOpen U) (hV : IsOpen V) (hF : ContDiffOn ℂ ∞ F U) (hp : ContDiffOn ℝ ∞ p V)
+    (hFV : MapsTo F U V) {y : ComplexModel k} (hy : y ∈ U) (v w : ComplexModel k) :
+    hessForm (fun x ↦ p (F x)) y v w = hessForm p (F y) (fderiv ℝ F y v) (fderiv ℝ F y w) :=
+  hessForm_comp_holomorphic_two hU hV hF
+    (hp.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hFV hy v w
+
 /-- The complex Jacobian matrix `(∂Fₐ/∂zⱼ)`. -/
 def jacobianMatrix (F : ComplexModel n → ComplexModel n) (y : ComplexModel n) :
     Matrix (Fin n) (Fin n) ℂ :=
   Matrix.of fun a j ↦ (fderiv ℝ F y (coordinateVector j)) a
+
+/-- **`H(p ∘ F) = Jᵀ H(p) JBar`** for a holomorphic `F` and a `C²` function `p`. -/
+theorem complexHessian_comp_holomorphic_two {F : ComplexModel n → ComplexModel n}
+    {p : ComplexModel n → ℝ} {U V : Set (ComplexModel n)} (hU : IsOpen U) (hV : IsOpen V)
+    (hF : ContDiffOn ℂ ∞ F U) (hp : ContDiffOn ℝ 2 p V) (hFV : MapsTo F U V)
+    {y : ComplexModel n} (hy : y ∈ U) :
+    complexHessian (fun x ↦ p (F x)) y =
+      (jacobianMatrix F y).transpose * complexHessian p (F y) *
+        (jacobianMatrix F y).map (starRingEnd ℂ) := by
+  ext j k
+  rw [complexHessian_eq_hessForm, hessForm_comp_holomorphic_two hU hV hF hp hFV hy,
+    hessForm_eq_sum]
+  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, jacobianMatrix,
+    Matrix.of_apply, Finset.sum_mul]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun b _ ↦ Finset.sum_congr rfl fun a _ ↦ ?_
+  simp only [Complex.star_def]
+  ring
 
 theorem complexHessian_comp_holomorphic {F : ComplexModel n → ComplexModel n}
     {p : ComplexModel n → ℝ} {U V : Set (ComplexModel n)} (hU : IsOpen U) (hV : IsOpen V)
@@ -225,15 +252,9 @@ theorem complexHessian_comp_holomorphic {F : ComplexModel n → ComplexModel n}
     {y : ComplexModel n} (hy : y ∈ U) :
     complexHessian (fun x ↦ p (F x)) y =
       (jacobianMatrix F y).transpose * complexHessian p (F y) * (jacobianMatrix F y).map
-        (starRingEnd ℂ) := by
-  ext j k
-  rw [complexHessian_eq_hessForm, hessForm_comp_holomorphic hU hV hF hp hFV hy, hessForm_eq_sum]
-  simp only [Matrix.mul_apply, Matrix.transpose_apply, Matrix.map_apply, jacobianMatrix,
-    Matrix.of_apply, Finset.sum_mul]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun b _ ↦ Finset.sum_congr rfl fun a _ ↦ ?_
-  simp only [Complex.star_def]
-  ring
+        (starRingEnd ℂ) :=
+  complexHessian_comp_holomorphic_two hU hV hF
+    (hp.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hFV hy
 
 /-- **Mixed densities under holomorphic maps.** -/
 theorem mixedDensity_comp_holomorphic {F : ComplexModel n → ComplexModel n}

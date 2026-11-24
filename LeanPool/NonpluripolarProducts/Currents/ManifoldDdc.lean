@@ -123,7 +123,7 @@ theorem isPSHOn_of_manifoldPSH {φ : M → EReal} (hφ : SGPT.PSH.ManifoldPSH (n
 
 omit [IsManifold (𝓘(ℂ, ComplexModel (m + 1))) ∞ M] in
 /-- On an overlap, `φ ∘ e⁻¹ = (φ ∘ f⁻¹) ∘ (f ∘ e⁻¹)`. -/
-theorem chart_comp_transition (φ : M → EReal) (e f : ComplexChart (m + 1) M) :
+theorem chart_comp_transition {α : Type*} (φ : M → α) (e f : ComplexChart (m + 1) M) :
     ∀ x ∈ overlapSource e f, φ (e.val.symm x) = φ (f.val.symm (chartTransition e f x)) := by
   intro x hx
   have hx' : x ∈ (chartTransition e f).source := hx

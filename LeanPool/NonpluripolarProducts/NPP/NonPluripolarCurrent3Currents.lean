@@ -378,20 +378,9 @@ theorem productInChart_compatible (e f : ComplexChart (m + 1) M) :
   have hpot := hT.pot_spec hU
   set V' : Opens (ComplexModel (m + 1)) := overlapTarget e f ⊓ chartDomain f U with hV'
   have hV'B : V' ≤ overlapTarget e f := inf_le_left
-  have hzf : e.val.symm z ∈ f.val.source := by
-    have hz' : z ∈ (chartTransition e f).source := hz
-    simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-      OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hz'
-    exact hz'.2
-  have hτ : ∀ x ∈ overlapSource e f, f.val.symm (chartTransition e f x) = e.val.symm x := by
-    intro x hx
-    have hx' : x ∈ (chartTransition e f).source := hx
-    have hxf : e.val.symm x ∈ f.val.source := by
-      simp only [chartTransition, OpenPartialHomeomorph.trans_source,
-        OpenPartialHomeomorph.symm_source, mem_inter_iff, mem_preimage] at hx'
-      exact hx'.2
-    simp only [chartTransition, OpenPartialHomeomorph.coe_trans, Function.comp_apply,
-      f.val.left_inv hxf]
+  have hτ (x : _) (hx : x ∈ overlapSource e f) :
+      f.val.symm (chartTransition e f x) = e.val.symm x :=
+    (chart_comp_transition id e f x hx).symm
   have hpre_le : preOpen hh V' ≤ chartDomain e U := by
     intro x hx
     refine ⟨overlapSource_le e f hx.1, ?_⟩

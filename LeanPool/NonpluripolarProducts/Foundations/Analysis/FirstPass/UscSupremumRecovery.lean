@@ -81,62 +81,6 @@ theorem exists_family_value_between_of_uscRegularization_sSup_eq_coe
   exact (le_uscRegularization (sSup F) y |>.trans'
     (le_sSup hfF y)).trans_lt hyU.2
 
-/-- A finite value of the upper regularization of a single function is
-approached by actual values of that function at points tending to the base
-point. This is the version needed when the regularized object is not itself a
-pointwise supremum of a separately indexed family. -/
-theorem exists_sequence_tendsto_uscRegularization_eq_coe
-    {f : X → EReal} {x : X} {a : ℝ}
-    (hx : uscRegularization f x = (a : EReal)) :
-    ∃ y : ℕ → X, Tendsto y atTop (𝓝 x) ∧
-      Tendsto (fun n => f (y n)) atTop (𝓝 (a : EReal)) := by
-  let ε : ℕ → ℝ := fun n => 1 / ((n : ℝ) + 1)
-  have hεpos : ∀ n, 0 < ε n := by
-    intro n
-    dsimp [ε]
-    positivity
-  have hchoice : ∀ n, ∃ y ∈ ball x (ε n),
-      ((a - ε n : ℝ) : EReal) < f y ∧ f y < ((a + ε n : ℝ) : EReal) := by
-    intro n
-    let g := uscRegularization f
-    have hax : ((a : ℝ) : EReal) = g x := hx.symm
-    have hupper_at : g x < ((a + ε n : ℝ) : EReal) := by
-      rw [← hax, EReal.coe_lt_coe_iff]
-      exact lt_add_of_pos_right _ (hεpos n)
-    have hupper_nhds : {y | g y < ((a + ε n : ℝ) : EReal)} ∈ 𝓝 x :=
-      (upperSemicontinuous_uscRegularization f) x _ hupper_at
-    have hball : ball x (ε n) ∈ 𝓝 x := ball_mem_nhds x (hεpos n)
-    have hU : ball x (ε n) ∩ {y | g y < ((a + ε n : ℝ) : EReal)} ∈ 𝓝 x :=
-      inter_mem hball hupper_nhds
-    have hlower : ((a - ε n : ℝ) : EReal) < g x := by
-      rw [← hax, EReal.coe_lt_coe_iff]
-      exact sub_lt_self _ (hεpos n)
-    obtain ⟨y, hyU, hy⟩ := exists_mem_lt_of_lt_uscRegularization hlower hU
-    refine ⟨y, hyU.1, hy, ?_⟩
-    exact (le_uscRegularization f y).trans_lt hyU.2
-  choose y hy hlower hupper using hchoice
-  have hε : Tendsto ε atTop (𝓝 0) := by
-    simpa only [ε] using
-      (tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ))
-  refine ⟨y, ?_, ?_⟩
-  · apply Metric.tendsto_atTop.2
-    intro δ hδ
-    have hsmall : ∀ᶠ n : ℕ in atTop, ε n < δ :=
-      hε.eventually (gt_mem_nhds hδ)
-    obtain ⟨N, hN⟩ := eventually_atTop.1 hsmall
-    exact ⟨N, fun n hn => (hy n).trans (hN n hn)⟩
-  · have hlower_tendsto : Tendsto (fun n => ((a - ε n : ℝ) : EReal))
-        atTop (𝓝 (a : EReal)) := by
-      apply EReal.tendsto_coe.mpr
-      simpa using tendsto_const_nhds.sub hε
-    have hupper_tendsto : Tendsto (fun n => ((a + ε n : ℝ) : EReal))
-        atTop (𝓝 (a : EReal)) := by
-      apply EReal.tendsto_coe.mpr
-      simpa using tendsto_const_nhds.add hε
-    exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower_tendsto hupper_tendsto
-      (Eventually.of_forall fun n => (hlower n).le)
-      (Eventually.of_forall fun n => (hupper n).le)
-
 /-- Sequential form of finite-value recovery.  Both the moving centers and
 the selected family values converge to the prescribed base data. -/
 theorem exists_sequences_tendsto_uscRegularization_sSup_eq_coe
@@ -176,6 +120,18 @@ theorem exists_sequences_tendsto_uscRegularization_sSup_eq_coe
     exact tendsto_of_tendsto_of_tendsto_of_le_of_le' hlower_tendsto hupper_tendsto
       (Eventually.of_forall fun n => (hlower n).le)
       (Eventually.of_forall fun n => (hupper n).le)
+
+/-- A finite value of the upper regularization is approached by values of the original function. -/
+theorem exists_sequence_tendsto_uscRegularization_eq_coe
+    {f : X → EReal} {x : X} {a : ℝ}
+    (hx : uscRegularization f x = (a : EReal)) :
+    ∃ y : ℕ → X, Tendsto y atTop (𝓝 x) ∧
+      Tendsto (fun n => f (y n)) atTop (𝓝 (a : EReal)) := by
+  have hs : uscRegularization (sSup ({f} : Set (X → EReal))) x = (a : EReal) := by
+    simpa only [sSup_singleton] using hx
+  obtain ⟨y, g, hy, hg, hlim⟩ := exists_sequences_tendsto_uscRegularization_sSup_eq_coe hs
+  refine ⟨y, hy, hlim.congr fun n => ?_⟩
+  rw [Set.mem_singleton_iff.mp (hg n)]
 
 end
 

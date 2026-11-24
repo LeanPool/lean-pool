@@ -273,6 +273,62 @@ theorem IsDecApprox.congr {U : Opens (ComplexModel n)} {w w' : ComplexModel n �
   rw [← (h.mono hKU).image_eq]
   exact hG.2.2.2 K hK hKU
 
+/-- Restriction equalities for local mixed limits pass to an open exhaustion. The two
+tuples defining the second limit may be identified by equality on the open set. -/
+theorem restrict_eq_of_relativelyCompact_model {Ω : Opens (ComplexModel n)}
+    {v w model : Fin n → ComplexModel n → ℝ} {μ ν : Measure (ComplexModel n)}
+    (P : Set (ComplexModel n))
+    (hμf : ∀ K, IsCompact K → K ⊆ Ω → μ K < ⊤)
+    (hνf : ∀ K, IsCompact K → K ⊆ Ω → ν K < ⊤)
+    (hμT : ∀ U, RelativelyCompactIn U Ω → ∃ F, IsAdmissible n U v F ∧ TendstoMixed U F μ)
+    (hνT : ∀ U, RelativelyCompactIn U Ω → ∃ G, IsAdmissible n U w G ∧ TendstoMixed U G ν)
+    (hmodel : ∀ i, EqOn (w i) (model i) Ω)
+    (hlocal : ∀ (V : Opens (ComplexModel n)), RelativelyCompactIn V Ω →
+      ∀ (μV νV : Measure (ComplexModel n)),
+      (∀ K, IsCompact K → K ⊆ V → μV K < ⊤) →
+      (∀ F, IsAdmissible n V v F → TendstoMixed V F μV) →
+      (∃ F, IsAdmissible n V v F) →
+      νV (V : Set (ComplexModel n))ᶜ = 0 →
+      (∀ K, IsCompact K → K ⊆ V → νV K < ⊤) →
+      (∀ G, IsAdmissible n V model G → TendstoMixed V G νV) →
+      νV.restrict {z | z ∈ V ∧ z ∈ P} = μV.restrict {z | z ∈ V ∧ z ∈ P}) :
+    ν.restrict {z | z ∈ Ω ∧ z ∈ P} = μ.restrict {z | z ∈ Ω ∧ z ∈ P} := by
+  obtain ⟨U, -, hUrc, hUabs⟩ := exists_exhaustion Ω
+  have hUΩ (j : ℕ) : U j ≤ Ω := subset_closure.trans (hUrc j).2
+  have hcover : {z | z ∈ Ω ∧ z ∈ P} = ⋃ j, {z | z ∈ U j ∧ z ∈ P} := by
+    ext z
+    simp only [mem_ofPred_eq, mem_iUnion]
+    constructor
+    · rintro ⟨hzΩ, hz⟩
+      obtain ⟨j, hj⟩ := hUabs {z} isCompact_singleton (singleton_subset_iff.2 hzΩ)
+      exact ⟨j, hj rfl, hz⟩
+    · rintro ⟨j, hzj, hz⟩
+      exact ⟨hUΩ j hzj, hz⟩
+  rw [hcover, Measure.restrict_iUnion_congr]
+  intro j
+  set V := U j
+  have hPV : {z | z ∈ V ∧ z ∈ P} ⊆ (V : Set (ComplexModel n)) := fun _ hz ↦ hz.1
+  have hfin (ρ : Measure (ComplexModel n)) (hρ : ∀ K, IsCompact K → K ⊆ Ω → ρ K < ⊤) :
+      ∀ K, IsCompact K → K ⊆ V → ρ K < ⊤ := fun K hK hKV ↦ hρ K hK (hKV.trans (hUΩ j))
+  obtain ⟨F, hF, hFT⟩ := hμT V (hUrc j)
+  obtain ⟨μV, -, hμVf, hμVT⟩ := pClaim_all (n := n) V v
+  have hμeq : μ.restrict V = μV.restrict V :=
+    restrict_eq_of_testFunction_integral_eq (hfin μ hμf) hμVf fun φ ↦
+      tendsto_nhds_unique (hFT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
+        (hμVT F hF φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
+  obtain ⟨G, hG, hGT⟩ := hνT V (hUrc j)
+  have hG' : IsAdmissible n V model G :=
+    ⟨fun i ↦ (hG.1 i).congr ((hmodel i).mono (hUΩ j)), hG.2⟩
+  obtain ⟨νV, hνVc, hνVf, hνVT⟩ := pClaim_all (n := n) V model
+  have hνeq : ν.restrict V = νV.restrict V :=
+    restrict_eq_of_testFunction_integral_eq (hfin ν hνf) hνVf fun φ ↦
+      tendsto_nhds_unique (hGT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
+        (hνVT G hG' φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
+  have hchain := hlocal V (hUrc j) μV νV hμVf hμVT ⟨F, hF⟩ hνVc hνVf hνVT
+  rw [← Measure.restrict_restrict_of_subset hPV, hνeq, Measure.restrict_restrict_of_subset hPV,
+    hchain, ← Measure.restrict_restrict_of_subset hPV, ← hμeq,
+    Measure.restrict_restrict_of_subset hPV]
+
 /-- **Max-constant locality on an open set.** For measures that are limits of
 mixed densities of decreasing approximations on every relatively compact open
 subset, replacing every slot `v i` by `max(v i, c)` does not change the measure
@@ -284,43 +340,12 @@ theorem restrict_eq_of_max_const {Ω : Opens (ComplexModel n)} {v w : Fin n → 
     (hνT : ∀ U, RelativelyCompactIn U Ω → ∃ F, IsAdmissible n U w F ∧ TendstoMixed U F ν)
     (hmax : ∀ i, EqOn (w i) (fun z ↦ max (v i z) c) Ω) :
     ν.restrict {z | z ∈ Ω ∧ ∀ i, c < v i z} = μ.restrict {z | z ∈ Ω ∧ ∀ i, c < v i z} := by
-  obtain ⟨U, -, hUrc, hUabs⟩ := exists_exhaustion Ω
-  have hUΩ (m : ℕ) : U m ≤ Ω := subset_closure.trans (hUrc m).2
-  have hQ : {z | z ∈ Ω ∧ ∀ i, c < v i z} = ⋃ m, {z | z ∈ U m ∧ ∀ i, c < v i z} := by
-    ext z
-    simp only [mem_ofPred_eq, mem_iUnion]
-    constructor
-    · rintro ⟨hzΩ, hz⟩
-      obtain ⟨m, hm⟩ := hUabs {z} isCompact_singleton (singleton_subset_iff.2 hzΩ)
-      exact ⟨m, hm rfl, hz⟩
-    · rintro ⟨m, hzm, hz⟩
-      exact ⟨hUΩ m hzm, hz⟩
-  rw [hQ, Measure.restrict_iUnion_congr]
-  intro m
-  set V := U m
-  set P := {z | z ∈ V ∧ ∀ i, c < v i z}
-  have hPV : P ⊆ V := fun z hz ↦ hz.1
-  have hfinV (ρ : Measure (ComplexModel n)) (hρ : ∀ K, IsCompact K → K ⊆ Ω → ρ K < ⊤) :
-      ∀ K, IsCompact K → K ⊆ V → ρ K < ⊤ := fun K hK hKV ↦ hρ K hK (hKV.trans (hUΩ m))
-  obtain ⟨F, hF, hFT⟩ := hμT V (hUrc m)
-  obtain ⟨μV, -, hμVf, hμVT⟩ := pClaim_all (n := n) V v
-  have e1 : μ.restrict V = μV.restrict V :=
-    restrict_eq_of_testFunction_integral_eq (hfinV μ hμf) hμVf fun φ ↦
-      tendsto_nhds_unique (hFT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-        (hμVT F hF φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-  obtain ⟨G, hG, hGT⟩ := hνT V (hUrc m)
-  have hG' : IsAdmissible n V (maxTuple v c n) G := by
-    refine ⟨fun i ↦ (hG.1 i).congr fun z hz ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
-    simpa [maxTuple] using hmax i (hUΩ m hz)
-  obtain ⟨νV, hνVc, hνVf, hνVT⟩ := pClaim_all (n := n) V (maxTuple v c n)
-  have e2 : ν.restrict V = νV.restrict V :=
-    restrict_eq_of_testFunction_integral_eq (hfinV ν hνf) hνVf fun φ ↦
-      tendsto_nhds_unique (hGT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-        (hνVT G hG' φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-  have hchain := restrict_eq_maxTuple c hμVf hμVT ⟨F, hF⟩ n le_rfl νV hνVc hνVf hνVT
-  rw [← Measure.restrict_restrict_of_subset hPV, e2, Measure.restrict_restrict_of_subset hPV,
-    hchain, ← Measure.restrict_restrict_of_subset hPV, ← e1,
-    Measure.restrict_restrict_of_subset hPV]
+  refine restrict_eq_of_relativelyCompact_model (model := maxTuple v c n)
+    {z | ∀ i, c < v i z} hμf hνf hμT hνT ?_ ?_
+  · intro i z hz
+    simpa [maxTuple] using hmax i hz
+  · intro V hV μV νV hμVf hμVT hF hνVc hνVf hνVT
+    exact restrict_eq_maxTuple c hμVf hμVT hF n le_rfl νV hνVc hνVf hνVT
 
 theorem IsLocalBedfordTaylorMeasure.exists_isAdmissible_tendstoMixed
     {Ω U : Opens (ComplexModel n)} {v : ComplexModel n → ℝ} {μ : Measure (ComplexModel n)}

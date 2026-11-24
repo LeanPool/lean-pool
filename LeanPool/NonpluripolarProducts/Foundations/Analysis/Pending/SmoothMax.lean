@@ -184,6 +184,26 @@ theorem sub_posPart_monotone : Monotone fun t ↦ t - posPart t := by
   rw [h.deriv]
   linarith [trans_le_one t]
 
+/-- The smooth positive part majorizes the identity. -/
+theorem le_posPart (t : ℝ) : t ≤ posPart t := by
+  rcases le_total t 1 with h | h
+  · have := sub_posPart_monotone h
+    simp only [posPart_eq_self le_rfl, sub_self] at this
+    linarith
+  · rw [posPart_eq_self h]
+
+/-- The smooth positive part is nonnegative. -/
+theorem posPart_nonneg (t : ℝ) : 0 ≤ posPart t := by
+  rcases le_total t (-1) with h | h
+  · rw [posPart_eq_zero h]
+  · have := posPart_monotone h
+    rwa [posPart_eq_zero le_rfl] at this
+
+/-- The positive part at inputs at most one is at most one. -/
+theorem posPart_le_one {t : ℝ} (ht : t ≤ 1) : posPart t ≤ 1 := by
+  have := posPart_monotone ht
+  rwa [posPart_eq_self le_rfl] at this
+
 theorem smoothMax_mono {E : Type*} {f f' g g' : E → ℝ} {z : E} (hf : f z ≤ f' z)
     (hg : g z ≤ g' z) : smoothMax f g z ≤ smoothMax f' g' z := by
   unfold smoothMax

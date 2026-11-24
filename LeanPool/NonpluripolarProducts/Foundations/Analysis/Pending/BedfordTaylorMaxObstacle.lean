@@ -197,45 +197,13 @@ theorem restrict_eq_of_max_obstacle {Ω : Opens (ComplexModel n)}
     (hmax : ∀ i, EqOn (w i) (fun z ↦ max (v i z) (g i z)) Ω) :
     ν.restrict {z | z ∈ Ω ∧ ∀ i, g i z < v i z} =
       μ.restrict {z | z ∈ Ω ∧ ∀ i, g i z < v i z} := by
-  obtain ⟨U, -, hUrc, hUabs⟩ := exists_exhaustion Ω
-  have hUΩ (m : ℕ) : U m ≤ Ω := subset_closure.trans (hUrc m).2
-  have hQ : {z | z ∈ Ω ∧ ∀ i, g i z < v i z} =
-      ⋃ m, {z | z ∈ U m ∧ ∀ i, g i z < v i z} := by
-    ext z
-    simp only [mem_ofPred_eq, mem_iUnion]
-    constructor
-    · rintro ⟨hzΩ, hz⟩
-      obtain ⟨m, hm⟩ := hUabs {z} isCompact_singleton (singleton_subset_iff.2 hzΩ)
-      exact ⟨m, hm rfl, hz⟩
-    · rintro ⟨m, hzm, hz⟩
-      exact ⟨hUΩ m hzm, hz⟩
-  rw [hQ, Measure.restrict_iUnion_congr]
-  intro m
-  set V := U m
-  set P := {z | z ∈ V ∧ ∀ i, g i z < v i z}
-  have hPV : P ⊆ V := fun z hz ↦ hz.1
-  have hgV (i : Fin n) : IsSmoothPsdOn V (g i) := (hg i).mono (hUΩ m)
-  have hfinV (ρ : Measure (ComplexModel n)) (hρ : ∀ K, IsCompact K → K ⊆ Ω → ρ K < ⊤) :
-      ∀ K, IsCompact K → K ⊆ V → ρ K < ⊤ := fun K hK hKV ↦ hρ K hK (hKV.trans (hUΩ m))
-  obtain ⟨F, hF, hFT⟩ := hμT V (hUrc m)
-  obtain ⟨μV, -, hμVf, hμVT⟩ := pClaim_all (n := n) V v
-  have e1 : μ.restrict V = μV.restrict V :=
-    restrict_eq_of_testFunction_integral_eq (hfinV μ hμf) hμVf fun φ ↦
-      tendsto_nhds_unique (hFT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-        (hμVT F hF φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-  obtain ⟨G, hG, hGT⟩ := hνT V (hUrc m)
-  have hG' : IsAdmissible n V (maxTupleObstacle v g n) G := by
-    refine ⟨fun i ↦ (hG.1 i).congr fun z hz ↦ ?_, fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩
-    simpa [maxTupleObstacle] using hmax i (hUΩ m hz)
-  obtain ⟨νV, hνVc, hνVf, hνVT⟩ := pClaim_all (n := n) V (maxTupleObstacle v g n)
-  have e2 : ν.restrict V = νV.restrict V :=
-    restrict_eq_of_testFunction_integral_eq (hfinV ν hνf) hνVf fun φ ↦
-      tendsto_nhds_unique (hGT φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-        (hνVT G hG' φ φ.continuous φ.hasCompactSupport φ.tsupport_subset)
-  have hchain := restrict_eq_maxTupleObstacle hgV hμVf hμVT ⟨F, hF⟩ n le_rfl νV hνVc hνVf hνVT
-  rw [← Measure.restrict_restrict_of_subset hPV, e2, Measure.restrict_restrict_of_subset hPV,
-    hchain, ← Measure.restrict_restrict_of_subset hPV, ← e1,
-    Measure.restrict_restrict_of_subset hPV]
+  refine restrict_eq_of_relativelyCompact_model (model := maxTupleObstacle v g n)
+    {z | ∀ i, g i z < v i z} hμf hνf hμT hνT ?_ ?_
+  · intro i z hz
+    simpa [maxTupleObstacle] using hmax i hz
+  · intro V hV μV νV hμVf hμVT hF hνVc hνVf hνVT
+    have hgV (i : Fin n) : IsSmoothPsdOn V (g i) := (hg i).mono (subset_closure.trans hV.2)
+    exact restrict_eq_maxTupleObstacle hgV hμVf hμVT hF n le_rfl νV hνVc hνVf hνVT
 
 /-- **Scalar max-obstacle locality** for bounded Bedford–Taylor measures. -/
 theorem IsLocalBedfordTaylorMeasure.restrict_max_obstacle

@@ -76,7 +76,7 @@ theorem abs_sub_fderiv_le_of_norm_second_le {f : ComplexModel n → ℝ} (hf : C
 
 /-- The limit of `C²` functions with uniformly bounded second derivatives is differentiable,
 with the same second-order Taylor bound. -/
-theorem differentiableAt_and_taylor_of_tendsto {c : ComplexModel n} {ρ M C : ℝ} (_hρ : 0 < ρ)
+theorem differentiableAt_and_taylor_of_tendsto {c : ComplexModel n} {ρ M C : ℝ}
     (hM0 : 0 ≤ M) {F : ℕ → ComplexModel n → ℝ} {u : ComplexModel n → ℝ}
     (hF : ∀ j, ContDiff ℝ 2 (F j))
     (hM : ∀ j, ∀ y ∈ ball c ρ, ‖fderiv ℝ (fderiv ℝ (F j)) y‖ ≤ M)
@@ -239,7 +239,7 @@ theorem norm_fderiv_sub_le_of_taylor {u : ComplexModel n → ℝ} {c : ComplexMo
 
 /-- **Almost-everywhere second-order expansion.**  At almost every point of the smaller ball,
 the limit `u` has a Peano expansion with a symmetric quadratic part. -/
-theorem ae_exists_hasPeanoExpansion {c : ComplexModel n} {ρ M C : ℝ} (hρ : 0 < ρ) (hM0 : 0 ≤ M)
+theorem ae_exists_hasPeanoExpansion {c : ComplexModel n} {ρ M C : ℝ} (hM0 : 0 ≤ M)
     {F : ℕ → ComplexModel n → ℝ} {u : ComplexModel n → ℝ}
     (hF : ∀ j, ContDiff ℝ 2 (F j))
     (hM : ∀ j, ∀ y ∈ ball c ρ, ‖fderiv ℝ (fderiv ℝ (F j)) y‖ ≤ M)
@@ -248,7 +248,7 @@ theorem ae_exists_hasPeanoExpansion {c : ComplexModel n} {ρ M C : ℝ} (hρ : 0
     ∀ᵐ x : ComplexModel n, x ∈ ball c (ρ / 4) →
       ∃ A : ComplexModel n →L[ℝ] ComplexModel n →L[ℝ] ℝ, (∀ v w, A v w = A w v) ∧
         HasPeanoExpansionAt u x (fderiv ℝ u x) A := by
-  obtain hdt := differentiableAt_and_taylor_of_tendsto hρ hM0 hF hM hC hconv
+  obtain hdt := differentiableAt_and_taylor_of_tendsto hM0 hF hM hC hconv
   have hdiff : ∀ x ∈ ball c ρ, DifferentiableAt ℝ u x := fun x hx ↦ (hdt x hx).1
   have hT : ∀ x ∈ ball c ρ, ∀ y ∈ ball c ρ,
       |u y - u x - fderiv ℝ u x (y - x)| ≤ M * ‖y - x‖ ^ 2 := fun x hx ↦ (hdt x hx).2

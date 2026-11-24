@@ -10,7 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoCovectorProducts
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoLocalComplexStokes
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicHessianTwo
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicMixedDensity
 
 /-! # Normalized local differentials of scalar times constant type forms -/
 

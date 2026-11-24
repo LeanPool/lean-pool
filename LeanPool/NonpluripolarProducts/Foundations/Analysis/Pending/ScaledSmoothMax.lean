@@ -80,27 +80,10 @@ theorem scaledSmoothMax_eq_right {E : Type*} {δ : ℝ} (hδ : 0 < δ)
   rw [scaledSmoothMax_apply, posPart_eq_zero ((div_le_iff₀ hδ).2 (by linarith))]
   ring
 
-private theorem le_posPart (t : ℝ) : t ≤ SmoothMax.posPart t := by
-  rcases le_total t 1 with ht | ht
-  · have h := sub_posPart_monotone ht
-    simp only [posPart_eq_self le_rfl, sub_self] at h
-    linarith
-  · rw [posPart_eq_self ht]
-
-private theorem posPart_nonneg (t : ℝ) : 0 ≤ SmoothMax.posPart t := by
-  rcases le_total t (-1) with ht | ht
-  · rw [posPart_eq_zero ht]
-  · have h := posPart_monotone ht
-    rwa [posPart_eq_zero le_rfl] at h
-
-private theorem posPart_le_one {t : ℝ} (ht : t ≤ 1) : SmoothMax.posPart t ≤ 1 := by
-  have h := posPart_monotone ht
-  rwa [posPart_eq_self le_rfl] at h
-
 /-- Both input branches lie below the scale-`δ` regularized maximum. -/
 theorem le_scaledSmoothMax_left {E : Type*} {δ : ℝ} (hδ : 0 < δ)
     (f g : E → ℝ) (z : E) : f z ≤ scaledSmoothMax δ f g z := by
-  have h := mul_le_mul_of_nonneg_left (le_posPart ((f z - g z) / δ)) hδ.le
+  have h := mul_le_mul_of_nonneg_left (SmoothMax.le_posPart ((f z - g z) / δ)) hδ.le
   rw [mul_div_cancel₀ _ hδ.ne'] at h
   rw [scaledSmoothMax_apply]
   linarith
@@ -109,7 +92,7 @@ theorem le_scaledSmoothMax_left {E : Type*} {δ : ℝ} (hδ : 0 < δ)
 theorem le_scaledSmoothMax_right {E : Type*} {δ : ℝ} (hδ : 0 < δ)
     (f g : E → ℝ) (z : E) : g z ≤ scaledSmoothMax δ f g z := by
   rw [scaledSmoothMax_apply]
-  exact le_add_of_nonneg_right (mul_nonneg hδ.le (posPart_nonneg _))
+  exact le_add_of_nonneg_right (mul_nonneg hδ.le (SmoothMax.posPart_nonneg _))
 
 /-- The ordinary maximum is a lower bound for the scale-`δ` regularized maximum. -/
 theorem max_le_scaledSmoothMax {E : Type*} {δ : ℝ} (hδ : 0 < δ)
@@ -123,7 +106,7 @@ theorem scaledSmoothMax_le_max_add {E : Type*} {δ : ℝ} (hδ : 0 < δ)
   rw [scaledSmoothMax_apply]
   rcases le_total (f z - g z) δ with h | h
   · have hP := mul_le_mul_of_nonneg_left
-      (posPart_le_one ((div_le_one hδ).2 h)) hδ.le
+      (SmoothMax.posPart_le_one ((div_le_one hδ).2 h)) hδ.le
     linarith [le_max_right (f z) (g z)]
   · rw [posPart_eq_self ((one_le_div hδ).2 h), mul_div_cancel₀ _ hδ.ne']
     linarith [le_max_left (f z) (g z)]

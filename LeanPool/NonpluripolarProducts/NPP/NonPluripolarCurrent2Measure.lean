@@ -193,7 +193,6 @@ theorem wedgePowerMeasure_eq_of_integral_eq {T : LocalProductCurrent n U q} (hT 
   have hgp := ae_forall_posCone_nonneg hgp'
   set b := formBasis n q
   set c := powerCoeff U α q
-  have hU := U.isOpen.measurableSet
   have hcm := measurable_powerCoeff (q := q) hα
   have hcb := isLocallyBoundedOn_powerCoeff (q := q) hα
   -- the measurable densities agreeing with the given ones on `U`

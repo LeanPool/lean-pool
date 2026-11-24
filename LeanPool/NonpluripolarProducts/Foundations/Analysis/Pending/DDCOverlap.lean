@@ -233,28 +233,7 @@ end Transport
 
 section Pointwise
 
-/-- The scalar exterior product of two real alternating forms. -/
-private def scalarWedge {r q : ℕ} (α : ComplexModel n [⋀^Fin r]→L[ℝ] ℝ)
-    (β : ComplexModel n [⋀^Fin q]→L[ℝ] ℝ) :
-    ComplexModel n [⋀^(Fin r ⊕ Fin q)]→ₗ[ℝ] ℝ :=
-  (LinearMap.mul' ℝ ℝ).compAlternatingMap (α.toAlternatingMap.domCoprod β.toAlternatingMap)
-
-private theorem scalarWedge_apply {r q : ℕ} (α : ComplexModel n [⋀^Fin r]→L[ℝ] ℝ)
-    (β : ComplexModel n [⋀^Fin q]→L[ℝ] ℝ) (v : Fin r ⊕ Fin q → ComplexModel n) :
-    scalarWedge α β v =
-      ∑ s : Equiv.Perm.ModSumCongr (Fin r) (Fin q),
-        ((Equiv.Perm.sign s.out : ℤ) : ℝ) *
-          (α (fun i ↦ v (s.out (Sum.inl i))) * β (fun j ↦ v (s.out (Sum.inr j)))) := by
-  rw [scalarWedge, LinearMap.compAlternatingMap_apply,
-    AlternatingMap.domCoprod_apply, sum_apply, map_sum]
-  apply Finset.sum_congr rfl
-  intro s _
-  conv_lhs => rw [← Quotient.out_eq s, AlternatingMap.domCoprod.summand_mk'']
-  rcases Int.units_eq_one_or (Equiv.Perm.sign s.out) with hs | hs
-  · rw [hs]
-    simp [LinearMap.mul'_apply]
-  · rw [hs]
-    simp [LinearMap.mul'_apply]
+open GlobalCurrents (scalarWedge scalarWedge_apply scalarWedge_comp_basis)
 
 variable {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
   [IsComplexManifold n M] {q : ℕ}
@@ -282,23 +261,10 @@ theorem ddcDensity_overlap_pointwise (B : Module.Basis (Fin 2 ⊕ Fin q) ℝ (Co
       ddcDensity B k ζ y = scalarWedge (smoothDDC k y) (ζ y) B := by
     rw [scalarWedge_apply]
     rfl
-  rw [hdens, hdens]
-  let W := scalarWedge (smoothDDC g (F x)) (θ (F x))
-  have hpull : scalarWedge (smoothDDC h x) (η x) B = W (D ∘ B) := by
-    rw [scalarWedge_apply, scalarWedge_apply]
-    refine Finset.sum_congr rfl fun s _ => ?_
-    rw [hddc, hηθ x hx]
-    rfl
-  rw [hpull]
-  have htop := congrArg
-    (fun A : ComplexModel n [⋀^(Fin 2 ⊕ Fin q)]→ₗ[ℝ] ℝ ↦ A (D ∘ B)) (W.eq_smul_basis_det B)
-  have hdet : B.det (D ∘ B) = LinearMap.det D.toLinearMap := by
-    change B.det (D.toLinearMap ∘ B) = LinearMap.det D.toLinearMap
-    rw [B.det_comp, B.det_self, mul_one]
-  calc
-    W (D ∘ B) = ((W B) • B.det) (D ∘ B) := htop
-    _ = W B * B.det (D ∘ B) := by simp
-    _ = LinearMap.det D.toLinearMap * W B := by rw [hdet, mul_comm]
+  have hη : η x = (θ (F x)).compContinuousLinearMap D :=
+    ContinuousAlternatingMap.ext (hηθ x hx)
+  rw [hdens, hdens, hddc, hη]
+  exact scalarWedge_comp_basis B D _ _
 
 end Pointwise
 

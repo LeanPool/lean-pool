@@ -22,8 +22,10 @@ These are presentations by actual finite families of holomorphic functions.
 They do not assert the existence of a global coherent ideal, its integral
 closure, or a principalization. The rational-coefficient, bounded-remainder
 condition describes singularity type only; it does not imply quasi-PSH.
-The CT22 local convention instead allows a positive real coefficient and
-requires a smooth real remainder. Nondegenerate quasi-PSH is imposed separately.
+The local expression in [Collins–Tosatti, §2](https://www.numdam.org/item/10.5802/afst.1708.pdf#page=8)
+uses a positive real coefficient and a smooth real remainder. The paper also
+requires the generators to come from a coherent ideal sheaf. This file models
+the local expression and a weaker variant with a bounded, off-pole smooth remainder.
 -/
 
 @[expose] public section
@@ -204,7 +206,8 @@ theorem LogarithmicTypeAt.eq_bot_iff {u : E → EReal} {c : ℝ}
 
 variable [NormedSpace ℝ E]
 
-/-- The CT22 local convention: positive REAL coefficient and smooth real remainder. -/
+/-- The local logarithmic expression of Collins–Tosatti with a positive real coefficient
+and a remainder smooth throughout a neighbourhood. -/
 def SmoothLogarithmicTypeAt (u : E → EReal) (c : ℝ) {n : ℕ}
     (f : Fin n → E → ℂ) (x : E) : Prop :=
   0 < c ∧ HolomorphicGeneratorsAt f x ∧
@@ -215,20 +218,11 @@ def SmoothLogarithmicTypeAt (u : E → EReal) (c : ℝ) {n : ℕ}
 def HasSmoothAnalyticSingularitiesAt (u : E → EReal) (x : E) : Prop :=
   ∃ c : ℝ, ∃ n : ℕ, ∃ f : Fin n → E → ℂ, SmoothLogarithmicTypeAt u c f x
 
-/-- **The CT22 local convention in the form the human authorised in `I-0489`.**  A positive
-REAL coefficient, holomorphic generators, and a remainder that is BOUNDED near the point and
-`C^\infty` only OFF the pole set -- the common zero set of the generators.
-
-This sits strictly between `LogarithmicTypeAt` (remainder merely bounded) and
-`SmoothLogarithmicTypeAt` (remainder smooth across the poles), and it is what Demailly's
-Bergman-kernel regularization actually delivers: the remainder is bounded across the poles
-and smooth away from them, while smoothness ACROSS the poles is an extra "neatness" the
-construction does not supply.
-
-The decision recorded in `I-0489` is that this is enough for CT22's notion of analytic
-singularities. The off-pole clause is stated as an implication rather than on a restricted
-set so that it composes with `Filter.Eventually`: at parameters where the generators vanish
-nothing is asked. -/
+/-- A weaker local variant of the logarithmic expression in [Collins–Tosatti, §2](https://www.numdam.org/item/10.5802/afst.1708.pdf#page=8).
+The coefficient is positive real. The remainder is bounded near the point and smooth on the
+complement of the common zero set of the holomorphic generators. Collins–Tosatti require
+smoothness throughout the neighbourhood. The implication at each nearby point lets the
+off-pole clause compose with `Filter.Eventually`. -/
 def BoundedSmoothOffPoleLogarithmicTypeAt (u : E → EReal) (c : ℝ) {n : ℕ}
     (f : Fin n → E → ℂ) (x : E) : Prop :=
   0 < c ∧ HolomorphicGeneratorsAt f x ∧
@@ -236,14 +230,13 @@ def BoundedSmoothOffPoleLogarithmicTypeAt (u : E → EReal) (c : ℝ) {n : ℕ}
       (∀ᶠ y in 𝓝 x, generatorNormSq f y ≠ 0 → ContDiffAt ℝ ∞ b y) ∧
       u =ᶠ[𝓝 x] (fun y => (c : EReal) * generatorLog f y + (b y : EReal))
 
-/-- Local analytic singularities in the convention of `I-0489`: the coefficient is a positive
-real and the remainder is bounded near the point and smooth off the pole set. -/
+/-- Local logarithmic singularities with a positive real coefficient and a remainder
+that is bounded near the point and smooth off the pole set. -/
 def HasAnalyticSingularitiesSmoothOffPoleAt (u : E → EReal) (x : E) : Prop :=
   ∃ c : ℝ, ∃ n : ℕ, ∃ f : Fin n → E → ℂ,
     BoundedSmoothOffPoleLogarithmicTypeAt u c f x
 
-/-- The strong convention implies the one of `I-0489`: a remainder smooth on a whole
-neighbourhood is in particular bounded there and smooth off the pole set. -/
+/-- A remainder smooth on a neighbourhood is locally bounded and smooth off the pole set. -/
 theorem SmoothLogarithmicTypeAt.boundedSmoothOffPole {u : E → EReal} {c : ℝ}
     {n : ℕ} {f : Fin n → E → ℂ} {x : E} (hu : SmoothLogarithmicTypeAt u c f x) :
     BoundedSmoothOffPoleLogarithmicTypeAt u c f x := by

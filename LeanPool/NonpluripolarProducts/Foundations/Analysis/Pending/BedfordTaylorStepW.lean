@@ -197,14 +197,8 @@ section Collar
 
 open SmoothMax
 
-theorem posPart_nonneg (t : ℝ) : 0 ≤ SmoothMax.posPart t := by
-  rcases le_total t (-1) with h | h
-  · rw [posPart_eq_zero h]
-  · have := posPart_monotone h
-    rwa [posPart_eq_zero le_rfl] at this
-
 theorem le_smoothMax_right {E : Type*} (f g : E → ℝ) (z : E) : g z ≤ smoothMax f g z := by
-  simp only [smoothMax]; linarith [posPart_nonneg (f z - g z)]
+  simp only [smoothMax]; linarith [SmoothMax.posPart_nonneg (f z - g z)]
 
 theorem contDiffOn_smoothMax {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] {s : Set E}
     {f g : E → ℝ} (hf : ContDiffOn ℝ ∞ f s) (hg : ContDiffOn ℝ ∞ g s) :

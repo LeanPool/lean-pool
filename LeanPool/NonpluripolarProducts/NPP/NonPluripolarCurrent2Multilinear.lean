@@ -683,13 +683,10 @@ theorem ae_glueMeasure_right (hφ : ∀ i, PlurisubharmonicOn (φ i) U)
     ∀ᵐ x ∂(isTruncationFamily hqp (plurisubharmonicOn_update hφ hψ (j := j))).glueMeasure,
       x ∈ ⋃ k, commonLocus U φ j ψ k := by
   have hF := isTruncationFamily hqp (plurisubharmonicOn_update hφ hψ (j := j))
-  have h0 := (isTruncationFamily hqp (plurisubharmonicOn_update hφ hψ (j :=
-    j))).glueMeasure_inter_eq_zero
+  have h0 := hF.glueMeasure_inter_eq_zero
     (doesNotChargePluripolarOn_truncatedBT hqp (plurisubharmonicOn_update hφ hψ))
     (locallyPluripolarOn_poles (hφ j) hφnd)
-  filter_upwards [(isTruncationFamily hqp (plurisubharmonicOn_update hφ hψ (j :=
-    j))).ae_glueMeasure_mem,
-    measure_eq_zero_iff_ae_notMem.mp h0] with x hx hx0
+  filter_upwards [hF.ae_glueMeasure_mem, measure_eq_zero_iff_ae_notMem.mp h0] with x hx hx0
   obtain ⟨m, hxU, hm⟩ := hx
   have hψx : ψ x ≠ ⊥ := by
     have := hm j
