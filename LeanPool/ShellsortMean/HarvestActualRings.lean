@@ -19,6 +19,7 @@ open Finset RoughGapEndpoint
 /-- Floor of distance from the cut T-1/2. Thus twice the exact distance is 2*depth+1. -/
 def depth (T i : ℕ) : ℕ := if i < T then T - 1 - i else i - T
 
+/-- The radius of the specified dyadic level at the initial scale `H`. -/
 def rad (H k : ℕ) := 2 ^ k * H
 
 private theorem power_ge (j : ℕ) : j + 1 ≤ 2 ^ j := by
@@ -57,6 +58,7 @@ theorem band_lower {n T H j : ℕ} (ht : T ≤ n) (hp : 0 < H) (i : Fin n)
 private theorem rad_mono (H : ℕ) {j k : ℕ} (h : j ≤ k) : rad H j ≤ rad H k := by
   exact Nat.mul_le_mul_right H (Nat.pow_le_pow_right (by decide : 0 < 2) h)
 
+/-- The left endpoint of a cut-centered interval, clipped at zero. -/
 def start (T R : ℕ) := T - R
 
 /-- A half-open interval with clipped start and prescribed length; it may extend beyond n. -/
@@ -72,6 +74,7 @@ theorem merged_support {n T H k : ℕ} (ht : T ≤ n) (hp : 0 < H) (i : Fin n)
     start T (rad H k) ≤ i.val ∧ i.val < start T (rad H k) + 2 * rad H k :=
   ball_support ((band_upper ht hp i).trans_le (rad_mono _ hk))
 
+/-- The threshold error vector restricted to a single dyadic ring. -/
 def ringVec {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H) (p : RankPlacement n)
     (k : Fin (n + 1)) (i : Fin n) : ℤ :=
   if k = band ht hp i then slotError p T i else 0
@@ -135,6 +138,7 @@ theorem length_mass {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H) (p : RankPlacement
       rw [sum_add_distrib, ← mul_sum, ← mul_sum, eqmom]
       ring
 
+/-- The threshold error contributed by the rings up to the given level. -/
 def mergedVec {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H) (p : RankPlacement n)
     (k : ℕ) (i : Fin n) : ℤ :=
   if (band ht hp i).val ≤ k then slotError p T i else 0

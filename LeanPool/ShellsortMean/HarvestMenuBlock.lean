@@ -20,10 +20,13 @@ two retained passes. Sum the cut rewards before using the signed correction. -/
 namespace Shellsort.HarvestMenuBlock
 open Finset Actual214 RoughGapEndpoint RoughGapDenominatorAverage HarvestActualRings
 
+/-- The admissible third gaps after the two retained passes at index `j`. -/
 def choices (j : ℕ) := window (gap j) (Nat.gcd (gap (j + 2)) (gap (j + 1)))
 
+/-- The sum of absolute slot errors at the chosen rank threshold. -/
 def mass {n : ℕ} (p : RankPlacement n) (T : ℕ) : ℝ := ∑ i, |(slotError p T i : ℝ)|
 
+/-- The high-frequency bound in terms of threshold mass and its cut moment. -/
 def highBound (c D m : ℕ) (s V : ℝ) : ℝ :=
   ((2 * m - 1 : ℕ) : ℝ) * (18800 * (32 * (c : ℝ) * s + (4 * Real.pi / D) * (2 * c * s + 4 * V))) +
     (4 * c * s + (8 * (2 + (D : ℝ) ^ 2) * (1 / (2 : ℝ) ^ m)) * V)

@@ -27,6 +27,7 @@ def bF (c g D m : ℕ) : ℝ :=
 def bQ (D m : ℕ) : ℝ :=
   ((2 * m - 1 : ℕ) : ℝ) * 18800 * (8 * Real.pi / D) + 4 * (2 + (D : ℝ) ^ 2) / (2 : ℝ) ^ m
 
+/-- The coefficient of the threshold error mass in the high-frequency budget. -/
 def highFoot (c D m : ℕ) : ℝ := (c : ℝ) * (((2 * m - 1 : ℕ) : ℝ) * 18800 * (32 + 8 * Real.pi / D)
   + 4)
 

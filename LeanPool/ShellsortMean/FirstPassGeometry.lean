@@ -16,6 +16,7 @@ public import LeanPool.ShellsortMean.ChainCoordinates
 namespace Shellsort
 open scoped BigOperators
 
+/-- The number of slots in the chain containing the tagged slot. -/
 def tagChainLength {n : ℕ} (h : ℕ) (i : Fin n) : ℕ :=
   (chainPositions n h (i.val % h)).card
 
@@ -73,6 +74,7 @@ theorem tagged_chain_sum {n : ℕ} (h : ℕ) (i : Fin n) (v0 vc vo : ℝ) :
   rw [hcard, hnot]
   ring
 
+/-- The contribution of a lower-key indicator to first-pass displacement. -/
 def firstPassCoefficient {n : ℕ} (h : ℕ) (i a : Fin n) : ℝ :=
   if a = i then 0 else if a.val % h = i.val % h then (h : ℝ) - 1 else - 1
 

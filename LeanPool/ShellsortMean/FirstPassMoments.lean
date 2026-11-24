@@ -31,6 +31,7 @@ theorem bernoulli_scaled_variance (t c : ℝ) :
   simp only [Fintype.sum_bool, bernoulliWeight, Bool.false_eq_true, ite_false, ite_true]
   ring
 
+/-- First-pass tag displacement represented as a weighted sum of bits. -/
 def firstPassBitDisplacement {n : ℕ} (h : ℕ) (i : Fin n) (z : Fin n → Bool) : ℝ :=
   ((i.val % h : ℕ) : ℝ) + ∑ a : Fin n, if z a then firstPassCoefficient h i a else 0
 

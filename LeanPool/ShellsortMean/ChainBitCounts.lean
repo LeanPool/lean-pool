@@ -34,6 +34,7 @@ theorem fullBitsSubset_filter {n : ℕ} (i : Fin n) (z : Fin n → Bool) :
   ext a
   simp only [mem_fullBitsSubset, Finset.mem_filter, Finset.mem_univ, true_and]
 
+/-- The restriction of a slot-indexed bit vector to one gap chain in slot order. -/
 def chainBits {n h : ℕ} (hh : 0 < h) (z : Fin n → Bool) (s : Fin h) :
     Fin (sourceTrialLength (n / h) (n % h) s.val) → Bool :=
   fun v => z ((positionChainEquiv n h hh).symm ⟨s, v⟩)

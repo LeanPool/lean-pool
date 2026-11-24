@@ -21,6 +21,7 @@ record count is computed from the input list, independently of the counters.
 namespace Shellsort
 open scoped BigOperators
 
+/-- The number of entries strictly below every preceding entry of the list. -/
 def prefixMinima {α : Type*} [LinearOrder α] (l : List α) : ℕ :=
   List.reverseRec (motive := fun _ => ℕ) 0
     (fun pre a count => count + if pre.all (fun b => decide (a < b)) then 1 else 0) l
@@ -81,6 +82,7 @@ theorem insertionComparedExecution_scan {α : Type*} [LinearOrder α] (l : List 
       have hlen := List.length_pos_iff.mpr hl
       omega
 
+/-- The total number of strict prefix minima across the gap chains. -/
 def gapPrefixMinima {n : ℕ} (p : RankPlacement n) (k : ℕ) (hk : 0 < k) : ℕ :=
   ∑ s : Fin k, prefixMinima (List.ofFn (chainKeys p k hk s))
 
@@ -129,11 +131,13 @@ theorem gapComparisonCost_scan_bounds {n : ℕ} (p : RankPlacement n) (k : ℕ) 
       (List.ofFn (chainKeys p k hk s))
   · simpa only [chainScanVisits_eq n k hk] using gapComparisonCost_upper_chains p k hk
 
+/-- The accumulated comparison count as the placement evolves through the gap word. -/
 def ordinaryWordComparisons {n : ℕ} (p : RankPlacement n) : List {k : ℕ // 0 < k} → ℕ
   | [] => 0
   | k :: ks => gapComparisonCost p k.val k.property +
       ordinaryWordComparisons (gapSort p k.val) ks
 
+/-- The accumulated prefix-minimum corrections along the gap word. -/
 def wordPrefixMinima {n : ℕ} (p : RankPlacement n) : List {k : ℕ // 0 < k} → ℕ
   | [] => 0
   | k :: ks => gapPrefixMinima p k.val k.property + wordPrefixMinima (gapSort p k.val) ks

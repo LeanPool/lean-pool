@@ -16,6 +16,7 @@ public import LeanPool.ShellsortMean.TaggedFibers
 namespace Shellsort
 open scoped BigOperators
 
+/-- A candidate set of lower-key slots that omits the tagged slot. -/
 abbrev TaggedSubset {n : ℕ} (i : Fin n) :=
   {B : Finset (Fin n) // i ∉ B}
 

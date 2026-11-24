@@ -43,6 +43,7 @@ private theorem triangular (K : ℕ) (v : ℕ → ℂ) :
   | zero => simp
   | succ k ih => rw [sum_range_succ, update, ih, sum_range_succ (f := fun j=>‖v j‖ ^ 2 + _)]; ring
 
+/-- The earlier ring indices at strictly less than the prescribed separation. -/
 def prev (K m k : ℕ) := (range K).filter (fun l => l < k ∧ k < l + m)
 
 private theorem prev_card (K m k : ℕ) (hm : 0 < m) : (prev K m k).card ≤ m - 1 := by
@@ -129,9 +130,11 @@ def amp {n : ℕ} (start : ℤ) (v : Fin n → ℂ) (p : Fraction) : ℂ :=
   ∑ j : Fin n, Complex.exp (-2 * (Real.pi : ℂ) * Complex.I *
     ((start : ℂ) + j.val) * p.1 / p.2) * v j
 
+/-- The part of a vector supported on slots with exactly the specified label. -/
 def piece {n : ℕ} (label : Fin n → ℕ) (k : ℕ) (v : Fin n → ℂ) (i : Fin n) : ℂ :=
   if label i = k then v i else 0
 
+/-- The part of a vector supported on labels below the specified boundary. -/
 def prefixPiece {n : ℕ} (label : Fin n → ℕ) (b : ℕ) (v : Fin n → ℂ) (i : Fin n) : ℂ :=
   if label i < b then v i else 0
 

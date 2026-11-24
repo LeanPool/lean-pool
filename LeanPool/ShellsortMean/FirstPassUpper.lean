@@ -18,6 +18,7 @@ public import LeanPool.ShellsortMean.OwnerSlice
 namespace Shellsort
 open scoped BigOperators
 
+/-- First-pass tag displacement determined by the slots holding lower keys. -/
 def firstPassSubsetDisplacement {n : ℕ} (h : ℕ) (i : Fin n) (B : Finset (Fin n)) : ℝ :=
   ((i.val % h : ℕ) : ℝ) + (h : ℝ) * chainLowerCount B h (i.val % h) - B.card
 

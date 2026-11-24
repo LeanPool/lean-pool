@@ -20,6 +20,7 @@ threshold error in each chain is a signed contiguous geometric sum. -/
 namespace Shellsort.RoughGapEndpoint
 open Finset
 
+/-- The polynomial evaluation of the signed threshold error at a complex frequency. -/
 def amplitude {n : ℕ} (p : RankPlacement n) (T : ℕ) (z : ℂ) : ℂ :=
   ∑ i : Fin n, z ^ i.val * (slotError p T i : ℂ)
 

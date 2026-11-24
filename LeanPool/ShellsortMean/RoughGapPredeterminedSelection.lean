@@ -19,7 +19,9 @@ prefix state map, and select one common next gap before the input is drawn. -/
 namespace Shellsort.RoughGapSelection
 open Finset
 
+/-- The footrule divided by the number of slots. -/
 def mass {n : ℕ} (p : RankPlacement n) : ℝ := footrule p / n
+/-- The mean squared rank displacement per slot. -/
 def energy {n : ℕ} (p : RankPlacement n) : ℝ :=
   (RoughGapScaleAssembly.squareDisplacement p : ℝ) / n
 

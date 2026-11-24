@@ -17,13 +17,16 @@ nonempty set of natural numbers. The choice is made solely as a function of n. -
 namespace Shellsort.PredeterminedOptimum
 open HarvestBlockIteration
 
+/-- A positive decreasing gap word whose gaps are below the input size and end at one. -/
 def Legal (n : ℕ) (w : PositiveWord) : Prop :=
   (w.map Subtype.val).Pairwise (· > ·) ∧ (∀ k ∈ w, k.val < n) ∧
     (w.map Subtype.val).getLast? = some 1
 
+/-- The sum of comparison counts over all rank placements. -/
 def total (n : ℕ) (w : PositiveWord) : ℕ :=
   ∑ p : RankPlacement n, ordinaryWordComparisons p w
 
+/-- The mean comparison count under the uniform rank placement. -/
 def mean (n : ℕ) (w : PositiveWord) : ℝ :=
   uniformAverage fun p : RankPlacement n => (ordinaryWordComparisons p w : ℝ)
 

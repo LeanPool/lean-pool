@@ -9,7 +9,7 @@ Authors: Miaozhen Yu
 module
 
 public import Mathlib.Data.Nat.GCD.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Order.Interval.Finset.Nat
 public import Mathlib.Data.Finset.Card
 public import LeanPool.ShellsortMean.Actual214Arithmetic
@@ -22,6 +22,7 @@ public import Mathlib.Tactic.NormNum
 namespace Shellsort.Actual214
 open Finset
 
+/-- Gaps within one percent of the center that are coprime to the retained modulus. -/
 def window (c d : ℕ) : Finset ℕ :=
   (Icc (c - c / 100) (c + c / 100)).filter (fun h => Nat.Coprime h d)
 

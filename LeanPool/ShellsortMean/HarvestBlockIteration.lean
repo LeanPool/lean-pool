@@ -16,17 +16,24 @@ any supplied finite sequence of block centers and fixed suffixes. -/
 namespace Shellsort.HarvestBlockIteration
 open Finset Actual214 RoughGapScaleAssembly HarvestScaleNumbers HarvestMenuBlock
 
+/-- A block of three core passes followed by a fixed suffix of further passes. -/
 structure Stage where
+  /-- The index of the center for the third core gap. -/
   j : ℕ
+  /-- The fixed gaps used after the three core passes. -/
   suffix : List ℕ
 
+/-- The upper budget for the mean squared displacement at center `c`. -/
 def scaleBound (c : ℕ) : ℝ := ((2 : ℝ) ^ 115 * c) ^ 2
+/-- Mean normalized squared displacement after applying the prefix map to uniform inputs. -/
 def meanEnergy {n : ℕ} (P : RankPlacement n → RankPlacement n) : ℝ :=
   uniformAverage (fun p => RoughGapSelection.energy (P p))
 
+/-- The two retained gaps, the selected third gap and the fixed suffix. -/
 def stageWord (s : Stage) (h : ℕ) : List ℕ :=
   gap (s.j + 2) :: gap (s.j + 1) :: h :: s.suffix
 
+/-- The lower-size and ratio requirements on the sequence of block centers. -/
 def Centers : ℕ → List Stage → Prop
   | _, [] => True
   | prev, s::ss => 9400 ≤ gap s.j ∧ prev ≤ 2 ^ 16 * gap s.j ∧ Centers (gap s.j) ss
@@ -128,6 +135,7 @@ def realizedWord : List Stage → List ℕ → List ℕ
   | s::ss, h::hs => stageWord s h ++ realizedWord ss hs
   | _, _ => []
 
+/-- The center reached after running the listed blocks, with the initial center as default. -/
 def endCenter : ℕ → List Stage → ℕ
   | prev, [] => prev
   | _, s::ss => endCenter (gap s.j) ss

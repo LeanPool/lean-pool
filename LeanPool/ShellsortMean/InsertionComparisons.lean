@@ -20,12 +20,17 @@ key comparisons. This is a counter model, not machine running time.
 
 namespace Shellsort
 
+/-- The output of a comparison-counting insertion operation and its two cost counters. -/
 structure ComparedInsertion (α : Type*) where
+  /-- The output in the orientation of the insertion routine. -/
   output : List α
+  /-- The number of existing keys shifted past the inserted key. -/
   shifts : ℕ
+  /-- The number of executed key comparisons, including a stopping comparison when present. -/
   comparisons : ℕ
   deriving Repr
 
+/-- Insert one key into a reversed sorted chain and record its shifts and comparisons. -/
 def insertCompared {α : Type*} [LinearOrder α] (a : α) : List α → ComparedInsertion α
   | [] => ⟨[a], 0, 0⟩
   | b :: l =>
@@ -64,6 +69,7 @@ theorem insertCompared_bounds {α : Type*} [LinearOrder α] (a : α) (l : List �
       omega
     · simp [insertCompared, hab]
 
+/-- Insertion sort with an internal reversed output and accumulated cost counters. -/
 def insertionComparedBack {α : Type*} [LinearOrder α] : List α → ComparedInsertion α :=
   List.reverseRec ⟨[], 0, 0⟩ (fun _ a previous =>
     let step := insertCompared a previous.output
@@ -109,6 +115,7 @@ theorem insertionComparedBack_bounds {α : Type*} [LinearOrder α] (l : List α)
       simp only [insertionComparedBack_append, List.length_append, List.length_singleton]
       omega
 
+/-- Insertion sort returning ascending output with the original cost counters. -/
 def insertionComparedExecution {α : Type*} [LinearOrder α] (l : List α) : ComparedInsertion α :=
   let result := insertionComparedBack l
   ⟨result.output.reverse, result.shifts, result.comparisons⟩

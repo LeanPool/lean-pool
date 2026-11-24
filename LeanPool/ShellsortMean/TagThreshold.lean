@@ -47,10 +47,12 @@ theorem lowerStep_tag_difference {n : ℕ} (p : RankPlacement n) (x : Fin n) (k 
     ← gapSort_threshold_commutes, thresholdSet_succ_tag]
   simp [tag_not_in_threshold]
 
+/-- Apply the gap passes in order to a rank placement. -/
 def sortWord {n : ℕ} (p : RankPlacement n) : List ℕ → RankPlacement n
   | [] => p
   | k :: ks => sortWord (gapSort p k) ks
 
+/-- Apply the sequence of threshold passes to the lower-key slots. -/
 def lowerWord {n : ℕ} (B : Finset (Fin n)) : List ℕ → Finset (Fin n)
   | [] => B
   | k :: ks => lowerWord (lowerStep B k) ks

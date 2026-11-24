@@ -22,9 +22,11 @@ namespace Shellsort
 open scoped BigOperators
 open MeasureTheory
 
+/-- The number of true bits in a family indexed by a finite type. -/
 def finiteBitCount {ι : Type*} [Fintype ι] (x : ι → Bool) : ℕ :=
   ∑ i, if x i then 1 else 0
 
+/-- The mass of a specified bit family after averaging its Bernoulli parameter uniformly. -/
 noncomputable def factorialSubsetWeight {ι : Type*} [Fintype ι] (x : ι → Bool) : ℝ :=
   ((finiteBitCount x).factorial : ℝ) * (Fintype.card ι - finiteBitCount x).factorial /
     (Fintype.card ι + 1).factorial

@@ -18,9 +18,11 @@ public import Mathlib.Data.Finset.Card
 namespace Shellsort
 open scoped BigOperators
 
+/-- The inclusion of the positions other than the designated tag. -/
 def omittedPositionEmbedding {α : Type*} (i : α) : {j : α // j ≠ i} ↪ α :=
   ⟨Subtype.val, Subtype.val_injective⟩
 
+/-- The subset of non-tag positions whose indicators are true. -/
 def subsetOfBits {α : Type*} [Fintype α] [DecidableEq α]
     (i : α) (x : {j : α // j ≠ i} → Bool) : Finset α :=
   (Finset.univ.filter (fun j => x j = true)).map (omittedPositionEmbedding i)

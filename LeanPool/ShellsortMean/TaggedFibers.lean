@@ -18,9 +18,11 @@ public import LeanPool.ShellsortMean.TagThreshold
 namespace Shellsort
 open scoped BigOperators
 
+/-- Classify a rank as below, equal to or above the tagged rank. -/
 def rankTagLabel {n : ℕ} (m : ℕ) (x : Fin n) : Fin 3 :=
   if x.val < m then 0 else if x.val = m then 1 else 2
 
+/-- Classify a slot as a lower-key slot, the tagged slot or an upper-key slot. -/
 def positionTagLabel {n : ℕ} (B : Finset (Fin n)) (i a : Fin n) : Fin 3 :=
   if a ∈ B then 0 else if a = i then 1 else 2
 

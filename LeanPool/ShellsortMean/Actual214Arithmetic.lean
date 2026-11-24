@@ -17,8 +17,10 @@ The index here is zero-based, with gaps 1, 4, 10, 23, ... . -/
 
 namespace Shellsort.Actual214
 
+/-- The next center after (h) in the integer gap recurrence. -/
 def nextGap (h : Nat) : Nat := (107 * h + 94) / 50
 
+/-- The gap center at a given index, starting at one. -/
 def gap : Nat → Nat
   | 0 => 1
   | j + 1 => nextGap (gap j)

@@ -18,6 +18,7 @@ not supplied as a probabilistic hypothesis about a later sorting state. -/
 namespace Shellsort
 open scoped BigOperators
 
+/-- The weight of a point in a finite product, formed from its coordinate weights. -/
 def productWeight {ι : Type*} [Fintype ι] {β : ι → Type*}
     (w : ∀ i, β i → ℝ) (x : ∀ i, β i) : ℝ := ∏ i, w i (x i)
 

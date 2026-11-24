@@ -18,9 +18,11 @@ statistics, not insertion shifts and not a formal operational write-cost model.
 namespace Shellsort
 open scoped BigOperators
 
+/-- The number of ranks whose positions differ between the two placements. -/
 def checkpointChange {n : ℕ} (p q : RankPlacement n) : ℕ :=
   (Finset.univ.filter (fun x => p x ≠ q x)).card
 
+/-- The number of slots whose occupants differ between the two placements. -/
 def checkpointSlotChange {n : ℕ} (p q : RankPlacement n) : ℕ :=
   (Finset.univ.filter (fun i => p.symm i ≠ q.symm i)).card
 
@@ -70,6 +72,7 @@ theorem checkpointChange_triangle {n : ℕ} (p q r : RankPlacement n) :
   by_cases hpq : p x = q x <;> by_cases hqr : q x = r x <;>
     by_cases hpr : p x = r x <;> simp_all
 
+/-- The change charged to the tagged key by one gap pass. -/
 def gapCheckpointReward {n : ℕ} (p : RankPlacement n) (k : ℕ) (i : Fin n) : ℕ :=
   checkpointTagReward p (gapSort p k) i
 

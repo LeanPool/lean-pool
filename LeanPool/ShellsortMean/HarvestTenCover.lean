@@ -17,6 +17,7 @@ schedule. The emitted words use the very same h as the selection certificate. -/
 namespace Shellsort.HarvestTenCover
 open Actual214 HarvestMenuBlock HarvestBlockIteration HarvestTenSchedule HarvestStageArithmetic
 
+/-- The remaining center gaps in descending index order, with positivity evidence. -/
 def positiveTail (l : ℕ) : PositiveWord :=
   (List.range l).reverse.map (fun t => ⟨gap t, gap_pos t⟩)
 

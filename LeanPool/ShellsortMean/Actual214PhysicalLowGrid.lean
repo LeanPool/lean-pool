@@ -17,6 +17,7 @@ energy used by the large-denominator sieve, on the real physical slots. -/
 namespace Shellsort.Actual214
 open Finset RoughGapEndpoint RoughGapDenominatorAverage
 
+/-- The root of unity with negative orientation used to evaluate Fourier sums. -/
 def negGridRoot (h : ℕ) : ℂ := Complex.exp (-(2 * (Real.pi : ℂ) * Complex.I / h))
 
 theorem negGridRoot_primitive {h : ℕ} (hh : 0 < h) : IsPrimitiveRoot (negGridRoot h) h := by

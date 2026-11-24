@@ -22,11 +22,14 @@ namespace Shellsort
 open scoped BigOperators
 @[expose] public noncomputable section
 
+/-- A permutation taking each rank to its physical slot. -/
 abbrev RankPlacement (n : ℕ) := Equiv.Perm (Fin n)
 
+/-- The total distance traveled by matched ranks between two placements. -/
 def transport {n : ℕ} (p q : RankPlacement n) : ℝ :=
   ∑ x : Fin n, |((p x).val : ℝ) - ((q x).val : ℝ)|
 
+/-- The sum of distances between the slots of each rank and its sorted position. -/
 def footrule {n : ℕ} (p : RankPlacement n) : ℝ := transport p (Equiv.refl _)
 
 /-- Exactly uniform average over all rank-to-position permutations. -/

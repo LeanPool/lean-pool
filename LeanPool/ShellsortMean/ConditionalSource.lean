@@ -23,21 +23,26 @@ identifying this law with uniform random permutations or actual sorting costs.
 namespace Shellsort
 open scoped BigOperators
 
+/-- The size of one residue chain when the slot count has quotient `m` and remainder `ell`. -/
 def sourceTrialLength (m ell s : ℕ) : ℕ := if s < ell then m + 1 else m
 
+/-- The Bernoulli product mass of a bit vector on one source chain. -/
 def sourceCoordinateWeight (h m ell : ℕ) (t : ℝ) (s : Fin h)
     (x : Fin (sourceTrialLength m ell s.val) → Bool) : ℝ :=
   bernoulliVectorWeight t (sourceTrialLength m ell s.val) x
 
+/-- The product of the chain masses for all source chains at fixed parameter `t`. -/
 def conditionalSourceWeight (h m ell : ℕ) (t : ℝ)
     (x : ∀ s : Fin h, Fin (sourceTrialLength m ell s.val) → Bool) : ℝ :=
   productWeight (sourceCoordinateWeight h m ell t) x
 
+/-- The source-chain residual with the owner count pinned at the tagged key. -/
 def conditionalSourceResidual (h g m ell : ℕ) (owner : Fin h) (y : ℕ)
     (s : Fin h) (x : Fin (sourceTrialLength m ell s.val) → Bool) : ℝ :=
   if s = owner then sourceResidualReal h g ((owner.val + h * y) % g) owner.val y
   else sourceResidualReal h g ((owner.val + h * y) % g) s.val (bitCount x)
 
+/-- The displacement predicted by adding the conditional residuals to the tag residue. -/
 def conditionalSourceDisplacement (h g m ell : ℕ) (owner : Fin h) (y : ℕ)
     (x : ∀ s : Fin h, Fin (sourceTrialLength m ell s.val) → Bool) : ℝ :=
   (((owner.val + h * y) % g : ℕ) : ℝ) +

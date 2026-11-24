@@ -21,9 +21,12 @@ assumed implicitly. The bridge to that distribution remains separate. -/
 namespace Shellsort
 open scoped BigOperators
 
+/-- The weighted mean used for finite product laws. -/
 def mean {ι : Type*} [Fintype ι] (w f : ι → ℝ) : ℝ := ∑ i, w i * f i
+/-- The weighted second moment about zero. -/
 def secondMoment {ι : Type*} [Fintype ι] (w f : ι → ℝ) : ℝ :=
   ∑ i, w i * (f i) ^ 2
+/-- The weighted second moment about the weighted mean. -/
 def centeredSecond {ι : Type*} [Fintype ι] (w f : ι → ℝ) : ℝ :=
   ∑ i, w i * (f i - mean w f) ^ 2
 

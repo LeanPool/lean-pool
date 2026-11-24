@@ -19,10 +19,13 @@ public import Mathlib.Algebra.BigOperators.Fin
 namespace Shellsort
 open scoped BigOperators
 
+/-- The mass of a single bit under a Bernoulli law of parameter `t`. -/
 def bernoulliWeight (t : ℝ) (b : Bool) : ℝ := if b then t else 1 - t
 
+/-- The number of true entries in a vector of bits. -/
 def bitCount {m : ℕ} (x : Fin m → Bool) : ℕ := ∑ i, if x i then 1 else 0
 
+/-- The product mass of a vector of independent Bernoulli bits. -/
 def bernoulliVectorWeight (t : ℝ) (m : ℕ) (x : Fin m → Bool) : ℝ :=
   productWeight (fun _ => bernoulliWeight t) x
 

@@ -27,6 +27,7 @@ open scoped BigOperators
 abbrev matchingEquiv {A B I : Type*} (f : A → I) (g : B → I) :=
   {e : A ≃ B // ∀ a, g (e a) = f a}
 
+/-- Restrict a label-preserving bijection to the matching fibers of one label. -/
 def restrictMatching {A B I : Type*} (f : A → I) (g : B → I)
     (e : matchingEquiv f g) (i : I) :
     {a // f a = i} ≃ {b // g b = i} where

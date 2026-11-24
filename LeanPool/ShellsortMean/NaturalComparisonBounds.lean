@@ -20,6 +20,7 @@ unrestricted gap optimality, or total machine time.
 @[expose] public noncomputable section
 namespace Shellsort
 
+/-- The executed comparison count for gap passes `h`, `g` and one. -/
 def threePassComparisonCost {n : ℕ} (p : RankPlacement n) (h g : ℕ)
     (hh : 0 < h) (hg : 0 < g) : ℕ :=
   gapComparisonCost p h hh + gapComparisonCost (gapSort p h) g hg +
@@ -54,6 +55,7 @@ theorem uniform_threePassComparisonCost_bounds (n h g : ℕ) (hh : 0 < h) (hg : 
       (fun p => by exact_mod_cast (threePassComparisonCost_bounds p h g hh hg).2)
     simpa only [uniformAverage_add, uniformAverage_const] using hb
 
+/-- The comparison count of the three-pass word built from the integer fourth root. -/
 def naturalThreePassComparisonCost {n : ℕ} (hn : 16 ≤ n) (p : RankPlacement n) : ℕ :=
   threePassComparisonCost p (fourthRoot n ^ 2 + 1) (fourthRoot n)
     (by positivity) (by have hq := fourthRoot_ge_two n hn; omega)

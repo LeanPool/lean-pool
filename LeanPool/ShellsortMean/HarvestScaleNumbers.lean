@@ -51,6 +51,7 @@ theorem calibrated_coefficients (c g : ℕ) (hg : g ≤ 9 * c) :
     norm_num [D, m]
     linarith only [Real.pi_lt_four]
 
+/-- The three-pass block with two retained gaps and the selected gap `h`. -/
 def block {n : ℕ} (j h : ℕ) (p : RankPlacement n) :=
   gapSort (gapSort (gapSort p (gap (j + 2))) (gap (j + 1))) h
 

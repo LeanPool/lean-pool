@@ -19,6 +19,7 @@ any linearly ordered keys; the specification theorem uses distinct ranks. -/
 namespace Shellsort.HarvestOperationalAudit
 open HarvestBlockIteration
 
+/-- Sort each gap chain and return the reassembled array and executed comparison count. -/
 def runPass {α : Type} [LinearOrder α] {n : ℕ} (a : Vector α n)
     (gap : {k : ℕ // 0 < k}) : Vector α n × ℕ :=
   let k := gap.val
@@ -30,6 +31,7 @@ def runPass {α : Type} [LinearOrder α] {n : ℕ} (a : Vector α n)
     (chains[s.val].output[i.val / k]?).getD a[i.val]
   (output, (List.ofFn fun s : Fin k => chains[s.val].comparisons).sum)
 
+/-- Execute the gap word and accumulate the number of key comparisons. -/
 def runWord {α : Type} [LinearOrder α] {n : ℕ} (a : Vector α n) :
     PositiveWord → Vector α n × ℕ
   | [] => (a, 0)

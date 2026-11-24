@@ -19,6 +19,7 @@ namespace Shellsort.HarvestPrimitiveSegment
 open Finset ZMod HarvestProjectedFar Actual214
 open scoped ComplexConjugate
 
+/-- The geometric sum for consecutive powers along a gap progression on the frequency grid. -/
 def segment (d g a b : ℕ) : ℂ :=
   ∑ j ∈ range b, (((negGridRoot d) ^ a) ^ g) ^ j
 

@@ -19,11 +19,14 @@ Sorting correctness is proved from the construction, not assumed. -/
 @[expose] public noncomputable section
 namespace Shellsort
 
+/-- The ranks assigned to one chain by the original placement. -/
 abbrev KeyFiber {n : ℕ} (p : RankPlacement n) (k r : ℕ) :=
   { x : Fin n // (p x).val % k = r }
 
+/-- The physical slots of one residue chain. -/
 abbrev PositionFiber (n k r : ℕ) := { i : Fin n // i.val % k = r }
 
+/-- The permutation restricted to the ranks and slots in one chain. -/
 def originalFiberEquiv {n : ℕ} (p : RankPlacement n) (k r : ℕ) :
     KeyFiber p k r ≃ PositionFiber n k r where
   toFun x := ⟨p x.val, x.property⟩
@@ -31,6 +34,7 @@ def originalFiberEquiv {n : ℕ} (p : RankPlacement n) (k r : ℕ) :
   left_inv x := by ext; simp
   right_inv i := by ext; simp
 
+/-- The increasing bijection that assigns ranks to slots within one chain. -/
 def sortedFiberIso {n : ℕ} (p : RankPlacement n) (k r : ℕ) :
     KeyFiber p k r ≃o PositionFiber n k r :=
   (Fintype.orderIsoFinOfCardEq (KeyFiber p k r) rfl).symm.trans
@@ -67,6 +71,7 @@ theorem gapSort_sorted {n : ℕ} (p : RankPlacement n) (k : ℕ) (x y : Fin n)
     simpa only [gapSort_preserves_residue] using hchain
   exact gapSort_strict_order_on_fiber p k ((p y).val % k) ⟨x, hres⟩ ⟨y, rfl⟩
 
+/-- The within-chain order isomorphism induced by an order-preserving candidate placement. -/
 def candidateFiberIso {n : ℕ} (p q : RankPlacement n) (k r : ℕ)
     (hres : ∀ x, (q x).val % k = (p x).val % k)
     (hsort : ∀ x y, (p x).val % k = (p y).val % k → (q x < q y ↔ x < y)) :

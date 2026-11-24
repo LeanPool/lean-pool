@@ -18,9 +18,11 @@ the actual key set. The same gap table works for every key set of size n. -/
 namespace Shellsort.PhysicalKeyOptimum
 open HarvestOperationalAudit HarvestBlockIteration PredeterminedOptimum
 
-def physicalArray {α : Type} [LinearOrder α] {n : ℕ} {s : Finset α}
+/-- The slot-indexed array associated to a bijection onto the key set. -/
+def physicalArray {α : Type} {n : ℕ} {s : Finset α}
     (b : Fin n ≃ ↥s) : Vector α n := Vector.ofFn fun i => (b i : α)
 
+/-- The mean comparison cost over all bijective assignments of the key set to slots. -/
 def physicalMean {α : Type} [LinearOrder α] (n : ℕ) (s : Finset α) (w : PositiveWord) : ℝ :=
   (∑ b : Fin n ≃ ↥s, ((runWord (physicalArray b) w).2 : ℝ)) /
     (Fintype.card (Fin n ≃ ↥s) : ℝ)

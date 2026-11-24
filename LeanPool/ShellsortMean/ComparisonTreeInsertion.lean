@@ -18,17 +18,20 @@ interpreter, never an argument of the tree builder. -/
 
 namespace Shellsort.ComparisonAudit
 
+/-- A finite comparison tree whose queries name the original slots of two keys. -/
 inductive Tree (n : ℕ) (α : Type) where
   | leaf (value : α)
   | ask (i j : Fin n) (yes no : Tree n α)
 
 namespace Tree
 
+/-- Continue each leaf with the comparison tree chosen by its output. -/
 def bind {n : ℕ} {α β : Type} (t : Tree n α) (next : α → Tree n β) : Tree n β :=
   match t with
   | .leaf a => next a
   | .ask i j yes no => .ask i j (yes.bind next) (no.bind next)
 
+/-- Run the comparisons on a rank placement and record the answers in order. -/
 def run {n : ℕ} {α : Type} (t : Tree n α) (p : RankPlacement n) : α × List Bool :=
   match t with
   | .leaf a => (a, [])
@@ -51,6 +54,7 @@ theorem run_bind {n : ℕ} {α β : Type} (t : Tree n α) (next : α → Tree n 
 
 end Tree
 
+/-- The comparison tree for inserting one slot label into a reversed sorted chain. -/
 def insertTree {n : ℕ} (x : Fin n) : List (Fin n) → Tree n (List (Fin n))
   | [] => .leaf [x]
   | b :: l => .ask x b
@@ -84,6 +88,7 @@ theorem chainBack_spec {n : ℕ} (l : List (Fin n)) (p : RankPlacement n) :
       simp [chainBack, List.reverseRec_concat]
     simp [step, Tree.run_bind, insertionComparedBack_append, next.1, next.2, ih.2]
 
+/-- The comparison tree for insertion-sorting a chain of original slot labels. -/
 def chainTree {n : ℕ} (l : List (Fin n)) : Tree n (List (Fin n)) :=
   (chainBack l).bind fun z => .leaf z.reverse
 

@@ -17,6 +17,7 @@ array of a given size. The objective charges the executed key comparisons. -/
 namespace Shellsort.PredeterminedOptimum
 open HarvestBlockIteration HarvestOperationalAudit
 
+/-- The uniform mean of the actual array execution's key comparison count. -/
 def arrayMean (n : ℕ) (w : PositiveWord) : ℝ :=
   uniformAverage fun p : RankPlacement n => ((runWord (slots p) w).2 : ℝ)
 

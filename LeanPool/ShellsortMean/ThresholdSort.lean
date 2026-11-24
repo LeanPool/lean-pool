@@ -21,12 +21,15 @@ open scoped BigOperators
 def thresholdSet {n : ℕ} (p : RankPlacement n) (t : ℕ) : Finset (Fin n) :=
   Finset.univ.filter (fun i => (p.symm i).val < t)
 
+/-- The slots belonging to a given residue chain. -/
 def chainPositions (n k r : ℕ) : Finset (Fin n) :=
   Finset.univ.filter (fun i => i.val % k = r)
 
+/-- The number of lower-key slots in the specified chain. -/
 def chainLowerCount {n : ℕ} (B : Finset (Fin n)) (k r : ℕ) : ℕ :=
   (B.filter (fun i => i.val % k = r)).card
 
+/-- The position of a slot within its own residue chain. -/
 def chainOrdinal {n : ℕ} (k : ℕ) (i : Fin n) : ℕ :=
   ((chainPositions n k (i.val % k)).filter (fun j => j < i)).card
 

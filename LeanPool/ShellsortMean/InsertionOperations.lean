@@ -25,9 +25,11 @@ The inversion statistic below is defined separately from this execution.
 
 namespace Shellsort
 
+/-- The number of entries strictly larger than the specified key. -/
 def largerCount {α : Type*} [LinearOrder α] (a : α) (l : List α) : ℕ :=
   (l.filter (fun b => a < b)).length
 
+/-- The number of entries strictly smaller than the specified key. -/
 def smallerCount {α : Type*} [LinearOrder α] (a : α) (l : List α) : ℕ :=
   (l.filter (fun b => b < a)).length
 

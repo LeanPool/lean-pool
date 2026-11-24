@@ -22,6 +22,7 @@ open scoped BigOperators
 def residueError {n : ℕ} (p : RankPlacement n) (h T r : ℕ) : ℤ :=
   (chainLowerCount (thresholdSet p T) h r : ℤ) - residuePrefixCount h r T
 
+/-- The doubled centered offset of a residue at a rank cut. -/
 def phase (h T r : ℕ) : ℤ :=
   2 * ((r : ℤ) + h * residuePrefixCount h r T - T) - h
 

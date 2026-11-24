@@ -18,9 +18,11 @@ public import LeanPool.ShellsortMean.PrefixMean
 namespace Shellsort
 open scoped BigOperators
 
+/-- The target residue of the tag after the source gap pass. -/
 def taggedSubsetTarget {n : ℕ} (h g : ℕ) (i : Fin n) (B : Finset (Fin n)) : ℕ :=
   (i.val % h + h * chainLowerCount B h (i.val % h)) % g
 
+/-- The predicted two-pass tag displacement from the lower-key subset. -/
 def taggedSubsetDisplacement {n : ℕ} (h g : ℕ) (i : Fin n) (B : Finset (Fin n)) : ℝ :=
   (taggedSubsetTarget h g i B : ℝ) + ∑ s ∈ Finset.range h,
     sourceResidualReal h g (taggedSubsetTarget h g i B) s (chainLowerCount B h s)

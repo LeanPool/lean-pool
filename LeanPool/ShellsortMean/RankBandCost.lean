@@ -187,6 +187,7 @@ theorem rankBandPass_le_room {n : ℕ} (p : RankPlacement n) (k a b : ℕ) :
   simp only [threshold_mem, Fin.lt_def]
   split_ifs <;> omega
 
+/-- The total band-crossing budget along the successive threshold states of a gap word. -/
 def thresholdBandRoomWord {n : ℕ} (L U : Finset (Fin n)) :
     List {k : ℕ // 0 < k} → ℕ
   | [] => 0

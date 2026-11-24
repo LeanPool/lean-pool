@@ -16,6 +16,7 @@ sample per (numerator, original modulus), even for coincident fractions. -/
 namespace Shellsort.Actual214
 open Finset RoughGapDenominatorAverage
 
+/-- Nonzero frequencies whose reduced denominator exceeds the cutoff. -/
 def highGrid (h D : ℕ) : Finset ℕ :=
   (range h).filter (fun a => 0 < a ∧ D < h / Nat.gcd h a)
 

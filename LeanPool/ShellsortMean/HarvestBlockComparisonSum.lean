@@ -16,6 +16,7 @@ blocks. Positive words describe the same transitions as the certificate. -/
 @[expose] public noncomputable section
 namespace Shellsort.HarvestBlockIteration
 open Actual214
+/-- A list of strictly positive gap values for ordinary Shellsort. -/
 abbrev PositiveWord := List {k : ℕ // 0 < k}
 
 /-- Match each realized stage to its typed positive execution word and

@@ -22,12 +22,15 @@ operational insertion-shift counter is a separate theorem, not assumed here.
 namespace Shellsort
 open scoped BigOperators
 
+/-- Increasing pairs of slots in the same residue chain. -/
 def gapPositionPairs (n k : ℕ) : Finset (Fin n × Fin n) :=
   Finset.univ.filter (fun ij => ij.1 < ij.2 ∧ ij.1.val % k = ij.2.val % k)
 
+/-- Inversions within the chains before a gap pass. -/
 def gapInversions {n : ℕ} (p : RankPlacement n) (k : ℕ) : ℕ :=
   ((gapPositionPairs n k).filter (fun ij => p.symm ij.2 < p.symm ij.1)).card
 
+/-- The real-valued indicator that a pair of slots is in decreasing key order. -/
 def pairInversionIndicator {n : ℕ} (p : RankPlacement n) (i j : Fin n) : ℝ :=
   if p.symm j < p.symm i then 1 else 0
 

@@ -11,7 +11,7 @@ module
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.BigOperators.Ring.Finset
 public import Mathlib.Data.Fintype.Basic
-public import Mathlib.Data.Real.Basic
+public import Mathlib.Basic.Real.Basic
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum
@@ -28,6 +28,7 @@ namespace Shellsort.RoughGapFarInteraction
 
 open Finset
 
+/-- The residue of a local interval slot after shifting by the interval start. -/
 def intervalResidue {length gap : ℕ} (positive : 0 < gap) (start : ℕ)
     (i : Fin length) : Fin gap := ⟨(start + i.val) % gap, Nat.mod_lt _ positive⟩
 
@@ -53,10 +54,12 @@ theorem interval_capacity {length gap : ℕ} (positive : 0 < gap) (start : ℕ)
       _ = j.val % gap + gap * (j.val / gap) := by rw [rem, equalQuotient]
       _ = j.val := Nat.mod_add_div _ _
 
+/-- The sum of vector entries assigned to one residue. -/
 def bucket {ι : Type*} [Fintype ι] {h : ℕ}
     (col : ι → Fin h) (v : ι → ℝ) (r : Fin h) : ℝ :=
   ∑ i : ι, if col i = r then v i else 0
 
+/-- The residue sum minus the total vector mass divided by the number of residues. -/
 noncomputable def centered {ι : Type*} [Fintype ι] {h : ℕ}
     (col : ι → Fin h) (v : ι → ℝ) (r : Fin h) : ℝ :=
   bucket col v r - (∑ i, v i) / h

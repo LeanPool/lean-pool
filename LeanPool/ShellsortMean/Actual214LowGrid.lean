@@ -17,6 +17,7 @@ two retained passes. Count grid indices, not union-of-grids multiplicities. -/
 namespace Shellsort.Actual214
 open Finset RoughGapEndpoint
 
+/-- Nonzero frequencies whose reduced denominator is at most the cutoff. -/
 def lowGrid (h D : ℕ) : Finset ℕ :=
   (range h).filter (fun a => 0 < a ∧ h / Nat.gcd h a ≤ D)
 

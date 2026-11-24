@@ -18,7 +18,9 @@ execution order. Count is the number of retained zero-based centers. -/
 namespace Shellsort.HarvestTenSchedule
 open Actual214 HarvestBlockIteration HarvestStageArithmetic
 
+/-- The highest gap index with twice its gap at most the input size, defaulting to zero. -/
 def top (n : ℕ) := Nat.findGreatest (fun i => 2 * gap i ≤ n) n
+/-- The number of gap indices retained at a given input size. -/
 def count (n : ℕ) := top n + 1
 
 theorem count_positive (n : ℕ) : 0 < count n := Nat.succ_pos _
@@ -37,17 +39,21 @@ theorem next_excluded {n : ℕ} (hn : 2 ≤ n) : n < 2 * gap (count n) := by
 theorem count_le_log {n : ℕ} (hn : 2 ≤ n) : count n ≤ Nat.log 2 n :=
   retained_count (top_kept hn)
 
+/-- The condition that a ten-gap block fits and its smallest center is large enough. -/
 def eligible (k : ℕ) : Prop := 10 ≤ k ∧ 18800 ≤ gap (k - 10)
 instance (k : ℕ) : Decidable (eligible k) := inferInstanceAs (Decidable (_ ∧ _))
 
+/-- The block using the top ten indices, with seven fixed gaps following the core. -/
 def chunk (k : ℕ) : Stage :=
   ⟨k - 3, (List.range 7).reverse.map (fun t => gap (k - 10 + t))⟩
 
+/-- The stage list obtained by taking eligible ten-gap blocks in descending order. -/
 def stages (k : ℕ) : List Stage :=
   if e : eligible k then chunk k :: stages (k - 10) else []
 termination_by k
 decreasing_by have := e.1; omega
 
+/-- The number of center gaps left after the eligible blocks. -/
 def tailCount (k : ℕ) : ℕ :=
   if e : eligible k then tailCount (k - 10) else k
 termination_by k
@@ -63,6 +69,7 @@ theorem tailCount_eq (k : ℕ) : tailCount k =
   conv_lhs => rw [tailCount]
   split <;> simp [*]
 
+/-- The final descending sequence of ungrouped center gaps. -/
 def tailWord (k : ℕ) := (List.range (tailCount k)).reverse.map gap
 
 theorem counts (k : ℕ) : 10 * (stages k).length + tailCount k = k := by

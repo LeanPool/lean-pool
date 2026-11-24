@@ -17,10 +17,14 @@ public import Mathlib.Analysis.SpecificLimits.Basic
 namespace Shellsort.RoughGapDenominatorAverage
 open Finset Shellsort.RoughGapFareyGrid
 
+/-- A pair of natural numbers representing a frequency numerator and denominator. -/
 abbrev Fraction := ℕ × ℕ
+/-- The common divisor removed when reducing a frequency pair. -/
 def mult (p : Fraction) := p.1.gcd p.2
+/-- The frequency pair obtained by dividing numerator and denominator by their gcd. -/
 def reduced (p : Fraction) : Fraction := (p.1 / mult p, p.2 / mult p)
 
+/-- The squared norm of the Fourier sum at a rational frequency and offset. -/
 def energy {m : ℕ} (start : ℤ) (v : Fin m → ℂ) (p : Fraction) : ℝ :=
   ‖∑ j : Fin m, Complex.exp (-2 * (Real.pi : ℂ) * Complex.I *
     ((start : ℂ) + j.val) * p.1 / p.2) * v j‖ ^ 2

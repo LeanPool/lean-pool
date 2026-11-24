@@ -22,9 +22,11 @@ asserted to be the actual joint law and is not used for any variance claim.
 namespace Shellsort
 open scoped BigOperators
 
+/-- The source prefix count scaled by the target gap, centered by the prefix length. -/
 def sourceResidualReal (h g j s y : ℕ) : ℝ :=
   (g : ℝ) * sourcePrefixCount h g j s y - y
 
+/-- The mean residual when a Bernoulli bit can extend a reference prefix by one. -/
 def referencePrefixMean {B : Type*} [Fintype B] (h g j ell : ℕ)
     (w : B → ℝ) (base : B → ℕ) (t : ℝ) (s : ℕ) : ℝ :=
   (1 - t) * mean w (fun b => sourceResidualReal h g j s (base b)) +

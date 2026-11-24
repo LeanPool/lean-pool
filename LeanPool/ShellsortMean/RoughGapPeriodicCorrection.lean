@@ -16,6 +16,7 @@ periodic correction to the total post-pass square displacement. -/
 namespace Shellsort.RoughGapEndpoint
 open Finset
 
+/-- The quadratic residue correction at displacement `x` modulo gap `h`. -/
 def periodicPenalty (h : ℕ) (x : ℤ) : ℤ :=
   let u := x % (h : ℤ)
   u * ((h : ℤ) - u)

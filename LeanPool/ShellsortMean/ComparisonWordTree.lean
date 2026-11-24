@@ -18,6 +18,7 @@ be built before assigning any values to these labels. -/
 namespace Shellsort.ComparisonAudit
 open HarvestBlockIteration HarvestOperationalAudit
 
+/-- Execute a list of comparison trees in order and collect their outputs. -/
 def collect {n : ℕ} {α : Type} : List (Tree n α) → Tree n (List α)
   | [] => .leaf []
   | x :: xs => x.bind fun a => (collect xs).bind fun l => .leaf (a :: l)
@@ -29,6 +30,7 @@ private theorem collect_spec {n : ℕ} {α : Type} (xs : List (Tree n α)) (p : 
   | nil => simp [collect, Tree.run]
   | cons x xs ih => simp [collect, Tree.run_bind, Tree.run, ih.1, ih.2]
 
+/-- Extract the slots of one residue chain in increasing physical position. -/
 def physicalChain {α : Type} {n : ℕ} (a : Vector α n)
     (h : {k : ℕ // 0 < k}) (s : Fin h.val) : List α :=
   List.ofFn fun v : Fin (sourceTrialLength (n / h.val) (n % h.val) s.val) =>
@@ -39,6 +41,7 @@ private theorem physicalChain_map {α β : Type} {n : ℕ} (a : Vector α n) (f 
     (physicalChain a h s).map f = physicalChain (a.map f) h s := by
   simp [physicalChain, List.map_ofFn, Function.comp_def]
 
+/-- The comparison tree for one gap pass, with outputs reassembled into slot order. -/
 def passTree {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k}) :
     Tree n (Vector (Fin n) n) :=
   let trees := List.ofFn fun s : Fin h.val => chainTree (physicalChain a h s)
@@ -82,6 +85,7 @@ theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
     funext s
     exact (chain s).2
 
+/-- The comparison tree for the complete execution of a predetermined gap word. -/
 def wordTree {n : ℕ} (a : Vector (Fin n) n) : PositiveWord → Tree n (Vector (Fin n) n)
   | [] => .leaf a
   | h :: t => (passTree a h).bind fun b => wordTree b t
