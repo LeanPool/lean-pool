@@ -1,9 +1,10 @@
 slug: suzuki-cancellation
 title: Cancellation-aware error bounds for the fourth-order Suzuki formula
-summary: The fourth-order binary Suzuki splitting admits a global error
-  expansion through the centered septic term, with an eighth-order remainder
-  at fixed time. The integral of the transported quintic coefficient gives
-  the leading error constant.
+summary: In complete normed algebras with contractive exponentials, the binary
+  fourth-order Suzuki splitting has a global error expansion through the centered
+  septic term and an eighth-order remainder at fixed nonnegative time. For skew-adjoint
+  generators in a complete C*-algebra, the integral of the transported quintic
+  coefficient determines the leading error norm.
 branch: functional analysis
 entry_module: LeanPool.SuzukiCancellation
 authors:
@@ -25,17 +26,20 @@ main_declarations:
 - FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
 main_results:
 - declaration: FQFP.BCH.norm_suzukiProduct_pow_sub_septic_midpoint_le_of_skewAdjoint
-  informal: For two skew-adjoint generators and any positive number of steps,
-    the Suzuki product's normalized global error differs from the sum of the
-    transported quintic and centered septic terms by at most an explicit remainder.
+  informal: For two skew-adjoint generators in a complete C*-algebra with compatible
+    real scalars, a nonnegative final time, and any positive number of steps, the
+    left-normalized Suzuki product error differs from the sum of the transported
+    quintic and centered septic terms by at most an explicit remainder.
 - declaration: FQFP.BCH.isBigO_fiveStageStrangProduct_pow_sub_septic_midpoint
-  informal: With the generators and nonnegative final time fixed and contractive
-    exponentials, the refined operator remainder is big O of the inverse eighth
+  informal: In a complete normed algebra, with the Suzuki cubic relation and
+    contractive exponentials for both generators and their sum, the refined
+    operator remainder at fixed nonnegative time is big O of the inverse eighth
     power of the number of steps.
 - declaration: FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
-  informal: For skew-adjoint generators, multiplying the global Suzuki error norm
-    by the fourth power of the step count yields a limit determined by the integral
-    of the conjugated quintic coefficient.
+  informal: For skew-adjoint generators in a complete C*-algebra with compatible
+    real scalars and at fixed nonnegative final time, multiplying the global Suzuki
+    error norm by the fourth power of the step count yields the norm of the
+    integral of the conjugated quintic coefficient.
 tags:
 - functional-analysis
 - product-formulas
