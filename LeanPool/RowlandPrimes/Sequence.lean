@@ -1,6 +1,5 @@
 /-
 Copyright (c) 2026 Yujie Sun. All rights reserved.
-Copyright 2026 The Formal Conjectures Authors.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yujie Sun, Claude Opus 5.5 (AI)
 -/
@@ -17,6 +16,8 @@ Rowland's sequence (OEIS A106108) is `a 1 = 7` and `a n = a (n - 1) + gcd n (a (
 `RowlandPrimes.rowlandSeq` and `RowlandPrimes.rowlandDiff` and the statement of
 `RowlandPrimes.rowland_diff_eq_one_or_prime` are copied verbatim (apart from the namespace, which
 is `RowlandSequence` there) from [Formal Conjectures](https://github.com/google-deepmind/formal-conjectures/blob/f9b3868d5ca994a7bf95039bcec05338c0c21e2f/FormalConjectures/Wikipedia/RowlandSequence.lean), where the theorem is stated without a proof.
+
+Copyright 2026 The Formal Conjectures Authors.
 
 The sequence `rowlandSeqFrom s` has the same recurrence with an arbitrary first term `s`; it is
 used to show that the first term matters: with `a 1 = 532` the increment at `n = 18` is `9`.
