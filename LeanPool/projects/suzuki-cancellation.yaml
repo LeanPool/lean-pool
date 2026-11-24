@@ -38,8 +38,8 @@ main_results:
 - declaration: FQFP.BCH.tendsto_nat_pow_four_mul_norm_suzukiProduct_pow_sub_exp_of_skewAdjoint
   informal: For skew-adjoint generators in a complete C*-algebra with compatible
     real scalars and at fixed nonnegative final time, multiplying the global Suzuki
-    error norm by the fourth power of the step count yields the norm of the
-    integral of the conjugated quintic coefficient.
+    error norm by the fourth power of the step count yields the fourth power of
+    the final time times the norm of the integrated conjugated quintic coefficient.
 tags:
 - functional-analysis
 - product-formulas
