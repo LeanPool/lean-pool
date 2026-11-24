@@ -94,10 +94,15 @@ It preserves .ordinary checks and never treats native output as a proof. A faile
 missing witness stops regeneration; changed geometry may require a genuinely new search, not an
 assumption or a skipped transition.
 
-5. Insert proposals into ExclusionHint.sound calls and require the existing decide +kernel
+5. Insert proposals into the exclusion replay calls and require the existing kernel-checked
 acceptance proofs, initialization, all owner exclusions, Model.insert equalities, backward
 replay and interval coverage. Share long fan tails from the right in blocks of 24 next nodes
-(fanKOwnerJPartN); preserve their expanded value. Rebuild the complete aggregate, regenerate
+(fanKOwnerJPartN) and preserve their expanded value. Selected replay modules use
+exclude_checkpoint to apply the closed-interval statement directly. They prove closed checker
+and checkpoint-field equalities by reflexivity, keeping the auxiliary proof boundaries with
+as_aux_lemma. Large witness definitions are compiled in re-exported FanData modules.
+For split intervals, check the two subintervals separately and combine them with the endpoint
+conditions. Rebuild the complete aggregate, regenerate
 indexes with lake exe mk_all --module, and run Mathlib linters, style and repository
 quality/trust checks. No option override, extra axiom or native proof result is permitted. The
 acceptance proofs, not the producer, establish correctness.
@@ -426,11 +431,12 @@ def render_shared(template: str, fresh: str, aliases: dict[str, str]) -> str:
 def exclusion_rows_text(
     source: str, aliases: dict[str, str], label: str = ''
 ) -> list[dict[str, Any]]:
+    application = r'  (?:apply ExclusionHint\.sound|refine exclude_checkpoint) '
     pattern = (r'^theorem (excluded\d+_\d+)\s*:\s*ExcludedOn (.*?) := by\n'
-               r'  apply ExclusionHint.sound (.*?)\s+\(den\s*:=.*?\)\s+'
+               + application + r'(.*?)\s+\(den\s*:=.*?\)\s+'
                r'\(fuel\s*:=\s*(\d+)\)')
     matches = list(re.finditer(pattern, source, re.M | re.S))
-    assert len(matches) == source.count('  apply ExclusionHint.sound '), label
+    assert len(matches) == len(re.findall('^' + application, source, re.M)), label
     rows = []
     for match in matches:
         values = arguments(match[2])
