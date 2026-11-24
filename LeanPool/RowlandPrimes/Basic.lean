@@ -14,7 +14,7 @@ This file works with an arbitrary sequence `a : ℕ → ℕ` that obeys Rowland'
 `a (n + 1) = a n + Nat.gcd (n + 1) (a n)` from some index `n₀` on, with no assumption on its
 initial values.
 
-Call `N ≥ 2` a *checkpoint* of `a` when `a N = 3 * N`. Rowland's Lemma 1
+Call `N ≥ 2` a *checkpoint* of `a` when `a N = 3 * N`. The case `r = 3` of Rowland's Lemma 1
 (E. S. Rowland, *A natural prime-generating recurrence*, J. Integer Seq. 11 (2008),
 Article 08.2.8) says: if `N` is a checkpoint and `p` is the least prime factor of `2 * N - 1`,
 then the next `(p - 1) / 2 - 1` increments of `a` are all `1`, the following increment is `p`,
