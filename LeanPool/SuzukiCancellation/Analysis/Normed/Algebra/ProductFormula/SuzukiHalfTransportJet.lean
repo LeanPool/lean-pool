@@ -8,9 +8,14 @@ Authors: Foresight Quantum
 
 module
 
-public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiDefectJet
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiArguments
 public import LeanPool.SuzukiCancellation.RingTheory.PowerSeries.Noncommutative.Palindromic
 public import LeanPool.SuzukiCancellation.RingTheory.PowerSeries.Noncommutative.ExponentialListLowDegree
+public import Mathlib.Algebra.Algebra.RestrictScalars
+public import Mathlib.Algebra.Algebra.Rat
+import Mathlib.Tactic.Module
+import Mathlib.Tactic.NoncommRing
+import Mathlib.Tactic.NormNum
 
 /-!
 # Finite jets of the centered Suzuki half-product
@@ -55,10 +60,8 @@ theorem expListTerm_suzukiCenteredHalf_one (a b : A) (p : ℝ) :
     expListTerm (-(1 / 2 : ℝ) • (a + b) ::
       List.ofFn (fiveStageStrangHalfGenerator a b p)) 1 = 0 := by
   let : Algebra ℚ A := .restrictScalars ℚ ℝ A
-  simp only [expListTerm_one, List.ofFn_succ, fiveStageStrangHalfGenerator,
-    List.sum_cons]
-  norm_num
-  module
+  rw [expListTerm_one, List.sum_cons, fiveStageStrangHalfGenerator_ofFn,
+    fiveStageStrangHalfArguments_sum, neg_smul, neg_add_cancel]
 
 /-- The quadratic half-product coefficient is exactly the complete ordered bracket sum. -/
 theorem expListTerm_suzukiCenteredHalf_two (a b : A) (p : ℝ) :

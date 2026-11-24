@@ -12,6 +12,7 @@ public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SymmetricLocalError
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.HalfDefectConjugation
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiLocalAsymptotics
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiParameter
 
 /-!
 # All-real local bounds for the fourth-order Suzuki product

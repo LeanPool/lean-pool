@@ -8,9 +8,10 @@ Authors: Foresight Quantum
 
 module
 
-public import LeanPool.SuzukiCancellation.Algebra.Word.Basic
 public import Mathlib.Algebra.Algebra.Basic
-public import Mathlib.Tactic
+public import Mathlib.Algebra.BigOperators.Group.Finset.Basic
+public import Mathlib.Algebra.BigOperators.Group.List.Basic
+import Mathlib.Tactic.SplitIfs
 
 /-!
 # Ordered word tables with scalar coefficients

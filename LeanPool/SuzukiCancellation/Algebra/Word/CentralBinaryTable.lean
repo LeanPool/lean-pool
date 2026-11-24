@@ -9,6 +9,8 @@ Authors: Foresight Quantum
 module
 
 public import LeanPool.SuzukiCancellation.Algebra.Word.CentralTable
+public import Mathlib.Data.Fin.VecNotation
+import Mathlib.Tactic.FinCases
 
 /-!
 # Prefix collection with a central scalar and two noncommuting letters

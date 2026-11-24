@@ -20,9 +20,16 @@ import Mathlib.Tactic.Module
 
 namespace FQFP.BCH
 
+/-- The sum of cubes of the five Strang coefficients. -/
+def suzukiCubicCoeff {K : Type*} [CommRing K] (p : K) : K :=
+  4 * p ^ 3 + (1 - 4 * p) ^ 3
+
+/-- The five Strang coefficients satisfy the Suzuki cubic cancellation condition. -/
+def IsSuzukiCubic {K : Type*} [CommRing K] (p : K) : Prop := suzukiCubicCoeff p = 0
+
 section Full
 
-variable {K A : Type*} [Field K] [Ring A] [Algebra K A]
+variable {K A : Type*} [Field K] [AddCommGroup A] [Module K A]
 
 /-- The eleven ordered arguments of the five-block Suzuki composition. -/
 def fiveStageStrangArguments (a b : A) (p t : K) : List A :=
@@ -50,7 +57,7 @@ end Full
 
 section Half
 
-variable {A : Type*} [Ring A] [Algebra ℝ A]
+variable {A : Type*} [AddCommGroup A] [Module ℝ A]
 
 /-- The six ordered half-generators of the five-stage Strang composition. -/
 def fiveStageStrangHalfGenerator (a b : A) (p : ℝ) : Fin 6 → A :=

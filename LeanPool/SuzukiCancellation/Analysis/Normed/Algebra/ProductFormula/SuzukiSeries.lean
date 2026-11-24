@@ -12,7 +12,13 @@ public import LeanPool.SuzukiCancellation.RingTheory.PowerSeries.Noncommutative.
 public import LeanPool.SuzukiCancellation.Algebra.Word.CentralBinaryTable
 public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiArguments
 public import LeanPool.SuzukiCancellation.Algebra.Lie.BCH.SuzukiTerms
-public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiParameter
+import Mathlib.Algebra.Algebra.Rat
+import Mathlib.Algebra.Module.Rat
+import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.IntervalCases
+import Mathlib.Tactic.Module
+import Mathlib.Tactic.NormNum
+import Mathlib.Tactic.Ring
 
 /-!
 # Quintic Suzuki coefficient matching

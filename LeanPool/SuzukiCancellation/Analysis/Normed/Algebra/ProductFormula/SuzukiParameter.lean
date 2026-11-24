@@ -8,7 +8,10 @@ Authors: Foresight Quantum
 
 module
 
+public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula.SuzukiArguments
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # The Suzuki cubic cancellation parameter
@@ -34,13 +37,6 @@ reals it has the unique solution `1 / (4 - 4^(1/3))`.
 @[expose] public noncomputable section
 
 namespace FQFP.BCH
-
-/-- The sum of cubes of the five Strang coefficients. -/
-def suzukiCubicCoeff {K : Type*} [CommRing K] (p : K) : K :=
-  4 * p ^ 3 + (1 - 4 * p) ^ 3
-
-/-- The five Strang coefficients satisfy the Suzuki cubic cancellation condition. -/
-def IsSuzukiCubic {K : Type*} [CommRing K] (p : K) : Prop := suzukiCubicCoeff p = 0
 
 /-- The canonical real Suzuki parameter. -/
 def suzukiP : ℝ := 1 / (4 - (4 : ℝ) ^ ((1 : ℝ) / 3))
