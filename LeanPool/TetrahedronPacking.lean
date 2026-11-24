@@ -33,7 +33,7 @@ of arXiv:1001.0586v3. All lengths are scaled by 160.
 
 namespace PackingCertificate
 
-open Filter MeasureTheory Set
+open Filter MeasureTheory Set TetrahedronPacking
 open scoped BigOperators Pointwise Topology
 
 /-- The four published tetrahedra in integer coordinates, at scale 160. -/
@@ -62,69 +62,32 @@ theorem packing_density :
         volume.real (Metric.closedBall (0 : Fin 3 → ℝ) R))
       atTop (𝓝 (4000 / 4671 : ℝ)) := by
   classical
-  have hv : motifVertex = TetrahedronPacking.recordVertex := rfl
-  have hp : periodVector = TetrahedronPacking.recordPeriod := rfl
-  have hvertex (i a : Fin 4) :
-      (fun r => (motifVertex i a r : ℝ)) = TetrahedronPacking.recordRealVertex i a := by
-    rw [hv]
-    rfl
   have hs (k : Fin 3 → ℤ) :
-      periodShift k = TetrahedronPacking.recordCoordinates.symm (fun r => (k r : ℝ)) := by
+      periodShift k = recordCoordinates.symm (fun r => (k r : ℝ)) := by
     ext r
-    simp [periodShift, hp, TetrahedronPacking.recordCoordinates_symm_apply, mul_comm]
-  have he (p : Fin 4 × (Fin 3 → ℤ)) :
-      piece p = convexHull ℝ (range fun a =>
-        TetrahedronPacking.recordRealVertex p.1 a +
-          TetrahedronPacking.recordCoordinates.symm (fun r => (p.2 r : ℝ))) := by
-    simp only [piece, hvertex, hs]
+    simp [periodShift, periodVector, recordCoordinates_symm_apply, mul_comm]
+  have hp (p : Fin 4 × (Fin 3 → ℤ)) : piece p = periodShift p.2 +ᵥ recordHull p.1 := by
+    rw [recordHull_translate]
+    rfl
   refine ⟨?_, ?_, ?_⟩
-  · intro i a b h
-    simpa only [hv, TetrahedronPacking.recordRealVertex] using
-      TetrahedronPacking.record_squared_edge_lengths i a b h
-  · simpa only [he] using TetrahedronPacking.record_pairwise_disjoint_interiors
-  · let b := (Pi.basisFun ℝ (Fin 3)).map TetrahedronPacking.recordCoordinates.symm
-    let L := Submodule.span ℤ (range b)
-    let s (i : Fin 4) := convexHull ℝ (range (TetrahedronPacking.recordRealVertex i))
-    have hcoord (p : Fin 3 → ℝ) :
-        p ∈ L ↔ ∃ k : Fin 3 → ℤ, periodShift k = p := by
-      constructor
-      · intro hin
-        choose k hk using (b.mem_span_iff_repr_mem ℤ _).mp hin
-        refine ⟨k, ?_⟩
-        rw [hs]
-        apply TetrahedronPacking.recordCoordinates.injective
-        ext r
-        have hr := (hk r).symm
-        change (Pi.basisFun ℝ (Fin 3)).repr (TetrahedronPacking.recordCoordinates p) r =
-          (k r : ℝ) at hr
-        simpa using hr.symm
-      · rintro ⟨k, rfl⟩
-        change periodShift k ∈ Submodule.span ℤ (range b)
-        rw [b.mem_span_iff_repr_mem ℤ]
-        intro r
-        refine ⟨k r, ?_⟩
-        simp [b, hs]
-    have hpiece (i : Fin 4) (k : Fin 3 → ℤ) : piece (i, k) = periodShift k +ᵥ s i := by
-      change _ = periodShift k +ᵥ convexHull ℝ (range (TetrahedronPacking.recordRealVertex i))
-      rw [← convexHull_vadd, piece]
-      congr 1
-      change range (fun a => (fun r => (motifVertex i a r : ℝ)) + periodShift k) =
-        (fun y : Fin 3 → ℝ => periodShift k + y) '' range (TetrahedronPacking.recordRealVertex i)
-      rw [← range_comp]
-      simp only [hvertex, Function.comp_def, add_comm]
+  · exact record_squared_edge_lengths
+  · simpa only [hp, hs, recordHull_translate] using record_pairwise_disjoint_interiors
+  · have hcoord (x : Fin 3 → ℝ) :
+        x ∈ recordLattice ↔ ∃ k : Fin 3 → ℤ, periodShift k = x := by
+      simpa only [hs] using mem_recordLattice_iff x
     have hu : (⋃ p, piece p) =
-        (⋃ p : Fin 4 × L, (p.2 : Fin 3 → ℝ) +ᵥ s p.1) := by
+        (⋃ p : Fin 4 × recordLattice, (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1) := by
       ext x
       simp only [mem_iUnion]
       constructor
-      · rintro ⟨⟨i,k⟩, hx⟩
-        exact ⟨⟨i, ⟨periodShift k, (hcoord _).2 ⟨k, rfl⟩⟩⟩, hpiece i k ▸ hx⟩
-      · rintro ⟨⟨i,p⟩, hx⟩
-        obtain ⟨k,hk⟩ := (hcoord _).1 p.property
-        refine ⟨(i,k), ?_⟩
-        rw [hpiece, hk]
+      · rintro ⟨⟨i, k⟩, hx⟩
+        exact ⟨⟨i, ⟨periodShift k, (hcoord _).2 ⟨k, rfl⟩⟩⟩, hp (i, k) ▸ hx⟩
+      · rintro ⟨⟨i, p⟩, hx⟩
+        obtain ⟨k, hk⟩ := (hcoord _).1 p.property
+        refine ⟨(i, k), ?_⟩
+        rw [hp, hk]
         exact hx
     rw [hu]
-    exact TetrahedronPacking.record_spatial_density
+    exact record_spatial_density
 
 end PackingCertificate

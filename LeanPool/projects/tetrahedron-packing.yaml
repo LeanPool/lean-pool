@@ -4,7 +4,8 @@ summary: >-
   Verifies the four congruent regular tetrahedra and pairwise disjoint interiors
   of the periodic Chen–Engel–Glotzer construction. The covered fraction of
   expanding coordinate cubes tends to 4000/4671. The development gives a
-  general periodic density theorem and a finite integer separation criterion.
+  periodic density theorem in positive-dimensional real coordinate spaces and
+  a finite integer separation criterion.
 branch: discrete geometry
 entry_module: LeanPool.TetrahedronPacking
 authors:
@@ -37,9 +38,10 @@ main_results:
   source_ref: Definition 2 and the packing and density claims of Theorem 1, equations (15)–(16).
 - declaration: TetrahedronPacking.periodic_convex_density
   informal: >-
-    For a finite bounded convex motif and a full lattice, pairwise interior
-    disjointness of the translated pieces gives an expanding-cube density
-    equal to the total motif volume divided by the lattice covolume.
+    In a positive-dimensional real coordinate space, suppose a finite bounded
+    convex motif and a full lattice give pairwise interior-disjoint translates.
+    The expanding-cube density equals the total motif volume divided by the
+    lattice covolume.
 tags:
 - discrete-geometry
 - lattice-packing

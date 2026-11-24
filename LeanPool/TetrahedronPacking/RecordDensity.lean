@@ -33,63 +33,39 @@ open scoped Pointwise Topology
 /-- Covered volume fraction in expanding axis-aligned cubes for the exact
 Chen–Engel–Glotzer cell. The data use a common length scale of 160. -/
 theorem record_spatial_density :
-    let b := (Pi.basisFun ℝ (Fin 3)).map recordCoordinates.symm
-    let L := Submodule.span ℤ (range b)
-    let s (i : Fin 4) := convexHull ℝ (range (recordRealVertex i))
     Tendsto (fun R : ℝ =>
-      volume.real ((⋃ p : Fin 4 × L, (p.2 : Fin 3 → ℝ) +ᵥ s p.1) ∩ Metric.closedBall 0 R) /
-        volume.real (Metric.closedBall (0 : Fin 3 → ℝ) R))
+      volume.real ((⋃ p : Fin 4 × recordLattice, (p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1) ∩
+        Metric.closedBall 0 R) / volume.real (Metric.closedBall (0 : Fin 3 → ℝ) R))
       atTop (𝓝 (4000 / 4671 : ℝ)) := by
   classical
-  let b := (Pi.basisFun ℝ (Fin 3)).map recordCoordinates.symm
-  let L := Submodule.span ℤ (range b)
-  let s (i : Fin 4) := convexHull ℝ (range (recordRealVertex i))
-  change Tendsto (fun R : ℝ =>
-    volume.real ((⋃ p : Fin 4 × L, (p.2 : Fin 3 → ℝ) +ᵥ s p.1) ∩ Metric.closedBall 0 R) /
-      volume.real (Metric.closedBall (0 : Fin 3 → ℝ) R)) atTop _
-  have hcoord (p : L) : ∃ k : Fin 3 → ℤ,
-      (p : Fin 3 → ℝ) = recordCoordinates.symm (fun r => (k r : ℝ)) := by
-    choose k hk using (b.mem_span_iff_repr_mem ℤ _).mp p.property
-    refine ⟨k, recordCoordinates.injective ?_⟩
-    ext r
-    have hr := (hk r).symm
-    change (Pi.basisFun ℝ (Fin 3)).repr (recordCoordinates (p : Fin 3 → ℝ)) r = (k r : ℝ)
-      at hr
-    simpa using hr
-  have hd : Pairwise fun p q : Fin 4 × L =>
-      Disjoint (interior ((p.2 : Fin 3 → ℝ) +ᵥ s p.1))
-        (interior ((q.2 : Fin 3 → ℝ) +ᵥ s q.1)) := by
+  have hd : Pairwise fun p q : Fin 4 × recordLattice =>
+      Disjoint (interior ((p.2 : Fin 3 → ℝ) +ᵥ recordHull p.1))
+        (interior ((q.2 : Fin 3 → ℝ) +ᵥ recordHull q.1)) := by
     intro p q hpq
-    obtain ⟨k, hk⟩ := hcoord p.2
-    obtain ⟨l, hl⟩ := hcoord q.2
+    obtain ⟨k, hk⟩ := (mem_recordLattice_iff _).mp p.2.property
+    obtain ⟨l, hl⟩ := (mem_recordLattice_iff _).mp q.2.property
     have hn : (p.1, k) ≠ (q.1, l) := by
       intro he
       obtain ⟨hi, hj⟩ := Prod.mk.inj he
       apply hpq
       refine Prod.ext hi (Subtype.ext ?_)
-      rw [hk, hl, hj]
+      rw [← hk, ← hl, hj]
     have h := record_pairwise_disjoint_interiors hn
-    have translate (i : Fin 4) (x : Fin 3 → ℝ) :
-        x +ᵥ s i = convexHull ℝ (range fun j => recordRealVertex i j + x) := by
-      rw [← convexHull_vadd]
-      change convexHull ℝ ((fun y => x + y) '' range (recordRealVertex i)) = _
-      rw [← range_comp]
-      simp only [Function.comp_def, add_comm]
-    rw [translate, translate, hk, hl]
+    rw [recordHull_translate, recordHull_translate, ← hk, ← hl]
     exact h
-  have hbounded : Bornology.IsBounded (⋃ i, s i) :=
+  have hbounded : Bornology.IsBounded (⋃ i, recordHull i) :=
     Bornology.isBounded_iUnion.mpr fun i =>
       ((finite_range (recordRealVertex i)).isCompact_convexHull ℝ).isBounded
   obtain ⟨d, hd_bound⟩ := hbounded.exists_norm_le
-  have h := periodic_convex_density L s d (fun i => convex_convexHull ℝ _)
+  have h := periodic_convex_density recordLattice recordHull d (fun i => convex_convexHull ℝ _)
     (fun i x hx => hd_bound x (mem_iUnion.mpr ⟨i, hx⟩)) hd
-  have hv (i : Fin 4) : volume.real (s i) = 36864000 := by
+  have hv (i : Fin 4) : volume.real (recordHull i) = 36864000 := by
     change volume.real (convexHull ℝ (range (recordRealVertex i))) = 36864000
     rw [tetrahedron_volume, record_edge_determinant]
     norm_num
-  have hL : ZLattice.covolume L = 172191744 := by
-    rw [ZLattice.covolume_eq_measure_fundamentalDomain L volume
-      (ZSpan.isAddFundamentalDomain b volume)]
+  have hL : ZLattice.covolume recordLattice = 172191744 := by
+    rw [ZLattice.covolume_eq_measure_fundamentalDomain recordLattice volume
+      (ZSpan.isAddFundamentalDomain recordBasis volume)]
     exact record_period_cell_volume
   rw [hL] at h
   simp only [hv, Fin.sum_univ_four] at h

@@ -10,7 +10,9 @@ module
 
 public import Mathlib.Analysis.Convex.Basic
 public import Mathlib.Analysis.Convex.Hull
-public import Mathlib.Analysis.Normed.Operator.Banach
+public import Mathlib.Analysis.Normed.Module.Basic
+public import Mathlib.Topology.Algebra.Module.ContinuousLinearMap.Basic
+import Mathlib.Tactic.Linarith
 
 /-!
 # Certifying all translates of a finite motif
@@ -46,25 +48,16 @@ private theorem hull_ge {E : Type*} [AddCommGroup E] [Module ℝ E]
   exact h i
 
 theorem disjoint_interiors_of_separating_plane
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {ι κ : Type*} {v : ι → E} {w : κ → E}
     (f : E →L[ℝ] ℝ) (hf : f ≠ 0) (a : ℝ)
     (hv : ∀ i, f (v i) ≤ a) (hw : ∀ j, a ≤ f (w j)) :
     Disjoint (interior (convexHull ℝ (range v))) (interior (convexHull ℝ (range w))) := by
-  have hsurj : Function.Surjective f := by
-    have hy : ∃ y, f y ≠ 0 := by
-      by_contra! h
-      exact hf (ContinuousLinearMap.ext h)
-    obtain ⟨y, hy⟩ := hy
-    intro b
-    refine ⟨(b / f y) • y, ?_⟩
-    simp only [map_smul, smul_eq_mul]
-    exact div_mul_cancel₀ b hy
   apply disjoint_left.2
   intro x hx hx'
   have hsubset : convexHull ℝ (range v) ⊆ f ⁻¹' Iic a :=
     fun _ hy => hull_le (f := f.toLinearMap) hv hy
-  have hlt := (f.isOpenMap hsurj).interior_preimage_subset_preimage_interior
+  have hlt := (f.isOpenMap_of_ne_zero hf).interior_preimage_subset_preimage_interior
     (interior_mono hsubset hx)
   rw [interior_Iic] at hlt
   exact (not_lt_of_ge (hull_ge (f := f.toLinearMap) hw (interior_subset hx'))) hlt
@@ -119,7 +112,7 @@ theorem shift_bounds_of_hulls_intersect
 motif, apply this to each ordered pair and omit the zero shift for self-pairs.
 For finite coordinate index types the integer bounds give finite test sets. -/
 theorem disjoint_interiors_of_bounded_shift_certificates
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {ι κ α : Type*} (C : E ≃ₗ[ℝ] (α → ℝ))
     (v : ι → E) (w : κ → E) (required : (α → ℤ) → Prop)
     (loV hiV loW hiW : α → ℝ)

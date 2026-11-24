@@ -78,20 +78,6 @@ theorem record_integer_separator (i j : Fin 4) (x y z : Fin 5)
   obtain ⟨n, _, hs⟩ := List.any_eq_true.mp ((record_bounded_separations i j x y z).resolve_left h)
   exact ⟨n, hs⟩
 
-theorem record_integer_planes (i j : Fin 4) (x y z : Fin 5)
-    (h : ¬ (i = j ∧ x = 2 ∧ y = 2 ∧ z = 2)) :
-    ∃ n : Fin 3 → ℤ, 0 < n 0 ∧
-      let offset := (x.val - (2 : ℤ)) * integerDot n (recordPeriod 0) +
-        (y.val - (2 : ℤ)) * integerDot n (recordPeriod 1) +
-        (z.val - (2 : ℤ)) * integerDot n (recordPeriod 2)
-      (∀ a b : Fin 4, integerDot n (recordVertex i a) ≤ integerDot n (recordVertex j b) + offset) ∨
-      (∀ a b : Fin 4, integerDot n (recordVertex j b) + offset ≤
-        integerDot n (recordVertex i a)) := by
-  obtain ⟨n, hn, hs⟩ := List.any_eq_true.mp ((record_bounded_separations i j x y z).resolve_left h)
-  refine ⟨n, ?_, (integerSeparates_sound n (recordVertex i) (recordVertex j) _ hs).2⟩
-  simp only [axes, List.mem_cons, List.not_mem_nil, or_false] at hn
-  rcases hn with h | h | h | h | h | h | h | h | h | h <;> subst n <;> decide
-
 theorem record_integer_edge_lengths (i a b : Fin 4) (h : a ≠ b) :
     integerDot (fun t => recordVertex i a t - recordVertex i b t)
       (fun t => recordVertex i a t - recordVertex i b t) = 460800 := by

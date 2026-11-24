@@ -10,6 +10,7 @@ module
 
 public import LeanPool.TetrahedronPacking.PeriodicSeparation
 public import LeanPool.TetrahedronPacking.IntegerProjections
+public import Mathlib.Data.Pi.Interval
 public import Mathlib.Data.Int.Interval
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 public import Mathlib.Tactic.NormNum
@@ -97,28 +98,11 @@ theorem integer_shift_certificates
 
 /-- Enumerate the integer points in an inclusive coordinate box. -/
 def integerShiftBox (lo hi : Fin 3 → ℤ) : Finset (Fin 3 → ℤ) :=
-  ((Finset.Icc (lo 0) (hi 0)).product
-    ((Finset.Icc (lo 1) (hi 1)).product (Finset.Icc (lo 2) (hi 2)))).image
-    (fun p => ![p.1, p.2.1, p.2.2])
+  Finset.Icc lo hi
 
 theorem mem_integerShiftBox (lo hi k : Fin 3 → ℤ) :
     k ∈ integerShiftBox lo hi ↔ ∀ j, lo j ≤ k j ∧ k j ≤ hi j := by
-  unfold integerShiftBox
-  constructor
-  · intro h j
-    obtain ⟨⟨a, b, c⟩, habc, rfl⟩ := Finset.mem_image.mp h
-    have hp := Finset.mem_product.mp habc
-    have hq := Finset.mem_product.mp hp.2
-    fin_cases j
-    · exact Finset.mem_Icc.mp hp.1
-    · exact Finset.mem_Icc.mp hq.1
-    · exact Finset.mem_Icc.mp hq.2
-  · intro h
-    refine Finset.mem_image.mpr ⟨(k 0, k 1, k 2), ?_, ?_⟩
-    · exact Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr (h 0),
-        Finset.mem_product.mpr ⟨Finset.mem_Icc.mpr (h 1), Finset.mem_Icc.mpr (h 2)⟩⟩
-    · ext j
-      fin_cases j <;> rfl
+  simp only [integerShiftBox, Finset.mem_Icc, Pi.le_def, forall_and]
 
 example : (![0, 0, 0] : Fin 3 → ℤ) ∈ integerShiftBox ![-1, 0, 0] ![1, 0, 0] := by decide
 example : (![2, 0, 0] : Fin 3 → ℤ) ∉ integerShiftBox ![-1, 0, 0] ![1, 0, 0] := by decide

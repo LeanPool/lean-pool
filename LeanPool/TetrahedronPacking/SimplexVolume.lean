@@ -8,7 +8,7 @@ Authors: Mike Lady
 
 module
 
-public import LeanPool.TetrahedronPacking.PackingMeasure
+public import Mathlib.MeasureTheory.Measure.Lebesgue.EqHaar
 public import Mathlib.Analysis.Convex.Combination
 public import Mathlib.Data.Fin.Tuple.Sort
 public import Mathlib.LinearAlgebra.Matrix.Notation
