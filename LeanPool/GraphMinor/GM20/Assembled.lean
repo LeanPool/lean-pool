@@ -107,7 +107,8 @@ namespace GraphMinor.GM20
 
 open Graph
 
-/-- **The graph minor theorem** (Graph Minors XX, (10.5)), for a sequence of finite multigraphs. -/
+/-- **The graph minor theorem** for a sequence of finite multigraphs.
+This is the undirected consequence of (10.5) in Graph Minors XX. -/
 theorem graph_minor_theorem_assembled
     {α β : Type*} (G : ℕ → Graph α β) (hV : ∀ n, V(G n).Finite) (hE : ∀ n, E(G n).Finite) :
     ∃ i j, i < j ∧ IsIsoMinor (G i) (G j) := by
