@@ -6,12 +6,12 @@ Authors: Moritz Firsching
 
 module
 
+import LeanPool.Zeta5Irrational.Table.ArctangentCertificate
 import LeanPool.Zeta5Irrational.Table.RationalLogCertificate
 import LeanPool.Zeta5Irrational.Table.RationalSeries
 
 public import LeanPool.Zeta5Irrational.Potential
 import LeanPool.Zeta5Irrational.Certificates
-import LeanPool.Zeta5Irrational.TableCheck
 import Mathlib.Analysis.Complex.ExponentialBounds
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum.Ineq
@@ -26,7 +26,7 @@ open Finset
 
 namespace Zeta5Irrational
 
-open scoped LogarithmCertificates
+open scoped ArctangentCertificates LogarithmCertificates
 
 lemma V_br :
     ((236122014583635193 / 40000000000000000000 : ℝ) -
