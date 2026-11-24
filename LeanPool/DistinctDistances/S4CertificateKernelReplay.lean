@@ -50,6 +50,40 @@ theorem summaryValidOfReplay {T : Type} {width : Nat} {box : Box} {build : T →
   ⟨congrArg PackedSummary.cost verified, congrArg PackedSummary.rhs verified,
     congrArg PackedSummary.positive verified, congrArg PackedSummary.negative verified⟩
 
+/-- Compute an integer row while forcing its common denominator before scaling the coefficients.
+A case split on the natural number lets kernel reduction share the resulting numeral. -/
+noncomputable def buildIntWithSharedDenominator
+    (parameters : Params) (lower upper : ℚ) (tag : Tag) : Option Row :=
+  (parameters.build lower upper tag).bind fun row ↦
+    let scale (denominator : Nat) : Option Row :=
+      some ⟨QRow.signedEntries (fun value ↦ decide (0 < value))
+          (QRow.scaleNumerator denominator) row.ent,
+        QRow.signedEntries (fun value ↦ decide (value < 0))
+          (fun value ↦ -QRow.scaleNumerator denominator value) row.ent,
+        QRow.scaleNumerator denominator row.rhs⟩
+    Nat.casesOn row.den (scale 0) (fun predecessor ↦ scale predecessor.succ)
+
+private theorem buildIntWithSharedDenominator_eq
+    (parameters : Params) (lower upper : ℚ) :
+    buildIntWithSharedDenominator parameters lower upper = parameters.buildInt lower upper := by
+  funext tag
+  unfold buildIntWithSharedDenominator Params.buildInt
+  cases parameters.build lower upper tag with
+  | none => rfl
+  | some row =>
+    simp only [Option.bind_some, QRow.toRow]
+    generalize row.den = denominator
+    cases denominator <;> rfl
+
+/-- Exact replay with a shared denominator verifies the original integer-row builder. -/
+theorem summaryValidOfSharedDenominatorReplay (parameters : Params) (lower upper : ℚ)
+    {width : Nat} {rows : WTree Tag} {summary : PackedSummary}
+    (verified : replaySummary width parameters.box (buildIntWithSharedDenominator parameters
+      lower upper) rows = summary) :
+    SummaryValid width parameters.box (parameters.buildInt lower upper) rows summary := by
+  rw [← buildIntWithSharedDenominator_eq]
+  exact summaryValidOfReplay verified
+
 end
 
 /-- Check one quarter of the weighted row tree against its proposed packed summary. -/

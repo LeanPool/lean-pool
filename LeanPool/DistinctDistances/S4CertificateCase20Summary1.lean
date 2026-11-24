@@ -6,6 +6,7 @@ Authors: Adam McKenna
 module
 
 public import LeanPool.DistinctDistances.S4CertificateCase20Data
+import LeanPool.DistinctDistances.S4CertificateKernelReplay -- shake: keep
 
 /-!
 # Subtree 1 of certificate case 20
@@ -20,23 +21,28 @@ open FarkasPackedCheck
 /-- Proposed summary for subtree 1 of case 20. -/
 noncomputable def case20Summary1 : PackedSummary := s4_summary% 20, case20Rows1
 
+private theorem certificateReplay :
+    SummaryValid 256 params.box case20Build case20Rows1 case20Summary1 :=
+  summaryValidOfSharedDenominatorReplay params (caseY.get 20) (caseY.get 21)
+    (by s4_check_equality)
+
 private theorem certificateCost :
     case20Rows1.sumNat (leafCost 256 params.box.nv case20Build) = case20Summary1.cost := by
-  decide +kernel
+  as_aux_lemma => exact certificateReplay.cost_eq
 
 private theorem certificateRhs :
     case20Rows1.sumInt (leafRhs case20Build) = case20Summary1.rhs := by
-  decide +kernel
+  as_aux_lemma => exact certificateReplay.rhs_eq
 
 private theorem certificatePositive :
     case20Rows1.sumTrie (leafPack 256 (chunkLen params.box.nv 4) 4 case20Build Row.pos) =
       case20Summary1.positive := by
-  decide +kernel
+  as_aux_lemma => exact certificateReplay.positive_eq
 
 private theorem certificateNegative :
     case20Rows1.sumTrie (leafPack 256 (chunkLen params.box.nv 4) 4 case20Build Row.neg) =
       case20Summary1.negative := by
-  decide +kernel
+  as_aux_lemma => exact certificateReplay.negative_eq
 
 /-- Kernel verification of all four quantities for this subtree. -/
 theorem case20Summary1Checked :
