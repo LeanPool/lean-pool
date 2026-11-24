@@ -100,6 +100,7 @@ public import LeanPool.Zeta5Irrational.PrimeSumStep
 public import LeanPool.Zeta5Irrational.RealBound
 public import LeanPool.Zeta5Irrational.SimplePoles
 public import LeanPool.Zeta5Irrational.Stirling
+public import LeanPool.Zeta5Irrational.Table.ArctangentCertificate
 public import LeanPool.Zeta5Irrational.Table.Bracket
 public import LeanPool.Zeta5Irrational.Table.Common
 public import LeanPool.Zeta5Irrational.Table.Intervals
