@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -34,7 +34,7 @@ theorem chainKeys_mem_iff {n : ℕ} (p : RankPlacement n) (k : ℕ)
     rw [← hp, positionChainEquiv_symm_residue]
   · intro hx
     let v : Fin (sourceTrialLength (n / k) (n % k) s.val) :=
-      ⟨(p x).val / k, by rw [← hx]; exact actual_chain_quotient_lt hk (p x)⟩
+      ⟨(p x).val / k, by rw [← hx]; exact actual_chain_quotient_lt (p x)⟩
     apply List.mem_ofFn.mpr
     refine ⟨v, ?_⟩
     have hp : (positionChainEquiv n k hk).symm ⟨s, v⟩ = p x := by

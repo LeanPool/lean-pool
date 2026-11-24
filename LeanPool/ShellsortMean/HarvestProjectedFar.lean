@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -187,28 +187,15 @@ open HarvestActualRings in
 theorem coeff_pad {n L : ℕ} (a : ℕ) (u : Fin n → ℝ)
     (support : ∀ i, u i ≠ 0 → a ≤ i.val ∧ i.val < a + L) (k : ZMod h) :
     coeff (fun i : Fin n => i.val) (fun i => (u i : ℂ)) k =
-      coeff (fun i : Fin L => a + i.val) (fun i => (pad a u i : ℂ)) k := by
+      coeff (fun i : Fin L => a + i.val) (fun i => (pad (α := ℝ) a u i : ℂ)) k := by
   unfold coeff
-  have hs (i : Fin n) (nz : stdAddChar (-((i.val : ZMod h) * k)) * (u i : ℂ) ≠ 0) :=
-    support i (fun z => nz (by simp [z]))
-  apply sum_bij_ne_zero (fun i _ nz => (⟨i.val - a, by have := hs i nz; omega⟩ : Fin L))
-  · simp
-  · intro i _ hi j _ hj eq
-    have h1 := hs i hi
-    have h2 := hs j hj
-    have h3 := congrArg Fin.val eq
-    dsimp at h3
-    apply Fin.ext
-    omega
-  · intro j _ nz
-    by_cases hj : a + j.val < n
-    · refine ⟨⟨a + j.val, hj⟩, mem_univ _, ?_, Fin.ext (by simp)⟩
-      simpa [pad, hj] using nz
-    · simp [pad, hj] at nz
-  · intro i _ nz
-    have hi := (hs i nz).1
-    have eq : a + (i.val - a) = i.val := by omega
-    simp [pad, eq]
+  let weighted (i : Fin n) := stdAddChar (-((i.val : ZMod h) * k)) * (u i : ℂ)
+  have hs (i : Fin n) (nz : weighted i ≠ 0) := support i (fun z => nz (by simp [weighted, z]))
+  change (∑ i, weighted i) = _
+  rw [pad_sum a weighted hs]
+  apply sum_congr rfl
+  intro j _
+  by_cases hj : a + j.val < n <;> simp [pad, hj, weighted]
 
 open HarvestActualRings RoughGapEndpoint in
 /-- Actual threshold error: merge all rings through j, then test against ring k
@@ -224,7 +211,7 @@ theorem actual_projected_far {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H)
   let L := 2 * rad H j
   have hs (i : Fin n) (nz : u i ≠ 0) : a ≤ i.val ∧ i.val < a + L :=
     merged_nonzero_support ht hp p j i (by dsimp [u] at nz; exact_mod_cast nz)
-  have hu (i : Fin L) : ‖(pad a u i : ℂ)‖ ≤ 1 := by
+  have hu (i : Fin L) : ‖(pad (α := ℝ) a u i : ℂ)‖ ≤ 1 := by
     rw [Complex.norm_real, Real.norm_eq_abs]
     unfold pad
     split
@@ -233,7 +220,7 @@ theorem actual_projected_far {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H)
     · norm_num
   have convertInner (t : ZMod h) : coeff (fun i : Fin n => i.val)
         (fun i => (mergedVec ht hp p j i : ℂ)) t =
-      coeff (fun i : Fin L => a + i.val) (fun i => (pad a u i : ℂ)) t := by
+      coeff (fun i : Fin L => a + i.val) (fun i => (pad (α := ℝ) a u i : ℂ)) t := by
     simpa [u] using coeff_pad (L := L) a u hs t
   simp_rw [convertInner]
   simpa [L, Complex.norm_intCast] using high_far_cross (h := h) D a _ hu

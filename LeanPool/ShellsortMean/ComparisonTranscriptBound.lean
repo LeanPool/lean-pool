@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -12,6 +12,7 @@ public import LeanPool.ShellsortMean.PermutationGeometry
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
 public import Mathlib.Data.Fintype.BigOperators
 public import Mathlib.Data.Nat.Factorial.BigOperators
+import Mathlib.InformationTheory.Coding.Kraft
 public import Mathlib.Algebra.BigOperators.Intervals
 
 /-! Binary transcripts of deterministic comparisons on a finite input space. -/
@@ -23,41 +24,23 @@ open scoped BigOperators
 def Separates {α : Type*} (trace : α → List Bool) : Prop :=
   ∀ x y, List.IsPrefix (trace x) (trace y) → x = y
 
-/-- Pad each transcript to a common length. All resulting sets of words are disjoint. -/
+/-- Separating transcripts give a finite prefix-free binary code. -/
 theorem kraft {α : Type*} [Fintype α] (trace : α → List Bool)
     (separates : Separates trace) :
     (∑ x, ((2 : ℝ) ^ (trace x).length)⁻¹) ≤ 1 := by
   classical
-  let d := ∑ x, (trace x).length
-  have maxlen (x) : (trace x).length ≤ d :=
-    Finset.single_le_sum (f := fun i => (trace i).length)
-      (fun i _ => Nat.zero_le _) (Finset.mem_univ x)
-  let pad : (Σ x, List.Vector Bool (d - (trace x).length)) → List.Vector Bool d :=
-    fun ⟨x, s⟩ => ⟨trace x ++ s.val, by simp [s.property, Nat.add_sub_of_le (maxlen x)]⟩
-  have injective : Function.Injective pad := by
-    rintro ⟨x, s⟩ ⟨y, t⟩ eq
-    have common : trace x ++ s.val = trace y ++ t.val := congrArg Subtype.val eq
-    have px : List.IsPrefix (trace x) (trace x ++ s.val) := ⟨_, rfl⟩
-    have py : List.IsPrefix (trace y) (trace x ++ s.val) := ⟨t.val, common.symm⟩
-    have xy : x = y := (List.prefix_or_prefix_of_prefix px py).elim (separates x y)
-      (fun h => (separates y x h).symm)
-    subst y
-    have st : s = t := Subtype.ext (List.append_cancel_left common)
-    cases st
-    rfl
-  have count : (∑ x, 2 ^ (d - (trace x).length)) ≤ 2 ^ d := by
-    simpa [Fintype.card_sigma] using Fintype.card_le_of_injective pad injective
-  have countR : (∑ x, (2 : ℝ) ^ (d - (trace x).length)) ≤ (2 : ℝ) ^ d := by exact_mod_cast count
-  apply (mul_le_mul_iff_left₀ (show 0 < (2 : ℝ) ^ d by positivity)).mp
-  rw [Finset.sum_mul, one_mul]
-  convert countR using 1
-  apply Finset.sum_congr rfl
-  intro x _
-  have exp := Nat.sub_add_cancel (maxlen x)
-  have powers := congrArg (fun k => (2 : ℝ) ^ k) exp
-  rw [pow_add] at powers
-  rw [← powers]
-  field_simp
+  have injective : Function.Injective trace := fun x y eq => separates x y (eq ▸ List.prefix_refl _)
+  have prefixFree : InformationTheory.IsPrefixFree (Finset.univ.image trace : Set (List Bool)) := by
+    intro x hx y hy related
+    obtain ⟨a, _, rfl⟩ := Finset.mem_image.mp (Finset.mem_coe.mp hx)
+    obtain ⟨b, _, rfl⟩ := Finset.mem_image.mp (Finset.mem_coe.mp hy)
+    exact congrArg trace (separates a b related)
+  calc
+    _ = ∑ w ∈ Finset.univ.image trace, ((2 : ℝ) ^ w.length)⁻¹ :=
+      (Finset.sum_image (fun _ _ _ _ eq => injective eq)).symm
+    _ ≤ 1 := by
+      simpa [Fintype.card_bool, one_div, inv_pow] using
+        prefixFree.finsetSum_one_div_card_pow_length_le_one
 
 /-- The mean length of separating binary comparison outcomes over equiprobable rank inputs. -/
 theorem uniform_transcript_mean_lower {n : ℕ} (trace : RankPlacement n → List Bool)

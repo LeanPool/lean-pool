@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -19,7 +19,7 @@ open Shellsort.RoughGapGridSieve
 /-- Numerators of distinct proper rational sample points on a common grid.
 A positive difference of distinct cross products supplies one full grid step. -/
 private theorem gap_of_cross (N q R x y a b c d : ℕ)
-    (hN : N = q * R ^ 2) (_Npos : 0 < N)
+    (hN : N = q * R ^ 2)
     (hx : x * b = N * a) (hy : y * d = N * c) (hb : 0 < b) (hd : 0 < d)
     (br : b ≤ R) (dr : d ≤ R) (lt : x < y) : x + q ≤ y := by
   have diff : a * d < c * b := by
@@ -59,7 +59,7 @@ theorem farey_windows {ι : Type*} {N q R : ℕ} [NeZero N]
     have e' := Nat.mul_lt_mul_of_pos_left (proper i) Npos
     exact Nat.lt_of_mul_lt_mul_right (e ▸ e')
   have top (i : ι) : x i + q ≤ N := gap_of_cross N q R (x i) N
-    (a i) (b i) 1 1 hN Npos (onGrid i) rfl (bpos i) (by decide) (den i)
+    (a i) (b i) 1 1 hN (onGrid i) rfl (bpos i) (by decide) (den i)
     (Nat.succ_le_of_lt (lt_of_lt_of_le (bpos i) (den i))) (gridlt i)
   intro t u he
   rcases t with ⟨i, v⟩; rcases u with ⟨j, w⟩
@@ -70,11 +70,11 @@ theorem farey_windows {ι : Type*} {N q R : ℕ} [NeZero N]
   have hxy : x i = x j := by
     rcases lt_trichotomy (x i) (x j) with h|h|h
     · have h' := gap_of_cross N q R (x i) (x j) (a i) (b i) (a j) (b j)
-        hN Npos (onGrid i) (onGrid j) (bpos i) (bpos j) (den i) (den j) h
+        hN (onGrid i) (onGrid j) (bpos i) (bpos j) (den i) (den j) h
       omega
     · exact h
     · have h' := gap_of_cross N q R (x j) (x i) (a j) (b j) (a i) (b i)
-        hN Npos (onGrid j) (onGrid i) (bpos j) (bpos i) (den j) (den i) h
+        hN (onGrid j) (onGrid i) (bpos j) (bpos i) (den j) (den i) h
       omega
   have hij : i = j := by
     apply distinct

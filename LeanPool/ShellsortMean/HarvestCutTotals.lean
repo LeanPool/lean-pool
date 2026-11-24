@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -36,36 +36,11 @@ theorem total_cut_mass {n : ℕ} (p : RankPlacement n) :
   simp_rw [cut_abs]
   rw [mul_sum]
 
-/-- A key threshold T and a physical cut t can be chosen independently. -/
+/-- A key threshold and a physical cut can be chosen independently. -/
 theorem count_right_le {n : ℕ} (p : RankPlacement n) (h T : ℕ) (t : Fin n) :
     ((thresholdSet (gapSort p h) T).filter (fun i => t < i)).card ≤
-      ((thresholdSet p T).filter (fun i => t < i)).card := by
-  let byResidue (q : RankPlacement n) (r : ℕ) :=
-    (thresholdSet q T).filter (fun i => i.val % h = r)
-  have cell (r : ℕ) : ((byResidue (gapSort p h) r).filter (fun i => t < i)).card ≤
-        ((byResidue p r).filter (fun i => t < i)).card := by
-    apply prefix_right_filter_card_le (chainPositions n h r)
-    · intro i hi
-      simpa only [chainPositions, mem_filter, mem_univ, true_and] using (mem_filter.mp hi).2
-    · intro i hi
-      simpa only [chainPositions, mem_filter, mem_univ, true_and] using (mem_filter.mp hi).2
-    · exact gapSort_threshold_chain_count p T h r
-    · intro i hit j hj hji
-      obtain ⟨hi, hr⟩ := mem_filter.mp hit
-      have jr : j.val % h = r := by simpa [chainPositions] using hj
-      exact mem_filter.mpr ⟨gapSort_threshold_prefix p T h i j hi (jr.trans hr.symm) hji, jr⟩
-  have partition (q : RankPlacement n) :
-      ((thresholdSet q T).filter (fun i => t < i)).card =
-      ∑ r ∈ range n, ((byResidue q r).filter (fun i => t < i)).card := by
-    rw [card_eq_sum_card_fiberwise (f := fun i : Fin n => i.val % h) (t := range n)
-      (fun i _ => mem_range.mpr (lt_of_le_of_lt (Nat.mod_le _ _) i.isLt))]
-    apply sum_congr rfl
-    intro r _
-    congr 1
-    ext i
-    simp [byResidue, and_left_comm, and_comm]
-  rw [partition, partition]
-  exact sum_le_sum (fun r _ => cell r)
+      ((thresholdSet p T).filter (fun i => t < i)).card :=
+  gapSort_threshold_right_le p h T t
 
 private theorem weighted_by_tails {n : ℕ} (S : Finset (Fin n)) :
     (∑ i ∈ S, (i.val : ℤ)) = ∑ t : Fin n, ((S.filter (fun i => t < i)).card : ℤ) := by

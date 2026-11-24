@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -60,7 +60,7 @@ private theorem dft_diff (f : ZMod N → ℂ) (k : ZMod N) :
 
 /-- The discrete Bernstein bound uses integer representatives of the physical
 support and applies just as well to a support centered at zero. -/
-theorem grid_bernstein (f : ZMod N → ℂ) (L : ℝ) (_hL : 0 ≤ L)
+theorem grid_bernstein (f : ZMod N → ℂ) (L : ℝ)
     (hs : ∀ k, f k ≠ 0 → ∃ j : ℤ, (j : ZMod N) = k ∧ |(j : ℝ)| ≤ L) :
     (∑ k, ‖dft f (k + 1) - dft f k‖ ^ 2) ≤
       (2 * Real.pi * L / N) ^ 2 * ((N : ℝ) * ∑ j, ‖f j‖ ^ 2) := by
@@ -160,7 +160,7 @@ theorem grid_positive_bernstein (f : ZMod N → ℂ) (L : ℝ) (hL : 0 ≤ L)
   have inn : (∑ k, (a k) ^ 2) = E := grid_parseval f
   have next : (∑ k, (a (k + 1)) ^ 2) = E :=
     (sum_translate (fun k ↦ (a k) ^ 2)).trans inn
-  have deriv : (∑ k, (b k) ^ 2) ≤ c ^ 2 * E := grid_bernstein f L hL hs
+  have deriv : (∑ k, (b k) ^ 2) ≤ c ^ 2 * E := grid_bernstein f L hs
   have hc : 0 ≤ c := by dsimp [c]; positivity
   have hE : 0 ≤ E := by dsimp [E]; positivity
   have p := weighted_product a b c E hc hE inn deriv

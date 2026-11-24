@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -17,11 +17,6 @@ are the same as in the per-cut estimate. -/
 @[expose] public noncomputable section
 namespace Shellsort.HarvestAggregateBudget
 open Finset Actual214 RoughGapEndpoint RoughGapScaleAssembly HarvestMenuBlock
-
-/-- Coefficient of incoming global footrule, including the retained low modes. -/
-def bF (c g D m : ℕ) : ℝ :=
-  4 * 18800 * (g : ℝ) * (D : ℝ) ^ 2 + (c : ℝ) * (((2 * m - 1 : ℕ) : ℝ) * 18800 * (32 + 8 *
-    Real.pi / D) + 4)
 
 /-- Coefficient of incoming squared displacement (the summed cut moment is half of it). -/
 def bQ (D m : ℕ) : ℝ :=
@@ -62,13 +57,6 @@ private theorem aggregate {n D m : ℕ} (j : ℕ) (p : RankPlacement n) (A : ℝ
   have sq := mul_le_mul_of_nonneg_left qmono Cpos
   change _ ≤ (A + B) * (footrule p) + C * (squareDisplacement p : ℝ)
   linarith only [foot, sq]
-
-theorem actual_block_budget {n D m : ℕ} (j : ℕ) (hc : 9400 ≤ gap j)
-    (hd : 0 < D) (hm : 0 < m) (p : RankPlacement n) :
-    let z := gapSort (gapSort p (gap (j + 2))) (gap (j + 1))
-    (∑ h ∈ choices j, (squareDisplacement (gapSort z h) : ℝ)) / ((choices j).card : ℝ) ≤
-      bF (gap j) (gap (j + 2)) D m * footrule p + bQ D m * (squareDisplacement p : ℝ) :=
-  aggregate j p _ (actual_block_square j hc hd hm p)
 
 theorem actual_block_budget_linear {n D m : ℕ} (j : ℕ) (hc : 9400 ≤ gap j)
     (hd : 0 < D) (hm : 0 < m) (p : RankPlacement n) :

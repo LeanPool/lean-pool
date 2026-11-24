@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -40,35 +40,20 @@ private theorem relabel_chain {α β : Type} [LinearOrder α] [LinearOrder β]
       simp [insertionComparedBack_append, ih.1, ih.2, next.1, next.2]
   simp [insertionComparedExecution, (back l).1, (back l).2, List.map_reverse]
 
-private theorem relabel_read {α β : Type} (f : α → β) (l : List α) (i : ℕ) (d : α) :
-    ((l.map f)[i]?).getD (f d) = f (l[i]?.getD d) := by
-  rw [List.getElem?_map]
-  cases l[i]? <;> rfl
-
 theorem relabel_pass {α β : Type} [LinearOrder α] [LinearOrder β]
     (f : α ↪o β) {n : ℕ} (a : Vector α n) (h : {k : ℕ // 0 < k}) :
     runPass (a.map f) h = ((runPass a h).1.map f, (runPass a h).2) := by
-  let row (s : Fin h.val) := List.ofFn fun v : Fin (sourceTrialLength (n / h.val) (n % h.val)
-    s.val) =>
-    a[s.val + h.val * v.val]'(actual_chain_prefix_lt n h.val h.property s v)
-  have rowmap (s : Fin h.val) :
-      (List.ofFn fun v : Fin (sourceTrialLength (n / h.val) (n % h.val) s.val) =>
-        (a.map f)[s.val + h.val * v.val]'(actual_chain_prefix_lt n h.val h.property s v)) =
-        (row s).map f := by simp [row, List.map_ofFn, Function.comp_def]
   apply Prod.ext
   · apply Vector.ext
     intro i hi
     let s : Fin h.val := ⟨i % h.val, Nat.mod_lt _ h.property⟩
-    have output := (relabel_chain f (row s)).1
-    simp only [row, List.map_ofFn, Function.comp_def] at output
-    simp only [runPass, Vector.getElem_ofFn, Vector.getElem_map]
-    rw [output]
-    exact relabel_read f _ _ _
-  · simp only [runPass, Vector.getElem_ofFn, rowmap]
+    simp only [runPass, Vector.getElem_ofFn, Vector.getElem_map, ← physicalChain_map]
+    rw [(relabel_chain f (physicalChain a h s)).1, List.getElem?_map, Option.getD_map]
+  · simp only [runPass, Vector.getElem_ofFn, ← physicalChain_map]
     apply congrArg List.sum
     apply congrArg List.ofFn
     funext s
-    exact (relabel_chain f (row s)).2
+    exact (relabel_chain f (physicalChain a h s)).2
 
 theorem relabel_word {α β : Type} [LinearOrder α] [LinearOrder β]
     (f : α ↪o β) {n : ℕ} (a : Vector α n) (w : HarvestBlockIteration.PositiveWord) :

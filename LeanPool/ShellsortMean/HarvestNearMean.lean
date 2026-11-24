@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -47,7 +47,7 @@ private theorem ring_mean {n T D : ℕ} (j : ℕ) (hc : 9400 ≤ gap j) (hd : 0 
     apply ring_support ht hp p k i
     dsimp [u] at nz
     exact_mod_cast nz
-  let v (i : Fin L) := (pad a u i : ℂ)
+  let v (i : Fin L) := (pad (α := ℝ) a u i : ℂ)
   have matchE (h b : ℕ) (pos : 0 < h) :
       energy 0 (fun i => (ringVec ht hp p k i : ℂ)) (b, h) = energy a v (b, h) := by
     let : NeZero h := ⟨pos.ne'⟩

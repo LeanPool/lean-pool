@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -24,32 +24,11 @@ theorem retained_ratio (j : ℕ) (hc : 9400 ≤ gap j) : gap (j + 2) ≤ 9 * gap
   change nextGap (nextGap (gap j)) ≤ _
   omega
 
-/-- The two coefficients multiplying the initial F and Q, respectively.
-The numerical energy contraction is independent of n and the group index. -/
-theorem calibrated_coefficients (c g : ℕ) (hg : g ≤ 9 * c) :
-    let D : ℕ := 2 ^ 79
-    let m : ℕ := 324
-    4 * 18800 * (g : ℝ) * (D : ℝ) ^ 2 + (c : ℝ) * (((2 * m - 1 : ℕ) : ℝ) * 18800 * (32 + 8 *
-      Real.pi / D) + 4)
-        ≤ (2 : ℝ) ^ 179 * c ∧
-    ((2 * m - 1 : ℕ) : ℝ) * 18800 * (8 * Real.pi / D) + 4 * (2 + (D : ℝ) ^ 2) / (2 : ℝ) ^ m
-        ≤ 1 / (2 : ℝ) ^ 47 := by
-  intro D m
-  have upper : (g : ℝ) ≤ 9 * (c : ℝ) := by exact_mod_cast hg
-  have num : 36 * 18800 * (D : ℝ) ^ 2 + (((2 * m - 1 : ℕ) : ℝ) * 18800 * (32 + 8 * Real.pi / D) + 4)
-      ≤ (2 : ℝ) ^ 179 := by
-    norm_num [D, m]
-    linarith only [Real.pi_lt_four]
-  constructor
-  · calc
-      _ ≤ 4 * 18800 * (9 * (c : ℝ)) * (D : ℝ) ^ 2 + (c : ℝ) * (((2 * m - 1 : ℕ) : ℝ) * 18800 *
-        (32 + 8 * Real.pi / D) + 4) := by gcongr
-      _ = (36 * 18800 * (D : ℝ) ^ 2 + (((2 * m - 1 : ℕ) : ℝ) * 18800 * (32 + 8 * Real.pi / D) +
-        4)) * c := by ring
-      _ ≤ _ := mul_le_mul_of_nonneg_right num (by positivity)
-  · conv_lhs => arg 2; rw [show m = 162 + 162 by decide, pow_add]
-    norm_num [D, m]
-    linarith only [Real.pi_lt_four]
+private theorem calibrated_square_coefficient : bQ (2 ^ 79) 324 ≤ 1 / (2 : ℝ) ^ 47 := by
+  unfold bQ
+  conv_lhs => arg 2; rw [show 324 = 162 + 162 by decide, pow_add]
+  norm_num
+  linarith only [Real.pi_lt_four]
 
 /-- The three-pass block with two retained gaps and the selected gap `h`. -/
 def block {n : ℕ} (j h : ℕ) (p : RankPlacement n) :=
@@ -61,19 +40,6 @@ private theorem choose_below (G : Finset ℕ) (nonempty : G.Nonempty)
   apply exists_le_of_sum_le nonempty (g := fun _ => b)
   simpa only [sum_const, nsmul_eq_mul] using bound
 
-/-- No spectral premise: the incoming permutation alone determines the
-normalized comparison-potential budget for the uniformly sampled third gap. -/
-theorem actual_block_contraction {n : ℕ} (j : ℕ) (hc : 9400 ≤ gap j) (p : RankPlacement n) :
-    (∑ h ∈ choices j, (squareDisplacement (block j h p) : ℝ)) / ((choices j).card : ℝ) ≤
-      (2 : ℝ) ^ 179 * (gap j : ℝ) * footrule p + (1 / (2 : ℝ) ^ 47) * (squareDisplacement p :
-        ℝ) := by
-  have cf := calibrated_coefficients (gap j) (gap (j + 2)) (retained_ratio j hc)
-  have Fpos : 0 ≤ footrule p := by unfold footrule transport; positivity
-  have Qpos : 0 ≤ (squareDisplacement p : ℝ) := by
-    exact_mod_cast (show 0 ≤ squareDisplacement p by unfold squareDisplacement; positivity)
-  apply (actual_block_budget (D := 2 ^ 79) (m := 324) j hc (by decide) (by decide) p).trans
-  exact add_le_add (mul_le_mul_of_nonneg_right cf.1 Fpos) (mul_le_mul_of_nonneg_right cf.2 Qpos)
-
 /-- Stronger coefficient obtained by charging each primitive packet as one. -/
 theorem actual_linear_block_contraction {n : ℕ} (j : ℕ) (hc : 9400 ≤ gap j) (p : RankPlacement n) :
     (∑ h ∈ choices j, (squareDisplacement (block j h p) : ℝ)) / ((choices j).card : ℝ) ≤
@@ -81,7 +47,7 @@ theorem actual_linear_block_contraction {n : ℕ} (j : ℕ) (hc : 9400 ≤ gap j
         ℝ) := by
   let D : ℕ := 2 ^ 79
   let m : ℕ := 324
-  have cf := (calibrated_coefficients _ _ (retained_ratio j hc)).2
+  have cf : bQ D m ≤ 1 / (2 : ℝ) ^ 47 := calibrated_square_coefficient
   have fpos : 0 ≤ footrule p := by unfold footrule transport; positivity
   have qpos : 0 ≤ (squareDisplacement p : ℝ) := by
     exact_mod_cast (show 0 ≤ squareDisplacement p by unfold squareDisplacement; positivity)
@@ -146,13 +112,6 @@ private theorem select_with_block {n : ℕ} (hn : 0 < n) (P : RankPlacement n �
     change β * uniformAverage F + α * x ≤ _
     linarith only [fbound]
   exact choose_below G (card_pos.mp card) (fun h => uniformAverage (reward h)) _ (avg.trans lim)
-
-theorem select_actual_block {n : ℕ} (hn : 0 < n) (P : RankPlacement n → RankPlacement n)
-    (j : ℕ) (hc : 9400 ≤ gap j) :
-    let x := uniformAverage (fun p => RoughGapSelection.energy (P p))
-    ∃ h ∈ choices j, uniformAverage (fun p => RoughGapSelection.energy (block j h (P p))) ≤
-      (1 / (2 : ℝ) ^ 47) * x + (2 : ℝ) ^ 179 * (gap j : ℝ) * Real.sqrt x :=
-  select_with_block hn P j hc _ (by positivity) (actual_block_contraction j hc)
 
 theorem select_actual_linear_block {n : ℕ} (hn : 0 < n) (P : RankPlacement n → RankPlacement n)
     (j : ℕ) (hc : 9400 ≤ gap j) :

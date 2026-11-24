@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -30,17 +30,6 @@ private theorem collect_spec {n : ℕ} {α : Type} (xs : List (Tree n α)) (p : 
   | nil => simp [collect, Tree.run]
   | cons x xs ih => simp [collect, Tree.run_bind, Tree.run, ih.1, ih.2]
 
-/-- Extract the slots of one residue chain in increasing physical position. -/
-def physicalChain {α : Type} {n : ℕ} (a : Vector α n)
-    (h : {k : ℕ // 0 < k}) (s : Fin h.val) : List α :=
-  List.ofFn fun v : Fin (sourceTrialLength (n / h.val) (n % h.val) s.val) =>
-    a[s.val + h.val * v.val]'(actual_chain_prefix_lt n h.val h.property s v)
-
-private theorem physicalChain_map {α β : Type} {n : ℕ} (a : Vector α n) (f : α → β)
-    (h : {k : ℕ // 0 < k}) (s : Fin h.val) :
-    (physicalChain a h s).map f = physicalChain (a.map f) h s := by
-  simp [physicalChain, List.map_ofFn, Function.comp_def]
-
 /-- The comparison tree for one gap pass, with outputs reassembled into slot order. -/
 def passTree {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k}) :
     Tree n (Vector (Fin n) n) :=
@@ -48,11 +37,6 @@ def passTree {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k}) :
   (collect trees).bind fun rows => .leaf (Vector.ofFn fun i : Fin n =>
     let row := rows[i.val % h.val]?.getD []
     row[i.val / h.val]?.getD a[i.val])
-
-private theorem map_read {α β : Type} (f : α → β) (l : List α) (j : ℕ) (default : α) :
-    f (l[j]?.getD default) = ((l.map f)[j]?).getD (f default) := by
-  rw [List.getElem?_map]
-  cases l[j]? <;> rfl
 
 theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
     (p : RankPlacement n) :
@@ -74,8 +58,8 @@ theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
       simp [trees, List.map_ofFn, s.isLt, Function.comp_def]
     rw [he]
     simp only [Option.getD_some]
-    rw [map_read p.symm ((chainTree (physicalChain a h s)).run p).1 (i / h.val) a[i], (chain s).1]
-    simp [runPass, physicalChain, s]
+    rw [← Option.getD_map p.symm, ← List.getElem?_map, (chain s).1]
+    simp [runPass, s]
   · simp only [passTree, Tree.run_bind, Tree.run, List.append_nil]
     change ((collect trees).run p).2.length = _
     rw [scans.2]

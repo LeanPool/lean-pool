@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -19,13 +19,22 @@ any linearly ordered keys; the specification theorem uses distinct ranks. -/
 namespace Shellsort.HarvestOperationalAudit
 open HarvestBlockIteration
 
+/-- Extract the slots of one residue chain in increasing physical position. -/
+def physicalChain {α : Type} {n : ℕ} (a : Vector α n)
+    (h : {k : ℕ // 0 < k}) (s : Fin h.val) : List α :=
+  List.ofFn fun v : Fin (sourceTrialLength (n / h.val) (n % h.val) s.val) =>
+    a[s.val + h.val * v.val]'(actual_chain_prefix_lt n h.val h.property s v)
+
+theorem physicalChain_map {α β : Type} {n : ℕ} (a : Vector α n) (f : α → β)
+    (h : {k : ℕ // 0 < k}) (s : Fin h.val) :
+    (physicalChain a h s).map f = physicalChain (a.map f) h s := by
+  simp [physicalChain, List.map_ofFn, Function.comp_def]
+
 /-- Sort each gap chain and return the reassembled array and executed comparison count. -/
 def runPass {α : Type} [LinearOrder α] {n : ℕ} (a : Vector α n)
     (gap : {k : ℕ // 0 < k}) : Vector α n × ℕ :=
   let k := gap.val
-  let chains := Vector.ofFn fun s : Fin k =>
-    insertionComparedExecution (List.ofFn fun v : Fin (sourceTrialLength (n / k) (n % k) s.val) =>
-      a[s.val + k * v.val]'(actual_chain_prefix_lt n k gap.property s v))
+  let chains := Vector.ofFn fun s : Fin k => insertionComparedExecution (physicalChain a gap s)
   let output := Vector.ofFn fun i : Fin n =>
     let s : Fin k := ⟨i.val % k, Nat.mod_lt _ gap.property⟩
     (chains[s.val].output[i.val / k]?).getD a[i.val]
@@ -48,10 +57,9 @@ theorem runPass_slots {n : ℕ} (p : RankPlacement n) (h : {k : ℕ // 0 < k}) :
     runPass (slots p) h = (slots (gapSort p h.val), gapComparisonCost p h.val h.property) := by
   rcases h with ⟨k, hk⟩
   let exec := fun s : Fin k => insertionComparedExecution (List.ofFn (chainKeys p k hk s))
-  have chain (s : Fin k) : insertionComparedExecution
-      (List.ofFn fun v : Fin (sourceTrialLength (n / k) (n % k) s.val) =>
-        (slots p)[s.val + k * v.val]'(actual_chain_prefix_lt n k hk s v)) = exec s := by
-    simp only [slots, Vector.getElem_ofFn]
+  have chain (s : Fin k) : insertionComparedExecution (physicalChain (slots p) ⟨k, hk⟩ s) =
+      exec s := by
+    simp only [physicalChain, slots, Vector.getElem_ofFn]
     rfl
   apply Prod.ext
   · apply Vector.ext

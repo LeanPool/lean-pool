@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -35,7 +35,7 @@ theorem actual_chain_prefix_lt (n h : ℕ) (hh : 0 < h) (s : Fin h)
   rw [actual_chain_length n h hh s]
   exact v.isLt
 
-theorem actual_chain_quotient_lt {n h : ℕ} (_hh : 0 < h) (i : Fin n) :
+theorem actual_chain_quotient_lt {n h : ℕ} (i : Fin n) :
     i.val / h < sourceTrialLength (n / h) (n % h) (i.val % h) := by
   have hi := i.isLt
   have hiE := Nat.mod_add_div i.val h
@@ -51,7 +51,7 @@ theorem actual_chain_quotient_lt {n h : ℕ} (_hh : 0 < h) (i : Fin n) :
 
 /-- Explicit residue/quotient coordinates for every original position. -/
 def positionChainEquiv (n h : ℕ) (hh : 0 < h) : Fin n ≃ ChainCoordinate n h where
-  toFun i := ⟨⟨i.val % h, Nat.mod_lt _ hh⟩, ⟨i.val / h, actual_chain_quotient_lt hh i⟩⟩
+  toFun i := ⟨⟨i.val % h, Nat.mod_lt _ hh⟩, ⟨i.val / h, actual_chain_quotient_lt i⟩⟩
   invFun c := ⟨c.1.val + h * c.2.val, actual_chain_prefix_lt n h hh c.1 c.2⟩
   left_inv i := Fin.ext (Nat.mod_add_div i.val h)
   right_inv c := by

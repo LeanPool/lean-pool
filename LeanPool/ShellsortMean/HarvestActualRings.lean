@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -162,10 +162,10 @@ theorem merged_nonzero_support {n T H : ℕ} (ht : T ≤ n) (hp : 0 < H) (p : Ra
   simp [mergedVec, hn'] at hn
 
 /-- Pad a physical array by zero beyond the end of a support interval. -/
-def pad {n L : ℕ} (a : ℕ) (u : Fin n → ℝ) (j : Fin L) : ℝ :=
+def pad {α : Type*} [Zero α] {n L : ℕ} (a : ℕ) (u : Fin n → α) (j : Fin L) : α :=
   if v : a + j.val < n then u ⟨a + j.val, v⟩ else 0
 
-theorem pad_sum {n L : ℕ} (a : ℕ) (u : Fin n → ℝ)
+theorem pad_sum {α : Type*} [AddCommMonoid α] {n L : ℕ} (a : ℕ) (u : Fin n → α)
     (support : ∀ i, u i ≠ 0 → a ≤ i.val ∧ i.val < a + L) :
     ∑ i, u i = ∑ j : Fin L, pad a u j := by
   apply sum_bij_ne_zero (fun i _ nz => (⟨i.val - a, by have := support i nz; omega⟩ : Fin L))

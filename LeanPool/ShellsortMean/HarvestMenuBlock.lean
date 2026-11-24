@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -111,16 +111,6 @@ theorem block_square_with_low {n D m : ℕ} (j : ℕ) (hc : 9400 ≤ gap j)
       intro t ht
       exact add_le_add (low (t + 1) (mem_range.mp ht))
         (actual_menu_high_energy j hc hd hm (mem_range.mp ht) z)
-
-theorem actual_block_square {n D m : ℕ} (j : ℕ) (hc : 9400 ≤ gap j)
-    (hd : 0 < D) (hm : 0 < m) (p : RankPlacement n) :
-    let z := gapSort (gapSort p (gap (j + 2))) (gap (j + 1))
-    (∑ h ∈ choices j, (RoughGapScaleAssembly.squareDisplacement (gapSort z h) : ℝ)) /
-      ((choices j).card : ℝ) ≤ ∑ t ∈ range n,
-      ((4 * 18800 * (gap (j + 2) : ℝ) * (D : ℝ) ^ 2) * mass p (t + 1) +
-        highBound (gap j) D m (mass z (t + 1)) (cutMoment z (t + 1) : ℝ)) :=
-  block_square_with_low j hc hd hm p (4 * 18800 * (gap (j + 2) : ℝ) * (D : ℝ) ^ 2)
-    (fun T hT => actual_low_quadratic_mean p T hT j hc)
 
 theorem actual_block_square_linear {n D m : ℕ} (j : ℕ) (hc : 9400 ≤ gap j)
     (hd : 0 < D) (hm : 0 < m) (p : RankPlacement n) :

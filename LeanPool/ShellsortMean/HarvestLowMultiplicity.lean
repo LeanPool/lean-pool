@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -134,49 +134,5 @@ theorem low_menu_energy {n c g₁ g₂ D B : ℕ}
       simp only [sum_const, nsmul_eq_mul, sum_mul]
     _ ≤ ((D : ℝ) * B) * K := mul_le_mul_of_nonneg_right countR kp
     _ = _ := by dsimp [K, mass]; ring
-
-theorem actual_low_quadratic_mean {n D : ℕ} (p : RankPlacement n) (T : ℕ) (hT : T ≤ n)
-    (j : ℕ) (hc : 9400 ≤ gap j) :
-    let c := gap j
-    let g₁ := gap (j + 2)
-    let g₂ := gap (j + 1)
-    let G := window c (Nat.gcd g₁ g₂)
-    (∑ h ∈ G, ∑ a ∈ lowGrid h D, energy 0 (fun i : Fin n ↦
-      (slotError (gapSort (gapSort p g₁) g₂) T i : ℂ)) (a, h)) / (G.card : ℝ) ≤
-      (4 * 18800 * (g₁ : ℝ) * D ^ 2) * (∑ i, |(slotError p T i : ℝ)|) := by
-  intro c g₁ g₂ G
-  have hp : (c : ℝ) ≠ 0 := by exact_mod_cast (gap_pos j).ne'
-  have hle : g₂ ≤ g₁ := by
-    change gap (j + 1) ≤ nextGap (gap (j + 1))
-    have := (scaled_next_bounds (gap (j + 1))).1
-    omega
-  have elems : ∀ h ∈ G, h ≤ 2 * c := by
-    intro h hh
-    have hi := (mem_Icc.mp (mem_filter.mp hh).1).2
-    omega
-  have bound := low_menu_energy (c := c) (D := D) p T hT (gap_pos (j + 1)) hle G (fun _ hh => hh)
-    elems
-  have atom : (1 : ℝ) / G.card ≤ 18800 / (c : ℝ) := actual_atom_le j hc
-  have one := mul_le_mul_of_nonneg_left bound (show 0 ≤ (1 : ℝ) / G.card by positivity)
-  have two := mul_le_mul_of_nonneg_right atom
-    (show (0 : ℝ) ≤ (2 * (g₁ : ℝ) * D ^ 2*↑(2 * c)) * (∑ i, |(slotError p T i : ℝ)|) by positivity)
-  rw [div_eq_inv_mul]
-  simpa only [one_div] using (one.trans two).trans_eq (by push_cast; field_simp; ring)
-
-/-- Numerical portion of the existing block budget using the quadratic mean.
-The high-denominator coefficient budgets are taken from Actual214Calibration. -/
-theorem quadratic_budget :
-    let D : ℕ := 2 ^ 79
-    let J : ℕ := 2 ^ 15
-    let A : ℕ := 2 ^ 196
-    let B : ℕ := 2 ^ 16
-    36 * J * D ^ 2 + J * 2 ^ 15 < 2 ^ 179 ∧
-    A * A * B * B + 2 ^ (47 + 178 + 1) * A * B ≤ 2 ^ 47 * A * A ∧
-    4 * A * B * 2 ^ 12 ≤ 2 ^ 226 ∧ 4 * A * 2 ^ 49 ≤ 2 ^ 247 ∧
-    (1 + 2 ^ 226) + 33 * (1 + 2 ^ 247) < (2 : ℕ) ^ 255 := by decide
-
-
-
-
 
 end Shellsort.Actual214

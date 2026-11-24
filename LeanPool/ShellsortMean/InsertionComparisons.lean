@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -20,34 +20,9 @@ key comparisons. This is a counter model, not machine running time.
 
 namespace Shellsort
 
-/-- The output of a comparison-counting insertion operation and its two cost counters. -/
-structure ComparedInsertion (α : Type*) where
-  /-- The output in the orientation of the insertion routine. -/
-  output : List α
-  /-- The number of existing keys shifted past the inserted key. -/
-  shifts : ℕ
-  /-- The number of executed key comparisons, including a stopping comparison when present. -/
-  comparisons : ℕ
-  deriving Repr
-
-/-- Insert one key into a reversed sorted chain and record its shifts and comparisons. -/
-def insertCompared {α : Type*} [LinearOrder α] (a : α) : List α → ComparedInsertion α
-  | [] => ⟨[a], 0, 0⟩
-  | b :: l =>
-    if a < b then
-      let next := insertCompared a l
-      ⟨b :: next.output, next.shifts + 1, next.comparisons + 1⟩
-    else ⟨a :: b :: l, 0, 1⟩
-
 theorem insertCompared_projection {α : Type*} [LinearOrder α] (a : α) (l : List α) :
-    ((insertCompared a l).output, (insertCompared a l).shifts) = insertFromRight a l := by
-  induction l with
-  | nil => rfl
-  | cons b l ih =>
-    have ho := congrArg Prod.fst ih
-    have hs := congrArg Prod.snd ih
-    simp only at ho hs
-    by_cases hab : a < b <;> simp [insertCompared, insertFromRight, hab, ho, hs]
+    ((insertCompared a l).output, (insertCompared a l).shifts) = insertFromRight a l :=
+  rfl
 
 theorem insertCompared_output {α : Type*} [LinearOrder α] (a : α) (l : List α) :
     (insertCompared a l).output = (insertFromRight a l).1 :=
@@ -69,12 +44,6 @@ theorem insertCompared_bounds {α : Type*} [LinearOrder α] (a : α) (l : List �
       omega
     · simp [insertCompared, hab]
 
-/-- Insertion sort with an internal reversed output and accumulated cost counters. -/
-def insertionComparedBack {α : Type*} [LinearOrder α] : List α → ComparedInsertion α :=
-  List.reverseRec ⟨[], 0, 0⟩ (fun _ a previous =>
-    let step := insertCompared a previous.output
-    ⟨step.output, previous.shifts + step.shifts, previous.comparisons + step.comparisons⟩)
-
 theorem insertionComparedBack_nil {α : Type*} [LinearOrder α] :
     insertionComparedBack ([] : List α) = ⟨[], 0, 0⟩ := by simp [insertionComparedBack]
 
@@ -88,15 +57,8 @@ theorem insertionComparedBack_append {α : Type*} [LinearOrder α] (l : List α)
   simp [insertionComparedBack]
 
 theorem insertionComparedBack_projection {α : Type*} [LinearOrder α] (l : List α) :
-    ((insertionComparedBack l).output, (insertionComparedBack l).shifts) = insertionBack l := by
-  induction l using List.reverseRecOn with
-  | nil => simp [insertionComparedBack_nil, insertionBack_nil]
-  | append_singleton l a ih =>
-    have ho := congrArg Prod.fst ih
-    have hs := congrArg Prod.snd ih
-    simp only at ho hs
-    rw [insertionComparedBack_append, insertionBack_append_singleton]
-    simp only [ho, hs, insertCompared_output, insertCompared_shifts]
+    ((insertionComparedBack l).output, (insertionComparedBack l).shifts) = insertionBack l :=
+  rfl
 
 /-- The first key of a nonempty chain requires no key comparison. -/
 theorem insertionComparedBack_bounds {α : Type*} [LinearOrder α] (l : List α) :

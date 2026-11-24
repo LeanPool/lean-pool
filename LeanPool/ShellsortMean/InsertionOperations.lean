@@ -4,7 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Miaozhen Yu
 -/
 
-/- Modified for Lean Pool: module conversion, import paths, and diagnostics. -/
+/- Modified for Lean Pool: module conversion, import paths, diagnostics, and proof consolidation. -/
 
 module
 
@@ -38,34 +38,54 @@ def listInversions {α : Type*} [LinearOrder α] : List α → ℕ
   | [] => 0
   | a :: l => smallerCount a l + listInversions l
 
-/-- Insert at the physical right end of a sorted prefix represented backwards. -/
-def insertFromRight {α : Type*} [LinearOrder α] (a : α) : List α → List α × ℕ
-  | [] => ([a], 0)
+/-- The output of a comparison-counting insertion operation and its two cost counters. -/
+structure ComparedInsertion (α : Type*) where
+  /-- The output in the orientation of the insertion routine. -/
+  output : List α
+  /-- The number of existing keys shifted past the inserted key. -/
+  shifts : ℕ
+  /-- The number of executed key comparisons, including a stopping comparison when present. -/
+  comparisons : ℕ
+  deriving Repr
+
+/-- Insert one key into a reversed sorted chain and record its shifts and comparisons. -/
+def insertCompared {α : Type*} [LinearOrder α] (a : α) : List α → ComparedInsertion α
+  | [] => ⟨[a], 0, 0⟩
   | b :: l =>
     if a < b then
-      let next := insertFromRight a l
-      (b :: next.1, next.2 + 1)
-    else (a :: b :: l, 0)
+      let next := insertCompared a l
+      ⟨b :: next.output, next.shifts + 1, next.comparisons + 1⟩
+    else ⟨a :: b :: l, 0, 1⟩
+
+/-- Insert at the physical right end of a sorted prefix represented backwards. -/
+def insertFromRight {α : Type*} [LinearOrder α] (a : α) (l : List α) : List α × ℕ :=
+  ((insertCompared a l).output, (insertCompared a l).shifts)
+
+private theorem insertFromRight_cons {α : Type*} [LinearOrder α] (a b : α) (l : List α) :
+    insertFromRight a (b :: l) =
+      if a < b then (b :: (insertFromRight a l).1, (insertFromRight a l).2 + 1)
+      else (a :: b :: l, 0) := by
+  by_cases h : a < b <;> simp [insertFromRight, insertCompared, h]
 
 theorem insertFromRight_perm {α : Type*} [LinearOrder α] (a : α) (l : List α) :
     (insertFromRight a l).1.Perm (a :: l) := by
   induction l with
-  | nil => simp [insertFromRight]
+  | nil => simp [insertFromRight, insertCompared]
   | cons b l ih =>
     by_cases hab : a < b
-    · simp only [insertFromRight, hab, ite_true]
+    · simp only [insertFromRight_cons, hab, ite_true]
       exact (ih.cons b).trans (List.Perm.swap a b l)
-    · simp [insertFromRight, hab]
+    · simp [insertFromRight_cons, hab]
 
 theorem insertFromRight_sorted {α : Type*} [LinearOrder α] (a : α) (l : List α)
     (hl : l.Pairwise (fun x y => y ≤ x)) :
     (insertFromRight a l).1.Pairwise (fun x y => y ≤ x) := by
   induction l with
-  | nil => simp [insertFromRight]
+  | nil => simp [insertFromRight, insertCompared]
   | cons b l ih =>
     obtain ⟨hb, hl⟩ := List.pairwise_cons.mp hl
     by_cases hab : a < b
-    · simp only [insertFromRight, hab, ite_true]
+    · simp only [insertFromRight_cons, hab, ite_true]
       apply List.pairwise_cons.mpr
       refine ⟨?_, ih hl⟩
       intro y hy
@@ -73,7 +93,7 @@ theorem insertFromRight_sorted {α : Type*} [LinearOrder α] (a : α) (l : List 
       rcases List.mem_cons.mp hmem with rfl | hymem
       · exact le_of_lt hab
       · exact hb y hymem
-    · simp only [insertFromRight, hab, ite_false]
+    · simp only [insertFromRight_cons, hab, ite_false]
       apply List.pairwise_cons.mpr
       refine ⟨?_, List.pairwise_cons.mpr ⟨hb, hl⟩⟩
       intro y hy
@@ -91,11 +111,11 @@ theorem insertFromRight_count {α : Type*} [LinearOrder α] (a : α) (l : List �
     (hl : l.Pairwise (fun x y => y ≤ x)) :
     (insertFromRight a l).2 = largerCount a l := by
   induction l with
-  | nil => simp [insertFromRight, largerCount]
+  | nil => simp [insertFromRight, insertCompared, largerCount]
   | cons b l ih =>
     obtain ⟨hb, hl⟩ := List.pairwise_cons.mp hl
     by_cases hab : a < b
-    · simp [insertFromRight, hab, ih hl, largerCount, Nat.add_comm]
+    · simp [insertFromRight_cons, hab, ih hl, largerCount, Nat.add_comm]
     · have hfilter : (b :: l).filter (fun x => a < x) = [] := by
         apply List.filter_eq_nil_iff.mpr
         intro y hy
@@ -103,7 +123,7 @@ theorem insertFromRight_count {α : Type*} [LinearOrder α] (a : α) (l : List �
         rcases List.mem_cons.mp hy with rfl | hymem
         · exact le_of_not_gt hab
         · exact (hb y hymem).trans (le_of_not_gt hab)
-      simp [insertFromRight, hab, largerCount, hfilter]
+      simp [insertFromRight_cons, hab, largerCount, hfilter]
 
 theorem listInversions_append_singleton {α : Type*} [LinearOrder α]
     (l : List α) (a : α) :
@@ -115,23 +135,27 @@ theorem listInversions_append_singleton {α : Type*} [LinearOrder α]
       simp [listInversions, smallerCount, largerCount, List.filter_append, ih, hab] <;>
       omega
 
+/-- Insertion sort with an internal reversed output and accumulated cost counters. -/
+def insertionComparedBack {α : Type*} [LinearOrder α] : List α → ComparedInsertion α :=
+  List.reverseRec ⟨[], 0, 0⟩ (fun _ a previous =>
+    let step := insertCompared a previous.output
+    ⟨step.output, previous.shifts + step.shifts, previous.comparisons + step.comparisons⟩)
+
 /-- Process input keys in their original left-to-right order. The first output
 is the sorted physical prefix represented backwards; the second is shifts. -/
-def insertionBack {α : Type*} [LinearOrder α] : List α → List α × ℕ :=
-  List.reverseRec ([], 0) (fun _ a previous =>
-    let step := insertFromRight a previous.1
-    (step.1, previous.2 + step.2))
+def insertionBack {α : Type*} [LinearOrder α] (l : List α) : List α × ℕ :=
+  ((insertionComparedBack l).output, (insertionComparedBack l).shifts)
 
 theorem insertionBack_nil {α : Type*} [LinearOrder α] :
     insertionBack ([] : List α) = ([], 0) := by
-  simp [insertionBack]
+  simp [insertionBack, insertionComparedBack]
 
 theorem insertionBack_append_singleton {α : Type*} [LinearOrder α]
     (l : List α) (a : α) :
     insertionBack (l ++ [a]) =
       ((insertFromRight a (insertionBack l).1).1,
         (insertionBack l).2 + (insertFromRight a (insertionBack l).1).2) := by
-  simp [insertionBack]
+  simp [insertionBack, insertionComparedBack, insertFromRight]
 
 theorem insertionBack_perm {α : Type*} [LinearOrder α] (l : List α) :
     (insertionBack l).1.Perm l := by
