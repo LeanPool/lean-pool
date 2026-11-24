@@ -12,7 +12,7 @@ public import LeanPool.ShellsortMean.Actual214LowGrid
 public import LeanPool.ShellsortMean.RoughGapFarInteraction
 public import LeanPool.ShellsortMean.HarvestActualRings
 public import LeanPool.ShellsortMean.RoughGapDenominatorAverage
-public import Mathlib.Analysis.Fourier.ZMod
+public import LeanPool.ShellsortMean.FiniteFourier
 
 /-! The high-denominator inverse Fourier kernel on a genuine interval.
 All transforms are unnormalized. -/
@@ -133,10 +133,6 @@ theorem high_interval_kernel {len : ℕ} (D start b : ℕ) (v : Fin len → ℂ)
   apply (add_le_add (full_interval (h := h) start b v unit) small).trans
   push_cast; ring_nf; exact le_rfl
 
-private theorem conj_char (t : ZMod h) : conj (stdAddChar (-t)) = stdAddChar t := by
-  rw [stdAddChar_apply, stdAddChar_apply, AddChar.map_neg_eq_inv, Circle.coe_inv_eq_conj]
-  simp
-
 /-- Each outer weight evaluates the bounded projected kernel at its own slot.
 The two vectors may overlap and have arbitrary signs. -/
 theorem high_far_cross {len : ℕ} {κ : Type*} [Fintype κ] (D start : ℕ) (v : Fin len → ℂ)
@@ -150,7 +146,7 @@ theorem high_far_cross {len : ℕ} {κ : Type*} [Fintype κ] (D start : ℕ) (v 
   let K (j : κ) := ∑ a ∈ G, X a * stdAddChar ((loc j : ZMod h) * (a : ZMod h))
   have cross (a : ℕ) : X a * conj (coeff loc w (a : ZMod h)) =
       ∑ j, (X a * stdAddChar ((loc j : ZMod h) * (a : ZMod h))) * conj (w j) := by
-    simp only [coeff, map_sum, map_mul, conj_char, mul_sum, mul_assoc]
+    simp only [coeff, map_sum, map_mul, FiniteFourier.stdAddChar_conj_neg, mul_sum, mul_assoc]
   change ‖∑ a ∈ G, X a * conj (coeff loc w (a : ZMod h))‖ ≤ _
   simp_rw [cross]
   rw [sum_comm]

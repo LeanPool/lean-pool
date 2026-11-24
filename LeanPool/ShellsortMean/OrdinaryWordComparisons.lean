@@ -18,6 +18,13 @@ record count is computed from the input list, independently of the counters.
 -/
 
 @[expose] public noncomputable section
+namespace Shellsort.HarvestBlockIteration
+
+/-- A finite word of positive gaps for ordinary Shellsort. -/
+abbrev PositiveWord := List {k : ℕ // 0 < k}
+
+end Shellsort.HarvestBlockIteration
+
 namespace Shellsort
 open scoped BigOperators
 

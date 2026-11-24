@@ -70,11 +70,8 @@ theorem short_full_grid {d g b : ℕ} [NeZero d] (hb : b ≤ d / d.gcd g) :
         _ from full_kernel loc (fun _ => (1 : ℂ)) (loc i)]
     have eq (j : Fin b) : (loc j : ZMod d) = (loc i : ZMod d) ↔ j = i := ⟨inj, fun z => z ▸ rfl⟩
     simp [eq]
-  have ch (t : ZMod d) : conj (stdAddChar (-t)) = stdAddChar t := by
-    rw [stdAddChar_apply, stdAddChar_apply, AddChar.map_neg_eq_inv, Circle.coe_inv_eq_conj]
-    simp
   have cv (a : ℕ) : conj (X a) = ∑ j, stdAddChar ((loc j : ZMod d) * (a : ZMod d)) := by
-    simp [X, coeff, ch]
+    simp [X, coeff, FiniteFourier.stdAddChar_conj_neg]
   have whole : (∑ a ∈ range d, X a * conj (X a)) = (d : ℂ) * b := by
     simp_rw [cv, mul_sum]
     rw [sum_comm]

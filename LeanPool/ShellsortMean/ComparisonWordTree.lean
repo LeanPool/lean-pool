@@ -34,9 +34,7 @@ private theorem collect_spec {n : ℕ} {α : Type} (xs : List (Tree n α)) (p : 
 def passTree {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k}) :
     Tree n (Vector (Fin n) n) :=
   let trees := List.ofFn fun s : Fin h.val => chainTree (physicalChain a h s)
-  (collect trees).bind fun rows => .leaf (Vector.ofFn fun i : Fin n =>
-    let row := rows[i.val % h.val]?.getD []
-    row[i.val / h.val]?.getD a[i.val])
+  (collect trees).bind fun rows => .leaf (assembleChains a h (fun s => rows[s.val]?.getD []))
 
 theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
     (p : RankPlacement n) :
@@ -49,7 +47,8 @@ theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
   constructor
   · apply Vector.ext
     intro i hi
-    simp only [passTree, Tree.run_bind, Tree.run, Vector.getElem_map, Vector.getElem_ofFn]
+    simp only [passTree, assembleChains, Tree.run_bind, Tree.run, Vector.getElem_map,
+      Vector.getElem_ofFn]
     change p.symm (_[i / h.val]?.getD a[i]) = _
     rw [show ((collect trees).run p).1 = _ from scans.1]
     let s : Fin h.val := ⟨i % h.val, Nat.mod_lt _ h.property⟩
@@ -59,7 +58,7 @@ theorem passTree_spec {n : ℕ} (a : Vector (Fin n) n) (h : {k : ℕ // 0 < k})
     rw [he]
     simp only [Option.getD_some]
     rw [← Option.getD_map p.symm, ← List.getElem?_map, (chain s).1]
-    simp [runPass, s]
+    simp [runPass, assembleChains, s]
   · simp only [passTree, Tree.run_bind, Tree.run, List.append_nil]
     change ((collect trees).run p).2.length = _
     rw [scans.2]

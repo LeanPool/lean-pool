@@ -44,11 +44,10 @@ theorem relabel_pass {α β : Type} [LinearOrder α] [LinearOrder β]
     (f : α ↪o β) {n : ℕ} (a : Vector α n) (h : {k : ℕ // 0 < k}) :
     runPass (a.map f) h = ((runPass a h).1.map f, (runPass a h).2) := by
   apply Prod.ext
-  · apply Vector.ext
-    intro i hi
-    let s : Fin h.val := ⟨i % h.val, Nat.mod_lt _ h.property⟩
-    simp only [runPass, Vector.getElem_ofFn, Vector.getElem_map, ← physicalChain_map]
-    rw [(relabel_chain f (physicalChain a h s)).1, List.getElem?_map, Option.getD_map]
+  · simp only [runPass, Vector.getElem_ofFn, ← physicalChain_map, assembleChains_map]
+    congr 1
+    funext s
+    exact (relabel_chain f (physicalChain a h s)).1
   · simp only [runPass, Vector.getElem_ofFn, ← physicalChain_map]
     apply congrArg List.sum
     apply congrArg List.ofFn

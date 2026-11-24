@@ -8,7 +8,7 @@ Authors: Miaozhen Yu
 
 module
 
-public import LeanPool.ShellsortMean.HarvestFullSchedule
+public import LeanPool.ShellsortMean.OrdinaryWordComparisons
 
 /-! A slot-indexed execution of ordinary Shellsort, instrumented for key comparisons.
 One vector caches the actual insertion result for each chain. Both the next
@@ -30,14 +30,28 @@ theorem physicalChain_map {α β : Type} {n : ℕ} (a : Vector α n) (f : α →
     (physicalChain a h s).map f = physicalChain (a.map f) h s := by
   simp [physicalChain, List.map_ofFn, Function.comp_def]
 
+/-- Reassemble the sorted residue chains in physical slot order. -/
+def assembleChains {α : Type} {n : ℕ} (a : Vector α n) (gap : {k : ℕ // 0 < k})
+    (rows : Fin gap.val → List α) : Vector α n :=
+  Vector.ofFn fun i : Fin n =>
+    let s : Fin gap.val := ⟨i.val % gap.val, Nat.mod_lt _ gap.property⟩
+    (rows s)[i.val / gap.val]?.getD a[i.val]
+
+/-- Reassembly commutes with mapping each key and each sorted chain. -/
+theorem assembleChains_map {α β : Type} {n : ℕ} (a : Vector α n) (f : α → β)
+    (gap : {k : ℕ // 0 < k}) (rows : Fin gap.val → List α) :
+    (assembleChains a gap rows).map f = assembleChains (a.map f) gap (fun s => (rows s).map f) := by
+  apply Vector.ext
+  intro i hi
+  simp only [assembleChains, Vector.getElem_ofFn, Vector.getElem_map, List.getElem?_map,
+    Option.getD_map]
+
 /-- Sort each gap chain and return the reassembled array and executed comparison count. -/
 def runPass {α : Type} [LinearOrder α] {n : ℕ} (a : Vector α n)
     (gap : {k : ℕ // 0 < k}) : Vector α n × ℕ :=
   let k := gap.val
   let chains := Vector.ofFn fun s : Fin k => insertionComparedExecution (physicalChain a gap s)
-  let output := Vector.ofFn fun i : Fin n =>
-    let s : Fin k := ⟨i.val % k, Nat.mod_lt _ gap.property⟩
-    (chains[s.val].output[i.val / k]?).getD a[i.val]
+  let output := assembleChains a gap (fun s => chains[s.val].output)
   (output, (List.ofFn fun s : Fin k => chains[s.val].comparisons).sum)
 
 /-- Execute the gap word and accumulate the number of key comparisons. -/
@@ -64,7 +78,7 @@ theorem runPass_slots {n : ℕ} (p : RankPlacement n) (h : {k : ℕ // 0 < k}) :
   apply Prod.ext
   · apply Vector.ext
     intro i hi
-    simp only [runPass, Vector.getElem_ofFn]
+    simp only [runPass, assembleChains, Vector.getElem_ofFn]
     rw [chain ⟨i % k, Nat.mod_lt _ hk⟩]
     let coord := positionChainEquiv n k hk (⟨i, hi⟩ : Fin n)
     change ((exec coord.1).output[coord.2.val]?).getD _ = _
@@ -86,20 +100,5 @@ theorem runWord_slots {n : ℕ} (p : RankPlacement n) (w : PositiveWord) :
   | nil => rfl
   | cons h t ih =>
     simp only [runWord, runPass_slots, ih, List.map_cons, sortWord, ordinaryWordComparisons]
-
-theorem exists_executed_family :
-    ∃ W : ℕ → PositiveWord, ∀ n : ℕ, 2 ≤ n →
-      ((W n).map Subtype.val).Pairwise (· > ·) ∧
-      (∀ h ∈ W n, h.val < n) ∧ ((W n).map Subtype.val).getLast? = some 1 ∧
-      (W n).length ≤ Nat.log 2 n ∧
-      (∀ p : RankPlacement n, (runWord (slots p) (W n)).1 = Vector.ofFn id) ∧
-      uniformAverage (fun p : RankPlacement n => ((runWord (slots p) (W n)).2 : ℝ)) ≤
-        (1 + (2 : ℝ) ^ 165) * (n : ℝ) * Real.logb 2 n := by
-  obtain ⟨W, spec⟩ := HarvestFullSchedule.exists_size_indexed_family
-  refine ⟨W, fun n hn => ?_⟩
-  obtain ⟨order, cap, last, sorted, count, cost⟩ := spec n hn
-  refine ⟨order, cap, last, count, fun p => ?_, ?_⟩
-  · rw [runWord_slots, sorted]; rfl
-  · simpa only [runWord_slots] using cost
 
 end Shellsort.HarvestOperationalAudit

@@ -8,6 +8,7 @@ Authors: Miaozhen Yu
 
 module
 
+public import LeanPool.ShellsortMean.HarvestOperationalAudit
 public import LeanPool.ShellsortMean.HarvestTenCover
 public import LeanPool.ShellsortMean.HarvestTenLegal
 public import Mathlib.Analysis.SpecialFunctions.Log.Base
@@ -118,3 +119,24 @@ theorem exists_size_indexed_family :
   exact Classical.choose_spec (exists_ordinary_shellsort_word n hn)
 
 end Shellsort.HarvestFullSchedule
+
+namespace Shellsort.HarvestOperationalAudit
+
+open HarvestBlockIteration
+
+theorem exists_executed_family :
+    ∃ W : ℕ → PositiveWord, ∀ n : ℕ, 2 ≤ n →
+      ((W n).map Subtype.val).Pairwise (· > ·) ∧
+      (∀ h ∈ W n, h.val < n) ∧ ((W n).map Subtype.val).getLast? = some 1 ∧
+      (W n).length ≤ Nat.log 2 n ∧
+      (∀ p : RankPlacement n, (runWord (slots p) (W n)).1 = Vector.ofFn id) ∧
+      uniformAverage (fun p : RankPlacement n => ((runWord (slots p) (W n)).2 : ℝ)) ≤
+        (1 + (2 : ℝ) ^ 165) * (n : ℝ) * Real.logb 2 n := by
+  obtain ⟨W, spec⟩ := HarvestFullSchedule.exists_size_indexed_family
+  refine ⟨W, fun n hn => ?_⟩
+  obtain ⟨order, cap, last, sorted, count, cost⟩ := spec n hn
+  refine ⟨order, cap, last, count, fun p => ?_, ?_⟩
+  · rw [runWord_slots, sorted]; rfl
+  · simpa only [runWord_slots] using cost
+
+end Shellsort.HarvestOperationalAudit
