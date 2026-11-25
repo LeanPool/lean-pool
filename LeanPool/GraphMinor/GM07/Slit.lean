@@ -46,70 +46,6 @@ theorem closedBall_disc {s : ℝ} (h0 : 0 < s) :
   rw [frontier_closedBall _ h0.ne'] at h
   exact h
 
-private theorem axisStretch_ball_subset
-    (O : Set ℂ)
-    (α : ℝ)
-    (β : ℝ)
-    (hαβ : α < β)
-    (m : ℝ)
-    (hm : m = (α + β) / 2)
-    (ℓ : ℝ)
-    (hℓ : ℓ = (β - α) / 2)
-    (η : ℝ)
-    (hη : 0 < η)
-    (hth : cthickening η (ofReal '' Icc α β) ⊆ O)
-    (a₀ : ℝ)
-    (hscale : ℓ * a₀ = ℓ + η / 2)
-    (hp : 0 < ℓ * a₀)
-    (hq : 0 < η / 2)
-    (A : ℂ ≃ₜ ℂ)
-    (hAre : ∀ (z : ℂ), (A z).re = m + ℓ * a₀ * z.re)
-    (hAim : ∀ (z : ℂ), (A z).im = η / 2 * z.im) :
-    ∀ z ∈ closedBall 0 1, A z ∈ O := by
-  intro z hz
-  have hzn : ‖z‖ ≤ 1 := mem_closedBall_zero_iff.mp hz
-  have hre : |z.re| ≤ 1 := (Complex.abs_re_le_norm z).trans hzn
-  have him : |z.im| ≤ 1 := (Complex.abs_im_le_norm z).trans hzn
-  refine hth ?_
-  set y := max α (min β (A z).re) with hy
-  have hrea := abs_le.mp hre
-  have hyI : y ∈ Icc α β := ⟨le_max_left _ _, max_le hαβ.le (min_le_left _ _)⟩
-  refine mem_cthickening_of_dist_le (A z) (y : ℂ) _ _ ⟨y, hyI, rfl⟩ ?_
-  rw [dist_eq_norm]
-  refine (norm_le_abs_re_add_abs_im _).trans ?_
-  simp only [sub_re, ofReal_re, sub_im, ofReal_im, sub_zero]
-  have h1 : |(A z).im| ≤ η / 2 := by
-    rw [hAim, abs_mul, abs_of_pos hq]
-    nlinarith
-  have h2 : |(A z).re - y| ≤ η / 2 := by
-    have h3 : (A z).re ≤ β + η / 2 := by
-      rw [hAre]
-      have h7 : ℓ * a₀ * z.re ≤ ℓ * a₀ * 1 := mul_le_mul_of_nonneg_left hrea.2 hp.le
-      rw [mul_one] at h7
-      have h8 : m + ℓ = β := by rw [hm, hℓ]; ring
-      linarith [hscale]
-    have h4 : α - η / 2 ≤ (A z).re := by
-      rw [hAre]
-      have h7 : ℓ * a₀ * (-1) ≤ ℓ * a₀ * z.re := mul_le_mul_of_nonneg_left hrea.1 hp.le
-      rw [mul_neg_one] at h7
-      have h8 : m - ℓ = α := by rw [hm, hℓ]; ring
-      linarith [hscale]
-    rw [abs_le]
-    constructor
-    · have h5 : y ≤ max α (A z).re := max_le_max_left _ (min_le_right _ _)
-      rcases le_total α (A z).re with h6 | h6
-      · rw [max_eq_right h6] at h5
-        linarith
-      · rw [max_eq_left h6] at h5
-        linarith
-    · have h5 : min β (A z).re ≤ y := le_max_right _ _
-      rcases le_total β (A z).re with h6 | h6
-      · rw [min_eq_left h6] at h5
-        linarith
-      · rw [min_eq_right h6] at h5
-        linarith
-  linarith
-
 /-- The chart of a line, as a segment of the real axis, in a given open set. -/
 theorem exists_ball_chart {T : Type} [TopologicalSpace T] (hT : IsClosedSurface T) {a : 𝕀 → T}
   (ha : IsArcMap a) {W : Set T}
@@ -171,7 +107,7 @@ theorem exists_ball_chart {T : Type} [TopologicalSpace T] (hT : IsClosedSurface 
   have hAre : ∀ z, (A z).re = m + ℓ * a₀ * z.re := fun z => by simp [A, axisStretch]
   have hAim : ∀ z, (A z).im = η / 2 * z.im := fun z => by simp [A, axisStretch]
   have hBO : ∀ z ∈ closedBall (0 : ℂ) 1, A z ∈ O := by
-    exact axisStretch_ball_subset O α β hαβ m hm ℓ hℓ η hη hth a₀ hscale hp hq A hAre hAim
+    exact stretch_mapsTo_cthickening hαβ hm hℓ hp hq hscale hAre hAim hth
   let O' : Set ℂ := A ⁻¹' O
   let K' : ℂ → T := fun z => K (A z)
   have hK' : StripChart O' K' := by

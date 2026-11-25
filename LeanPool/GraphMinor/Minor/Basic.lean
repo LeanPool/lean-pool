@@ -680,17 +680,16 @@ theorem isIsoMinor_of_isMinorModel : MinorModelStatement :=
 /-- A minor has a model when the ambient edge type of `G` is nonempty or the edge type of `H` is
 empty (so that a function `β' → β` exists). -/
 theorem exists_isMinorModel_of_isIsoMinor_of_nonempty_or_isEmpty {α β α' β' : Type*}
-    {H : Graph α' β'} {G : Graph α β} (_hV : V(G).Finite) (_hE : E(G).Finite)
+    {H : Graph α' β'} {G : Graph α β}
     (hβ : Nonempty β ∨ IsEmpty β') (h : IsIsoMinor H G) :
     ∃ (ηv : α' → Set α) (ηe : β' → β), IsMinorModel H G ηv ηe :=
   exists_isMinorModel_of_isIsoMinor_aux hβ h
 
 /-- A minor has a model (Graph Minors IV, Section 7, pages 242–243). -/
 theorem exists_isMinorModel_of_isIsoMinor {α β α' β' : Type*} [Nonempty β]
-    {H : Graph α' β'} {G : Graph α β} (hV : V(G).Finite) (hE : E(G).Finite)
-    (h : IsIsoMinor H G) :
+    {H : Graph α' β'} {G : Graph α β} (h : IsIsoMinor H G) :
     ∃ (ηv : α' → Set α) (ηe : β' → β), IsMinorModel H G ηv ηe :=
-  exists_isMinorModel_of_isIsoMinor_of_nonempty_or_isEmpty hV hE (Or.inl ‹_›) h
+  exists_isMinorModel_of_isIsoMinor_of_nonempty_or_isEmpty (Or.inl ‹_›) h
 
 /-- The identity isomorphism of a graph. -/
 def Iso.refl (G : Graph α β) : Iso G G where

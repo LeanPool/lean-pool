@@ -507,160 +507,18 @@ theorem theorem_5_2_p2_without_no_internal (S : Society α β)
   let S' := Society.spiked S
   have : Finite V(S'.G) := S'.finite_V
   have : Finite E(S'.G) := S'.finite_E
-  obtain ⟨P₀, hcr_P₀, hp_P₀⟩ := hex_cr
-  obtain ⟨hcr_P₀', hcard_P₀'⟩ := isCrookedTransaction_spikeOmegaPath S hcr_P₀
-  have hex_cr' : ∃ P₀' : Set (Graph (α ⊕ α) (β ⊕ α)),
-      S'.IsCrookedTransaction P₀' ∧ 2 ≤ P₀'.ncard :=
-    ⟨spikeOmegaPath S '' P₀, hcr_P₀', hcard_P₀' ▸ hp_P₀⟩
+  let m : Fin 2 := 1
   let Q' : Fin 2 → Graph (α ⊕ α) (β ⊕ α) := fun i => spikeOmegaPath S (Q i)
   let a' : Fin 2 → α ⊕ α := inrV ∘ a
   let b' : Fin 2 → α ⊕ α := inrV ∘ b
-  have hQ'_eq : ∀ i, Q' i = spikeGraph (Q i) {a i, b i} :=
-    fun i => spikeOmegaPath_eq S (hends_Q i)
-  obtain ⟨A_Q, B_Q, hfence_Q⟩ := htr_Q
-  obtain ⟨hfence_Q', hinj_Q_on, _⟩ := isFenceFor_spikeOmegaPath S hfence_Q
-  have hrange_Q' : range Q' = spikeOmegaPath S '' range Q :=
-    range_comp (spikeOmegaPath S) Q
-  have hinj_Q' : Function.Injective Q' :=
-    fun i j hij => hinj_Q (hinj_Q_on (mem_range_self i) (mem_range_self j) hij)
-  have htr_Q' : S'.IsTransaction (range Q') := by
-    rw [hrange_Q']
-    exact ⟨inrV '' A_Q, inrV '' B_Q, hfence_Q'⟩
-  have hsep_Q' : ∀ i : Fin 2, S'.IsSeparatingOmegaPath (Q' i) := by
-    intro i
-    rw [hQ'_eq i]
-    exact isSeparatingOmegaPath_spikeGraph S (hends_Q i) (hsep_Q i)
-  have hno_int' : ∀ i : Fin 2, Disjoint (pathInternalVerts S'.G (Q' i)) S'.Ω.bar := by
-    intro i
-    rw [hQ'_eq i]
-    exact (isOmegaPathWithEnds_spikeGraph S (hends_Q i)).2
-  have hends_Q' : ∀ i : Fin 2, S'.IsOmegaPathWithEnds (Q' i) (a' i) (b' i) := by
-    intro i
-    rw [hQ'_eq i]
-    exact (isOmegaPathWithEnds_spikeGraph S (hends_Q i)).1
-  have hcw' : S'.Ω.IsClockwiseSeq ((List.ofFn a').reverse ++ List.ofFn b') := by
-    have h_list : (List.ofFn a').reverse ++ List.ofFn b' =
-        ((List.ofFn a).reverse ++ List.ofFn b).map inrV := by
-      rw [List.map_append, List.map_reverse, List.map_ofFn, List.map_ofFn]
-    rw [h_list]
-    exact (S.Ω.mapInr_isClockwiseSeq_iff _).mpr hcw
-  let m : Fin 2 := 1
-  have hm_ends := hends_Q m
-  have ha_m_Qm : a m ∈ V(Q m) := hm_ends.1.left_mem
-  have hb_m_Qm : b m ∈ V(Q m) := hm_ends.1.right_mem
-  have ha_m_G₁ : a m ∈ V(G₁) := (hinter_G ▸ ha_m_Qm : a m ∈ V(G₁) ∩ V(G₂)).1
-  have hb_m_G₁ : b m ∈ V(G₁) := (hinter_G ▸ hb_m_Qm : b m ∈ V(G₁) ∩ V(G₂)).1
-  have ha_m_G₂ : a m ∈ V(G₂) := (hinter_G ▸ ha_m_Qm : a m ∈ V(G₁) ∩ V(G₂)).2
-  have hb_m_G₂ : b m ∈ V(G₂) := (hinter_G ▸ hb_m_Qm : b m ∈ V(G₁) ∩ V(G₂)).2
-  let X₁ : Set α := {a m, b m} ∪ S.Ω.interval (a m) (b m)
-  let X₂ : Set α := S.Ω.interval (b m) (a m)
-  have hfence_m : S.Ω.IsFence X₁ X₂ :=
-    S.Ω.isFence_interval_compl hm_ends.2.2.1 hm_ends.2.2.2 hm_ends.2.1
-  have hX₁_sub_G₁ : X₁ ⊆ V(G₁) := by
-    rintro x ((rfl | rfl) | hx)
-    · exact ha_m_G₁
-    · exact hb_m_G₁
-    · exact hint_G₁ hx
-  have hX₁_inter : X₁ ∩ V(G₁) = X₁ := inter_eq_left.mpr hX₁_sub_G₁
-  have hX₂_inter : X₂ ∩ V(G₂) = X₂ := inter_eq_left.mpr hint_G₂
-  have hX₂Z_inter : (X₂ ∪ {a m, b m}) ∩ V(G₂) = X₂ ∪ {a m, b m} := by
-    refine inter_eq_left.mpr ?_
-    rintro x (hx | rfl | rfl)
-    · exact hint_G₂ hx
-    · exact ha_m_G₂
-    · exact hb_m_G₂
-  have hbar_inter : S.Ω.bar ∩ V(S.G) = S.Ω.bar := inter_eq_left.mpr S.bar_subset
-  let G₁' := spikeGraph G₁ X₁
-  let G₂' := spikeGraphWithVerts G₂ X₂ {a m, b m}
-  have hG₁'_le : G₁' ≤ S'.G :=
-    spikeGraph_le hsep_G.1 (by rw [hX₁_inter, hbar_inter]; exact hfence_m.1)
-  have hG₂'_le : G₂' ≤ S'.G := by
-    refine ⟨union_subset_union (image_mono hsep_G.2.1.vertexSet_mono) (image_mono ?_), ?_⟩
-    · rw [hX₂Z_inter, hbar_inter]
-      rintro x (hx | rfl | rfl)
-      · exact hfence_m.2.1 hx
-      · exact hm_ends.2.2.1
-      · exact hm_ends.2.2.2
-    · intro e x y h
-      rcases h with ⟨hlink⟩ | ⟨hx⟩ | ⟨hx⟩
-      · exact .inl (hlink.mono hsep_G.2.1)
-      · exact .inr_lr ⟨hfence_m.2.1 hx.1, hsep_G.2.1.vertexSet_mono hx.2⟩
-      · exact .inr_rl ⟨hfence_m.2.1 hx.1, hsep_G.2.1.vertexSet_mono hx.2⟩
-  have hsep_G' : IsGraphSeparation S'.G G₁' G₂' := by
-    refine ⟨hG₁'_le, hG₂'_le, ?_, ?_, ?_⟩
-    · change ((inlV '' V(G₁)) ∪ (inrV '' (X₁ ∩ V(G₁)))) ∪
-        ((inlV '' V(G₂)) ∪ (inrV '' ((X₂ ∪ {a m, b m}) ∩ V(G₂)))) =
-        (inlV '' V(S.G)) ∪ (inrV '' (S.Ω.bar ∩ V(S.G)))
-      rw [hX₁_inter, hX₂Z_inter, hbar_inter, union_union_union_comm, ← image_union, ← image_union,
-        hsep_G.2.2.1]
-      congr 2
-      apply Subset.antisymm
-      · rintro x (hx₁ | hx₂ | rfl | rfl)
-        · exact hfence_m.1 hx₁
-        · exact hfence_m.2.1 hx₂
-        · exact hm_ends.2.2.1
-        · exact hm_ends.2.2.2
-      · intro x hx
-        rw [← hfence_m.2.2.2.1] at hx
-        rcases hx with hx₁ | hx₂
-        · exact Or.inl hx₁
-        · exact Or.inr (Or.inl hx₂)
-    · change ((inlE '' E(G₁)) ∪ (inrE '' (X₁ ∩ V(G₁)))) ∪
-        ((inlE '' E(G₂)) ∪ (inrE '' (X₂ ∩ V(G₂)))) =
-        (inlE '' E(S.G)) ∪ (inrE '' (S.Ω.bar ∩ V(S.G)))
-      rw [hX₁_inter, hX₂_inter, hbar_inter, union_union_union_comm, ← image_union, ← image_union,
-        hsep_G.2.2.2.1, hfence_m.2.2.2.1]
-    · change Disjoint ((inlE '' E(G₁)) ∪ (inrE '' (X₁ ∩ V(G₁))))
-        ((inlE '' E(G₂)) ∪ (inrE '' (X₂ ∩ V(G₂))))
-      rw [hX₁_inter, hX₂_inter]
-      rw [disjoint_left]
-      rintro e (⟨e₁, he₁, rfl⟩ | ⟨x₁, hx₁, rfl⟩) (⟨e₂, he₂, h_eq⟩ | ⟨x₂, hx₂, h_eq⟩)
-      · exact disjoint_left.mp hsep_G.2.2.2.2 he₁ (inlE_injective h_eq ▸ he₂)
-      · exact Sum.inl_ne_inr h_eq.symm
-      · exact Sum.inl_ne_inr h_eq
-      · exact disjoint_left.mp hfence_m.2.2.1 hx₁ (inrE_injective h_eq ▸ hx₂)
-  have hinter_G' : V(G₁') ∩ V(G₂') = V(Q' m) := by
-    rw [hQ'_eq m, vertexSet_spikeGraph_of_ends S hm_ends]
-    change ((inlV '' V(G₁)) ∪ (inrV '' (X₁ ∩ V(G₁)))) ∩
-      ((inlV '' V(G₂)) ∪ (inrV '' ((X₂ ∪ {a m, b m}) ∩ V(G₂)))) =
-      (inlV '' V(Q m)) ∪ {inrV (a m), inrV (b m)}
-    rw [hX₁_inter, hX₂Z_inter]
-    ext z
-    rcases z with u | v
-    · simp only [mem_inter_iff, mem_union, inlV_injective.mem_set_image, mem_image,
-        Sum.inr_ne_inl, and_false, exists_false, or_false, mem_insert_iff, mem_singleton_iff,
-        Sum.inl_ne_inr]
-      rw [← mem_inter_iff, hinter_G]
-    · simp only [mem_inter_iff, mem_union, inrV_injective.mem_set_image, mem_image,
-        Sum.inl_ne_inr, and_false, exists_false, false_or, mem_insert_iff, mem_singleton_iff,
-        inrV_injective.eq_iff]
-      constructor
-      · rintro ⟨hv₁ | hv₁, hv₂ | hv₂⟩
-        · exact hv₁
-        · exact hv₁
-        · exact (disjoint_left.mp hfence_m.2.2.1 (Or.inr hv₁) hv₂).elim
-        · exact hv₂
-      · rintro (rfl | rfl)
-        · exact ⟨Or.inl (Or.inl rfl), Or.inr (Or.inl rfl)⟩
-        · exact ⟨Or.inl (Or.inr rfl), Or.inr (Or.inr rfl)⟩
-  have hQ1'_le : Q' m ≤ G₁' := by
-    rw [hQ'_eq m]
-    refine spikeGraph_le hQ1_le ?_
-    rintro x ⟨rfl | rfl, _⟩
-    · exact ⟨Or.inl (Or.inl rfl), ha_m_G₁⟩
-    · exact ⟨Or.inl (Or.inr rfl), hb_m_G₁⟩
-  have hint_G₁' : S'.Ω.interval (a' m) (b' m) ⊆ V(G₁') := by
-    change S.Ω.mapInr.interval (inrV (a m)) (inrV (b m)) ⊆
-      (inlV '' V(G₁)) ∪ (inrV '' (X₁ ∩ V(G₁)))
-    rw [S.Ω.mapInr_interval, hX₁_inter]
-    exact subset_union_of_subset_right (image_mono subset_union_right) _
-  have hint_G₂' : S'.Ω.interval (b' m) (a' m) ⊆ V(G₂') := by
-    change S.Ω.mapInr.interval (inrV (b m)) (inrV (a m)) ⊆
-      (inlV '' V(G₂)) ∪ (inrV '' ((X₂ ∪ {a m, b m}) ∩ V(G₂)))
-    rw [S.Ω.mapInr_interval, hX₂Z_inter]
-    exact subset_union_of_subset_right (image_mono subset_union_left) _
+  let G₁' := spikeGraph G₁ ({a m, b m} ∪ S.Ω.interval (a m) (b m))
+  let G₂' := spikeGraphWithVerts G₂ (S.Ω.interval (b m) (a m)) {a m, b m}
+  obtain ⟨hex_cr', hinj_Q', htr_Q', hsep_Q', hno_int', hends_Q', hcw', hsep_G', hinter_G',
+    hint_G₁', hint_G₂', hQ'_le⟩ :=
+    S.spikeTransactionAndSeparation m hex_cr hinj_Q htr_Q hsep_Q hends_Q hcw
+      hsep_G hinter_G hint_G₁ hint_G₂
   rcases theorem_5_2_p2 S' hex_cr' hinj_Q' htr_Q' hsep_Q' hno_int' hends_Q' hcw'
-      hsep_G' hinter_G' hQ1'_le hint_G₁' hint_G₂' with
+      hsep_G' hinter_G' (hQ'_le hQ1_le) hint_G₁' hint_G₂' with
     ⟨K₁, K₂, ⟨hdisj_K12, s₁', t₁', s₂', t₂', hK₁_ends, hK₂_ends, hcr_K12⟩, hK₁_le, hK₂_le⟩ |
     ⟨P_set', hcr_P', hcard_P', hdisj_P'⟩
   · left

@@ -34,14 +34,6 @@ universe u v
 
 variable {α : Type u} {β : Type v}
 
-/-- The cyclic permutation of the empty set. -/
-def emptyPerm : CyclicPerm α where
-  bar := ∅
-  toFun := id
-  finite_bar := finite_empty
-  bijOn := bijOn_empty id
-  single_orbit := fun _ hx => hx.elim
-
 /-- The order of a list, read by positions. -/
 theorem isClockwise3_ofNodupList_iff (L : List α) (hnd : L.Nodup) (hne : L ≠ [])
     {i j k : ℕ} (hi : i < L.length) (hj : j < L.length) (hk : k < L.length)

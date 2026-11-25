@@ -148,13 +148,15 @@ def HasTangleMetric (H : Drawing S) (θ : ℕ)
       IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins ∧
       ∀ x ∈ H.A, ∀ y ∈ H.A, d x y = tangleMetric H K ins θ x y
 
-/-- "Let $H$ be a 2-cell drawing in $\Sigma$, and let $\mathscr{T}$ be a respectful tangle in $H$
+/-- The corrected definition of a zone in Graph Minors XIV, §3. The printed text reads:
+"Let $H$ be a 2-cell drawing in $\Sigma$, and let $\mathscr{T}$ be a respectful tangle in $H$
 of order $\theta$, with metric $d$. Let $z \in A(H)$ and let $\lambda \ge 0$ be an integer.
 A *$\lambda$-zone around $z$* is an open disc $\Lambda \subseteq \Sigma$ with $z \subseteq
 \Lambda$, such that $bd(\Lambda)$ is an $O$-arc and hence $\overline{\Lambda}$ is a closed
 disc, $bd(\Lambda) \subseteq U(H)$, $d(z, x) \le \lambda$ for all $x \in A(H)$ with $x
 \subseteq \overline{\Lambda}$, and if $z \in E(H)$ then $\lambda \ge 2$" (Graph Minors XIV, Section
-3, page 28). -/
+3, page 28). The formal definition requires the closure to be a closed disc as a separate
+condition. The printed implication from an $O$-arc boundary fails on the projective plane. -/
 structure IsLambdaZoneAround (H : Drawing S) (d : Set S → Set S → ℕ) (lam : ℕ)
     (z Λ : Set S) : Prop where
   /-- `z ∈ A(H)`. -/
@@ -493,7 +495,10 @@ def HasCylinderBreadthGe {α : Type v} {β : Type w}
 
 /-! ## Section 9: Battlefields (pages 45–47) -/
 
-/-- "Let $H$ be a 2-cell drawing in $\Sigma$, let $z \in A(H)$, and let $\mathscr{T}$ be a
+/-- The normalized battlefield of size `β` used in XVI (8.1) has `|X| = β`. The original
+definition in XIV allows a larger free set. See `GM16.IsBattlefieldData.normalize` for the
+reduction to the normalized form. The printed definition reads:
+"Let $H$ be a 2-cell drawing in $\Sigma$, let $z \in A(H)$, and let $\mathscr{T}$ be a
 respectful tangle in $H$ of order $\theta$, with metric $d$. Let $\beta \ge 4$ be an even integer.
 A triple $(\Lambda, C, X)$ is a *battlefield of size $\beta$ around $z$* if
 (i) $\Lambda$ is a $(3\beta + 3)$-zone around $z$, and $H \cap (\Sigma - \Lambda)$ is a rigid

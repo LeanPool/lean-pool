@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+public import LeanPool.GraphMinor.GM15.EyeInductionParameters
+
 public import LeanPool.GraphMinor.GM16.ProperLocalAssembly
 import LeanPool.GraphMinor.GM15.Section8
 
@@ -37,44 +39,6 @@ namespace GraphMinor.GM16
 open Set Function Topology
 open Graph SimpleGraph Hypergraph Surface GM06 GM09 GM10 GM11 GM14 GM15
 universe u v w
-
-private lemma section7_param_bounds {φ μ lam' θ' : ℕ}
-    (hφ8 : 8 ≤ φ) (hμ12 : 12 ≤ μ) (hlam'4 : 4 ≤ lam') (hθ'_ge : 4 * lam' + μ + 2 ≤ θ') :
-    let θ'' := 2 * (θ' + 3 * μ + 8)
-    let τ₁ := 4 + μ / 2
-    let τ₂ := 6 + θ'' / 2
-    let π := (φ - 1) * (2 * τ₁ + τ₂ - 7)
-    let beta := 2 * π + 8
-    let θ_k := 100 * beta
-    let lam_k := 20 * beta
-    Even θ'' ∧ θ' ≤ θ'' ∧ 4 ≤ θ' ∧ 4 ≤ θ_k ∧
-    4 * lam' + μ + 2 ≤ θ'' ∧ 6 * μ + 14 < θ'' ∧
-    2 ≤ φ ∧ 3 ≤ φ ∧ 3 ≤ τ₁ ∧ 4 ≤ τ₂ ∧
-    2 ≤ π ∧ π ≠ 3 ∧
-    4 * lam_k + μ + 2 ≤ θ_k ∧
-    6 * (3 * μ + 3) + 5 * lam' + 3 * μ + 4 ≤ lam_k ∧
-    θ'' + 16 * μ + 17 ≤ θ_k ∧
-    θ'' + 13 * μ + 14 ≤ beta ∧
-    16 * beta + 17 ≤ θ_k ∧
-    6 * beta + 12 < θ_k ∧
-    φ ≤ θ_k - 4 * (3 * beta + 3) - 2 ∧
-    3 * beta + 3 ≤ lam_k ∧
-    2 * τ₁ < θ_k - 4 * (3 * beta + 3) - 2 ∧
-    6 * (3 * beta + 3) + 5 * lam' + 3 * μ + 4 ≤ lam_k := by
-  intro θ'' τ₁ τ₂ π beta θ_k lam_k
-  have hθ''_even : Even θ'' := ⟨θ' + 3 * μ + 8, by ring⟩
-  have hθ''_div : θ'' / 2 = θ' + 3 * μ + 8 := by omega
-  have hτ_sum : θ' + 4 * μ + 11 ≤ 2 * τ₁ + τ₂ - 7 := by omega
-  have hφ_sub : 7 ≤ φ - 1 := by omega
-  have hπ_ge : 7 * (θ' + 4 * μ + 11) ≤ π := Nat.mul_le_mul hφ_sub hτ_sum
-  have hπ_ge_φ : φ ≤ π := by
-    have h2 : 2 ≤ 2 * τ₁ + τ₂ - 7 := (by omega : 2 ≤ θ' + 4 * μ + 11).trans hτ_sum
-    have h3 : (φ - 1) * 2 ≤ π := Nat.mul_le_mul_left (φ - 1) h2
-    omega
-  refine ⟨hθ''_even, by omega, by omega, by omega, by omega, by omega, by omega,
-    by omega, by omega, by omega, by omega, by omega, by omega, by omega,
-    by omega, by omega, by omega, by omega, by omega, by omega, by omega, by omega⟩
-
 
 /-- The induction step of XV (1.2), retaining the proper arrangement
 from XV (7.7) for the use in XVI (7.2), page 62. -/
@@ -111,15 +75,15 @@ theorem proper_eye_induction_step
   have h711 : GM15Theorem711Statement.{u, v, w} :=
     GM15.theorem_7_11_proof
   intro S _ _ _ _ _ k φ μ lam' θ' hφ8 hμ12 hμ_even hlam'4 hθ'_ge
-  let θ'' : ℕ := 2 * (θ' + 3 * μ + 8)
-  let τ₁ : ℕ := 4 + μ / 2
-  let τ₂ : ℕ := 6 + θ'' / 2
-  let π : ℕ := (φ - 1) * (2 * τ₁ + τ₂ - 7)
-  let beta : ℕ := 2 * π + 8
-  let θ_k : ℕ := 100 * beta
-  let lam_k : ℕ := 20 * beta
-  let p_k : ℕ := 3 * π + 9
-  rcases section7_param_bounds hφ8 hμ12 hlam'4 hθ'_ge with
+  let θ'' := (eyeInductionParameters φ μ θ').enlargedOrder
+  let τ₁ := (eyeInductionParameters φ μ θ').firstThreshold
+  let τ₂ := (eyeInductionParameters φ μ θ').secondThreshold
+  let π := (eyeInductionParameters φ μ θ').transactionSize
+  let beta := (eyeInductionParameters φ μ θ').battlefieldSize
+  let θ_k := (eyeInductionParameters φ μ θ').order
+  let lam_k := (eyeInductionParameters φ μ θ').flatness
+  let p_k := (eyeInductionParameters φ μ θ').segregationWidth
+  rcases eye_induction_parameter_bounds hφ8 hμ12 hlam'4 hθ'_ge with
     ⟨hθ''_even, hθ'_le_θ'', h4_θ', h4_θ_k, hθ''_ge, hθ''_gt, hφ2, hφ3, hτ₁_ge, hτ₂_ge,
       hπ2, hπ3, hθ_k_ge, hlam_bound_μ, hθ_bound_μ, hθ''_beta, h16beta, h6beta,
       hφ_le, hbeta_lam, h2τ₁_lt, hlam_bound_beta⟩

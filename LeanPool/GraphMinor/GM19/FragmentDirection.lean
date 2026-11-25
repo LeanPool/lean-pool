@@ -31,44 +31,19 @@ open Set Topology Metric Filter GraphMinor.Surface
 
 theorem exp_eq_of_angles {s t : ℝ} (hs : 0 < s) (hs' : s < 2 * Real.pi) (ht : 0 < t)
   (ht' : t < 2 * Real.pi)
-    (h : Circle.exp s = Circle.exp t) : s = t := by
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.1 h
-  have hpi := Real.pi_pos
-  have h1 : (m : ℝ) * (2 * Real.pi) < 2 * Real.pi := by linarith
-  have h2 : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith
-  have h3 : (m : ℝ) < 1 := by nlinarith
-  have h4 : (-1 : ℝ) < m := by nlinarith
-  have h5 : m = 0 := by
-    have h6 : m < 1 := by exact_mod_cast h3
-    have h7 : -1 < m := by exact_mod_cast h4
-    omega
-  rw [hm, h5]
-  simp
+    (h : Circle.exp s = Circle.exp t) : s = t :=
+  CircleOrder.exp_eq_of_angles hs hs' ht ht' h
 
 /-- Three points of the circle do not lie in both cyclic orders. -/
 theorem not_circleCyclic_both {a b c : Circle} (h : CircleCyclic a b c)
-  (h' : CircleCyclic a c b) : False := by
-  obtain ⟨s, t, hs, hst, ht, hb, hc⟩ := h
-  obtain ⟨s', t', hs', hst', ht', hc', hb'⟩ := h'
-  have h1 : Circle.exp s = Circle.exp t' := mul_left_cancel (hb.symm.trans hb')
-  have h2 : Circle.exp t = Circle.exp s' := mul_left_cancel (hc.symm.trans hc')
-  have hpos : 0 < t' := hs'.trans hst'
-  have hpos' : 0 < t := hs.trans hst
-  have e1 := exp_eq_of_angles hs (hst.trans ht) hpos ht' h1
-  have e2 := exp_eq_of_angles hpos' ht hs' (hst'.trans ht') h2
-  linarith
+  (h' : CircleCyclic a c b) : False :=
+  CircleOrder.not_circleCyclic_both h h'
 
-theorem circleCyclic_inv {a b c : Circle} (h : CircleCyclic a b c) : CircleCyclic a⁻¹ c⁻¹ b⁻¹ := by
-  obtain ⟨s, t, hs, hst, ht, rfl, rfl⟩ := h
-  have hpi := Real.pi_pos
-  refine ⟨2 * Real.pi - t, 2 * Real.pi - s, by linarith, by linarith, by linarith, ?_, ?_⟩
-  · rw [Circle.exp_sub, Circle.exp_two_pi]
-    simp [mul_comm]
-  · rw [Circle.exp_sub, Circle.exp_two_pi]
-    simp [mul_comm]
+theorem circleCyclic_inv {a b c : Circle} (h : CircleCyclic a b c) : CircleCyclic a⁻¹ c⁻¹ b⁻¹ :=
+  CircleOrder.circleCyclic_inv h
 
-theorem exists_angle_of_circle (a : Circle) : ∃ α : ℝ, a = Circle.exp α := ⟨Complex.arg a,
-  (Circle.exp_arg a).symm⟩
+theorem exists_angle_of_circle (a : Circle) : ∃ α : ℝ, a = Circle.exp α :=
+  CircleOrder.exists_angle_of_circle a
 
 /-- A homeomorphism of the circle with an increasing lift keeps the cyclic order. -/
 theorem circleCyclic_map_mono {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)

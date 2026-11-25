@@ -275,9 +275,35 @@ theorem linked_of_alternating_ends {S : Type} [TopologicalSpace S] [T2Space S]
 we pick a place where marked meets unmarked,
 in a gap that no linked pair spans. Linked pairs do not cross because of the crossing theorem for a
 disc. -/
-theorem normalIArcDiscRegion : NormalIArcDiscRegionStatement := by
-  unfold NormalIArcDiscRegionStatement
-  intro S _ hS Γ Θ n₁ n₂ F Δ e P_mark hΘ hn₁ hn₂ hne hnorm hF hb hFN hΔ h1 h2 he hP₁ hP₂
+theorem normalIArcDiscRegion_of_boundary
+    (S : Type) [TopologicalSpace S] (hS : IsSurface S)
+    (Γ : Painting S) (Θ : Set S) (n₁ n₂ : S) (F Δ : Set S)
+    (e : Set S → Set S) (P_mark : S → Prop)
+    (hΘ : Θ ∈ cuffs S) (hn₁ : n₁ ∈ Γ.N ∩ Θ) (hn₂ : n₂ ∈ Γ.N ∩ Θ) (hne : n₁ ≠ n₂)
+    (hnorm : Γ.IsNormal F) (hF : IsLineWithEnds F n₁ n₂) (hb : F ∩ bd S = {n₁, n₂})
+    (hΔ : IsClosedDisc Δ) (h1 : F ⊆ discBd Δ) (h2 : discBd Δ ⊆ F ∪ Θ)
+    (he : ∀ d ∈ Γ.C, d ⊆ Δ → ¬ (d ∩ bd S).Nonempty →
+      e d ⊆ tilde d ∧ (e d = ∅ ∨ 2 ≤ (e d).ncard) ∧
+      ∀ x ∈ e d, ∀ y ∈ e d, P_mark x → P_mark y)
+    (hP₁ : P_mark n₁) (hP₂ : ¬ P_mark n₂) :
+    ∃ (m₁ m₂ : S) (c I₁ I₂ N₁ N₂ : Set S),
+      m₁ ∈ Γ.N ∩ (Θ ∩ discBd Δ) ∧ m₂ ∈ Γ.N ∩ (Θ ∩ discBd Δ) ∧ m₁ ≠ m₂ ∧
+      P_mark m₁ ∧ ¬ P_mark m₂ ∧
+      c ∈ Γ.C ∧ c ⊆ Δ ∧ (c ∩ Θ).Nonempty ∧ tilde c = {m₁, m₂} ∧
+      I₁ ⊆ Θ ∩ discBd Δ ∧ I₂ ⊆ Θ ∩ discBd Δ ∧ Disjoint I₁ I₂ ∧
+      n₁ ∈ I₁ ∧ m₁ ∈ I₁ ∧ m₂ ∈ I₂ ∧ n₂ ∈ I₂ ∧
+      N₁ ⊆ (Γ.N ∩ Δ) \ bd S ∧ N₂ ⊆ (Γ.N ∩ Δ) \ bd S ∧ Disjoint N₁ N₂ ∧
+      (∀ n ∈ I₁ ∩ Γ.N, ∀ n' ∈ I₂ ∩ Γ.N,
+        (n ≠ n₁ → n ≠ m₁ → GM19.InOrderOn Θ n₁ n m₁ n') ∧
+        (m₁ ≠ n₁ → n' ≠ n₂ → GM19.InOrderOn Θ n₁ m₁ n' n₂) ∧
+        (n' ≠ m₂ → n' ≠ n₂ → GM19.InOrderOn Θ n m₂ n' n₂) ∧
+        (n ≠ n₁ → m₂ ≠ n₂ → GM19.InOrderOn Θ n₁ n m₂ n₂)) ∧
+      (∀ d ∈ Γ.C, d ⊆ Δ → (d ∩ bd S).Nonempty → d ≠ c →
+        tilde d ⊆ I₁ ∨ tilde d ⊆ I₂) ∧
+      (∀ d ∈ Γ.C, d ⊆ Δ → ¬ (d ∩ bd S).Nonempty →
+        e d ⊆ N₁ ∪ I₁ ∨ e d ⊆ N₂ ∪ I₂) ∧
+      (∃ c₁ ∈ Γ.C, c₁ ⊆ Δ ∧ (c₁ ∩ bd S).Nonempty ∧ n₁ ∈ tilde c₁) ∧
+      (∃ c₂ ∈ Γ.C, c₂ ⊆ Δ ∧ (c₂ ∩ bd S).Nonempty ∧ n₂ ∈ tilde c₂) := by
   have ht2 : T2Space S := hS.2.1
   have hΘb : Θ ⊆ bd S := by
     obtain ⟨x, -, rfl⟩ := hΘ
@@ -472,5 +498,11 @@ theorem normalIArcDiscRegion : NormalIArcDiscRegionStatement := by
       · exact .inl ⟨⟨hGQ d hdG hx, h10⟩, fun h11 => h9 (.inl h11)⟩
       · exact absurd (.inr h10) h9
       · exact .inr h10
+
+/-- The marked-region partition for the two-node normal arc statement in XVII (7.3). -/
+theorem normalIArcDiscRegion : NormalIArcDiscRegionStatement := by
+  intro S _ hS Γ Θ n₁ n₂ F Δ e P_mark hΘ hn₁ hn₂ hne hnorm hF hb _ hΔ h1 h2 he hP₁ hP₂
+  exact normalIArcDiscRegion_of_boundary S hS Γ Θ n₁ n₂ F Δ e P_mark
+    hΘ hn₁ hn₂ hne hnorm hF hb hΔ h1 h2 he hP₁ hP₂
 
 end GraphMinor.GM17

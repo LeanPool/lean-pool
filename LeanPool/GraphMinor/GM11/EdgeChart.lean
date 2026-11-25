@@ -137,18 +137,16 @@ theorem exists_small_polar_chart
     exact Complex.ext h₁₀ h₂
   exact ⟨ε, δ, hε, hmn, hmW, hGc, hGi⟩
 
-private theorem edge_chart_endpoints [T2Space S] {H : Drawing S}
+/-- The chart diameter maps to an interval of the edge with the same endpoints. -/
+theorem edge_chart_endpoints [T2Space S]
     {γ : I → S} (hγ : Continuous γ) (hinj : InjOn γ (Ioo 0 1))
     {a₀ b₀ s t₀ u : I} (hIcc : Icc a₀ b₀ ⊆ Ioo 0 1)
     (hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀)
     {G : ℂ → S} (hGc : ContinuousOn G (closedBall 0 1)) (hGi : InjOn G (closedBall 0 1))
     (hG0 : G 0 = γ t₀)
-    (hUiff : ∀ z ∈ closedBall (0 : ℂ) 1, G z ∈ H.U ↔ z.im = 0)
     (hreal : ∀ z ∈ closedBall (0 : ℂ) 1, z.im = 0 → G z ∈ γ '' Ioo a₀ b₀)
     (havoid : ∀ z ∈ closedBall (0 : ℂ) 1, ∀ t : I, t ≤ s ∨ u ≤ t → γ t ≠ G z) :
-    ∃ (G : ℂ → S) (a b : I), ContinuousOn G (closedBall 0 1) ∧ InjOn G (closedBall 0 1) ∧
-      s < a ∧ a < t₀ ∧ t₀ < b ∧ b < u ∧ G 0 = γ t₀ ∧
-      (∀ z ∈ closedBall (0 : ℂ) 1, G z ∈ H.U ↔ z.im = 0) ∧
+    ∃ a b : I, s < a ∧ a < t₀ ∧ t₀ < b ∧ b < u ∧
       G '' {z | z ∈ ball (0 : ℂ) 1 ∧ z.im = 0} = γ '' Ioo a b ∧
       G '' {z | z ∈ closedBall (0 : ℂ) 1 ∧ z.im = 0} = γ '' Icc a b ∧
       ((G (-1) = γ a ∧ G 1 = γ b) ∨ (G (-1) = γ b ∧ G 1 = γ a)) := by
@@ -245,7 +243,7 @@ private theorem edge_chart_endpoints [T2Space S] {H : Drawing S}
     · rintro ⟨v, -, rfl⟩
       exact ⟨hzvb v, hzvim v⟩
   rcases Continuous.strictMono_of_inj hψc hψi with hmono | hanti
-  · refine ⟨G, ψ 0, ψ 1, hGc, hGi, (hboth 0).1, ?_, ?_, (hboth 1).2, hG0, hUiff, ?_, ?_, Or.inl ?_⟩
+  · refine ⟨ψ 0, ψ 1, (hboth 0).1, ?_, ?_, (hboth 1).2, ?_, ?_, Or.inl ?_⟩
     · rw [← hmid]
       exact hmono hmid₀
     · rw [← hmid]
@@ -267,7 +265,7 @@ private theorem edge_chart_endpoints [T2Space S] {H : Drawing S}
         obtain ⟨v, rfl⟩ := hrange ⟨0, rfl⟩ ⟨1, rfl⟩ ht
         exact ⟨v, mem_univ _, rfl⟩
     · exact ⟨by rw [← hz0, hψγ], by rw [hψγ 1, hz1]⟩
-  · refine ⟨G, ψ 1, ψ 0, hGc, hGi, (hboth 1).1, ?_, ?_, (hboth 0).2, hG0, hUiff, ?_, ?_, Or.inr ?_⟩
+  · refine ⟨ψ 1, ψ 0, (hboth 1).1, ?_, ?_, (hboth 0).2, ?_, ?_, Or.inr ?_⟩
     · rw [← hmid]
       exact hanti hmid₁
     · rw [← hmid]
@@ -451,7 +449,9 @@ theorem exists_edge_chart (hS : IsClosedSurface S) (H : Drawing S) {e : Set S} (
     · intro him
       obtain ⟨t, ht, hte⟩ := hreal z hz him
       exact hte ▸ hFU ⟨t, ⟨ht.1.le, ht.2.le⟩, rfl⟩
-  exact edge_chart_endpoints hγ hinj hIcc hpiece hGc hGi hG0 hUiff hreal
-    (fun z hz t ht heq => hWO (hmW z hz).2 (Or.inr ⟨t, ht, heq⟩))
+  obtain ⟨a, b, hsa, hat, htb, hbu, hball, hclosed, hends⟩ :=
+    edge_chart_endpoints hγ hinj hIcc hpiece hGc hGi hG0 hreal
+      (fun z hz t ht heq => hWO (hmW z hz).2 (Or.inr ⟨t, ht, heq⟩))
+  exact ⟨G, a, b, hGc, hGi, hsa, hat, htb, hbu, hG0, hUiff, hball, hclosed, hends⟩
 
 end GraphMinor.GM11

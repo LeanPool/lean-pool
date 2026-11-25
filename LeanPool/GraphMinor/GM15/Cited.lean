@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+public import LeanPool.GraphMinor.Minor.CompleteGraph
+
 public import LeanPool.GraphMinor.GM14.Cited
 public import LeanPool.GraphMinor.GM12.Defs
 public import LeanPool.GraphMinor.GM15.Defs
@@ -173,18 +175,7 @@ def GM12Theorem41Statement : Prop :=
 
 /-- The complete simple graph `K_p` on `Fin p` (with unordered pairs of distinct vertices as edges),
 used for `GM12.ControlsMinor` in `GM12Theorem45Statement`. -/
-def completeGraph (n : ℕ) : Graph (Fin n) (Sym2 (Fin n)) where
-  vertexSet := Set.univ
-  edgeSet := {e : Sym2 (Fin n) | ∃ x y : Fin n, x ≠ y ∧ e = s(x, y)}
-  IsLink e x y := x ≠ y ∧ e = s(x, y)
-  isLink_symm _ _ := ⟨fun _ _ ⟨hne, he⟩ => ⟨hne.symm, he.trans Sym2.eq_swap⟩⟩
-  eq_or_eq_of_isLink_of_isLink _ _ _ _ _ h1 h2 := by
-    have heq : s(_, _) = s(_, _) := h1.2.symm.trans h2.2
-    rcases Sym2.eq_iff.mp heq with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · exact Or.inl rfl
-    · exact Or.inr rfl
-  edge_mem_iff_exists_isLink _ := Iff.rfl
-  left_mem_of_isLink _ _ _ _ := Set.mem_univ _
+abbrev completeGraph (n : ℕ) : Graph (Fin n) (Sym2 (Fin n)) := GraphMinor.completeGraph n
 
 /-- Statement of Graph Minors XII, (4.5) (page 252), used in (8.1) of Graph Minors XV (page 145):
 For any connected surface `Σ` with `bd(Σ) = ∅` and any integer `p ≥ 0`, there exist `κ, ϕ ≥ 0` such

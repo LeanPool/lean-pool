@@ -266,8 +266,9 @@ $\Gamma' = (U(\Gamma) \cap \overline{S \setminus \Delta}, N(\Gamma) \cap \overli
 \Delta})$;
 otherwise $\Gamma' = (U(\Gamma) \setminus \Delta, N(\Gamma) \setminus \Delta)$.
 In both cases, $C(\Gamma') = \{c \in C(\Gamma) \mid c \subseteq S \setminus \Delta\}$. -/
-noncomputable def Painting.removeDisc (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
-    (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N) : Painting S := by
+noncomputable def Painting.removeDiscWithCells (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
+    (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N) :
+    {Γ' : Painting S // Γ'.C = {c ∈ Γ.C | c ⊆ Set.univ \ Δ}} := by
   classical
   have : T2Space S := hS.2.1
   obtain ⟨hopen, _, hbd_sub, _, _⟩ := isOpen_and_disjoint_bd_of_isClosedDisc hS hΔ
@@ -410,101 +411,28 @@ noncomputable def Painting.removeDisc (hS : IsSurface S) (Γ : Painting S) (Δ :
         hxN' (htilde_sub_N' c hcI₂ ((Γ.closure_cell_inter_N hcI₂.1).symm ▸ ⟨hxcl, hxN⟩))
       rw [← Γ.closure_cell_diff_N hcI₂.1]
       exact ⟨hxcl, hxN⟩
-  exact
-    { U := U'
-      N := N'
-      isClosed_U := hU'_closed
-      bd_subset := hbd_sub_U'
-      N_subset := hN'_sub_U'
-      finite_N := hN'_fin
-      finite_cells := hC_eq ▸ hI₂_fin
-      cell_disc := fun c hc => Γ.cell_disc c (hC_eq ▸ hc).1
-      border_cell := fun c hc hbd => Γ.border_cell c (hC_eq ▸ hc).1 hbd }
+  refine ⟨?_, ?_⟩
+  · exact
+      { U := U'
+        N := N'
+        isClosed_U := hU'_closed
+        bd_subset := hbd_sub_U'
+        N_subset := hN'_sub_U'
+        finite_N := hN'_fin
+        finite_cells := hC_eq ▸ hI₂_fin
+        cell_disc := fun c hc => Γ.cell_disc c (hC_eq ▸ hc).1
+        border_cell := fun c hc hbd => Γ.border_cell c (hC_eq ▸ hc).1 hbd }
+  · exact hC_eq
+
+/-- The painting obtained by removing a disc. -/
+noncomputable def Painting.removeDisc (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
+    (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N) : Painting S :=
+  (Γ.removeDiscWithCells hS Δ hΔ hnorm).1
 
 theorem Painting.removeDisc_C (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
     (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N) :
-    (Γ.removeDisc hS Δ hΔ hnorm).C = {c ∈ Γ.C | c ⊆ Set.univ \ Δ} := by
-  classical
-  have : T2Space S := hS.2.1
-  obtain ⟨hopen, _, _, _, _⟩ := isOpen_and_disjoint_bd_of_isClosedDisc hS hΔ
-  obtain ⟨hdich, _, _⟩ := normal_disc_cell_dichotomy hS Γ hΔ hnorm
-  set I₂ : Set (Set S) := {c ∈ Γ.C | c ⊆ Set.univ \ Δ}
-  have hI₂_fin : I₂.Finite := Γ.finite_cells.subset fun _ h => h.1
-  let Γ' := Γ.removeDisc hS Δ hΔ hnorm
-  let hasTouch : Prop := ∃ c ∈ I₂, (tilde c ∩ discBd Δ).Nonempty
-  have hN'_sub_N : Γ'.N ⊆ Γ.N := by
-    change (if hasTouch then Γ.N ∩ closure (Set.univ \ Δ) else Γ.N \ Δ) ⊆ Γ.N
-    split_ifs
-    · exact inter_subset_left
-    · exact sdiff_subset
-  have htilde_sub_N' : ∀ c ∈ I₂, tilde c ⊆ Γ'.N := by
-    intro c ⟨hc, hc_sub⟩
-    have hcl_sub := (closure_cell_inter_disc_of_subset_compl hS Γ hΔ hnorm hc hc_sub).1
-    have hcl_inter := (closure_cell_inter_disc_of_subset_compl hS Γ hΔ hnorm hc hc_sub).2
-    change tilde c ⊆ if hasTouch then Γ.N ∩ closure (Set.univ \ Δ) else Γ.N \ Δ
-    split_ifs with ht
-    · exact fun x hx => ⟨Γ.tilde_subset_N hc hx, hcl_sub hx.1⟩
-    · intro x hx
-      refine ⟨Γ.tilde_subset_N hc hx, fun hxΔ => ht ⟨c, ⟨hc, hc_sub⟩, x, ?_⟩⟩
-      rw [← hcl_inter]
-      exact ⟨hx.1, hxΔ⟩
-  have hcl_sub_U' : ∀ c ∈ I₂, closure c ⊆ Γ'.U := by
-    intro c ⟨hc, hc_sub⟩
-    have hcl_sub := (closure_cell_inter_disc_of_subset_compl hS Γ hΔ hnorm hc hc_sub).1
-    have hcl_inter := (closure_cell_inter_disc_of_subset_compl hS Γ hΔ hnorm hc hc_sub).2
-    change closure c ⊆ if hasTouch then Γ.U ∩ closure (Set.univ \ Δ) else Γ.U \ Δ
-    split_ifs with ht
-    · exact fun x hx => ⟨Γ.closure_cell_subset_U hc hx, hcl_sub hx⟩
-    · intro x hx
-      refine ⟨Γ.closure_cell_subset_U hc hx, fun hxΔ => ht ⟨c, ⟨hc, hc_sub⟩, x, ?_⟩⟩
-      rw [← hcl_inter]
-      exact ⟨hx, hxΔ⟩
-  have hcov : ⋃₀ I₂ = Γ'.U \ Γ'.N := by
-    ext x
-    constructor
-    · rintro ⟨c, hcI₂, hxc⟩
-      refine ⟨hcl_sub_U' c hcI₂ (subset_closure hxc), fun hxN' => ?_⟩
-      exact (Γ.cell_subset_diff hcI₂.1 hxc).2 (hN'_sub_N hxN')
-    · rintro ⟨hxU', hxN'⟩
-      have hxU : x ∈ Γ.U := by
-        change x ∈ if hasTouch then Γ.U ∩ closure (Set.univ \ Δ) else Γ.U \ Δ at hxU'
-        split_ifs at hxU' <;> exact hxU'.1
-      have hxN : x ∉ Γ.N := by
-        intro hxN
-        apply hxN'
-        change x ∈ if hasTouch then Γ.U ∩ closure (Set.univ \ Δ) else Γ.U \ Δ at hxU'
-        change x ∈ if hasTouch then Γ.N ∩ closure (Set.univ \ Δ) else Γ.N \ Δ
-        split_ifs at hxU' ⊢ with ht
-        · exact ⟨hxN, hxU'.2⟩
-        · exact ⟨hxN, hxU'.2⟩
-      have hx_cells : x ∈ ⋃₀ Γ.C := by
-        rw [Γ.sUnion_cells]
-        exact ⟨hxU, hxN⟩
-      rcases hx_cells with ⟨c, hc, hxc⟩
-      rcases hdich c hc with hc_in | hc_out
-      · exfalso
-        have hx_open : x ∈ Δ \ discBd Δ := hc_in hxc
-        change x ∈ if hasTouch then Γ.U ∩ closure (Set.univ \ Δ) else Γ.U \ Δ at hxU'
-        split_ifs at hxU' with ht
-        · obtain ⟨y, hy_open, hy_out⟩ :=
-            _root_.mem_closure_iff.mp hxU'.2 (Δ \ discBd Δ) hopen hx_open
-          exact hy_out.2 hy_open.1
-        · exact hxU'.2 hx_open.1
-      · exact ⟨c, ⟨hc, hc_out⟩, hxc⟩
-  apply arcComponentsIn_eq_of_finite_cover hI₂_fin hcov
-  · intro c hcI₂
-    exact Γ.cell_nonempty hcI₂.1
-  · intro c hcI₂
-    exact Γ.cell_isPathConnected hcI₂.1
-  · intro c₁ hc₁ c₂ hc₂ hne
-    exact Γ.cell_disjoint hc₁.1 hc₂.1 hne
-  · intro c hcI₂
-    refine Subset.antisymm ?_ (fun x hxc => ⟨subset_closure hxc, hcov ▸ ⟨c, hcI₂, hxc⟩⟩)
-    rintro x ⟨hxcl, _, hxN'⟩
-    have hxN : x ∉ Γ.N := fun hxN =>
-      hxN' (htilde_sub_N' c hcI₂ ((Γ.closure_cell_inter_N hcI₂.1).symm ▸ ⟨hxcl, hxN⟩))
-    rw [← Γ.closure_cell_diff_N hcI₂.1]
-    exact ⟨hxcl, hxN⟩
+    (Γ.removeDisc hS Δ hΔ hnorm).C = {c ∈ Γ.C | c ⊆ Set.univ \ Δ} :=
+  (Γ.removeDiscWithCells hS Δ hΔ hnorm).2
 
 theorem Painting.removeDisc_N_subset (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
     (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N) :
@@ -1417,9 +1345,10 @@ theorem isClosedDisc_sdiff_subset_discBd [T2Space S] {Δ F : Set S}
 in Graph Minors XVII, (7.2) (page 178), replacing the interior of a $\Gamma$-normal closed disc
 $\Delta$ with $|\operatorname{discBd} \Delta \cap N(\Gamma)| \le 3$ by a single internal cell
 $c' = \Delta \setminus (\operatorname{discBd} \Delta \cap N(\Gamma))$. -/
-noncomputable def Painting.replaceDisc (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
+noncomputable def Painting.replaceDiscWithCells (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
     (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N)
-    (hcard : (discBd Δ ∩ Γ.N).ncard ≤ 3) : Painting S := by
+    (hcard : (discBd Δ ∩ Γ.N).ncard ≤ 3) :
+    {Γ' : Painting S // Γ'.C = insert (Δ \ (discBd Δ ∩ Γ.N)) {c ∈ Γ.C | c ⊆ Set.univ \ Δ}} := by
   classical
   have : T2Space S := hS.2.1
   obtain ⟨hopen, hdisj_bd, hbd_sub, _, _⟩ := isOpen_and_disjoint_bd_of_isClosedDisc hS hΔ
@@ -1505,107 +1434,41 @@ noncomputable def Painting.replaceDisc (hS : IsSurface S) (Γ : Painting S) (Δ 
         have hxN : x ∉ Γ.N := fun hxN => hxN' ⟨hxN, hcl_sub hxcl⟩
         rw [← Γ.closure_cell_diff_N hcI₂.1]
         exact ⟨hxcl, hxN⟩
-  exact
-    { U := U'
-      N := N'
-      isClosed_U := Γ.isClosed_U.union hΔ.isCompact.isClosed
-      bd_subset := Γ.bd_subset.trans subset_union_left
-      N_subset := (inter_subset_left.trans Γ.N_subset).trans subset_union_left
-      finite_N := Γ.finite_N.subset inter_subset_left
-      finite_cells := hC_eq ▸ hI₂_fin.insert c'
-      cell_disc := fun c hc => by
-        rw [hC_eq] at hc
-        rcases hc with rfl | hcI₂
-        · rw [hc'_cl, htilde_c']
-          exact ⟨hΔ, inter_subset_left, Γ.finite_N.inter_of_right (discBd Δ), hcard⟩
-        · exact Γ.cell_disc c hcI₂.1
-      border_cell := fun c hc hbd => by
-        rw [hC_eq] at hc
-        rcases hc with rfl | hcI₂
-        · exact False.elim (Set.not_nonempty_iff_eq_empty.mpr
-            (Set.disjoint_iff_inter_eq_empty.mp hc'_disj_bd) hbd)
-        · exact Γ.border_cell c hcI₂.1 hbd }
+  refine ⟨?_, ?_⟩
+  · exact
+      { U := U'
+        N := N'
+        isClosed_U := Γ.isClosed_U.union hΔ.isCompact.isClosed
+        bd_subset := Γ.bd_subset.trans subset_union_left
+        N_subset := (inter_subset_left.trans Γ.N_subset).trans subset_union_left
+        finite_N := Γ.finite_N.subset inter_subset_left
+        finite_cells := hC_eq ▸ hI₂_fin.insert c'
+        cell_disc := fun c hc => by
+          rw [hC_eq] at hc
+          rcases hc with rfl | hcI₂
+          · rw [hc'_cl, htilde_c']
+            exact ⟨hΔ, inter_subset_left, Γ.finite_N.inter_of_right (discBd Δ), hcard⟩
+          · exact Γ.cell_disc c hcI₂.1
+        border_cell := fun c hc hbd => by
+          rw [hC_eq] at hc
+          rcases hc with rfl | hcI₂
+          · exact False.elim (Set.not_nonempty_iff_eq_empty.mpr
+              (Set.disjoint_iff_inter_eq_empty.mp hc'_disj_bd) hbd)
+          · exact Γ.border_cell c hcI₂.1 hbd }
+  · exact hC_eq
+
+/-- The painting obtained by replacing a disc. -/
+noncomputable def Painting.replaceDisc (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
+    (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N)
+    (hcard : (discBd Δ ∩ Γ.N).ncard ≤ 3) : Painting S :=
+  (Γ.replaceDiscWithCells hS Δ hΔ hnorm hcard).1
 
 theorem Painting.replaceDisc_C (hS : IsSurface S) (Γ : Painting S) (Δ : Set S)
     (hΔ : IsClosedDisc Δ) (hnorm : discBd Δ ∩ Γ.U ⊆ Γ.N)
     (hcard : (discBd Δ ∩ Γ.N).ncard ≤ 3) :
     (Γ.replaceDisc hS Δ hΔ hnorm hcard).C =
-      insert (Δ \ (discBd Δ ∩ Γ.N)) {c ∈ Γ.C | c ⊆ Set.univ \ Δ} := by
-  classical
-  have : T2Space S := hS.2.1
-  obtain ⟨hopen, _, _, _, _⟩ := isOpen_and_disjoint_bd_of_isClosedDisc hS hΔ
-  obtain ⟨hdich, _, hN_bd_cl⟩ := normal_disc_cell_dichotomy hS Γ hΔ hnorm
-  let U' : Set S := Γ.U ∪ Δ
-  let N' : Set S := Γ.N ∩ closure (Set.univ \ Δ)
-  let c' : Set S := Δ \ (discBd Δ ∩ Γ.N)
-  set I₂ : Set (Set S) := {c ∈ Γ.C | c ⊆ Set.univ \ Δ}
-  have hI₂_fin : I₂.Finite := Γ.finite_cells.subset fun _ h => h.1
-  have hΔ_inter_N' : Δ ∩ N' = discBd Δ ∩ Γ.N := by
-    refine Subset.antisymm ?_ (fun x hx => ⟨discBd_subset Δ hx.1, hx.2, hN_bd_cl hx⟩)
-    rintro x ⟨hxΔ, hxN, hxcl⟩
-    refine ⟨?_, hxN⟩
-    by_contra hx_not_bd
-    have hx_open : x ∈ Δ \ discBd Δ := ⟨hxΔ, hx_not_bd⟩
-    have hdisj : Disjoint (Δ \ discBd Δ) (Set.univ \ Δ) :=
-      Set.disjoint_left.mpr fun y hy₁ hy₂ => hy₂.2 hy₁.1
-    exact Set.disjoint_left.mp (hdisj.closure_right hopen) hx_open hxcl
-  have hc'_eq : c' = Δ \ N' := by
-    change Δ \ (discBd Δ ∩ Γ.N) = Δ \ N'
-    rw [← hΔ_inter_N']
-    ext x; simp
-  obtain ⟨hc'_ne, hc'_pc, hc'_cl⟩ :=
-    isClosedDisc_sdiff_subset_discBd hΔ (inter_subset_left : discBd Δ ∩ Γ.N ⊆ discBd Δ)
-  have hcov : ⋃₀ insert c' I₂ = U' \ N' := by
-    ext x
-    simp only [sUnion_insert, mem_union, mem_sUnion, mem_sdiff]
-    constructor
-    · rintro (hxc' | ⟨c, ⟨hc, hc_sub⟩, hxc⟩)
-      · rw [hc'_eq] at hxc'
-        exact ⟨Or.inr hxc'.1, hxc'.2⟩
-      · refine ⟨Or.inl (Γ.cell_subset_U hc hxc), fun hxN' => ?_⟩
-        exact (Γ.cell_subset_diff hc hxc).2 hxN'.1
-    · rintro ⟨hxU | hxΔ, hxN'⟩
-      · by_cases hxΔ : x ∈ Δ
-        · left
-          rw [hc'_eq]
-          exact ⟨hxΔ, hxN'⟩
-        · right
-          have hx_compl : x ∈ Set.univ \ Δ := ⟨ trivial, hxΔ ⟩
-          have hxN : x ∉ Γ.N := fun hxN => hxN' ⟨hxN, subset_closure hx_compl⟩
-          have hx_sUnion : x ∈ ⋃₀ Γ.C := by rw [Γ.sUnion_cells]; exact ⟨hxU, hxN⟩
-          rcases hx_sUnion with ⟨c, hc, hxc⟩
-          rcases hdich c hc with hc_in | hc_out
-          · exact False.elim (hxΔ (hc_in hxc).1)
-          · exact ⟨c, ⟨hc, hc_out⟩, hxc⟩
-      · left
-        rw [hc'_eq]
-        exact ⟨hxΔ, hxN'⟩
-  apply arcComponentsIn_eq_of_finite_cover (hI₂_fin.insert c') hcov
-  · rintro c (rfl | hcI₂)
-    · exact hc'_ne
-    · exact Γ.cell_nonempty hcI₂.1
-  · rintro c (rfl | hcI₂)
-    · exact hc'_pc
-    · exact Γ.cell_isPathConnected hcI₂.1
-  · rintro c₁ (rfl | hc₁) c₂ (rfl | hc₂) hne
-    · exact (hne rfl).elim
-    · exact Set.disjoint_left.mpr fun x hxc' hxc₂ => (hc₂.2 hxc₂).2 hxc'.1
-    · exact Set.disjoint_left.mpr fun x hxc₁ hxc' => (hc₁.2 hxc₁).2 hxc'.1
-    · exact Γ.cell_disjoint hc₁.1 hc₂.1 hne
-  · rintro c (rfl | hcI₂)
-    · refine Subset.antisymm ?_ (fun x hxc => ⟨subset_closure hxc,
-        hcov ▸ mem_sUnion_of_mem hxc (mem_insert _ _)⟩)
-      rintro x ⟨hxcl, _, hxN'⟩
-      rw [hc'_cl] at hxcl
-      rw [hc'_eq]
-      exact ⟨hxcl, hxN'⟩
-    · refine Subset.antisymm ?_ (fun x hxc => ⟨subset_closure hxc,
-        hcov ▸ mem_sUnion_of_mem hxc (mem_insert_of_mem _ hcI₂)⟩)
-      rintro x ⟨hxcl, _, hxN'⟩
-      have hcl_sub := (closure_cell_inter_disc_of_subset_compl hS Γ hΔ hnorm hcI₂.1 hcI₂.2).1
-      have hxN : x ∉ Γ.N := fun hxN => hxN' ⟨hxN, hcl_sub hxcl⟩
-      rw [← Γ.closure_cell_diff_N hcI₂.1]
-      exact ⟨hxcl, hxN⟩
+      insert (Δ \ (discBd Δ ∩ Γ.N)) {c ∈ Γ.C | c ⊆ Set.univ \ Δ} :=
+  (Γ.replaceDiscWithCells hS Δ hΔ hnorm hcard).2
 
 /-- Given a subhypergraph $H \le G$ and a vertex subset $W \subseteq V(G)$, the minimal
 subhypergraph $A \le G$ with $H \le A$ and $W \subseteq V(A)$ is $H \cup \text{discrete}(W)$,

@@ -1150,11 +1150,20 @@ theorem exists_capAll (S : Type u) [TopologicalSpace S] (hS : IsSurface S) :
   obtain ⟨T, t, j, K, h1, h2, h3, h4, h5, h6, -⟩ := exists_capAll_discs S hS
   exact ⟨T, t, j, K, h1, h2, h3, h4, h5, h6⟩
 
-/-- **Pushing a closed set off discs.** See the module docstring. -/
-theorem push_off : PushOffStatement := by
+/-- Push a curve off finitely many discs by moving each disc independently. The line in a disc is
+either an interior chord or a boundary arc containing the part of the fixed set in that disc. -/
+theorem push_off_discs {S : Type u} [TopologicalSpace S] (hS : IsSurface S)
+    {ι : Type} [Finite ι] {N Z : Set S} {D L : ι → Set S}
+    (hN : N.Finite) (hZ : IsClosed Z) (hD : ∀ i, IsClosedDisc (D i))
+    (hL : ∀ i, ∃ a b, IsLineWithEnds (L i) a b ∧ D i ∩ N = {a, b} ∧
+      a ∈ discBd (D i) ∧ b ∈ discBd (D i) ∧ L i ⊆ D i ∧
+      ((L i \ {a, b} ⊆ D i \ discBd (D i) ∧ D i ∩ bd S ⊆ N ∧ D i ∩ Z ⊆ N) ∨
+        (L i ⊆ discBd (D i) ∧ D i ∩ bd S ⊆ L i ∧ D i ∩ Z ⊆ L i)))
+    (hDD : ∀ i j, i ≠ j → D i ∩ D j ⊆ N) {F : Set S}
+    (hF : IsOArc F) (hFZ : F ∩ Z ⊆ N) (hFL : ∀ i, F ∩ L i ⊆ N) :
+    ∃ h : S ≃ₜ S, (∀ n ∈ N, h n = n) ∧ (h '' F) ∩ Z ⊆ N ∧ ∀ i, (h '' F) ∩ D i ⊆ N := by
   classical
-  intro S _ hS ι _ N Z D L hN hZ hD hL hDD hDZ F hF hFZ hFL
-  obtain ⟨hcpt, ht2, hman⟩ := id hS
+  obtain ⟨hcpt, ht2, _⟩ := id hS
   obtain ⟨T, _, j, K, hT, hj, hK, hu, hi, -⟩ := exists_capAll S hS
   obtain ⟨hTc, hTt, hTi⟩ := id hT
   obtain ⟨φ⟩ := id hF
@@ -1192,13 +1201,13 @@ theorem push_off : PushOffStatement := by
       have hY : IsClosed Y := hZ'.union ((Set.toFinite _).isClosed_biUnion fun k _ =>
         hj.isClosedMap _ (hD k).isClosed)
       obtain ⟨d1, d2⟩ := hdisc (hD i)
-      have hYN : ∀ x ∈ Y, ∀ y ∈ D i, x = j y → y ∈ N ∨ y ∈ bd S := by
+      have hYN : ∀ x ∈ Y, ∀ y ∈ D i, x = j y → y ∈ N ∨ y ∈ bd S ∨ y ∈ Z := by
         rintro x (hx | hx) y hy rfl
         · rcases hx with hx | ⟨w, hw, he⟩ | ⟨w, hw, he⟩
           · obtain ⟨w, hw, he⟩ : j y ∈ j '' bd S := hi ▸ ⟨⟨y, rfl⟩, hx⟩
-            exact .inr (hji he ▸ hw)
+            exact .inr (.inl (hji he ▸ hw))
           · exact .inl (hji he ▸ hw)
-          · exact .inl (hDZ i ⟨hy, hji he ▸ hw⟩)
+          · exact .inr (.inr (hji he ▸ hw))
         · obtain ⟨k, hk, w, hw, he⟩ := mem_iUnion₂.mp hx
           exact .inl (hDD i k hk.symm ⟨hy, hji he ▸ hw⟩)
       have hline : IsLineWithEnds (j '' L i) (j a) (j b) := by
@@ -1210,7 +1219,7 @@ theorem push_off : PushOffStatement := by
       obtain ⟨h₂, g1, g2⟩ := push_disc (T := T) hTi (D := j '' D i) (L := j '' L i) (Y := Y)
         (C := h '' (j '' F)) d1 hline (image_mono hLD)
         (by
-          rcases hcase with ⟨c1, c2⟩ | c1
+          rcases hcase with ⟨hinside, hbdN, hZN⟩ | ⟨hLb, hbdL, hZL⟩
           · right
             refine ⟨?_, ?_⟩
             · rintro _ ⟨⟨y, hy, rfl⟩, hne⟩
@@ -1218,38 +1227,34 @@ theorem push_off : PushOffStatement := by
                 rcases hm with rfl | rfl
                 · exact .inl rfl
                 · exact .inr rfl)
-              obtain ⟨c3, c4⟩ := c1 ⟨hy, hy'⟩
-              refine ⟨mem_image_of_mem j c3, ?_⟩
+              obtain ⟨hd, hnotBd⟩ := hinside ⟨hy, hy'⟩
+              refine ⟨mem_image_of_mem j hd, ?_⟩
               rw [d2]
               rintro ⟨w, hw, he⟩
-              exact c4 (hji he ▸ hw)
+              exact hnotBd (hji he ▸ hw)
             · rintro x ⟨hx, y, hy, rfl⟩
-              have h4 : y ∈ D i ∩ N := by
-                rcases hYN _ hx y hy rfl with h4 | h4
-                · exact ⟨hy, h4⟩
-                · exact ⟨hy, c2 ⟨hy, h4⟩⟩
-              rw [hDN] at h4
-              rcases h4 with rfl | rfl
+              have hyN : y ∈ N := by
+                rcases hYN _ hx y hy rfl with hN | hbd | hZ
+                · exact hN
+                · exact hbdN ⟨hy, hbd⟩
+                · exact hZN ⟨hy, hZ⟩
+              have hyEnds : y ∈ ({a, b} : Set S) := hDN ▸ ⟨hy, hyN⟩
+              rcases hyEnds with rfl | rfl
               · exact .inl rfl
               · exact .inr rfl
           · left
             refine ⟨?_, ?_⟩
-            · rintro _ ⟨y, hy, rfl⟩
-              rw [c1] at hy
-              rw [d2]
-              refine mem_image_of_mem j ?_
-              by_contra hcon
-              exact hy.2 (isInteriorPoint_of_mem_discInt hman (hD i) ⟨hy.1, hcon⟩)
+            · rw [d2]
+              exact image_mono hLb
             · rintro x ⟨hx, y, hy, rfl⟩
               refine mem_image_of_mem j ?_
-              rcases hYN _ hx y hy rfl with h4 | h4
-              · have h5 : y ∈ D i ∩ N := ⟨hy, h4⟩
-                rw [hDN] at h5
-                rcases h5 with rfl | rfl
+              rcases hYN _ hx y hy rfl with hN | hbd | hZ
+              · have hyEnds : y ∈ ({a, b} : Set S) := hDN ▸ ⟨hy, hN⟩
+                rcases hyEnds with rfl | rfl
                 · exact haL
                 · exact hbL
-              · rw [c1]
-                exact ⟨hy, h4⟩)
+              · exact hbdL ⟨hy, hbd⟩
+              · exact hZL ⟨hy, hZ⟩)
         (by rw [d2]; exact mem_image_of_mem j ha) (by rw [d2]; exact mem_image_of_mem j hb)
         hY (.inl (.inr (.inl (mem_image_of_mem j haN.2)))) (.inl (.inr (.inl
           (mem_image_of_mem j hbN.2))))
@@ -1323,5 +1328,28 @@ theorem push_off : PushOffStatement := by
     obtain ⟨w, hw, he⟩ := f3 i (Finset.mem_univ i)
       ⟨⟨j y, mem_image_of_mem j hy, (hjh y).symm⟩, mem_image_of_mem j hz⟩
     exact hji he ▸ hw
+
+/-- **Pushing a closed set off discs.** See the module docstring. -/
+theorem push_off : PushOffStatement := by
+  intro S _ hS ι _ N Z D L hN hZ hD hL hDD hDZ F hF hFZ hFL
+  refine push_off_discs hS hN hZ hD ?_ hDD hF hFZ hFL
+  intro i
+  obtain ⟨a, b, hLi, hDN, ha, hb, hLD, hcase⟩ := hL i
+  refine ⟨a, b, hLi, hDN, ha, hb, hLD, ?_⟩
+  rcases hcase with ⟨hinside, hbdN⟩ | hboundary
+  · exact .inl ⟨hinside, hbdN, hDZ i⟩
+  · have hLb : L i ⊆ discBd (D i) := by
+      rw [hboundary]
+      rintro y ⟨hyD, hybd⟩
+      by_contra hy_not
+      exact hybd (isInteriorPoint_of_mem_discInt hS.2.2 (hD i) ⟨hyD, hy_not⟩)
+    refine .inr ⟨hLb, hboundary.symm.subset, ?_⟩
+    intro y hy
+    have hyEnds : y ∈ ({a, b} : Set S) := hDN ▸ ⟨hy.1, hDZ i hy⟩
+    rcases hyEnds with rfl | rfl
+    · obtain ⟨f, h0, _⟩ := hLi
+      exact h0 ▸ (f 0).2
+    · obtain ⟨f, _, h1⟩ := hLi
+      exact h1 ▸ (f 1).2
 
 end GraphMinor.Surface

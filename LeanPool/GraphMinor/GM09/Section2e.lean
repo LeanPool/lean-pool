@@ -3436,26 +3436,17 @@ theorem exists_path_avoiding_bar_diff (S : Society α β)
       rw [hQ'_ft.2.2, mem_singleton_iff] at hx_in
       exact hx_ne.2 hx_in
 
-/-- **Graph Minors IX, (2.4)** (page 45):
-"We may choose distinct $s, t \in \bar{\Omega}$ such that there is a path between $s$ and $t$
-avoiding $Z$, where $Z = \bar{\Omega} - \{s, t\}$. We apply (2.1), and deduce that there is a path
-$P$ joining $s$ and $t$ such that $P$ is an induced subgraph of $G$ and $Z$ catches
-$G \setminus V(P)$. In particular, no internal vertex of $P$ is in $\bar{\Omega}$." -/
-theorem exists_induced_catches_path_of_three_connected (S : Society α β)
+private theorem induced_catches_path_from_path (S : Society α β)
     (hconn : S.IsKConnected 3)
-    (hconn_G : IsGraphConnected S.G)
     (hG_loopless : ∀ x : α, ¬ S.G.Adj x x)
     (hG_simple : ∀ e₁ e₂ x y, S.G.IsLink e₁ x y → S.G.IsLink e₂ x y → e₁ = e₂)
-    (hbar3 : 3 ≤ S.Ω.bar.ncard) :
-    ∃ s ∈ S.Ω.bar, ∃ t ∈ S.Ω.bar, s ≠ t ∧
-      ∃ P : Graph α β,
-        IsGraphPathWithEnds S.G P s t ∧
-        P ≤i S.G ∧
-        Disjoint (V(P) \ {s, t}) S.Ω.bar ∧
-        Catches (S.Ω.bar \ {s, t}) (deleteVertices S.G V(P)) := by
+    {s t : α} (hst : s ≠ t) {Q₀ : Graph α β}
+    (hQ₀ : IsGraphPathWithEnds S.G Q₀ s t) (hQ₀_av : Avoids Q₀ (S.Ω.bar \ {s, t})) :
+    ∃ P : Graph α β,
+      IsGraphPathWithEnds S.G P s t ∧ P ≤i S.G ∧
+      Disjoint (V(P) \ {s, t}) S.Ω.bar ∧
+      Catches (S.Ω.bar \ {s, t}) (deleteVertices S.G V(P)) := by
   classical
-  obtain ⟨s, hs, t, ht, hst, Q₀, hQ₀, hQ₀_av⟩ :=
-    exists_path_avoiding_bar_diff S hconn_G (by omega)
   let Z := S.Ω.bar \ {s, t}
   have hZ_sub : Z ⊆ V(S.G) := sdiff_subset.trans S.bar_subset
   let Good (H : Graph α β) : Prop :=
@@ -3538,7 +3529,7 @@ theorem exists_induced_catches_path_of_three_connected (S : Society α β)
       rcases hzv with ⟨hzH, ⟨W⟩⟩
       obtain ⟨W', _, _⟩ := exists_walk_up_of_le hH_le_delP W
       exact ⟨hH_le_delP.vertexSet_mono hzH, ⟨W'⟩⟩
-    exact ⟨s, hs, t, ht, hst, P, hP, hP_ind, hP_bar, hcatch_delP⟩
+    exact ⟨P, hP, hP_ind, hP_bar, hcatch_delP⟩
   · obtain ⟨G₁, G₂, hsep, hst_G₁, hcard2, _, _, hHG₁, hVG₁_ne⟩ := hsep2
     have hbar_G₁ : S.Ω.bar ⊆ V(G₁) := by
       intro x hx_bar
@@ -3548,6 +3539,29 @@ theorem exists_induced_catches_path_of_three_connected (S : Society α β)
     have hsep_S : S.IsKSeparation 2 G₂ G₁ :=
       ⟨⟨IsGraphSeparation.symm hsep, hbar_G₁⟩, by rw [inter_comm, hcard2], hVG₁_ne⟩
     exact (hconn 2 (by omega) G₂ G₁ hsep_S).elim
+
+/-- **Graph Minors IX, (2.4)** (page 45):
+"We may choose distinct $s, t \in \bar{\Omega}$ such that there is a path between $s$ and $t$
+avoiding $Z$, where $Z = \bar{\Omega} - \{s, t\}$. We apply (2.1), and deduce that there is a path
+$P$ joining $s$ and $t$ such that $P$ is an induced subgraph of $G$ and $Z$ catches
+$G \setminus V(P)$. In particular, no internal vertex of $P$ is in $\bar{\Omega}$." -/
+theorem exists_induced_catches_path_of_three_connected (S : Society α β)
+    (hconn : S.IsKConnected 3)
+    (hconn_G : IsGraphConnected S.G)
+    (hG_loopless : ∀ x : α, ¬ S.G.Adj x x)
+    (hG_simple : ∀ e₁ e₂ x y, S.G.IsLink e₁ x y → S.G.IsLink e₂ x y → e₁ = e₂)
+    (hbar3 : 3 ≤ S.Ω.bar.ncard) :
+    ∃ s ∈ S.Ω.bar, ∃ t ∈ S.Ω.bar, s ≠ t ∧
+      ∃ P : Graph α β,
+        IsGraphPathWithEnds S.G P s t ∧
+        P ≤i S.G ∧
+        Disjoint (V(P) \ {s, t}) S.Ω.bar ∧
+        Catches (S.Ω.bar \ {s, t}) (deleteVertices S.G V(P)) := by
+  classical
+  obtain ⟨s, hs, t, ht, hst, Q₀, hQ₀, hQ₀_av⟩ :=
+    exists_path_avoiding_bar_diff S hconn_G (by omega)
+  exact ⟨s, hs, t, ht, hst, induced_catches_path_from_path S hconn hG_loopless hG_simple
+    hst hQ₀ hQ₀_av⟩
 
 /-! ## Module 1: Walk Uniqueness on a Path, Simple Reduction, and 3-Connected Base Lemmas -/
 
@@ -3827,99 +3841,8 @@ theorem exists_induced_catches_path_of_three_connected_nonempty (S : Society α 
   classical
   obtain ⟨s, hs, t, ht, hst, Q₀, hQ₀, hQ₀_av⟩ :=
     exists_path_avoiding_bar_diff_of_three_connected S hconn hG_loopless hE
-  let Z := S.Ω.bar \ {s, t}
-  have hZ_sub : Z ⊆ V(S.G) := sdiff_subset.trans S.bar_subset
-  let Good (H : Graph α β) : Prop :=
-    H ≤ S.G ∧ Catches Z H ∧ ∃ Q : Graph α β, IsGraphPathWithEnds S.G Q s t ∧ Avoids Q V(H)
-  have hGood₀ : Good (S.G.induce Z) := by
-    refine ⟨S.G.induce_le hZ_sub, ⟨subset_rfl, fun C hC => ?_⟩, Q₀, hQ₀, hQ₀_av⟩
-    obtain ⟨v, hvC⟩ := hC.2.1.1
-    exact ⟨v, hC.1.vertexSet_mono hvC, hvC⟩
-  have hex_max : ∀ (n : ℕ) {H : Graph α β}, Good H →
-      (V(S.G).ncard + E(S.G).ncard) - (V(H).ncard + E(H).ncard) = n →
-      ∃ H_m : Graph α β, Good H_m ∧
-        ∀ H' : Graph α β, H_m ≤ H' → H' ≤ S.G → Catches Z H' →
-          (∃ Q : Graph α β, IsGraphPathWithEnds S.G Q s t ∧ Avoids Q V(H')) → H' = H_m := by
-    intro n
-    induction n using Nat.strong_induction_on with
-    | ind n ih =>
-      intro H hGood hmeas
-      by_cases hmax : ∀ H' : Graph α β, H ≤ H' → H' ≤ S.G → Catches Z H' →
-          (∃ Q : Graph α β, IsGraphPathWithEnds S.G Q s t ∧ Avoids Q V(H')) → H' = H
-      · exact ⟨H, hGood, hmax⟩
-      · push Not at hmax
-        obtain ⟨H', hHH', hH'G, hZ', hQ', hne⟩ := hmax
-        have hV_le : V(H).ncard ≤ V(H').ncard :=
-          ncard_le_ncard hHH'.vertexSet_mono (S.finite_V.subset hH'G.vertexSet_mono)
-        have hE_le : E(H).ncard ≤ E(H').ncard :=
-          ncard_le_ncard hHH'.edgeSet_mono (S.finite_E.subset hH'G.edgeSet_mono)
-        have hV_top : V(H').ncard ≤ V(S.G).ncard :=
-          ncard_le_ncard hH'G.vertexSet_mono S.finite_V
-        have hE_top : E(H').ncard ≤ E(S.G).ncard :=
-          ncard_le_ncard hH'G.edgeSet_mono S.finite_E
-        have hlt_sum : V(H).ncard + E(H).ncard < V(H').ncard + E(H').ncard := by
-          by_cases hV_eq : V(H) = V(H')
-          · have hE_ne : E(H) ≠ E(H') := fun hE_eq =>
-              hne ((Compatible.of_le_le le_rfl hHH').ext hV_eq.symm hE_eq.symm)
-            have hE_lt : E(H).ncard < E(H').ncard :=
-              ncard_lt_ncard ⟨hHH'.edgeSet_mono, fun h => hE_ne (Subset.antisymm hHH'.edgeSet_mono
-                h)⟩
-                (S.finite_E.subset hH'G.edgeSet_mono)
-            omega
-          · have hV_lt : V(H).ncard < V(H').ncard :=
-              ncard_lt_ncard ⟨hHH'.vertexSet_mono, fun h => hV_eq (Subset.antisymm
-                hHH'.vertexSet_mono h)⟩
-                (S.finite_V.subset hH'G.vertexSet_mono)
-            omega
-        exact ih ((V(S.G).ncard + E(S.G).ncard) - (V(H').ncard + E(H').ncard))
-          (by omega) ⟨hH'G, hZ', hQ'⟩ rfl
-  obtain ⟨H, ⟨hHG, hZH, P, hP, hP_av⟩, hmax⟩ := hex_max _ hGood₀ rfl
-  have hPK : IsGraphPathWithEnds (deleteVertices S.G V(H)) P s t :=
-    hP.in_deleteVertices hP_av
-  rcases theorem_2_1_proof hG_loopless hG_simple hst hHG hZH hmax hPK with hP_eq | hsep2
-  · have hP_ind : P ≤i S.G := by
-      rw [hP_eq]
-      exact ⟨deleteVertices_le S.G V(H), fun e x y hxy hx hy =>
-        (deleteVertices_isLink S.G V(H)).mpr ⟨hxy, hx.2, hy.2⟩⟩
-    have hVP : V(P) = V(S.G) \ V(H) := by rw [hP_eq]; rfl
-    have hP_bar : Disjoint (V(P) \ {s, t}) S.Ω.bar := by
-      rw [disjoint_left]
-      rintro x ⟨hxP, hx_st⟩ hx_bar
-      have hxZ : x ∈ Z := ⟨hx_bar, hx_st⟩
-      exact disjoint_left.mp hP_av (hZH.1 hxZ) hxP
-    have hH_le_delP : H ≤ deleteVertices S.G V(P) :=
-      le_deleteVertices hHG (by rw [hVP]; exact disjoint_sdiff_right)
-    have hV_delP : V(deleteVertices S.G V(P)) = V(H) := by
-      ext x
-      simp only [vertexSet_deleteVertices, hVP, mem_sdiff]
-      exact ⟨fun ⟨hxG, hx_not⟩ => by_contra fun hxH => hx_not ⟨hxG, hxH⟩,
-        fun hxH => ⟨hHG.vertexSet_mono hxH, fun ⟨_, hx_not⟩ => hx_not hxH⟩⟩
-    have hcatch_delP : Catches Z (deleteVertices S.G V(P)) := by
-      refine ⟨hV_delP.symm ▸ hZH.1, fun C hC => ?_⟩
-      obtain ⟨v, hvC⟩ := hC.2.1.1
-      have hv_delP : v ∈ V(deleteVertices S.G V(P)) := hC.1.vertexSet_mono hvC
-      have hvH : v ∈ V(H) := hV_delP ▸ hv_delP
-      obtain ⟨z, hzZ, hzv⟩ := hZH.2 (reachableComponent H v) (isGraphComponent_reachableComponent
-        hvH)
-      have hC_eq : C = reachableComponent (deleteVertices S.G V(P)) v :=
-        isGraphComponent_eq_reachableComponent hC hvC
-      refine ⟨z, hzZ, ?_⟩
-      rw [hC_eq, vertexSet_reachableComponent]
-      rw [vertexSet_reachableComponent] at hzv
-      rcases hzv with ⟨hzH, ⟨W⟩⟩
-      obtain ⟨W', _, _⟩ := exists_walk_up_of_le hH_le_delP W
-      exact ⟨hH_le_delP.vertexSet_mono hzH, ⟨W'⟩⟩
-    exact ⟨s, hs, t, ht, hst, P, hP, hP_ind, hP_bar, hcatch_delP⟩
-  · obtain ⟨G₁, G₂, hsep, hst_G₁, hcard2, _, _, hHG₁, hVG₁_ne⟩ := hsep2
-    have hbar_G₁ : S.Ω.bar ⊆ V(G₁) := by
-      intro x hx_bar
-      by_cases hx_st : x ∈ ({s, t} : Set α)
-      · exact hst_G₁ hx_st
-      · exact hHG₁.vertexSet_mono (hZH.1 ⟨hx_bar, hx_st⟩)
-    have hsep_S : S.IsKSeparation 2 G₂ G₁ :=
-      ⟨⟨IsGraphSeparation.symm hsep, hbar_G₁⟩, by rw [inter_comm, hcard2], hVG₁_ne⟩
-    exact (hconn 2 (by omega) G₂ G₁ hsep_S).elim
-
+  exact ⟨s, hs, t, ht, hst, induced_catches_path_from_path S hconn hG_loopless hG_simple
+    hst hQ₀ hQ₀_av⟩
 
 theorem RedirectsTo.mono {G H : Graph α β} (hle : H ≤ G) {X Y X' Y' : Set α}
     (h : RedirectsTo H X Y X' Y') : RedirectsTo G X Y X' Y' := by

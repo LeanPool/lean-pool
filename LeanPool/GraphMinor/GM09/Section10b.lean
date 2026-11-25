@@ -726,26 +726,37 @@ def spikeGraphWithVerts (H : Graph α β) (X Z : Set α) : Graph (α ⊕ α) (β
     · exact Or.inl ⟨_, hx.2, rfl⟩
     · exact Or.inr ⟨_, ⟨Or.inl hx.1, hx.2⟩, rfl⟩
 
-/-- **(5.2) without `hno_int`**: deduced from `Society.theorem_5_2_proof` applied to `Society.spiked
-S`. -/
-theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (hp2 : 2 ≤ p)
-  (hp3 : p ≠ 3)
+/-- Lift a transaction and a separation at a distinguished path to the spiked society. -/
+theorem Society.spikeTransactionAndSeparation (S : Society α β) {n p : ℕ}
+    {Q : Fin n → Graph α β} {a b : Fin n → α} (m : Fin n)
     (hex_cr : ∃ P₀ : Set (Graph α β), S.IsCrookedTransaction P₀ ∧ p ≤ P₀.ncard)
-    {Q : Fin (p + 4) → Graph α β} {a b : Fin (p + 4) → α}
-    (hinj_Q : Function.Injective Q)
-    (htr_Q : S.IsTransaction (range Q))
-    (hsep_Q : ∀ i : Fin (p + 4), S.IsSeparatingOmegaPath (Q i))
-    (hends_Q : ∀ i : Fin (p + 4), S.IsOmegaPathWithEnds (Q i) (a i) (b i))
+    (hinj_Q : Function.Injective Q) (htr_Q : S.IsTransaction (range Q))
+    (hsep_Q : ∀ i, S.IsSeparatingOmegaPath (Q i))
+    (hends_Q : ∀ i, S.IsOmegaPathWithEnds (Q i) (a i) (b i))
     (hcw : S.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b))
     {G₁ G₂ : Graph α β} (hsep_G : IsGraphSeparation S.G G₁ G₂)
-    (hinter_G : V(G₁) ∩ V(G₂) = V(Q ⟨p + 3, by omega⟩))
-    (hint_G₁ : S.Ω.interval (a ⟨p + 3, by omega⟩) (b ⟨p + 3, by omega⟩) ⊆ V(G₁))
-    (hint_G₂ : S.Ω.interval (b ⟨p + 3, by omega⟩) (a ⟨p + 3, by omega⟩) ⊆ V(G₂)) :
-    (∃ P₁ P₂ : Graph α β, S.OmegaPathsCross P₁ P₂ ∧
-      Disjoint V(P₁) V(G₂) ∧ Disjoint V(P₂) V(G₂)) ∨
-    (∃ P_set : Set (Graph α β), S.IsCrookedTransaction P_set ∧ P_set.ncard = p ∧
-      Disjoint (S.Ω.interval (a ⟨0, by omega⟩) (b ⟨0, by omega⟩)) (S.transactionEnds P_set)) := by
-  let S' := Society.spiked S
+    (hinter_G : V(G₁) ∩ V(G₂) = V(Q m))
+    (hint_G₁ : S.Ω.interval (a m) (b m) ⊆ V(G₁))
+    (hint_G₂ : S.Ω.interval (b m) (a m) ⊆ V(G₂)) :
+    let S' := Society.spiked S
+    let Q' : Fin n → Graph (α ⊕ α) (β ⊕ α) := fun i => spikeOmegaPath S (Q i)
+    let a' : Fin n → α ⊕ α := inrV ∘ a
+    let b' : Fin n → α ⊕ α := inrV ∘ b
+    let X₁ := {a m, b m} ∪ S.Ω.interval (a m) (b m)
+    let X₂ := S.Ω.interval (b m) (a m)
+    let G₁' := spikeGraph G₁ X₁
+    let G₂' := spikeGraphWithVerts G₂ X₂ {a m, b m}
+    (∃ P₀' : Set (Graph (α ⊕ α) (β ⊕ α)),
+      S'.IsCrookedTransaction P₀' ∧ p ≤ P₀'.ncard) ∧
+    Function.Injective Q' ∧ S'.IsTransaction (range Q') ∧
+    (∀ i, S'.IsSeparatingOmegaPath (Q' i)) ∧
+    (∀ i, Disjoint (pathInternalVerts S'.G (Q' i)) S'.Ω.bar) ∧
+    (∀ i, S'.IsOmegaPathWithEnds (Q' i) (a' i) (b' i)) ∧
+    S'.Ω.IsClockwiseSeq ((List.ofFn a').reverse ++ List.ofFn b') ∧
+    IsGraphSeparation S'.G G₁' G₂' ∧ V(G₁') ∩ V(G₂') = V(Q' m) ∧
+    S'.Ω.interval (a' m) (b' m) ⊆ V(G₁') ∧ S'.Ω.interval (b' m) (a' m) ⊆ V(G₂') ∧
+    (Q m ≤ G₁ → Q' m ≤ G₁') := by
+  intro S' Q' a' b' X₁ X₂ G₁' G₂'
   have : Finite V(S'.G) := S'.finite_V
   have : Finite E(S'.G) := S'.finite_E
   obtain ⟨P₀, hcr_P₀, hp_P₀⟩ := hex_cr
@@ -753,9 +764,6 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
   have hex_cr' : ∃ P₀' : Set (Graph (α ⊕ α) (β ⊕ α)),
       S'.IsCrookedTransaction P₀' ∧ p ≤ P₀'.ncard :=
     ⟨spikeOmegaPath S '' P₀, hcr_P₀', hcard_P₀' ▸ hp_P₀⟩
-  let Q' : Fin (p + 4) → Graph (α ⊕ α) (β ⊕ α) := fun i => spikeOmegaPath S (Q i)
-  let a' : Fin (p + 4) → α ⊕ α := inrV ∘ a
-  let b' : Fin (p + 4) → α ⊕ α := inrV ∘ b
   have hQ'_eq : ∀ i, Q' i = spikeGraph (Q i) {a i, b i} :=
     fun i => spikeOmegaPath_eq S (hends_Q i)
   obtain ⟨A_Q, B_Q, hfence_Q⟩ := htr_Q
@@ -767,15 +775,15 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
   have htr_Q' : S'.IsTransaction (range Q') := by
     rw [hrange_Q']
     exact ⟨inrV '' A_Q, inrV '' B_Q, hfence_Q'⟩
-  have hsep_Q' : ∀ i : Fin (p + 4), S'.IsSeparatingOmegaPath (Q' i) := by
+  have hsep_Q' : ∀ i : Fin n, S'.IsSeparatingOmegaPath (Q' i) := by
     intro i
     rw [hQ'_eq i]
     exact isSeparatingOmegaPath_spikeGraph S (hends_Q i) (hsep_Q i)
-  have hno_int' : ∀ i : Fin (p + 4), Disjoint (pathInternalVerts S'.G (Q' i)) S'.Ω.bar := by
+  have hno_int' : ∀ i : Fin n, Disjoint (pathInternalVerts S'.G (Q' i)) S'.Ω.bar := by
     intro i
     rw [hQ'_eq i]
     exact (isOmegaPathWithEnds_spikeGraph S (hends_Q i)).2
-  have hends_Q' : ∀ i : Fin (p + 4), S'.IsOmegaPathWithEnds (Q' i) (a' i) (b' i) := by
+  have hends_Q' : ∀ i : Fin n, S'.IsOmegaPathWithEnds (Q' i) (a' i) (b' i) := by
     intro i
     rw [hQ'_eq i]
     exact (isOmegaPathWithEnds_spikeGraph S (hends_Q i)).1
@@ -785,7 +793,6 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
       rw [List.map_append, List.map_reverse, List.map_ofFn, List.map_ofFn]
     rw [h_list]
     exact (S.Ω.mapInr_isClockwiseSeq_iff _).mpr hcw
-  let m : Fin (p + 4) := ⟨p + 3, by omega⟩
   have hm_ends := hends_Q m
   have ha_m_Qm : a m ∈ V(Q m) := hm_ends.1.left_mem
   have hb_m_Qm : b m ∈ V(Q m) := hm_ends.1.right_mem
@@ -793,8 +800,6 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
   have hb_m_G₁ : b m ∈ V(G₁) := (hinter_G ▸ hb_m_Qm : b m ∈ V(G₁) ∩ V(G₂)).1
   have ha_m_G₂ : a m ∈ V(G₂) := (hinter_G ▸ ha_m_Qm : a m ∈ V(G₁) ∩ V(G₂)).2
   have hb_m_G₂ : b m ∈ V(G₂) := (hinter_G ▸ hb_m_Qm : b m ∈ V(G₁) ∩ V(G₂)).2
-  let X₁ : Set α := {a m, b m} ∪ S.Ω.interval (a m) (b m)
-  let X₂ : Set α := S.Ω.interval (b m) (a m)
   have hfence_m : S.Ω.IsFence X₁ X₂ :=
     S.Ω.isFence_interval_compl hm_ends.2.2.1 hm_ends.2.2.2 hm_ends.2.1
   have hX₁_sub_G₁ : X₁ ⊆ V(G₁) := by
@@ -811,8 +816,6 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
     · exact ha_m_G₂
     · exact hb_m_G₂
   have hbar_inter : S.Ω.bar ∩ V(S.G) = S.Ω.bar := inter_eq_left.mpr S.bar_subset
-  let G₁' := spikeGraph G₁ X₁
-  let G₂' := spikeGraphWithVerts G₂ X₂ {a m, b m}
   have hG₁'_le : G₁' ≤ S'.G :=
     spikeGraph_le hsep_G.1 (by rw [hX₁_inter, hbar_inter]; exact hfence_m.1)
   have hG₂'_le : G₂' ≤ S'.G := by
@@ -894,6 +897,46 @@ theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (h
       (inlV '' V(G₂)) ∪ (inrV '' ((X₂ ∪ {a m, b m}) ∩ V(G₂)))
     rw [S.Ω.mapInr_interval, hX₂Z_inter]
     exact subset_union_of_subset_right (image_mono subset_union_left) _
+  refine ⟨hex_cr', hinj_Q', htr_Q', hsep_Q', hno_int', hends_Q', hcw', hsep_G', hinter_G',
+    hint_G₁', hint_G₂', fun hQ_le => ?_⟩
+  rw [hQ'_eq m]
+  refine spikeGraph_le hQ_le ?_
+  rintro x ⟨rfl | rfl, _⟩
+  · exact ⟨Or.inl (Or.inl rfl), ha_m_G₁⟩
+  · exact ⟨Or.inl (Or.inr rfl), hb_m_G₁⟩
+
+/-- **(5.2) without `hno_int`**: deduced from `Society.theorem_5_2_proof` applied to `Society.spiked
+S`. -/
+theorem Society.theorem_5_2_without_no_internal (S : Society α β) {p : ℕ} (hp2 : 2 ≤ p)
+  (hp3 : p ≠ 3)
+    (hex_cr : ∃ P₀ : Set (Graph α β), S.IsCrookedTransaction P₀ ∧ p ≤ P₀.ncard)
+    {Q : Fin (p + 4) → Graph α β} {a b : Fin (p + 4) → α}
+    (hinj_Q : Function.Injective Q)
+    (htr_Q : S.IsTransaction (range Q))
+    (hsep_Q : ∀ i : Fin (p + 4), S.IsSeparatingOmegaPath (Q i))
+    (hends_Q : ∀ i : Fin (p + 4), S.IsOmegaPathWithEnds (Q i) (a i) (b i))
+    (hcw : S.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b))
+    {G₁ G₂ : Graph α β} (hsep_G : IsGraphSeparation S.G G₁ G₂)
+    (hinter_G : V(G₁) ∩ V(G₂) = V(Q ⟨p + 3, by omega⟩))
+    (hint_G₁ : S.Ω.interval (a ⟨p + 3, by omega⟩) (b ⟨p + 3, by omega⟩) ⊆ V(G₁))
+    (hint_G₂ : S.Ω.interval (b ⟨p + 3, by omega⟩) (a ⟨p + 3, by omega⟩) ⊆ V(G₂)) :
+    (∃ P₁ P₂ : Graph α β, S.OmegaPathsCross P₁ P₂ ∧
+      Disjoint V(P₁) V(G₂) ∧ Disjoint V(P₂) V(G₂)) ∨
+    (∃ P_set : Set (Graph α β), S.IsCrookedTransaction P_set ∧ P_set.ncard = p ∧
+      Disjoint (S.Ω.interval (a ⟨0, by omega⟩) (b ⟨0, by omega⟩)) (S.transactionEnds P_set)) := by
+  let S' := Society.spiked S
+  have : Finite V(S'.G) := S'.finite_V
+  have : Finite E(S'.G) := S'.finite_E
+  let m : Fin (p + 4) := ⟨p + 3, by omega⟩
+  let Q' : Fin (p + 4) → Graph (α ⊕ α) (β ⊕ α) := fun i => spikeOmegaPath S (Q i)
+  let a' : Fin (p + 4) → α ⊕ α := inrV ∘ a
+  let b' : Fin (p + 4) → α ⊕ α := inrV ∘ b
+  let G₁' := spikeGraph G₁ ({a m, b m} ∪ S.Ω.interval (a m) (b m))
+  let G₂' := spikeGraphWithVerts G₂ (S.Ω.interval (b m) (a m)) {a m, b m}
+  obtain ⟨hex_cr', hinj_Q', htr_Q', hsep_Q', hno_int', hends_Q', hcw', hsep_G', hinter_G',
+    hint_G₁', hint_G₂', -⟩ :=
+    S.spikeTransactionAndSeparation m hex_cr hinj_Q htr_Q hsep_Q hends_Q hcw
+      hsep_G hinter_G hint_G₁ hint_G₂
   rcases S'.theorem_5_2_proof hp2 hp3 hex_cr' hinj_Q' htr_Q' hsep_Q' hno_int' hends_Q' hcw'
       hsep_G' hinter_G' hint_G₁' hint_G₂' with
     ⟨K₁, K₂, ⟨hdisj_K12, s₁', t₁', s₂', t₂', hK₁_ends, hK₂_ends, hcr_K12⟩, hd_K₁, hd_K₂⟩ |

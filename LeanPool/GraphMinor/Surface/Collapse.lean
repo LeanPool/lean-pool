@@ -488,7 +488,8 @@ noncomputable def axisStretch (m p q : ℝ) (hp : 0 < p) (hq : 0 < q) : ℂ ≃�
 
 variable {T : Type} [TopologicalSpace T]
 
-private theorem stretch_mapsTo_cthickening {O : Set ℂ} {A : ℂ → ℂ}
+/-- An axis stretch of the unit disc lies in a thickening of its real-axis segment. -/
+theorem stretch_mapsTo_cthickening {O : Set ℂ} {A : ℂ → ℂ}
     {α β m ℓ η a₀ : ℝ} (hαβ : α < β) (hm : m = (α + β) / 2) (hℓ : ℓ = (β - α) / 2)
     (hp : 0 < ℓ * a₀) (hq : 0 < η / 2) (hscale : ℓ * a₀ = ℓ + η / 2)
     (hAre : ∀ z, (A z).re = m + ℓ * a₀ * z.re) (hAim : ∀ z, (A z).im = η / 2 * z.im)

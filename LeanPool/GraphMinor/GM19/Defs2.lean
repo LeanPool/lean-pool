@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+public import LeanPool.GraphMinor.Surface.CircleOrder
+
 public import LeanPool.GraphMinor.GM19.Defs
 public import LeanPool.GraphMinor.GM11.Defs
 public import LeanPool.GraphMinor.GM10.Defs2
@@ -472,8 +474,7 @@ structure IsCappedSurface (S : Type u) [TopologicalSpace S]
 
 /-- The positive cyclic order of three points of the circle: going around from `a` in the positive
 direction, we reach `b` before `c`, and both before coming back to `a`. -/
-def CircleCyclic (a b c : Circle) : Prop :=
-  ∃ s t : ℝ, 0 < s ∧ s < t ∧ t < 2 * Real.pi ∧ b = a * Circle.exp s ∧ c = a * Circle.exp t
+abbrev CircleCyclic (a b c : Circle) : Prop := CircleOrder.CircleCyclic a b c
 
 /-- An orientation `ω` of a surface `S` (Graph Minors XIX, Section 4, page 332). The paper uses
 orientations as usual. An orientation assigns to each closed disc `Δ ⊆ S` a cyclic order of

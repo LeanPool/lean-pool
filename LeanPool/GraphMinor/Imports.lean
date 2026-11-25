@@ -1282,7 +1282,9 @@ public import LeanPool.GraphMinor.GM14.WhitneyGraph
 public import LeanPool.GraphMinor.GM14.WhitneyPeripheral
 public import LeanPool.GraphMinor.GM15.ChordMove
 public import LeanPool.GraphMinor.GM15.Cited
+public import LeanPool.GraphMinor.GM15.ControllingTangle
 public import LeanPool.GraphMinor.GM15.Defs
+public import LeanPool.GraphMinor.GM15.EyeInductionParameters
 public import LeanPool.GraphMinor.GM15.LineMove
 public import LeanPool.GraphMinor.GM15.Section2
 public import LeanPool.GraphMinor.GM15.Section3
@@ -2052,6 +2054,7 @@ public import LeanPool.GraphMinor.Hypergraph.Basic
 public import LeanPool.GraphMinor.Menger.Basic
 public import LeanPool.GraphMinor.Menger.SimpleGraph
 public import LeanPool.GraphMinor.Minor.Basic
+public import LeanPool.GraphMinor.Minor.CompleteGraph
 public import LeanPool.GraphMinor.Minor.Model
 public import LeanPool.GraphMinor.RST94.Basic
 public import LeanPool.GraphMinor.RST94.Contract
@@ -2090,6 +2093,7 @@ public import LeanPool.GraphMinor.Surface.CellMap
 public import LeanPool.GraphMinor.Surface.ChartCells
 public import LeanPool.GraphMinor.Surface.Circle
 public import LeanPool.GraphMinor.Surface.CircleMove
+public import LeanPool.GraphMinor.Surface.CircleOrder
 public import LeanPool.GraphMinor.Surface.Classification
 public import LeanPool.GraphMinor.Surface.CohCard
 public import LeanPool.GraphMinor.Surface.CohCount

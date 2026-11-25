@@ -556,15 +556,12 @@ C((\mathcal{P} - \{P\}) \cup \{P'\})$." -/
 theorem lemma_6_1_claim_5 {P_set : Set (Graph α β)} {P P' G₁ G₂ : Graph α β} {a b : α}
     (htrans : S.IsTransaction P_set)
     (hcard : 2 ≤ P_set.ncard)
-    (_hno_int : ∀ R ∈ P_set, Disjoint (pathInternalVerts S.G R) S.Ω.bar)
     (hP_in : P ∈ P_set)
     (hP_ends : S.IsOmegaPathWithEnds P a b)
     (hd_ab : Disjoint (S.Ω.interval a b) (S.transactionEnds P_set))
     (hsep : IsGraphSeparation S.G G₁ G₂)
     (hinter : V(G₁) ∩ V(G₂) = V(P))
-    (_hab_G₁ : S.Ω.interval a b ⊆ V(G₁))
     (hba_G₂ : S.Ω.interval b a ⊆ V(G₂))
-    (_hP'_omega : S.IsOmegaPath P')
     (hP'_le : P' ≤ G₁)
     (hU_sub : S.transactionPeripheralUnion P_set ⊆
       S.transactionPeripheralUnion ((P_set \ {P}) ∪ {P'}))
@@ -898,8 +895,8 @@ private theorem replacePathWithOrderedEnds
       rw [← hU_P]
       exact mem_iInter₂.mp hz_inter P ⟨hP_in, hper_P⟩
   have hC_sub : S.coveredComponentUnion P_set ⊆ S.coveredComponentUnion P_set' :=
-    S.lemma_6_1_claim_5 htrans_orig hcard_ge2 hno_int hP_in hP_ends hd_ab hsep hinter hab_G₁ hba_G₂
-      ⟨u₀, v₀, hP''_uv⟩ hP''_le_G₁ hU_sub hper_sub
+    S.lemma_6_1_claim_5 htrans_orig hcard_ge2 hP_in hP_ends hd_ab hsep hinter hba_G₂
+      hP''_le_G₁ hU_sub hper_sub
   have hx₀_U' : x₀ ∈ S.transactionPeripheralUnion P_set' := by
     have hx₀_bar : x₀ ∈ S.Ω.bar := by
       rcases hx₀_ab with rfl | rfl
@@ -1468,8 +1465,8 @@ theorem replacement_same_ends_properties {p : ℕ} {P_set : Set (Graph α β)}
         exact hx P ⟨hP_in, hper_P⟩
   have hcard_ge2 : 2 ≤ P_set.ncard := by omega
   have hC_sub : S.coveredComponentUnion P_set ⊆ S.coveredComponentUnion P_set' :=
-    S.lemma_6_1_claim_5 htrans_orig hcard_ge2 hno_int hP_in hP_ends hd_ab hsep hinter hab_G₁ hba_G₂
-      ⟨a, b, hP'_ends⟩ hP'_le hU_eq.symm.subset hper_sub
+    S.lemma_6_1_claim_5 htrans_orig hcard_ge2 hP_in hP_ends hd_ab hsep hinter hba_G₂
+      hP'_le hU_eq.symm.subset hper_sub
   have hC_eq : S.coveredComponentUnion P_set = S.coveredComponentUnion P_set' :=
     hmax P_set' htrans' hcard' hno_int' hC_sub
   exact ⟨hP'_not_in, htrans', hcard', hno_int', hW_eq, hper_P', hper_iff, hU_eq, hC_eq⟩

@@ -382,15 +382,6 @@ private theorem gridHypergraph_inc_swapEdge {θ : ℕ} {e : Sym2 (Fin θ × Fin 
   induction e using Sym2.ind with | _ x y =>
   simp [swapEdge, Prod.swap_inj]
 
-private theorem swapEdge_mem_gridRowPath_iff {θ : ℕ} {i : Fin θ} {e : Sym2 (Fin θ × Fin θ)} :
-    swapEdge θ e ∈ (gridRowPath θ i).edgeSet ↔ e ∈ (gridColPath θ i).edgeSet := by
-  simp only [gridRowPath, gridColPath, Set.mem_sep_iff, swapEdge_mem_gridHypergraph]
-  refine and_congr_right fun _ ↦ ⟨fun h v hv ↦ ?_, fun h v hv ↦ ?_⟩
-  · simpa using h v.swap (gridHypergraph_inc_swapEdge.2 hv)
-  · have hv' : (gridHypergraph θ).Inc e v.swap :=
-      (gridHypergraph_inc_swapEdge (v := v.swap)).1 (by simpa using hv)
-    exact h v.swap hv'
-
 private theorem swapEdge_mem_gridColPath_iff {θ : ℕ} {j : Fin θ} {e : Sym2 (Fin θ × Fin θ)} :
     swapEdge θ e ∈ (gridColPath θ j).edgeSet ↔ e ∈ (gridRowPath θ j).edgeSet := by
   simp only [gridRowPath, gridColPath, Set.mem_sep_iff, swapEdge_mem_gridHypergraph]
@@ -753,12 +744,6 @@ private theorem gridHypergraph_inc_embEdge {m : ℕ} {e : Sym2 (Fin m × Fin m)}
   refine and_congr embEdge_mem_gridHypergraph ?_
   induction e using Sym2.ind with | _ x y =>
   simp [embEdge, embVert_injective.eq_iff]
-
-private theorem embEdge_rowEdge {m : ℕ} (i : Fin m) (a : ℕ) (ha : a + 1 < m) :
-    embEdge m (rowEdge i a ha) = rowEdge i.castSucc a (Nat.lt_succ_of_lt ha) := rfl
-
-private theorem embEdge_colEdge {m : ℕ} (j : Fin m) (a : ℕ) (ha : a + 1 < m) :
-    embEdge m (colEdge j a ha) = colEdge j.castSucc a (Nat.lt_succ_of_lt ha) := rfl
 
 /-- The pullback `X' = X ∩ E(G')` of an edge set `X` of the `(m + 1)`-grid to the `m`-grid. -/
 private def restrictEdgeSet (m : ℕ) (X : Set (Sym2 (Fin (m + 1) × Fin (m + 1)))) :

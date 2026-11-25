@@ -37,32 +37,13 @@ variable {S : Type u} [TopologicalSpace S] {α : Type w}
 
 /-- Each point of the circle other than `1` has an angle strictly between `0` and `2π`. -/
 theorem exists_angle {z : Circle} (hz : z ≠ 1) :
-    ∃ s : ℝ, 0 < s ∧ s < 2 * Real.pi ∧ z = Circle.exp s := by
-  have harg : Circle.exp (Complex.arg z) = z := Circle.exp_arg z
-  have h0 : Complex.arg z ≠ 0 := fun h ↦ hz (by rw [← harg, h, Circle.exp_zero])
-  have hlo := Complex.neg_pi_lt_arg (z : ℂ)
-  have hhi := Complex.arg_le_pi (z : ℂ)
-  have hpi := Real.pi_pos
-  rcases lt_or_gt_of_ne h0 with h | h
-  · refine ⟨Complex.arg z + 2 * Real.pi, by linarith, by linarith, ?_⟩
-    rw [Circle.exp_add, Circle.exp_two_pi, mul_one, harg]
-  · exact ⟨Complex.arg z, h, by linarith, harg.symm⟩
+    ∃ s : ℝ, 0 < s ∧ s < 2 * Real.pi ∧ z = Circle.exp s :=
+  CircleOrder.exists_angle hz
 
 /-- Three distinct points of the circle occur in one of the two cyclic orders. -/
 theorem circleCyclic_or {a b c : Circle} (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
-    CircleCyclic a b c ∨ CircleCyclic a c b := by
-  obtain ⟨s, hs0, hs1, hs⟩ := exists_angle (z := a⁻¹ * b) (fun h ↦ hab (by
-    rw [inv_mul_eq_one] at h
-    exact h))
-  obtain ⟨t, ht0, ht1, ht⟩ := exists_angle (z := a⁻¹ * c) (fun h ↦ hac (by
-    rw [inv_mul_eq_one] at h
-    exact h))
-  have hb : b = a * Circle.exp s := by rw [← hs]; simp
-  have hc : c = a * Circle.exp t := by rw [← ht]; simp
-  rcases lt_trichotomy s t with h | h | h
-  · exact Or.inl ⟨s, t, hs0, h, ht1, hb, hc⟩
-  · exact absurd (by rw [hb, hc, h]) hbc
-  · exact Or.inr ⟨t, s, ht0, h, hs1, hc, hb⟩
+    CircleCyclic a b c ∨ CircleCyclic a c b :=
+  CircleOrder.circleCyclic_or hab hac hbc
 
 /-- Three distinct boundary points of a closed disc occur in one of the two cyclic orders of an
 orientation. -/

@@ -244,7 +244,7 @@ theorem not_cuff_subset_closure (Γ : Painting S) {c : Set S} (hc : c ∈ Γ.C) 
   exact not_homeomorph_circle_unitInterval (f.trans hL.symm)
 
 /-- A point of `Θ` that is not at a node lies on one of the arcs between consecutive nodes. -/
-theorem exists_mem_Ioo_of_seq {T : ℕ → ℝ} (_hT : StrictMono T) {a b : ℕ} (hab : a ≤ b) {t : ℝ}
+theorem exists_mem_Ioo_of_seq {T : ℕ → ℝ} {a b : ℕ} (hab : a ≤ b) {t : ℝ}
     (h₁ : T a ≤ t) (h₂ : t < T b) : ∃ j, a ≤ j ∧ j < b ∧ T j ≤ t ∧ t < T (j + 1) := by
   induction b, hab using Nat.le_induction with
   | base => exact absurd h₂ (not_lt.mpr h₁)
@@ -451,7 +451,7 @@ theorem exists_cuffCycle (Γ : Painting S) {Θ : Set S} (hΘ : Θ ∈ cuffs S) (
     have ht₁ : t < T (m + 2) := by
       rw [hadd]
       exact ht₀.2
-    obtain ⟨j, h₇, h₈, h₉, h₁₀⟩ := exists_mem_Ioo_of_seq hT (by omega) ht₀.1 ht₁
+    obtain ⟨j, h₇, h₈, h₉, h₁₀⟩ := exists_mem_Ioo_of_seq (by omega) ht₀.1 ht₁
     have hj : j = m ∨ j = m + 1 := by omega
     have hcj : cell j = cell m := by
       rcases hj with rfl | rfl
@@ -466,7 +466,7 @@ theorem exists_cuffCycle (Γ : Painting S) {Θ : Set S} (hΘ : Θ ∈ cuffs S) (
   have hfind : ∀ a b, a < b → ∀ t, T a ≤ t → t < T b → P t ∉ Γ.N →
       ∃ j, a ≤ j ∧ j < b ∧ P t ∈ cell j ∧ t ∈ Ioo (T j) (T (j + 1)) := by
     intro a b hab t h₁ h₂ hN
-    obtain ⟨j, h₃, h₄, h₅, h₆⟩ := exists_mem_Ioo_of_seq hT hab.le h₁ h₂
+    obtain ⟨j, h₃, h₄, h₅, h₆⟩ := exists_mem_Ioo_of_seq hab.le h₁ h₂
     have h₇ : T j < t := by
       refine lt_of_le_of_ne h₅ fun heq ↦ hN ?_
       rw [← heq]

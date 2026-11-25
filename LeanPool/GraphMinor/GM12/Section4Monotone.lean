@@ -46,11 +46,11 @@ theorem theorem_4_2_proof {α β γ δ γ' δ' : Type*} [Nonempty β]
     {T : Set (Hypergraph α β × Hypergraph α β)}
     (hc : ControlsMinor (Hypergraph.ofGraph G hV hE) θ T L') :
     ControlsMinor (Hypergraph.ofGraph G hV hE) θ T L := by
-  obtain ⟨K, ⟨φ⟩, _, hVK, hEK⟩ := exists_option_edge_copy L' hV' hE'
+  obtain ⟨K, ⟨φ⟩, _, hVK, _⟩ := exists_option_edge_copy L' hV' hE'
   have hcK : ControlsMinor (Hypergraph.ofGraph G hV hE) θ T K :=
     controlsMinor_of_iso φ.symm hc
   have hminorK : IsIsoMinor L K := φ.isIsoMinor_right hminor
-  obtain ⟨a, b, hm⟩ := exists_isMinorModel_of_isIsoMinor hVK hEK hminorK
+  obtain ⟨a, b, hm⟩ := exists_isMinorModel_of_isIsoMinor hminorK
   exact controlsMinor_of_target_model hV hE hm hVK hcK
 
 end GraphMinor.GM12

@@ -369,7 +369,7 @@ private theorem exists_two_disjoint_discs {S : Type*} [TopologicalSpace S] [T2Sp
   exact ⟨Δ₁, Δ₂, hΔ₁_disc, hΔ₂_disc, hΔ₁_sub, hΔ₂_sub,
     hn₁_Δ₁, hn₂_not_Δ₁, hn₂_Δ₂, hn₁_not_Δ₂, hinter⟩
 
-private noncomputable def splitInternalCell {S : Type} [TopologicalSpace S] [T2Space S]
+private noncomputable def splitInternalCellWithCells {S : Type} [TopologicalSpace S] [T2Space S]
     (Γ : Painting S) {c₀ Δ₁ Δ₂ N' : Set S} (hc₀ : c₀ ∈ Γ.C) (hint₀ : ¬ (c₀ ∩ bd S).Nonempty)
     (hΔ₁_disc : IsClosedDisc Δ₁) (hΔ₂_disc : IsClosedDisc Δ₂)
     (hΔ₁_sub : Δ₁ ⊆ closure c₀) (hΔ₂_sub : Δ₂ ⊆ closure c₀)
@@ -377,7 +377,7 @@ private noncomputable def splitInternalCell {S : Type} [TopologicalSpace S] [T2S
     (hΔ_inter : Δ₁ ∩ Δ₂ ⊆ N')
     (hΔ₁_bd : Δ₁ ∩ N' ⊆ discBd Δ₁) (hΔ₂_bd : Δ₂ ∩ N' ⊆ discBd Δ₂)
     (hΔ₁_card : (Δ₁ ∩ N').ncard ≤ 3) (hΔ₂_card : (Δ₂ ∩ N').ncard ≤ 3) :
-    Painting S := by
+    {Γ' : Painting S // Γ'.C = insert (Δ₁ \ N') (insert (Δ₂ \ N') (Γ.C \ {c₀}))} := by
   classical
   let c₁ : Set S := Δ₁ \ N'
   let c₂ : Set S := Δ₂ \ N'
@@ -495,35 +495,49 @@ private noncomputable def splitInternalCell {S : Type} [TopologicalSpace S] [T2S
         exact ⟨hxcl, hxUN.2⟩
       · rw [← Γ.closure_cell_diff_N hcI.1]
         exact ⟨hxcl, fun hxN => hxUN.2 (hN_sub hxN)⟩
-  refine
-    { U := U'
-      N := N'
-      isClosed_U := hU'_closed
-      finite_N := hN'_fin
-      N_subset := fun x hxN' => by
-        by_cases hxN : x ∈ Γ.N
-        · exact Or.inl (Or.inl ⟨Γ.N_subset hxN,
-            fun hxc₀ => (Γ.cell_subset_diff hc₀ hxc₀).2 hxN⟩)
-        · exact Or.inl (Or.inr (hN'_diff ⟨hxN', hxN⟩).1)
-      finite_cells := hC'_eq ▸ hI_fin
-      cell_disc := ?_
-      bd_subset := fun x hxbd => Or.inl (Or.inl ⟨Γ.bd_subset hxbd,
-        fun hxc₀ => hint₀ ⟨x, hxc₀, hxbd⟩⟩)
-      border_cell := ?_ }
-  · intro c hc
-    rw [hC'_eq] at hc
-    rcases hc with rfl | rfl | hcI
-    · rw [hcl_c₁, htc₁]
-      exact ⟨hΔ₁_disc, hΔ₁_bd, hN'_fin.inter_of_right Δ₁, hΔ₁_card⟩
-    · rw [hcl_c₂, htc₂]
-      exact ⟨hΔ₂_disc, hΔ₂_bd, hN'_fin.inter_of_right Δ₂, hΔ₂_card⟩
-    · exact Γ.cell_disc c hcI.1
-  · intro c hc hbd
-    rw [hC'_eq] at hc
-    rcases hc with rfl | rfl | hcI
-    · exact False.elim (hint₀ (hbd.mono (inter_subset_inter_left _ hc₁_sub_c₀)))
-    · exact False.elim (hint₀ (hbd.mono (inter_subset_inter_left _ hc₂_sub_c₀)))
-    · exact Γ.border_cell c hcI.1 hbd
+  refine ⟨?_, ?_⟩
+  · refine
+      { U := U'
+        N := N'
+        isClosed_U := hU'_closed
+        finite_N := hN'_fin
+        N_subset := fun x hxN' => by
+          by_cases hxN : x ∈ Γ.N
+          · exact Or.inl (Or.inl ⟨Γ.N_subset hxN,
+              fun hxc₀ => (Γ.cell_subset_diff hc₀ hxc₀).2 hxN⟩)
+          · exact Or.inl (Or.inr (hN'_diff ⟨hxN', hxN⟩).1)
+        finite_cells := hC'_eq ▸ hI_fin
+        cell_disc := ?_
+        bd_subset := fun x hxbd => Or.inl (Or.inl ⟨Γ.bd_subset hxbd,
+          fun hxc₀ => hint₀ ⟨x, hxc₀, hxbd⟩⟩)
+        border_cell := ?_ }
+    · intro c hc
+      rw [hC'_eq] at hc
+      rcases hc with rfl | rfl | hcI
+      · rw [hcl_c₁, htc₁]
+        exact ⟨hΔ₁_disc, hΔ₁_bd, hN'_fin.inter_of_right Δ₁, hΔ₁_card⟩
+      · rw [hcl_c₂, htc₂]
+        exact ⟨hΔ₂_disc, hΔ₂_bd, hN'_fin.inter_of_right Δ₂, hΔ₂_card⟩
+      · exact Γ.cell_disc c hcI.1
+    · intro c hc hbd
+      rw [hC'_eq] at hc
+      rcases hc with rfl | rfl | hcI
+      · exact False.elim (hint₀ (hbd.mono (inter_subset_inter_left _ hc₁_sub_c₀)))
+      · exact False.elim (hint₀ (hbd.mono (inter_subset_inter_left _ hc₂_sub_c₀)))
+      · exact Γ.border_cell c hcI.1 hbd
+  · exact hC'_eq
+
+private noncomputable def splitInternalCell {S : Type} [TopologicalSpace S] [T2Space S]
+    (Γ : Painting S) {c₀ Δ₁ Δ₂ N' : Set S} (hc₀ : c₀ ∈ Γ.C) (hint₀ : ¬ (c₀ ∩ bd S).Nonempty)
+    (hΔ₁_disc : IsClosedDisc Δ₁) (hΔ₂_disc : IsClosedDisc Δ₂)
+    (hΔ₁_sub : Δ₁ ⊆ closure c₀) (hΔ₂_sub : Δ₂ ⊆ closure c₀)
+    (hN_sub : Γ.N ⊆ N') (hN'_fin : N'.Finite) (hN'_diff : N' \ Γ.N ⊆ Δ₁ ∩ Δ₂)
+    (hΔ_inter : Δ₁ ∩ Δ₂ ⊆ N')
+    (hΔ₁_bd : Δ₁ ∩ N' ⊆ discBd Δ₁) (hΔ₂_bd : Δ₂ ∩ N' ⊆ discBd Δ₂)
+    (hΔ₁_card : (Δ₁ ∩ N').ncard ≤ 3) (hΔ₂_card : (Δ₂ ∩ N').ncard ≤ 3) :
+    Painting S :=
+  (splitInternalCellWithCells Γ hc₀ hint₀ hΔ₁_disc hΔ₂_disc hΔ₁_sub hΔ₂_sub
+    hN_sub hN'_fin hN'_diff hΔ_inter hΔ₁_bd hΔ₂_bd hΔ₁_card hΔ₂_card).1
 
 private theorem splitInternalCell_C {S : Type} [TopologicalSpace S] [T2Space S]
     (Γ : Painting S) {c₀ Δ₁ Δ₂ N' : Set S} (hc₀ : c₀ ∈ Γ.C) (hint₀ : ¬ (c₀ ∩ bd S).Nonempty)
@@ -535,90 +549,9 @@ private theorem splitInternalCell_C {S : Type} [TopologicalSpace S] [T2Space S]
     (hΔ₁_card : (Δ₁ ∩ N').ncard ≤ 3) (hΔ₂_card : (Δ₂ ∩ N').ncard ≤ 3) :
     (splitInternalCell Γ hc₀ hint₀ hΔ₁_disc hΔ₂_disc hΔ₁_sub hΔ₂_sub
       hN_sub hN'_fin hN'_diff hΔ_inter hΔ₁_bd hΔ₂_bd hΔ₁_card hΔ₂_card).C =
-      insert (Δ₁ \ N') (insert (Δ₂ \ N') (Γ.C \ {c₀})) := by
-  classical
-  let c₁ : Set S := Δ₁ \ N'
-  let c₂ : Set S := Δ₂ \ N'
-  let U' : Set S := (Γ.U \ c₀) ∪ Δ₁ ∪ Δ₂
-  let I₀ : Set (Set S) := Γ.C \ {c₀}
-  let I : Set (Set S) := insert c₁ (insert c₂ I₀)
-  have hI₀_fin : I₀.Finite := Γ.finite_cells.subset sdiff_subset
-  have hI_fin : I.Finite := (hI₀_fin.insert c₂).insert c₁
-  have hc₁_sub_c₀ : c₁ ⊆ c₀ := by
-    rw [← Γ.closure_cell_diff_N hc₀]
-    exact fun x ⟨hx₁, hxN'⟩ => ⟨hΔ₁_sub hx₁, fun hxN => hxN' (hN_sub hxN)⟩
-  have hc₂_sub_c₀ : c₂ ⊆ c₀ := by
-    rw [← Γ.closure_cell_diff_N hc₀]
-    exact fun x ⟨hx₂, hxN'⟩ => ⟨hΔ₂_sub hx₂, fun hxN => hxN' (hN_sub hxN)⟩
-  have hc₁_diff_fin : (Δ₁ \ c₁).Finite :=
-    hN'_fin.subset fun x hx => by by_contra hxN; exact hx.2 ⟨hx.1, hxN⟩
-  have hc₂_diff_fin : (Δ₂ \ c₂).Finite :=
-    hN'_fin.subset fun x hx => by by_contra hxN; exact hx.2 ⟨hx.1, hxN⟩
-  have hc₁_pc : IsPathConnected c₁ :=
-    isPathConnected_of_isClosedDisc_finite_diff hΔ₁_disc sdiff_subset hc₁_diff_fin
-  have hc₂_pc : IsPathConnected c₂ :=
-    isPathConnected_of_isClosedDisc_finite_diff hΔ₂_disc sdiff_subset hc₂_diff_fin
-  have hcl_c₁ : closure c₁ = Δ₁ :=
-    closure_eq_of_isClosedDisc_finite_diff hΔ₁_disc sdiff_subset hc₁_diff_fin
-  have hcl_c₂ : closure c₂ = Δ₂ :=
-    closure_eq_of_isClosedDisc_finite_diff hΔ₂_disc sdiff_subset hc₂_diff_fin
-  have hc₁_disj_c₂ : Disjoint c₁ c₂ := by
-    refine Set.disjoint_left.mpr fun x ⟨hx₁, hxN⟩ ⟨hx₂, _⟩ => hxN (hΔ_inter ⟨hx₁, hx₂⟩)
-  have hcell_disj_N' : ∀ c ∈ I₀, ∀ x ∈ c, x ∉ N' := by
-    rintro c ⟨hc, hne⟩ x hxc hxN'
-    by_cases hxN : x ∈ Γ.N
-    · exact (Γ.cell_subset_diff hc hxc).2 hxN
-    · have hx_c₀ : x ∈ c₀ := by
-        rw [← Γ.closure_cell_diff_N hc₀]
-        exact ⟨hΔ₁_sub (hN'_diff ⟨hxN', hxN⟩).1, hxN⟩
-      exact Set.disjoint_left.mp (Γ.cell_disjoint hc hc₀ hne) hxc hx_c₀
-  have hcov : ⋃₀ I = U' \ N' := by
-    ext x
-    simp only [I, U', sUnion_insert, mem_union, mem_sUnion, mem_sdiff]
-    constructor
-    · rintro (hxc₁ | hxc₂ | ⟨c, ⟨hc, hne⟩, hxc⟩)
-      · exact ⟨Or.inl (Or.inr hxc₁.1), hxc₁.2⟩
-      · exact ⟨Or.inr hxc₂.1, hxc₂.2⟩
-      · exact ⟨Or.inl (Or.inl ⟨Γ.cell_subset_U hc hxc,
-          Set.disjoint_left.mp (Γ.cell_disjoint hc hc₀ hne) hxc⟩),
-          hcell_disj_N' c ⟨hc, hne⟩ x hxc⟩
-    · rintro ⟨((⟨hxU, hx_not_c₀⟩ | hxΔ₁) | hxΔ₂), hx_not_N'⟩
-      · have hx_not_N : x ∉ Γ.N := fun hxN => hx_not_N' (hN_sub hxN)
-        have hx_cells : x ∈ ⋃₀ Γ.C := Γ.sUnion_cells.symm ▸ ⟨hxU, hx_not_N⟩
-        rcases hx_cells with ⟨c, hc, hxc⟩
-        have hne : c ≠ c₀ := fun h => hx_not_c₀ (h ▸ hxc)
-        exact Or.inr (Or.inr ⟨c, ⟨hc, hne⟩, hxc⟩)
-      · exact Or.inl ⟨hxΔ₁, hx_not_N'⟩
-      · exact Or.inr (Or.inl ⟨hxΔ₂, hx_not_N'⟩)
-  apply arcComponentsIn_eq_of_finite_cover hI_fin hcov
-  · rintro c (rfl | rfl | hcI)
-    · exact hc₁_pc.nonempty
-    · exact hc₂_pc.nonempty
-    · exact Γ.cell_nonempty hcI.1
-  · rintro c (rfl | rfl | hcI)
-    · exact hc₁_pc
-    · exact hc₂_pc
-    · exact Γ.cell_isPathConnected hcI.1
-  · rintro c (rfl | rfl | hcI) c' (rfl | rfl | hc'I) hne
-    · exact (hne rfl).elim
-    · exact hc₁_disj_c₂
-    · exact (Γ.cell_disjoint hc'I.1 hc₀ hc'I.2).symm.mono_left hc₁_sub_c₀
-    · exact hc₁_disj_c₂.symm
-    · exact (hne rfl).elim
-    · exact (Γ.cell_disjoint hc'I.1 hc₀ hc'I.2).symm.mono_left hc₂_sub_c₀
-    · exact (Γ.cell_disjoint hcI.1 hc₀ hcI.2).mono_right hc₁_sub_c₀
-    · exact (Γ.cell_disjoint hcI.1 hc₀ hcI.2).mono_right hc₂_sub_c₀
-    · exact Γ.cell_disjoint hcI.1 hc'I.1 hne
-  · intro c hcI_all
-    refine Subset.antisymm ?_ (fun x hxc => ⟨subset_closure hxc, hcov ▸ ⟨c, hcI_all, hxc⟩⟩)
-    rintro x ⟨hxcl, hxUN⟩
-    rcases hcI_all with rfl | rfl | hcI
-    · rw [hcl_c₁] at hxcl
-      exact ⟨hxcl, hxUN.2⟩
-    · rw [hcl_c₂] at hxcl
-      exact ⟨hxcl, hxUN.2⟩
-    · rw [← Γ.closure_cell_diff_N hcI.1]
-      exact ⟨hxcl, fun hxN => hxUN.2 (hN_sub hxN)⟩
+      insert (Δ₁ \ N') (insert (Δ₂ \ N') (Γ.C \ {c₀})) :=
+  (splitInternalCellWithCells Γ hc₀ hint₀ hΔ₁_disc hΔ₂_disc hΔ₁_sub hΔ₂_sub
+    hN_sub hN'_fin hN'_diff hΔ_inter hΔ₁_bd hΔ₂_bd hΔ₁_card hΔ₂_card).2
 
 private theorem exists_discs_for_splitInternalCell {S : Type} [TopologicalSpace S] [T2Space S]
     (Γ : Painting S) {c₀ : Set S} (hc₀ : c₀ ∈ Γ.C)

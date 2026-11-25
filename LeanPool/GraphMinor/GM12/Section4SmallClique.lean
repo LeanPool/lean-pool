@@ -42,7 +42,7 @@ theorem exists_graphDrawing_complete_two
   have hν1 : ν 1 = w := by simp [ν]
   have hV : (GM16.completeGraph 2).vertexSet = ({0, 1} : Set (Fin 2)) := by
     ext v
-    fin_cases v <;> simp [GM16.completeGraph]
+    fin_cases v <;> simp [GM16.completeGraph, GraphMinor.completeGraph]
   have hE : (GM16.completeGraph 2).edgeSet = {s(0, 1)} := by
     ext e
     constructor

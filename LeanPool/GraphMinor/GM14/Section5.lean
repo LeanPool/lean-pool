@@ -18,22 +18,24 @@ import LeanPool.GraphMinor.Surface.InvarianceOfDomain
 # Graph Minors XIV, Section 5: Circuits in Cylinders
 
 This file formalizes Section 5 (pages 31–32) of Robertson and Seymour,
-*Graph Minors. XIV. Extending an embedding*, J. Combin. Theory Ser. B 65 (1995), 23–50:
+*Graph Minors. XIV. Extending an embedding*, J. Combin. Theory Ser. B 65 (1995), 23–50. The
+formal statements use connected closed surfaces:
 
-- `theorem_5_1` ((5.1), page 31): Given a nonempty connected set `R_set` of regions of `H` in the
-  interior `Δ \ bd(Δ)` of a closed disc `Δ`, there is a circuit `C` of `H` with `U(C) ⊆ Δ` bounding
-  an open disc `Λ ⊆ Δ` that includes every member of `R_set`, with every edge of `C` incident with
-  some member of `R_set`.
-- `theorem_5_2` ((5.2), page 31): Given a nonempty arc-wise connected
+- `theorem_5_1_proof` ((5.1), page 31): Given a nonempty connected set `R_set` of regions of `H`
+  in the interior `Δ \ bd(Δ)` of a closed disc `Δ`, there is a circuit `C` of `H` with `U(C) ⊆ Δ`
+  bounding an open disc `Λ ⊆ Δ` that includes every member of `R_set`. Every edge of `C` is
+  incident with some member of `R_set`.
+- `theorem_5_2_proof` ((5.2), page 31): Given a nonempty arc-wise connected
   subset `Z ⊆ Δ \ bd(Δ)` such that every region `r` of `H` with `closure r ∩ Z ≠ ∅` satisfies
   `r ⊆ Δ \ bd(Δ)`, there is a circuit `C` of `H` with `U(C) ⊆ Δ` bounding an open disc `Λ ⊆ Δ`
   including `Z`, with every edge of `C` incident with a region `r` satisfying `closure r ∩ Z ≠ ∅`.
-- `theorem_5_3` ((5.3), page 32): Single-step circuit around `Z` reducing the regional distance to
-  `Σ \ Δ` by at most `1`.
-- `theorem_5_4` ((5.4), page 32): `k - 1` mutually disjoint circuits in `Δ` bounding open discs
+- `theorem_5_3_proof` ((5.3), page 32): A circuit around `Z` reduces the regional distance
+  to `Σ \ Δ` by at most `1`.
+- `theorem_5_4_proof` ((5.4), page 32): `k - 1` disjoint circuits in `Δ` bound open discs
   including `Z` when the regional distance between `Z` and `Σ \ Δ` is at least `k ≥ 2`.
-- `theorem_5_5_step` and `theorem_5_5` ((5.5), page 32): Single-step and `(k - 1)`-circuit versions
-  in `Δ \ bd(Δ)` when the regional distance between `Z` and `bd(Δ)` is at least `k ≥ 1`.
+- `theorem_5_5_step` and `theorem_5_5_proof` ((5.5), page 32): Single-step and
+  `(k - 1)`-circuit versions in `Δ \ bd(Δ)` when the regional distance between `Z` and
+  `bd(Δ)` is at least `k ≥ 1`.
 -/
 
 @[expose] public section
@@ -103,7 +105,7 @@ private theorem exists_region_closure_mem [ConnectedSpace S] (hS : IsClosedSurfa
 
 /-! ## 2. Proof of (5.1) (page 31) -/
 
-/-- Graph Minors XIV, (5.1) (page 31):
+/-- Closed-surface form of Graph Minors XIV (5.1) (page 31):
 "Let $H$ be a drawing in a surface $\Sigma$, and let $\Delta \subseteq \Sigma$ be a closed
 disc. Let $\mathscr{R}$ be a non-empty connected set of regions of $H$, such that $r
 \subseteq \Delta - \text{bd}(\Delta)$ for all $r \in \mathscr{R}$. Then there is a circuit
@@ -414,7 +416,7 @@ theorem theorem_5_2_full [ConnectedSpace S] (hS : IsClosedSurface S)
   obtain ⟨r, ⟨hrR, hrZ⟩, hinc⟩ := heR e he
   exact ⟨r, hrR, hinc, hrZ⟩
 
-/-- **Graph Minors XIV, (5.2)** (page 31), cited in Graph Minors XIX (Section 7, page 344):
+/-- Closed-surface form of Graph Minors XIV (5.2) (page 31), cited in XIX on pages 345 and 363:
 "(5.2) *Let $H$ be a drawing in $\Sigma$, and let $\Delta \subseteq \Sigma$ be a closed disc.
 Let $Z \subseteq \Delta - \text{bd}(\Delta)$ be non-empty and arc-wise connected, and such
 that $r \subseteq \Delta - \text{bd}(\Delta)$ for every region $r$ of $H$ with $\bar{r} \cap
@@ -626,7 +628,7 @@ theorem theorem_5_3_of_isPreconnected [ConnectedSpace S] (hS : IsClosedSurface S
     (hZΛ.trans subset_closure) hZne hcompl_ne hdisj heR hdist
   exact ⟨C, Λ, hCH, hC, hCU, hOpenΛ, hclΛ_sub, hclΛ_disc, hbdΛ, hbd_clΛ, hdiffΛ, hZΛ, hdist'⟩
 
-/-- Graph Minors XIV, (5.3) (page 32):
+/-- Closed-surface form of Graph Minors XIV (5.3) (page 32):
 "Let $H$ be a drawing in $\Sigma$, and let $\Delta \subseteq \Sigma$ be a closed disc. Let $Z
 \subseteq \Delta - \text{bd}(\Delta)$ be non-empty and arc-wise connected, such that the
 regional distance between $Z$ and $\Sigma - \Delta$ is $\ge k \ge 2$. Then there is a
@@ -678,7 +680,7 @@ private theorem theorem_5_4_aux [ConnectedSpace S] (hS : IsClosedSurface S)
       · exact absurd hij (Nat.not_lt_zero _)
       · exact hnest i' j' (Fin.succ_lt_succ_iff.mp hij)
 
-/-- Graph Minors XIV, (5.4) (page 32):
+/-- Closed-surface form of Graph Minors XIV (5.4) (page 32):
 "Let $H, \Sigma, \Delta, Z, k$ be as in (5.3). Then there are mutually disjoint circuits
 $C_1, \dots, C_{k-1}$ of $H$ with $U(C_1), \dots, U(C_{k-1}) \subseteq \Delta$, all bounding
 open discs including $Z$." -/
@@ -843,7 +845,7 @@ theorem theorem_5_5_aux [ConnectedSpace S] (hS : IsClosedSurface S)
       · exact absurd hij (Nat.not_lt_zero _)
       · exact hnest i' j' (Fin.succ_lt_succ_iff.mp hij)
 
-/-- Graph Minors XIV, (5.5) (page 32):
+/-- Closed-surface form of Graph Minors XIV (5.5) (page 32):
 "Let $H$ be a drawing in $\Sigma$, and let $\Delta \subseteq \Sigma$ be a closed disc. Let $Z
 \subseteq \Delta - \text{bd}(\Delta)$ be non-empty and arc-wise connected, such that the
 regional distance between $Z$ and $\text{bd}(\Delta)$ is $\ge k \ge 1$. Then there are $k -
