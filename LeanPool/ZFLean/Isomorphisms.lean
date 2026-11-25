@@ -700,10 +700,12 @@ theorem uncurrify_is_func {A B C : ZFSet} (g : ZFSet)
   (hg : A.IsFunc (B.funs C) g := by zfun) : (A.prod B).IsFunc C (uncurrify g hg) := by
   apply lambda_isFunc
   simp_all
+-- Pass the function witness directly to avoid searching through the expanded graph.
 @[simp]
 theorem currify_of_uncurrify {A B C : ZFSet} (f : ZFSet)
     (hf : (A.IsFunc (B.funs C)) f := by zfun) :
-  currify (uncurrify f) = f := by
+  currify (A := A) (B := B) (C := C) (uncurrify f hf)
+    (by exact uncurrify_is_func f hf) = f := by
     simp only [currify, uncurrify, lambda_eta hf]
     rw [lambda_ext_iff]
     · intro x hx
@@ -734,7 +736,8 @@ theorem currify_of_uncurrify {A B C : ZFSet} (f : ZFSet)
       simp_all
 theorem uncurrify_of_currify {A B C : ZFSet} (g : ZFSet)
     (hg : (A.prod B).IsFunc C g := by zfun) :
-  uncurrify (currify g) = g := by
+  uncurrify (A := A) (B := B) (C := C) (currify g hg)
+    (by exact currify_is_func g hg) = g := by
     simp only [currify, uncurrify, lambda_eta hg]
     rw [lambda_ext_iff]
     · intro ab hab
