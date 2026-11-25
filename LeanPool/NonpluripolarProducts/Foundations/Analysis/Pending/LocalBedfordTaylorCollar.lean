@@ -235,11 +235,6 @@ theorem traceIntegral_of_isPositive (B : Set E) (f : E → ℝ) {S : LocalProduc
     (hS : IsPositive S) : traceIntegral B f S = ∫ x in B, f x ∂hS.traceMeasure :=
   dite_eq_left hS
 
-theorem traceMeasure_congr {S S' : LocalProductCurrent n U m} (h : S = S') (hS : IsPositive S)
-    (hS' : IsPositive S') : hS.traceMeasure = hS'.traceMeasure := by
-  subst h
-  rfl
-
 /-- `f = g` on `B` off a compact subset of `B`. -/
 def EqOffCompact (B : Set E) (f g : E → ℝ) : Prop :=
   ∃ K : Set E, IsCompact K ∧ K ⊆ B ∧ ∀ x ∈ B, x ∉ K → f x = g x
@@ -523,7 +518,7 @@ theorem traceIntegral_ddcMul_eq {Q : LocalProductCurrent n U (m + 1)} (hQ : IsPo
     exact (huu x hxW.1 hxW.2).trans (by rw [huF_def, Set.indicator_of_mem (hBU hxW.1)])
   have hσ : hS.traceMeasure.restrict W = hS'.traceMeasure.restrict W := by
     rw [← traceMeasure_restrict hS hWU, ← traceMeasure_restrict hS' hWU]
-    exact traceMeasure_congr hR _ _
+    exact IsPositive.traceMeasure_congr _ _ hR
   -- assembly
   have hsplit : ∀ (μ : Measure E) (f : E → ℝ),
       IntegrableOn (fun x => χ x * f x) B μ → IntegrableOn (fun x => (1 - χ x) * f x) B μ →

@@ -104,6 +104,14 @@ def restrict (hVU : V ≤ U) (T : LocalProductCurrent n U q) : LocalProductCurre
 @[simp] theorem restrict_apply (hVU : V ≤ U) (T : LocalProductCurrent n U q) (γ : formSpan n q)
     (φ : 𝓓(V, ℝ)) : restrict hVU T γ φ = T γ (extTest hVU φ) := rfl
 
+/-- Restriction to the whole domain fixes a current. -/
+theorem restrict_self (hUU : U ≤ U) (T : LocalProductCurrent n U q) : restrict hUU T = T := by
+  ext γ φ
+  rw [restrict_apply]
+  congr 1
+  ext x
+  exact extTest_apply hUU φ x
+
 /-- Restricting in two steps agrees with restricting directly. -/
 theorem restrict_restrict {V W : Opens (ComplexModel n)} (hWV : W ≤ V) (hVU : V ≤ U)
     (T : LocalProductCurrent n U q) :

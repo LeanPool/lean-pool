@@ -65,11 +65,6 @@ section General
 
 variable {U : Opens (ComplexModel n)} {q : ℕ}
 
-theorem traceMeasure_congr {T T' : LocalProductCurrent n U q} (hT : IsPositive T)
-    (hT' : IsPositive T') (h : T = T') : hT.traceMeasure = hT'.traceMeasure := by
-  subst h
-  rfl
-
 /-- If `1_A T = 1_A T'` for a Borel set `A`, then `σ_T(K ∩ A) = σ_{T'}(K ∩ A)` for the compact
 subsets `K` of `U`. -/
 theorem traceMeasure_inter_eq_of_mulBorel_eq {T T' : LocalProductCurrent n U q}
@@ -410,7 +405,7 @@ theorem isWellDefinedOn_of_cover (hφ : ∀ i, PlurisubharmonicOn (φ i) U) {ι 
     k) =
       ((isTruncationFamily hqp (hφV i)).isPositive k).traceMeasure
         (L i ∩ BedfordTaylorTopDegree.strictLocus (V i) φ k) := fun i k => by
-    rw [traceMeasure_congr ((isTruncationFamily hqp (hφV i)).isPositive k)
+    rw [IsPositive.traceMeasure_congr ((isTruncationFamily hqp (hφV i)).isPositive k)
       (isPositive_restrict (hF.isPositive k) (hVU i))
       (truncatedBT_restrict hqp hφ (hVU i) k), traceMeasure_restrict (hF.isPositive k) (hVU i),
       strictLocus_restrict (hVU i), Measure.restrict_apply

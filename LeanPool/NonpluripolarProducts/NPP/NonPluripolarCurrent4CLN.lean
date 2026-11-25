@@ -299,10 +299,10 @@ theorem exists_lintegral_neg_ddcMul_le_of_smooth (z₀ : (ComplexModel n)) {R R�
   have hcomp : ∫ x, χ x * V x ∂σ₂ ≤ ∫ x, χ x * V x ∂σ₁ := by linarith
   -- the collar potential term
   have hσ₂eq : σ₂ = ENNReal.ofReal (A / Real.pi) • hS.traceMeasure := by
-    rw [hσ₂, LocalBedfordTaylorCollar.traceMeasure_congr
-      (ddcMul_eq_ddcWedge hS hSc (contDiff_ballPot A z₀ R).contDiffOn)
-      _ (isPositive_ddcWedge hS (contDiff_ballPot A z₀ R).contDiffOn
-        (leviForm_ballPot_nonneg hA.le z₀ R)),
+    rw [hσ₂, IsPositive.traceMeasure_congr _
+      (isPositive_ddcWedge hS (contDiff_ballPot A z₀ R).contDiffOn
+        (leviForm_ballPot_nonneg hA.le z₀ R))
+      (ddcMul_eq_ddcWedge hS hSc (contDiff_ballPot A z₀ R).contDiffOn),
       traceMeasure_ddcWedge_ballPot hS hA.le z₀ R]
   have hI₂ : ∫ x, χ x * V x ∂σ₂ = A / Real.pi * ∫ x, χ x * V x ∂hS.traceMeasure := by
     rw [hσ₂eq, integral_smul_measure, ENNReal.toReal_ofReal (by positivity), smul_eq_mul]
@@ -333,7 +333,7 @@ theorem exists_lintegral_neg_ddcMul_le_of_smooth (z₀ : (ComplexModel n)) {R R�
     have h1 := traceMeasure_restrict (isPositive_ddcMul hS hSc hw).1 hWU
     have h2 := traceMeasure_restrict (isPositive_ddcMul hS hSc hv).1 hWU
     rw [← h1, ← h2]
-    exact LocalBedfordTaylorCollar.traceMeasure_congr e _ _
+    exact IsPositive.traceMeasure_congr _ _ e
   -- assembly
   calc ∫⁻ z in ball z₀ R₁, ENNReal.ofReal (-V z) ∂(isPositive_ddcMul hS hSc hv).1.traceMeasure
       = ∫⁻ z in ball z₀ R₁, ENNReal.ofReal (χf z * -V z) ∂σ₁ := by
@@ -426,7 +426,7 @@ theorem exists_lintegral_neg_ddcMul_le (z₀ : (ComplexModel n)) {R R₁ M : ℝ
   have hσA : (isPositive_ddcMul hSA hSAc hvA).1.traceMeasure =
       (isPositive_ddcMul hS hSc hv).1.traceMeasure.restrict A := by
     rw [← traceMeasure_restrict (isPositive_ddcMul hS hSc hv).1 hAU]
-    exact LocalBedfordTaylorCollar.traceMeasure_congr (ddcMul_restrict hS hAU hv) _ _
+    exact IsPositive.traceMeasure_congr _ _ (ddcMul_restrict hS hAU hv)
   have hSAσ : hSA.traceMeasure = hS.traceMeasure.restrict A := traceMeasure_restrict hS hAU
   have hres : ∀ (μ : Measure (ComplexModel n)) {r : ℝ}, r ≤ R → (μ.restrict A).restrict (ball z₀
     r) =
@@ -562,7 +562,7 @@ theorem traceMeasure_poleSet_ddcMul_eq_zero {S : LocalProductCurrent n U (m + 1)
   have hσU₀ : (isPositive_ddcMul hSU₀ (isClosedCurrent_restrict hSc hU₀)
       (isLocallyBoundedPshOn_mono hv hU₀)).1.traceMeasure = σ.restrict U₀ := by
     rw [hσ, ← traceMeasure_restrict (isPositive_ddcMul hS hSc hv).1 hU₀]
-    exact LocalBedfordTaylorCollar.traceMeasure_congr (ddcMul_restrict hS hU₀ hv) _ _
+    exact IsPositive.traceMeasure_congr _ _ (ddcMul_restrict hS hU₀ hv)
   have hres : ∀ (μ : Measure (ComplexModel n)) {ρ : ℝ}, ρ ≤ r / 2 → (μ.restrict U₀).restrict (ball
     x ρ) =
       μ.restrict (ball x ρ) := fun μ ρ hρ => by

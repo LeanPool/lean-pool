@@ -9,23 +9,17 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorHolomorphic
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BiholomorphicPair
 
 /-!
 # Pull-back of positive currents along biholomorphisms, and `(τ^* T)_ac = τ^*(T_ac)`
 
-Blueprint `ana:ac-density-unique`, `ana:current-pullback`, `ana:current-pullback-ac`
-    (`blueprint/src/analytic.tex`; TN.5,
-toward `ana:volume-semicontinuity`, route item 2: the chart invariance of `det(A_T)/det(H_ω)`).
-    Source: Boucksom 2002
-(`bou02-volume`), Lemma 4.2 (iii) (arXiv numbering): `(f^* T)_ac = f^*(T_ac)` almost everywhere,
-    here for a biholomorphism
-`τ : A → B` between open sets of `ℂⁿ` with inverse `σ` (`BedfordTaylor.IsBiholomorphicPair A B τ
-    σ`).
-
-A positive current `T` of bidimension `(q,q)` on `B` (`LocalProductCurrents`) is given by its
-    trace measure `σ_T` and its
-density form `L_y` (`LocalCurrentLebesgue`).
+The transformation of the absolutely continuous part `(τ^* T)_ac = τ^*(T_ac)` has a
+classical antecedent in [Boucksom, Lemma 4.2 (iii)](https://arxiv.org/pdf/math/0201031#page=12),
+which treats positive `(1,1)`-currents under generically finite holomorphic maps of compact
+Kähler manifolds. The version here uses a biholomorphism `τ : A → B` between open coordinate
+domains with inverse `σ` and works for positive currents of any bidimension `(q,q)`. It
+expresses the transformation through the trace measure and the corresponding coefficient density.
 
 * **Uniqueness of the absolutely continuous density** (`ae_eq_ofReal_acDensity`): if a measure
     carried by `B`, finite on
@@ -678,9 +672,12 @@ theorem ae_acDensity_pullback_of_mem_posCone (h : IsBiholomorphicPair A B τ σ)
     ← ENNReal.ofReal_mul (abs_nonneg _)] at h1
   exact (ENNReal.ofReal_eq_ofReal_iff (h4 γ hγ) (mul_nonneg (abs_nonneg _) hL)).mp h1.symm
 
-/-- **`(τ^* T)_ac = τ^*(T_ac)`** (Boucksom's Lemma 4.2 (iii) for a biholomorphism): for almost
-    every `x ∈ A` and every
-constant form `γ`, `acWeight'(x) L'_x(γ) = |det Dτ(x)| acWeight(τ x) L_{τ x}(Dσ(τ x)^* γ)`. -/
+/-- The absolutely continuous coefficients of a positive current of any bidimension `(q,q)`
+transform under biholomorphisms of open coordinate domains. This is the local, degree-general
+version of Boucksom's Lemma 4.2 (iii), which treats positive `(1,1)`-currents and generically
+finite holomorphic maps of compact Kähler manifolds. For almost every `x ∈ A`, the coefficient
+on a constant test form `γ` acquires the real Jacobian factor and is evaluated on the test
+form pulled back by the derivative of the inverse map. -/
 theorem ae_acDensity_pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) :
     ∀ᵐ x ∂(volume : Measure (ComplexModel n)), x ∈ A → ∀ γ : formSpan n q,
       acWeight (isPositive_pullback h hT) x * densityForm (isPositive_pullback h hT) x γ =

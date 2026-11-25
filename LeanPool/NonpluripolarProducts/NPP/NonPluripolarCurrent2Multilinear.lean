@@ -125,30 +125,18 @@ theorem eq_of_mulBorel_indicator_eq {S S' : LocalProductCurrent n U q} (hS : IsP
       Tendsto (fun k => mulBorel T ((A k).indicator fun _ => (1 : ℝ)) γ χ) atTop
         (𝓝 (T γ χ)) := by
     intro T hT hTA γ χ
-    simp only [mulBorel_apply hT (measurable_const.indicator (hAm _))
-      (isLocallyBoundedOn_indicator_one _)]
-    rw [hT.apply_eq_integral_density γ χ]
-    obtain ⟨C, -, hC⟩ := hT.exists_abs_density_le γ
-    refine tendsto_integral_of_dominated_convergence (fun x => |χ x| * C) (fun k => ?_) ?_
-      (fun k => ?_) ?_
-    · exact (χ.continuous.measurable.mul ((measurable_const.indicator (hAm k)).mul
-        (hT.measurable_density γ))).aestronglyMeasurable
-    · have := hT.integrable_mul_of_bounded (w := fun _ => C) χ.continuous χ.hasCompactSupport
-        χ.tsupport_subset aestronglyMeasurable_const ⟨|C|, fun _ _ => le_rfl⟩
-      refine this.norm.congr (ae_of_all _ fun x => ?_)
-      simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg ((abs_nonneg _).trans (hC x))]
-    · refine ae_of_all _ fun x => ?_
-      rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs]
-      refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-      calc |(A k).indicator (fun _ => (1 : ℝ)) x| * |hT.density γ x| ≤ 1 * C :=
-            mul_le_mul (by by_cases hx : x ∈ A k <;> simp [hx]) (hC x) (abs_nonneg _)
-              zero_le_one
-        _ = C := one_mul _
-    · filter_upwards [hTA] with x hx
+    have hlim : ∀ᵐ x ∂hT.traceMeasure,
+        Tendsto (fun k => (A k).indicator (fun _ => (1 : ℝ)) x) atTop (𝓝 1) := by
+      filter_upwards [hTA] with x hx
       obtain ⟨k₀, hk₀⟩ := hx
       refine tendsto_const_nhds.congr' ?_
       filter_upwards [eventually_ge_atTop k₀] with k hk
-      rw [Set.indicator_of_mem (hA hk hk₀), one_mul]
+      rw [Set.indicator_of_mem (hA hk hk₀)]
+    simpa only [mulBorel_const hT, one_smul] using
+      tendsto_mulBorel_apply_of_ae_tendsto hT
+        (fun k => measurable_const.indicator (hAm k)) measurable_const
+        (fun k x => by by_cases hx : x ∈ A k <;> simp [hx]) (fun _ => by simp)
+        hlim γ χ
   ext γ χ
   have h1 := key hS hSA γ χ
   have h2 := key hS' hS'A γ χ
@@ -548,7 +536,7 @@ theorem IsTruncationFamily.traceMeasure_restrict_consistent (hF : IsTruncationFa
       (hF.isPositive j).traceMeasure.restrict (O j) := by
   rw [← traceMeasure_mulBorel_indicator (hF.isPositive m) (hF.measurableSet j),
     ← traceMeasure_mulBorel_indicator (hF.isPositive j) (hF.measurableSet j)]
-  exact traceMeasure_congr _ _ (hF.consistent hjm)
+  exact IsPositive.traceMeasure_congr _ _ (hF.consistent hjm)
 
 /-- **On `O_m` the glued measure is the trace measure of `B_m`.** -/
 theorem IsTruncationFamily.glueMeasure_eq_traceMeasure (hF : IsTruncationFamily B O) {m : ℕ}
@@ -628,7 +616,7 @@ theorem traceMeasure_truncatedBT_combo_inter (hφ : ∀ i, PlurisubharmonicOn (�
   have hYA := isPositive_mulBorel_indicator hY hcm
   have hsum := (hXA.smul ha.le).add (hYA.smul hb.le)
   rw [← traceMeasure_mulBorel_indicator_apply hC hcm hCA hs,
-    traceMeasure_congr hCA hsum (mulBorel_truncatedBT_combo hqp hφ hψ ha hb k),
+    IsPositive.traceMeasure_congr hCA hsum (mulBorel_truncatedBT_combo hqp hφ hψ ha hb k),
     traceMeasure_smul_add_smul hXA hYA ha.le hb.le hsum, add_apply, smul_apply,
     smul_apply, smul_eq_mul, smul_eq_mul,
     traceMeasure_mulBorel_indicator_apply hX hcm hXA hs,
@@ -796,7 +784,7 @@ theorem traceMeasure_nonPluripolarProduct {φ : Fin p → (ComplexModel n) → E
     (isPositive_nonPluripolarProduct hqp hφ hW).traceMeasure =
       (isTruncationFamily hqp hφ).glueMeasure := by
   have hm := (isWellDefinedOn_iff hqp hφ).mp hW
-  rw [traceMeasure_congr _ ((isTruncationFamily hqp hφ).isPositive_glue hm)
+  rw [IsPositive.traceMeasure_congr _ ((isTruncationFamily hqp hφ).isPositive_glue hm)
     (nonPluripolarProduct_eq hqp hφ), (isTruncationFamily hqp hφ).traceMeasure_glue hm]
 
 /-- **`prop:npp1` (6), `eq:ppp6`** (local form): when the products are well defined,

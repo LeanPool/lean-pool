@@ -902,25 +902,22 @@ theorem exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
       ae_tendsto_pairing := hae }
   exact ⟨S, fun _ _ ↦ rfl⟩
 
-/-- The radial monotonicity atom, together with the already checked smoothness,
-PSH preservation, almost-everywhere convergence, and representative uniqueness,
-produces a pointwise decreasing smooth approximation on every relatively
-compact inner domain. -/
-theorem exists_decreasingMollifierApproximation
+/-- An explicit radial convolution on a fixed compact neighborhood gives a decreasing
+smooth approximation on the inner domain. -/
+theorem isDecreasingApproximation_explicitRadialKernel
     {Ω A : Opens (ComplexModel n)} {p : ComplexModel n → ℝ}
-    (hp : IsLocallyBoundedPshOn Ω p) (hA : RelativelyCompactIn A Ω) :
-    ∃ f : ℕ → ComplexModel n → ℝ, IsDecreasingApproximation A p f := by
-  let _ : ProperSpace (ComplexModel n) := FiniteDimensional.proper ℝ _
-  obtain ⟨R, hR, N, K, hN, hclAN, hNK, hK, hKΩ, hball⟩ :=
-    exists_open_compact_closedBall_neighborhood hA.1 Ω.isOpen hA.2
-  have hAN : (A : Set (ComplexModel n)) ⊆ N := subset_closure.trans hclAN
-  have hAΩ : (A : Set (ComplexModel n)) ⊆ Ω := hAN.trans (hNK.trans hKΩ)
+    (hp : IsLocallyBoundedPshOn Ω p) {R : ℝ} (hR : 0 < R)
+    {N K : Set (ComplexModel n)} (hN : IsOpen N) (hK : IsCompact K) (hKΩ : K ⊆ Ω)
+    (hAN : (A : Set (ComplexModel n)) ⊆ N) (hAΩ : (A : Set (ComplexModel n)) ⊆ Ω)
+    (hball : ∀ z ∈ N, Metric.closedBall z R ⊆ K) :
+    IsDecreasingApproximation A p
+      (fun j ↦ translationPairing volume (K.indicator p) (explicitRadialKernel R hR j)) := by
   let hpL : LocallyIntegrableOn p Ω volume :=
     locallyIntegrableOn_of_plurisubharmonicOn_real hp.1
   have hpLevi : HasNonnegativeDistributionalLevi
       (regularDistribution volume p hpL) :=
     hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hp.1
-  obtain ⟨S, _hSkernel⟩ :=
+  obtain ⟨S, hSkernel⟩ :=
     exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
       hp hR hN hK hKΩ hball
   let f : ℕ → ComplexModel n → ℝ := fun j ↦
@@ -950,7 +947,24 @@ theorem exists_decreasingMollifierApproximation
     exact ae_mono (Measure.restrict_mono hAN le_rfl) haeN
   have hpoint : ∀ x ∈ A, Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) :=
     tendsto_everywhere_of_ae_of_antitone_psh (hp.1.mono hAΩ) hfPsh hanti hae
-  exact ⟨f, hfSmooth, hanti, hpoint⟩
+  have hker : S.kernel = fun j ↦ explicitRadialKernel R hR j :=
+    funext fun j ↦ funext (hSkernel j)
+  simpa only [f, hker] using (show IsDecreasingApproximation A p f from ⟨hfSmooth, hanti, hpoint⟩)
+
+/-- The radial monotonicity atom, together with the already checked smoothness,
+PSH preservation, almost-everywhere convergence, and representative uniqueness,
+produces a pointwise decreasing smooth approximation on every relatively
+compact inner domain. -/
+theorem exists_decreasingMollifierApproximation
+    {Ω A : Opens (ComplexModel n)} {p : ComplexModel n → ℝ}
+    (hp : IsLocallyBoundedPshOn Ω p) (hA : RelativelyCompactIn A Ω) :
+    ∃ f : ℕ → ComplexModel n → ℝ, IsDecreasingApproximation A p f := by
+  let _ : ProperSpace (ComplexModel n) := FiniteDimensional.proper ℝ _
+  obtain ⟨R, hR, N, K, hN, hclAN, hNK, hK, hKΩ, hball⟩ :=
+    exists_open_compact_closedBall_neighborhood hA.1 Ω.isOpen hA.2
+  have hAN : (A : Set (ComplexModel n)) ⊆ N := subset_closure.trans hclAN
+  have hAΩ : (A : Set (ComplexModel n)) ⊆ Ω := hAN.trans (hNK.trans hKΩ)
+  exact ⟨_, isDecreasingApproximation_explicitRadialKernel hp hR hN hK hKΩ hAN hAΩ hball⟩
 
 /-- A smooth real-valued PSH function pulls back by a smooth holomorphic map.
 This is the smooth kernel of the general pullback theorem: `smoothDDC_comp`

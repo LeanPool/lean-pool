@@ -160,7 +160,7 @@ theorem glueMeasure_update_pluriharmonic (hφ : ∀ i, PlurisubharmonicOn (φ i)
     have h' : mulBorel (truncatedBT hqp U ψ k)
         ((BedfordTaylorTopDegree.strictLocus U ψ k).indicator fun _ => (1 : ℝ)) = 0 :=
       truncatedProduct_update_pluriharmonic hqp hφ j hh h0 k
-    rw [SGPT.Currents.traceMeasure_congr h' hS isPositive_zero, traceMeasure_zero]
+    rw [IsPositive.traceMeasure_congr hS isPositive_zero h', traceMeasure_zero]
   rw [e2, FunLike.coe_zero, Pi.zero_apply] at e1
   exact measure_mono_null (inter_subset_inter_right _ (layer_subset k)) e1.symm
 

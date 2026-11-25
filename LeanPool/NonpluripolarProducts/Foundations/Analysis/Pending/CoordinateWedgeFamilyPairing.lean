@@ -185,6 +185,21 @@ section Multilinear
 
 variable {ι : Type*} [Fintype ι] [DecidableEq ι] {k : ℕ} [DecidableEq (Fin k)]
 
+omit [Fintype ι] [DecidableEq ι] in
+private theorem coordinatePairingProd_update (A : Fin k → CoordinateRealTwoForm n)
+    (i : Fin k) (c : CoordinateRealTwoForm n) (q : Fin k × Fin 2 → ι)
+    (v : ι → ComplexModel n) (σ : Equiv.Perm ι) :
+    ∏ j : Fin k, (Function.update A i c) j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] =
+      c ![v (σ (q (i, 0))), v (σ (q (i, 1)))] *
+        ∏ j ∈ Finset.univ \ {i}, A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] := by
+  rw [← Finset.prod_update_of_mem (Finset.mem_univ i)
+    (fun j : Fin k => A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
+    (c ![v (σ (q (i, 0))), v (σ (q (i, 1)))])]
+  exact Finset.prod_congr rfl fun j _ =>
+    Function.apply_update
+      (fun j (a : CoordinateRealTwoForm n) => a ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
+      A i c j
+
 theorem coordinatePairingSumFamily_update_add (A : Fin k → CoordinateRealTwoForm n)
     (i : Fin k) (x y : CoordinateRealTwoForm n) (q : Fin k × Fin 2 → ι)
     (v : ι → ComplexModel n) :
@@ -194,19 +209,7 @@ theorem coordinatePairingSumFamily_update_add (A : Fin k → CoordinateRealTwoFo
   unfold coordinatePairingSumFamily
   rw [← Finset.sum_add_distrib]
   refine Finset.sum_congr rfl fun σ _ => ?_
-  have hprod : ∀ c : CoordinateRealTwoForm n,
-      ∏ j : Fin k, (Function.update A i c) j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] =
-        c ![v (σ (q (i, 0))), v (σ (q (i, 1)))] *
-          ∏ j ∈ Finset.univ \ {i}, A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] := by
-    intro c
-    rw [← Finset.prod_update_of_mem (Finset.mem_univ i)
-      (fun j : Fin k => A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
-      (c ![v (σ (q (i, 0))), v (σ (q (i, 1)))])]
-    exact Finset.prod_congr rfl fun j _ =>
-      Function.apply_update
-        (fun j (a : CoordinateRealTwoForm n) => a ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
-        A i c j
-  rw [hprod, hprod, hprod]
+  simp only [coordinatePairingProd_update]
   have hxy : (x + y) ![v (σ (q (i, 0))), v (σ (q (i, 1)))] =
       x ![v (σ (q (i, 0))), v (σ (q (i, 1)))] + y ![v (σ (q (i, 0))), v (σ (q (i, 1)))] := rfl
   rw [hxy]
@@ -220,19 +223,7 @@ theorem coordinatePairingSumFamily_update_smul (A : Fin k → CoordinateRealTwoF
   unfold coordinatePairingSumFamily
   rw [Finset.mul_sum]
   refine Finset.sum_congr rfl fun σ _ => ?_
-  have hprod : ∀ c : CoordinateRealTwoForm n,
-      ∏ j : Fin k, (Function.update A i c) j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] =
-        c ![v (σ (q (i, 0))), v (σ (q (i, 1)))] *
-          ∏ j ∈ Finset.univ \ {i}, A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))] := by
-    intro c
-    rw [← Finset.prod_update_of_mem (Finset.mem_univ i)
-      (fun j : Fin k => A j ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
-      (c ![v (σ (q (i, 0))), v (σ (q (i, 1)))])]
-    exact Finset.prod_congr rfl fun j _ =>
-      Function.apply_update
-        (fun j (a : CoordinateRealTwoForm n) => a ![v (σ (q (j, 0))), v (σ (q (j, 1)))])
-        A i c j
-  rw [hprod, hprod]
+  simp only [coordinatePairingProd_update]
   have hrx : (r • x) ![v (σ (q (i, 0))), v (σ (q (i, 1)))] =
       r * x ![v (σ (q (i, 0))), v (σ (q (i, 1)))] := rfl
   rw [hrx]

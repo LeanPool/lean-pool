@@ -10,7 +10,7 @@ module
 
 public import Mathlib.Topology.Instances.EReal.Lemmas
 public import Mathlib.Topology.Semicontinuity.Basic
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Choose
 
 /-!
 # Locally uniform upper bounds

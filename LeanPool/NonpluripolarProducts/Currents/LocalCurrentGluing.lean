@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrentLocality
+public import LeanPool.NonpluripolarProducts.Currents.LayeredCurrent
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPositiveCurrentGluing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCalculus
@@ -78,13 +78,6 @@ theorem eq_of_isEmpty {V : Opens (ComplexModel n)} (hV : (V : Set (ComplexModel 
   ext γ φ
   rw [h0 φ, map_zero, map_zero]
 
-/-- The trace measure depends only on the current. -/
-theorem traceMeasure_congr {V : Opens (ComplexModel n)} {S S' : LocalProductCurrent n V q} (h : S
-    = S')
-    (hS : IsPositive S) (hS' : IsPositive S') : hS.traceMeasure = hS'.traceMeasure := by
-  subst h
-  rfl
-
 /-- The density form depends only on the current. -/
 theorem densityForm_congr {V : Opens (ComplexModel n)} {S S' : LocalProductCurrent n V q} (h : S =
     S')
@@ -104,7 +97,7 @@ theorem traceMeasure_restrict_eq_and_ae_densityForm {A B V : Opens (ComplexModel
   have hR' := isPositive_restrict hS' hVB
   have e1 := traceMeasure_restrict hS hVA
   have e2 := traceMeasure_restrict hS' hVB
-  have e3 := traceMeasure_congr h hR hR'
+  have e3 := IsPositive.traceMeasure_congr hR hR' h
   have hμ : hS.traceMeasure.restrict V = hS'.traceMeasure.restrict V := by
     rw [← e1, ← e2, e3]
   refine ⟨hμ, ?_⟩

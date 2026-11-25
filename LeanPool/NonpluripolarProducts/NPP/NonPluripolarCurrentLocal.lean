@@ -426,33 +426,16 @@ theorem eq_glue_of_mulBorel (hm : hF.HasLocallyFiniteMass) {S : LocalProductCurr
   ext γ φ
   have hlim : Tendsto (fun k => mulBorel S ((O k).indicator fun _ => (1 : ℝ)) γ φ) atTop
       (𝓝 (mulBorel S (A.indicator fun _ => (1 : ℝ)) γ φ)) := by
-    simp only [mulBorel_apply hS (measurable_const.indicator (hF.measurableSet _))
-      (isLocallyBoundedOn_indicator_one _), mulBorel_apply hS (measurable_const.indicator hA)
-      (isLocallyBoundedOn_indicator_one _)]
-    obtain ⟨C, -, hC⟩ := hS.exists_abs_density_le γ
-    refine tendsto_integral_of_dominated_convergence (fun x => |φ x| * C) (fun k => ?_) ?_
-      (fun k => ?_) ?_
-    · exact (φ.continuous.measurable.mul ((measurable_const.indicator (hF.measurableSet k)).mul
-        (hS.measurable_density γ))).aestronglyMeasurable
-    · have := hS.integrable_mul_of_bounded (w := fun _ => C) φ.continuous φ.hasCompactSupport
-        φ.tsupport_subset aestronglyMeasurable_const ⟨|C|, fun _ _ => le_rfl⟩
-      refine this.norm.congr (ae_of_all _ fun x => ?_)
-      simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg ((abs_nonneg _).trans (hC x))]
-    · refine ae_of_all _ fun x => ?_
-      rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs]
-      refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-      calc |(O k).indicator (fun _ => (1 : ℝ)) x| * |hS.density γ x| ≤ 1 * C :=
-            mul_le_mul (by by_cases h : x ∈ O k <;> simp [h]) (hC x) (abs_nonneg _) zero_le_one
-        _ = C := one_mul _
-    · refine ae_of_all _ fun x => ?_
-      by_cases hx : x ∈ A
-      · obtain ⟨k₀, hk₀⟩ := mem_iUnion.mp hx
-        refine tendsto_const_nhds.congr' ?_
-        filter_upwards [eventually_ge_atTop k₀] with k hk
-        rw [Set.indicator_of_mem (hF.mono hk hk₀), Set.indicator_of_mem hx]
-      · have h0 : ∀ k, x ∉ O k := fun k hk => hx (mem_iUnion.mpr ⟨k, hk⟩)
-        simp only [Set.indicator_of_notMem (h0 _), Set.indicator_of_notMem hx]
-        exact tendsto_const_nhds
+    apply tendsto_mulBorel_indicator_one hS hF.measurableSet hA _ γ φ
+    refine ae_of_all _ fun x => ?_
+    by_cases hx : x ∈ A
+    · obtain ⟨k₀, hk₀⟩ := mem_iUnion.mp hx
+      refine tendsto_const_nhds.congr' ?_
+      filter_upwards [eventually_ge_atTop k₀] with k hk
+      rw [Set.indicator_of_mem (hF.mono hk hk₀), Set.indicator_of_mem hx]
+    · have h0 : ∀ k, x ∉ O k := fun k hk => hx (mem_iUnion.mpr ⟨k, hk⟩)
+      simp only [Set.indicator_of_notMem (h0 _), Set.indicator_of_notMem hx]
+      exact tendsto_const_nhds
   simp_rw [h₁] at hlim
   rw [← congrArg (fun T : LocalProductCurrent n U q => T γ φ) hsplit] at hlim
   exact tendsto_nhds_unique hlim (hF.weakTendsto_truncAt_glue hm γ φ)

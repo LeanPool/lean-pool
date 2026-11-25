@@ -15,6 +15,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDeg
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HermitianGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Upstream.KahlerClosed
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
+public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
 # Local currents of bidimension `(q,q)` against constant product forms
@@ -479,6 +480,12 @@ Riesz measure of the positive distribution `T(ω₀^q)`. -/
 def traceMeasure (hT : IsPositive T) : Measure (ComplexModel n) :=
   (traceMeasureOn hT).map Subtype.val
 
+/-- Equal positive currents have equal trace measures. -/
+theorem traceMeasure_congr {T' : LocalProductCurrent n U q} (hT : IsPositive T)
+    (hT' : IsPositive T') (h : T = T') : hT.traceMeasure = hT'.traceMeasure := by
+  subst h
+  rfl
+
 /-- **The density** `f_γ` of the coefficient `T(γ)` with respect to the trace measure (extended by
 zero off `U`). -/
 def density (hT : IsPositive T) (γ : formSpan n q) : ComplexModel n → ℝ :=
@@ -726,6 +733,52 @@ theorem mulBorel_apply {T : LocalProductCurrent n U q} (hT : IsPositive T)
     (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
     mulBorel T u γ φ = ∫ x, φ x * (u x * hT.density γ x) ∂hT.traceMeasure := by
   rw [mulBorel, dite_eq_left ⟨hT, hu, hb⟩, IsPositive.mulBorelLM_apply]
+
+/-- Dominated convergence of bounded Borel weights on a fixed positive current. -/
+theorem tendsto_mulBorel_apply_of_ae_tendsto {T : LocalProductCurrent n U q}
+    (hT : IsPositive T) {f : ℕ → ComplexModel n → ℝ} {g : ComplexModel n → ℝ}
+    (hfm : ∀ k, Measurable (f k)) (hgm : Measurable g)
+    (hf : ∀ k x, |f k x| ≤ 1) (hg : ∀ x, |g x| ≤ 1)
+    (hlim : ∀ᵐ x ∂hT.traceMeasure, Tendsto (fun k => f k x) atTop (𝓝 (g x)))
+    (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
+    Tendsto (fun k => mulBorel T (f k) γ φ) atTop (𝓝 (mulBorel T g γ φ)) := by
+  have hloc : ∀ {f : (ComplexModel n) → ℝ}, (∀ x, |f x| ≤ 1) → IsLocallyBoundedOn f U :=
+    fun hf _ _ _ => ⟨1, fun x _ => hf x⟩
+  simp only [mulBorel_apply hT (hfm _) (hloc (hf _)), mulBorel_apply hT hgm (hloc hg)]
+  obtain ⟨C, -, hC⟩ := hT.exists_abs_density_le γ
+  refine tendsto_integral_of_dominated_convergence (fun x => |φ x| * C) (fun k => ?_) ?_
+    (fun k => ?_) ?_
+  · exact (φ.continuous.measurable.mul ((hfm k).mul
+      (hT.measurable_density γ))).aestronglyMeasurable
+  · have := hT.integrable_mul_of_bounded (w := fun _ => C) φ.continuous φ.hasCompactSupport
+      φ.tsupport_subset aestronglyMeasurable_const ⟨|C|, fun _ _ => le_rfl⟩
+    refine this.norm.congr (ae_of_all _ fun x => ?_)
+    simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg ((abs_nonneg _).trans (hC x))]
+  · refine ae_of_all _ fun x => ?_
+    rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs]
+    refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
+    calc |f k x| * |hT.density γ x| ≤ 1 * C :=
+          mul_le_mul (hf k x) (hC x) (abs_nonneg _) zero_le_one
+      _ = C := one_mul _
+  · filter_upwards [hlim] with x hx
+    exact tendsto_const_nhds.mul (hx.mul tendsto_const_nhds)
+
+/-- Borel indicator weights converge on every test when they converge almost everywhere. -/
+theorem tendsto_mulBorel_indicator_one {T : LocalProductCurrent n U q}
+    (hT : IsPositive T) {A : ℕ → Set (ComplexModel n)} {B : Set (ComplexModel n)}
+    (hA : ∀ k, MeasurableSet (A k)) (hB : MeasurableSet B)
+    (hlim : ∀ᵐ x ∂hT.traceMeasure,
+      Tendsto (fun k => (A k).indicator (fun _ => (1 : ℝ)) x) atTop
+        (𝓝 (B.indicator (fun _ => (1 : ℝ)) x)))
+    (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
+    Tendsto (fun k => mulBorel T ((A k).indicator fun _ => (1 : ℝ)) γ φ) atTop
+      (𝓝 (mulBorel T (B.indicator fun _ => (1 : ℝ)) γ φ)) := by
+  have hbound (D : Set (ComplexModel n)) (x : ComplexModel n) :
+      |D.indicator (fun _ => (1 : ℝ)) x| ≤ 1 := by
+    by_cases hx : x ∈ D <;> simp [hx]
+  exact tendsto_mulBorel_apply_of_ae_tendsto hT
+    (fun k => measurable_const.indicator (hA k)) (measurable_const.indicator hB)
+    (fun k => hbound (A k)) (hbound B) hlim γ φ
 
 /-- A function smooth on an open set, multiplied by a smooth function supported in it, is
 smooth everywhere. -/

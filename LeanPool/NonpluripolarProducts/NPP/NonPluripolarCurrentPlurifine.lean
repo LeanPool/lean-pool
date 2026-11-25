@@ -133,7 +133,7 @@ theorem ae_mem_iUnion_strictLocus {φ : Fin p → (ComplexModel n) → EReal}
     ∀ᵐ x ∂(isPositive_nonPluripolarProduct hqp hφ hW).traceMeasure,
       ∃ k, x ∈ BedfordTaylorTopDegree.strictLocus U φ k := by
   have hm := (isWellDefinedOn_iff hqp hφ).mp hW
-  rw [traceMeasure_congr _ ((isTruncationFamily hqp hφ).isPositive_glue hm)
+  rw [IsPositive.traceMeasure_congr _ ((isTruncationFamily hqp hφ).isPositive_glue hm)
     (nonPluripolarProduct_eq hqp hφ), (isTruncationFamily hqp hφ).traceMeasure_glue hm]
   exact (isTruncationFamily hqp hφ).ae_glueMeasure_mem
 
@@ -147,37 +147,17 @@ theorem tendsto_mulBorel_strictLocus_inter {φ : Fin p → (ComplexModel n) → 
       (𝓝 (mulBorel (nonPluripolarProduct hqp U φ) (O.indicator fun _ => (1 : ℝ)) γ χ)) := by
   have hS := isPositive_nonPluripolarProduct hqp hφ hW
   have hOk := BedfordTaylorTopDegree.measurableSet_strictLocus hφ
-  simp only [mulBorel_apply hS (measurable_const.indicator ((hOk _).inter hOm))
-    (isLocallyBoundedOn_indicator_one _), mulBorel_apply hS (measurable_const.indicator hOm)
-    (isLocallyBoundedOn_indicator_one _)]
-  obtain ⟨C, -, hC⟩ := hS.exists_abs_density_le γ
-  refine tendsto_integral_of_dominated_convergence (fun x => |χ x| * C) (fun k => ?_) ?_
-    (fun k => ?_) ?_
-  · exact (χ.continuous.measurable.mul ((measurable_const.indicator ((hOk k).inter hOm)).mul
-      (hS.measurable_density γ))).aestronglyMeasurable
-  · have := hS.integrable_mul_of_bounded (w := fun _ => C) χ.continuous χ.hasCompactSupport
-      χ.tsupport_subset aestronglyMeasurable_const ⟨|C|, fun _ _ => le_rfl⟩
-    refine this.norm.congr (ae_of_all _ fun x => ?_)
-    simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg ((abs_nonneg _).trans (hC x))]
-  · refine ae_of_all _ fun x => ?_
-    rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs]
-    refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-    calc |(BedfordTaylorTopDegree.strictLocus U φ k ∩ O).indicator (fun _ => (1 : ℝ)) x| *
-          |hS.density γ x| ≤ 1 * C :=
-          mul_le_mul (by
-            by_cases h : x ∈ BedfordTaylorTopDegree.strictLocus U φ k ∩ O <;> simp [h])
-            (hC x) (abs_nonneg _) zero_le_one
-      _ = C := one_mul _
-  · filter_upwards [ae_mem_iUnion_strictLocus hqp hφ hW] with x hx
-    obtain ⟨k₀, hk₀⟩ := hx
-    refine tendsto_const_nhds.congr' ?_
-    filter_upwards [eventually_ge_atTop k₀] with k hk
-    have hxk := BedfordTaylorTopDegree.strictLocus_mono U φ hk hk₀
-    by_cases hxO : x ∈ O
-    · rw [Set.indicator_of_mem hxO, Set.indicator_of_mem
-        (show x ∈ BedfordTaylorTopDegree.strictLocus U φ k ∩ O from ⟨hxk, hxO⟩)]
-    · rw [Set.indicator_of_notMem hxO, Set.indicator_of_notMem
-        (fun h : x ∈ BedfordTaylorTopDegree.strictLocus U φ k ∩ O => hxO h.2)]
+  apply tendsto_mulBorel_indicator_one hS (fun k => (hOk k).inter hOm) hOm _ γ χ
+  filter_upwards [ae_mem_iUnion_strictLocus hqp hφ hW] with x hx
+  obtain ⟨k₀, hk₀⟩ := hx
+  refine tendsto_const_nhds.congr' ?_
+  filter_upwards [eventually_ge_atTop k₀] with k hk
+  have hxk := BedfordTaylorTopDegree.strictLocus_mono U φ hk hk₀
+  by_cases hxO : x ∈ O
+  · rw [Set.indicator_of_mem hxO, Set.indicator_of_mem
+      (show x ∈ BedfordTaylorTopDegree.strictLocus U φ k ∩ O from ⟨hxk, hxO⟩)]
+  · rw [Set.indicator_of_notMem hxO, Set.indicator_of_notMem
+      (fun h : x ∈ BedfordTaylorTopDegree.strictLocus U φ k ∩ O => hxO h.2)]
 
 /-- **Plurifine locality of the non-pluripolar product** (`prop:npp1` (1), `eq:ppp1`, for Borel
 plurifine open sets): if `φⱼ = ψⱼ` on a Borel plurifine open `O ⊆ U` and both products are well

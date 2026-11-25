@@ -136,42 +136,9 @@ theorem exists_common_mollifier {Ω A : Opens (ComplexModel n)} (hA : Relatively
   refine ⟨fun j p ↦ translationPairing volume (Kc.indicator p)
       (HolomorphicPullback.explicitRadialKernel (min R₀ δ) hR j), fun p hp ↦ ?_,
     fun p hp j ↦ ?_, fun j p q z hpq ↦ ?_⟩
-  · have hpL : LocallyIntegrableOn p Ω volume :=
-      locallyIntegrableOn_of_plurisubharmonicOn_real hp.1
-    have hpLevi : HasNonnegativeDistributionalLevi (regularDistribution volume p hpL) :=
-      hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hp.1
-    obtain ⟨S, hSk⟩ :=
-      HolomorphicPullback.exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
-        hp hR hN hKc hKcΩ hball
-    have hker : S.kernel = fun j ↦ HolomorphicPullback.explicitRadialKernel (min R₀ δ) hR j :=
-      funext fun j ↦ funext (hSk j)
-    let f : ℕ → ComplexModel n → ℝ := fun j ↦
-      translationPairing volume (Kc.indicator p) (S.kernel j)
-    have hg : LocallyIntegrable (Kc.indicator p) volume :=
-      (integrable_indicator_of_locallyIntegrableOn_isCompact hpL hKc hKcΩ).locallyIntegrable
-    have hfDisc (j : ℕ) : DiscPshOn (fun x ↦ (f j x : EReal)) N :=
-      discPshOn_translationPairing_indicator hpL hpLevi
-        (S.kernel_hasCompactSupport j) (S.kernel_contDiff j)
-        (S.kernel_nonneg j) hKc hKcΩ (S.translated_tsupport j)
-    have hfPsh (j : ℕ) : PlurisubharmonicOn (fun x ↦ (f j x : EReal)) A :=
-      ((hfDisc j).plurisubharmonicOn hN).mono hAN
-    have hfSmooth (j : ℕ) : IsSmoothPshOn A (f j) :=
-      isSmoothPshOn_of_psh
-        (contDiff_translationPairing hg (S.kernel_hasCompactSupport j)
-          (S.kernel_contDiff j)).contDiffOn (hfPsh j)
-    have hanti : ∀ x ∈ A, Antitone (fun j ↦ f j x) :=
-      fun x hx ↦ S.antitone_pairing x (hAN hx)
-    have hae : ∀ᵐ x ∂volume.restrict (A : Set (ComplexModel n)),
-        Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) := by
-      have haeN := S.ae_tendsto_pairing
-      change ∀ᵐ x ∂volume.restrict N,
-        Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) at haeN
-      exact ae_mono (Measure.restrict_mono hAN le_rfl) haeN
-    have hpoint : ∀ x ∈ A, Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) :=
-      tendsto_everywhere_of_ae_of_antitone_psh (hp.1.mono hAΩ) hfPsh hanti hae
-    have hdec : IsDecreasingApproximation A p f := ⟨hfSmooth, hanti, hpoint⟩
-    simp only [f, hker] at hdec
-    exact isDecApprox_of_isDecreasingApproximation hp hAΩ hdec
+  · exact isDecApprox_of_isDecreasingApproximation hp hAΩ
+      (HolomorphicPullback.isDecreasingApproximation_explicitRadialKernel
+        hp hR hN hKc hKcΩ hAN hAΩ hball)
   · have hpL : LocallyIntegrableOn p Ω volume :=
       locallyIntegrableOn_of_plurisubharmonicOn_real hp.1
     have hg : LocallyIntegrable (Kc.indicator p) volume :=

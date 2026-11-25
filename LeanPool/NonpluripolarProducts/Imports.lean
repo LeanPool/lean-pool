@@ -14,6 +14,7 @@ public import LeanPool.NonpluripolarProducts.Currents.LayeredCurrent
 public import LeanPool.NonpluripolarProducts.Currents.LocalCurrentGluing
 public import LeanPool.NonpluripolarProducts.Currents.ManifoldDdc
 public import LeanPool.NonpluripolarProducts.Currents.PluriharmonicPotential
+public import LeanPool.NonpluripolarProducts.Currents.PositiveManifoldCurrent
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.BallRotation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.BallSubmean
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.CircleMeanSecondOrder
@@ -25,12 +26,12 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitLocaliz
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BTTruncations
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ChartDomains
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CircleDeficitMajorants
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ComplexManifold
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ContinuousUscMajorants
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CurrentPairing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.DiscPshSupremum
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ERealChordUSC
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
@@ -40,7 +41,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Fini
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FiniteTranslation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FormPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GeometricForms
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalMeasureNoncharging
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPatchMeasures
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialPatches
@@ -129,6 +129,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Bedfor
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlots
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorStepP
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorStepW
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BiholomorphicPair
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BorelPlurifineCanonicalMixedLocality
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BorelPlurifineCoverMixedNullRemainder
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BorelPlurifineOpenCountableNormalizedSuperlevelCover

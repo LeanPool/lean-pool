@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.NPP.BedfordTaylorManifold
+public import LeanPool.NonpluripolarProducts.Currents.PositiveManifoldCurrent
 public import LeanPool.NonpluripolarProducts.PSH.LocalManifold
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentL1Ddc
 
@@ -189,9 +189,13 @@ theorem isDdcOn_top_iff {T : PositiveCurrent (m + 1) M m} {φ : M → EReal}
   constructor
   · intro h
     ext1 e
-    apply LocalBedfordTaylorCalculus.eq_of_local
-    intro z hz
-    refine ⟨chartDomain e ⊤, chartDomain_le e ⊤, ⟨hz, trivial⟩, ?_⟩
+    have whole (W : Opens (ComplexModel (m + 1))) (hW : W ≤ chartTarget e)
+        (heq : W = chartTarget e)
+        (hr : restrict hW (T.inChart e) = restrict hW ((ddcCurrent m φ hφ).inChart e)) :
+        T.inChart e = (ddcCurrent m φ hφ).inChart e := by
+      subst W
+      simpa only [restrict_self] using hr
+    apply whole _ (chartDomain_le e ⊤) (chartDomain_top e)
     rw [h e, ddcCurrent_inChart,
       restrict_ddcL1 (chartDomain_le e ⊤) (isL1PshOn_chart hφ e).locallyIntegrableOn]
   · rintro rfl

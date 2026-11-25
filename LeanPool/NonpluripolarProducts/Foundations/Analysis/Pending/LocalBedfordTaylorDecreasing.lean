@@ -381,7 +381,7 @@ theorem setIntegral_eq_of_restrict_eq {m : ℕ} {W : Opens (ComplexModel n)} (hW
     (h : restrict hWU S = restrict hWU S') (F : E → ℝ) :
     ∫ x in (W : Set E), F x ∂hS.traceMeasure = ∫ x in (W : Set E), F x ∂hS'.traceMeasure := by
   rw [← traceMeasure_restrict hS hWU, ← traceMeasure_restrict hS' hWU,
-    traceMeasure_congr h _ (isPositive_restrict hS' hWU)]
+    IsPositive.traceMeasure_congr _ (isPositive_restrict hS' hWU) h]
 
 /-- Upper semicontinuity on `K` only sees the values on `K`. -/
 theorem upperSemicontinuousOn_congr {f g : E → ℝ} {K : Set E} (hf : UpperSemicontinuousOn f K)

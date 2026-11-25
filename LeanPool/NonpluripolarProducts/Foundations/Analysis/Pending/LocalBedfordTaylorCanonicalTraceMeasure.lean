@@ -27,12 +27,6 @@ open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
   LocalBedfordTaylorDecreasing LocalBedfordTaylorSmoothTraceMeasure
 variable {n : ℕ} {U V : Opens (ComplexModel n)}
 
-private theorem traceMeasure_congr {k : ℕ} {A B : LocalProductCurrent n U k}
-    (hA : IsPositive A) (hB : IsPositive B) (e : A = B) :
-    hA.traceMeasure = hB.traceMeasure := by
-  subst B
-  rfl
-
 /-- Literal open restriction of the independently constructed recursive mixed trace. -/
 theorem recursiveMixedTraceMeasure_restrict {u : Fin n → ComplexModel n → ℝ}
     (hu : ∀ i, IsLocallyBoundedPshOn U (u i)) (hVU : V ≤ U) :
@@ -45,7 +39,7 @@ theorem recursiveMixedTraceMeasure_restrict {u : Fin n → ComplexModel n → �
     rw [← btProduct_restrict hVU n 0 u _ (isPositive_oneCurrentOf _)
       (isClosedAny_oneCurrentOf _) hu, restrict_oneCurrentOf]
   have er := traceMeasure_restrict hT hVU
-  exact er.symm.trans (traceMeasure_congr (isPositive_restrict hT hVU)
+  exact er.symm.trans (IsPositive.traceMeasure_congr (isPositive_restrict hT hVU)
     (isPositive_btProduct n 0 u (oneCurrentOf (U := V) (Nat.zero_add n))
       (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _)
       (fun i => isLocallyBoundedPshOn_mono (hu i) hVU)).1 e)

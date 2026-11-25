@@ -79,27 +79,9 @@ theorem tendsto_mulBorel_apply_of_tendsto {q : ℕ} {T : LocalProductCurrent n U
     (hlim : ∀ x ∈ (U : Set (ComplexModel n)), Tendsto (fun k => u k x) atTop (𝓝 (u₀ x)))
       (γ : formSpan n q)
     (φ : 𝓓(U, ℝ)) : Tendsto (fun k => mulBorel T (u k) γ φ) atTop (𝓝 (mulBorel T u₀ γ φ)) := by
-  have hloc : ∀ {f : (ComplexModel n) → ℝ}, (∀ x, |f x| ≤ 1) → IsLocallyBoundedOn f U :=
-    fun hf _ _ _ => ⟨1, fun x _ => hf x⟩
-  simp only [mulBorel_apply hT (hum _) (hloc (hb _)), mulBorel_apply hT hu₀m (hloc hb₀)]
-  obtain ⟨C, -, hC⟩ := hT.exists_abs_density_le γ
-  refine tendsto_integral_of_dominated_convergence (fun x => |φ x| * C) (fun k => ?_) ?_
-    (fun k => ?_) ?_
-  · exact (φ.continuous.measurable.mul ((hum k).mul
-      (hT.measurable_density γ))).aestronglyMeasurable
-  · have := hT.integrable_mul_of_bounded (w := fun _ => C) φ.continuous φ.hasCompactSupport
-      φ.tsupport_subset aestronglyMeasurable_const ⟨|C|, fun _ _ => le_rfl⟩
-    refine this.norm.congr (ae_of_all _ fun x => ?_)
-    simp only [norm_mul, Real.norm_eq_abs, abs_of_nonneg ((abs_nonneg _).trans (hC x))]
-  · refine ae_of_all _ fun x => ?_
-    rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs, Real.norm_eq_abs]
-    refine mul_le_mul_of_nonneg_left ?_ (abs_nonneg _)
-    calc |u k x| * |hT.density γ x| ≤ 1 * C :=
-          mul_le_mul (hb k x) (hC x) (abs_nonneg _) zero_le_one
-      _ = C := one_mul _
-  · filter_upwards [measure_eq_zero_iff_ae_notMem.mp hT.traceMeasure_compl] with x hx
-    have hxU : x ∈ (U : Set (ComplexModel n)) := by simpa using hx
-    exact tendsto_const_nhds.mul ((hlim x hxU).mul tendsto_const_nhds)
+  apply tendsto_mulBorel_apply_of_ae_tendsto hT hum hu₀m hb hb₀ _ γ φ
+  filter_upwards [measure_eq_zero_iff_ae_notMem.mp hT.traceMeasure_compl] with x hx
+  exact hlim x (by simpa using hx)
 
 /-! ### Transfer of weighted identities through `dd^c v ∧ ·` -/
 
@@ -497,7 +479,7 @@ theorem nonPluripolarProduct_cons_bounded (hqp' : r + 1 + p' = n) (hqp : r + (p'
         = hP.traceMeasure K := (traceMeasure_mulBorel_indicator_apply _ (hOψm k) hP
           hK.measurableSet).symm
       _ = hP'.traceMeasure K := by
-          rw [LocalBedfordTaylorCollar.traceMeasure_congr (hT k) hP hP']
+          rw [IsPositive.traceMeasure_congr hP hP' (hT k)]
       _ = hR.traceMeasure (K ∩ Oψ k) :=
           traceMeasure_mulBorel_indicator_apply hR (hOψm k) hP' hK.measurableSet
       _ ≤ hR.traceMeasure K := measure_mono inter_subset_left

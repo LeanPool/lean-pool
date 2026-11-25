@@ -157,7 +157,7 @@ theorem doesNotChargePluripolarOn_nonPluripolarProduct
   intro s hs
   have e : (isPositive_nonPluripolarProduct hqp hφ hW).traceMeasure =
       (hF.isPositive_glue hm).traceMeasure :=
-    traceMeasure_congr _ _ (nonPluripolarProduct_eq hqp hφ)
+    IsPositive.traceMeasure_congr _ _ (nonPluripolarProduct_eq hqp hφ)
   rw [e, hF.traceMeasure_glue hm]
   exact hF.glueMeasure_eq_zero fun k =>
     doesNotChargePluripolarOn_btProduct hqp (fun i => truncationReal_isLocallyBoundedPshOn (hφ i)

@@ -11,7 +11,7 @@ module
 public import Mathlib.Topology.Algebra.MetricSpace.Lipschitz
 public import Mathlib.Topology.Instances.EReal.Lemmas
 public import Mathlib.Topology.Semicontinuity.Basic
-public import Mathlib.Tactic
+public import Mathlib.Tactic.Linarith
 
 /-!
 # Continuous majorants of extended-real upper semicontinuous functions
