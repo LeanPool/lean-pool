@@ -20,7 +20,7 @@ import LeanPool.GraphMinor.GM09.Section4b
 import LeanPool.GraphMinor.GM10.Section12
 import LeanPool.GraphMinor.GM11.OArcCircuit
 import LeanPool.GraphMinor.GM11.Section81
-import LeanPool.GraphMinor.GM14.BridgeFacts
+public import LeanPool.GraphMinor.GM14.BridgeFacts
 import LeanPool.GraphMinor.GM14.Section7b
 import LeanPool.GraphMinor.Surface.CircleMove
 
@@ -83,6 +83,9 @@ namespace GraphMinor.GM15
 
 open Set Function Topology
 open Graph SimpleGraph Hypergraph Surface GM06 GM09 GM10 GM11 GM14
+
+export _root_.GraphMinor.GM14
+  (exists_isHPathWithEnds_of_component_attachments exists_isHPathWithEnds_of_isBridge)
 
 universe u v w
 
@@ -239,75 +242,6 @@ theorem theorem_7_1_proof
     have hrj : r j ∈ H₀.A := Or.inr (hr_eye j).1
     rw [hd_eq (r i) hri (r j) hrj]
     exact min_eq_left (hr_dist i j hij)
-
-/-- If `C` is a connected component of `deleteVertices G V(H_sub)` and `u', v' ∈ V(H_sub)` are
-distinct vertices linked in `G` by edges `e₁, e₂` to vertices `x₁, x₂ ∈ V(C)`, then there is an
-`H_sub`-path `P` in `G` with ends `u'` and `v'`. -/
-theorem exists_isHPathWithEnds_of_component_attachments {G H_sub C : Graph α β}
-    (hH : H_sub ≤ G) (hC : C ∈ graphComponents (deleteVertices G V(H_sub)))
-    {u' v' x₁ x₂ : α} {e₁ e₂ : β}
-    (hu' : u' ∈ V(H_sub)) (hv' : v' ∈ V(H_sub)) (huv' : u' ≠ v')
-    (hx₁ : x₁ ∈ V(C)) (hx₂ : x₂ ∈ V(C))
-    (he₁ : G.IsLink e₁ u' x₁) (he₂ : G.IsLink e₂ x₂ v') :
-    ∃ P : Graph α β, IsHPathWithEnds G H_sub P u' v' := by
-  have hC_del : C ≤ deleteVertices G V(H_sub) := hC.1
-  have hdel_G : deleteVertices G V(H_sub) ≤ G := deleteVertices_le G V(H_sub)
-  have hC_G : C ≤ G := hC_del.trans hdel_G
-  have hVC_disj : ∀ w ∈ V(C), w ∉ V(H_sub) := fun w hw =>
-    (hC_del.vertexSet_mono hw).2
-  obtain ⟨W₀⟩ := hC.2.1.2 x₁ hx₁ x₂ hx₂
-  obtain ⟨W, hW_sim, _, _⟩ := exists_isSimple_subwalk W₀
-  obtain ⟨W_G, hWG_sup, hWG_ed⟩ := exists_walk_up_of_le hC_G W
-  let W_full : GraphWalk G u' v' :=
-    GraphWalk.cons he₁ (W_G.append (GraphWalk.cons he₂ (GraphWalk.nil he₂.right_mem)))
-  have hWf_sup : W_full.support = u' :: (W.support ++ [v']) := by
-    simp [W_full, GraphWalk.support_append, hWG_sup]
-  have hWf_ed : W_full.edges = e₁ :: (W.edges ++ [e₂]) := by
-    simp [W_full, GraphWalk.edges_append, hWG_ed]
-  have hu'_not_W : u' ∉ W.support := fun h =>
-    hVC_disj u' (W.mem_vertexSet_of_mem_support h) hu'
-  have hv'_not_W : v' ∉ W.support := fun h =>
-    hVC_disj v' (W.mem_vertexSet_of_mem_support h) hv'
-  have hWf_sim : W_full.IsSimple := by
-    unfold GraphWalk.IsSimple
-    rw [hWf_sup, List.nodup_cons]
-    refine ⟨?_, ?_⟩
-    · simp only [List.mem_append, List.mem_singleton, not_or]
-      exact ⟨hu'_not_W, huv'⟩
-    · rw [List.nodup_append]
-      refine ⟨hW_sim, List.nodup_singleton v', fun z hz w hw hzw => ?_⟩
-      simp only [List.mem_singleton] at hw
-      subst hw hzw
-      exact hv'_not_W hz
-  let P := walkSubgraph W_full
-  refine ⟨P, hH, isGraphPathWithEnds_walkSubgraph hWf_sim, huv', hu', hv', ?_, ?_⟩
-  · rw [vertexSet_walkSubgraph]
-    ext z
-    simp only [mem_inter_iff, mem_ofPred_eq, hWf_sup, List.mem_cons, List.mem_append,
-      List.not_mem_nil, or_false, mem_insert_iff, mem_singleton_iff]
-    constructor
-    · rintro ⟨rfl | hzW | rfl, hzH⟩
-      · exact Or.inl rfl
-      · exact False.elim (hVC_disj z (W.mem_vertexSet_of_mem_support hzW) hzH)
-      · exact Or.inr rfl
-    · rintro (rfl | rfl)
-      · exact ⟨Or.inl rfl, hu'⟩
-      · exact ⟨Or.inr (Or.inr rfl), hv'⟩
-  · rw [edgeSet_walkSubgraph]
-    refine Set.disjoint_left.mpr fun e heP heH => ?_
-    simp only [mem_ofPred_eq, hWf_ed, List.mem_cons, List.mem_append,
-      List.not_mem_nil, or_false] at heP
-    rcases heP with rfl | heW | rfl
-    · have hlinkH : H_sub.IsLink e u' x₁ := (hH.isLink_iff heH).mpr he₁
-      exact hVC_disj x₁ hx₁ hlinkH.right_mem
-    · have heC : e ∈ E(C) := walk_edges_subset_edgeSet W e heW
-      have he_del : e ∈ E(deleteVertices G V(H_sub)) := hC_del.edgeSet_mono heC
-      obtain ⟨w₁, w₂, hlink_del⟩ := exists_isLink_of_mem_edgeSet he_del
-      have hlink_G : G.IsLink e w₁ w₂ := hlink_del.mono hdel_G
-      have hlink_H : H_sub.IsLink e w₁ w₂ := (hH.isLink_iff heH).mpr hlink_G
-      exact hlink_del.left_mem.2 hlink_H.left_mem
-    · have hlinkH : H_sub.IsLink e x₂ v' := (hH.isLink_iff heH).mpr he₂
-      exact hVC_disj x₂ hx₂ hlinkH.left_mem
 
 /-- Statement of Graph Minors XV, (7.2) (page 135):
 "For $1 \le i < j \le k$, if $\sigma_1 \in Z_i$ and $\sigma_2 \in Z_j$ then $d(\sigma_1,
@@ -1406,54 +1340,6 @@ def GM15Theorem75Statement : Prop :=
     IsCompatibleWith (section7G0 G H η d θ' μ r) H η₀ S₀ α₀_disc α₀_pt →
     ∃ D : ∀ i : Fin k, Section75EyeData G H η θ_star θ θ' π beta μ T_star T d r S₀ α₀_disc α₀_pt i,
       Pairwise (fun i j : Fin k => Disjoint (D i).Δ (D j).Δ)
-
-/-- If `B` is a bridge of `H_sub` in `G` and `u', v' ∈ V(B) ∩ V(H_sub)` are distinct, then there is
-an `H_sub`-path `P` in `G` with ends `u'` and `v'`. -/
-theorem exists_isHPathWithEnds_of_isBridge {G H_sub B : Graph α β}
-    (hB : IsBridge G H_sub B) {u' v' : α}
-    (hu'B : u' ∈ V(B)) (hv'B : v' ∈ V(B))
-    (hu'H : u' ∈ V(H_sub)) (hv'H : v' ∈ V(H_sub)) (huv' : u' ≠ v') :
-    ∃ P : Graph α β, IsHPathWithEnds G H_sub P u' v' := by
-  rcases hB.2.2 with ⟨e, he, w₁, _, w₂, _, hlink_w, hVB, _⟩ | ⟨C, hC, hVB, _⟩
-  · rw [hVB] at hu'B hv'B
-    have hlink : G.IsLink e u' v' := by
-      rcases hu'B with rfl | rfl <;> rcases hv'B with rfl | rfl
-      · exact False.elim (huv' rfl)
-      · exact hlink_w
-      · exact hlink_w.symm
-      · exact False.elim (huv' rfl)
-    let W : GraphWalk G u' v' := GraphWalk.cons hlink (GraphWalk.nil hlink.right_mem)
-    have hW_sup : W.support = [u', v'] := rfl
-    have hW_ed : W.edges = [e] := rfl
-    have hW_sim : W.IsSimple := by
-      unfold GraphWalk.IsSimple
-      rw [hW_sup]
-      simp [huv']
-    refine ⟨walkSubgraph W, hB.1, isGraphPathWithEnds_walkSubgraph hW_sim, huv', hu'H, hv'H, ?_, ?_⟩
-    · rw [vertexSet_walkSubgraph, hW_sup]
-      ext z
-      simp only [mem_inter_iff, mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
-        mem_insert_iff, mem_singleton_iff]
-      exact ⟨fun h => h.1, fun h => ⟨h, h.elim (fun h₁ => h₁ ▸ hu'H) (fun h₂ => h₂ ▸ hv'H)⟩⟩
-    · rw [edgeSet_walkSubgraph, hW_ed]
-      refine Set.disjoint_left.mpr fun f hfP hfH => ?_
-      simp only [mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false] at hfP
-      subst hfP
-      exact he.2 hfH
-  · rw [hVB] at hu'B hv'B
-    have hVC_disj : ∀ w ∈ V(C), w ∉ V(H_sub) := fun w hw => (hC.1.vertexSet_mono hw).2
-    have hu'E : ∃ e₁ ∈ E(G), ∃ x₁ ∈ V(C), G.IsLink e₁ x₁ u' := by
-      rcases hu'B with hu'C | ⟨_, h⟩
-      · exact False.elim (hVC_disj u' hu'C hu'H)
-      · exact h
-    have hv'E : ∃ e₂ ∈ E(G), ∃ x₂ ∈ V(C), G.IsLink e₂ x₂ v' := by
-      rcases hv'B with hv'C | ⟨_, h⟩
-      · exact False.elim (hVC_disj v' hv'C hv'H)
-      · exact h
-    obtain ⟨e₁, _, x₁, hx₁, hlink₁⟩ := hu'E
-    obtain ⟨e₂, _, x₂, hx₂, hlink₂⟩ := hv'E
-    exact exists_isHPathWithEnds_of_component_attachments hB.1 hC hu'H hv'H huv' hx₁ hx₂
-      hlink₁.symm hlink₂
 
 /-- **Graph Minors XV, (7.5), Claim (1)** (page 138):
 "For* $1 \le i \le k$, *every* $v \in V(J_i \cap H)$ *satisfies* $d(r_i, v) \le \theta' +
@@ -2627,15 +2513,66 @@ theorem arrange_replacement_societies
       exact hnat_congr (fun v hv => (hClaim5 i (mem_biUnion hBi.1 hv)).symm)
         (hnat_i i B hBi.1)
 
-/-- **Graph Minors XV, (7.7)** (pages 139–142):
-If there is no crooked transaction of cardinality `π` in `(G_i*, Ω_i*)` for `1 ≤ i ≤ k`, then
-`(S3)` holds.
-Proved from `(2.1)` (`theorem_2_1_proof`), `(6.1)` (`theorem_6_1_proof`), `(7.6)`
-(`theorem_7_6_proof`), and Graph
-Minors XIV, `(7.3)` (`gm14_theorem_7_3`). -/
-theorem theorem_7_7_proof
-     :
-    GM15Theorem77Statement.{u, v, w} := by
+/-- Distinct large societies in the assembled segregation come from different local pieces. -/
+private theorem large_boundaries_disjoint_of_eye_segregation
+    {G₀ : Graph α β} {S₀ S' : Set (Society α β)} (hThree : IsThreeSegregation G₀ S₀)
+    (hRetained : S' ⊆ S₀) {k p : ℕ} {pieces : Fin k → Graph α β}
+    {S_seg S_seg' : Fin k → Set (Society α β)} (hLocal : ∀ i, S_seg' i ⊆ S_seg i)
+    (hType_i : ∀ i, IsSegregationOfType (pieces i) p 1 (S_seg i))
+    (hDisj_star : Pairwise (fun i j : Fin k => Disjoint V(pieces i) V(pieces j))) :
+    ∀ A ∈ S' ∪ ⋃ i, S_seg' i, ∀ B ∈ S' ∪ ⋃ i, S_seg' i,
+      A ≠ B → 3 < A.Ω.bar.ncard → 3 < B.Ω.bar.ncard → Disjoint A.Ω.bar B.Ω.bar := by
+  intro A hA B hB hne hlargeA hlargeB
+  have hLargeLocal : ∀ C ∈ S' ∪ ⋃ i, S_seg' i, 3 < C.Ω.bar.ncard → ∃ i, C ∈ S_seg' i := by
+    intro C hC hlarge
+    rcases hC with hC | hC
+    · exact (not_lt_of_ge (hThree.2 C (hRetained hC)) hlarge).elim
+    · exact mem_iUnion.mp hC
+  obtain ⟨i, hAi⟩ := hLargeLocal A hA hlargeA
+  obtain ⟨j, hBj⟩ := hLargeLocal B hB hlargeB
+  have hij : i ≠ j := by
+    intro hij
+    subst j
+    have hfin : {C ∈ S_seg i | 3 < C.Ω.bar.ncard}.Finite :=
+      (hType_i i).1.finite.subset fun _ h => h.1
+    exact hne ((Set.ncard_le_one hfin).mp (hType_i i).vortex_count_le A
+      ⟨hLocal i hAi, hlargeA⟩ B ⟨hLocal i hBj, hlargeB⟩)
+  exact (hDisj_star hij).mono
+    (fun _ hv => ((hType_i i).1.le A (hLocal i hAi)).vertexSet_mono (A.bar_subset hv))
+    (fun _ hv => ((hType_i j).1.le B (hLocal j hBj)).vertexSet_mono (B.bar_subset hv))
+
+/-- The construction of XV (7.7), including disjoint boundaries of large societies. -/
+theorem assemble_eye_arrangement :
+  ∀ {S : Type w} [TopologicalSpace S] [T2Space S] {α : Type u} {β : Type v}
+    (G : Graph α β) (H : Drawing S) (η : SpanEmbedding H G)
+    (θ_star θ θ' lam π beta μ k : ℕ)
+    (T_star : Set (Hypergraph α β × Hypergraph α β))
+    (T : Set (Hypergraph S (Set S) × Hypergraph S (Set S)))
+    (d : Set S → Set S → ℕ) (r : Fin k → Set S)
+    (η₀ : SpanEmbedding H (section7G0 G H η d θ' μ r))
+    (S₀ : Set (Society α β)) (α₀_disc : Society α β → Set S) (α₀_pt : α → S)
+    (D : ∀ i : Fin k, Section75EyeData G H η θ_star θ θ' π beta μ T_star T d r S₀ α₀_disc α₀_pt i),
+    IsFlatSpan G H η θ_star θ lam μ T_star T →
+    HasTangleMetric H θ T d →
+    1 ≤ μ → 2 ≤ π → π ≠ 3 → beta = 2 * π + 8 →
+    θ' + 13 * μ + 14 ≤ beta → 100 * beta ≤ θ →
+    Injective r →
+    (∀ i : Fin k, IsDrawingEye G H η θ T (r i)) →
+    (∀ i j : Fin k, i ≠ j → d (r i) (r j) = θ) →
+    (∀ v ∈ H.V, η₀.vMap v = η.vMap v) →
+    (∀ e ∈ H.E, η₀.eMap e = η.eMap e) →
+    IsThreeSegregation (section7G0 G H η d θ' μ r) S₀ →
+    IsTangleLocal (section7G0 G H η d θ' μ r) H η₀ T S₀ →
+    IsSurfaceArrangement S₀ α₀_disc α₀_pt →
+    IsCompatibleWith (section7G0 G H η d θ' μ r) H η₀ S₀ α₀_disc α₀_pt →
+    Pairwise (fun i j : Fin k => Disjoint (D i).Δ (D j).Δ) →
+    (∀ i : Fin k, ∀ P_set : Set (Graph α β),
+      (D i).localSociety.IsCrookedTransaction P_set → P_set.ncard ≠ π) →
+    ∃ (𝒮 : Set (Society α β)) (disc : Society α β → Set S) (pt : α → S),
+      IsCentralSegregation G T_star 𝒮 ∧ IsSegregationOfType G (3 * π + 9) k 𝒮 ∧
+      IsSurfaceArrangement 𝒮 disc pt ∧
+      (∀ A ∈ 𝒮, ∀ B ∈ 𝒮, A ≠ B → 3 < A.Ω.bar.ncard → 3 < B.Ω.bar.ncard →
+        Disjoint A.Ω.bar B.Ω.bar) := by
   classical
   intro S _ _ α β G H η θ_star θ θ' lam π beta μ k T_star T d r η₀ S₀ α₀_disc α₀_pt D
     hFlat hMetric hμ1 hπ2 hπ3 hbeta_eq hbeta_ge hθ_ge hr_inj hr_eye hr_dist hη₀_v hη₀_e
@@ -2823,7 +2760,25 @@ theorem theorem_7_7_proof
       k T_star T d r S₀ α₀_disc α₀_pt D hFlat hArr₀ hDisj_Δ hS S_seg α_disc_i α_pt_i hBar_i
       hpt_i_eq_0 hpt_i_mem_Δ hinj_i hdisc_i_closed hnat_i hinter_bd_i hinter_discs_i
        α_disc α_pt hα_disc_S' hα_disc_seg' hClaim5 hα_pt_S'
-  exact ⟨S_final, α_disc, α_pt, hCentral, hClaim3, hArr_final⟩
+  refine ⟨S_final, α_disc, α_pt, hCentral, hClaim3, hArr_final, ?_⟩
+  exact large_boundaries_disjoint_of_eye_segregation (S' := S') (S_seg' := S_seg')
+    hThree (fun _ h ↦ h.1) (fun _ _ h ↦ h.1) hType_i hDisj_star
+
+/-- **Graph Minors XV, (7.7)** (pages 139–142):
+If there is no crooked transaction of cardinality `π` in `(G_i*, Ω_i*)` for `1 ≤ i ≤ k`, then
+`(S3)` holds.
+Proved from `(2.1)` (`theorem_2_1_proof`), `(6.1)` (`theorem_6_1_proof`), `(7.6)`
+(`theorem_7_6_proof`), and Graph
+Minors XIV, `(7.3)` (`gm14_theorem_7_3`). -/
+theorem theorem_7_7_proof : GM15Theorem77Statement.{u, v, w} := by
+  intro S _ _ α β G H η θ_star θ θ' lam π beta μ k T_star T d r η₀ S₀ α₀_disc α₀_pt D
+    hFlat hMetric hμ1 hπ2 hπ3 hbeta_eq hbeta_ge hθ_ge hr_inj hr_eye hr_dist hη₀_v hη₀_e
+    hThree hLocal hArr₀ hCompat₀ hDisj_Δ hno_crooked
+  obtain ⟨𝒮, disc, pt, hCentral, hType, hArr, _⟩ :=
+    assemble_eye_arrangement G H η θ_star θ θ' lam π beta μ k T_star T d r η₀ S₀ α₀_disc α₀_pt
+      D hFlat hMetric hμ1 hπ2 hπ3 hbeta_eq hbeta_ge hθ_ge hr_inj hr_eye hr_dist hη₀_v hη₀_e
+      hThree hLocal hArr₀ hCompat₀ hDisj_Δ hno_crooked
+  exact ⟨𝒮, disc, pt, hCentral, hType, hArr⟩
 
 /-- Statement of Graph Minors XV, (7.8) (page 142):
 "There is a transaction $\mathscr{P}$ in $(G_0 \cup J_1, \Omega_1)$ such that $V(\mathscr{P})$ is

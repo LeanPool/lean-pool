@@ -495,14 +495,6 @@ structure GraphDrawing {α : Type u} {β : Type v} (G : Graph α β)
   /-- The isomorphism between the abstract graph $G$ and the geometric graph `drawing.toGraph`. -/
   iso : Iso G drawing.toGraph
 
-/-- A *proper drawing of an abstract graph* $G$ in $\Sigma$ is a drawing of $G$ in $\Sigma$ whose
-underlying topological drawing is proper (no edge meets $\operatorname{bd}(\Sigma)$).
-Graph Minors VI, Section 1 (page 116). -/
-structure ProperGraphDrawing {α : Type u} {β : Type v} (G : Graph α β)
-    (S : Type w) [TopologicalSpace S] extends GraphDrawing G S where
-  /-- No edge of the drawing meets $\operatorname{bd}(\Sigma)$. -/
-  isProper : drawing.IsProper
-
 /-! ## 5. Paintings and Radial / Dual Drawings -/
 
 /-- A *painting* $\Gamma = (U, V)$ in a surface $\Sigma$: $V \subseteq U \subseteq \Sigma$, $V$ is

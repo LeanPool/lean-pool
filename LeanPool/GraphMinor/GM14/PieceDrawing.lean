@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.FewCircuitsDrawing
 public import LeanPool.GraphMinor.GM14.RigidPoints
 public import LeanPool.GraphMinor.GM14.Section6
+public import LeanPool.GraphMinor.Minor.Basic
 
 /-!
 # Extending a drawing inside one disc of an arrangement
@@ -117,21 +118,13 @@ theorem exists_disc_drawing {K : Graph α β} (hV : V(K).Finite) (hE : E(K).Fini
 
 /-- The inverse of an isomorphism. -/
 def isoSymm {α' β' α'' β'' : Type*} {G : Graph α' β'} {G' : Graph α'' β''} (ι : Iso G G') :
-    Iso G' G where
-  vertexEquiv := ι.vertexEquiv.symm
-  edgeEquiv := ι.edgeEquiv.symm
-  isLink_iff e x y := by
-    rw [ι.isLink_iff]
-    simp
+    Iso G' G :=
+  ι.symm
 
 /-- The composition of two isomorphisms. -/
 def isoTrans {α₁ β₁ α₂ β₂ α₃ β₃ : Type*} {G₁ : Graph α₁ β₁} {G₂ : Graph α₂ β₂} {G₃ : Graph α₃ β₃}
-    (ι : Iso G₁ G₂) (κ : Iso G₂ G₃) : Iso G₁ G₃ where
-  vertexEquiv := ι.vertexEquiv.trans κ.vertexEquiv
-  edgeEquiv := ι.edgeEquiv.trans κ.edgeEquiv
-  isLink_iff e x y := by
-    rw [ι.isLink_iff, κ.isLink_iff]
-    rfl
+    (ι : Iso G₁ G₂) (κ : Iso G₂ G₃) : Iso G₁ G₃ :=
+  ι.trans κ
 
 omit [T2Space S] in
 /-- A `SpanEmbedding` is an isomorphism onto its image. -/

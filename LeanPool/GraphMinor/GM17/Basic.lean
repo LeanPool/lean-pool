@@ -51,7 +51,8 @@ theorem theorem_1_1_i
     ∃ a b c : ℕ, Nonempty (S ≃ₜ SurfaceModel a b c) :=
   GraphMinor.Surface.classification.{u} S hS hConn
 
-/-- **Graph Minors XVII, (1.1)(ii)** (page 163):
+/-- Corrected Graph Minors XVII, (1.1)(ii) (page 163). As in `ModelCriterionStatement`, the
+coefficients in the printed $a + 2b$ are interchanged. The equation uses $2a + b$.
 For integers $a, b, c, a', b', c' \ge 0$, the surfaces $\Sigma(a, b, c)$ and $\Sigma(a', b', c')$
 are homeomorphic if and only if $c = c'$, $2a + b = 2a' + b'$, and either $b, b'$ are both zero
 or neither is zero. -/
@@ -61,8 +62,8 @@ theorem theorem_1_1_ii
       c = c' ∧ 2 * a + b = 2 * a' + b' ∧ (b = 0 ↔ b' = 0) :=
   GraphMinor.Surface.modelCriterion.2 a b c a' b' c'
 
-/-- **Graph Minors XVII, (1.1)** (page 163):
-Combined statement of (1.1)(i) and (1.1)(ii). -/
+/-- Graph Minors XVII, (1.1) (page 163), with the corrected handle and crosscap coefficients in
+(1.1)(ii). -/
 theorem theorem_1_1_proof :
     (∀ (S : Type u) [TopologicalSpace S], IsSurface S → ConnectedSpace S →
       ∃ a b c : ℕ, Nonempty (S ≃ₜ SurfaceModel a b c)) ∧

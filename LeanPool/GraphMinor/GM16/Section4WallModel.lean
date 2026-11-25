@@ -98,18 +98,6 @@ private theorem wallGrid_inc_iff {θ : ℕ} {e : Sym2 (Fin θ × Fin θ)}
     · exact Or.inl ((sphereWallPairProjection_vertex θ u b).symm.trans hproj).symm
     · exact Or.inr ((sphereWallPairProjection_vertex θ w c).symm.trans hproj).symm
 
-private theorem internal_edge_not_grid_image (θ : ℕ) (v : Fin θ × Fin θ) :
-    s(sphereWallPairVertex θ v 0, sphereWallPairVertex θ v 1) ∉
-      sphereWallGridEdge θ '' E(GM01.gridGraph θ) := by
-  rintro ⟨e, he, heq⟩
-  have hproj := congrArg (Sym2.map (sphereWallPairProjection θ)) heq
-  simp only [sphereWallGridEdge_projection, Sym2.map_mk,
-    sphereWallPairProjection_vertex] at hproj
-  have hloop : (pathGraph θ □ pathGraph θ).Adj v v := by
-    rw [hproj] at he
-    exact he
-  exact hloop.ne rfl
-
 /-- The explicit pair contraction used in XVI (4.2), Claim (1), page 53.
 The smaller square grid is a minor of the wall. -/
 theorem sphereWall_grid_model (θ : ℕ) :

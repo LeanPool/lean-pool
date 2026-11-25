@@ -71,7 +71,8 @@ variable {S : Type u} [TopologicalSpace S]
 
 /-- A closed disc has a homeomorphism onto the closed domain of two arcs with the same ends, taking
 a given line of the boundary to one of the arcs. -/
-private theorem exists_half {Δ : Set S} (hΔ : IsClosedDisc Δ) {ℓ : 𝕀 → S} (hℓ : Continuous ℓ)
+theorem exists_pasting_half_coordinates {Δ : Set S} (hΔ : IsClosedDisc Δ) {ℓ : 𝕀 → S}
+    (hℓ : Continuous ℓ)
     (hinj : Function.Injective ℓ) (hr : range ℓ ⊆ discBd Δ) {a e : 𝕀 → ℂ} (ha : IsArcMap a)
     (he : IsArcMap e) (h0 : a 0 = e 0) (h1 : a 1 = e 1)
     (hm : ∀ s t, a s = e t → (s = 0 ∧ t = 0) ∨ (s = 1 ∧ t = 1)) :
@@ -124,25 +125,26 @@ theorem IsClosedDisc.isCompact {D : Set S} (hD : IsClosedDisc D) : IsCompact D :
   exact c.isCompact
 
 /-- The diameter of the unit disc of `ℂ`. -/
-private noncomputable def diameter (u : 𝕀) : ℂ := ((2 * u.1 - 1 : ℝ) : ℂ)
+noncomputable def unitDiscDiameter (u : 𝕀) : ℂ := ((2 * u.1 - 1 : ℝ) : ℂ)
 
-private theorem isArcMap_diameter : IsArcMap diameter := by
+private theorem isArcMap_diameter : IsArcMap unitDiscDiameter := by
   refine ⟨Complex.continuous_ofReal.comp (by fun_prop), fun u v h => ?_⟩
   have h1 : 2 * u.1 - 1 = 2 * v.1 - 1 := Complex.ofReal_injective h
   exact Subtype.ext (by linarith)
 
-private theorem exists_cut_diameter : ∃ a b, IsCut (sphere (0 : ℂ) 1) a b diameter := by
+theorem exists_cut_diameter : ∃ a b, IsCut (sphere (0 : ℂ) 1) a b unitDiscDiameter := by
   obtain ⟨φ₀⟩ := oArc_sphere
   refine exists_isCut φ₀ isArcMap_diameter ?_ ?_ ?_ ?_
   · intro h
     have h1 : 2 * (0 : ℝ) - 1 = 2 * 1 - 1 := Complex.ofReal_injective h
     norm_num at h1
-  · rw [mem_sphere_zero_iff_norm, diameter, Complex.norm_real]
+  · rw [mem_sphere_zero_iff_norm, unitDiscDiameter, Complex.norm_real]
     simp
-  · rw [mem_sphere_zero_iff_norm, diameter, Complex.norm_real]
+  · rw [mem_sphere_zero_iff_norm, unitDiscDiameter, Complex.norm_real]
     norm_num
   · intro t h0 h1
-    rw [inner_sphere, mem_ball_zero_iff, diameter, Complex.norm_real, Real.norm_eq_abs, abs_lt]
+    rw [inner_sphere, mem_ball_zero_iff, unitDiscDiameter, Complex.norm_real,
+      Real.norm_eq_abs, abs_lt]
     have h2 : 0 < t.1 := lt_of_le_of_ne t.2.1 fun h => h0 (Subtype.ext h.symm)
     have h3 : t.1 < 1 := lt_of_le_of_ne t.2.2 fun h => h1 (Subtype.ext h)
     constructor <;> linarith
@@ -164,18 +166,18 @@ theorem disc_union : DiscUnionStatement.{u} := by
     · intro hx
       exact ⟨f.symm ⟨x, hx⟩, by simp [ℓ]⟩
   obtain ⟨a, b, cut⟩ := exists_cut_diameter
-  let e : 𝕀 → ℂ := diameter
-  obtain ⟨p₁, q₁, pc₁, qc₁, pm₁, qm₁, l₁, r₁, v₁, b₁⟩ := exists_half h₁ hℓ hinj
+  let e : 𝕀 → ℂ := unitDiscDiameter
+  obtain ⟨p₁, q₁, pc₁, qc₁, pm₁, qm₁, l₁, r₁, v₁, b₁⟩ := exists_pasting_half_coordinates h₁ hℓ hinj
     (hrL ▸ hL₁) cut.arc_a
     cut.arc_e cut.a_zero cut.a_one cut.a_eq_e
-  obtain ⟨p₂, q₂, pc₂, qc₂, pm₂, qm₂, l₂, r₂, v₂, b₂⟩ := exists_half h₂ hℓ hinj
+  obtain ⟨p₂, q₂, pc₂, qc₂, pm₂, qm₂, l₂, r₂, v₂, b₂⟩ := exists_pasting_half_coordinates h₂ hℓ hinj
     (hrL ▸ hL₂) cut.arc_b
     cut.arc_e cut.b_zero cut.b_one cut.symm.a_eq_e
   obtain ⟨φ₀⟩ := oArc_sphere
   obtain ⟨f1, -, -, f4, -, -⟩ := cut.closedInner_facts (isJordanParts φ₀)
   rw [closedInner_sphere] at f1
-  set H₁ := closedInner (side a diameter) with hH₁
-  set H₂ := closedInner (side b diameter) with hH₂
+  set H₁ := closedInner (side a unitDiscDiameter) with hH₁
+  set H₂ := closedInner (side b unitDiscDiameter) with hH₂
   have hcl₁ : IsClosed H₁ := by
     obtain ⟨φ⟩ := cut.oArc_side
     exact (isJordanParts φ).isCompact_closure_inner.isClosed
@@ -184,8 +186,8 @@ theorem disc_union : DiscUnionStatement.{u} := by
     exact (isJordanParts φ).isCompact_closure_inner.isClosed
   have hLΔ₁ : ∀ u, ℓ u ∈ Δ₁ := fun u => discBd_subset _ (hL₁ (f u).2)
   have hLΔ₂ : ∀ u, ℓ u ∈ Δ₂ := fun u => discBd_subset _ (hL₂ (f u).2)
-  have hq₁ : ∀ u, q₁ (diameter u) = ℓ u := fun u => by rw [← v₁ u, l₁ (hLΔ₁ u)]
-  have hq₂ : ∀ u, q₂ (diameter u) = ℓ u := fun u => by rw [← v₂ u, l₂ (hLΔ₂ u)]
+  have hq₁ : ∀ u, q₁ (unitDiscDiameter u) = ℓ u := fun u => by rw [← v₁ u, l₁ (hLΔ₁ u)]
+  have hq₂ : ∀ u, q₂ (unitDiscDiameter u) = ℓ u := fun u => by rw [← v₂ u, l₂ (hLΔ₂ u)]
   let P : S → ℂ := fun x => if x ∈ Δ₁ then p₁ x else p₂ x
   let Q : ℂ → S := fun z => if z ∈ H₁ then q₁ z else q₂ z
   have Pon₁ : EqOn P p₁ Δ₁ := fun x hx => by simp only [P, hx, ite_true]
@@ -247,11 +249,11 @@ theorem disc_union : DiscUnionStatement.{u} := by
     exact hx
   have hs0 : ℓ 0 = s := hf0
   have ht1 : ℓ 1 = t := hf1
-  have hae : ∀ v u, a v = diameter u → ℓ u ∈ ({s, t} : Set S) := fun v u h => by
+  have hae : ∀ v u, a v = unitDiscDiameter u → ℓ u ∈ ({s, t} : Set S) := fun v u h => by
     rcases cut.a_eq_e v u h with ⟨-, rfl⟩ | ⟨-, rfl⟩
     · exact Or.inl hs0
     · exact Or.inr ht1
-  have hbe : ∀ v u, b v = diameter u → ℓ u ∈ ({s, t} : Set S) := fun v u h => by
+  have hbe : ∀ v u, b v = unitDiscDiameter u → ℓ u ∈ ({s, t} : Set S) := fun v u h => by
     rcases cut.symm.a_eq_e v u h with ⟨-, rfl⟩ | ⟨-, rfl⟩
     · exact Or.inl hs0
     · exact Or.inr ht1
@@ -282,10 +284,10 @@ theorem disc_union : DiscUnionStatement.{u} := by
     have hend : x ∈ L → x ∈ ({s, t} : Set S) := fun hL' => by
       by_contra h
       exact hn ⟨hL', h⟩
-    have hs : s ∈ Q '' sphere 0 1 := ⟨diameter 0, cut.a_zero ▸ cut.a_mem 0, by
-      rw [Qon₁ (show diameter 0 ∈ H₁ from Or.inr (Or.inr ⟨0, rfl⟩)), hq₁, hs0]⟩
-    have ht : t ∈ Q '' sphere 0 1 := ⟨diameter 1, cut.a_one ▸ cut.a_mem 1, by
-      rw [Qon₁ (show diameter 1 ∈ H₁ from Or.inr (Or.inr ⟨1, rfl⟩)), hq₁, ht1]⟩
+    have hs : s ∈ Q '' sphere 0 1 := ⟨unitDiscDiameter 0, cut.a_zero ▸ cut.a_mem 0, by
+      rw [Qon₁ (show unitDiscDiameter 0 ∈ H₁ from Or.inr (Or.inr ⟨0, rfl⟩)), hq₁, hs0]⟩
+    have ht : t ∈ Q '' sphere 0 1 := ⟨unitDiscDiameter 1, cut.a_one ▸ cut.a_mem 1, by
+      rw [Qon₁ (show unitDiscDiameter 1 ∈ H₁ from Or.inr (Or.inr ⟨1, rfl⟩)), hq₁, ht1]⟩
     have hLcase : x ∈ L → x ∈ Q '' sphere 0 1 := fun hL' => by
       rcases hend hL' with rfl | h'
       · exact hs

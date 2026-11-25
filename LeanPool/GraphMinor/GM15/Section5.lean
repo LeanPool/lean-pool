@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+import LeanPool.GraphMinor.GM12.Section79
+
 public import LeanPool.GraphMinor.GM15.Defs
 public import LeanPool.GraphMinor.GM15.Cited
 public import LeanPool.GraphMinor.GM15.Section4
@@ -65,19 +67,7 @@ theorem IsRespectfulDrawingTangle.truncation {S : Type w} [TopologicalSpace S]
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T) (h1 : 1 ≤ θ₁) (hle : θ₁ ≤ θ) :
     IsRespectfulDrawingTangle H θ₁ (GM10.truncation T θ₁) := by
-  rcases hResp with ⟨hTwoCell, hTangle, hConn, hOArc⟩
-  refine ⟨hTwoCell, hTangle.truncation h1 hle, hConn, fun F hF_oarc hF_norm hF_card => ?_⟩
-  obtain ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem⟩ :=
-    hOArc F hF_oarc hF_norm (lt_of_lt_of_le hF_card hle)
-  refine ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem, ?_⟩
-  let Γ := PaintingOrDrawing.drawing H
-  have hsub : ((Γ.inter Δ) ∩ (Γ.interOutside Δ)).vertexSet ⊆ F ∩ H.V := by
-    rintro v ⟨⟨hvV, hvΔ⟩, ⟨_, hvOut⟩⟩
-    have hv_bd : v ∈ subBd Δ := ⟨subset_closure hvΔ, hvOut⟩
-    rw [hΔ_bd] at hv_bd
-    exact ⟨hv_bd, hvV⟩
-  have hfin : (F ∩ H.V).Finite := H.toHypergraph.vertexSet_finite.subset inter_subset_right
-  exact (ncard_le_ncard hsub hfin).trans_lt hF_card
+  exact GM12.IsRespectfulDrawingTangle.truncation hResp h1 hle
 
 /-- If `T*` controls `T` via `η` of order `θ` and `1 ≤ θ₁ ≤ θ`, then `T*` controls the
 `θ₁`-truncation `GM10.truncation T θ₁` of order `θ₁` (Graph Minors XV, Section 5, page 129). -/
@@ -5097,8 +5087,9 @@ theorem not_isMuSteppedSpan_of_rearranged_twice
 + 3\mu + 4$. Let $z_1 \in A(H)$, and let $H', \eta', \mathscr{T}'$ be a $\Sigma$-span
 obtained from $H, \eta, \mathscr{T}$ by rearranging within $\lambda_1$ of $z_1$. Then $H',
 \eta', \mathscr{T}'$ is $(\lambda_2, \mu)$-flat."
-(Formalized with `4 * lam + 2 < θ`, matching `(5.1)`, to cover the case `μ = 0` when
-`θ = 4 * lam + 2`. See the correction to (5.2) in `corrections/GM15.md`.) -/
+The Lean form requires `4 * lam + 2 < θ` when `μ = 0`, excluding the degenerate equality
+`θ = 4 * lam + 2`. For `μ ≥ 1` the strict inequality follows from flatness. See the correction to
+(5.2) in `corrections/GM15.md`. -/
 def GM15Theorem52Statement : Prop :=
   ∀ {S : Type w} [TopologicalSpace S] [T2Space S] {α : Type u} {β : Type v}
     (G : Graph α β) (H H' : Drawing S) (η : SpanEmbedding H G) (η' : SpanEmbedding H' G)

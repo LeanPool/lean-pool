@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM06.RegionLocal
 public import LeanPool.GraphMinor.GM06.Section2Dual
 public import LeanPool.GraphMinor.GM11.Section5b
 import LeanPool.GraphMinor.Surface.JordanDomain
+import LeanPool.GraphMinor.GM11.EdgeSides
 import LeanPool.GraphMinor.Surface.DiscArcs
 import Mathlib.Analysis.Convex.PathConnected
 
@@ -342,126 +343,12 @@ theorem disc_exists_edge_sides (hS : IsClosedDiscSpace S) (Γ : Drawing S) (hpro
     disc_exists_closedDisc_nbhd hS hX₀.isOpen_compl hpX₀ hpbd
   have hVout : ∀ x ∈ Γ.V, x ∉ D := fun x hx hxD =>
     hDO hxD ⟨Γ.V_subset_U hx, fun hxe => (he.2.1 hxe).2 hx⟩
-  have hDclosed : IsClosed D := hD.isClosed
   obtain ⟨t₀, ⟨ht₀0, ht₀1⟩, rfl⟩ : p ∈ γ '' Ioo 0 1 := by rw [hγe]; exact hp
-  have hC₁ : IsCompact {t : unitInterval | t ≤ t₀ ∧ γ t ∉ D'} :=
-    (isClosed_Iic.inter (hD'.isClosed_compl.preimage hγ)).isCompact
-  have hC₂ : IsCompact {t : unitInterval | t₀ ≤ t ∧ γ t ∉ D'} :=
-    (isClosed_Ici.inter (hD'.isClosed_compl.preimage hγ)).isCompact
-  obtain ⟨a, ⟨hat, hagamma⟩, hamax⟩ := hC₁.exists_isGreatest
-    ⟨0, unitInterval.nonneg _, fun h => hVout _ hγ0 (hD'D h)⟩
-  obtain ⟨b, ⟨htb, hbgamma⟩, hbmin⟩ := hC₂.exists_isLeast
-    ⟨1, unitInterval.le_one _, fun h => hVout _ hγ1 (hD'D h)⟩
-  have hat' : a < t₀ := lt_of_le_of_ne hat fun h => hagamma (h ▸ hpD')
-  have htb' : t₀ < b := lt_of_le_of_ne htb fun h => hbgamma (h ▸ hpD')
-  have hIoo : ∀ t, a < t → t < b → γ t ∈ D' := by
-    intro t h₁ h₂
-    by_contra hcon
-    rcases le_total t t₀ with h | h
-    · exact absurd (hamax ⟨h, hcon⟩) (not_le.mpr h₁)
-    · exact absurd (hbmin ⟨h, hcon⟩) (not_le.mpr h₂)
-  have hab : a < b := hat'.trans htb'
-  have hclosure : ∀ t ∈ closure (Ioo a b), γ t ∈ D := by
-    intro t ht
-    have h₁ : γ t ∈ closure (γ '' Ioo a b) := image_closure_subset_closure_image hγ ⟨t, ht, rfl⟩
-    have h₂ : γ '' Ioo a b ⊆ D := by
-      rintro _ ⟨u, hu, rfl⟩
-      exact hD'D (hIoo u hu.1 hu.2)
-    exact hDclosed.closure_subset_iff.mpr h₂ h₁
-  have hamem : γ a ∈ D := hclosure a (by rw [closure_Ioo hab.ne]; exact ⟨le_rfl, hab.le⟩)
-  have hbmem : γ b ∈ D := hclosure b (by rw [closure_Ioo hab.ne]; exact ⟨hab.le, le_rfl⟩)
-  have ha0 : 0 < a := unitInterval.pos_iff_ne_zero.mpr fun h => hVout _ hγ0 (h ▸ hamem)
-  have hb1 : b < 1 := unitInterval.lt_one_iff_ne_one.mpr fun h => hVout _ hγ1 (h ▸ hbmem)
-  have hIcc : Icc a b ⊆ Ioo 0 1 := fun t ht => ⟨ha0.trans_le ht.1, ht.2.trans_lt hb1⟩
-  have habR : (a : ℝ) < b := hab
-  have hρmem : ∀ u : unitInterval, (a : ℝ) + u.1 * (b - a) ∈ Set.Icc (0 : ℝ) 1 := by
-    intro u
-    have hu₀ := u.2.1
-    have hu₁ := u.2.2
-    have ha' := a.2.1
-    have hb' := b.2.2
-    constructor
-    · have : 0 ≤ u.1 * ((b : ℝ) - a) := mul_nonneg hu₀ (by linarith)
-      linarith
-    · have : u.1 * ((b : ℝ) - a) ≤ 1 * ((b : ℝ) - a) :=
-        mul_le_mul_of_nonneg_right hu₁ (by linarith)
-      linarith
-  let ρ : unitInterval → unitInterval := fun u => ⟨(a : ℝ) + u.1 * (b - a), hρmem u⟩
-  have hρ : Continuous ρ := by
-    refine Continuous.subtype_mk ?_ _
-    fun_prop
-  have hρIcc : ∀ u, ρ u ∈ Icc a b := by
-    intro u
-    have hu₀ := u.2.1
-    have hu₁ := u.2.2
-    constructor
-    · have : 0 ≤ u.1 * ((b : ℝ) - a) := mul_nonneg hu₀ (by linarith)
-      exact Subtype.mk_le_mk.mpr (by linarith)
-    · have : u.1 * ((b : ℝ) - a) ≤ 1 * ((b : ℝ) - a) :=
-        mul_le_mul_of_nonneg_right hu₁ (by linarith)
-      exact Subtype.mk_le_mk.mpr (by linarith)
-  have hρsurj : ∀ t ∈ Icc a b, ∃ u, ρ u = t := by
-    intro t ht
-    have ht₁ : (a : ℝ) ≤ t := ht.1
-    have ht₂ : (t : ℝ) ≤ b := ht.2
-    have hd : (0 : ℝ) < b - a := by linarith
-    have hu : ((t : ℝ) - a) / (b - a) ∈ Set.Icc (0 : ℝ) 1 :=
-      ⟨div_nonneg (by linarith) hd.le, (div_le_one hd).mpr (by linarith)⟩
-    refine ⟨⟨_, hu⟩, Subtype.ext ?_⟩
-    change (a : ℝ) + ((t : ℝ) - a) / (b - a) * (b - a) = t
-    field_simp
-    ring
-  have hρ0 : ρ 0 = a := Subtype.ext (by simp [ρ])
-  have hρ1 : ρ 1 = b := Subtype.ext (by simp [ρ])
-  have hρinj : Function.Injective ρ := by
-    intro u v h
-    have h₁ : (a : ℝ) + u.1 * (b - a) = a + v.1 * (b - a) := congrArg Subtype.val h
-    have hd : ((b : ℝ) - a) ≠ 0 := by linarith
-    exact Subtype.ext (mul_right_cancel₀ hd (add_left_cancel h₁))
-  let k : unitInterval → S := fun u => γ (ρ u)
-  have hk : Continuous k := hγ.comp hρ
-  have hkinj : Function.Injective k := fun u v h =>
-    hρinj (hinj (hIcc (hρIcc u)) (hIcc (hρIcc v)) h)
-  let F : Set S := range k
-  have hFmem : ∀ x, x ∈ F ↔ ∃ t ∈ Icc a b, γ t = x := by
-    intro x
-    constructor
-    · rintro ⟨u, rfl⟩
-      exact ⟨ρ u, hρIcc u, rfl⟩
-    · rintro ⟨t, ht, rfl⟩
-      obtain ⟨u, rfl⟩ := hρsurj t ht
-      exact ⟨u, rfl⟩
-  have hFline : IsLineWithEnds F (γ a) (γ b) := by
-    refine ⟨Continuous.homeoOfEquivCompactToT2 (f := Equiv.ofInjective k hkinj)
-      hk.rangeFactorization, ?_, ?_⟩
-    · change k 0 = γ a
-      simp [k, hρ0]
-    · change k 1 = γ b
-      simp [k, hρ1]
-  have hFD : F ⊆ D := by
-    rintro x hx
-    obtain ⟨t, ht, rfl⟩ := (hFmem x).mp hx
-    rcases eq_or_lt_of_le ht.1 with rfl | h₁
-    · exact hamem
-    rcases eq_or_lt_of_le ht.2 with rfl | h₂
-    · exact hbmem
-    exact hD'D (hIoo t h₁ h₂)
-  have hst : γ a ≠ γ b := fun h => hab.ne (hinj (hIcc ⟨le_rfl, hab.le⟩) (hIcc ⟨hab.le, le_rfl⟩) h)
-  have hFcap : F ∩ discBd D = {γ a, γ b} := by
-    rw [← hbdD]
-    ext x
-    constructor
-    · rintro ⟨hx, -, hxD'⟩
-      obtain ⟨t, ht, rfl⟩ := (hFmem x).mp hx
-      rcases eq_or_lt_of_le ht.1 with rfl | h₁
-      · exact Or.inl rfl
-      rcases eq_or_lt_of_le ht.2 with rfl | h₂
-      · exact Or.inr rfl
-      exact absurd (hIoo t h₁ h₂) hxD'
-    · rintro (rfl | hx)
-      · exact ⟨(hFmem _).mpr ⟨a, ⟨le_rfl, hab.le⟩, rfl⟩, hamem, hagamma⟩
-      · rw [mem_singleton_iff.mp hx]
-        exact ⟨(hFmem _).mpr ⟨b, ⟨hab.le, le_rfl⟩, rfl⟩, hbmem, hbgamma⟩
+  obtain ⟨a, b, hat', htb', hIcc, hIoo, hFline, hFD, hFcap, hst⟩ :=
+    GM11.exists_edge_piece_in_disc hD hD' hD'D hbdD hγ hinj
+      (hVout _ hγ0) (hVout _ hγ1) hpD'
+  let F := γ '' Icc a b
+  have hFmem : ∀ x, x ∈ F ↔ ∃ t ∈ Icc a b, γ t = x := fun _ ↦ Iff.rfl
   obtain ⟨A₁, A₂, Δ₁, Δ₂, -, hcomp, hΔ₁, hΔ₂, hunion, -, hbd₁, hbd₂, -⟩ :=
     disc_iArc D F (γ a) (γ b) hD hFD hst hFline hFcap
   have hAsub : ∀ A ∈ componentsIn (discBd D \ {γ a, γ b}), A ⊆ discBd D := by
@@ -493,7 +380,7 @@ theorem disc_exists_edge_sides (hS : IsClosedDiscSpace S) (Γ : Drawing S) (hpro
       rcases ht with h | h
       · exact absurd h (not_le.mpr hat')
       · exact absurd h (not_le.mpr htb')
-  have hpF : γ t₀ ∈ F := (hFmem _).mpr ⟨t₀, ⟨hat, htb⟩, rfl⟩
+  have hpF : γ t₀ ∈ F := (hFmem _).mpr ⟨t₀, ⟨hat'.le, htb'.le⟩, rfl⟩
   have hFsub : ∀ x ∈ e, x ∉ Y → x ∈ F := by
     intro x hx hxY
     obtain ⟨t, -, rfl⟩ : x ∈ γ '' Ioo 0 1 := by rw [hγe]; exact hx

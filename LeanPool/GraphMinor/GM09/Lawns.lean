@@ -137,7 +137,7 @@ theorem isLine_closure_of_isLink {e : β} {u w : α} (hl : G.IsLink e u w) (huw 
 /-- The closures of two different edges at a vertex `m`, with different other ends, meet only in
 the image of `m`. -/
 theorem closure_inter_closure {e f : β} {m x y : α} (he : G.IsLink e m x) (hf : G.IsLink f m y)
-    (hxy : x ≠ y) (_hmx : m ≠ x) (_hmy : m ≠ y) (hef : e ≠ f) :
+    (hxy : x ≠ y) (hef : e ≠ f) :
     closure (graphDrawingEdgeSet Γ e) ∩ closure (graphDrawingEdgeSet Γ f) = {vertexPt Γ m} := by
   obtain ⟨hme, hce⟩ := closure_inter_V_of_isLink Γ he
   obtain ⟨hmf, hcf⟩ := closure_inter_V_of_isLink Γ hf
@@ -397,7 +397,7 @@ theorem isPathDisc_of_ear {P : Graph α β} {a b : α} (hS : IsShortPath N P a b
     exact union_subset_union_right _ E.A_subset
 
 /-- The path disc of a short path is the disc of its ear, so it is unique. -/
-theorem eq_of_isPathDisc {P : Graph α β} {a b : α} (_hS : IsShortPath N P a b)
+theorem eq_of_isPathDisc {P : Graph α β} {a b : α}
     {L A B D : Set EuclideanPlane} (E : EarData P_pres.Δ₀ (graphDrawingSubgraphU P_pres.Γ P) L A B
       (vertexPt P_pres.Γ a) (vertexPt P_pres.Γ b)) (hD : IsPathDisc P_pres P D) : D = L := by
   obtain ⟨-, hd, -, hn, hs₁, hs₂⟩ := hD
@@ -425,7 +425,7 @@ theorem exists_ear_of_prominence {P : Graph α β} {L : Set EuclideanPlane}
   obtain ⟨a, b, hp, hab, ha, hb, hd⟩ := hL.1.1
   have hS : IsShortPath N P a b := ⟨hp, hab, ha, hb, hd, hL.2.1⟩
   obtain ⟨L', A, B, E⟩ := C.exists_ear hS
-  have heq : L = L' := C.eq_of_isPathDisc hS E hL.1
+  have heq : L = L' := C.eq_of_isPathDisc E hL.1
   exact ⟨a, b, A, B, hS, heq ▸ E⟩
 
 /-- The two-edge path at `m` with ends `x` and `y` is short, and it is an ear. -/
@@ -599,9 +599,9 @@ theorem lawn_eq_of_common_middle {P P' : Graph α β} {a b a' b' m : α} {L L' A
     rcases E₁.third_leg E₂ E₃ (hline hl₁ hS.left_mem) (hline hl₂ hS.right_mem) (hline hg hz) hmΔ
       (fun h => hza (vertexPt_injOn P_pres.Γ hg.right_mem hl₁.right_mem h))
       (fun h => hzb (vertexPt_injOn P_pres.Γ hg.right_mem hl₂.right_mem h))
-      (closure_inter_closure P_pres.Γ hl₁ hl₂ hab hma hmb hee)
-      (closure_inter_closure P_pres.Γ hl₁ hg (Ne.symm hza) hma hmz he₁g)
-      (closure_inter_closure P_pres.Γ hl₂ hg (Ne.symm hzb) hmb hmz he₂g) with h | ⟨h, hne⟩ | ⟨h,
+      (closure_inter_closure P_pres.Γ hl₁ hl₂ hab hee)
+      (closure_inter_closure P_pres.Γ hl₁ hg (Ne.symm hza) he₁g)
+      (closure_inter_closure P_pres.Γ hl₂ hg (Ne.symm hzb) he₂g) with h | ⟨h, hne⟩ | ⟨h,
         hne⟩
     · exact h
     · exact (hne (hL.2.2 Q₂ L₂ hQ₂ hc₂ h).symm).elim
@@ -633,7 +633,7 @@ theorem lawn_inter_subset {P P' : Graph α β} {L L' : Set EuclideanPlane}
   obtain ⟨a, b, A, B, hS, E⟩ := C.exists_ear_of_prominence hL
   obtain ⟨a', b', A', B', hS', E'⟩ := C.exists_ear_of_prominence hL'
   rcases eq_or_middle_or_disjoint hS hS' with rfl | ⟨m, hm, hm'⟩ | hd
-  · exact (hne (C.eq_of_isPathDisc hS E hL'.1).symm).elim
+  · exact (hne (C.eq_of_isPathDisc E hL'.1).symm).elim
   · exact (hne (C.lawn_eq_of_common_middle hL hL' hS hS' E E' hm hm')).elim
   rcases E.nested_or_inter E' hd with h | h | h
   · exact (hne (hL'.2.2 P L hL.1 hL.2.1 h)).elim
@@ -701,7 +701,7 @@ theorem finite_pathDiscs :
   obtain ⟨a, b, hp, hab, ha, hb, hd⟩ := hD.1
   have hS : IsShortPath N Q a b := ⟨hp, hab, ha, hb, hd, hc⟩
   obtain ⟨L, A, B, E⟩ := C.exists_ear hS
-  rw [C.eq_of_isPathDisc hS E hD, C.eq_of_isPathDisc hS E hD']
+  rw [C.eq_of_isPathDisc E hD, C.eq_of_isPathDisc E hD']
 
 /-- Every path disc of a short path lies in a lawn. -/
 theorem exists_lawn_of_pathDisc {Q : Graph α β} {D : Set EuclideanPlane}

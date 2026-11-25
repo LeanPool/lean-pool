@@ -305,6 +305,7 @@ public import LeanPool.GraphMinor.GM09.DiscPlacement
 public import LeanPool.GraphMinor.GM09.EarCompare
 public import LeanPool.GraphMinor.GM09.EarDisc
 public import LeanPool.GraphMinor.GM09.EarUnion
+public import LeanPool.GraphMinor.GM09.GraphCircuits
 public import LeanPool.GraphMinor.GM09.Lawns
 public import LeanPool.GraphMinor.GM09.NestUncrossing
 public import LeanPool.GraphMinor.GM09.Park
@@ -1232,6 +1233,7 @@ public import LeanPool.GraphMinor.GM14.GraphTransport
 public import LeanPool.GraphMinor.GM14.NaturalOrderArc
 public import LeanPool.GraphMinor.GM14.PieceDrawing
 public import LeanPool.GraphMinor.GM14.PieceFacts
+public import LeanPool.GraphMinor.GM14.RadialAtoms
 public import LeanPool.GraphMinor.GM14.RigidAccess
 public import LeanPool.GraphMinor.GM14.RigidClaims
 public import LeanPool.GraphMinor.GM14.RigidDisc
@@ -1271,6 +1273,7 @@ public import LeanPool.GraphMinor.GM14.Section9a
 public import LeanPool.GraphMinor.GM14.Section9b
 public import LeanPool.GraphMinor.GM14.SegregationDrawing
 public import LeanPool.GraphMinor.GM14.SegregationReplace
+public import LeanPool.GraphMinor.GM14.SpanRestriction
 public import LeanPool.GraphMinor.GM14.SubDataSep
 public import LeanPool.GraphMinor.GM14.Suppress
 public import LeanPool.GraphMinor.GM14.Whitney

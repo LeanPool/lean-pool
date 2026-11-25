@@ -699,7 +699,7 @@ def Iso.refl (G : Graph α β) : Iso G G where
   isLink_iff _ _ _ := Iff.rfl
 
 /-- The inverse of a graph isomorphism. -/
-def Iso.symm {H : Graph α' β'} {G : Graph α β} (φ : Iso H G) : Iso G H where
+@[expose] def Iso.symm {H : Graph α' β'} {G : Graph α β} (φ : Iso H G) : Iso G H where
   vertexEquiv := φ.vertexEquiv.symm
   edgeEquiv := φ.edgeEquiv.symm
   isLink_iff e x y := by
@@ -708,7 +708,7 @@ def Iso.symm {H : Graph α' β'} {G : Graph α β} (φ : Iso H G) : Iso G H wher
     exact h.symm
 
 /-- The composition of two graph isomorphisms. -/
-def Iso.trans {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
+@[expose] def Iso.trans {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
     (φ : Iso H K) (ψ : Iso K G) : Iso H G where
   vertexEquiv := φ.vertexEquiv.trans ψ.vertexEquiv
   edgeEquiv := φ.edgeEquiv.trans ψ.edgeEquiv

@@ -1029,7 +1029,8 @@ def DiscFeasibilityArcTranslationStatement : Prop :=
             (V₀ ∩ C₁).Nonempty ∧ (V₀ ∩ C₂).Nonempty ∧ s ∉ V₀ ∧ t ∉ V₀}.ncard ≤
             (G.V ∩ (F \ {s, t})).ncard)
 
-/-- Graph Minors VII, (4.3) (pages 222–223):
+/-- Corrected conclusion of Graph Minors VII, (4.3) (pages 222–223). The indexed paths may
+repeat when a path has no internal vertex. The printed statement reads:
 "(4.3) *Let $\Sigma$ be a connected surface with at least two cuffs, and let $G$ be a proper graph
 in $\Sigma$. Let $v \ge 0$ be an integer, and suppose that every $G$-normal $O$-arc $F$ with
 $F \cap bd(\Sigma) = \emptyset$ and $|V(G) \cap F| \le v$ is null-homotopic. Let $C$ be a cuff.

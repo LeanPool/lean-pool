@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+import LeanPool.GraphMinor.GM12.Section79
+
 public import LeanPool.GraphMinor.GM15.Defs
 public import LeanPool.GraphMinor.GM15.Cited
 import LeanPool.GraphMinor.GM10.Section6
@@ -1471,114 +1473,7 @@ private theorem isRespectful_inducedBySubgraph {S : Type w} [TopologicalSpace S]
     (hResp₀ : (PaintingOrDrawing.drawing H₀).IsRespectful θ' T₀) :
     (PaintingOrDrawing.drawing H').IsRespectful θ'
       (GM12.inducedBySubgraph H'.toHypergraph H₀.toHypergraph θ' T₀) := by
-  refine ⟨hResp₀.1, fun F hF hNorm' hcard' => ?_⟩
-  have hNorm₀ : (PaintingOrDrawing.drawing H₀).IsNormal F :=
-    fun x ⟨hxF, hxU⟩ => by
-      have hxU' : x ∈ H₀.U := hxU
-      rcases H₀.U_eq ▸ hxU' with hxV | hxE
-      · exact hxV
-      · obtain ⟨e, he₀, hxe⟩ := mem_iUnion₂.mp hxE
-        by_cases hxV₀ : x ∈ H₀.V
-        · exact hxV₀
-        · have hxe_in : x ∈ e := by rw [← H₀.closure_diff_V he₀]; exact ⟨hxe, hxV₀⟩
-          have he' : e ∈ H'.E := hSub.2 he₀
-          have hxV' : x ∈ H'.V := hNorm' ⟨hxF, (he'.2.1 hxe_in).1⟩
-          exact False.elim ((he'.2.1 hxe_in).2 hxV')
-  have hcard₀ : (F ∩ H₀.V).ncard < θ' :=
-    lt_of_le_of_lt
-      (Set.ncard_le_ncard (inter_subset_inter_right F hSub.1) (H'.finite_V.subset
-        inter_subset_right))
-      hcard'
-  obtain ⟨Δ, hΔ, hbd, hmem₀⟩ := hResp₀.2 F hF hNorm₀ hcard₀
-  refine ⟨Δ, hΔ, hbd, ?_, ?_, ?_⟩
-  · have hAl : (PaintingOrDrawing.drawing H').inter Δ ≤ H'.toHypergraph :=
-      drawing_inter_le H' hΔ.isClosed
-    have hBl : (PaintingOrDrawing.drawing H').interOutside Δ ≤ H'.toHypergraph :=
-      drawing_inter_le H' isClosed_closure
-    refine (isSeparation_iff_of_le hAl hBl).mpr ⟨?_, ?_, ?_⟩
-    · ext x
-      change (x ∈ H'.V ∩ Δ ∨ x ∈ H'.V ∩ closure (univ \ Δ)) ↔ x ∈ H'.V
-      constructor
-      · rintro (⟨hx, _⟩ | ⟨hx, _⟩) <;> exact hx
-      · intro hx
-        by_cases hxΔ : x ∈ Δ
-        · exact Or.inl ⟨hx, hxΔ⟩
-        · exact Or.inr ⟨hx, subset_closure ⟨mem_univ x, hxΔ⟩⟩
-    · ext e
-      change (e ∈ {e ∈ H'.E | e ⊆ Δ} ∨ e ∈ {e ∈ H'.E | e ⊆ closure (univ \ Δ)}) ↔ e ∈ H'.E
-      constructor
-      · rintro (⟨he, _⟩ | ⟨he, _⟩) <;> exact he
-      · intro he
-        obtain ⟨x, hxe⟩ := he.1
-        have he_pre : IsPreconnected e :=
-          (GM14.PaintingOrDrawing.edge_props (Γ := PaintingOrDrawing.drawing H') he).1
-        have hdisF : Disjoint e (frontier Δ) := by
-          rw [GM11.subBd_eq_frontier' Δ, hbd]
-          exact disjoint_left.mpr fun y hye hyF =>
-            (he.2.1 hye).2 (hNorm' ⟨hyF, (he.2.1 hye).1⟩)
-        by_cases hxΔ : x ∈ Δ
-        · exact Or.inl ⟨he, GM14.subset_of_disjoint_frontier
-            he_pre hΔ.isClosed hdisF hxe hxΔ⟩
-        · have hdisF' : Disjoint e (frontier (closure (univ \ Δ))) := by
-            refine Disjoint.mono_right ?_ hdisF
-            intro y hy
-            have hy1 : y ∈ frontier (univ \ Δ) := frontier_closure_subset hy
-            rwa [← compl_eq_univ_sdiff, frontier_compl] at hy1
-          exact Or.inr ⟨he, GM14.subset_of_disjoint_frontier
-            he_pre isClosed_closure hdisF' hxe (subset_closure ⟨mem_univ x, hxΔ⟩)⟩
-    · ext e
-      change (e ∈ {e ∈ H'.E | e ⊆ Δ} ∧ e ∈ {e ∈ H'.E | e ⊆ closure (univ \ Δ)}) ↔ e ∈ (∅ : Set
-        (Set S))
-      simp only [mem_ofPred_eq, mem_empty_iff_false, iff_false]
-      rintro ⟨⟨he, heΔ⟩, ⟨_, heOut⟩⟩
-      obtain ⟨x, hxe⟩ := he.1
-      have hxF : x ∈ F := by
-        rw [← hbd, GM11.subBd_eq_frontier]
-        rw [frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
-        exact ⟨subset_closure (heΔ hxe), heOut hxe⟩
-      exact (he.2.1 hxe).2 (hNorm' ⟨hxF, (he.2.1 hxe).1⟩)
-  · have hsub : (((PaintingOrDrawing.drawing H').inter Δ) ∩
-        ((PaintingOrDrawing.drawing H').interOutside Δ)).vertexSet ⊆ F ∩ H'.V := by
-      rintro x ⟨⟨hxV, hxΔ⟩, ⟨_, hxOut⟩⟩
-      refine ⟨?_, hxV⟩
-      rw [← hbd, GM11.subBd_eq_frontier, frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
-      exact ⟨subset_closure hxΔ, hxOut⟩
-    exact lt_of_le_of_lt (Set.ncard_le_ncard hsub (H'.finite_V.subset inter_subset_right)) hcard'
-  · have hSubHyp : H₀.toHypergraph ≤ H'.toHypergraph := by
-      refine ⟨hSub.1, hSub.2, fun e he₀ => ?_⟩
-      ext v
-      change (e ∈ H'.E ∧ v ∈ H'.V ∧ v ∈ closure e) ↔ (e ∈ H₀.E ∧ v ∈ H₀.V ∧ v ∈ closure e)
-      constructor
-      · rintro ⟨_, hv', hve⟩
-        refine ⟨he₀, ?_, hve⟩
-        have hv_in : v ∈ closure e ∩ H'.V := ⟨hve, hv'⟩
-        rw [← hSub.closure_inter_V he₀] at hv_in
-        exact hv_in.2
-      · rintro ⟨_, hv₀, hve⟩
-        exact ⟨hSub.2 he₀, hSub.1 hv₀, hve⟩
-    have h1 : (PaintingOrDrawing.drawing H').inter Δ ∩ H₀.toHypergraph =
-        (PaintingOrDrawing.drawing H₀).inter Δ := by
-      refine GM10.eq_of_le_of_vertexSet_eq_of_edgeSet_eq
-        (inter_le_right (drawing_inter_le H' hΔ.isClosed) hSubHyp)
-        (drawing_inter_le H₀ hΔ.isClosed) ?_ ?_
-      · change (H'.V ∩ Δ) ∩ H₀.V = H₀.V ∩ Δ
-        ext x
-        exact ⟨fun ⟨⟨_, hxΔ⟩, hx₀⟩ => ⟨hx₀, hxΔ⟩, fun ⟨hx₀, hxΔ⟩ => ⟨⟨hSub.1 hx₀, hxΔ⟩, hx₀⟩⟩
-      · change {e ∈ H'.E | e ⊆ Δ} ∩ H₀.E = {e ∈ H₀.E | e ⊆ Δ}
-        ext e
-        exact ⟨fun ⟨⟨_, heΔ⟩, he₀⟩ => ⟨he₀, heΔ⟩, fun ⟨he₀, heΔ⟩ => ⟨⟨hSub.2 he₀, heΔ⟩, he₀⟩⟩
-    have h2 : (PaintingOrDrawing.drawing H').interOutside Δ ∩ H₀.toHypergraph =
-        (PaintingOrDrawing.drawing H₀).interOutside Δ := by
-      refine GM10.eq_of_le_of_vertexSet_eq_of_edgeSet_eq
-        (inter_le_right (drawing_inter_le H' isClosed_closure) hSubHyp)
-        (drawing_inter_le H₀ isClosed_closure) ?_ ?_
-      · change (H'.V ∩ closure (univ \ Δ)) ∩ H₀.V = H₀.V ∩ closure (univ \ Δ)
-        ext x
-        exact ⟨fun ⟨⟨_, hxΔ⟩, hx₀⟩ => ⟨hx₀, hxΔ⟩, fun ⟨hx₀, hxΔ⟩ => ⟨⟨hSub.1 hx₀, hxΔ⟩, hx₀⟩⟩
-      · change {e ∈ H'.E | e ⊆ closure (univ \ Δ)} ∩ H₀.E = {e ∈ H₀.E | e ⊆ closure (univ \ Δ)}
-        ext e
-        exact ⟨fun ⟨⟨_, heΔ⟩, he₀⟩ => ⟨he₀, heΔ⟩, fun ⟨he₀, heΔ⟩ => ⟨⟨hSub.2 he₀, heΔ⟩, he₀⟩⟩
-    rwa [h1, h2]
+  exact GM12.isRespectful_inducedBySubgraph hSub hResp₀
 
 /-- For `H₀ = H.span ∅ E'` with `H₀.IsSubdrawing H'` and `IsTangle H₀.toHypergraph θ' T₀`, the
 edge-based `GM10.inducedTangle` coincides with `GM12.inducedBySubgraph`. -/

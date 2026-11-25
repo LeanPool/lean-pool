@@ -126,7 +126,9 @@ def Theorem104Statement : Prop :=
       D.IsFlawedInDistance n →
       ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb (n + 1) D.ord D.𝒯 ∧ (⟨hd, D.P, L⟩ : Place χ) ∈ 𝒞
 
-/-- **Graph Minors XIX, (10.5)** (page 357): "Let $\chi$ satisfy $\mathbf{S}_4$, and let $n \ge 0$
+/-- Corrected form of **Graph Minors XIX, (10.5)** (page 357). The statement adds $\mathbf{S}_3$
+for the fragment with fewer cuffs. The printed statement reads:
+"Let $\chi$ satisfy $\mathbf{S}_4$, and let $n \ge 0$
 be an integer. Then there is a
 well-behaved set $\mathscr{C}_3(n)$ of $\chi$-places with the following property. Let
 $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ be $n$-flawed in freedom. Then there

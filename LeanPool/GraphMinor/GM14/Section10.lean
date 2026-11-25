@@ -11,7 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.Section9
 public import LeanPool.GraphMinor.GM14.Section6
 public import LeanPool.GraphMinor.GM14.Section10Translation4
-import LeanPool.GraphMinor.GM14.BridgeFacts
+public import LeanPool.GraphMinor.GM14.BridgeFacts
 import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM09.Section3a
 import LeanPool.GraphMinor.GM09.Section4b
@@ -94,125 +94,6 @@ theorem isDrawingEye_mono {α : Type v} {β : Type w}
     hdisj, isHPathWithEnds_mono hG₀ hP₁, isHPathWithEnds_mono hG₀ hP₂⟩
 
 /-! ## Bridge Decomposition Lemmas -/
-
-/-- If `C` is a connected component of `deleteVertices G V(H_sub)` and `u', v' ∈ V(H_sub)` are
-distinct vertices linked in `G` by edges `e₁, e₂` to vertices `x₁, x₂ ∈ V(C)`, then there is an
-`H_sub`-path `P` in `G` with ends `u'` and `v'`. -/
-theorem exists_isHPathWithEnds_of_component_attachments {α : Type v} {β : Type w}
-    {G H_sub C : Graph α β}
-    (hH : H_sub ≤ G) (hC : C ∈ graphComponents (deleteVertices G V(H_sub)))
-    {u' v' x₁ x₂ : α} {e₁ e₂ : β}
-    (hu' : u' ∈ V(H_sub)) (hv' : v' ∈ V(H_sub)) (huv' : u' ≠ v')
-    (hx₁ : x₁ ∈ V(C)) (hx₂ : x₂ ∈ V(C))
-    (he₁ : G.IsLink e₁ u' x₁) (he₂ : G.IsLink e₂ x₂ v') :
-    ∃ P : Graph α β, IsHPathWithEnds G H_sub P u' v' := by
-  have hC_del : C ≤ deleteVertices G V(H_sub) := hC.1
-  have hdel_G : deleteVertices G V(H_sub) ≤ G := deleteVertices_le G V(H_sub)
-  have hC_G : C ≤ G := hC_del.trans hdel_G
-  have hVC_disj : ∀ w ∈ V(C), w ∉ V(H_sub) := fun w hw =>
-    (hC_del.vertexSet_mono hw).2
-  obtain ⟨W₀⟩ := hC.2.1.2 x₁ hx₁ x₂ hx₂
-  obtain ⟨W, hW_sim, _, _⟩ := exists_isSimple_subwalk W₀
-  obtain ⟨W_G, hWG_sup, hWG_ed⟩ := exists_walk_up_of_le hC_G W
-  let W_full : GraphWalk G u' v' :=
-    GraphWalk.cons he₁ (W_G.append (GraphWalk.cons he₂ (GraphWalk.nil he₂.right_mem)))
-  have hWf_sup : W_full.support = u' :: (W.support ++ [v']) := by
-    simp [W_full, GraphWalk.support_append, hWG_sup]
-  have hWf_ed : W_full.edges = e₁ :: (W.edges ++ [e₂]) := by
-    simp [W_full, GraphWalk.edges_append, hWG_ed]
-  have hu'_not_W : u' ∉ W.support := fun h =>
-    hVC_disj u' (W.mem_vertexSet_of_mem_support h) hu'
-  have hv'_not_W : v' ∉ W.support := fun h =>
-    hVC_disj v' (W.mem_vertexSet_of_mem_support h) hv'
-  have hWf_sim : W_full.IsSimple := by
-    unfold GraphWalk.IsSimple
-    rw [hWf_sup, List.nodup_cons]
-    refine ⟨?_, ?_⟩
-    · simp only [List.mem_append, List.mem_singleton, not_or]
-      exact ⟨hu'_not_W, huv'⟩
-    · rw [List.nodup_append]
-      refine ⟨hW_sim, List.nodup_singleton v', fun z hz w hw hzw => ?_⟩
-      simp only [List.mem_singleton] at hw
-      subst hw hzw
-      exact hv'_not_W hz
-  let P := walkSubgraph W_full
-  refine ⟨P, hH, isGraphPathWithEnds_walkSubgraph hWf_sim, huv', hu', hv', ?_, ?_⟩
-  · rw [vertexSet_walkSubgraph]
-    ext z
-    simp only [mem_inter_iff, mem_ofPred_eq, hWf_sup, List.mem_cons, List.mem_append,
-      List.not_mem_nil, or_false, mem_insert_iff, mem_singleton_iff]
-    constructor
-    · rintro ⟨rfl | hzW | rfl, hzH⟩
-      · exact Or.inl rfl
-      · exact False.elim (hVC_disj z (W.mem_vertexSet_of_mem_support hzW) hzH)
-      · exact Or.inr rfl
-    · rintro (rfl | rfl)
-      · exact ⟨Or.inl rfl, hu'⟩
-      · exact ⟨Or.inr (Or.inr rfl), hv'⟩
-  · rw [edgeSet_walkSubgraph]
-    refine Set.disjoint_left.mpr fun e heP heH => ?_
-    simp only [mem_ofPred_eq, hWf_ed, List.mem_cons, List.mem_append,
-      List.not_mem_nil, or_false] at heP
-    rcases heP with rfl | heW | rfl
-    · have hlinkH : H_sub.IsLink e u' x₁ := (hH.isLink_iff heH).mpr he₁
-      exact hVC_disj x₁ hx₁ hlinkH.right_mem
-    · have heC : e ∈ E(C) := walk_edges_subset_edgeSet W e heW
-      have he_del : e ∈ E(deleteVertices G V(H_sub)) := hC_del.edgeSet_mono heC
-      obtain ⟨w₁, w₂, hlink_del⟩ := exists_isLink_of_mem_edgeSet he_del
-      have hlink_G : G.IsLink e w₁ w₂ := hlink_del.mono hdel_G
-      have hlink_H : H_sub.IsLink e w₁ w₂ := (hH.isLink_iff heH).mpr hlink_G
-      exact hlink_del.left_mem.2 hlink_H.left_mem
-    · have hlinkH : H_sub.IsLink e x₂ v' := (hH.isLink_iff heH).mpr he₂
-      exact hVC_disj x₂ hx₂ hlinkH.left_mem
-
-/-- If `B` is a bridge of `H_sub` in `G` and `u', v' ∈ V(B) ∩ V(H_sub)` are distinct, then there is
-an `H_sub`-path `P` in `G` with ends `u'` and `v'`. -/
-theorem exists_isHPathWithEnds_of_isBridge {α : Type v} {β : Type w}
-    {G H_sub B : Graph α β}
-    (hB : IsBridge G H_sub B) {u' v' : α}
-    (hu'B : u' ∈ V(B)) (hv'B : v' ∈ V(B))
-    (hu'H : u' ∈ V(H_sub)) (hv'H : v' ∈ V(H_sub)) (huv' : u' ≠ v') :
-    ∃ P : Graph α β, IsHPathWithEnds G H_sub P u' v' := by
-  rcases hB.2.2 with ⟨e, he, w₁, _, w₂, _, hlink_w, hVB, _⟩ | ⟨C, hC, hVB, _⟩
-  · rw [hVB] at hu'B hv'B
-    have hlink : G.IsLink e u' v' := by
-      rcases hu'B with rfl | rfl <;> rcases hv'B with rfl | rfl
-      · exact False.elim (huv' rfl)
-      · exact hlink_w
-      · exact hlink_w.symm
-      · exact False.elim (huv' rfl)
-    let W : GraphWalk G u' v' := GraphWalk.cons hlink (GraphWalk.nil hlink.right_mem)
-    have hW_sup : W.support = [u', v'] := rfl
-    have hW_ed : W.edges = [e] := rfl
-    have hW_sim : W.IsSimple := by
-      unfold GraphWalk.IsSimple
-      rw [hW_sup]
-      simp [huv']
-    refine ⟨walkSubgraph W, hB.1, isGraphPathWithEnds_walkSubgraph hW_sim, huv', hu'H, hv'H, ?_, ?_⟩
-    · rw [vertexSet_walkSubgraph, hW_sup]
-      ext z
-      simp only [mem_inter_iff, mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false,
-        mem_insert_iff, mem_singleton_iff]
-      exact ⟨fun h => h.1, fun h => ⟨h, h.elim (fun h₁ => h₁ ▸ hu'H) (fun h₂ => h₂ ▸ hv'H)⟩⟩
-    · rw [edgeSet_walkSubgraph, hW_ed]
-      refine Set.disjoint_left.mpr fun f hfP hfH => ?_
-      simp only [mem_ofPred_eq, List.mem_cons, List.not_mem_nil, or_false] at hfP
-      subst hfP
-      exact he.2 hfH
-  · rw [hVB] at hu'B hv'B
-    have hVC_disj : ∀ w ∈ V(C), w ∉ V(H_sub) := fun w hw => (hC.1.vertexSet_mono hw).2
-    have hu'E : ∃ e₁ ∈ E(G), ∃ x₁ ∈ V(C), G.IsLink e₁ x₁ u' := by
-      rcases hu'B with hu'C | ⟨_, h⟩
-      · exact False.elim (hVC_disj u' hu'C hu'H)
-      · exact h
-    have hv'E : ∃ e₂ ∈ E(G), ∃ x₂ ∈ V(C), G.IsLink e₂ x₂ v' := by
-      rcases hv'B with hv'C | ⟨_, h⟩
-      · exact False.elim (hVC_disj v' hv'C hv'H)
-      · exact h
-    obtain ⟨e₁, _, x₁, hx₁, hlink₁⟩ := hu'E
-    obtain ⟨e₂, _, x₂, hx₂, hlink₂⟩ := hv'E
-    exact exists_isHPathWithEnds_of_component_attachments hB.1 hC hu'H hv'H huv' hx₁ hx₂
-      hlink₁.symm hlink₂
 
 omit [T2Space S] in
 /-- If `G₀ ≠ η₀.imageGraph`, there is a bridge `J` of `η₀.imageGraph` in `G₀` and a remaining

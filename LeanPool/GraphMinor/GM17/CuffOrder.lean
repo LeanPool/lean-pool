@@ -303,10 +303,6 @@ private noncomputable def nodeAngle (f : Circle ≃ₜ Θ) (i : Fin (Γ.N ∩ Θ
 private theorem strictMono_nodeAngle (f : Circle ≃ₜ Θ) : StrictMono (nodeAngle Γ f) :=
   ((nodeAngleFinset Γ f).orderEmbOfFin (card_nodeAngleFinset Γ f)).strictMono
 
-private theorem nodeAngle_mem_finset (f : Circle ≃ₜ Θ) (i : Fin (Γ.N ∩ Θ).ncard) :
-    nodeAngle Γ f i ∈ nodeAngleFinset Γ f :=
-  Finset.orderEmbOfFin_mem (nodeAngleFinset Γ f) (card_nodeAngleFinset Γ f) i
-
 private theorem range_nodeAngle (f : Circle ≃ₜ Θ) :
     Set.range (nodeAngle Γ f) = angleOf f '' (Γ.N ∩ Θ) := by
   unfold nodeAngle
@@ -373,18 +369,6 @@ private theorem nodeAngle_lt_upperAngle (f : Circle ≃ₜ Θ) (hk : 2 ≤ (Γ.N
   · exact strictMono_nodeAngle Γ f (Nat.lt_succ_self i.1)
   · have hi := (nodeAngle_mem_Ico Γ f i).2
     have h0 := (nodeAngle_mem_Ico Γ f ⟨0, by omega⟩).1
-    linarith
-
-private theorem upperAngle_le_add_two_pi (f : Circle ≃ₜ Θ) (hk : 2 ≤ (Γ.N ∩ Θ).ncard)
-    (i : Fin (Γ.N ∩ Θ).ncard) :
-    upperAngle Γ f hk i ≤ nodeAngle Γ f i + 2 * Real.pi := by
-  unfold upperAngle
-  split_ifs with h
-  · have hi := (nodeAngle_mem_Ico Γ f i).1
-    have h1 := (nodeAngle_mem_Ico Γ f ⟨i.1 + 1, h⟩).2
-    linarith
-  · have hle : (⟨0, by omega⟩ : Fin (Γ.N ∩ Θ).ncard) ≤ i := Nat.zero_le i.1
-    have hmono := (strictMono_nodeAngle Γ f).monotone hle
     linarith
 
 private theorem cuffPoint_upperAngle (f : Circle ≃ₜ Θ) (hk : 2 ≤ (Γ.N ∩ Θ).ncard)

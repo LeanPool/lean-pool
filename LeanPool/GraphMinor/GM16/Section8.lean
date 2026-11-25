@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+import LeanPool.GraphMinor.GM12.Section79
+
 public import LeanPool.GraphMinor.GM16.Section7
 import LeanPool.GraphMinor.GM10.TangleLemmas
 import LeanPool.GraphMinor.GM09.Basic
@@ -55,19 +57,7 @@ theorem IsRespectfulDrawingTangle.truncation {H : Drawing S} {θ θ' : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T) (h1 : 1 ≤ θ') (hle : θ' ≤ θ) :
     IsRespectfulDrawingTangle H θ' (GM10.truncation T θ') := by
-  rcases hResp with ⟨hTwoCell, hTangle, hConn, hOArc⟩
-  refine ⟨hTwoCell, hTangle.truncation h1 hle, hConn, fun F hF_oarc hF_norm hF_card => ?_⟩
-  obtain ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem⟩ :=
-    hOArc F hF_oarc hF_norm (lt_of_lt_of_le hF_card hle)
-  refine ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem, ?_⟩
-  let Γ := PaintingOrDrawing.drawing H
-  have hsub : ((Γ.inter Δ) ∩ (Γ.interOutside Δ)).vertexSet ⊆ F ∩ H.V := by
-    rintro v ⟨⟨hvV, hvΔ⟩, ⟨_, hvOut⟩⟩
-    have hv_bd : v ∈ subBd Δ := ⟨subset_closure hvΔ, hvOut⟩
-    rw [hΔ_bd] at hv_bd
-    exact ⟨hv_bd, hvV⟩
-  have hfin : (F ∩ H.V).Finite := H.toHypergraph.vertexSet_finite.subset inter_subset_right
-  exact (ncard_le_ncard hsub hfin).trans_lt hF_card
+  exact GM12.IsRespectfulDrawingTangle.truncation hResp h1 hle
 
 /-- If `K ≤ G` and `Disjoint V(K) Z`, then `K ≤ GM09.deleteVertices G Z`. -/
 theorem le_deleteVertices_of_disjoint {G K : Graph α β} {Z : Set α}

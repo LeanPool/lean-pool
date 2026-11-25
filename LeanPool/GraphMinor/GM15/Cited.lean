@@ -30,7 +30,7 @@ This file states as `Prop`s the results from *Graph Minors IX. Disjoint crossed 
   - `GM12Theorem710Statement`: Graph Minors XII, (7.10) (page 270), used in (4.4) of Graph Minors
     XV.
 - **From Graph Minors IX:**
-  - `GM09Theorem71Statement`: (7.1) (page 59), quoted as (6.2) in Graph Minors XV (page 134).
+  - `GM09Theorem71Statement`: (7.1) (page 59), quoted with a misprint as XV (6.2) (page 134).
   - `GM09Theorem81Statement`: (8.1) (page 60), nonempty-boundary case used in XV (2.1) (page 116).
   - `GM09Theorem1111Statement`: (11.11) (page 74), used to deduce (6.1) of Graph Minors XV
     (page 134).
@@ -40,11 +40,11 @@ This file states as `Prop`s the results from *Graph Minors IX. Disjoint crossed 
   - `GM12Theorem41Statement`: (4.1) (page 248), used in (4.7) of Graph Minors XV (page 127).
   - `GM12Theorem45Statement`: (4.5) (page 252), used in (8.1) of Graph Minors XV (page 145).
   - `GM12Theorem51Statement`: (5.1) (page 254), used in (3.5) of Graph Minors XV (page 123).
-  - `GM12Theorem52Statement`: (5.2) (page 254), used in (3.3) of Graph Minors XV (page 121).
-  - `GM12Theorem61Statement`: (6.1) (page 258), used in (3.4) and (6.5) of Graph Minors XV.
+  - `GM12Theorem52Statement`: corrected (5.2) with `2 ≤ θ` (page 254), used in XV (3.3) (page 121).
+  - `GM12Theorem61Statement`: corrected (6.1) with `2 ≤ k` (pages 257–258), used in XV (3.4).
   - `GM12Theorem711Statement`: (7.11) (page 271), used in (4.3) of Graph Minors XV (page 125).
 - **From Graph Minors XIV:**
-  - `GM14Theorem73Statement`: (7.3) (page 36), used in (7.7) of Graph Minors XV (page 142).
+  - `GM14Theorem73Statement`: (7.3) (page 36), used in claim (4) of XV (7.7) (page 141).
   - `GM14Theorem96Statement`: (9.6) (page 47), used in Section 7 of Graph Minors XV (pages 138–144).
   - `GM14Theorem101Statement`: (10.1) (page 49), used in (7.4) of Graph Minors XV (page 137).
 -/
@@ -63,7 +63,8 @@ export GM14 (GM11Theorem63Statement GM11Theorem810Statement GM11Theorem812Statem
 
 /-! ## 1. Results from Graph Minors IX -/
 
-/-- Statement of Graph Minors IX, (7.1) (page 59), quoted as (6.2) in Graph Minors XV (page 134):
+/-- Statement of Graph Minors IX, (7.1) (page 59). XV (6.2) (page 134) quotes it with a misprint
+in the threshold, printing $2\tau_i$ for $2\tau_1$.
 "Let $\phi \ge 2$, $\tau_1 \ge 3$, $\tau_2 \ge 4$ be integers. Let $\mathcal{P}$ be a crooked
 transaction in a society $(G, \Omega)$ such that $|\mathcal{P}| \ge (\phi - 1)(2\tau_1 +
 \tau_2 - 7)$. Then there exists $\mathcal{P}' \subseteq \mathcal{P}$ such that either* (i)
@@ -280,8 +281,8 @@ def GM12Theorem52Statement : Prop :=
     (∀ X ⊆ ι '' ((↑) ⁻¹' (Γ.V ∩ C 0)), X.ncard ≤ θ → IsFreeSet Γ₁.toHypergraph T₁ θ X) →
     (PaintingOrDrawing.drawing Γ).IsRespectful θ (GM12.inducedAcross ι Γ Γ₁ θ T₁)
 
-/-- Statement of Graph Minors XII, (6.1) (pages 257–258, written with `θ = 2k`), used in (3.4)
-(page 122) and (6.5) (page 134) of Graph Minors XV:
+/-- Statement of Graph Minors XII, (6.1) (pages 257–258, written with `θ = 2k`), used in the
+proof of Graph Minors XV (3.4) (page 123):
 "Let $\Gamma$ be a 2-cell drawing in a connected surface $\Sigma$, and let $F$ be a $\Gamma$-normal
 $O$-arc bounding a closed disc $\Delta \subseteq \Sigma$. Let $|F \cap V(\Gamma)| = \theta \ge 2$,
 where $\theta$ is even, and let $$F \cap V(\Gamma) = \{v_1, v_2, \dots, v_\theta\}$$ numbered in
@@ -294,8 +295,8 @@ induced by $\mathscr{T}_1$; then $\mathscr{T}$ is clearly respectful towards $\S
 the metric derived from $\mathscr{T}$. Finally, let $F \cap V(\Gamma_1)$ be free with respect to
 $\mathscr{T}_1$. ... (6.1) In these circumstances, $d(e_1, e_{\theta/2}) \ge \theta$."
 The paper allows `k = 1`, which is false, as then `e₁ = e_k` and `d(e₁, e₁) = 0`. So we assume `2 ≤
-k`. The one
-use, XV page 122, concludes `d'(v₁, v₂) ≥ 2k - 8`, which needs nothing when there are few paths. -/
+k`. Its use in the proof of XV (3.4), page 123, concludes `d'(v₁, v₂) ≥ 2k - 8`,
+which needs nothing when there are few paths. -/
 def GM12Theorem61Statement : Prop :=
   ∀ {S : Type w} [TopologicalSpace S] [T2Space S]
     (Γ : Drawing S) (F Δ : Set S) (k θ₁ : ℕ)
@@ -371,7 +372,7 @@ def GM12Theorem711Statement : Prop :=
 
 /-! ## 4. Results from Graph Minors XIV -/
 
-/-- Statement of Graph Minors XIV, (7.3) (page 36), used in (7.7) of Graph Minors XV (page 142):
+/-- Statement of Graph Minors XIV, (7.3) (page 36), used in claim (4) of XV (7.7) (page 141).
 Let `H` be a 2-cell drawing in `Σ` with `E(H) ≠ ∅`, and let `T` be a respectful tangle in `H` of
 order `θ`, with metric `d`. Let `z ∈ A(H)`, and let `(A, B) ∈ T` with `E(B) ≠ {z}`. Then there
 exists `e ∈ E(B)` with `d(z, e) ≥ θ - |V(A ∩ B)|`. -/

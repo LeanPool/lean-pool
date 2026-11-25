@@ -464,7 +464,8 @@ private theorem wheel_boundary_path_bounds
   have hN : D.IsNear H (k + 1) v := isNear_iff_exists_path.mpr ⟨P, h, hh, hP, by omega⟩
   exact (hint (.inl (.inl ⟨hvV, hN⟩))).2 hvb
 
-/-- **(12.1).** Let `ρ = k + 3` and `rep(𝒯) ≥ 5ρ + 14`, and let `H` be a nonempty subdrawing of `Γ*`
+/-- The strengthened form of XIX (12.1) (page 362). Let `ρ = k + 3` and
+`rep(𝒯) ≥ 5ρ + 14`, and let `H` be a nonempty subdrawing of `Γ*`
 satisfying the third
 condition in the definition of a wheel, with any two vertices at distance at most `2ρ + 2`. Let `Y`
 be as in `IsZoneSet`,

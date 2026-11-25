@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+import LeanPool.GraphMinor.GM12.Section79
+
 public import LeanPool.GraphMinor.GM15.Section3Disc
 public import LeanPool.GraphMinor.GM15.Section3SpanGlue
 public import LeanPool.GraphMinor.Surface.Cap
@@ -2677,19 +2679,7 @@ theorem isRespectfulDrawingTangle_truncation {S : Type w} [TopologicalSpace S]
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T) (h1 : 1 ≤ θ₁) (hle : θ₁ ≤ θ) :
     IsRespectfulDrawingTangle H θ₁ (GM10.truncation T θ₁) := by
-  rcases hResp with ⟨hTwoCell, hTangle, hConn, hOArc⟩
-  refine ⟨hTwoCell, hTangle.truncation h1 hle, hConn, fun F hF_oarc hF_norm hF_card => ?_⟩
-  obtain ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem⟩ :=
-    hOArc F hF_oarc hF_norm (lt_of_lt_of_le hF_card hle)
-  refine ⟨Δ, hΔ_disc, hΔ_bd, hΔ_mem, ?_⟩
-  let Γ := PaintingOrDrawing.drawing H
-  have hsub : ((Γ.inter Δ) ∩ (Γ.interOutside Δ)).vertexSet ⊆ F ∩ H.V := by
-    rintro v ⟨⟨hvV, hvΔ⟩, ⟨_, hvOut⟩⟩
-    have hv_bd : v ∈ subBd Δ := ⟨subset_closure hvΔ, hvOut⟩
-    rw [hΔ_bd] at hv_bd
-    exact ⟨hv_bd, hvV⟩
-  have hfin : (F ∩ H.V).Finite := H.toHypergraph.vertexSet_finite.subset inter_subset_right
-  exact (ncard_le_ncard hsub hfin).trans_lt hF_card
+  exact GM12.IsRespectfulDrawingTangle.truncation hResp h1 hle
 
 /-- Truncation of a controlling tangle (Graph Minors XV, Section 3, page 120). -/
 theorem isControllingTangle_truncation {α : Type u} {β : Type v}

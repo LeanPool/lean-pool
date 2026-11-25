@@ -14,9 +14,9 @@ public import LeanPool.GraphMinor.Menger.SimpleGraph
 /-!
 # Graph Minors VII, (4.3)
 
-We prove (4.3) of Graph Minors VII (pages 222 and 223). Let `G` be a proper graph in a connected
-surface `Σ` with at least two cuffs, such that every `G`-normal `O`-arc off `bd(Σ)` with at most `v`
-vertices of `G` is null-homotopic.
+We prove the corrected form of Graph Minors VII (4.3) (pages 222–223). Let `G` be a proper graph
+in a connected surface `Σ` with at least two cuffs. Suppose every `G`-normal `O`-arc off `bd(Σ)`
+with at most `v` vertices of `G` is null-homotopic.
 Then for each cuff `C` there are `v + 1` paths of `G` from `C` to the rest of `bd(Σ)`, disjoint
 except for their ends.
 
@@ -28,8 +28,8 @@ flat, and apply `exists_walk_between_cuffs`.
 
 The second step (`exists_paths_of_walks`) is the form of Menger's theorem that the paper cites. Let
 `A` and `B` be the vertices on `C` and on the rest of `bd(Σ)`. If an edge joins `A` to `B`, then we
-take this one-edge path `v + 1` times. The statement
-allows that, because the paths need to be disjoint only except for their ends. Otherwise we use
+take this one-edge path `v + 1` times. The corrected conclusion allows the same path at different
+indices when it has no internal vertex. Otherwise we use
 Menger's theorem between the neighbours of `A` and of `B` in `G - (A ∪ B)`, and add one edge at each
 end of each path.
 
@@ -349,7 +349,8 @@ theorem cuffToRestDisjointPaths : CuffToRestDisjointPathsStatement.{0} := by
     exact exists_walk_avoiding hS hG hnull hC hC' hne.symm hXV hXb hXc
   exact ⟨P, s, t, fun i => ⟨(h1 i).1, (h1 i).2.1.2, (h1 i).2.2.1.2, (h1 i).2.2.2⟩, h2⟩
 
-/-- Graph Minors VII, (4.3) (pages 222–223):
+/-- Corrected conclusion of Graph Minors VII, (4.3) (pages 222–223). The indexed paths may
+repeat when a path has no internal vertex. The printed statement reads:
 "(4.3) *Let $\Sigma$ be a connected surface with at least two cuffs, and let $G$ be a proper graph
 in $\Sigma$. Let $v \ge 0$ be an integer, and suppose that every $G$-normal $O$-arc $F$ with
 $F \cap bd(\Sigma) = \emptyset$ and $|V(G) \cap F| \le v$ is null-homotopic. Let $C$ be a cuff.

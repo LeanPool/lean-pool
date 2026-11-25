@@ -8,6 +8,9 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+public import LeanPool.GraphMinor.GM14.RadialAtoms
+import LeanPool.GraphMinor.GM12.Section4WalkMetric
+
 public import LeanPool.GraphMinor.GM14.Section3
 public import LeanPool.GraphMinor.GM14.DiscSlope
 public import LeanPool.GraphMinor.GM15.Cited
@@ -140,47 +143,6 @@ theorem disjoint_of_mem_A_ne {Γ : Drawing S} {x y : Set S}
   · exact disjoint_left.mpr fun p hpx hpy => hne (region_eq_of_mem hxR hyR hpx hpy)
 
 omit [T1Space S] in
-/-- For a radial drawing `K` of `H`, every atom `x ∈ A(H)` has a unique corresponding atom
-`x' ∈ A(K)`. -/
-theorem existsUnique_correspondingAtom {H K : Drawing S}
-    (hK : (PaintingOrDrawing.drawing H).IsRadialDrawing K) {x : Set S} (hx : x ∈ H.A) :
-    ∃! x' : Set S, IsCorrespondingAtom H K x x' := by
-  have hP := hK.2.1
-  have hUU : H.U ∩ K.U = H.V := hP.1
-  have hVV : H.V ⊆ K.V := hP.2.1
-  have huniqR : ∀ r ∈ H.R, ∃! w, w ∈ r ∧ w ∈ K.V := hP.2.2.1
-  have hxA := hx
-  rcases hx with (⟨v, hv, rfl⟩ | hxE) | hxR
-  · refine ⟨{v}, ⟨hxA, Or.inl (Or.inl ⟨v, hVV hv, rfl⟩), Or.inl ⟨v, hv, rfl, rfl⟩⟩, ?_⟩
-    rintro x' ⟨-, -, ⟨u, -, hu, rfl⟩ | ⟨he, -, -⟩ | ⟨hr, -⟩⟩
-    · exact hu.symm
-    · exact absurd hv (he.2.1 (mem_singleton v)).2
-    · exact absurd (H.V_subset_U hv) (region_subset hr (mem_singleton v))
-  · obtain ⟨p₀, hp₀⟩ := hxE.1
-    have hoff : ∀ y ∈ x, y ∉ K.U := fun y hy hyK => by
-      have : y ∈ H.U ∩ K.U := ⟨(hxE.2.1 hy).1, hyK⟩
-      rw [hUU] at this
-      exact (hxE.2.1 hy).2 this
-    set r₀ := connectedComponentIn (univ \ K.U) p₀
-    have hr₀ : r₀ ∈ K.R := (mem_R_iff K).mpr ⟨p₀, hoff p₀ hp₀, rfl⟩
-    have hsub : x ⊆ r₀ :=
-      hxE.2.2.1.isConnected.isPreconnected.subset_connectedComponentIn hp₀
-        fun y hy => ⟨mem_univ y, hoff y hy⟩
-    refine ⟨r₀, ⟨hxA, Or.inr hr₀, Or.inr (Or.inl ⟨hxE, hr₀, hsub⟩)⟩, ?_⟩
-    rintro x' ⟨-, -, ⟨u, hu, hxu, -⟩ | ⟨-, hr', hsub'⟩ | ⟨hr, -⟩⟩
-    · exact absurd hu (hxE.2.1 (hxu ▸ mem_singleton u)).2
-    · exact region_eq_of_mem hr' hr₀ (hsub' hp₀) (hsub hp₀)
-    · exact absurd (hxE.2.1 hp₀).1 (region_subset hr hp₀)
-  · obtain ⟨w, ⟨hwx, hwK⟩, hw_uniq⟩ := huniqR x hxR
-    refine ⟨{w}, ⟨hxA, Or.inl (Or.inl ⟨w, hwK, rfl⟩),
-      Or.inr (Or.inr ⟨hxR, w, ⟨hwK, hwx⟩, rfl⟩)⟩, ?_⟩
-    rintro x' ⟨-, -, ⟨u, hu, hxu, -⟩ | ⟨he, -, -⟩ | ⟨-, u, ⟨huK, hux⟩, rfl⟩⟩
-    · exact absurd (H.V_subset_U hu) (region_subset hxR (hxu ▸ mem_singleton u))
-    · obtain ⟨p₀, hp₀⟩ := he.1
-      exact absurd (he.2.1 hp₀).1 (region_subset hxR hp₀)
-    · rw [hw_uniq u ⟨hux, huK⟩]
-
-omit [T1Space S] in
 /-- When `E(H) ≠ ∅`, distinct atoms of `H` have distinct corresponding atoms in `K`. -/
 theorem correspondingAtom_inj [ConnectedSpace S] (hS : IsClosedSurface S) {H K : Drawing S}
     (hK : (PaintingOrDrawing.drawing H).IsRadialDrawing K) (hE : H.E.Nonempty)
@@ -216,27 +178,7 @@ theorem closed_walk_length_eq_two_mul {H K : Drawing S}
     (hP : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K) {u : S}
     (W : GraphWalk K.toGraph u u) :
     by classical exact W.length = 2 * (W.support.tail.countP (· ∈ H.V)) := by
-  classical
-  have hb₁ : ∀ e x y, K.toGraph.IsLink e x y → (x ∈ H.V ↔ y ∉ H.V) :=
-    bipartite_of_preRadial hP
-  have hb₂ : ∀ e x y, K.toGraph.IsLink e x y → (x ∈ H.Vᶜ ↔ y ∉ H.Vᶜ) := by
-    intro e x y hl
-    simp only [mem_compl_iff, not_not]
-    exact ⟨fun hx => not_not.mp ((hb₁ e x y hl).not.mp hx),
-      fun hy hx => (hb₁ e x y hl).mp hx hy⟩
-  have hle₁ := two_mul_count_le H.V hb₁ W
-  have hle₂ := two_mul_count_le H.Vᶜ hb₂ W
-  have hsum_list : ∀ l : List S, l.countP (· ∈ H.V) + l.countP (· ∈ H.Vᶜ) = l.length := by
-    intro l
-    induction l with
-    | nil => rfl
-    | cons x xs ih =>
-      rw [List.countP_cons, List.countP_cons, List.length_cons, ← ih]
-      by_cases hx : x ∈ H.V <;> (simp [hx]; omega)
-  have hsum : W.support.tail.countP (· ∈ H.V) + W.support.tail.countP (· ∈ H.Vᶜ) = W.length := by
-    rw [hsum_list, List.length_tail, length_support]
-    rfl
-  omega
+  exact GM12.closed_walk_length_eq_two_mul hP W
 
 omit [T1Space S] in
 /-- Every circuit `D` of a pre-radial drawing `K` of `H` has length `2 * |V(D) ∩ V(H)|` and
@@ -245,42 +187,7 @@ theorem circuit_length_eq_two_mul_ncard {H K D : Drawing S}
     (hP : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K)
     (hD : D.IsCircuit) (hDs : D.IsSubdrawing K) :
     D.length = 2 * (D.V ∩ H.V).ncard ∧ (D.V ∩ H.V).Nonempty := by
-  classical
-  obtain ⟨u, W_D, ⟨hnd, hed⟩, hpos, hDV, hDE⟩ := hD
-  obtain ⟨W, hs, he⟩ := hDs.exists_walk_up W_D
-  have hDlen : D.length = W.length := by
-    rw [Drawing.length, hDE, ← he]
-    have h : {e | e ∈ W.edges} = (W.edges.toFinset : Set (Set S)) := by ext; simp
-    rw [h, ncard_coe_finset, List.toFinset_card_of_nodup (he ▸ hed)]
-    rfl
-  have heven := closed_walk_length_eq_two_mul hP W
-  have htail_mem : ∀ x, x ∈ W.support.tail ↔ x ∈ D.V := by
-    intro x
-    rw [hDV, hs, mem_ofPred_eq]
-    cases W_D with
-    | nil _ => exact absurd hpos (Nat.lt_irrefl 0)
-    | cons _ r =>
-      change x ∈ r.support ↔ x ∈ _ :: r.support
-      constructor
-      · exact fun hx => List.mem_cons_of_mem _ hx
-      · intro hx
-        rcases List.mem_cons.mp hx with rfl | hx
-        · exact r.end_mem_support
-        · exact hx
-  have hset_eq : ((W.support.tail.filter (· ∈ H.V)).toFinset : Set S) = D.V ∩ H.V := by
-    ext x
-    simp [htail_mem]
-  have hcard : W.support.tail.countP (· ∈ H.V) = (D.V ∩ H.V).ncard := by
-    rw [← hset_eq, ncard_coe_finset,
-      List.toFinset_card_of_nodup ((hs ▸ hnd).filter _), List.countP_eq_length_filter]
-  have hlen_eq : D.length = 2 * (D.V ∩ H.V).ncard := by
-    rw [hDlen, heven, hcard]
-  refine ⟨hlen_eq, ?_⟩
-  have hWlen : W.length = W_D.length := by
-    change W.edges.length = W_D.edges.length
-    rw [he]
-  have hpos' : 0 < (D.V ∩ H.V).ncard := by omega
-  exact (ncard_pos (D.finite_V.subset inter_subset_left)).mp hpos'
+  exact GM12.circuit_length_eq_two_mul_ncard hP hD hDs
 
 /-- For a closed walk `W` of length `0` in `K`, `insWalk ins K W = {u}`. -/
 theorem insWalk_of_length_zero (ins : Drawing S → Set S) (K : Drawing S) {u : S}

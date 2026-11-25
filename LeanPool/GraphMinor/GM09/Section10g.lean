@@ -107,9 +107,10 @@ theorem IsGraphCircuit.edgeSet_nonempty {G C : Graph α β} (hC : IsGraphCircuit
 /-- The nest and the linking paths of the proof of (10.4). The nest misses `ΩBar` and each path
 meets
 `ΩBar` only in its first vertex. -/
-theorem exists_clean_paths {N : Neighborhood α β} (P_pres : Presentation N) {p : ℕ}
-    {C' : Fin (p + 5) → Graph α β} (hC' : N.IsNest P_pres C') {X : Set α} (hX : N.IsLinked X) :
-    ∃ (C : Fin (p + 4) → Graph α β) (P : Fin X.ncard → Graph α β) (x t : Fin X.ncard → α),
+theorem exists_clean_paths_of_nest {N : Neighborhood α β} (P_pres : Presentation N)
+    {n : ℕ} (hn : 1 ≤ n)
+    {C' : Fin (n + 1) → Graph α β} (hC' : N.IsNest P_pres C') {X : Set α} (hX : N.IsLinked X) :
+    ∃ (C : Fin n → Graph α β) (P : Fin X.ncard → Graph α β) (x t : Fin X.ncard → α),
       N.IsNest P_pres C ∧ (∀ j, Disjoint V(C j) N.Ω.bar) ∧
       (∀ i, IsFromToPathWithEnds N.G (P i) X N.Ω₀.bar (x i) (t i) ∧ V(P i) ∩ N.Ω.bar = {x i}) ∧
       Pairwise (fun i j => Disjoint V(P i) V(P j)) ∧
@@ -132,7 +133,7 @@ theorem exists_clean_paths {N : Neighborhood α β} (P_pres : Presentation N) {p
     P_pres.isClosedDisc_Δ P_pres.Δ₀_subset_Δ
     ((graphDrawingSubgraphU_subset_U P_pres.Γ _).trans P_pres.U_subset) P_pres.mem_bd_Δ_iff
     P_pres.mem_bd_Δ₀_iff P_pres.agrees_Δ P_pres.agrees_Δ₀
-  let C₀ : Fin (p + 4) → Graph α β := fun j => C' j.castSucc
+  let C₀ : Fin n → Graph α β := fun j => C' j.castSucc
   have hC₀d : ∀ j, Disjoint V(C₀ j) N.Ω.bar := fun j =>
     disjoint_vertexSet_bar_of_isNest_lt hC' (Fin.castSucc_lt_last j)
   have hC₀G : ∀ j, C₀ j ≤ N.G := fun j => (hC'.1 _).1
@@ -257,6 +258,16 @@ theorem exists_clean_paths {N : Neighborhood α β} (P_pres : Presentation N) {p
     exact ⟨_, ⟨u, w, hI.mono hG'⟩, subgraphInter_le_left hle₁ hle₂,
       subgraphInter_le_right hle₁ hle₂,
       vertexSet_subgraphInter _ _ _⟩
+
+/-- The clean nest used in the proof of Graph Minors IX (10.4). -/
+theorem exists_clean_paths {N : Neighborhood α β} (P_pres : Presentation N) {p : ℕ}
+    {C' : Fin (p + 5) → Graph α β} (hC' : N.IsNest P_pres C') {X : Set α} (hX : N.IsLinked X) :
+    ∃ (C : Fin (p + 4) → Graph α β) (P : Fin X.ncard → Graph α β) (x t : Fin X.ncard → α),
+      N.IsNest P_pres C ∧ (∀ j, Disjoint V(C j) N.Ω.bar) ∧
+      (∀ i, IsFromToPathWithEnds N.G (P i) X N.Ω₀.bar (x i) (t i) ∧ V(P i) ∩ N.Ω.bar = {x i}) ∧
+      Pairwise (fun i j => Disjoint V(P i) V(P j)) ∧
+      ∀ i j, ∃ I, IsGraphPath N.G I ∧ I ≤ P i ∧ I ≤ C j ∧ V(I) = V(P i) ∩ V(C j) :=
+  exists_clean_paths_of_nest P_pres (n := p + 4) (by omega) hC' hX
 
 /-- The union of a path with a path at each end. -/
 theorem exists_extended_path {G P A B : Graph α β} {a b a' b' : α}

@@ -17,7 +17,7 @@ We collect the hypotheses of `RegionBoundaryOArcCriterionStatement` in `Painting
 least six nodes, all regions are open discs, and every normal `O`-arc
 with at most one node bounds a disc that meets the paint only in the arc. Then every cell has at
 least two nodes (`two_nodes`), which is the last part of (8.2) of
-Graph Minors XVII (page 182), and every node lies on a cell (`node_on_cell`). To prove them we take
+Graph Minors XVII (page 181), and every node lies on a cell (`node_on_cell`). To prove them we take
 a curve around a cell or around a node. The curve bounds a disc on its other
 side, so the surface is covered by two discs, which leaves room for too few nodes.
 -/

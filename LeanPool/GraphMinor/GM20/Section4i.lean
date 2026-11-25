@@ -191,8 +191,8 @@ in $G_1$, such that* - $G_2^- \setminus F = G_1^- \cap \bigcap((G_1 \setminus A)
 \mathcal{L})$, - $P_2 \setminus F = P_1|(G_2 \setminus F)$, and - for each $f \in F$,
 $\pi(A_f) = \mu_2(f)$ and $f$ has $\le k$ ends. *Then $\mathcal{F}_2$ is well-behaved."
 
-The paper's proof is "By $w$ applications of 4.12": this is `wellBehaved_replaceSet`, applied after
-tagging the new edges. -/
+The corrected form adds equality of the root marches of `G₂` and `G₁`. Apply
+`wellBehaved_replaceSet` after tagging the new edges. -/
 theorem theorem_4_13_proof {𝓕₁ 𝓕₂ : Set (UnlabeledPatchwork α β)} (h : WellBehaved 𝓕₁)
     (ha : ∀ P ∈ 𝓕₁, IsActive P) (k w : ℕ)
     (h₂ : ∀ P₂ ∈ 𝓕₂, ∃ F ⊆ P₂.dom, F.ncard ≤ w ∧ ∃ P₁ ∈ 𝓕₁, ∃ A : β → RootedHypergraph α β,

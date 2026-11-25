@@ -15,7 +15,7 @@ public import LeanPool.GraphMinor.GM19.Section10s
 import LeanPool.GraphMinor.GM19.FragmentOrient
 
 /-!
-# Graph Minors XIX, (10.5)
+# Corrected Graph Minors XIX, (10.5)
 
 As in the proof of (10.4) we pick one feature in each class of (5.2), and use `exists_class_free`
 for it.
@@ -40,7 +40,8 @@ theorem freedomFlaw {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourSch
   exact TangleDatum.exists_free_data χ.isSurface D.P.fits.internally_three_connected hn hd ⟨F,
     hF, hc, h⟩
 
-/-- **Graph Minors XIX, (10.5)** (page 357), from (5.2) and the orientation of a fragment. -/
+/-- Corrected Graph Minors XIX, (10.5) (page 357). The proof uses $\mathbf{S}_3$ for a
+fragment with fewer cuffs and $\mathbf{S}_4$ for a refinement. -/
 theorem theorem_10_5_proof : Theorem105Statement.{w} := by
   intro S Shat _ _ _ _ β _ cap χ hd 𝒮 hcl hS3 hS4 n
   classical

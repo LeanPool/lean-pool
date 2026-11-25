@@ -373,32 +373,25 @@ theorem exists_edge_param (Γ : Drawing S) {e : Set S} (he : e ∈ Γ.E) :
             simp only [w, hmul, hθq, hq]
           simp only [hwt, y, Homeomorph.apply_symm_apply]
 
-/-- A piece `γ([a, b])` of an edge around `γ t₀`, as a chord of a small closed disc `D`. -/
-theorem exists_edge_piece (hS : IsClosedSurface S)
-    (Γ : Drawing S) {e : Set S} (he : e ∈ Γ.E) {γ : unitInterval → S} (hγ : Continuous γ)
-    (hγ0 : γ 0 ∈ Γ.V) (hγ1 : γ 1 ∈ Γ.V) (hinj : InjOn γ (Ioo 0 1)) (hγe : γ '' Ioo 0 1 = e)
-    {t₀ : unitInterval} (ht₀ : t₀ ∈ Ioo (0 : unitInterval) 1) {O : Set S} (hO : IsOpen O)
-    (hpO : γ t₀ ∈ O) (hOdis : Disjoint O (Γ.U \ e)) :
-    ∃ (D D' : Set S) (a b : unitInterval), IsClosedDisc D ∧ IsOpen D' ∧ γ t₀ ∈ D' ∧ D' ⊆ D ∧ D ⊆ O ∧
-      D \ D' = discBd D ∧ a < t₀ ∧ t₀ < b ∧ Icc a b ⊆ Ioo 0 1 ∧ (∀ t, a < t → t < b → γ t ∈ D') ∧
-      IsLineWithEnds (γ '' Icc a b) (γ a) (γ b) ∧ γ '' Icc a b ⊆ D ∧
-      (γ '' Icc a b) ∩ discBd D = {γ a, γ b} ∧ γ a ≠ γ b := by
-  have hpe : γ t₀ ∈ e := hγe ▸ mem_image_of_mem γ ht₀
-  obtain ⟨D, D', hD, hD', hpD', hD'D, hDO, hbdD⟩ :=
-    exists_closedDisc_nbhd hS hO hpO
-  have hVout : ∀ x ∈ Γ.V, x ∉ D := fun x hx hxD =>
-    disjoint_left.mp hOdis (hDO hxD) ⟨Γ.V_subset_U hx, fun hxe => (he.2.1 hxe).2 hx⟩
+/-- Choose the piece of a parametrized edge through an open disc neighbourhood, bounded by the
+last exit before and first exit after the given parameter. -/
+theorem exists_edge_piece_in_disc {D D' : Set S} (hD : IsClosedDisc D)
+    (hD' : IsOpen D') (hD'D : D' ⊆ D) (hbdD : D \ D' = discBd D)
+    {γ : unitInterval → S} (hγ : Continuous γ) (hinj : InjOn γ (Ioo 0 1))
+    (hγ0 : γ 0 ∉ D) (hγ1 : γ 1 ∉ D) {t₀ : unitInterval} (hpD' : γ t₀ ∈ D') :
+    ∃ a b : unitInterval, a < t₀ ∧ t₀ < b ∧ Icc a b ⊆ Ioo 0 1 ∧
+      (∀ t, a < t → t < b → γ t ∈ D') ∧ IsLineWithEnds (γ '' Icc a b) (γ a) (γ b) ∧
+      γ '' Icc a b ⊆ D ∧ (γ '' Icc a b) ∩ discBd D = {γ a, γ b} ∧ γ a ≠ γ b := by
   have hDclosed : IsClosed D := hD.isClosed
-  obtain ⟨ht₀0, ht₀1⟩ := ht₀
   -- The last exit `a` before `t₀`, and the first exit `b` after it.
   have hC₁ : IsCompact {t : unitInterval | t ≤ t₀ ∧ γ t ∉ D'} :=
     (isClosed_Iic.inter (hD'.isClosed_compl.preimage hγ)).isCompact
   have hC₂ : IsCompact {t : unitInterval | t₀ ≤ t ∧ γ t ∉ D'} :=
     (isClosed_Ici.inter (hD'.isClosed_compl.preimage hγ)).isCompact
   obtain ⟨a, ⟨hat, hagamma⟩, hamax⟩ := hC₁.exists_isGreatest
-    ⟨0, unitInterval.nonneg _, fun h => hVout _ hγ0 (hD'D h)⟩
+    ⟨0, unitInterval.nonneg _, fun h => hγ0 (hD'D h)⟩
   obtain ⟨b, ⟨htb, hbgamma⟩, hbmin⟩ := hC₂.exists_isLeast
-    ⟨1, unitInterval.le_one _, fun h => hVout _ hγ1 (hD'D h)⟩
+    ⟨1, unitInterval.le_one _, fun h => hγ1 (hD'D h)⟩
   have hat' : a < t₀ := lt_of_le_of_ne hat fun h => hagamma (h ▸ hpD')
   have htb' : t₀ < b := lt_of_le_of_ne htb fun h => hbgamma (h ▸ hpD')
   have hIoo : ∀ t, a < t → t < b → γ t ∈ D' := by
@@ -418,8 +411,8 @@ theorem exists_edge_piece (hS : IsClosedSurface S)
     exact hDclosed.closure_subset_iff.mpr h₂ h₁
   have hamem : γ a ∈ D := hclosure a (by rw [closure_Ioo hab.ne]; exact ⟨le_rfl, hab.le⟩)
   have hbmem : γ b ∈ D := hclosure b (by rw [closure_Ioo hab.ne]; exact ⟨hab.le, le_rfl⟩)
-  have ha0 : 0 < a := unitInterval.pos_iff_ne_zero.mpr fun h => hVout _ hγ0 (h ▸ hamem)
-  have hb1 : b < 1 := unitInterval.lt_one_iff_ne_one.mpr fun h => hVout _ hγ1 (h ▸ hbmem)
+  have ha0 : 0 < a := unitInterval.pos_iff_ne_zero.mpr fun h => hγ0 (h ▸ hamem)
+  have hb1 : b < 1 := unitInterval.lt_one_iff_ne_one.mpr fun h => hγ1 (h ▸ hbmem)
   have hIcc : Icc a b ⊆ Ioo 0 1 := fun t ht => ⟨ha0.trans_le ht.1, ht.2.trans_lt hb1⟩
   -- The piece `F` of `e` from `γ a` to `γ b`.
   have habR : (a : ℝ) < b := hab
@@ -516,6 +509,25 @@ theorem exists_edge_piece (hS : IsClosedSurface S)
     rw [hFmem]
     rfl
   rw [hFeq] at hFline hFD hFcap
+  exact ⟨a, b, hat', htb', hIcc, hIoo, hFline, hFD, hFcap, hst⟩
+
+/-- A piece `γ([a, b])` of an edge around `γ t₀`, as a chord of a small closed disc `D`. -/
+theorem exists_edge_piece (hS : IsClosedSurface S)
+    (Γ : Drawing S) {e : Set S} (he : e ∈ Γ.E) {γ : unitInterval → S} (hγ : Continuous γ)
+    (hγ0 : γ 0 ∈ Γ.V) (hγ1 : γ 1 ∈ Γ.V) (hinj : InjOn γ (Ioo 0 1)) (hγe : γ '' Ioo 0 1 = e)
+    {t₀ : unitInterval} (ht₀ : t₀ ∈ Ioo (0 : unitInterval) 1) {O : Set S} (hO : IsOpen O)
+    (hpO : γ t₀ ∈ O) (hOdis : Disjoint O (Γ.U \ e)) :
+    ∃ (D D' : Set S) (a b : unitInterval), IsClosedDisc D ∧ IsOpen D' ∧ γ t₀ ∈ D' ∧ D' ⊆ D ∧ D ⊆ O ∧
+      D \ D' = discBd D ∧ a < t₀ ∧ t₀ < b ∧ Icc a b ⊆ Ioo 0 1 ∧ (∀ t, a < t → t < b → γ t ∈ D') ∧
+      IsLineWithEnds (γ '' Icc a b) (γ a) (γ b) ∧ γ '' Icc a b ⊆ D ∧
+      (γ '' Icc a b) ∩ discBd D = {γ a, γ b} ∧ γ a ≠ γ b := by
+  obtain ⟨D, D', hD, hD', hpD', hD'D, hDO, hbdD⟩ :=
+    exists_closedDisc_nbhd hS hO hpO
+  have hVout : ∀ x ∈ Γ.V, x ∉ D := fun x hx hxD =>
+    disjoint_left.mp hOdis (hDO hxD) ⟨Γ.V_subset_U hx, fun hxe => (he.2.1 hxe).2 hx⟩
+  have hpe : γ t₀ ∈ e := hγe ▸ mem_image_of_mem γ ht₀
+  obtain ⟨a, b, hat', htb', hIcc, hIoo, hFline, hFD, hFcap, hst⟩ :=
+    exists_edge_piece_in_disc hD hD' hD'D hbdD hγ hinj (hVout _ hγ0) (hVout _ hγ1) hpD'
   exact ⟨D, D', a, b, hD, hD', hpD', hD'D, hDO, hbdD, hat', htb', hIcc, hIoo, hFline, hFD, hFcap,
     hst⟩
 

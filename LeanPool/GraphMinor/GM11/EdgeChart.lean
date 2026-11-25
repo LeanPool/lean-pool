@@ -37,7 +37,8 @@ theorem cis'_eq_exp (θ : ℝ) : cis' θ = (Circle.exp θ : ℂ) := by
   rw [Circle.coe_exp]
   rfl
 
-private theorem exists_small_polar_chart
+/-- A polar coordinate chart near a point of a collared circle. -/
+theorem exists_small_polar_chart
     {c : ℂ → S} {W : Set S} (hW : IsOpen W)
     (hc : ContinuousOn c (closedBall (0 : ℂ) 2))
     (hcinj : InjOn c (closedBall (0 : ℂ) 2))

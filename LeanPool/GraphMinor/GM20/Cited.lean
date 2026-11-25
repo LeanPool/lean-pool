@@ -98,9 +98,10 @@ open GraphMinor.GM17
 
 variable {α : Type u} {β : Type v}
 
-/-- The standing hypothesis of Graph Minors XVII, Sections 8, 9 (page 182) with `r = 2p + 3`, and of
-Section 11 (page 189) with `r = 2p + 4` and `t = 6p + 8`: `π` is a true, `r`-redundant, `𝒯`-central
-portrayal of `G` with warp `≤ p`, and `ord(𝒯) > t`. -/
+/-- The standing hypothesis of Graph Minors XVII, Sections 8 (page 181) and 9 (page 183), with
+`r = 2p + 3`, and of Section 11 (page 189) with `r = 2p + 4` and `t = 6p + 8`. The portrayal `π` is
+true, `r`-redundant, and `𝒯`-central,
+with warp `≤ p` and `ord(𝒯) > t`. -/
 structure Standing {G : Hypergraph α β} (𝒯 : Set (Hypergraph α β × Hypergraph α β))
     (θ p r t : ℕ) (π : Portrayal G) : Prop where
   isTangle : IsTangle G θ 𝒯

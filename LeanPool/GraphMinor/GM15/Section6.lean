@@ -23,8 +23,9 @@ Seymour, *Graph Minors. XV. Giant steps*, J. Combin. Theory Ser. B 68 (1996) 112
   of type `(3π + 9, 1)` with `ΩBar ⊆ V(S_seg)` and a disc arrangement of it in a closed disc `Δ`
   with
   `Ω = α⁻¹(bd(Δ))`. Proved from Graph Minors IX, (11.11) (`GM09Theorem1111Statement`).
-- **Graph Minors XV, (6.2)** (`GM15Theorem62Statement`, `theorem_6_2`, page 134): every crooked
-  transaction of cardinality `≥ (φ - 1)(2τ₁ + τ₂ - 7)` contains a crosscap transaction of size `φ`,
+- **Corrected Graph Minors XV, (6.2)** (page 134, `GM15Theorem62Statement`). The first threshold
+  term is `2 * τ₁`, correcting the printed subscript `i`. Every crooked transaction of
+  cardinality `≥ (φ - 1)(2τ₁ + τ₂ - 7)` contains a crosscap transaction of size `φ`,
   a leap transaction of size `τ₁`, or a doublecross transaction of size `τ₂`. Proved from Graph
   Minors IX, (7.1) (`GM09Theorem71Statement`).
 -/
@@ -143,7 +144,8 @@ theorem theorem_6_1_proof :
       exact mem_biUnion (mem_insert_of_mem A₀ ⟨i, rfl⟩) hvi
   exact ⟨S_seg, k, A₀, A, Δ, α₀, α_disc, α_pt, rfl, hType, hBar, hDiscArr⟩
 
-/-- Statement of Graph Minors XV, (6.2) (page 134):
+/-- Corrected Graph Minors XV, (6.2) (page 134). The threshold uses $2\tau_1$ from IX (7.1) in
+place of the printed $2\tau_i$. The corrected statement is:
 "Let $\phi \ge 2$, $\tau_1 \ge 3$, $\tau_2 \ge 4$ be integers. Let $\mathcal{P}$ be a crooked
 transaction in a society $(G, \Omega)$ such that $|\mathcal{P}| \ge (\phi - 1)(2\tau_1 +
 \tau_2 - 7)$. Then there exists $\mathcal{P}' \subseteq \mathcal{P}$ such that either* (i)
@@ -161,7 +163,7 @@ def GM15Theorem62Statement : Prop :=
       (P'.ncard = τ₁ ∧ S.IsLeapTransaction P') ∨
       (P'.ncard = τ₂ ∧ S.IsDoublecrossTransaction P')
 
-/-- **Graph Minors XV, (6.2)** (page 134):
+/-- Corrected Graph Minors XV, (6.2) (page 134), with $2\tau_1$ in the threshold.
 Every crooked transaction of cardinality `≥ (φ - 1)(2τ₁ + τ₂ - 7)` contains a crosscap transaction
 of cardinality `φ`, a leap transaction of cardinality `τ₁`, or a doublecross transaction of
 cardinality `τ₂`.

@@ -327,95 +327,12 @@ private theorem chart_in_collared_disc (hS : IsClosedDiscSpace S) (H : Drawing S
   obtain ⟨θ₀, hθ₀⟩ : ∃ θ₀ : ℝ, Circle.exp θ₀ = w₀ :=
     ⟨Complex.arg (w₀ : ℂ), Circle.exp_arg w₀⟩
   have hw₀c : cis' θ₀ = w₀ := by rw [cis'_eq_exp, hθ₀]
-  have hopen : IsOpen (ball (0 : ℂ) 2 ∩ c ⁻¹' W) :=
-    (hc.mono ball_subset_closedBall).isOpen_inter_preimage isOpen_ball hW
-  have hmemw : (w₀ : ℂ) ∈ ball (0 : ℂ) 2 ∩ c ⁻¹' W := by
-    refine ⟨by simp, ?_⟩
-    change c w₀ ∈ W
-    rw [hcw₀]
-    exact hpW
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp hopen _ hmemw
-  obtain ⟨δ₁, hδ₁, hd⟩ := Metric.continuous_iff.mp continuous_cis' θ₀ (r / 2) (by positivity)
-  obtain ⟨ε, hε, hεr, hε1⟩ : ∃ ε : ℝ, 0 < ε ∧ ε ≤ r / 2 ∧ ε ≤ 1 / 2 :=
-    ⟨min (r / 2) (1 / 2), by positivity, min_le_left _ _, min_le_right _ _⟩
-  obtain ⟨δ, hδ, hδ₂, hδ1⟩ : ∃ δ : ℝ, 0 < δ ∧ δ < δ₁ ∧ δ ≤ 1 :=
-    ⟨min (δ₁ / 2) 1, by positivity, (min_le_left _ _).trans_lt (by linarith), min_le_right _ _⟩
+  obtain ⟨ε, δ, hε, hmn, hmW, hGc, hGi⟩ :=
+    exists_small_polar_chart hW hc hcinj hw₀c (hcw₀.symm ▸ hpW)
   let m : ℂ → ℂ := fun z => ((1 + ε * z.im : ℝ) : ℂ) * cis' (θ₀ + δ * z.re)
-  have hmc : Continuous m := by
-    refine Continuous.mul (Complex.continuous_ofReal.comp ?_) (continuous_cis'.comp ?_)
-    · exact continuous_const.add (continuous_const.mul Complex.continuous_im)
-    · exact continuous_const.add (continuous_const.mul Complex.continuous_re)
-  have hbound : ∀ z ∈ closedBall (0 : ℂ) 1, |z.re| ≤ 1 ∧ |z.im| ≤ 1 := fun z hz => by
-    have hn : ‖z‖ ≤ 1 := by simpa using hz
-    exact ⟨(Complex.abs_re_le_norm z).trans hn, (Complex.abs_im_le_norm z).trans hn⟩
-  have hpos : ∀ z ∈ closedBall (0 : ℂ) 1, 0 < 1 + ε * z.im := fun z hz => by
-    have h₁ := abs_le.mp (hbound z hz).2
-    nlinarith [h₁.1, h₁.2]
-  have hmn : ∀ z ∈ closedBall (0 : ℂ) 1, ‖m z‖ = 1 + ε * z.im := fun z hz => by
-    simp only [m, norm_mul, norm_cis', mul_one, Complex.norm_real, Real.norm_eq_abs]
-    exact abs_of_pos (hpos z hz)
-  have hmball : ∀ z ∈ closedBall (0 : ℂ) 1, m z ∈ ball (w₀ : ℂ) r := by
-    intro z hz
-    obtain ⟨h₁, h₂⟩ := hbound z hz
-    have h₃ : dist (θ₀ + δ * z.re) θ₀ < δ₁ := by
-      rw [Real.dist_eq, add_sub_cancel_left, abs_mul, abs_of_pos hδ]
-      nlinarith [abs_nonneg z.re]
-    have h₄ : ‖cis' (θ₀ + δ * z.re) - w₀‖ < r / 2 := by
-      have := hd _ h₃
-      rwa [dist_eq_norm, hw₀c] at this
-    have h₅ : m z - w₀ = ((ε * z.im : ℝ) : ℂ) * cis' (θ₀ + δ * z.re) + (cis' (θ₀ + δ * z.re) - w₀)
-      := by
-      simp only [m]
-      push_cast
-      ring
-    have h₆ : ‖((ε * z.im : ℝ) : ℂ) * cis' (θ₀ + δ * z.re)‖ ≤ r / 2 := by
-      rw [norm_mul, norm_cis', mul_one, Complex.norm_real, Real.norm_eq_abs, abs_mul, abs_of_pos hε]
-      nlinarith [abs_nonneg z.im]
-    rw [mem_ball, dist_eq_norm, h₅]
-    exact (norm_add_le _ _).trans_lt (by linarith)
-  have hmW : ∀ z ∈ closedBall (0 : ℂ) 1, m z ∈ ball (0 : ℂ) 2 ∧ c (m z) ∈ W := fun z hz =>
-    hball (hmball z hz)
   have hmball2 : ∀ z ∈ closedBall (0 : ℂ) 1, m z ∈ closedBall (0 : ℂ) 2 := fun z hz =>
     ball_subset_closedBall (hmW z hz).1
   let G : ℂ → S := fun z => c (m z)
-  have hGc : ContinuousOn G (closedBall 0 1) :=
-    hc.comp hmc.continuousOn hmball2
-  have hGi : InjOn G (closedBall 0 1) := by
-    intro y hy z hz hyz
-    have h₁ : m y = m z := hcinj (hmball2 y hy) (hmball2 z hz) hyz
-    have h₂ : y.im = z.im := by
-      have := congrArg norm h₁
-      rw [hmn y hy, hmn z hz] at this
-      exact mul_left_cancel₀ hε.ne' (add_left_cancel this)
-    have h₃ : cis' (θ₀ + δ * y.re) = cis' (θ₀ + δ * z.re) := by
-      have hne : ((1 + ε * y.im : ℝ) : ℂ) ≠ 0 := by
-        exact_mod_cast (hpos y hy).ne'
-      simp only [m, h₂] at h₁
-      rw [h₂] at hne
-      exact mul_left_cancel₀ hne h₁
-    have h₄ : Circle.exp (θ₀ + δ * y.re) = Circle.exp (θ₀ + δ * z.re) := by
-      apply Circle.ext
-      rw [← cis'_eq_exp, ← cis'_eq_exp, h₃]
-    obtain ⟨k, hk⟩ := Circle.exp_eq_exp.mp h₄
-    have h₅ : δ * (y.re - z.re) = k * (2 * Real.pi) := by linarith
-    have h₆ : |y.re - z.re| ≤ 2 := by
-      have a₁ := abs_le.mp (hbound y hy).1
-      have a₂ := abs_le.mp (hbound z hz).1
-      exact abs_le.mpr ⟨by linarith, by linarith⟩
-    have h₇ : |(k : ℝ) * (2 * Real.pi)| ≤ 2 := by
-      rw [← h₅, abs_mul, abs_of_pos hδ]
-      nlinarith [abs_nonneg (y.re - z.re)]
-    have hπ := Real.pi_gt_three
-    have hk0 : k = 0 := by
-      by_contra hk0
-      have h₈ : (1 : ℝ) ≤ |(k : ℝ)| := by exact_mod_cast Int.one_le_abs hk0
-      rw [abs_mul, abs_of_pos (by positivity : 0 < 2 * Real.pi)] at h₇
-      nlinarith
-    have h₉ : δ * (y.re - z.re) = 0 := by rw [h₅, hk0]; simp
-    have h₁₀ : y.re = z.re := by
-      have := (mul_eq_zero.mp h₉).resolve_left hδ.ne'
-      linarith
-    exact Complex.ext h₁₀ h₂
   have hG0 : G 0 = γ t₀ := by
     change c (m 0) = _
     have : m 0 = w₀ := by simp [m, hw₀c]
@@ -464,7 +381,7 @@ private theorem chart_in_collared_disc (hS : IsClosedDiscSpace S) (H : Drawing S
         simpa using hw
       have hwn : ((p.symm w : Circle) : ℂ) ∈ closedBall (0 : ℂ) 2 := by simp
       have heq := hcinj hwn (hmball2 z hz) hcw
-      have hn₁ := hmn z hz
+      have hn₁ : ‖m z‖ = 1 + ε * z.im := hmn z hz
       rw [← heq] at hn₁
       simp only [Circle.norm_coe] at hn₁
       have : ε * z.im = 0 := by linarith

@@ -220,6 +220,88 @@ theorem isSimpleClosed_append {a b : α} {W₁ : GraphWalk G a b} {W₂ : GraphW
     exact List.nodup_append.mpr ⟨h₁.edges_nodup, h₂.edges_nodup, fun e he f hf hef =>
       hE e he (hef ▸ hf)⟩
 
+/-- Split a simple closed walk at two distinct vertices. The two pieces preserve the support
+and edges, and their tails and edge lists are jointly nodup. -/
+theorem exists_circuit_split {u a b : α} (W : GraphWalk G u u)
+    (hnd : W.support.tail.Nodup) (hed : W.edges.Nodup)
+    (ha : a ∈ W.support) (hb : b ∈ W.support) (hab : a ≠ b) :
+    ∃ (R₁ : GraphWalk G a b) (R₂ : GraphWalk G b a),
+      R₁.IsSimple ∧ R₂.IsSimple ∧ (R₁.support.tail ++ R₂.support.tail).Nodup ∧
+      (R₁.edges ++ R₂.edges).Nodup ∧
+      (∀ x, x ∈ (R₁.append R₂).support ↔ x ∈ W.support) ∧
+      (∀ e, e ∈ (R₁.append R₂).edges ↔ e ∈ W.edges) := by
+  obtain ⟨W₁, W₂, rfl⟩ := W.exists_append_of_mem ha
+  set Rot := W₂.append W₁ with hRot
+  have hmemRot : ∀ x, x ∈ Rot.support ↔ x ∈ (W₁.append W₂).support := by
+    intro x
+    rw [hRot, GraphWalk.mem_support_append, GraphWalk.mem_support_append, or_comm]
+  have hmemE : ∀ e, e ∈ Rot.edges ↔ e ∈ (W₁.append W₂).edges := by
+    intro e
+    rw [hRot, GraphWalk.edges_append, GraphWalk.edges_append, List.mem_append, List.mem_append,
+      or_comm]
+  have htail : Rot.support.tail.Nodup := by
+    have h1 : (W₁.append W₂).support.tail = W₁.support.tail ++ W₂.support.tail := by
+      rw [GraphWalk.support_append, W₁.support_eq_cons]; simp
+    have h2 : Rot.support.tail = W₂.support.tail ++ W₁.support.tail := by
+      rw [hRot, GraphWalk.support_append, W₂.support_eq_cons]; simp
+    rw [h2]
+    rw [h1] at hnd
+    exact (List.perm_append_comm.nodup_iff).mp hnd
+  have hedRot : Rot.edges.Nodup := by
+    rw [hRot, GraphWalk.edges_append]
+    rw [GraphWalk.edges_append] at hed
+    exact (List.perm_append_comm.nodup_iff).mp hed
+  obtain ⟨R₁, R₂, hR⟩ := Rot.exists_append_of_mem ((hmemRot b).mpr hb)
+  have htail' : (R₁.support.tail ++ R₂.support.tail).Nodup := by
+    have : Rot.support.tail = R₁.support.tail ++ R₂.support.tail := by
+      rw [hR, GraphWalk.support_append, R₁.support_eq_cons]; simp
+    rwa [this] at htail
+  have hdisjT := List.nodup_append.mp htail'
+  have hbt₁ : b ∈ R₁.support.tail := by
+    have h := R₁.end_mem_support
+    rw [R₁.support_eq_cons] at h
+    exact (List.mem_cons.mp h).resolve_left hab.symm
+  have hat₂ : a ∈ R₂.support.tail := by
+    have h := R₂.end_mem_support
+    rw [R₂.support_eq_cons] at h
+    exact (List.mem_cons.mp h).resolve_left hab
+  have hS₁ : R₁.IsSimple := by
+    unfold GraphWalk.IsSimple
+    rw [R₁.support_eq_cons]
+    exact List.nodup_cons.mpr ⟨fun h => hdisjT.2.2 a h a hat₂ rfl, hdisjT.1⟩
+  have hS₂ : R₂.IsSimple := by
+    unfold GraphWalk.IsSimple
+    rw [R₂.support_eq_cons]
+    exact List.nodup_cons.mpr ⟨fun h => hdisjT.2.2 b hbt₁ b h rfl, hdisjT.2.1⟩
+  have hedR : (R₁.edges ++ R₂.edges).Nodup := by
+    rw [hR, GraphWalk.edges_append] at hedRot
+    exact hedRot
+  refine ⟨R₁, R₂, hS₁, hS₂, htail', hedR, ?_, ?_⟩
+  · simpa only [← hR] using hmemRot
+  · simpa only [← hR] using hmemE
+
+/-- Lift two simple paths with matching ends to a simple closed walk in one graph. -/
+theorem isSimpleClosed_append_of_lifts {H K : Graph α β} {a b : α}
+    {W₁ : GraphWalk H a b} {W₂ : GraphWalk K a b} {X₁ : GraphWalk G a b} {X₂ : GraphWalk G b a}
+    (hW₁ : W₁.IsSimple) (hW₂ : W₂.IsSimple)
+    (hs₁ : X₁.support = W₁.support) (hs₂ : X₂.support = W₂.reverse.support)
+    (he₁ : X₁.edges = W₁.edges) (he₂ : X₂.edges = W₂.reverse.edges)
+    (hV : {x | x ∈ W₁.support} ∩ {x | x ∈ W₂.support} = {a, b})
+    (hE : Disjoint {e | e ∈ W₁.edges} {e | e ∈ W₂.edges}) :
+    (X₁.append X₂).IsSimpleClosed := by
+  have hX₁ : X₁.IsSimple := by unfold GraphWalk.IsSimple; rw [hs₁]; exact hW₁
+  have hX₂ : X₂.IsSimple := by unfold GraphWalk.IsSimple; rw [hs₂]; exact hW₂.reverse
+  apply isSimpleClosed_append hX₁ hX₂
+  · intro x hx₁ hx₂
+    rw [hs₁] at hx₁
+    rw [hs₂, support_reverse, List.mem_reverse] at hx₂
+    have hx : x ∈ {x | x ∈ W₁.support} ∩ {x | x ∈ W₂.support} := ⟨hx₁, hx₂⟩
+    rwa [hV] at hx
+  · intro e he₁' he₂'
+    rw [he₁] at he₁'
+    rw [he₂, edges_reverse, List.mem_reverse] at he₂'
+    exact Set.disjoint_left.mp hE he₁' he₂'
+
 end GraphWalk
 
 namespace Drawing
@@ -429,26 +511,14 @@ theorem isCircuit_sup {Γ P Q : Drawing S} {a b : S} (hP : P.IsPathBetween a b)
   have hr := le_sup_right hPs hQs
   obtain ⟨X₁, hs₁, he₁⟩ := hl.exists_walk_up W₁
   obtain ⟨X₂, hs₂, he₂⟩ := hr.exists_walk_up W₂.reverse
-  have hX₁ : X₁.IsSimple := by unfold GraphWalk.IsSimple; rw [hs₁]; exact hW₁
-  have hX₂ : X₂.IsSimple := by
-    unfold GraphWalk.IsSimple
-    rw [hs₂]
-    exact hW₂.reverse
   have hmem₂ : ∀ x, x ∈ X₂.support ↔ x ∈ W₂.support := by
     intro x
     rw [hs₂, GraphWalk.support_reverse, List.mem_reverse]
   have hmemE₂ : ∀ e, e ∈ X₂.edges ↔ e ∈ W₂.edges := by
     intro e
     rw [he₂, GraphWalk.edges_reverse, List.mem_reverse]
-  have hsc := GraphWalk.isSimpleClosed_append hX₁ hX₂ (fun x hx₁ hx₂ => by
-      have h₁ : x ∈ P.V := by rw [hV₁, mem_ofPred_eq]; rwa [hs₁] at hx₁
-      have h₂ : x ∈ Q.V := by rw [hV₂, mem_ofPred_eq]; exact (hmem₂ x).mp hx₂
-      have : x ∈ P.V ∩ Q.V := ⟨h₁, h₂⟩
-      rwa [hV] at this)
-    (fun e he₁' he₂' => by
-      have h₁ : e ∈ P.E := by rw [hE₁, mem_ofPred_eq]; rwa [he₁] at he₁'
-      have h₂ : e ∈ Q.E := by rw [hE₂, mem_ofPred_eq]; exact (hmemE₂ e).mp he₂'
-      exact disjoint_left.mp hE h₁ h₂)
+  have hsc := GraphWalk.isSimpleClosed_append_of_lifts hW₁ hW₂ hs₁ hs₂ he₁ he₂
+    (by simpa only [hV₁, hV₂] using hV) (by simpa only [hE₁, hE₂] using hE)
   refine ⟨a, X₁.append X₂, hsc, ?_, ?_, ?_⟩
   · rw [GraphWalk.length_append]
     have : X₁.length ≠ 0 := fun h => hab (GraphWalk.eq_of_length_eq_zero h)
@@ -469,53 +539,9 @@ theorem IsCircuit.exists_two_paths {C : Drawing S} (hC : C.IsCircuit) {a b : S} 
       C.sup P Q = C := by
   obtain ⟨u, W, ⟨hnd, hed⟩, -, hV, hE⟩ := hC
   rw [hV] at ha hb
-  obtain ⟨W₁, W₂, rfl⟩ := W.exists_append_of_mem ha
-  -- Rotate the closed walk to start at `a`.
-  set Rot := W₂.append W₁ with hRot
-  have hmemRot : ∀ x, x ∈ Rot.support ↔ x ∈ (W₁.append W₂).support := by
-    intro x
-    rw [hRot, GraphWalk.mem_support_append, GraphWalk.mem_support_append, or_comm]
-  have hmemE : ∀ e, e ∈ Rot.edges ↔ e ∈ (W₁.append W₂).edges := by
-    intro e
-    rw [hRot, GraphWalk.edges_append, GraphWalk.edges_append, List.mem_append, List.mem_append,
-      or_comm]
-  have htail : Rot.support.tail.Nodup := by
-    have h1 : (W₁.append W₂).support.tail = W₁.support.tail ++ W₂.support.tail := by
-      rw [GraphWalk.support_append, W₁.support_eq_cons]; simp
-    have h2 : Rot.support.tail = W₂.support.tail ++ W₁.support.tail := by
-      rw [hRot, GraphWalk.support_append, W₂.support_eq_cons]; simp
-    rw [h2]
-    rw [h1] at hnd
-    exact (List.perm_append_comm.nodup_iff).mp hnd
-  have hedRot : Rot.edges.Nodup := by
-    rw [hRot, GraphWalk.edges_append]
-    rw [GraphWalk.edges_append] at hed
-    exact (List.perm_append_comm.nodup_iff).mp hed
-  obtain ⟨R₁, R₂, hR⟩ := Rot.exists_append_of_mem ((hmemRot b).mpr hb)
-  have htail' : (R₁.support.tail ++ R₂.support.tail).Nodup := by
-    have : Rot.support.tail = R₁.support.tail ++ R₂.support.tail := by
-      rw [hR, GraphWalk.support_append, R₁.support_eq_cons]; simp
-    rwa [this] at htail
-  have hdisjT := List.nodup_append.mp htail'
-  have hbt₁ : b ∈ R₁.support.tail := by
-    have h := R₁.end_mem_support
-    rw [R₁.support_eq_cons] at h
-    exact (List.mem_cons.mp h).resolve_left hab.symm
-  have hat₂ : a ∈ R₂.support.tail := by
-    have h := R₂.end_mem_support
-    rw [R₂.support_eq_cons] at h
-    exact (List.mem_cons.mp h).resolve_left hab
-  have hS₁ : R₁.IsSimple := by
-    unfold GraphWalk.IsSimple
-    rw [R₁.support_eq_cons]
-    exact List.nodup_cons.mpr ⟨fun h => hdisjT.2.2 a h a hat₂ rfl, hdisjT.1⟩
-  have hS₂ : R₂.IsSimple := by
-    unfold GraphWalk.IsSimple
-    rw [R₂.support_eq_cons]
-    exact List.nodup_cons.mpr ⟨fun h => hdisjT.2.2 b hbt₁ b h rfl, hdisjT.2.1⟩
-  have hedR : (R₁.edges ++ R₂.edges).Nodup := by
-    rw [hR, GraphWalk.edges_append] at hedRot
-    exact hedRot
+  obtain ⟨R₁, R₂, hS₁, hS₂, htail, hedR, hmemRot, hmemE⟩ :=
+    GraphWalk.exists_circuit_split W hnd hed ha hb hab
+  have hdisjT := List.nodup_append.mp htail
   have hedD := List.nodup_append.mp hedR
   have hP₀ := walkDrawing_isPathBetween C hS₁
   have hQ₀ := walkDrawing_isPathBetween C hS₂.reverse
@@ -558,10 +584,10 @@ theorem IsCircuit.exists_two_paths {C : Drawing S} (hC : C.IsCircuit) {a b : S} 
     · rw [sup_V hPs hQs, walkDrawing_V, walkDrawing_V, hV]
       ext x
       simp only [mem_union, mem_ofPred_eq, GraphWalk.support_reverse, List.mem_reverse]
-      rw [← hmemRot x, hR, GraphWalk.mem_support_append]
+      rw [← hmemRot x, GraphWalk.mem_support_append]
     · rw [sup_E hPs hQs, walkDrawing_E, walkDrawing_E, hE]
       ext e
       simp only [mem_union, mem_ofPred_eq, GraphWalk.edges_reverse, List.mem_reverse]
-      rw [← hmemE e, hR, GraphWalk.edges_append, List.mem_append]
+      rw [← hmemE e, GraphWalk.edges_append, List.mem_append]
 
 end GraphMinor.Surface.Drawing

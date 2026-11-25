@@ -58,7 +58,8 @@ theorem nonempty_of_isTangle {α : Type u} {β : Type v} {G : Hypergraph α β} 
   · exact ht.axiom3 h (hsub _ _)
   · exact ht.axiom3 h (hsub _ _)
 
-/-- **Graph Minors XVII, (13.1)** (page 202), from XVI (3.1). -/
+/-- Graph Minors XVII (13.1) (page 202), for graphs. Subdivide each edge of `H` twice before
+applying XVI (3.1). The controlled minor of the subdivision then gives a controlled `H`-minor. -/
 theorem theorem_13_1_proof : Theorem131Statement.{u, v} := by
   classical
   intro α' β' H hH

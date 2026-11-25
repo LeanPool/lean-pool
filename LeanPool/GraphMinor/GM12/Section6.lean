@@ -159,7 +159,8 @@ private theorem spoke_circuits_are_inside_hub_walk
       · exact (hWE _).mpr ⟨i, .inr (.inr (.inl rfl))⟩
   exact Or.inr (mem_iUnion₂.mpr ⟨Q i, ⟨hQc i, hsub⟩, hx⟩)
 
-/-- **(6.1)** of Graph Minors XII: `d(e₁, e_{θ/2}) ≥ θ`. -/
+/-- Corrected XII (6.1) (pages 257–258). The bound `d(e₁, e_{θ/2}) ≥ θ` assumes even `θ ≥ 4`.
+When `θ = 2` the two edges coincide. -/
 theorem theorem_6_1_proof : GM15.GM12Theorem61Statement.{u} := by
   intro S _ _ Γ F Δ k θ₁ T₁ d a b P e_path i₀ i_last hS hconn hk hθ h2c hF hN hΔ hb hnd hord hV hP
     hdis

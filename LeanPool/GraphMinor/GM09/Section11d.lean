@@ -162,9 +162,9 @@ theorem isOArc_triangle (P : Presentation N) (_hs : IsSimpleGraph N.G) {x y z : 
     rcases Sym2.eq_iff.mp h with ⟨h, -⟩ | ⟨h, -⟩
     · exact hzx h
     · exact hyz h.symm
-  have hi₁₂ := closure_inter_closure P.Γ h₁.symm h₂ hzx.symm hxy.symm hyz hne₁₂
-  have hi₁₃ := closure_inter_closure P.Γ h₁ h₃.symm hyz hxy hzx.symm hne₃₁.symm
-  have hi₂₃ := closure_inter_closure P.Γ h₂.symm h₃ hxy.symm hyz.symm hzx hne₂₃
+  have hi₁₂ := closure_inter_closure P.Γ h₁.symm h₂ hzx.symm hne₁₂
+  have hi₁₃ := closure_inter_closure P.Γ h₁ h₃.symm hyz hne₃₁.symm
+  have hi₂₃ := closure_inter_closure P.Γ h₂.symm h₃ hxy.symm hne₂₃
   have hl₁ := isLine_closure_of_isLink P.Γ h₁ hxy
   have hl₂ := isLine_closure_of_isLink P.Γ h₂ hyz
   have hl₃ := isLine_closure_of_isLink P.Γ h₃ hzx

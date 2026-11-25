@@ -2364,57 +2364,6 @@ private theorem exists_isFence_extension {S₀ : Society α β} {A B : Set α} {
         fun a₁ ha₁ a₂ ha₂ ha12 b₁ hb₁ b₂ hb₂ hb12 hcr =>
           hf₀_BA.2.2.2.2 b₁ hb₁ b₂ hb₂ hb12 a₁ ha₁ a₂ ha₂ ha12 hcr.symm⟩⟩
 
-/-- A crooked transaction in `S` remains a crooked transaction in `S₀`. -/
-private theorem isCrookedTransaction_extension {S₀ : Society α β}
-    {P_set : Set (Graph α β)} {a₀ b₀ r : α}
-    (hG₀ : S₀.G = S.G)
-    (hbar₀ : S₀.Ω.bar = S.Ω.bar ∪ {r})
-    (hrest₀ : S₀.Ω.IsRestriction S.Ω.bar S.Ω)
-    (hab_empty : S.Ω.interval a₀ b₀ = ∅)
-    (hcw_arb : S₀.Ω.IsClockwise3 a₀ r b₀)
-    (hcr : S.IsCrookedTransaction P_set) :
-    S₀.IsCrookedTransaction P_set := by
-  rcases hcr with ⟨⟨A, B, hfence⟩, hnot_per⟩
-  obtain ⟨A₀, B₀, hAA₀, hBB₀, hfence₀⟩ :=
-    S.exists_isFence_extension hbar₀ hrest₀ hab_empty hcw_arb hfence.2.1
-  have hP_ends_iff : ∀ {P : Graph α β} {x y : α},
-      P ∈ P_set → (S.IsOmegaPathWithEnds P x y ↔ S₀.IsOmegaPathWithEnds P x y) := by
-    intro P x y hP
-    constructor
-    · rintro ⟨hPG, hxy, hx, hy⟩
-      exact ⟨hG₀.symm ▸ hPG, hxy, hbar₀ ▸ Or.inl hx, hbar₀ ▸ Or.inl hy⟩
-    · rintro hP₀
-      obtain ⟨x', y', hP_S⟩ := hfence.1.1 P hP
-      rcases (hG₀ ▸ hP₀.1).ends_eq hP_S.1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-      · exact hP_S
-      · exact hP_S.symm
-  have hW_eq : S₀.transactionEnds P_set = S.transactionEnds P_set := by
-    ext v
-    simp only [transactionEnds]
-    exact ⟨fun ⟨P, hP, b, h⟩ => ⟨P, hP, b, (hP_ends_iff hP).mpr h⟩,
-      fun ⟨P, hP, b, h⟩ => ⟨P, hP, b, (hP_ends_iff hP).mp h⟩⟩
-  have htr₀ : S₀.IsTransaction P_set := by
-    refine ⟨A₀, B₀, ⟨?_, hfence.1.2⟩, hfence₀, ?_⟩
-    · intro P hP
-      obtain ⟨x, y, hxy⟩ := hfence.1.1 P hP
-      exact ⟨x, y, (hP_ends_iff hP).mp hxy⟩
-    · intro P hP
-      obtain ⟨x, hxA, y, hyB, hxy⟩ := hfence.2.2 P hP
-      exact ⟨x, hAA₀ hxA, y, hBB₀ hyB, (hP_ends_iff hP).mp hxy⟩
-  refine ⟨htr₀, fun P hP ⟨_, x, y, hxy₀, hdisj₀⟩ => ?_⟩
-  have hxy_S : S.IsOmegaPathWithEnds P x y := (hP_ends_iff hP).mpr hxy₀
-  apply hnot_per P hP ⟨hP, x, y, hxy_S, ?_⟩
-  rw [← hW_eq]
-  rcases hdisj₀ with hd | hd
-  · left
-    apply hd.mono_left
-    rw [hrest₀.interval_eq hxy_S.2.2.1 hxy_S.2.2.2]
-    exact inter_subset_left
-  · right
-    apply hd.mono_left
-    rw [hrest₀.interval_eq hxy_S.2.2.2 hxy_S.2.2.1]
-    exact inter_subset_left
-
 /-- Preliminary step for **Graph Minors IX, (5.5), Claim (2)** (pages 54–55): by (5.2), either
 there is a cross `{P₁, P₂}` of `(G, Ω₀)` disjoint from `V(G₂)`, or `(G, Ω)` has a crooked
 transaction of cardinality `p` avoiding `Ω(a₂, b₂)`. -/
