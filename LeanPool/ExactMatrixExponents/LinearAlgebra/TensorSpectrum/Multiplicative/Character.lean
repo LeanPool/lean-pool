@@ -14,10 +14,9 @@ public import Mathlib.Basic.NNReal.Defs
 /-!
 # Multiplicativity of a compact convex tensor-state space
 
-This is Appendix A.2, including the single-map fixed-point existence step.
-The projective fixed-point result is proved by finite weighted orbit averages,
-so no Schauder theorem is postulated. Nonemptiness of the additive state space
-is the explicit Appendix A.1 input; no multiplicative state is an input.
+Finite weighted orbit averages give the projective fixed points. Iterating
+through their fixed-point slices constructs a character from a nonempty
+compact convex space of additive detecting states.
 -/
 
 @[expose] public section
@@ -54,8 +53,8 @@ section Semiring
 
 variable {S : Type*} [CommSemiring S] [PartialOrder S]
 
-/-- Appendix A.2 turns an actual nonempty additive detecting state space into a
-monotone real semiring character without assuming a character or fixed point. -/
+/-- Construct a monotone real semiring character from a nonempty space of
+additive detecting states. -/
 theorem exists_character_of_nonempty_stateSet
     (T : S) (k : ℕ) (R : S → ℕ)
     (hzero : ∀ x : S, 0 ≤ x)

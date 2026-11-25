@@ -129,6 +129,15 @@ theorem relabel (e : A.term ≃ B.term) (f : ∀ s, A.leg s ≃ B.leg s)
   simp only [coeff, h]
   exact e.sum_comp (fun i => ∏ s, B.factor i s (f s (x s)))
 
+/-- Equivalences of all coordinates and terms that preserve the tensor factors. -/
+def Relabels (A B : Raw K S) : Prop :=
+  ∃ (terms : A.term ≃ B.term) (legs : ∀ s, A.leg s ≃ B.leg s),
+    ∀ i s x, A.factor i s x = B.factor (terms i) s (legs s x)
+
+theorem relabel_of_relabels {A B : Raw K S} (h : Relabels A B) : A ≈ B := by
+  obtain ⟨terms, legs, factors⟩ := h
+  exact relabel terms legs factors
+
 end Raw
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral
 end
@@ -224,51 +233,76 @@ the same sum or product equivalence.
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] (A B C : Raw K S)
+variable {K S : Type} [Field K] (A B C : Raw K S)
 
-theorem comm_add : A + B ≈ B + A := by
-  refine relabel (Equiv.sumComm _ _) (fun _ => Equiv.sumComm _ _) ?_
+theorem comm_add_relabels : Relabels (A + B) (B + A) := by
+  refine ⟨(Equiv.sumComm _ _), (fun _ => Equiv.sumComm _ _), ?_⟩
   rintro (i | i) s (x | x) <;> rfl
 
-theorem assoc_add : (A + B) + C ≈ A + (B + C) := by
-  refine relabel (Equiv.sumAssoc _ _ _) (fun _ => Equiv.sumAssoc _ _ _) ?_
+theorem assoc_add_relabels : Relabels ((A + B) + C) (A + (B + C)) := by
+  refine ⟨(Equiv.sumAssoc _ _ _), (fun _ => Equiv.sumAssoc _ _ _), ?_⟩
   rintro ((i | i) | i) s ((x | x) | x) <;> rfl
 
-theorem nil_add : 0 + A ≈ A := by
-  refine relabel (Equiv.emptySum Empty _) (fun _ => Equiv.emptySum Empty _) ?_
+theorem nil_add_relabels : Relabels (0 + A) A := by
+  refine ⟨(Equiv.emptySum Empty _), (fun _ => Equiv.emptySum Empty _), ?_⟩
   rintro (i | i)
   · exact i.elim
   rintro s (x | x)
   · exact x.elim
   rfl
 
-theorem comm_mul : A * B ≈ B * A := by
-  refine relabel (Equiv.prodComm _ _) (fun _ => Equiv.prodComm _ _) ?_
+theorem comm_mul_relabels : Relabels (A * B) (B * A) := by
+  refine ⟨(Equiv.prodComm _ _), (fun _ => Equiv.prodComm _ _), ?_⟩
   intro i s x
   exact mul_comm _ _
 
-theorem assoc_mul : (A * B) * C ≈ A * (B * C) := by
-  refine relabel (Equiv.prodAssoc _ _ _) (fun _ => Equiv.prodAssoc _ _ _) ?_
+theorem assoc_mul_relabels : Relabels ((A * B) * C) (A * (B * C)) := by
+  refine ⟨(Equiv.prodAssoc _ _ _), (fun _ => Equiv.prodAssoc _ _ _), ?_⟩
   intro i s x
   exact mul_assoc _ _ _
 
-theorem unit_mul : 1 * A ≈ A := by
-  refine relabel (Equiv.punitProd _) (fun _ => Equiv.punitProd _) ?_
+theorem unit_mul_relabels : Relabels (1 * A) A := by
+  refine ⟨(Equiv.punitProd _), (fun _ => Equiv.punitProd _), ?_⟩
   intro i s x
   exact one_mul _
 
-theorem nil_mul : 0 * A ≈ 0 := by
-  refine relabel (Equiv.emptyProd _) (fun _ => Equiv.emptyProd _) ?_
+theorem nil_mul_relabels : Relabels (0 * A) 0 := by
+  refine ⟨(Equiv.emptyProd _), (fun _ => Equiv.emptyProd _), ?_⟩
   intro i
   exact i.1.elim
 
-theorem distrib_left : A * (B + C) ≈ A * B + A * C := by
-  refine relabel (Equiv.prodSumDistrib _ _ _) (fun _ => Equiv.prodSumDistrib _ _ _) ?_
+theorem distrib_left_relabels : Relabels (A * (B + C)) (A * B + A * C) := by
+  refine ⟨(Equiv.prodSumDistrib _ _ _), (fun _ => Equiv.prodSumDistrib _ _ _), ?_⟩
   rintro ⟨i, j | j⟩ s ⟨x, y | y⟩
   · rfl
   · exact mul_zero _
   · exact mul_zero _
   · rfl
+variable [Fintype S]
+
+theorem comm_add : A + B ≈ B + A :=
+  relabel_of_relabels (comm_add_relabels A B)
+
+theorem assoc_add : (A + B) + C ≈ A + (B + C) :=
+  relabel_of_relabels (assoc_add_relabels A B C)
+
+theorem nil_add : 0 + A ≈ A :=
+  relabel_of_relabels (nil_add_relabels A)
+
+theorem comm_mul : A * B ≈ B * A :=
+  relabel_of_relabels (comm_mul_relabels A B)
+
+theorem assoc_mul : (A * B) * C ≈ A * (B * C) :=
+  relabel_of_relabels (assoc_mul_relabels A B C)
+
+theorem unit_mul : 1 * A ≈ A :=
+  relabel_of_relabels (unit_mul_relabels A)
+
+theorem nil_mul : 0 * A ≈ 0 :=
+  relabel_of_relabels (nil_mul_relabels A)
+
+theorem distrib_left : A * (B + C) ≈ A * B + A * C :=
+  relabel_of_relabels (distrib_left_relabels A B C)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 end

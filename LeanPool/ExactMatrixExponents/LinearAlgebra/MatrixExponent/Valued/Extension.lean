@@ -26,49 +26,29 @@ open Spectral
 section
 variable {K S : Type} [Field K] [Fintype S] {O : Subring K} (A B C : Raw K S)
 
-theorem comm_add : (equiv O).r (A + B) (B + A) := by
-  refine relabel (Equiv.sumComm _ _) (fun _ => Equiv.sumComm _ _) ?_
-  rintro (i | i) s (x | x) <;> rfl
+theorem comm_add : (equiv O).r (A + B) (B + A) :=
+  relabel_of_relabels (Raw.comm_add_relabels A B)
 
-theorem assoc_add : (equiv O).r ((A + B) + C) (A + (B + C)) := by
-  refine relabel (Equiv.sumAssoc _ _ _) (fun _ => Equiv.sumAssoc _ _ _) ?_
-  rintro ((i | i) | i) s ((x | x) | x) <;> rfl
+theorem assoc_add : (equiv O).r ((A + B) + C) (A + (B + C)) :=
+  relabel_of_relabels (Raw.assoc_add_relabels A B C)
 
-theorem nil_add : (equiv O).r (0 + A) (A) := by
-  refine relabel (Equiv.emptySum Empty _) (fun _ => Equiv.emptySum Empty _) ?_
-  rintro (i | i)
-  · exact i.elim
-  rintro s (x | x)
-  · exact x.elim
-  rfl
+theorem nil_add : (equiv O).r (0 + A) (A) :=
+  relabel_of_relabels (Raw.nil_add_relabels A)
 
-theorem comm_mul : (equiv O).r (A * B) (B * A) := by
-  refine relabel (Equiv.prodComm _ _) (fun _ => Equiv.prodComm _ _) ?_
-  intro i s x
-  exact mul_comm _ _
+theorem comm_mul : (equiv O).r (A * B) (B * A) :=
+  relabel_of_relabels (Raw.comm_mul_relabels A B)
 
-theorem assoc_mul : (equiv O).r ((A * B) * C) (A * (B * C)) := by
-  refine relabel (Equiv.prodAssoc _ _ _) (fun _ => Equiv.prodAssoc _ _ _) ?_
-  intro i s x
-  exact mul_assoc _ _ _
+theorem assoc_mul : (equiv O).r ((A * B) * C) (A * (B * C)) :=
+  relabel_of_relabels (Raw.assoc_mul_relabels A B C)
 
-theorem unit_mul : (equiv O).r (1 * A) (A) := by
-  refine relabel (Equiv.punitProd _) (fun _ => Equiv.punitProd _) ?_
-  intro i s x
-  exact one_mul _
+theorem unit_mul : (equiv O).r (1 * A) (A) :=
+  relabel_of_relabels (Raw.unit_mul_relabels A)
 
-theorem nil_mul : (equiv O).r (0 * A) (0) := by
-  refine relabel (Equiv.emptyProd _) (fun _ => Equiv.emptyProd _) ?_
-  intro i
-  exact i.1.elim
+theorem nil_mul : (equiv O).r (0 * A) (0) :=
+  relabel_of_relabels (Raw.nil_mul_relabels A)
 
-theorem distrib_left : (equiv O).r (A * (B + C)) (A * B + A * C) := by
-  refine relabel (Equiv.prodSumDistrib _ _ _) (fun _ => Equiv.prodSumDistrib _ _ _) ?_
-  rintro ⟨i, j | j⟩ s ⟨x, y | y⟩
-  · rfl
-  · exact mul_zero _
-  · exact mul_zero _
-  · rfl
+theorem distrib_left : (equiv O).r (A * (B + C)) (A * B + A * C) :=
+  relabel_of_relabels (Raw.distrib_left_relabels A B C)
 
 end
 
@@ -208,41 +188,12 @@ theorem pad_restricts (A B : Raw K S) :
 
 theorem close_add (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
     (equiv O).r ((A + B).close v)
-      (A.close (fun u x => v u (.inl x)) + B.close (fun u x => v u (.inr x))) := by
-  have hl (i : A.term) :
-      (A + B).scalar v (.inl i) = A.scalar (fun u x => v u (.inl x)) i := by
-    apply Finset.prod_congr rfl
-    intro u _
-    change (∑ y : A.leg (.inr u) ⊕ B.leg (.inr u),
-      v u y * Sum.elim (A.factor i (.inr u)) (fun _ => 0) y) = _
-    simp [Fintype.sum_sum_type]
-  have hr (i : B.term) :
-      (A + B).scalar v (.inr i) = B.scalar (fun u x => v u (.inr x)) i := by
-    apply Finset.prod_congr rfl
-    intro u _
-    change (∑ y : A.leg (.inr u) ⊕ B.leg (.inr u),
-      v u y * Sum.elim (fun _ => 0) (B.factor i (.inr u)) y) = _
-    simp [Fintype.sum_sum_type]
-  refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_
-  rintro (i | i) s (x | x)
-  · exact congrArg (fun a => A.factor i (.inl s) x * weight a s) (hl i)
-  · exact zero_mul _
-  · exact zero_mul _
-  · exact congrArg (fun a => B.factor i (.inl s) x * weight a s) (hr i)
+      (A.close (fun u x => v u (.inl x)) + B.close (fun u x => v u (.inr x))) :=
+  relabel_of_relabels (Raw.close_add_relabels A B v)
 
 theorem close_mul (A : Raw K S) (B : Raw K (S ⊕ U)) (v : (pad U A * B).Covectors) :
-    (equiv O).r ((pad U A * B).close v) (A * B.close (fun u x => v u ((), x))) := by
-  refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_
-  rintro ⟨i, j⟩ s ⟨x, y⟩
-  have h : (pad U A * B).scalar v (i, j) = B.scalar (fun u z => v u ((), z)) j := by
-    apply Finset.prod_congr rfl
-    intro u _
-    change (∑ z : Unit × B.leg (.inr u), v u z * (1 * B.factor j (.inr u) z.2)) = _
-    simp [Fintype.sum_prod_type]
-    rfl
-  change A.factor i s x * B.factor j (.inl s) y * weight ((pad U A * B).scalar v (i, j)) s = _
-  rw [h, mul_assoc]
-  rfl
+    (equiv O).r ((pad U A * B).close v) (A * B.close (fun u x => v u ((), x))) :=
+  relabel_of_relabels (Raw.close_mul_relabels A B v)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Valued
 end

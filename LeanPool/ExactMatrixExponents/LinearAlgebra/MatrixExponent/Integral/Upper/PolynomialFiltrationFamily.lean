@@ -9,6 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.PolynomialFiltration
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.PolynomialWeightFamily
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialFiltrationFamily
 
 /-!
 # The finite-degree determinant family
@@ -31,46 +32,23 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
 
 theorem determinantAdapted_mem_restrictionOrbit (a b : ℕ) :
     determinantAdaptedTensor a b ∈ LocalTensor.orbit
-      (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) := by
-  have hd : doubledPolynomialTensor a b ∈ LocalTensor.orbit
-      (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) := by
-    rw [← doubledPolynomialTensor_product, Tensor.pullback_eq_restrict]
-    exact ⟨_, _, _, rfl⟩
-  have h := LocalTensor.restrict_mem hd
-    (fun i' i : Fin (a + 1) => if i = i' then (1 : O) else 0)
-    (determinantInputMap b) (determinantOutputMap a b)
-  have he : Tensor.restrict
-      (fun i' i : Fin (a + 1) => if i = i' then (1 : O) else 0)
-      (determinantInputMap b) (determinantOutputMap a b)
-      (doubledPolynomialTensor a b) = determinantAdaptedTensor a b :=
-    determinant_basis_change a b
-  rwa [he] at h
+      (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) :=
+  TensorSpectrum.PolynomialTensors.determinantAdapted_mem_restrictionOrbit a b
 
-/-- Coefficients are constant or linear in the degeneration parameter. -/
-def determinantPolynomialFamily (a b : ℕ) :
-    Tensor (Polynomial O) (Fin (a + 1)) (Fin (b + 3) ⊕ Fin (b + 1))
-      (Fin (a + b + 3) ⊕ Fin (a + b + 1)) :=
-  weightedPolynomial (determinantAdaptedTensor a b) (fun _ => 0)
-    (determinantInputWeight b) (determinantOutputWeight a b)
+/-- The determinant polynomial family over the coefficient ring. -/
+abbrev determinantPolynomialFamily :=
+  TensorSpectrum.PolynomialTensors.determinantPolynomialFamily (K := O)
 
 theorem determinantPolynomialFamily_coeff_zero (a b : ℕ) :
     (fun i y z => (determinantPolynomialFamily a b i y z).coeff 0) =
-      determinantGradedTensor a b := by
-  funext i y z
-  rw [determinantPolynomialFamily, weightedPolynomial_coeff_zero
-    (determinantAdaptedTensor a b) (fun _ => 0)
-    (determinantInputWeight b) (determinantOutputWeight a b)
-    (determinant_supported_weight a b)]
-  exact congrFun (congrFun (congrFun (determinant_weightedLimit a b) i) y) z
+      determinantGradedTensor a b :=
+  TensorSpectrum.PolynomialTensors.determinantPolynomialFamily_coeff_zero a b
 
 theorem determinantPolynomialFamily_degree_le (a b : ℕ)
     (i : Fin (a + 1)) (y : Fin (b + 3) ⊕ Fin (b + 1))
     (z : Fin (a + b + 3) ⊕ Fin (a + b + 1)) :
-    (determinantPolynomialFamily a b i y z).degree ≤ (1 : ℕ) := by
-  apply weightedPolynomial_degree_le
-  intro i' y' z' hc
-  cases y' <;> cases z' <;>
-    simp_all [determinantAdaptedTensor, determinantInputWeight, determinantOutputWeight]
+    (determinantPolynomialFamily a b i y z).degree ≤ (1 : ℕ) :=
+  TensorSpectrum.PolynomialTensors.determinantPolynomialFamily_degree_le a b i y z
 
 theorem determinantPolynomialFamily_eval_mem_restrictionOrbit (a b : ℕ)
     {t : O} (ht : IsUnit t) :

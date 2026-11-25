@@ -14,7 +14,7 @@ public import Mathlib.Topology.Order.Compact
 public import Mathlib.Tactic.Ring
 
 /-!
-# The projective maps and frozen affine slices in Appendix A.2
+# Projective maps and affine slices of fixed points
 
 These lemmas isolate the actual maps used by the character construction. A
 frozen eigenvalue slice is convex; the full nonlinear fixed set is only claimed
@@ -32,7 +32,7 @@ open Set
 
 variable {S : Type*} [CommMonoidWithZero S]
 
-/-- The normalized multiplication map from Appendix A.2. -/
+/-- Evaluation after multiplication by `z`, normalized by the value of `z`. -/
 def projective (z : S) (f : S → ℝ) : S → ℝ :=
   fun x => f (z * x) / f z
 
@@ -129,8 +129,8 @@ theorem freeze_fixedPoint (K : Set (S → ℝ)) (z : S) (f : S → ℝ)
   intro w hw g hg
   exact ⟨hinvariant w hw hg.1, projective_mem_eigenSlice z w (f z) g hg.2⟩
 
-/-- The compactness step in Appendix A.2. Finite common fixed points are an
-explicit obligation; this lemma does not assume or assert their existence. -/
+/-- Compactness yields a multiplicative state from common fixed points for
+every finite family of normalized multiplication maps. -/
 theorem multiplicative_of_finite_common_points
     (K : Set (S → ℝ)) (hcompact : IsCompact K)
     (hzero : ∀ f ∈ K, f 0 = 0)

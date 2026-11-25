@@ -164,58 +164,5 @@ theorem assemble_injective {H w : ℕ} (a : Val (word (H + 2))) :
     change (x.1, appendWord H w x.2 a.2.2) = (y.1, appendWord H w y.2 a.2.2) at h
     exact Prod.ext (Prod.mk.inj h).1 (ih (Prod.mk.inj h).2)
 
-/-- The data for the delivery construction, including `head`, `unique`, `peer`, `pairs`. -/
-structure Delivery (j H : ℕ) where
-  /-- The `Delivery` component of type `Fin (2 ^ j) → Val (word (H + 2))`. -/
-  head : Fin (2 ^ j) → Val (word (H + 2))
-  unique : Function.Injective head
-  /-- The `Delivery` component of type `Fin (2 ^ j) → Fin (2 ^ j)`. -/
-  peer : Fin (2 ^ j) → Fin (2 ^ j)
-  pairs : ∀ i, (head i).1 = true → head (peer i) = opposite (head i)
-
-namespace Delivery
-variable {j H w : ℕ} (p : Delivery j H)
-
-theorem valid_iff {m : Val (tree j (row H w))} (v : Fin (2 ^ j) → Val (word w))
-    (hm : flatten j m = List.ofFn (fun i => assemble (p.head i) (v i))) :
-    valid j H w m ↔ ∀ i, (p.head i).1 = true → v (p.peer i) = v i := by
-  rw [Messages.valid_iff, hm, List.map_ofFn]
-  have hu : (List.ofFn (header H w ∘ fun i => assemble (p.head i) (v i))).Nodup := by
-    rw [show (header H w ∘ fun i => assemble (p.head i) (v i)) = p.head from
-      funext fun i => header_assemble _ _]
-    exact List.nodup_ofFn.mpr p.unique
-  refine ⟨?_, fun h => ⟨hu, ?_⟩⟩
-  · intro h i hi
-    have he := h.2 _ (List.mem_ofFn.mpr ⟨i, rfl⟩) hi
-    obtain ⟨k, hk⟩ := List.mem_ofFn.mp he
-    rw [reverse_assemble, ← p.pairs _ hi] at hk
-    have h' := congrArg (header H w) hk
-    simp only [header_assemble] at h'
-    have := p.unique h'
-    subst k
-    exact assemble_injective _ hk
-  · intro r hr hi
-    obtain ⟨i, rfl⟩ := List.mem_ofFn.mp hr
-    exact List.mem_ofFn.mpr ⟨p.peer i, by rw [p.pairs i hi, h i hi, reverse_assemble]⟩
-
-variable {A : Type} (tap : Fin (2 ^ j) → slots (word w) → A)
-
-/-- The condition `∃ i k, (p.head i).1 = true ∧ tap (p.peer i) k = a ∧ tap i k = b` on the
-specified data. -/
-def link (a b : A) : Prop :=
-  ∃ i k, (p.head i).1 = true ∧ tap (p.peer i) k = a ∧ tap i k = b
-
-theorem checks {m : Val (tree j (row H w))} (z : A → Bool)
-    (hm : flatten j m = List.ofFn (fun i =>
-      assemble (p.head i) ((bits (word w)).symm (z ∘ tap i)))) :
-    valid j H w m ↔ ∀ a b, p.link tap a b → z a = z b := by
-  rw [p.valid_iff _ hm]
-  constructor
-  · rintro h _ _ ⟨i, k, hi, rfl, rfl⟩
-    exact congrFun ((bits (word w)).symm.injective (h i hi)) k
-  · intro h i hi
-    exact congrArg (bits (word w)).symm (funext fun k => h _ _ ⟨i, k, hi, rfl, rfl⟩)
-
-end Delivery
 end MatrixMultiplicationAllFields.MatrixExponent.Transcript.Messages
 end

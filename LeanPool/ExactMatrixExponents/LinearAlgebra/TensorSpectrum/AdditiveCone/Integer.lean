@@ -90,7 +90,7 @@ private def normalizedConstants {ι κ : Type u} : NormalizedRow ι κ → ℤ
   | Sum.inr (Sum.inr (Sum.inr true)) => -1
   | Sum.inr (Sum.inr (Sum.inr false)) => 1
 
-/-- The finite integer cone certificate used in Appendix A.1.
+/-- A finite integer certificate for failure of additive-state feasibility.
 
 Failure of a normalized real functional that kills the additive relations and
 is nonnegative on the inequality vectors yields a strictly positive integer

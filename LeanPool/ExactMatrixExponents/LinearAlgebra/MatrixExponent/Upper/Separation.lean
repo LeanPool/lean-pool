@@ -12,6 +12,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Fourier
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationPolynomial
 
 /-!
 # Charged finite separation by local Fourier maps
@@ -26,9 +27,11 @@ a nonnegative square, so the resulting coefficient array is polynomial.
 @[expose] public section
 
 open MatrixMultiplicationAllFields.MatrixExponent
-    MatrixMultiplicationAllFields.TensorSpectrum.Separation
+    MatrixMultiplicationAllFields.TensorSpectrum
 
 noncomputable section
+
+open MatrixMultiplicationAllFields.TensorSpectrum.Separation
 
 open scoped BigOperators
 open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
@@ -42,20 +45,10 @@ abbrev shared {M : ℕ} (A : Fin M → Tensor Coeff X Y Z) :
     Tensor Coeff X (Fin M × Y) (Fin M × Z) :=
   Tensor.sharedFirst A
 
-/-- The auxiliary pairing has one coordinate on the first leg. -/
-def dotPairingX (U : Type*) [DecidableEq U] : Tensor Coeff Unit U U :=
-  fun _ u v => if u = v then 1 else 0
-
-/-- Every branch in this output has its own first-leg space. -/
-def separated {M : ℕ} (A : Fin M → Tensor Coeff X Y Z) :
-    Tensor Coeff (Fin M × (X × Unit)) (Fin M × (Y × Fin M))
-      (Fin M × (Z × Fin M)) :=
-  Tensor.directSum (fun h => Tensor.product (A h) (dotPairingX (Fin M)))
-
-/-- The integer projected by the finite Fourier average. Labels are numbered
-from zero here; translating all four labels by one leaves this phase unchanged. -/
-def phase {M : ℕ} (h g u v : Fin M) : ℤ :=
-  (u : ℤ) - (v : ℤ) + 2 * ((g : ℤ) - (h : ℤ))
+export MatrixMultiplicationAllFields.TensorSpectrum.Separation
+  (dotPairingX separated phase projected squareDegree separationPolynomial
+    squareDegree_eq_zero_iff separationPolynomial_constant separationPolynomial_degree weightX
+    weightY weightZ)
 
 /-- Copy a specified source coordinate with a scalar depending only on the
 target coordinate and the source's direct-sum copy number. -/
@@ -129,14 +122,6 @@ def fourierZ (ζ : Coeff) (w : Fin (5 * M) → Coeff) :
     (fun z r => w r *
       ζ ^ ((r : ℤ) * (-(z.2.2 : ℤ) - (z.1 : ℤ))))
 
-/-- Evaluates `if y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0 then A y.1 x.2.1 y.2.1 z.2.1 else 0`
-at the input `x y z`. -/
-def projected (A : Fin M → Tensor Coeff X Y Z) :
-    Tensor Coeff (Fin M × (X × Unit)) (Fin M × (Y × Fin M))
-      (Fin M × (Z × Fin M)) :=
-  fun x y z => if y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0
-    then A y.1 x.2.1 y.2.1 z.2.1 else 0
-
 /-- The actual independent local maps give exactly the projected tensor. -/
 theorem fourier_restrict (A : Fin M → Tensor Coeff X Y Z)
     (ζ : Coeff) (w : Fin (5 * M) → Coeff) (hζ : ζ ≠ 0)
@@ -181,93 +166,14 @@ section Polynomial
 
 variable {M : ℕ}
 
-/-- The degree of a projected monomial, already known to be nonnegative. -/
-def squareDegree (h g : Fin M) : ℕ :=
-  squareExponent g h
-
-/-- This is a polynomial array even though the individual local weights used
-to realize its nonzero evaluations can be negative. -/
-def separationPolynomial (A : Fin M → Tensor Coeff X Y Z) :
-    Tensor (Polynomial Coeff) (Fin M × (X × Unit)) (Fin M × (Y × Fin M))
-      (Fin M × (Z × Fin M)) :=
-  fun x y z => if y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0
-    then Polynomial.monomial (squareDegree y.1 x.1) (A y.1 x.2.1 y.2.1 z.2.1)
-    else 0
-
-theorem squareDegree_eq_zero_iff (h g : Fin M) : squareDegree h g = 0 ↔ g = h := by
-  exact squareExponent_eq_zero_iff g h
-
-/-- The zero coefficient is the full direct sum with an auxiliary dot product. -/
-theorem separationPolynomial_constant (A : Fin M → Tensor Coeff X Y Z) :
-    (fun x y z => (separationPolynomial A x y z).coeff 0) = separated A := by
-  funext x y z
-  by_cases hxy : x.1 = y.1
-  · by_cases hyz : y.1 = z.1
-    · by_cases huv : y.2.2 = z.2.2
-      · simp [separationPolynomial, separated, Tensor.directSum, Tensor.product,
-          dotPairingX, phase, squareDegree, squareExponent, hxy, hyz, huv]
-      · have hp : phase y.1 x.1 y.2.2 z.2.2 ≠ 0 := by
-          intro hp
-          have heq : (y.2.2 : ℤ) = (z.2.2 : ℤ) := by
-            simpa [phase, hxy, sub_eq_zero] using hp
-          exact huv (Fin.ext (by exact_mod_cast heq))
-        have hsupport : ¬(y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0) :=
-          fun h => hp h.2
-        simp only [separationPolynomial, ite_eq_right hsupport]
-        simp [separated, Tensor.directSum, Tensor.product, dotPairingX, hxy, hyz, huv]
-    · have hxz : x.1 ≠ z.1 := by simpa [hxy] using hyz
-      simp [separationPolynomial, separated, Tensor.directSum, hyz, hxz]
-  · have hdegree : squareDegree y.1 x.1 ≠ 0 := by
-      exact fun h => hxy ((squareDegree_eq_zero_iff y.1 x.1).mp h)
-    by_cases hs : y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0
-    · simp only [separationPolynomial, ite_eq_left hs]
-      simp [separated, Tensor.directSum, hxy,
-        Polynomial.coeff_monomial, hdegree]
-    · simp [separationPolynomial, hs, separated, Tensor.directSum, hxy]
-
-theorem separationPolynomial_degree (A : Fin M → Tensor Coeff X Y Z)
-    (x : Fin M × (X × Unit)) (y : Fin M × (Y × Fin M))
-    (z : Fin M × (Z × Fin M)) :
-    (separationPolynomial A x y z).degree ≤ ((M - 1) ^ 2 : ℕ) := by
-  apply Polynomial.degree_le_of_natDegree_le
-  unfold separationPolynomial
-  split_ifs
-  · exact le_trans (Polynomial.natDegree_monomial_le _)
-      (squareExponent_le x.1 y.1)
-  · simp
-
-/-- The quantity computed by `(x.1 : ℤ) ^ 2`. -/
-def weightX (x : Fin M × (X × Unit)) : ℤ := (x.1 : ℤ) ^ 2
-
-/-- The quantity computed by `(y.1 : ℤ) * (y.2.2 : ℤ) - (y.1 : ℤ) ^ 2`. -/
-def weightY (y : Fin M × (Y × Fin M)) : ℤ :=
-  (y.1 : ℤ) * (y.2.2 : ℤ) - (y.1 : ℤ) ^ 2
-
-/-- The quantity computed by `-(z.1 : ℤ) * (z.2.2 : ℤ)`. -/
-def weightZ (z : Fin M × (Z × Fin M)) : ℤ :=
-  -(z.1 : ℤ) * (z.2.2 : ℤ)
-
 /-- On the complete projected support, the local weights add to the actual
 polynomial degree, including all zero and mismatched coefficients. -/
 theorem separationPolynomial_eval (A : Fin M → Tensor Coeff X Y Z)
     (t : Coeff) (ht : t ≠ 0) :
     (fun x y z => (separationPolynomial A x y z).eval t) =
-      fun x y z => t ^ weightX x * t ^ weightY y * t ^ weightZ z * projected A x y z := by
-  funext x y z
-  by_cases hs : y.1 = z.1 ∧ phase y.1 x.1 y.2.2 z.2.2 = 0
-  · have hsum : weightX x + weightY y + weightZ z =
-        ((x.1 : ℤ) - (y.1 : ℤ)) ^ 2 := by
-      dsimp [weightX, weightY, weightZ]
-      rw [← hs.1]
-      have hp := hs.2
-      dsimp [phase] at hp
-      nlinarith
-    have hcast : (squareDegree y.1 x.1 : ℤ) = ((x.1 : ℤ) - (y.1 : ℤ)) ^ 2 :=
-      Int.toNat_of_nonneg (sq_nonneg _)
-    simp only [separationPolynomial, projected, ite_eq_left hs, Polynomial.eval_monomial]
-    rw [← zpow_add₀ ht, ← zpow_add₀ ht, hsum, ← hcast, zpow_natCast]
-    ring
-  · simp [separationPolynomial, projected, hs]
+      fun x y z => t ^ weightX x * t ^ weightY y * t ^ weightZ z * projected A x y z :=
+  TensorSpectrum.Separation.separationPolynomial_eval A t (fun e => t ^ e)
+    (fun a b => zpow_add₀ ht a b) (fun n => zpow_natCast t n)
 
 end Polynomial
 

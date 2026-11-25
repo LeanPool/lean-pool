@@ -421,30 +421,5 @@ def ProductChart.apply (p : ProductChart M) (h : ℕ) :
   left_inv x := by simp
   right_inv y := by simp
 
-/-- Builds `Equiv.Perm (Words M h) where toFun x` with the specified `toFun`, `invFun`,
-`left_inv`, `right_inv`. -/
-def digitPerm (p : Equiv.Perm (Fin M)) (h : ℕ) : Equiv.Perm (Words M h) where
-  toFun x := (fun i => p (x.1 i), x.2)
-  invFun x := (fun i => p.symm (x.1 i), x.2)
-  left_inv x := by simp
-  right_inv x := by simp
-
-/-- The data for the system construction, including `read`, `fixed`, `read_fixed`, `factor`. -/
-structure System (M : ℕ) (G : Type) [Group G] where
-  /-- The read operation of type `∀ h, Equiv.Perm (Words M h) → G →* Equiv.Perm (Words M h)`. -/
-  read : ∀ h, Equiv.Perm (Words M h) → G →* Equiv.Perm (Words M h)
-  /-- The `System` component of type `Equiv.Perm (Fin M) → G`. -/
-  fixed : Equiv.Perm (Fin M) → G
-  read_fixed : ∀ h σ p, read h σ (fixed p) = digitPerm p h
-  factor : ∀ (p : ProductChart M) (g : G),
-    (∀ h σ x, (p.apply h (read h σ g x)).1 = (p.apply h x).1) →
-    ∃ u v w : G, g = u * v * w ∧
-      (∀ h σ x, (p.apply h (read h σ u x)).1 = (p.apply h x).1 ∧
-        (p.apply h (read h σ u x)).2.1 = (p.apply h x).2.1) ∧
-      (∀ h σ x, (p.apply h (read h σ v x)).1 = (p.apply h x).1 ∧
-        (p.apply h (read h σ v x)).2.2 = (p.apply h x).2.2) ∧
-      (∀ h σ x, (p.apply h (read h σ w x)).1 = (p.apply h x).1 ∧
-        (p.apply h (read h σ w x)).2.1 = (p.apply h x).2.1)
-
 end MatrixMultiplicationAllFields.MatrixExponent.Routing.Uniform
 end

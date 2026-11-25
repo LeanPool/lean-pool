@@ -157,25 +157,6 @@ theorem emptyExpansion [Field F] (u C d ℓ A : ℕ) : LocalExpansion P u C d �
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
 end
 
-section
-/- # Identity of the stations holding named exterior bits -/
-
-namespace MatrixMultiplicationAllFields.MatrixExponent.Rounds.Raw
-open Packing
-
-variable {F : Type} {x y : Wire} {h D T g u : ℕ} {W : ℝ}
-    (Q : Raw F x y h D T g W) (B : LocalTerm F x y h u) (parent : B.V → Q.V)
-
-/-- Each original holder has one distinct final holder in its original cell. -/
-structure Holders : Prop where
-  location : ∀ i, let v := B.frame.place (portEnd B.diagram i)
-    (parent v.1, v.2) = Q.place (portEnd Q.diagram i)
-  fibers : ∀ i j, portEnd B.diagram i = portEnd B.diagram j ↔ portEnd Q.diagram i
-    = portEnd Q.diagram j
-
-end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Raw
-end
-
 /- # Locating a frozen collector by its short station name -/
 
 noncomputable section

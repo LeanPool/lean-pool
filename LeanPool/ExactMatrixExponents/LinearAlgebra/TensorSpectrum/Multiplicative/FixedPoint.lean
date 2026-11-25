@@ -13,7 +13,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Multipl
 /-!
 # A compact convex fixed-point theorem for normalized multiplication
 
-This proves the particular fixed-point theorem needed in Appendix A.2 directly.
 Finite geometric averages supply approximate eigenstates; compactness of the
 whole state set supplies an exact eigenstate. No general Schauder theorem or
 fixed-point premise is assumed.

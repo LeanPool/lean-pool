@@ -10,6 +10,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coeffic
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.ChargedSeparation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.DotsPower
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagTensorWords
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagFiberBounds
 
 /-!
 # The exact finite-word character inequality
@@ -35,14 +36,7 @@ theorem Character.shared_branch_le (f : Character)
     {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
     {s : ℕ} (A : Fin s → Tensor Coeff X Y Z) (i : Fin s) :
     f (ofTensor (A i)) ≤ f (ofTensor (Separation.shared A)) := by
-  have hr := CoefficientTensor.Restricts.pullback (Separation.shared A)
-    id (fun y => (i, y)) (fun z => (i, z))
-  have heq : Tensor.pullback id (fun y => (i, y)) (fun z => (i, z))
-      (Separation.shared A) = A i := by
-    funext x y z
-    simp [Tensor.pullback, Separation.shared, Tensor.sharedFirst]
-  rw [heq] at hr
-  exact f.monotone' (ofTensor_le hr)
+  exact TensorSpectrum.TensorClass.Character.shared_branch_le f A i
 
 theorem Character.one_le_of_tensor_ne_zero (f : Character)
     {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
@@ -66,32 +60,8 @@ theorem Character.tag_count_fiber (f : Character)
     ((TagWords.fiber c).card : ℝ) ^ f.pX *
         TagWords.countWeight (fun i => (f (ofTensor (A i)) : ℝ)) c ≤
       5 * (f (ofTensor (Separation.shared A)) : ℝ) ^ N := by
-  classical
-  let M := (TagWords.fiber c).card
-  let e : Fin M ≃ {w // w ∈ TagWords.fiber c} :=
-    (Fintype.equivFinOfCardEq (Fintype.card_coe (TagWords.fiber c))).symm
-  let B := fun i : Fin M => TagTensorWords.wordBranch A (e i).val
-  let C : ℝ≥0 := TagWords.countWeight (fun i => f (ofTensor (A i))) c
-  have hvalue : ∀ i, f (ofTensor (B i)) = C := by
-    intro i
-    exact TagTensorWords.map_wordBranch_of_mem_fiber f A (e i).property
-  have hsep := f.charged_separation_equal hc B C hvalue
-  have hselect := TagTensorWords.restricts_power_shared_fiber_enumeration A c e
-  have hmono : f (ofTensor (Separation.shared B)) ≤
-      (f (ofTensor (Separation.shared A))) ^ N := by
-    have h := f.monotone' (ofTensor_le hselect)
-    simpa only [Character.map_power_tensor] using h
-  have hfinite : C * f (dotX M) ≤
-      5 * (f (ofTensor (Separation.shared A))) ^ N :=
-    hsep.trans (mul_le_mul_of_nonneg_left hmono (by norm_num))
-  have hreal : (C : ℝ) * f.dotXValue M ≤
-      5 * (f (ofTensor (Separation.shared A)) : ℝ) ^ N := by
-    exact_mod_cast hfinite
-  rw [f.dotXValue_eq_rpow M (Nat.succ_le_iff.mpr hc)] at hreal
-  have hC : (C : ℝ) =
-      TagWords.countWeight (fun i => (f (ofTensor (A i)) : ℝ)) c := by
-    simp [C, TagWords.countWeight]
-  rw [hC, mul_comm] at hreal
-  exact hreal
+  apply TensorSpectrum.TensorClass.Character.tag_count_fiber f A c hc 5
+  intro M hM B C hvalue
+  exact f.charged_separation_equal hM B C hvalue
 
 end MatrixMultiplicationAllFields.MatrixExponent.Upper.TensorClass

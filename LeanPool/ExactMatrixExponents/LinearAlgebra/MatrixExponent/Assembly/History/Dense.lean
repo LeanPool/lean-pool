@@ -88,19 +88,6 @@ private theorem read_address (w : C.collapse.End → Bool) (z : C.Inside) (p : G
 variable (H : History F X) (v : V) (out : C.collapse.Port v ≃ X)
 
 open Classical in
-/-- A certificate checked pointwise on the atom and bit names. -/
-structure Presents where
-  /-- Reindexes the data using `H.A ≃ {t // C.owner t = v}`. -/
-  atom : H.A ≃ {t // C.owner t = v}
-  /-- The private coordinates at each index of type `H.E ≃ C.hidden v`. -/
-  hidden : H.E ≃ C.hidden v
-  /-- The `Presents` component of type `∀ i, G.Port (atom i).val → H.I i`. -/
-  arg : ∀ i, G.Port (atom i).val → H.I i
-  localValue : ∀ i w, H.value i w = Transcript.sample (G.table (atom i).val) (w ∘ arg i)
-  links : ∀ i j, address C (named G (atom i).val j) =
-    (H.read i (arg i j)).map (fun p => named C.collapse v (out.symm p)) (fun e => ⟨v, hidden e⟩)
-
-open Classical in
 /-- Indexes the bit by the coordinates of `C.collapse.End ⊕ (Σ u, C.hidden u)`. -/
 abbrev Bit := C.collapse.End ⊕ (Σ u, C.hidden u)
 
@@ -127,22 +114,6 @@ structure Traces where
   idle : ∀ t ∉ Set.range atom, ∀ w, factor C t.val w = 1
 
 variable {C H v out}
-
-open Classical in
-/-- Builds `Traces C H v out where atom` with the specified `atom`, `hidden`, `idle`, `entry`. -/
-def Presents.traces (p : Presents C H v out) : Traces C H v out where
-  atom := p.atom.toEmbedding
-  hidden := p.hidden
-  idle j hj := (hj (p.atom.surjective j)).elim
-  entry i w := by
-    rw [p.localValue, factor, ← sample]
-    apply congrArg
-    funext t
-    change w (embed C H v out p.hidden (H.read i (p.arg i t))) = _
-    unfold embed
-    rw [← p.links]
-    simp only [Function.comp_apply]
-    cases named G (p.atom i).val t <;> rfl
 
 open Classical in
 theorem Traces.correct (p : Traces C H v out) (x : X → Bool) :
@@ -180,11 +151,6 @@ theorem Traces.correct (p : Traces C H v out) (x : X → Bool) :
   · intro j _ hj
     exact p.idle j (by simpa only [Finset.mem_image, Finset.mem_univ, true_and, Set.mem_range]
       using hj) tape
-
-open Classical in
-theorem Presents.correct (p : Presents C H v out) (x : X → Bool) :
-    H.eval x = Transcript.sample (C.collapse.table v) (x ∘ out) :=
-  p.traces.correct x
 
 end History
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly

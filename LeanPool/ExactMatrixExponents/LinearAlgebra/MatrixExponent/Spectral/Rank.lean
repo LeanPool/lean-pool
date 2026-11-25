@@ -292,10 +292,11 @@ product with a padded tensor only the other tensor is contracted.
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S U : Type} [Field K] [Fintype S] [Fintype U] [Nonempty S]
+variable {K S U : Type} [Field K] [Fintype U] [Nonempty S]
 
-theorem close_add (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
-    (A + B).close v ≈ A.close (fun u x => v u (.inl x)) + B.close (fun u x => v u (.inr x)) := by
+theorem close_add_relabels (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
+    Relabels ((A + B).close v)
+      (A.close (fun u x => v u (.inl x)) + B.close (fun u x => v u (.inr x))) := by
   have hl (i : A.term) :
       (A + B).scalar v (.inl i) = A.scalar (fun u x => v u (.inl x)) i := by
     apply Finset.prod_congr rfl
@@ -310,16 +311,16 @@ theorem close_add (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
     change (∑ y : A.leg (.inr u) ⊕ B.leg (.inr u),
       v u y * Sum.elim (fun _ => 0) (B.factor i (.inr u)) y) = _
     simp [Fintype.sum_sum_type]
-  refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_
+  refine ⟨Equiv.refl _, fun _ => Equiv.refl _, ?_⟩
   rintro (i | i) s (x | x)
   · exact congrArg (fun a => A.factor i (.inl s) x * weight a s) (hl i)
   · exact zero_mul _
   · exact zero_mul _
   · exact congrArg (fun a => B.factor i (.inl s) x * weight a s) (hr i)
 
-theorem close_mul (A : Raw K S) (B : Raw K (S ⊕ U)) (v : (pad U A * B).Covectors) :
-    (pad U A * B).close v ≈ A * B.close (fun u x => v u ((), x)) := by
-  refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_
+theorem close_mul_relabels (A : Raw K S) (B : Raw K (S ⊕ U)) (v : (pad U A * B).Covectors) :
+    Relabels ((pad U A * B).close v) (A * B.close (fun u x => v u ((), x))) := by
+  refine ⟨Equiv.refl _, fun _ => Equiv.refl _, ?_⟩
   rintro ⟨i, j⟩ s ⟨x, y⟩
   have h : (pad U A * B).scalar v (i, j) = B.scalar (fun u z => v u ((), z)) j := by
     apply Finset.prod_congr rfl
@@ -330,6 +331,17 @@ theorem close_mul (A : Raw K S) (B : Raw K (S ⊕ U)) (v : (pad U A * B).Covecto
   change A.factor i s x * B.factor j (.inl s) y * weight ((pad U A * B).scalar v (i, j)) s = _
   rw [h, mul_assoc]
   rfl
+
+
+variable [Fintype S]
+
+theorem close_add (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
+    (A + B).close v ≈ A.close (fun u x => v u (.inl x)) + B.close (fun u x => v u (.inr x)) :=
+  relabel_of_relabels (close_add_relabels A B v)
+
+theorem close_mul (A : Raw K S) (B : Raw K (S ⊕ U)) (v : (pad U A * B).Covectors) :
+    (pad U A * B).close v ≈ A * B.close (fun u x => v u ((), x)) :=
+  relabel_of_relabels (close_mul_relabels A B v)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 end

@@ -11,9 +11,8 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Multipl
 /-!
 # Finite iteration through frozen affine slices
 
-This is the finite induction in Appendix A.2. Its explicit local fixed-point
-premise is the interface for the separately proved projective eigenstate theorem;
-it is not an axiom or a completed character-existence result.
+Finite induction keeps an invariant affine slice after each map. A fixed-point
+witness on each slice supplies a common fixed point for the finite family.
 -/
 
 @[expose] public section

@@ -95,6 +95,10 @@ theorem relabel (e : A.term ≃ B.term) (f : ∀ s, A.leg s ≃ B.leg s)
   simp only [Raw.coeff, h]
   exact e.sum_comp (fun i => ∏ s, B.factor i s (f s (x s)))
 
+theorem relabel_of_relabels (h : Raw.Relabels A B) : (equiv O).r A B := by
+  obtain ⟨terms, legs, factors⟩ := h
+  exact relabel terms legs factors
+
 theorem Restricts.mul (h : Restricts O A B) (g : Restricts O C D) :
     Restricts O (A * C) (B * D) := by
   obtain ⟨L, hl, hL⟩ := h

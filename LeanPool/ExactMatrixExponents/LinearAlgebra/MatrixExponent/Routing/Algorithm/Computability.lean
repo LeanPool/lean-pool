@@ -310,34 +310,6 @@ theorem minority (hh : h + 1 ≤ w) (δ : B h → Bool) :
 end MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm.RAM
 end
 
-section
-/- # Controller operations on tables of addresses -/
-
-namespace MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm
-
-open Coloring
-
-/-- The indexing data represented by `(B h → B h) → (B h → B h)`. -/
-abbrev Endo (h : ℕ) := (B h → B h) → (B h → B h)
-
-/-- The cost bounds are independent of the height and the fixed tables.
-The inverse need only be correct on permutations. -/
-structure Computability (P : ∀ h, Endo h → ℕ → Prop) : Prop where
-  ident : ∃ c, ∀ h, P h id c
-  const : ∃ c, ∀ h (x : B h → B h), P h (fun _ => x) c
-  comp : ∀ c d, ∃ a, ∀ h (f g : Endo h), P h f c → P h g d → P h (g ∘ f) a
-  point : ∀ c d, ∃ a, ∀ h (f g : Endo h), P h f c → P h g d →
-    P h (fun x => f x ∘ g x) a
-  mask : ∃ c, ∀ h (m : B h → Bool), P h (fun x i => if m i then x i else i) c
-  charts : ∃ c d, ∀ h, ∃ inv : Endo h, P h inv c ∧
-    (∀ g : Equiv.Perm (B h), inv g = ⇑g.symm) ∧ ∀ p : Coloring.Chart h,
-      P h (fun x => (p.run inv x).1) d ∧
-      P h (fun x => (p.run inv x).2.1) d ∧
-      P h (fun x => (p.run inv x).2.2) d
-
-end MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm
-end
-
 /-
 # Compiling local observations
 

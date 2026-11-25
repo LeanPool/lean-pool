@@ -224,7 +224,7 @@ private theorem near_rate_weights (a : ℕ → ℝ)
       rw [show N + k + 1 = (N + 1) + k by omega, pow_add]
       ring
 
-/-- The scalar approximate-eigenvector selection used in Appendix A.2.
+/-- Weights for approximate eigenvectors of normalized multiplication.
 The rate `r` is fixed before the error tolerance and required mass are chosen. -/
 theorem exists_approximate_weights (a : ℕ → ℝ) (M : ℝ)
     (ha : ∀ n, 1 ≤ a n) (hM : 1 ≤ M) (haM : ∀ n, a n ≤ M ^ n) :

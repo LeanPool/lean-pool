@@ -543,27 +543,6 @@ private theorem lift_names (ns : List ℕ) (u : List (V ⊕ ℕ))
     obtain ⟨l, hl⟩ := ih (fun k hk => h k (.tail _ hk))
     exact ⟨i::l, by simp [hi, hl]⟩
 
-open scoped Classical in
-/-- A common label menu, the exterior order, and the address convention
-for the original selectors. No chunk shape needs to be fixed yet. -/
-structure Book (s : Stage F r t T V E X) (Q : Source Y a b s)
-    (labels : Finset (Label F r t)) (dec : Finset (Order.Decoder ℕ)) (n : ℕ) where
-  /-- The left-side data carried by `Book`, with type `Order.Exterior Q.left`. -/
-  left : Order.Exterior Q.left
-  /-- The right-side data carried by `Book`, with type `Order.Exterior Q.right`. -/
-  right : Order.Exterior Q.right
-  /-- The `Book` component of type `V → X → ℕ`. -/
-  key : V → X → ℕ
-  /-- The `Book` component of type `Option T → X → List Bool × List Bool`. -/
-  ext : Option T → X → List Bool × List Bool
-  /-- The identification of the indices of type `∀ v, Y.state v ↪ ℕ`. -/
-  index : ∀ v, Y.state v ↪ ℕ
-  key_init : ∀ v x y z, key v (Q.init x y z) = index v (z v)
-  ext_init : ∀ i x y z, ext (item s.scene.cell i).label.name (Q.init x y z) =
-    ((left.ports i).map (bits a x), (right.ports i).map (bits b y))
-  decoder : ∀ v, Order.decode _ _ (Y.code v) (index v) ∈ dec
-  recorded : ∀ i, Tabulated key ext s.hidden (item s.scene.cell i) labels n
-
 variable [Fintype V] {s : Stage F (M * r) (M * t) T V E X} {Q : Source Y a b s}
   {labels : Finset (Label F (M * r) (M * t))} {dec : Finset (Order.Decoder ℕ)} {n N : ℕ}
 
@@ -598,21 +577,6 @@ theorem rules_of_describes (left : Order.Exterior Q.left) (right : Order.Exterio
         simp only [Function.comp_def, lookup_stack index (M * t) s.hidden key (Q.init x y)
           (fun j w => key_init j x y w)] }
   exact ⟨W, rfl, rfl, rfl, rfl, hk⟩
-
-open scoped Classical in
-theorem Book.rules (L : Book s Q labels dec n) (hN : ∀ j ∈ s.hidden, j ≤ N) :
-    ∃ W : Order.Rules (share s Q),
-      (∀ i, W.label i ∈ labels) ∧ (∀ i, (W.reads i).length ≤ n) ∧
-        ∀ j, W.signal j ∈ decoders (M * t) N dec := by
-  choose f hf u hn hd using L.recorded
-  obtain ⟨W, _, _, ht, hl, hr⟩ := rules_of_describes L.left L.right L.key L.ext L.index
-    L.key_init L.ext_init f u hd
-  refine ⟨W, hl.symm ▸ hf, fun i => ?_, ?_⟩
-  · have h := hn i
-    rwa [← hr i, List.length_map] at h
-  · intro j
-    rw [Order.Rules.signal, ht]
-    exact decode_symbol _ _ _ _ _ L.decoder hN j
 
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout.Key
 end

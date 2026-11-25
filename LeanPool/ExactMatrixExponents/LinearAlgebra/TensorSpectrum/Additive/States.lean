@@ -15,7 +15,7 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 
 /-!
-# The compact additive-state space in Appendix A.1
+# The compact space of additive detecting states
 
 This file proves the topological reduction to a finite inconsistent system. It
 does not assert that this system has a solution: ruling out a finite obstruction

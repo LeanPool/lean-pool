@@ -302,8 +302,6 @@ theorem single_mem (r : ℚ) (a : E) : HahnSeries.single r a ∈ seriesField E :
 /-- Computes the c by the application `HahnSeries.C.codRestrict (seriesField E) (single_mem 0)`. -/
 def C : E →+* K0 E := HahnSeries.C.codRestrict (seriesField E) (single_mem 0)
 
-instance : Algebra E (K0 E) := C.toAlgebra
-
 /-- Uses `⟨HahnSeries.single r 1, single_mem _ _⟩` as the representation. -/
 def t (r : ℚ) : K0 E := ⟨HahnSeries.single r 1, single_mem _ _⟩
 
