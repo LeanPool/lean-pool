@@ -1,0 +1,97 @@
+slug: pattern-poset-not-sperner
+title: Non-Sperner Intervals and Exact Deficiency Family in the Permutation Pattern Poset
+summary: >-
+  Refutes Question 9.5 of McNamara and Steingrímsson (J. Combin. Theory Ser. A 134, 2015, 1–35),
+  which asked whether every interval in the classical permutation pattern poset is Sperner, and
+  constructs an infinite family of principal downsets with unbounded exact additive Sperner
+  deficiency. Proves unconditionally in Lean 4 + Mathlib (standard axioms only, no native_decide):
+  (1) the explicit 19-element closed interval [213, 2574613] has rank sizes 1, 3, 7, 7, 1 (largest
+  rank size 7) and width 8 (via an explicit 8-element antichain and an explicit 8-chain cover), so
+  it is not Sperner; and (2) for every integer k ≥ 1, the two-leader permutation τ_k of length
+  6k + 4 has principal downset [∅, τ_k] with largest rank size 3k² + 8k + 5 and width
+  3k² + 9k + 5, via a complete classification of Downset (τ_k) and an explicit 3D box symmetric
+  chain decomposition, giving exact Sperner deficiency k. Exhaustive minimality among intervals
+  with top element of length ≤ 8 is left outside the formalization.
+branch: combinatorics
+entry_module: LeanPool.PatternPosetNotSperner
+authors:
+- Tyler B. Hughes
+source:
+  title: On the topology of the permutation pattern poset
+  authors:
+  - Peter R. W. McNamara
+  - Einar Steingrímsson
+  arxiv: '1305.5569'
+  doi: 10.1016/j.jcta.2015.01.008
+  url: https://mathdiscoveries.org/results/pattern-poset-not-sperner/
+  github_repo: mathdiscoveries/pattern-poset-not-sperner
+  commit: b19cebeafa288f2f6996b120918d3845da39996f
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- PatternPoset.mcnamara_steingrimsson_Q9_5_false
+- PatternPoset.not_sperner_interval7
+- PatternPoset.interval7_card
+- PatternPoset.interval7_largestRank
+- PatternPoset.interval7_width
+- PatternPoset.family_exact_deficiency
+- PatternPoset.family_not_sperner
+- PatternPoset.family_largestRank
+- PatternPoset.family_width
+main_results:
+- declaration: PatternPoset.mcnamara_steingrimsson_Q9_5_false
+  informal: >-
+    Refutes McNamara–Steingrímsson (2015) Question 9.5: there exist permutations σ ≤ τ in the
+    classical permutation pattern poset whose closed interval [σ, τ] is not Sperner.
+- declaration: PatternPoset.not_sperner_interval7
+  informal: >-
+    The explicit closed interval [213, 2574613] in the classical permutation pattern poset is not
+    Sperner (width 8 exceeds largest rank size 7).
+- declaration: PatternPoset.interval7_card
+  informal: >-
+    The closed interval [213, 2574613] has exact cardinality 19.
+- declaration: PatternPoset.interval7_rank_sizes
+  informal: >-
+    The closed interval [213, 2574613] has rank sizes 1, 3, 7, 7, 1 at lengths 3, 4, 5, 6, 7 and
+    0 at all other ranks.
+- declaration: PatternPoset.interval7_largestRank
+  informal: >-
+    The largest rank size of [213, 2574613] is 7.
+- declaration: PatternPoset.interval7_width
+  informal: >-
+    The width of [213, 2574613] is 8, established by an explicit 8-element antichain and a
+    matching 8-chain cover.
+- declaration: PatternPoset.family_exact_deficiency
+  informal: >-
+    For every k ≥ 1, the principal downset [∅, τ_k] of the length-(6k + 4) two-leader permutation
+    τ_k satisfies width (Downset (τ_k)) = largestRank (Downset (τ_k)) + k.
+- declaration: PatternPoset.family_not_sperner
+  informal: >-
+    For every k ≥ 1, the principal downset [∅, τ_k] is not Sperner.
+- declaration: PatternPoset.family_largestRank
+  informal: >-
+    For every k ≥ 1, the largest rank size of Downset (τ_k) is 3k² + 8k + 5, attained at rank
+    3k + 3.
+- declaration: PatternPoset.family_width
+  informal: >-
+    For every k ≥ 1, the width of Downset (τ_k) is 3k² + 9k + 5, established by an explicit
+    antichain and a matching chain cover combining a 3D box symmetric chain decomposition with
+    4k + 3 valley-free chains.
+- declaration: PatternPoset.downset_tau_classify
+  informal: >-
+    Classifies every pattern π ≤ τ_k into two-leader valley patterns P(x, y, z), one-leader
+    valley-free patterns Q(p, q), and strictly decreasing patterns D(l).
+- declaration: PatternPoset.boxSlice_card
+  informal: >-
+    For the 3D integer box [0, 2k + 1] × [0, 2k + 1] × [0, 2k] and 0 ≤ t ≤ k, the slice of
+    triples with coordinate sum 3k + 1 + t has cardinality 3k² + 5k + 2 − t².
+tags:
+- combinatorics
+- permutation-patterns
+- posets
+- sperner-property
+- symmetric-chain-decomposition
+msc:
+- 05A05
+- 06A07
