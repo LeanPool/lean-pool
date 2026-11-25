@@ -1,0 +1,69 @@
+slug: dynamic-mcs
+title: Dynamic maximum cardinality search
+summary: >-
+  Formalizes stability of maximum-cardinality search orderings under one-sided
+  edge updates. For the canonical least-index tie break, it verifies exactly
+  where a single edge update can invalidate an old choice and proves that
+  a Boolean-adjacency probe-and-repair implementation gives the same ordering
+  as greedy recomputation. Instrumented implementations count legality tests
+  and greedy selections in a unit-cost model.
+branch: graph algorithms and combinatorics
+entry_module: LeanPool.DynamicMcs
+authors:
+- Md Thoriqul Islam Thonmay
+- Gregory Morse
+source:
+  title: How rigid is maximum cardinality search? Stability and locality of MCS orderings under edge updates, verified in Lean
+  arxiv: '2611.18369'
+  url: https://github.com/thonmay/mcs-lean/tree/0d0ddffbcef5817c50a073a350428edd2da5bfb5
+  github_repo: thonmay/mcs-lean
+  commit: 0d0ddffbcef5817c50a073a350428edd2da5bfb5
+  announcement_url: https://github.com/thonmay/mcs-lean/releases/tag/mcs-arxiv-v9
+  announcement_date: '2026-10-19'
+license: Apache-2.0
+status: verified
+provenance: mix
+provenance_evidence: >-
+  The authors assembled and checked the development interactively with AI
+  assistance and report writing the transport and bridge lemmas by hand.
+main_declarations:
+- DynamicMcs.Proofs.common_order_extends_prefix
+- DynamicMcs.Proofs.insert_break_iff_old
+- DynamicMcs.Proofs.exec_insert_update_eq_mcsOrder
+- DynamicMcs.Proofs.exec_delete_update_eq_mcsOrder
+- DynamicMcs.Proofs.exec_insert_cost_le
+- DynamicMcs.Proofs.exec_delete_cost_of_no_break
+main_results:
+- declaration: DynamicMcs.Proofs.common_order_extends_prefix
+  informal: >-
+    If the unchosen neighbor counts stay unchanged or increase by one along
+    each proper common prefix, every common prefix extends to a common ordering.
+- declaration: DynamicMcs.Proofs.insert_break_iff_old
+  informal: >-
+    At a position strictly between the inserted edge's endpoints, the old
+    choice is invalid exactly when the later endpoint previously tied it on the
+    neighbor count, or trailed by one and has the smaller index.
+- declaration: DynamicMcs.Proofs.exec_insert_update_eq_mcsOrder
+  informal: >-
+    On symmetric loop-free adjacency matrices related by a single insertion,
+    updating the old canonical ordering by the executable probe and repair
+    agrees with greedy recomputation.
+- declaration: DynamicMcs.Proofs.exec_delete_update_eq_mcsOrder
+  informal: >-
+    The analogous executable deletion update also agrees with greedy
+    recomputation on the updated adjacency matrix.
+- declaration: DynamicMcs.Proofs.exec_insert_cost_le
+  informal: >-
+    When the old ordering lists as many entries as the adjacency matrix has
+    rows, the total operation count for insertion is at most the row count.
+- declaration: DynamicMcs.Proofs.exec_delete_cost_of_no_break
+  informal: >-
+    When the deletion probe returns no break, the instrumented update takes
+    one counted operation.
+tags:
+- graph-algorithms
+- maximum-cardinality-search
+- dynamic-algorithms
+msc:
+- 05C85
+- 68W40
