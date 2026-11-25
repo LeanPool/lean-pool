@@ -24,6 +24,7 @@ import LeanPool.GraphMinor.Thomas.Separator
 import LeanPool.GraphMinor.Menger.Basic
 
 import LeanPool.GraphMinor.GM12.Section710
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Graph Minors XIV, Section 9 (Part 2): Rigid Zones (9.3) and Battlefields (9.5)
@@ -53,11 +54,6 @@ universe u w
 variable {S : Type w} [TopologicalSpace S]
 
 /-! ## 1. Enlarging a Disc Past a Disconnected Region -/
-
-private theorem ends_mem_of_isLineWithEnds {L : Set S} {a b : S} (h : IsLineWithEnds L a b) :
-    a ∈ L ∧ b ∈ L := by
-  obtain ⟨f, hf0, hf1⟩ := h
-  exact ⟨hf0 ▸ (f 0).2, hf1 ▸ (f 1).2⟩
 
 private theorem exists_edge_of_mem_walk_support {P : Drawing S} {a b : S}
     (W : GraphWalk P.toGraph a b) (hpos : 0 < W.length) {v : S} (hv : v ∈ W.support) :
@@ -317,7 +313,7 @@ theorem enlarge_disc_past_disconnected_region [T2Space S] [ConnectedSpace S]
     ext x
     exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
       fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
-  obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+  obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hv₁_cl_r : v₁ ∈ closure r :=
     closure_mono hF₂_r (IsLineWithEnds.subset_closure_sdiff_pair hF₂_line hv₁F₂)
   have hv₁_int : v₁ ∈ interior Δ_out :=
@@ -349,16 +345,16 @@ theorem enlarge_disc_past_disconnected_region [T2Space S] [ConnectedSpace S]
       by_contra hx12
       exact region_subset hr (hF₂_r ⟨hxF, hx12⟩) (hP₁H.U_subset hxP)
     · rintro x (rfl | rfl)
-      · exact ⟨hv₁F₂, (ends_mem_of_isLineWithEnds hL₁).1⟩
-      · exact ⟨hv₂F₂, (ends_mem_of_isLineWithEnds hL₁).2⟩
+      · exact ⟨hv₁F₂, (IsLineWithEnds.ends_mem hL₁).1⟩
+      · exact ⟨hv₂F₂, (IsLineWithEnds.ends_mem hL₁).2⟩
   have hI_2F : P₂.U ∩ F₂ = {v₁, v₂} := by
     apply subset_antisymm
     · rintro x ⟨hxP, hxF⟩
       by_contra hx12
       exact region_subset hr (hF₂_r ⟨hxF, hx12⟩) (hP₂H.U_subset hxP)
     · rintro x (rfl | rfl)
-      · exact ⟨(ends_mem_of_isLineWithEnds hL₂).1, hv₁F₂⟩
-      · exact ⟨(ends_mem_of_isLineWithEnds hL₂).2, hv₂F₂⟩
+      · exact ⟨(IsLineWithEnds.ends_mem hL₂).1, hv₁F₂⟩
+      · exact ⟨(IsLineWithEnds.ends_mem hL₂).2, hv₂F₂⟩
   have hO_c₂ : IsOArc (F₂ ∪ P₂.U) :=
     isOArc_union hF₂_line hL₂ (by rw [Set.inter_comm, hI_2F])
   have hO_c₁ : IsOArc (F₂ ∪ P₁.U) :=

@@ -425,6 +425,12 @@ theorem sup_E {Γ Γ₁ Γ₂ : Drawing S} (h₁ : Γ₁.IsSubdrawing Γ) (h₂ 
   rw [sup, Γ.span_E]
   exact inter_eq_left.mpr (union_subset h₁.2 h₂.2)
 
+/-- The union of subdrawings has the union of their point sets. -/
+theorem sup_U {Γ Γ₁ Γ₂ : Drawing S} (h₁ : Γ₁.IsSubdrawing Γ) (h₂ : Γ₂.IsSubdrawing Γ) :
+    (Γ.sup Γ₁ Γ₂).U = Γ₁.U ∪ Γ₂.U := by
+  rw [Drawing.U_eq, Drawing.sup_V h₁ h₂, Drawing.sup_E h₁ h₂, Γ₁.U_eq, Γ₂.U_eq,
+    biUnion_union, union_union_union_comm]
+
 theorem le_sup_left {Γ Γ₁ Γ₂ : Drawing S} (h₁ : Γ₁.IsSubdrawing Γ) (h₂ : Γ₂.IsSubdrawing Γ) :
     Γ₁.IsSubdrawing (Γ.sup Γ₁ Γ₂) :=
   ⟨by rw [sup_V h₁ h₂]; exact subset_union_left, by rw [sup_E h₁ h₂]; exact subset_union_left⟩

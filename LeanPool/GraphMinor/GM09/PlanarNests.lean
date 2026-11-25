@@ -115,9 +115,8 @@ theorem Drawing.inf_comm {H A B : Drawing S} (hA : A.IsSubdrawing H) (hB : B.IsS
   · rw [Drawing.inf_E hA, Drawing.inf_E hB, inter_comm]
 
 theorem Drawing.sup_U {H A B : Drawing S} (hA : A.IsSubdrawing H) (hB : B.IsSubdrawing H) :
-    (H.sup A B).U = A.U ∪ B.U := by
-  rw [Drawing.U_eq, H.sup_V hA hB, H.sup_E hA hB, A.U_eq, B.U_eq, biUnion_union,
-    union_union_union_comm]
+    (H.sup A B).U = A.U ∪ B.U :=
+  Surface.Drawing.sup_U hA hB
 
 /-- A subdrawing `D` is a path if `D.IsPathBetween u v` for some `u, v`. -/
 def IsDrawingPath (D : Drawing S) : Prop :=

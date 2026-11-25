@@ -247,11 +247,15 @@ theorem exists_level_off {Y : Type*} [TopologicalSpace Y] {b : Y × 𝕀 → S}
       · exact fun ⟨p, _, he⟩ => hr ⟨p, he⟩
       · exact hε q hq
 
+@[expose] public section
+
 /-- Condition (iii) of (5.3), with the length of a curve read as the number of vertices on its
 image. -/
-@[expose] def CurvesNull (Γ : Drawing S) (P₂ : Set S) (θ : ℕ) : Prop :=
+def CurvesNull (Γ : Drawing S) (P₂ : Set S) (θ : ℕ) : Prop :=
   ∀ c : C(Circle, S), (∀ x, c x ∈ P₂) → Γ.IsNormal (range c) → (range c ∩ Γ.V).ncard < θ →
     ClosedCurveIsNullHomotopicIn P₂ c
+
+end
 
 variable {φ : C(Circle, S)} {J : Finset (Set Circle)} {a b' : Set Circle → 𝕀 → Circle}
   {R : Set Circle → Set S} {Δ₁ : Set Circle → Set T} {Δg : Set Circle → Set S}

@@ -273,8 +273,12 @@ structure IsSplit (H : Drawing S) (β : Set S × Bool → I → S) (τ : Set S �
   apart : ∀ f ∈ H.E, Disjoint (β (f, false) '' Ioc 0 (τ (f, false))) (β (f, true) '' Ioc 0 (τ
     (f, true)))
 
+@[expose] public section
+
 /-- The halves of the edges of `H`. -/
-@[expose] def halves (H : Drawing S) : Set (Set S × Bool) := {q | q.1 ∈ H.E}
+def halves (H : Drawing S) : Set (Set S × Bool) := {q | q.1 ∈ H.E}
+
+end
 
 theorem halves_finite (H : Drawing S) : (halves H).Finite := by
   have : halves H = H.E ×ˢ univ := by
@@ -564,8 +568,12 @@ theorem IsSplit.exists_simple_walk (h : IsSplit H β τ) {x y : S} (hx : x ∈ h
 
 /-- Three inner points of the unit interval. -/
 @[expose] noncomputable def quarter₁ : I := ⟨1 / 4, by norm_num, by norm_num⟩
+@[expose] public section
+
 /-- See `quarter₁`. -/
-@[expose] noncomputable def quarter₂ : I := ⟨1 / 2, by norm_num, by norm_num⟩
+noncomputable def quarter₂ : I := ⟨1 / 2, by norm_num, by norm_num⟩
+
+end
 /-- See `quarter₁`. -/
 @[expose] noncomputable def quarter₃ : I := ⟨3 / 4, by norm_num, by norm_num⟩
 

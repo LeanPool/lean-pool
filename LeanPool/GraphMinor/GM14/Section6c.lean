@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM14.Section6b
 import LeanPool.GraphMinor.GM14.Section7a
 import LeanPool.GraphMinor.Surface.DiscGrow
 import LeanPool.GraphMinor.Surface.DiscUnion
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Graph Minors XIV, Section 6 (Part 3): Rigidity after Clearing a Zone (`(6.3)`)
@@ -78,18 +79,6 @@ theorem IsLineWithEnds.nonempty_sdiff_pair {L : Set S} {a b : S}
     exact absurd (congrArg Subtype.val this) (by norm_num [mid])
   · have : mid = 1 := f.injective (Subtype.ext (h2.trans hf1.symm))
     exact absurd (congrArg Subtype.val this) (by norm_num [mid])
-
-/-- Endpoints of a line belong to the line. -/
-private theorem ends_mem_of_isLineWithEnds {L : Set S} {a b : S}
-    (hL : IsLineWithEnds L a b) : a ∈ L ∧ b ∈ L := by
-  obtain ⟨f, ha, hb⟩ := hL
-  exact ⟨ha ▸ (f 0).2, hb ▸ (f 1).2⟩
-
-/-- Point set of the union of two subdrawings. -/
-private theorem sup_U [T2Space S] {H G₁ G₂ : Drawing S} (h₁ : G₁.IsSubdrawing H)
-    (h₂ : G₂.IsSubdrawing H) : (H.sup G₁ G₂).U = G₁.U ∪ G₂.U := by
-  rw [Drawing.U_eq, Drawing.sup_V h₁ h₂, Drawing.sup_E h₁ h₂, G₁.U_eq, G₂.U_eq,
-    biUnion_union, union_union_union_comm]
 
 /-- An `O`-arc `F` that meets both `Λ` and `Σ \ closure Λ` meets `subBd Λ` in at least two points.
 -/
@@ -271,7 +260,7 @@ private theorem split_oArc_across_openDisc [T2Space S] (hS : IsClosedSurface S)
     exact disjoint_left.mp hF₂_dis hp₂ (subset_closure (hrΛ ▸ hp₂_r))
   obtain ⟨hr_H, hdis_rΛ⟩ := hR'_other r hr_R' hr_ne_Λ
   have hr_sub : r ⊆ univ \ Λ := fun x hxr => ⟨mem_univ x, disjoint_left.mp hdis_rΛ hxr⟩
-  obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+  obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hv₁_cl_r : v₁ ∈ closure r :=
     closure_mono hF₂_r (IsLineWithEnds.subset_closure_sdiff_pair hF₂_line hv₁F₂)
   have hv₂_cl_r : v₂ ∈ closure r :=
@@ -363,9 +352,9 @@ theorem isRigid_clearedSubdrawing_of_arc_subset [T2Space S] [ConnectedSpace S]
       let L : Set S := P.U
       obtain ⟨f_L, hfL0, hfL1⟩ := isLine_of_isPathBetween hP hv12
       have hL_line : IsLineWithEnds L v₁ v₂ := ⟨f_L, hfL0, hfL1⟩
-      obtain ⟨hv₁L, hv₂L⟩ := ends_mem_of_isLineWithEnds hL_line
-      obtain ⟨hv₁F₁, hv₂F₁⟩ := ends_mem_of_isLineWithEnds hF₁_line
-      obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+      obtain ⟨hv₁L, hv₂L⟩ := IsLineWithEnds.ends_mem hL_line
+      obtain ⟨hv₁F₁, hv₂F₁⟩ := IsLineWithEnds.ends_mem hF₁_line
+      obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
       have hL_CU : L ⊆ C.U := hPs.U_subset
       have hL_cl : L ⊆ closure Λ := hL_CU.trans hCU_cl
       have hF₁L_inter : F₁ ∩ L ⊆ {v₁, v₂} := by
@@ -484,14 +473,14 @@ theorem theorem_6_3_proof [T2Space S] [ConnectedSpace S] (hS : IsClosedSurface S
       exact ⟨hxr, hbd ▸ hx_bd⟩
     · exact inter_subset_inter_right (closure r) hCU_cl
   have hK_pre : IsPreconnected (closure r ∩ C.U) := hK_eq ▸ hconn r hr_H hdis_rΛ
-  obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+  obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hv₁_cl_r : v₁ ∈ closure r :=
     closure_mono hF₂_r (IsLineWithEnds.subset_closure_sdiff_pair hF₂_line hv₁F₂)
   have hv₂_cl_r : v₂ ∈ closure r :=
     closure_mono hF₂_r (IsLineWithEnds.subset_closure_sdiff_pair hF₂_line hv₂F₂)
   have hU_union12 : P₁.U ∪ P₂.U = C.U := by
     rw [← hsup12]
-    exact (sup_U hP₁s hP₂s).symm
+    exact (Drawing.sup_U hP₁s hP₂s).symm
   rcases path_subset_of_isPreconnected_inter_circuit hP₁ hP₂ hP₁s hP₂s hv12
     hV_inter12 hE_disj12 hU_union12 hK_pre inter_subset_right
     ⟨hv₁_cl_r, C.V_subset_U hv₁C⟩ ⟨hv₂_cl_r, C.V_subset_U hv₂C⟩ with hsub1 | hsub2

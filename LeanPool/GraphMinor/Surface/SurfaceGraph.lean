@@ -41,6 +41,11 @@ theorem IsLineWithEnds.right_mem {L : Set X} {u v : X} (h : IsLineWithEnds L u v
   obtain ⟨f, -, h1⟩ := h
   exact h1 ▸ (f 1).2
 
+/-- Both endpoints of a line belong to the line. -/
+theorem IsLineWithEnds.ends_mem {L : Set X} {u v : X} (h : IsLineWithEnds L u v) :
+    u ∈ L ∧ v ∈ L :=
+  ⟨h.left_mem, h.right_mem⟩
+
 theorem IsLineWithEnds.isCompact {L : Set X} {u v : X} (h : IsLineWithEnds L u v) : IsCompact L
   := by
   obtain ⟨f, -, -⟩ := h

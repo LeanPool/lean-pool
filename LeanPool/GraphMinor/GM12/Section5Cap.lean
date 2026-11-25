@@ -35,8 +35,12 @@ universe u
 variable {S T : Type u} [TopologicalSpace S] [T2Space S] [TopologicalSpace T] [T2Space T]
   {n : ℕ} {C : Fin n → Set S} {P₁ P₂ : Set S} {ι : P₁ → T} {D : Fin n → Set T}
 
+@[expose] public section
+
 /-- The part of `X ⊆ Σ` in `Σ₁`, moved to `Σ̂₁`. -/
-@[expose] def capUp (ι : P₁ → T) (X : Set S) : Set T := ι '' ((↑) ⁻¹' X)
+def capUp (ι : P₁ → T) (X : Set S) : Set T := ι '' ((↑) ⁻¹' X)
+
+end
 
 /-- The part of `Y ⊆ Σ̂₁` in `Σ₁`, moved back to `Σ`. -/
 @[expose] def capDown (ι : P₁ → T) (Y : Set T) : Set S := (↑) '' (ι ⁻¹' Y)

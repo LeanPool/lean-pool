@@ -510,6 +510,8 @@ private theorem shrunk_cell_cases {S : Type} [TopologicalSpace S]
   · exact Or.inl ⟨hd, fun hEq => shrunk_cell_not_mem_old hsh (hEq ▸ hd)⟩
   · exact Or.inr rfl
 
+@[expose] public section
+
 /-- Given a portrayal $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ of $G$, an internal cell
 $c_0 \in C(\Gamma)$, a node $n \in \tilde{c}_0$ such that
 $n \in \operatorname{dom}(\gamma) \implies \gamma(n) \notin V(\alpha(c_0))$, and a painting
@@ -518,7 +520,6 @@ $\pi' = (\Sigma, \Gamma', \alpha', \beta, \gamma)$ obtained from $\pi$ by shrink
 where $\alpha'(c') = \alpha(c_0)$ for $c' = \Delta \setminus (\tilde{c}_0 \setminus \{n\})$ and
 $\alpha'(c) = \alpha(c)$ for $c \in C(\Gamma) \setminus \{c_0\}$.
 Graph Minors XVII, Section 5 (page 171). -/
-@[expose]
 noncomputable def Portrayal.shrinkCell {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G) (Γ' : Painting π.S) (c₀ : Set π.S) (n : π.S) (Δ : Set π.S)
     (hsh : π.Γ.IsShrunkenFrom Γ' c₀ n Δ)
@@ -644,6 +645,8 @@ noncomputable def Portrayal.shrinkCell {α : Type u} {β : Type v} {G : Hypergra
   p7 := by
     rw [hsh.2.2.2.2.2.2.2.1]
     exact π.p7
+
+end
 
 /-- Shrinking an internal cell preserves $\mathcal{T}$-centrality.
 Graph Minors XVII, (5.2) (page 171). -/
@@ -824,6 +827,8 @@ theorem Portrayal.borderSet_eq_empty_of_warpAt_eq_zero
     exact hvn.elim
   · exact ⟨n, ⟨hn_tilde, hn_γ⟩, rfl⟩
 
+@[expose] public section
+
 /-- Topological surface-capping statement for (5.1) (page 171): given a painting $\Gamma$ in a
 connected compact surface $\Sigma$ and a cuff $\Theta \in \text{cuffs}(\Sigma)$, pasting a closed
 disc onto $\Theta$ yields a connected compact surface $\Sigma'$, a closed embedding
@@ -833,7 +838,7 @@ in $\Sigma'$ such that $\Sigma'$ is simpler than $\Sigma$, $\operatorname{bd}(\S
 \iota '' (\operatorname{bd}(\Sigma) \setminus \Theta)$, $\text{cuffs}(\Sigma') =
 \{\iota '' \Theta' \mid \Theta' \in \text{cuffs}(\Sigma) \setminus \{\Theta\}\}$, and the cells of
 $\Gamma'$ are $\{\iota '' c \mid c \in C(\Gamma)\}$. -/
-@[expose] def PasteCuffPaintingStatement : Prop :=
+def PasteCuffPaintingStatement : Prop :=
   ∀ (S : Type) [TopologicalSpace S] [CompactSpace S] [T2Space S] [ConnectedSpace S],
     IsSurface S → ∀ (Γ : Painting S) (Θ : Set S), Θ ∈ cuffs S →
     ∃ (S' : Type) (_ : TopologicalSpace S') (_ : CompactSpace S') (_ : T2Space S')
@@ -850,6 +855,8 @@ $\Gamma'$ are $\{\iota '' c \mid c \in C(\Gamma)\}$. -/
           ∀ n₃ ∈ Γ.N ∩ Θ', ∀ n₄ ∈ Γ.N ∩ Θ',
           GM19.InOrderOn (ι '' Θ') (ι n₁) (ι n₂) (ι n₃) (ι n₄) →
           GM19.InOrderOn Θ' n₁ n₂ n₃ n₄)
+
+end
 
 /-- Corollary of (5.1) (page 171): "From (5.1), every 0-redundant $\mathscr{T}$-central portrayal
 has warp $\ge 1$." -/
@@ -2179,6 +2186,8 @@ theorem Portrayal.exists_simpler_of_isCutSidePainting
       (fun _ => rfl) hβ'_eq hβ'_empty hγ'_eq rfl
   exact ⟨π', hπ'_central, Or.inl ⟨hsimpS', warp_le_of_cellWarp_le π π' hcellWarp_le⟩⟩
 
+@[expose] public section
+
 /-- Pure surface-and-painting topological cutting statement for (5.3) (page 172):
 given a connected compact surface $\Sigma$, a painting $\Gamma$ in $\Sigma$, and a $\Gamma$-normal
 $I$-arc $F \subseteq \Sigma$ with ends $n_1, n_2$ such that $F \cap \operatorname{bd}(\Sigma) =
@@ -2192,7 +2201,7 @@ $I_{\text{absorb}}$ is the set of cells in a closed disc $\Delta \subseteq \Sigm
 $F \subseteq \operatorname{bd}(\Delta) \subseteq F \cup \operatorname{bd}(\Sigma)$, or the surface
 $\Sigma'$ of side $I_{\text{keep}}$ is simpler than $\Sigma$, has at least one cuff, and carries a
 cut-side painting for $I_{\text{keep}}$. -/
-@[expose] def CutNormalIArcPaintingStatement : Prop :=
+def CutNormalIArcPaintingStatement : Prop :=
   ∀ (S : Type) [TopologicalSpace S] [CompactSpace S] [T2Space S] [ConnectedSpace S],
     IsSurface S → ∀ (Γ : Painting S) (F : Set S) (n₁ n₂ : S),
     Γ.IsNormal F → IsLineWithEnds F n₁ n₂ → F ∩ bd S = {n₁, n₂} →
@@ -2217,6 +2226,10 @@ cut-side painting for $I_{\text{keep}}$. -/
           IsSurface S' ∧ IsSimplerThan S' S ∧ (cuffs S').Nonempty ∧
           IsCutSidePainting S Γ F I₁ S' ι Γ')))
 
+end
+
+@[expose] public section
+
 /-- Pure surface-and-painting topological cutting statement for (5.4) (page 173):
 given a connected compact surface $\Sigma$, a painting $\Gamma$ in $\Sigma$, and a $\Gamma$-normal
 $O$-arc $F \subseteq \Sigma$ such that $\tilde{c} \cap F = \emptyset$ for every internal cell
@@ -2231,7 +2244,7 @@ nonempty, either $I_{\text{absorb}}$ is the set of cells in a closed disc $\Delt
 with $\operatorname{bd}(\Delta) = F$, or the capped surface $\hat{\Sigma}'$ of side
 $I_{\text{keep}}$
 is simpler than $\Sigma$ and carries a cut-side painting for $I_{\text{keep}}$. -/
-@[expose] def CutNormalOArcPaintingStatement : Prop :=
+def CutNormalOArcPaintingStatement : Prop :=
   ∀ (S : Type) [TopologicalSpace S] [CompactSpace S] [T2Space S] [ConnectedSpace S],
     IsSurface S → ∀ (Γ : Painting S) (F : Set S),
     Γ.IsNormal F → IsOArc F →
@@ -2256,6 +2269,8 @@ is simpler than $\Sigma$ and carries a cut-side painting for $I_{\text{keep}}$. 
             (_ : ConnectedSpace S') (ι : S → S') (Γ' : Painting S'),
           IsSurface S' ∧ IsSimplerThan S' S ∧
           IsCutSidePainting S Γ ∅ I₁ S' ι Γ')))
+
+end
 
 end GraphMinor.GM17
 

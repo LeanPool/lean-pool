@@ -154,6 +154,12 @@ structure IsTwoArcs {X : Type*} [TopologicalSpace X] (a b : 𝕀 → X) : Prop w
   one : b 1 = a 1
   meet : ∀ s t, a s = b t → (s = 0 ∧ t = 0) ∨ (s = 1 ∧ t = 1)
 
+/-- Swapping the two arcs preserves their common endpoints and their intersection property. -/
+theorem IsTwoArcs.symm {X : Type*} [TopologicalSpace X] {u v : 𝕀 → X}
+    (h : IsTwoArcs u v) : IsTwoArcs v u :=
+  ⟨h.arc_right, h.arc_left, h.zero.symm, h.one.symm, fun s t hst =>
+    (h.meet t s hst.symm).imp (fun ⟨h1, h2⟩ => ⟨h2, h1⟩) (fun ⟨h1, h2⟩ => ⟨h2, h1⟩)⟩
+
 /-- The two arcs of the circle between `u` and the point at angle `θ` from `u`. -/
 theorem circle_two_arcs' (u : Circle) {θ : ℝ} (hθ : θ ∈ Ioo 0 (2 * Real.pi)) :
     ∃ a b : 𝕀 → Circle, IsTwoArcs a b ∧ (∀ r : 𝕀, a r = u * Circle.exp (r.1 * θ)) ∧

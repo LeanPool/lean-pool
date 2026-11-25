@@ -44,6 +44,8 @@ namespace IsCuttingFragment
 /-- The part of `Σ` that the interior of the fragment covers. -/
 def R (ψ : S₁ → S) : Set S := ψ '' (bd S₁)ᶜ
 
+section Fragment
+
 variable {A : Set S} (h : IsCuttingFragment S K S₁ ψ)
 include h
 
@@ -270,6 +272,8 @@ theorem image_tilde_preimage (hA : A ⊆ R ψ) : ψ '' tilde (ψ ⁻¹' A) = til
     rw [← h.image_closure_preimage hA] at hy
     obtain ⟨x, hx, rfl⟩ := hy
     exact ⟨x, ⟨hx, hyn⟩, rfl⟩
+
+end Fragment
 
 end IsCuttingFragment
 

@@ -1590,21 +1590,13 @@ private theorem merged_border_cell_graphs_are_small
     · rw [hcellG'_other c ⟨hc, by rintro (h | h) <;> [exact hc_c₀ h; exact hc_c₁ h]⟩]
       exact htrue.1 c hc
 
-private theorem cellWarp_le_of_two_ends
+private theorem cellWarp_le_of_small_borderPlus
     {α β : Type*} {G : Hypergraph α β} (π : Portrayal G) {c : Set π.S}
     {n₁ n₂ : π.S} (htc : tilde c = {n₁, n₂}) {p : ℕ}
     (hbs₁ : (π.borderSet n₁).ncard ≤ p) (hbs₂ : (π.borderSet n₂).ncard ≤ p)
-    (hbp₁ : (π.borderPlus n₁).ncard ≤ p) : π.cellWarp c ≤ p := by
-  refine csInf_le (OrderBot.bddBelow _) ?_
-  intro u₁ hu₁ u₂ hu₂ hne
-  rw [htc] at hu₁ hu₂
-  rcases hu₁ with h1 | h1 <;> rcases hu₂ with h2 | h2
-  · exact (hne (h1.trans h2.symm)).elim
-  · subst u₁ u₂
-    exact ⟨hbs₁, hbs₂, fun h _ ↦ (Nat.not_succ_le_self _ (h ▸ hbp₁)).elim⟩
-  · subst u₁ u₂
-    exact ⟨hbs₂, hbs₁, fun _ h ↦ (Nat.not_succ_le_self _ (h ▸ hbp₁)).elim⟩
-  · exact (hne (h1.trans h2.symm)).elim
+    (hbp₁ : (π.borderPlus n₁).ncard ≤ p) : π.cellWarp c ≤ p :=
+  π.cellWarp_le_of_two_ends htc hbs₁ hbs₂
+    (fun h _ => (Nat.not_succ_le_self _ (h ▸ hbp₁)).elim)
 
 private theorem cellWarp_le_warpAt_of_two_changed_cells
     {α β : Type*} {G : Hypergraph α β} (π : Portrayal G) {Θ c₀ c₁ : Set π.S}
@@ -1842,11 +1834,11 @@ theorem claim_9_6
   have hbp'₁_le : (bp' n₁).ncard ≤ π.warpAt Θ := by
     rw [hbp'_n₁]; exact hinter_le_q
   have hcw'_c₀ : π'.cellWarp c₀ ≤ π.warpAt Θ := by
-    exact cellWarp_le_of_two_ends π' htc₀ hbs'₁_le
+    exact cellWarp_le_of_small_borderPlus π' htc₀ hbs'₁_le
       (show (bs' n₂).ncard ≤ π.warpAt Θ by rwa [hbs'_other n₂ hne.symm])
       hbp'₁_le
   have hcw'_c₁ : π'.cellWarp c₁ ≤ π.warpAt Θ := by
-    exact cellWarp_le_of_two_ends π' htc₁ hbs'₁_le
+    exact cellWarp_le_of_small_borderPlus π' htc₁ hbs'₁_le
       (show (bs' n₃).ncard ≤ π.warpAt Θ by rwa [hbs'_other n₃ hne₁₃.symm])
       hbp'₁_le
   have hcw'_other : ∀ d ∈ π.Γ.C \ {c₀, c₁}, (d ∩ bd π.S).Nonempty →

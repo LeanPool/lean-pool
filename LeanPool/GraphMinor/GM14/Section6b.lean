@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.Section6a
 import LeanPool.GraphMinor.GM11.ThreeCircuits
 import LeanPool.GraphMinor.Surface.PushOff
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Graph Minors XIV, Section 6 (Part 2): Clearing an Open Disc in a Rigid Drawing ((6.3))
@@ -39,16 +40,10 @@ variable {S : Type u} [TopologicalSpace S]
 
 local notation "𝕀" => unitInterval
 
-/-- Symmetry of `IsTwoArcs`. -/
-private theorem isTwoArcs_symm {X : Type u} [TopologicalSpace X] {u v : 𝕀 → X}
-    (h : IsTwoArcs u v) : IsTwoArcs v u :=
-  ⟨h.arc_right, h.arc_left, h.zero.symm, h.one.symm, fun s t hst =>
-    (h.meet t s hst.symm).imp (fun ⟨h1, h2⟩ => ⟨h2, h1⟩) (fun ⟨h1, h2⟩ => ⟨h2, h1⟩)⟩
-
 /-- Given a closed disc `D` in a closed surface `S`, a line `L ⊆ subBd D` with ends `a, b`, and a
 closed set `Y ⊆ S` with `Y ∩ D ⊆ subBd D`, `a ∈ Y`, `b ∈ Y`, and `Y ∩ L ⊆ {a, b}`, there is a
 homeomorphism `h : S ≃ₜ S` fixing `Y` pointwise such that `h '' L ∩ D ⊆ {a, b}`. -/
-private theorem push_arc (hS : IsClosedSurface S) {D L Y : Set S} {a b : S}
+private theorem push_arc_of_fixed_boundary (hS : IsClosedSurface S) {D L Y : Set S} {a b : S}
     (hD : IsClosedDisc D) (hL : IsLineWithEnds L a b) (hLD : L ⊆ subBd D)
     (hY : IsClosed Y) (hYD : Y ∩ D ⊆ subBd D) (haY : a ∈ Y) (hbY : b ∈ Y) (hYL : Y ∩ L ⊆ {a, b}) :
     ∃ h : S ≃ₜ S, (∀ y ∈ Y, h y = y) ∧ h '' L ∩ D ⊆ {a, b} := by
@@ -60,7 +55,7 @@ private theorem push_arc (hS : IsClosedSurface S) {D L Y : Set S} {a b : S}
   have hLD' : L ⊆ discBd D := hbd_eq ▸ hLD
   obtain ⟨u, v, huv, hr, h0, h1, hun⟩ := exists_arcs_of_line hD.isOArc_discBd hL hLD'
   subst h0 h1 hr
-  have hvu : IsTwoArcs v u := isTwoArcs_symm huv
+  have hvu : IsTwoArcs v u := huv.symm
   have hun' : range v ∪ range u = discBd D := by rw [Set.union_comm, hun]
   have hv0 : v 0 ∈ Y := huv.zero ▸ haY
   have hv1 : v 1 ∈ Y := huv.one ▸ hbY
@@ -754,18 +749,6 @@ private theorem isClosed_of_isLineWithEnds [T2Space S] {L : Set S} {a b : S}
   rw [h]
   exact (isCompact_range (continuous_subtype_val.comp f.continuous)).isClosed
 
-/-- Endpoints of a line belong to the line. -/
-private theorem ends_mem_of_isLineWithEnds {L : Set S} {a b : S}
-    (hL : IsLineWithEnds L a b) : a ∈ L ∧ b ∈ L := by
-  obtain ⟨f, ha, hb⟩ := hL
-  exact ⟨ha ▸ (f 0).2, hb ▸ (f 1).2⟩
-
-/-- Point set of the union of two subdrawings. -/
-private theorem sup_U [T2Space S] {H G₁ G₂ : Drawing S} (h₁ : G₁.IsSubdrawing H)
-    (h₂ : G₂.IsSubdrawing H) : (H.sup G₁ G₂).U = G₁.U ∪ G₂.U := by
-  rw [Drawing.U_eq, Drawing.sup_V h₁ h₂, Drawing.sup_E h₁ h₂, G₁.U_eq, G₂.U_eq,
-    biUnion_union, union_union_union_comm]
-
 private theorem push_path_into_adjacent_region [T2Space S] [ConnectedSpace S]
   (hS : IsClosedSurface S)
     {H' C P P' : Drawing S} {Λ r F₂ : Set S} {v₁ v₂ : S}
@@ -788,7 +771,7 @@ private theorem push_path_into_adjacent_region [T2Space S] [ConnectedSpace S]
   intro L Z_edges K_reg Y
   have : CompactSpace S := hS.1
   have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+  obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hL_bd : L ⊆ subBd (closure Λ) := hsubBd_cl.symm ▸ hPs.U_subset
   obtain ⟨hdisL, hclL⟩ := isOpen_disjoint_subBd_and_closure_eq hΛ_open.1
   have hr_ne_Λ : r ≠ Λ := by
@@ -874,7 +857,7 @@ private theorem push_path_into_adjacent_region [T2Space S] [ConnectedSpace S]
     rintro x ⟨hxY, hx_cl⟩
     rw [hsubBd_cl, ← hbd]
     exact (hclL ▸ hx_cl).resolve_left (disjoint_left.mp hY_dis_Λ hxY)
-  obtain ⟨h, hhY, hhL⟩ := push_arc hS hΛ_cl hL_line hL_bd hY_cl hYD hv₁Y hv₂Y hYL
+  obtain ⟨h, hhY, hhL⟩ := push_arc_of_fixed_boundary hS hΛ_cl hL_line hL_bd hY_cl hYD hv₁Y hv₂Y hYL
   have h_compl_r : univ \ (Y ∪ closure Λ) ⊆ r := by
     rintro y ⟨_, hy_not⟩
     have hyY : y ∉ Y := fun h => hy_not (Or.inl h)
@@ -939,7 +922,7 @@ private theorem frontier_of_pushed_cycle [T2Space S] {H' C P P' : Drawing S}
     · have he_not_P : e ∉ P.E := disjoint_right.mp hE_disj heP'
       exact Or.inl (Or.inl (Or.inr (mem_iUnion₂.mpr ⟨e, ⟨hC_sub'.2 (hP's.2 heP'), he_not_P⟩, hxe⟩)))
   have hCU_union : C.U = L ∪ P'.U := by
-    rw [← hsup, sup_U hPs hP's]
+    rw [← hsup, Drawing.sup_U hPs hP's]
   let D_pushed : Set S := h '' (closure Λ)
   have hfr_D_pushed : frontier D_pushed = h '' L ∪ P'.U := by
     rw [← h.image_frontier, ← subBd_eq_frontier, hsubBd_cl, hCU_union, image_union]
@@ -970,8 +953,8 @@ theorem exists_pushed_disc_of_arc [T2Space S] [ConnectedSpace S] (hS : IsClosedS
   let L : Set S := P.U
   obtain ⟨f_L, hfL0, hfL1⟩ := isLine_of_isPathBetween hP hv12
   have hL_line : IsLineWithEnds L v₁ v₂ := ⟨f_L, hfL0, hfL1⟩
-  obtain ⟨hv₁L, hv₂L⟩ := ends_mem_of_isLineWithEnds hL_line
-  obtain ⟨hv₁F₂, hv₂F₂⟩ := ends_mem_of_isLineWithEnds hF₂_line
+  obtain ⟨hv₁L, hv₂L⟩ := IsLineWithEnds.ends_mem hL_line
+  obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hO_bd : IsOArc (subBd Λ) := hbd ▸ isOArc_of_isCircuit hC
   have hsubBd_cl : subBd (closure Λ) = C.U :=
     (subBd_closure_eq_subBd_of_isOpenDisc hS hΛ_open hO_bd hΛ_cl).trans hbd

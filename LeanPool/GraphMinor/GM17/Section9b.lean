@@ -33,12 +33,16 @@ universe u v
 
 local notation "𝕀" => unitInterval
 
+@[expose] public section
+
 /-- There are `q` mutually vertex-disjoint paths in `H.skeleton` from `X` to `Y` avoiding `W`. -/
-@[expose] def HasDisjointPathsAvoiding {α : Type u} {β : Type v} (H : Hypergraph α β)
+def HasDisjointPathsAvoiding {α : Type u} {β : Type v} (H : Hypergraph α β)
     (X Y W : Set α) (q : ℕ) : Prop :=
   ∃ L : Fin q → PathFromTo H.skeleton X Y,
     (Pairwise fun i j ↦ Disjoint {z | z ∈ (L i).walk.support} {z | z ∈ (L j).walk.support}) ∧
     ∀ i, Disjoint {z | z ∈ (L i).walk.support} W
+
+end
 
 theorem hasDisjointPathsAvoiding_iff_forall_isSeparation
     {α : Type u} {β : Type v} (H : Hypergraph α β) {X Y W : Set α}
@@ -355,9 +359,11 @@ theorem inOrderOn_of_mem_closure_border_cell_mid {S : Type} [TopologicalSpace S]
   rcases hcl with ⟨tu, ⟨htu1, htu2⟩, rfl⟩
   exact ⟨f, t₁, tu, t₃, t₄, htu1, htu2, ht34, ht41, rfl, rfl, rfl, rfl⟩
 
+@[expose] public section
+
 open Classical in
 /-- A painting obtained by moving a border node along its cuff and replacing two incident cells. -/
-@[expose] def IsIndentedBorderPainting {S : Type} [TopologicalSpace S]
+def IsIndentedBorderPainting {S : Type} [TopologicalSpace S]
     (Γ : Painting S) (Θ c₀ : Set S) (n₁ n₂ n_star : S) (R : Set (Set S)) (Γ' : Painting S) : Prop :=
   ∃ (n_star' : S) (c₁ c₂ : Set S) (cellMap : Set S → Set S),
     n_star' ∈ c₀ ∩ Θ ∧
@@ -371,8 +377,12 @@ open Classical in
     (∀ d ∈ Γ'.C \ {c₁, c₂},
       tilde d = (fun x => if x = n_star then n_star' else x) '' tilde (cellMap d))
 
+end
+
+@[expose] public section
+
 /-- The border-indentation statement of Graph Minors XVII, (9.6). -/
-@[expose] def IndentedBorderPaintingStatement : Prop :=
+def IndentedBorderPaintingStatement : Prop :=
   ∀ (S : Type) [TopologicalSpace S] [ConnectedSpace S], IsSurface S →
     ∀ (Γ : Painting S),
       6 ≤ Γ.N.ncard →
@@ -392,6 +402,8 @@ open Classical in
         (∀ c₃ ∈ Γ.C, ¬ (c₃ ∩ bd S).Nonempty → ∀ n₃ ∈ Γ.N \ bd S,
           tilde c₃ = {n₁, n₂, n₃} →
           ∃ Γ' : Painting S, IsIndentedBorderPainting Γ Θ c₀ n₁ n₂ n₃ {c₀, c₃} Γ')
+
+end
 
 theorem border_cell_vertex_mem_borderPlus_of_mem_other
     {α : Type u} {β : Type v} {G : Hypergraph α β} (π : Portrayal G)
@@ -1183,7 +1195,8 @@ private noncomputable abbrev indented_cuff_portrayal
       exact hp7_aux m₁ m₂ m₃ m₄ hm₁ hm₂ hm₃ hm₄ h12 h23 h34 h41 hord
         (Or.inr (Or.inr ⟨hm₁_s, hm₂_s, hm₃_s, hm₄_s⟩)) hw₁ hw₃ }
 
-private theorem cellWarp_le_of_two_ends {α β : Type*} {G : Hypergraph α β}
+/-- A bound on both borders and the required linkage bound the warp of a two-ended cell. -/
+theorem Portrayal.cellWarp_le_of_two_ends {α β : Type*} {G : Hypergraph α β}
     (π : Portrayal G) {c : Set π.S} {n m : π.S} {p : ℕ} (ht : tilde c = {n, m})
     (hn : (π.borderSet n).ncard ≤ p) (hm : (π.borderSet m).ncard ≤ p)
     (hlink : (π.borderPlus n).ncard = p + 1 → (π.borderPlus m).ncard = p + 1 →
@@ -1502,7 +1515,7 @@ theorem not_indentedPortrayal
     have hn' : n ≠ n_star' := fun h => hn_star'_not_N (h ▸ hnN)
     change borderS' n = _; simp [borderS', hn']
   have hcw_c₁ : π'.cellWarp c₁ ≤ π.warpAt Θ := by
-    apply cellWarp_le_of_two_ends π' htc₁
+    apply Portrayal.cellWarp_le_of_two_ends π' htc₁
     · rw [hbs'_other n₁ hn₁_Θ.1]
       exact hbs₁_le
     · rw [hbs'_star']
@@ -1513,7 +1526,7 @@ theorem not_indentedPortrayal
         show π'.nodeVertex n_star' = π.nodeVertex n_star from hnodeV'_star']
       exact hlp₁
   have hcw_c₂ : π'.cellWarp c₂ ≤ π.warpAt Θ := by
-    apply cellWarp_le_of_two_ends π' htc₂
+    apply Portrayal.cellWarp_le_of_two_ends π' htc₂
     · rw [hbs'_other n₂ hn₂_Θ.1]
       exact hbs₂_le
     · rw [hbs'_star']
@@ -1591,8 +1604,10 @@ theorem not_indentedPortrayal
       omega
   exact htrue.2.2 π' hπ'_central hπ'_truer hπ'_res
 
+@[expose] public section
+
 /-- The subhypergraph on the given vertices with no edges. -/
-@[expose] def edgelessSubhypergraph {α : Type u} {β : Type v} (G : Hypergraph α β) (S : Set α)
+def edgelessSubhypergraph {α : Type u} {β : Type v} (G : Hypergraph α β) (S : Set α)
     (hS : S ⊆ G.vertexSet) : Hypergraph α β where
   vertexSet := S
   edgeSet := ∅
@@ -1602,12 +1617,16 @@ theorem not_indentedPortrayal
   vertexSet_finite := G.vertexSet_finite.subset hS
   edgeSet_finite := Set.finite_empty
 
+end
+
 theorem edgelessSubhypergraph_le {α : Type u} {β : Type v} (G : Hypergraph α β) (S : Set α)
     (hS : S ⊆ G.vertexSet) : edgelessSubhypergraph G S hS ≤ G :=
   ⟨hS, empty_subset _, fun _ he => he.elim⟩
 
+@[expose] public section
+
 /-- Adjoin an isolated vertex to a subhypergraph. -/
-@[expose] def addVertexSubhypergraph {α : Type u} {β : Type v} (A : Hypergraph α β) (x : α) :
+def addVertexSubhypergraph {α : Type u} {β : Type v} (A : Hypergraph α β) (x : α) :
     Hypergraph α β where
   vertexSet := A.vertexSet ∪ {x}
   edgeSet := A.edgeSet
@@ -1616,6 +1635,8 @@ theorem edgelessSubhypergraph_le {α : Type u} {β : Type v} (G : Hypergraph α 
   edge_mem_of_inc _ _ h := A.edge_mem_of_inc h
   vertexSet_finite := A.vertexSet_finite.union (Set.finite_singleton x)
   edgeSet_finite := A.edgeSet_finite
+
+end
 
 theorem addVertexSubhypergraph_le {α : Type u} {β : Type v} {G A : Hypergraph α β} {x : α}
     (hA : A ≤ G) (hx : x ∈ G.vertexSet) : addVertexSubhypergraph A x ≤ G :=

@@ -174,7 +174,7 @@ theorem exists_minimal_admissible [T2Space X] {γ : 𝕀 → X} (hγ : Continuou
 /-- A monotone continuous surjection of `[0, 1]` that is strictly increasing on a given dense-in-
 itself order `Z`, and that closes every interval free of `Z`. This is where Cantor's isomorphism
 theorem enters. -/
-private theorem exists_collapse (Z : Set 𝕀) (hne : Z.Nonempty)
+private theorem exists_monotone_interval_collapse (Z : Set 𝕀) (hne : Z.Nonempty)
     (hdense : ∀ y ∈ Z, ∀ y' ∈ Z, y < y' → ∃ z ∈ Z, y < z ∧ z < y')
     (hmax : ∀ y ∈ Z, ∃ z ∈ Z, y < z) (hmin : ∀ y ∈ Z, ∃ z ∈ Z, z < y) :
     ∃ c : 𝕀 → 𝕀, Monotone c ∧ Continuous c ∧ Dense (c '' Z) ∧ c 0 = 0 ∧ c 1 = 1 ∧
@@ -531,7 +531,7 @@ theorem exists_arc_of_path [T2Space X] {γ : 𝕀 → X} (hγ : Continuous γ) (
   have hdist : ∀ y ∈ coreSet T γ, ∀ y' ∈ coreSet T γ, y < y' → γ y ≠ γ y' := by
     intro y hy y' hy' hyy heq
     exact hy'.2.1 ⟨y, hy.1, hyy, Ioo_inter_eq_empty hT hy.1 hy'.1 hyy heq⟩
-  obtain ⟨c, hcm, hcc, hcd, hc0, hc1, hcs, hcgap⟩ := exists_collapse (coreSet T γ)
+  obtain ⟨c, hcm, hcc, hcd, hc0, hc1, hcs, hcgap⟩ := exists_monotone_interval_collapse (coreSet T γ)
     (by
       obtain ⟨z, hz, -⟩ := hcore h0T h1T h01lt h01
       exact ⟨z, hz⟩)

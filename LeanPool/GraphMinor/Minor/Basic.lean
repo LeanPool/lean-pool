@@ -273,9 +273,11 @@ public lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H G ηv ηe)
       by_contra hzw
       exact (h.vertex_disjoint z hz.vertex_mem w hw hzw).notMem_of_mem_left ha_z hy_w
 
+@[expose] public section
+
 /-- The isomorphism from a minor model to the contraction of its realizing subgraph. Its vertex
 and edge equivalences act by the model's maps. -/
-@[expose] public noncomputable def modelContractionIso (h : IsMinorModel H G ηv ηe) :
+noncomputable def modelContractionIso (h : IsMinorModel H G ηv ηe) :
     Iso H (contract (modelSubgraph h) (modelContractEdges h)) :=
   { vertexEquiv :=
       (Equiv.Set.imageOfInjOn ηv V(H) (modelVertexMap_injOn h)).trans
@@ -285,6 +287,8 @@ and edge equivalences act by the model's maps. -/
         (Equiv.subtypeEquivRight fun _ ↦ by rw [edgeSet_contract_modelSubgraph])
     isLink_iff := fun ⟨e, he⟩ ⟨u, hu⟩ ⟨w, hw⟩ ↦
       contract_modelSubgraph_isLink_iff h he hu hw }
+
+end
 
 /-- Realise a minor model by contraction, retaining both of its maps. -/
 public theorem exists_contraction_realizing_model
@@ -697,8 +701,10 @@ def Iso.refl (G : Graph α β) : Iso G G where
   edgeEquiv := Equiv.refl _
   isLink_iff _ _ _ := Iff.rfl
 
+@[expose] public section
+
 /-- The inverse of a graph isomorphism. -/
-@[expose] def Iso.symm {H : Graph α' β'} {G : Graph α β} (φ : Iso H G) : Iso G H where
+def Iso.symm {H : Graph α' β'} {G : Graph α β} (φ : Iso H G) : Iso G H where
   vertexEquiv := φ.vertexEquiv.symm
   edgeEquiv := φ.edgeEquiv.symm
   isLink_iff e x y := by
@@ -706,12 +712,18 @@ def Iso.refl (G : Graph α β) : Iso G G where
     simp only [Equiv.apply_symm_apply] at h
     exact h.symm
 
+end
+
+@[expose] public section
+
 /-- The composition of two graph isomorphisms. -/
-@[expose] def Iso.trans {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
+def Iso.trans {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
     (φ : Iso H K) (ψ : Iso K G) : Iso H G where
   vertexEquiv := φ.vertexEquiv.trans ψ.vertexEquiv
   edgeEquiv := φ.edgeEquiv.trans ψ.edgeEquiv
   isLink_iff e x y := (φ.isLink_iff e x y).trans (ψ.isLink_iff _ _ _)
+
+end
 
 /-- Every graph is isomorphic to a minor of itself (Graph Minors IV, Section 1, page 228). -/
 theorem IsIsoMinor.refl (G : Graph α β) : IsIsoMinor G G := by

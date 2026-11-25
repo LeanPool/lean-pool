@@ -38,11 +38,6 @@ variable {S : Type u} [TopologicalSpace S]
 
 local notation "𝕀" => unitInterval
 
-/-- Symmetry of `IsTwoArcs`. -/
-private theorem isTwoArcs_symm {u v : 𝕀 → S} (h : IsTwoArcs u v) : IsTwoArcs v u :=
-  ⟨h.arc_right, h.arc_left, h.zero.symm, h.one.symm, fun s t hst =>
-    (h.meet t s hst.symm).imp (fun ⟨h1, h2⟩ => ⟨h2, h1⟩) (fun ⟨h1, h2⟩ => ⟨h2, h1⟩)⟩
-
 /-- Given a closed disc `D` in a closed surface `S`, a line `L ⊆ subBd D` with ends `a, b`, and a
 closed set `Y ⊆ S` with `a ∈ Y`, `b ∈ Y`, and `Y ∩ L ⊆ {a, b}`, there is a homeomorphism `h : S ≃ₜ
 S`
@@ -60,7 +55,7 @@ private theorem push_arc (hS : IsClosedSurface S) {D L Y : Set S} {a b : S}
     rwa [← IsClosedDisc.subBd_eq_discBd hS hD]
   obtain ⟨u, v, huv, hr, h0, h1, hun⟩ := exists_arcs_of_line hD.isOArc_discBd hL hLD'
   subst h0 h1 hr
-  have hvu : IsTwoArcs v u := isTwoArcs_symm huv
+  have hvu : IsTwoArcs v u := huv.symm
   have hun' : range v ∪ range u = discBd D := by rw [Set.union_comm, hun]
   obtain ⟨E, c, c', hE, q1, q2, q3, q4, q5, q6, q7, q8, cl, ch⟩ :=
     exists_chart_two_arcs hman hD (fun x _ => hint x) hvu hun'
