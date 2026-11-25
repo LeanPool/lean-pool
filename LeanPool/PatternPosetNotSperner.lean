@@ -14,7 +14,7 @@ public import LeanPool.PatternPosetNotSperner.Family
 /-!
 # Non-Sperner Intervals and Exact Deficiency Family in the Permutation Pattern Poset
 
-Source: arxiv:1305.5569, doi:10.1016/j.jcta.2015.01.008, url:https://mathdiscoveries.org/results/pattern-poset-not-sperner/
+Source: arxiv:1305.5569, doi:10.1016/j.jcta.2015.02.009, url:https://mathdiscoveries.org/results/pattern-poset-not-sperner/
 Authors: Tyler B. Hughes
 Status: verified
 Main declarations: `PatternPoset.mcnamara_steingrimsson_Q9_5_false`,

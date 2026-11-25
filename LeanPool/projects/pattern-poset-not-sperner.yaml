@@ -22,7 +22,7 @@ source:
   - Peter R. W. McNamara
   - Einar Steingrímsson
   arxiv: '1305.5569'
-  doi: 10.1016/j.jcta.2015.01.008
+  doi: 10.1016/j.jcta.2015.02.009
   url: https://mathdiscoveries.org/results/pattern-poset-not-sperner/
   github_repo: mathdiscoveries/pattern-poset-not-sperner
   commit: b19cebeafa288f2f6996b120918d3845da39996f

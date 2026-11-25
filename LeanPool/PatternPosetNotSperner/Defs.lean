@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Tyler B. Hughes
 -/
 
+-- Modified for Lean Pool: Lean 4.36 module and import port with style and linter fixes.
+
 module
 
 public import Mathlib.Data.Finset.Card
