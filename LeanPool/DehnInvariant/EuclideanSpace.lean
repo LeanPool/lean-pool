@@ -8,7 +8,7 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.EdgeData
+public import LeanPool.DehnInvariant.Dissection
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Tactic.FinCases
@@ -16,10 +16,7 @@ public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Ring
 
 /-!
-Lean study 2 of the shape-language canon (DICTO, 19 Nov 2026), part G: the bridge stated in
-coordinate
-3-space ℝ³, and two concrete solids (a regular tetrahedron and the cubes) as convex polytopes.
-No `sorry`.
+Coordinate calculations in Euclidean three-space.
 -/
 
 @[expose] public section
@@ -56,39 +53,17 @@ lemma bounded_of_coords {S : Set R3} (C : ℝ) (h : ∀ x ∈ S, ∀ i, |x i| �
   have := h1 0; have := h1 1; have := h1 2
   linarith
 
-/-- Outward face normals of the regular tetrahedron with corners (−1,−1,−1), (1,1,−1), (1,−1,1),
-(−1,1,1). -/
-def tetN : Fin 4 → R3 := ![!₂[1, 1, 1], !₂[-1, -1, 1], !₂[-1, 1, -1], !₂[1, -1, -1]]
+/-- Squared length in coordinates. -/
+lemma norm3_sq (p q r : ℝ) : ‖(!₂[p, q, r] : R3)‖ ^ 2 = p ^ 2 + q ^ 2 + r ^ 2 := by
+  rw [← real_inner_self_eq_norm_sq, inner3]
+  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
+  ring
 
-/-- The regular tetrahedron with corners (−1,−1,−1), (1,1,−1), (1,−1,1), (−1,1,1) (edge 2√2). -/
-noncomputable def tetraSet : Set R3 := sol tetN (fun _ => 1)
-
-/-- Outward face normals of a cube: ± the three coordinate directions. -/
-noncomputable def cubeN : Fin 3 × Bool → R3 :=
-  fun p => if p.2 then EuclideanSpace.single p.1 1 else -EuclideanSpace.single p.1 1
-
-/-- The cube `[-s, s]³` (edge 2s). -/
-noncomputable def cubeSet (s : ℝ) : Set R3 := sol cubeN (fun _ => s)
-
-theorem isPoly_tetra : IsPoly tetraSet := by
-  refine ⟨bounded_of_coords 1 (fun x hx i => ?_), Fin 4, inferInstance, tetN, _, rfl⟩
-  have h0 : ⟪(!₂[1, 1, 1] : R3), x⟫ ≤ 1 := hx 0
-  have h1 : ⟪(!₂[-1, -1, 1] : R3), x⟫ ≤ 1 := hx 1
-  have h2 : ⟪(!₂[-1, 1, -1] : R3), x⟫ ≤ 1 := hx 2
-  have h3 : ⟪(!₂[1, -1, -1] : R3), x⟫ ≤ 1 := hx 3
-  rw [inner3] at h0 h1 h2 h3
-  have key : |x 0| ≤ 1 ∧ |x 1| ≤ 1 ∧ |x 2| ≤ 1 := by
-    refine ⟨abs_le.2 ⟨?_, ?_⟩, abs_le.2 ⟨?_, ?_⟩, abs_le.2 ⟨?_, ?_⟩⟩ <;> linarith
-  fin_cases i
-  exacts [key.1, key.2.1, key.2.2]
-
-theorem isPoly_cube (s : ℝ) : IsPoly (cubeSet s) := by
-  refine ⟨bounded_of_coords s (fun x hx i => ?_), Fin 3 × Bool, inferInstance, cubeN, _, rfl⟩
-  have h1 : ⟪(EuclideanSpace.single i (1 : ℝ) : R3), x⟫ ≤ s := hx (i, true)
-  have h2 : ⟪(-EuclideanSpace.single i (1 : ℝ) : R3), x⟫ ≤ s := hx (i, false)
-  rw [inner_neg_left] at h2
-  rw [EuclideanSpace.inner_single_left] at h1 h2
-  simp only [map_one, one_mul] at h1 h2
-  exact abs_le.2 ⟨by linarith, by linarith⟩
+/-- Distance in coordinates. -/
+lemma dist3 (x y : R3) {d : ℝ} (hd : 0 ≤ d)
+    (h : (x 0 - y 0) ^ 2 + (x 1 - y 1) ^ 2 + (x 2 - y 2) ^ 2 = d ^ 2) : dist x y = d := by
+  rw [EuclideanSpace.dist_eq, Fin.sum_univ_three]
+  simp only [Real.dist_eq, sq_abs]
+  rw [h, Real.sqrt_sq hd]
 
 end DehnCanon.Library

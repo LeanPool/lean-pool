@@ -194,16 +194,4 @@ theorem eq_convexHull (h : IsTetraData n p b w) : sol n b = convexHull ℝ (Set.
 
 end IsTetraData
 
-lemma openSegment_eq_diff {x y : E} (hxy : x ≠ y) :
-    openSegment ℝ x y = segment ℝ x y \ {x, y} := by
-  ext z; constructor
-  · intro hz
-    refine ⟨openSegment_subset_segment ℝ x y hz, ?_⟩
-    rintro (rfl | rfl)
-    · exact hxy (left_mem_openSegment_iff.1 hz)
-    · exact hxy (right_mem_openSegment_iff.1 hz)
-  · rintro ⟨hz, hne⟩
-    exact mem_openSegment_of_ne_left_right (fun h => hne (Or.inl h.symm))
-      (fun h => hne (Or.inr h.symm)) hz
-
 end DehnCanon.Library

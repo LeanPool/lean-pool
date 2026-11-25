@@ -8,6 +8,8 @@ Authors: DICTO
 
 module
 
+public import LeanPool.DehnInvariant.EuclideanSpace
+public import LeanPool.DehnInvariant.RationalAngles
 public import LeanPool.DehnInvariant.Simplex
 public import LeanPool.DehnInvariant.Volume
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
@@ -358,13 +360,13 @@ lemma volume_hilCornerF : volume hilCornerF = ENNReal.ofReal (1 / 6) := by
     rw [vol_l1_le zero_le_one]; norm_num
   have h3 : volume S3 = ENNReal.ofReal (1 / 6) := by
     rw [hS0] at e1
-    have v1 := ennreal_half (by norm_num) (show 2 * volume S1 = ENNReal.ofReal (2 * (2 / 3)) by
+    have v1 := ennreal_half (show 2 * volume S1 = ENNReal.ofReal (2 * (2 / 3)) by
       rw [e1]; norm_num)
     rw [v1] at e2
-    have v2 := ennreal_half (by norm_num) (show 2 * volume S2 = ENNReal.ofReal (2 * (1 / 3)) by
+    have v2 := ennreal_half (show 2 * volume S2 = ENNReal.ofReal (2 * (1 / 3)) by
       rw [e2]; norm_num)
     rw [v2] at e3
-    exact ennreal_half (by norm_num) (show 2 * volume S3 = ENNReal.ofReal (2 * (1 / 6)) by
+    exact ennreal_half (show 2 * volume S3 = ENNReal.ofReal (2 * (1 / 6)) by
       rw [e3]; norm_num)
   rw [← h3]
   symm

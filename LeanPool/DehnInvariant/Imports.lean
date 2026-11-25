@@ -8,6 +8,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.DehnInvariant
 public import LeanPool.DehnInvariant.AngleSum
+public import LeanPool.DehnInvariant.ConeAngles
 public import LeanPool.DehnInvariant.CubeAndTetrahedron
 public import LeanPool.DehnInvariant.Dissection
 public import LeanPool.DehnInvariant.EdgeData
@@ -20,6 +21,7 @@ public import LeanPool.DehnInvariant.PlaneCut
 public import LeanPool.DehnInvariant.Polytope
 public import LeanPool.DehnInvariant.PolytopeConversion
 public import LeanPool.DehnInvariant.RationalAngles
+public import LeanPool.DehnInvariant.RhombicDodecahedron
 public import LeanPool.DehnInvariant.SectorArea
 public import LeanPool.DehnInvariant.Similarity
 public import LeanPool.DehnInvariant.Simplex

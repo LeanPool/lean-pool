@@ -8,45 +8,22 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.RationalAngles
+public import LeanPool.DehnInvariant.ConeAngles
+public import LeanPool.DehnInvariant.EdgeData
+public import LeanPool.DehnInvariant.TetrahedronData
 public import Mathlib.Algebra.Module.StablyFree.Basic
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.RingTheory.Flat.TorsionFree
 public import Mathlib.RingTheory.SimpleRing.Principal
-public import Mathlib.Tactic.Linarith
-public import Mathlib.Tactic.LinearCombination
-public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Push
-public import Mathlib.Tactic.Ring
 
 /-!
-Lean study 4 of the shape-language canon (DICTO, 19 Nov 2026), part M: the Dehn invariant of a
-tetrahedron
-given by its four corners and four face normals, and a test for "not zero".
+# The Dehn invariant of a tetrahedron
 
-`IsTetraData n p b w`: `p k` are the corners, `n m` the outward normal of the face opposite the
-corner `m`,
-`⟪n m, x⟫ ≤ b m` the half-space of that face, and `w m (b m - ⟪n m, x⟫)` the barycentric coordinates
-(1 at the corner `m`, 0 at the three others; they sum to 1 and rebuild `x`). These are finitely many
-identities, checked by arithmetic for a concrete solid.
-
-* `IsTetraData.eq_convexHull`: the solid `sol n b` is the convex hull of the four corners.
-* `IsTetraData.openSegment_iff`: the points where exactly the two faces other than `k`, `l` are
-  tight are the
-  points of the open segment between the corners `k` and `l` (as in study 3 for the regular
-  tetrahedron).
-* `IsTetraData.dehnSet_eq`: `dehnSet (sol n b)` = Σ over the six edges of (distance of the two
-  corners) ⊗
-  (angle class of the two faces through the edge).
-* `tmul_add_tmul_ne_zero`: `L₁ ⊗ θ₁ + L₂ ⊗ θ₂ ≠ 0` when `L₁` is not a rational multiple of `L₂`
-  and `θ₁` is not
-  a rational multiple of π.
-
-Credits: Mathlib `MeasureTheory.hausdorffMeasure_segment`, `Convex.sum_mem`, `convexHull_min`,
-`Submodule.exists_dual_map_eq_bot_of_notMem`, `Module.forall_dual_apply_eq_zero_iff`; study 2's
-`dehnSet_eq_dehn_edgeList`; study 3's `pair_of_finrank_one` and the finite facts about four corners.
-No `sorry`.
+The barycentric coordinates in `IsTetraData` identify the points where exactly two constraints
+are active as the open segment between the two opposite corners. The Dehn invariant sums
+the lengths of these six segments tensored with the angle classes of their cones.
 -/
 
 @[expose] public section
@@ -84,16 +61,19 @@ variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 
 variable [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E]
 
-omit [FiniteDimensional ℝ E] in
-/-- The length of an open segment is the distance of its ends. -/
-lemma hausdorff_openSegment {x y : E} (hxy : x ≠ y) :
-    (μH[1] (openSegment ℝ x y)).toReal = dist x y := by
-  have hnull : μH[1] ({x, y} : Set E) = 0 := by
-    have := nullSingletonClass_hausdorff E (d := 1) one_pos
-    rw [Set.insert_eq]
-    exact measure_union_null (measure_singleton x) (measure_singleton y)
-  rw [openSegment_eq_diff hxy, measure_sdiff_null hnull, hausdorffMeasure_segment, edist_dist,
-    ENNReal.toReal_ofReal dist_nonneg]
+lemma fin4_pair_compl : ∀ i j : Fin 4, i ≠ j →
+    ∃ k l, k < l ∧ ∀ m, (m = i ∨ m = j) ↔ (m ≠ k ∧ m ≠ l) := by decide
+
+lemma fin4_compl_pair : ∀ k l : Fin 4, k ≠ l →
+    ∃ i j, i ≠ j ∧ ∀ m, (m ≠ k ∧ m ≠ l) ↔ (m = i ∨ m = j) := by decide
+
+lemma fin4_pair_unique : ∀ k l k' l' : Fin 4, k < l → k' < l' →
+    (∀ m, (m ≠ k ∧ m ≠ l) ↔ (m ≠ k' ∧ m ≠ l')) → k = k' ∧ l = l' := by decide
+
+/-- The pairs of distinct tetrahedron corners, with the smaller index first. -/
+def tetPairs : Finset (Fin 4 × Fin 4) := Finset.univ.filter fun p => p.1 < p.2
+
+lemma tetPairs_card : tetPairs.card = 6 := by decide
 
 /-- The six pairs of corners, written out. -/
 lemma tetPairs_eq : tetPairs = {(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)} := by decide
@@ -111,52 +91,6 @@ lemma compl_pair_eq {k l i j : Fin 4} (h : ∀ m : Fin 4, (m ≠ k ∧ m ≠ l) 
   ext m
   rw [mem_compl_iff, mem_insert_iff, mem_singleton_iff, not_or, mem_insert_iff, mem_singleton_iff]
   exact h m
-
-/-- **The angle class of two faces from the Gram numbers of their normals.** If `⟪aᵢ, aᵢ⟫ = X`,
-`⟪aⱼ, aⱼ⟫ = Y` and `⟪aᵢ, aⱼ⟫ = -d`, the interior angle where the two faces meet is `arccos (d /
-√(X Y))`. -/
-theorem theta_pair_of_gram [Fact (finrank ℝ E = 3)] {ι : Type} (a : ι → E) {A : Set ι} {i j : ι}
-    (hA : A = {i, j}) {X Y d : ℝ} (hX : 0 < X) (hxx : ⟪a i, a i⟫ = X)
-    (hyy : ⟪a j, a j⟫ = Y) (hxy : ⟪a i, a j⟫ = -d) (hne : X * Y ≠ d ^ 2) :
-    theta (cone a A) = (Submodule.Quotient.mk (Real.arccos (d / √(X * Y))) : Angle) := by
-  have hli : LinearIndependent ℝ ![a i, a j] :=
-    linIndep_pair_of_gram (by rw [hxx, hyy, hxy, neg_sq]; exact hne)
-  rw [theta_pair a hA hli]
-  congr 1
-  unfold InnerProductGeometry.angle
-  rw [norm_eq_sqrt_real_inner, norm_eq_sqrt_real_inner, hxx, hyy, hxy, ← Real.sqrt_mul hX.le,
-    neg_div, Real.arccos_neg]
-  ring
-
-/-- Squared length in coordinates. -/
-lemma norm3_sq (p q r : ℝ) : ‖(!₂[p, q, r] : R3)‖ ^ 2 = p ^ 2 + q ^ 2 + r ^ 2 := by
-  rw [← real_inner_self_eq_norm_sq, inner3]
-  simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Matrix.cons_val]
-  ring
-
-/-- Distance in coordinates. -/
-lemma dist3 (x y : R3) {d : ℝ} (hd : 0 ≤ d)
-    (h : (x 0 - y 0) ^ 2 + (x 1 - y 1) ^ 2 + (x 2 - y 2) ^ 2 = d ^ 2) : dist x y = d := by
-  rw [EuclideanSpace.dist_eq, Fin.sum_univ_three]
-  simp only [Real.dist_eq, sq_abs]
-  rw [h, Real.sqrt_sq hd]
-
-/-- The Dehn invariant of a bounded solid given by half-spaces, as a sum over the sets `A` of
-constraints:
-(length of the set of points where exactly the constraints of `A` are tight) ⊗ (angle class of
-their cone). -/
-lemma dehnSet_eq_sum_faceSet {ι : Type} [Fintype ι] (a : ι → E) (b : ι → ℝ)
-    (hb : Bornology.IsBounded (sol a b)) :
-    dehnSet (sol a b) = ∑ A : Set ι, (μH[1] (faceSet a b A)).toReal ⊗ₜ[ℚ] theta (cone a A) := by
-  rw [dehnSet_eq_dehn_edgeList a b hb]
-  unfold dehn edgeList
-  rw [List.map_map, Finset.sum_map_toList, Finset.sum_filter]
-  apply Finset.sum_congr rfl; intro A _
-  unfold theta
-  rw [linSpace_cone]
-  by_cases h : finrank ℝ (linCone a A) = 1
-  · rw [ite_eq_left h, ite_eq_left h]; rfl
-  · rw [ite_eq_right h, ite_eq_right h, TensorProduct.tmul_zero]
 
 /-- **The Dehn invariant of a tetrahedron**: the sum over its six edges of
 (distance of the two corners of the edge) ⊗ (angle class of the cone of the two faces through the

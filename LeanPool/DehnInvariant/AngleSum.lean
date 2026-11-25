@@ -8,7 +8,7 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.LocalAngle
+public import LeanPool.DehnInvariant.TensorInvariant
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.Order.CompletePartialOrder

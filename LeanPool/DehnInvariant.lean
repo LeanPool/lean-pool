@@ -8,6 +8,8 @@ module
 
 public import LeanPool.DehnInvariant.EdgeSum
 public import LeanPool.DehnInvariant.HilbertThirdProblem
+public import LeanPool.DehnInvariant.RhombicDodecahedron
+public import LeanPool.DehnInvariant.Similarity
 
 /-!
 # The Dehn invariant and Hilbert's third problem

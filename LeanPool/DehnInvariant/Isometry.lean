@@ -55,13 +55,6 @@ lemma tcone_image (g : E ≃ᵃⁱ[ℝ] E) (P : Set E) (x : E) :
       rw [motion_add, map_smul]
     rw [h1]; exact mem_image_of_mem g hmem
 
-/-- The angle of a cone inside a subspace `V` (so `wedgeAngle T K = wedgeAngleIn T Kᗮ`). -/
-noncomputable def wedgeAngleIn (T : Set E) (V : Submodule ℝ E) : ℝ :=
-  2 * Real.pi * ((volume {w : V | (w : E) ∈ T ∧ ‖w‖ < 1}).toReal /
-    (volume (Metric.ball (0 : V) 1)).toReal)
-
-lemma wedgeAngle_eq_in (T : Set E) (K : Submodule ℝ E) : wedgeAngle T K = wedgeAngleIn T Kᗮ := rfl
-
 lemma wedgeAngleIn_image (L : E ≃ₗᵢ[ℝ] E) (T : Set E) (V : Submodule ℝ E) :
     wedgeAngleIn (L '' T) (V.map (L.toLinearEquiv : E →ₗ[ℝ] E)) = wedgeAngleIn T V := by
   let e := LinearIsometryEquiv.submoduleMap V L
@@ -114,7 +107,7 @@ lemma edgeAngle_image (g : E ≃ᵃⁱ[ℝ] E) (P : Set E) (x : E) :
 
 /-- **Rigid motions keep the Dehn invariant.** -/
 theorem dehnSet_image (g : E ≃ᵃⁱ[ℝ] E) (P : Set E) : dehnSet (g '' P) = dehnSet P := by
-  unfold dehnSet
+  unfold dehnSet tsum1
   apply finsum_congr; intro θ
   have h : {y | edgeAngle (g '' P) y = θ} = g '' {x | edgeAngle P x = θ} := by
     ext y; constructor

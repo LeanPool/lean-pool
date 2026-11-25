@@ -8,7 +8,8 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.Simplex
+public import LeanPool.DehnInvariant.ConeAngles
+public import LeanPool.DehnInvariant.EdgeData
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Convex.Exposed
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
@@ -54,7 +55,7 @@ of points, with no half-space description:
 * `IsEdge.length`: the length (1-dimensional Hausdorff measure) of the edge with ends `u`, `v` is
   `dist u v`.
 
-Method. Study 4 (`dehnSet_eq_sum_faceSet`) gives the invariant of `sol a b` as a sum over the sets
+The half-space formula `dehnSet_eq_sum_faceSet` sums the invariant of `sol a b` over the sets
 `A` of
 constraints: (length of the points where exactly `A` is tight) ⊗ (angle class of the cone of `A`).
 The
@@ -425,7 +426,6 @@ lemma exists_pair_cone [Finite ι] (hint : (interior (sol a b)).Nonempty) {A : S
     (hx : x ∈ faceSet a b A) (hfin : finrank ℝ (linCone a A) = 1) :
     ∃ p ∈ A, ∃ q ∈ A, LinearIndependent ℝ ![a p, a q] ∧ cone a A = cone a {p, q} := by
   classical
-  let := Fintype.ofFinite ι
   obtain ⟨z, hz⟩ := hint
   obtain ⟨hxs, hact⟩ := hx
   have hzlt : ∀ i, a i ≠ 0 → ⟪a i, z⟫ < b i := by
@@ -444,60 +444,7 @@ lemma exists_pair_cone [Finite ι] (hint : (interior (sol a b)).Nonempty) {A : S
     intro i hi hne
     have h1 : ⟪a i, x⟫ = b i := (hact ▸ hi : i ∈ act a b x)
     rw [inner_sub_right, h1]; linarith [hzlt i hne]
-  have hE : finrank ℝ E = 3 := Fact.out
-  have hW : finrank ℝ (linCone a A)ᗮ = 2 := by
-    have := Submodule.finrank_add_finrank_orthogonal (linCone a A)
-    omega
-  have hmem : ∀ i ∈ A, a i ∈ (linCone a A)ᗮ := by
-    intro i hi
-    rw [Submodule.mem_orthogonal']
-    intro u hu
-    exact hu i hi
-  let s : Finset ι := Finset.univ.filter fun i => i ∈ A ∧ a i ≠ 0
-  have hs : ∀ i, i ∈ s ↔ i ∈ A ∧ a i ≠ 0 := by intro i; simp [s]
-  have hsne : s.Nonempty := by
-    by_contra hno
-    rw [Finset.not_nonempty_iff_eq_empty] at hno
-    have htop : linCone a A = ⊤ := by
-      rw [eq_top_iff]; intro w _ i hi
-      have h0 : a i = 0 := by
-        by_contra h
-        have h1 : i ∈ s := (hs i).2 ⟨hi, h⟩
-        rw [hno] at h1
-        exact absurd h1 (Finset.notMem_empty _)
-      rw [h0, inner_zero_left]
-    rw [htop, finrank_top] at hfin
-    omega
-  obtain ⟨p, hp, q, hq, hpq⟩ := two_extreme hW a (z - x) s hsne
-    (fun i hi => hmem i ((hs i).1 hi).1) (fun i hi => hv0 i ((hs i).1 hi).1 ((hs i).1 hi).2)
-  have hpA : p ∈ A := ((hs p).1 hp).1
-  have hqA : q ∈ A := ((hs q).1 hq).1
-  have hcone : cone a A = cone a {p, q} := by
-    ext w; constructor
-    · intro h i hi
-      rcases hi with rfl | rfl
-      · exact h _ hpA
-      · exact h _ hqA
-    · intro h i hi
-      by_cases h0 : a i = 0
-      · rw [h0, inner_zero_left]
-      · exact hpq w (h p (mem_insert _ _)) (h q (mem_insert_of_mem _ rfl)) i ((hs i).2 ⟨hi, h0⟩)
-  refine ⟨p, hpA, q, hqA, ?_, hcone⟩
-  by_contra hli
-  rw [LinearIndependent.pair_iff' ((hs p).1 hp).2] at hli
-  push Not at hli
-  obtain ⟨c, hc⟩ := hli
-  have hlin : linCone a A = linCone a {p, q} := by
-    ext w; rw [← cone_lin a A w, ← cone_lin a {p, q} w, hcone]
-  have hle : (ℝ ∙ a p)ᗮ ≤ linCone a {p, q} := by
-    intro w hw
-    have h0 : ⟪a p, w⟫ = 0 := Submodule.mem_orthogonal_singleton_iff_inner_right.1 hw
-    rw [mem_linCone]
-    intro i hi
-    rcases hi with rfl | rfl
-    · exact h0
-    · rw [← hc, inner_smul_left, h0, mul_zero]
-  exact finrank_linCone_ne_one_of_perp a hle (hlin ▸ hfin)
+  exact cone_eq_pair_of_strict a hfin hv0
 
 omit [FiniteDimensional ℝ E] [Fact (finrank ℝ E = 3)] in
 /-- The unit normal of one of the two constraints of an edge is the normal of a facet through the
@@ -778,12 +725,14 @@ theorem dehnSet_sol_eq_edge_sum [Finite ι] (hb : Bornology.IsBounded (sol a b))
 
 /-! ### The statements for a convex polytope, with no half-spaces in them -/
 
-/-- **A convex polytope has finitely many edges.** -/
-theorem edges_finite {P : Set E} (hP : IsPoly P) (hint : (interior P).Nonempty)
-    : (edges P).Finite := by
-  obtain ⟨hb, ι, _, a, b, rfl⟩ := hP
-  rw [← (bijOn_tightSet hb hint).image_eq]
-  exact (Set.toFinite _).image _
+omit [FiniteDimensional ℝ E] [Fact (finrank ℝ E = 3)] [MeasurableSpace E] [BorelSpace E] in
+/-- A convex polytope has finitely many edges, including when its interior is empty. -/
+theorem edges_finite {P : Set E} (hP : IsPoly P) : (edges P).Finite := by
+  obtain ⟨_, ι, _, a, b, rfl⟩ := hP
+  refine (Set.finite_range (tightSet a b)).subset ?_
+  intro F hF
+  obtain ⟨A, _, _, equality⟩ := exists_tight_of_edge hF
+  exact ⟨A, equality⟩
 
 /-- **Exactly two facets pass through every edge of a convex polytope** with interior points;
 their outward

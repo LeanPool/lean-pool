@@ -8,7 +8,7 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.RationalAngles
+public import LeanPool.DehnInvariant.EuclideanSpace
 public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 public import Mathlib.Analysis.Convex.Measure
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
@@ -169,7 +169,7 @@ lemma refl_apply_ne {i j : Fin 3} (h : j ≠ i) (y : Fin 3 → ℝ) : refl i y j
 lemma refl_apply_self (i : Fin 3) (y : Fin 3 → ℝ) : refl i y i = -y i := by
   simp [refl]
 
-lemma ennreal_half {x : ENNReal} {c : ℝ} (_hc : 0 ≤ c) (h : 2 * x = ENNReal.ofReal (2 * c)) :
+lemma ennreal_half {x : ENNReal} {c : ℝ} (h : 2 * x = ENNReal.ofReal (2 * c)) :
     x = ENNReal.ofReal c := by
   rw [ENNReal.ofReal_mul (by norm_num), ENNReal.ofReal_ofNat] at h
   exact (ENNReal.mul_right_inj (by norm_num) (by norm_num)).1 h

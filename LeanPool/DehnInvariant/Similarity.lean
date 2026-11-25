@@ -71,7 +71,7 @@ invariant of `P`:
 lengths are multiplied by `a`, angles are unchanged. (`a` acts on the length factor of ℝ ⊗[ℚ]
 (ℝ/ℚπ).) -/
 theorem dehnSet_smul_set {a : ℝ} (ha : 0 < a) (P : Set E) : dehnSet (a • P) = a • dehnSet P := by
-  unfold dehnSet
+  unfold dehnSet tsum1
   rw [smul_finsum]
   apply finsum_congr; intro θ
   have h : {y | edgeAngle (a • P) y = θ} = a • {x | edgeAngle P x = θ} := by

@@ -9,7 +9,7 @@ Authors: DICTO
 module
 
 public import LeanPool.DehnInvariant.Polytope
-public import LeanPool.DehnInvariant.TensorInvariant
+public import LeanPool.DehnInvariant.AngleSum
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.MeasureTheory.Measure.Hausdorff
@@ -67,10 +67,22 @@ def linSpace (T : Set E) : Submodule ℝ E := Submodule.span ℝ {v | v ∈ T �
 /-- The part of the cone `T` inside the open unit disc of the space perpendicular to `K`. -/
 def wedgeSet (T : Set E) (K : Submodule ℝ E) : Set Kᗮ := {w | (w : E) ∈ T ∧ ‖w‖ < 1}
 
+/-- The angle of a cone inside a subspace `V` (so `wedgeAngle T K = wedgeAngleIn T Kᗮ`). -/
+noncomputable def wedgeAngleIn (T : Set E) (V : Submodule ℝ E) : ℝ :=
+  2 * Real.pi * ((volume {w : V | (w : E) ∈ T ∧ ‖w‖ < 1}).toReal /
+    (volume (Metric.ball (0 : V) 1)).toReal)
+
 /-- The angle of the cone `T` around the line `K`: 2π × area(T ∩ unit disc of Kᗮ) / area(unit disc
 of Kᗮ). -/
 noncomputable def wedgeAngle (T : Set E) (K : Submodule ℝ E) : ℝ :=
-  2 * Real.pi * ((volume (wedgeSet T K)).toReal / (volume (Metric.ball (0 : Kᗮ) 1)).toReal)
+  wedgeAngleIn T Kᗮ
+
+lemma wedgeAngle_eq_in (T : Set E) (K : Submodule ℝ E) : wedgeAngle T K = wedgeAngleIn T Kᗮ := rfl
+
+lemma wedgeAngle_formula (T : Set E) (K : Submodule ℝ E) :
+    wedgeAngle T K =
+      2 * Real.pi * ((volume (wedgeSet T K)).toReal / (volume (Metric.ball (0 : Kᗮ) 1)).toReal) :=
+  rfl
 
 /-- The angle class in ℝ/ℚπ of a cone: its angle around `linSpace` when that is a line, else 0. -/
 noncomputable def theta (T : Set E) : Angle :=
@@ -82,7 +94,7 @@ noncomputable def edgeAngle (P : Set E) (x : E) : Angle := theta (tcone P x)
 /-- **The Dehn invariant of a set**, in ℝ ⊗[ℚ] (ℝ/ℚπ): Σ over angle classes θ of length{edge
 points with class θ} ⊗ θ. -/
 noncomputable def dehnSet (P : Set E) : DehnSpace :=
-  ∑ᶠ θ : Angle, (μH[1] {x | edgeAngle P x = θ}).toReal ⊗ₜ[ℚ] θ
+  tsum1 μH[1] (edgeAngle P)
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 lemma linSpace_eq_of {T : Set E} {M : Submodule ℝ E} (h : ∀ v, (v ∈ T ∧ -v ∈ T) ↔ v ∈ M) :
@@ -117,7 +129,7 @@ to the angle of the cone, exactly. -/
 lemma wedgeAngle_split (T : Set E) (K : Submodule ℝ E) {c : E} (hc : c ≠ 0) (hcK : c ∈ Kᗮ) :
     wedgeAngle T K = wedgeAngle (T ∩ {v | ⟪c, v⟫ ≤ 0}) K + wedgeAngle (T ∩ {v | ⟪-c, v⟫ ≤ 0})
         K := by
-  unfold wedgeAngle
+  simp only [wedgeAngle_formula]
   set S := wedgeSet T K with hS
   let Hle : Set Kᗮ := {w | ⟪c, (w : E)⟫ ≤ 0}
   have hHle : MeasurableSet Hle := (isClosed_le (by fun_prop) continuous_const).measurableSet
@@ -172,7 +184,7 @@ lemma wedgeAngle_mem_ratPi_of_line [Fact (finrank ℝ E = 3)] {T : Set E} {K : S
     wedgeAngle T K ∈ ratPi := by
   classical
   rw [mem_ratPi_iff]
-  unfold wedgeAngle
+  simp only [wedgeAngle_formula]
   have hE : finrank ℝ E = 3 := Fact.out
   have hV : finrank ℝ Kᗮ = 1 + 1 := by
     have h := Submodule.finrank_add_finrank_orthogonal K

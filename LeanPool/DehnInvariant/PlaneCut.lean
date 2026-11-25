@@ -8,7 +8,7 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.AngleSum
+public import LeanPool.DehnInvariant.LocalAngle
 public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.RingTheory.Flat.TorsionFree

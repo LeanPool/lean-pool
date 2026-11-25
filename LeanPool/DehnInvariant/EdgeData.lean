@@ -11,6 +11,7 @@ module
 public import LeanPool.DehnInvariant.Dissection
 public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.Tactic.FunProp
+public import Mathlib.Tactic.Linarith
 
 /-!
 Lean study 2 of the shape-language canon (DICTO, 19 Nov 2026), part F: the link to study 1.
@@ -46,9 +47,10 @@ noncomputable def edgeList [Fintype ι] (a : ι → E) (b : ι → ℝ) : List (
   ((Finset.univ : Finset (Set ι)).filter fun A => finrank ℝ (linCone a A) = 1).toList.map
     fun A => ((μH[1] (faceSet a b A)).toReal, wedgeAngle (cone a A) (linCone a A))
 
-/-- **The set invariant is study 1's edge-list invariant.** -/
-theorem dehnSet_eq_dehn_edgeList [Fintype ι] (a : ι → E) (b : ι → ℝ)
-    (hb : Bornology.IsBounded (sol a b)) : dehnSet (sol a b) = dehn (edgeList a b) := by
+/-- The invariant of a bounded intersection of half-spaces, summed over its active sets. -/
+theorem dehnSet_eq_sum_faceSet [Fintype ι] (a : ι → E) (b : ι → ℝ)
+    (hb : Bornology.IsBounded (sol a b)) :
+    dehnSet (sol a b) = ∑ A : Set ι, (μH[1] (faceSet a b A)).toReal ⊗ₜ[ℚ] theta (cone a A) := by
   classical
   let c' : E → Option (Set ι) := fun x => if x ∈ sol a b then some (act a b x) else none
   let φ : Option (Set ι) → Angle := fun o => o.elim 0 (fun A => theta (cone a A))
@@ -115,15 +117,47 @@ theorem dehnSet_eq_dehn_edgeList [Fintype ι] (a : ι → E) (b : ι → ℝ)
   rw [h1, Fintype.sum_option]
   have hnone : (μH[1] (c' ⁻¹' {none})).toReal ⊗ₜ[ℚ] φ none = 0 := TensorProduct.tmul_zero _ _
   rw [hnone, zero_add]
+  apply Finset.sum_congr rfl
+  intro A _
+  rw [hfib]
+  rfl
+
+/-- The edge-list formula for the invariant computed from a bounded intersection of half-spaces. -/
+theorem dehnSet_eq_dehn_edgeList [Fintype ι] (a : ι → E) (b : ι → ℝ)
+    (hb : Bornology.IsBounded (sol a b)) : dehnSet (sol a b) = dehn (edgeList a b) := by
+  classical
+  rw [dehnSet_eq_sum_faceSet a b hb]
   unfold dehn edgeList
   rw [List.map_map, Finset.sum_map_toList, Finset.sum_filter]
   apply Finset.sum_congr rfl; intro A _
-  change (μH[1] (c' ⁻¹' {some A})).toReal ⊗ₜ[ℚ] theta (cone a A) = _
-  rw [hfib]
   unfold theta
   rw [linSpace_cone]
   by_cases h : finrank ℝ (linCone a A) = 1
   · rw [ite_eq_left h, ite_eq_left h]; rfl
   · rw [ite_eq_right h, ite_eq_right h, TensorProduct.tmul_zero]
+
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+lemma openSegment_eq_diff {x y : E} (hxy : x ≠ y) :
+    openSegment ℝ x y = segment ℝ x y \ {x, y} := by
+  ext z; constructor
+  · intro hz
+    refine ⟨openSegment_subset_segment ℝ x y hz, ?_⟩
+    rintro (rfl | rfl)
+    · exact hxy (left_mem_openSegment_iff.1 hz)
+    · exact hxy (right_mem_openSegment_iff.1 hz)
+  · rintro ⟨hz, hne⟩
+    exact mem_openSegment_of_ne_left_right (fun h => hne (Or.inl h.symm))
+      (fun h => hne (Or.inr h.symm)) hz
+
+omit [FiniteDimensional ℝ E] in
+/-- The length of an open segment is the distance of its ends. -/
+lemma hausdorff_openSegment {x y : E} (hxy : x ≠ y) :
+    (μH[1] (openSegment ℝ x y)).toReal = dist x y := by
+  have hnull : μH[1] ({x, y} : Set E) = 0 := by
+    have := nullSingletonClass_hausdorff E (d := 1) one_pos
+    rw [Set.insert_eq]
+    exact measure_union_null (measure_singleton x) (measure_singleton y)
+  rw [openSegment_eq_diff hxy, measure_sdiff_null hnull, hausdorffMeasure_segment, edist_dist,
+    ENNReal.toReal_ofReal dist_nonneg]
 
 end DehnCanon.Library

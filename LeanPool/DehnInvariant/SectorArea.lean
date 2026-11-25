@@ -8,7 +8,8 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.EuclideanSpace
+public import LeanPool.DehnInvariant.PlaneCut
+public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.CStarAlgebra.Classes
@@ -368,7 +369,7 @@ theorem wedgeAngle_two_planes_unit [FiniteDimensional ℝ E] [MeasurableSpace E]
       rw [Real.cos_pi_sub, Real.cos_two_mul, hcos]
       linarith [hn2]
     rw [hgc, Real.arccos_cos (by linarith) (by linarith)]
-  unfold wedgeAngle
+  simp only [wedgeAngle_formula]
   rw [hvol1, hvol2, hang, ENNReal.toReal_ofReal hβ0.le]
   field_simp
   ring
