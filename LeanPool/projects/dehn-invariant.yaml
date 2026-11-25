@@ -1,10 +1,11 @@
 slug: dehn-invariant
 title: The Dehn invariant and Hilbert's third problem
-summary: The Dehn invariant of a solid is defined from its local cones and
-  Hausdorff lengths. It agrees with the classical edge sum on full-dimensional
-  convex polytopes and is preserved by dissections. This distinguishes a
-  regular tetrahedron from a cube and gives Hilbert's counterexample with
-  a common base, equal altitudes, and equal volumes.
+summary: In real three-space, the set-defined Dehn invariant of a convex
+  polytope is additive over finite convex dissections with pairwise
+  disjoint interiors. For scissors-congruent polyhedral sets, the sums
+  over such dissections agree. The development constructs tetrahedra
+  with a common base, equal altitudes, and equal volumes that fail both
+  scissors congruence and equicomplementability.
 branch: convex geometry
 entry_module: LeanPool.DehnInvariant
 authors:
@@ -32,17 +33,19 @@ main_results:
     three-dimensional inner product space, the set-defined invariant equals
     the edge-length tensor dihedral-angle sum.
 - declaration: DehnCanon.Library.dehnSet_eq_of_scissorsCongruent
-  informal: Scissors-congruent convex polytopes have the same Dehn invariant.
+  informal: Scissors-congruent convex polytopes in real three-space have
+    the same set-defined Dehn invariant.
 - declaration: DehnCanon.Library.dehnSum_eq_of_scissors
-  informal: For two scissors-congruent polyhedral sets, the sums of Dehn
-    invariants over finite convex dissections agree when the pieces within
-    each dissection have pairwise disjoint interiors.
+  informal: For two scissors-congruent polyhedral sets in real three-space,
+    the sums of Dehn invariants over finite convex dissections agree when
+    the pieces within each dissection have pairwise disjoint interiors.
 - declaration: DehnCanon.Library.similarTetra_not_scissorsCongruent_similarCube
-  informal: No similar copy of a regular tetrahedron is scissors congruent to
-    a similar copy of a cube.
+  informal: A positive scaling and affine-isometric image of the regular
+    tetrahedron cannot be scissors congruent to any such image of the unit cube.
 - declaration: DehnCanon.Library.hilbert_third_problem
-  informal: Two tetrahedra on the same base with altitude one and volume one
-    sixth can fail both scissors congruence and equicomplementability.
+  informal: There exist two tetrahedra with a common base, each with altitude
+    one and volume one sixth, that fail both scissors congruence and
+    equicomplementability.
 tags:
 - scissors-congruence
 - polytopes
