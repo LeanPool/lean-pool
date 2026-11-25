@@ -310,7 +310,7 @@ def cell0 : CoordinateCell row14Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1],
       aff [0, 1, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0], aff [0, -1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]] }
 
-attribute [local instance 2000] CertificateData.decidableCheckClosedRowsAtHints
+attribute [local instance 2000] CertificateData.decidableCheckClosedRowsKernel
 
 private theorem cell0_check_hints : cell0.certificate.checkClosedRowsAtHints 4
     [[], [13, 8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 14, 8], [0, 0, 0, 0, 0, 0, 0, 0, 15, 11, 11, 16],
@@ -5468,7 +5468,7 @@ def treePart0 : CompactCellTree :=
                 (.absurd 62)))
         (.absurd 63))
 
-attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+attribute [local instance 2000] CompactCellTree.decidableCheckPairedKernel
 
 private theorem treePart0_check_paired :
     treePart0.checkPaired splitForms farkasReceiptLookup cells

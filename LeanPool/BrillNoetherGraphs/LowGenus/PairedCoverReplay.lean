@@ -151,6 +151,35 @@ theorem checkWithLast_of_checkViolation {dimension : ℕ} (data : FarkasData)
   · exact data.checkWithLast_of_checkOpposite active form opposite
   · exact integral
 
+/-- Replay two unit-weight rows with proof-free integer comparisons. -/
+noncomputable def checkKernelOpposite {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension) : Bool :=
+  match data.terms with
+  | [first, second] =>
+    let activeRow := rowAt active first.row
+    (first.row < active.length) && (second.row == active.length) &&
+      decide (first.weight = 1) && decide (second.weight = 1) &&
+      decide (activeRow.fixedValue ≤ form.fixedValue) &&
+      allFinFold (fun coordinate =>
+        Int.beq' (activeRow.coefficient coordinate) (form.coefficient coordinate))
+  | _ => false
+
+theorem checkKernelOpposite_eq {dimension : ℕ} (data : FarkasData)
+    (active : List (AffineForm dimension)) (form : AffineForm dimension) :
+    data.checkKernelOpposite active form = data.checkOpposite active form := by
+  unfold checkKernelOpposite checkOpposite
+  cases data with
+  | mk terms =>
+    cases terms with
+    | nil => rfl
+    | cons first terms =>
+      cases terms with
+      | nil => rfl
+      | cons second terms =>
+        cases terms with
+        | nil => simp only [allFinFold_eq, Int.beq'_eq_beq, beq_eq_decide]
+        | cons => rfl
+
 end Utilities.Certificate.AffineCover.FarkasData
 
 namespace AtanasovRanganathan.GenusFiveClosedCover.CompactCellTree
@@ -274,5 +303,80 @@ def decidableCheckPaired {vertices edges : ℕ} {core : Core vertices edges}
   if checked : tree.checkWithOpposites forms lookup cells active = true then
     isTrue (checkPaired_of_checkWithOpposites checked)
   else inferInstance
+
+/-- Match each cone inequality to its verified receipt in one pass. -/
+noncomputable def checkKernelReceipts {edges : ℕ} (lookup : ℕ → FarkasData)
+    (active : List (AffineForm edges)) : List ℕ → List (AffineForm edges) → Bool
+  | [], [] => true
+  | index :: indices, form :: forms =>
+    let receipt := lookup index
+    (receipt.checkKernelOpposite active form || receipt.checkWithLast active form.violation) &&
+      checkKernelReceipts lookup active indices forms
+  | _, _ => false
+
+private theorem checkKernelReceipts_eq {edges : ℕ} (lookup : ℕ → FarkasData)
+    (active : List (AffineForm edges)) (indices : List ℕ) (forms : List (AffineForm edges)) :
+    checkKernelReceipts lookup active indices forms =
+      checkReceipts lookup active indices forms := by
+  induction indices generalizing forms with
+  | nil => cases forms <;> rfl
+  | cons index indices ih =>
+    cases forms with
+    | nil => rfl
+    | cons form forms =>
+      simp only [checkKernelReceipts, checkReceipts, FarkasData.checkKernelOpposite_eq,
+        FarkasData.checkViolation, ih]
+
+/-- Replay tree leaves with proof-free integer tests and a supplied cone lookup. -/
+noncomputable def checkKernelTree {edges : ℕ}
+    (tree : CompactCellTree) (forms : List (AffineForm edges)) (lookup : ℕ → FarkasData)
+    (cellCount : ℕ) (coneAt : ℕ → List (AffineForm edges))
+    (active : List (AffineForm edges)) : Bool :=
+  match tree with
+  | .cell index indices =>
+      decide (index < cellCount) && checkKernelReceipts lookup active indices (coneAt index)
+  | .absurd index => (lookup index).check active
+  | .split index nonnegative negative =>
+      let form := forms.getD index 0
+      checkKernelTree nonnegative forms lookup cellCount coneAt (active ++ [form]) &&
+        checkKernelTree negative forms lookup cellCount coneAt (active ++ [form.violation])
+
+theorem checkKernelTree_eq {vertices edges : ℕ} {core : Core vertices edges}
+    (tree : CompactCellTree) (forms : List (AffineForm edges)) (lookup : ℕ → FarkasData)
+    (cells : List (CoordinateCell core)) (active : List (AffineForm edges))
+    (cellCount : ℕ) (coneAt : ℕ → List (AffineForm edges))
+    (count_eq : cellCount = cells.length)
+    (cone_eq : ∀ index, coneAt index = CellTree.coneAt cells index) :
+    tree.checkKernelTree forms lookup cellCount coneAt active =
+      tree.checkWithOpposites forms lookup cells active := by
+  induction tree generalizing active with
+  | cell index indices =>
+    simp only [checkKernelTree, checkWithOpposites, count_eq, cone_eq, checkKernelReceipts_eq]
+  | absurd index => rfl
+  | split index nonnegative negative ihNonnegative ihNegative =>
+    simp only [checkKernelTree, checkWithOpposites, ihNonnegative, ihNegative]
+
+/-- Use a verified index for cone lookup in the kernel replay. -/
+noncomputable def decidableCheckPairedKernelWithLookup {vertices edges : ℕ}
+    {core : Core vertices edges} (tree : CompactCellTree) (forms : List (AffineForm edges))
+    (lookup : ℕ → FarkasData) (cells : List (CoordinateCell core))
+    (active : List (AffineForm edges)) (cellCount : ℕ) (coneAt : ℕ → List (AffineForm edges))
+    (count_eq : cellCount = cells.length)
+    (cone_eq : ∀ index, coneAt index = CellTree.coneAt cells index) :
+    Decidable (tree.checkPaired forms lookup cells active = true) :=
+  if checked : tree.checkKernelTree forms lookup cellCount coneAt active = true then
+    isTrue (checkPaired_of_checkWithOpposites
+      (checkKernelTree_eq tree forms lookup cells active cellCount coneAt count_eq cone_eq ▸
+        checked))
+  else inferInstance
+
+/-- Decide paired replay using proof-free comparisons in the unit-weight case. -/
+@[instance_reducible]
+noncomputable def decidableCheckPairedKernel {vertices edges : ℕ} {core : Core vertices edges}
+    (tree : CompactCellTree) (forms : List (AffineForm edges)) (lookup : ℕ → FarkasData)
+    (cells : List (CoordinateCell core)) (active : List (AffineForm edges)) :
+    Decidable (tree.checkPaired forms lookup cells active = true) :=
+  decidableCheckPairedKernelWithLookup tree forms lookup cells active
+    cells.length (CellTree.coneAt cells) rfl (fun _ => rfl)
 
 end AtanasovRanganathan.GenusFiveClosedCover.CompactCellTree

@@ -47,7 +47,7 @@ def cell97 : CoordinateCell row06Core :=
       aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 0], aff [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, 1],
       aff [0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0], aff [0, 0, 0, 0, 0, -1, 0, 0, 2, 0, 0, 0, 0]] }
 
-attribute [local instance 2000] CertificateData.decidableCheckClosedRowsAtHints
+attribute [local instance 2000] CertificateData.decidableCheckClosedRowsKernel
 
 private theorem cell97_check_hints : cell97.certificate.checkClosedRowsAtHints 4
     [[0, 0, 0, 0, 0, 0, 3, 13], [0, 0, 0, 0, 14, 4], [], [], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

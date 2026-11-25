@@ -27,7 +27,7 @@ open GenusFiveRow04Symmetry (Chamber chamber_covers)
 
 namespace ReplayChecks3
 
-attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+attribute [local instance 2000] CompactCellTree.decidableCheckPairedKernel
 
 theorem treePart72_check_paired :
     treePart72.checkPaired splitForms farkasReceiptLookup cells
