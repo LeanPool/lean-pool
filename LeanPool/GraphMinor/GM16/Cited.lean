@@ -24,13 +24,14 @@ P. D. Seymour, *Graph Minors. XVI. Excluding a non-planar graph*, J. Combin. The
 
 * **Graph Minors IX** (*Disjoint crossed paths*, JCTB 49 (1990) 40–77):
   - `GM15.GM09Theorem81Statement` (re-exported from `GraphMinor.GM15.Cited`), (8.1) (page 60),
+    nonempty-boundary case,
     used in the proof of (3.2) of XVI (page 50);
   - `GM09Theorem105Statement`, (10.5) (page 66), used in Step (11) of the proof of (8.1) in
     Section 9 of XVI (page 74).
 * **Graph Minors XII** (*Distance on a surface*, JCTB 64 (1995) 240–272):
   - `GM12Theorem42Statement`, (4.2) (page 249), monotonicity of controlling a minor, used in the
     proof of (3.1) of XVI (page 54);
-  - `GM12Theorem43Statement`, (4.3) (page 250), stated as (4.3) of XVI (page 54);
+  - `GM12Theorem43Statement`, (4.3) (page 249), stated as (4.3) of XVI (page 54);
   - `GM12Theorem44Statement`, (4.4) (page 251), stated as (5.2) of XVI (page 55);
   - `GM14.GM12Theorem710Statement` (re-exported from `GraphMinor.GM15.Cited`), (7.10) (page 270),
     clearing a $\lambda$-zone, used in (6.2), (6.3), and Section 9 of XVI.
@@ -101,7 +102,7 @@ def GM12Theorem42Statement : Prop :=
         (completeGraph p) →
       GM12.ControlsMinor (Hypergraph.ofGraph G hT.finite_V hT.finite_E) θ_star T_star L
 
-/-- Statement of Graph Minors XII, (4.3) (page 250), stated as (4.3) in Graph Minors XVI (page 54):
+/-- Statement of Graph Minors XII, (4.3) (page 249), stated as (4.3) in Graph Minors XVI (page 54):
 "If $L$ is a graph and $\Sigma$ is a surface such that $L$ can be drawn in $\Sigma$, there is an
 integer $\theta \ge 1$ with the following property. If $\mathscr{T}^*$ is a tangle in a graph $G$
 controlling no $L$ minor, then there is no $\Sigma$-span of order $\ge \theta$." -/

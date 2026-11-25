@@ -161,14 +161,15 @@ def Theorem111Statement : Prop :=
       ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb ((ω.length + 1) * n) D.ord D.𝒯 ∧
         (⟨hd, D.P, L⟩ : Place χ) ∈ 𝒞
 
-/-- **Graph Minors XIX, (14.1)** (page 374): "Let $\chi, \mathscr{S}, \mathscr{D}$ be as in Section
+/-- **Graph Minors XIX, (14.1)** (page 375): "Let $\chi, \mathscr{S}, \mathscr{D}$ be as in Section
 10, and let $\chi$ satisfy
 $\mathbf{S_2}$; let $\omega_0 \in E(\Omega_\chi(2)) \cup E(\Omega_\chi(3))$, and let $m \ge
-1, n \ge 4$. Then there is a well-behaved set $\mathscr{C}_5(m, n, q_0)$ of $\chi$-places
+1, n \ge 4$. Then there is a well-behaved set $\mathscr{C}_5(m, n, \omega_0)$ of $\chi$-places
 with the following property. Let $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ be
 $(m, n, \omega_0)$-flawed internally. Then there is a rooted location $\mathscr{L}$ which
 $(4n \cdot 5^{2m} + 3)$-isolates $\mathscr{T}$, and for which $(\Gamma, \phi, \mathscr{L})
-\in \mathscr{C}_5(m, n, \omega_0)$." -/
+\in \mathscr{C}_5(m, n, \omega_0)$."
+The printed `q_0` in the family of places is a misprint for `ω₀`. -/
 def Theorem141Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)

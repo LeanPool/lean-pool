@@ -68,6 +68,7 @@ public import LeanPool.GraphMinor.GM07.CuffForest
 public import LeanPool.GraphMinor.GM07.CuffFrame
 public import LeanPool.GraphMinor.GM07.CuffGlue
 public import LeanPool.GraphMinor.GM07.CuffGrid
+public import LeanPool.GraphMinor.GM07.CuffIncidences
 public import LeanPool.GraphMinor.GM07.CuffLayers
 public import LeanPool.GraphMinor.GM07.CuffLift
 public import LeanPool.GraphMinor.GM07.CuffLines
@@ -345,6 +346,7 @@ public import LeanPool.GraphMinor.GM09.Section9
 public import LeanPool.GraphMinor.GM10.BranchWidth
 public import LeanPool.GraphMinor.GM10.Defs
 public import LeanPool.GraphMinor.GM10.Defs2
+public import LeanPool.GraphMinor.GM10.GraphSubhypergraph
 public import LeanPool.GraphMinor.GM10.Section10
 public import LeanPool.GraphMinor.GM10.Section11
 public import LeanPool.GraphMinor.GM10.Section12
@@ -370,6 +372,7 @@ public import LeanPool.GraphMinor.GM11.CurveArc
 public import LeanPool.GraphMinor.GM11.CutEdges
 public import LeanPool.GraphMinor.GM11.Cylinder
 public import LeanPool.GraphMinor.GM11.Defs
+public import LeanPool.GraphMinor.GM11.DrawingConnectivity
 public import LeanPool.GraphMinor.GM11.DrawingOps
 public import LeanPool.GraphMinor.GM11.DrawingTopology
 public import LeanPool.GraphMinor.GM11.EdgeChart
@@ -1583,6 +1586,7 @@ public import LeanPool.GraphMinor.GM17.BorderCells
 public import LeanPool.GraphMinor.GM17.BorderNode
 public import LeanPool.GraphMinor.GM17.Bridge
 public import LeanPool.GraphMinor.GM17.CapSide
+public import LeanPool.GraphMinor.GM17.CellLinkage
 public import LeanPool.GraphMinor.GM17.CellNodes
 public import LeanPool.GraphMinor.GM17.CellPartitionArc
 public import LeanPool.GraphMinor.GM17.CellPartitionChord

@@ -26,7 +26,7 @@ used in later papers:
 - `GM14.GM09Theorem91Statement` ((9.1), cited in XIV)
 - `GM14.GM09Theorem104Statement` ((10.4), cited in XIV)
 - `GM15.GM09Theorem71Statement` ((7.1), cited in XV)
-- `GM15.GM09Theorem81Statement` ((8.1), cited in XV and XVI)
+- `GM15.GM09Theorem81Statement` ((8.1), nonempty-boundary case cited in XV and XVI)
 - `GM15.GM09Theorem1111Statement` ((11.11), cited in XV)
 - `GM16.GM09Theorem105Statement` ((10.5), cited in XVI)
 -/

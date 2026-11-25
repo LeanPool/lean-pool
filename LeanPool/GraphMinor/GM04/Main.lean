@@ -36,7 +36,7 @@ open Graph
 
 universe u v
 
-/-- Graph Minors IV, (1.5) (page 228): "For any integer $k$ the class of all graphs with tree-width
+/-- Graph Minors IV, (1.5) (page 229): "For any integer $k$ the class of all graphs with tree-width
 $\le k$ is well-quasi-ordered by
 minors." In the form of `theorem_1_5_of_cited`: every sequence
 of finite graphs of tree-width `≤ k` has `i < j` with `G i` isomorphic to a minor of `G j`. -/

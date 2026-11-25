@@ -288,6 +288,22 @@ theorem exists_circle_chord {T : Set Circle} (hT : IsClosed T) {z x y : Circle} 
 /-- A closed disc minus its boundary. -/
 def discInt (D : Set S) : Set S := D \ discBd D
 
+private theorem interior_eq_discInt_of_frontier {S : Type*} [TopologicalSpace S]
+    {D : Set S} (hClosed : IsClosed D) (hfr : frontier D = discBd D) :
+    interior D = discInt D := by
+  ext x
+  simp only [discInt, mem_sdiff, ← hfr, frontier, hClosed.closure_eq]
+  exact ⟨fun hx ↦ ⟨interior_subset hx, fun h ↦ h.2 hx⟩,
+    fun ⟨hxD, hnf⟩ ↦ by_contra fun hni ↦ hnf ⟨hxD, hni⟩⟩
+
+theorem interior_eq_discInt_complex {Δ : Set ℂ} (hΔ : IsClosedDisc Δ) :
+    interior Δ = discInt Δ :=
+  interior_eq_discInt_of_frontier hΔ.isCompact.isClosed (complex_disc_frontier hΔ)
+
+theorem interior_eq_discInt_euclideanPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
+    interior D = discInt D :=
+  interior_eq_discInt_of_frontier hD.isCompact.isClosed (plane_disc_frontier hD)
+
 theorem IsChart.discInt_eq {D : Set S} {h : S → ℂ} {g : ℂ → S} (c : IsChart D h g) :
     discInt D = g '' ball 0 1 := by
   obtain ⟨h1, h2⟩ := c.union_ball

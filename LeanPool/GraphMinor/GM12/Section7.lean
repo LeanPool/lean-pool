@@ -28,7 +28,7 @@ open Set Hypergraph GraphMinor.GM10
 variable {α β : Type*} {G A' B' : Hypergraph α β} {θ : ℕ}
   {𝒯 : Set (Hypergraph α β × Hypergraph α β)}
 
-/-- The set `𝒯' = {(A ∩ B', B ∩ B') : (A, B) ∈ 𝒯}` of Graph Minors XII, (7.1) (page 267). -/
+/-- The set `𝒯' = {(A ∩ B', B ∩ B') : (A, B) ∈ 𝒯}` of Graph Minors XII, (7.1) (page 259). -/
 def restrictTangle (𝒯 : Set (Hypergraph α β × Hypergraph α β)) (B' : Hypergraph α β) :
     Set (Hypergraph α β × Hypergraph α β) :=
   {p | ∃ A B : Hypergraph α β, (A, B) ∈ 𝒯 ∧ p = (A ∩ B', B ∩ B')}

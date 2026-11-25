@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.Surface.Jordan
 public import LeanPool.GraphMinor.Surface.DiscGrow
 import LeanPool.GraphMinor.GM11.DrawingOps
 import LeanPool.GraphMinor.GM11.ArcDrawings
+import LeanPool.GraphMinor.Surface.PlaneDisc
 
 /-! ## Module 2: `GraphDrawing` Transport, Gluing, and Atomic Constructors -/
 
@@ -2551,122 +2552,23 @@ theorem GraphDrawing.transportOn {S S' : Type*} [TopologicalSpace S] [T2Space S]
   refine ⟨Γ', hU', hV', fun _ => rfl, hvert, hedge, fun H => ?_⟩
   simp only [graphDrawingSubgraphU, image_union, image_iUnion, hvert, hedge_cl]
 
-theorem isInteriorPoint_plane (x : EuclideanPlane) : IsInteriorPoint x := by
-  let B : Set ℂ := ball (complexPlane.symm x) 1
-  let U : Set EuclideanPlane := complexPlane.symm ⁻¹' B
-  have hU : IsOpen U := isOpen_ball.preimage complexPlane.symm.continuous
-  have hxU : x ∈ U := mem_ball_self zero_lt_one
-  let f₁ : U ≃ₜ B := {
-    toFun := fun y => ⟨complexPlane.symm y.1, y.2⟩
-    invFun := fun z => ⟨complexPlane z.1, by
-      change complexPlane.symm (complexPlane z.1) ∈ B
-      rw [LinearIsometryEquiv.symm_apply_apply]
-      exact z.2⟩
-    left_inv := fun y => Subtype.ext (LinearIsometryEquiv.apply_symm_apply complexPlane y.1)
-    right_inv := fun z => Subtype.ext (LinearIsometryEquiv.symm_apply_apply complexPlane z.1)
-    continuous_toFun := Continuous.subtype_mk
-      (complexPlane.symm.continuous.comp continuous_subtype_val) (fun y => y.2)
-    continuous_invFun := Continuous.subtype_mk
-      (complexPlane.continuous.comp continuous_subtype_val) (fun z => by
-        change complexPlane.symm (complexPlane z.1) ∈ B
-        rw [LinearIsometryEquiv.symm_apply_apply]
-        exact z.2)
-  }
-  obtain ⟨f₂⟩ := exists_homeomorph_ball (complexPlane.symm x) zero_lt_one
-  exact ⟨U, hU, hxU, ⟨f₁.trans f₂⟩⟩
+theorem isInteriorPoint_plane (x : EuclideanPlane) : IsInteriorPoint x :=
+  Surface.isInteriorPoint_euclideanPlane x
 
 theorem isManifoldPoint_plane (x : EuclideanPlane) : IsManifoldPoint x :=
   (isInteriorPoint_plane x).isManifoldPoint
 
 theorem frontier_eq_discBd_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    frontier D = discBd D := by
-  have hman : ∀ x : EuclideanPlane, IsManifoldPoint x := isManifoldPoint_plane
-  have hcl : IsClosed D := hD.isCompact.isClosed
-  obtain ⟨h, g, c⟩ := hD.exists_isChart
-  obtain ⟨u1, -⟩ := c.union_ball
-  have hO := c.isOpen_image_ball hman
-  have hsub : g '' ball 0 1 ⊆ D := fun x hx => u1 ▸ Or.inl hx
-  apply subset_antisymm
-  · intro x hx
-    have hxD : x ∈ D := hcl.frontier_subset hx
-    rw [← u1] at hxD
-    rcases hxD with h' | h'
-    · exact absurd (interior_maximal hsub hO h') hx.2
-    · exact h'
-  · intro x hx
-    have hxD : x ∈ D := Surface.discBd_subset _ hx
-    refine ⟨subset_closure hxD, fun hint => ?_⟩
-    obtain ⟨U, hU, hxU, ⟨f⟩⟩ := isInteriorPoint_plane x
-    classical
-    let G : ℂ → EuclideanPlane := fun w =>
-      if hw : complexPlane w ∈ OpenUnitDisc then (f.symm ⟨_, hw⟩).1 else x
-    let M : Set ℂ := complexPlane ⁻¹' OpenUnitDisc
-    have hMo : IsOpen M := by
-      have : IsOpen OpenUnitDisc := by
-        have := Metric.isOpen_ball (x := (0 : EuclideanPlane)) (ε := 1)
-        convert this using 1
-        ext y
-        simp [OpenUnitDisc]
-      exact this.preimage complexPlane.continuous
-    have hG : ∀ w (hw : w ∈ M), G w = (f.symm ⟨_, hw⟩).1 := fun w hw => by
-      have hw' : complexPlane w ∈ OpenUnitDisc := hw
-      simp only [G, hw', dite_true]
-    have hGc : ContinuousOn G M := by
-      rw [continuousOn_iff_continuous_domRestrict]
-      have : M.domRestrict G = fun w : M => (f.symm ⟨complexPlane w.1, w.2⟩).1 :=
-        funext fun w => hG w.1 w.2
-      rw [this]
-      refine continuous_subtype_val.comp (f.symm.continuous.comp ?_)
-      exact Continuous.subtype_mk (complexPlane.continuous.comp continuous_subtype_val)
-        (fun w => w.2)
-    have hGi : InjOn G M := by
-      intro a ha b hb hab
-      rw [hG a ha, hG b hb] at hab
-      have h₁ := f.symm.injective (Subtype.ext hab)
-      exact complexPlane.injective (congrArg Subtype.val h₁)
-    let B : Set ℂ := M ∩ G ⁻¹' interior D
-    have hBo : IsOpen B := hGc.isOpen_inter_preimage hMo isOpen_interior
-    have hBD : MapsTo G B D := fun w hw => interior_subset hw.2
-    have hHc : ContinuousOn (h ∘ G) B := c.hc.comp (hGc.mono inter_subset_left) hBD
-    have hHi : InjOn (h ∘ G) B := by
-      intro a ha b hb hab
-      apply hGi ha.1 hb.1
-      have := congrArg g hab
-      simpa [c.gh (hBD ha), c.gh (hBD hb)] using this
-    have hOpen := isOpen_image_of_injOn hBo hHc hHi
-    set w₀ : ℂ := complexPlane.symm (f ⟨x, hxU⟩).1 with hw₀
-    have hw₀M : w₀ ∈ M := by
-      change complexPlane w₀ ∈ OpenUnitDisc
-      rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      exact (f ⟨x, hxU⟩).2
-    have hGw : G w₀ = x := by
-      rw [hG w₀ hw₀M]
-      have : (⟨complexPlane w₀, hw₀M⟩ : OpenUnitDisc) = f ⟨x, hxU⟩ := by
-        apply Subtype.ext
-        change complexPlane w₀ = _
-        rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      rw [this, f.symm_apply_apply]
-    have hw₀B : w₀ ∈ B := ⟨hw₀M, show G w₀ ∈ interior D from hGw ▸ hint⟩
-    have hball : h x ∈ interior (closedBall (0 : ℂ) 1) := by
-      refine mem_interior.mpr ⟨_, ?_, hOpen, ⟨w₀, hw₀B, by simp [hGw]⟩⟩
-      rintro _ ⟨w, hw, rfl⟩
-      exact c.hm (hBD hw)
-    rw [interior_closedBall _ one_ne_zero] at hball
-    have hsph : h x ∈ sphere (0 : ℂ) 1 := c.bd ▸ mem_image_of_mem h hx
-    rw [mem_ball, mem_sphere.mp hsph] at hball
-    exact lt_irrefl _ hball
+    frontier D = discBd D :=
+  Surface.plane_disc_frontier hD
 
 theorem subBd_eq_discBd_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    subBd D = discBd D := by
-  rw [GraphMinor.GM11.subBd_eq_frontier, frontier_eq_discBd_plane hD]
+    subBd D = discBd D :=
+  Surface.subBd_eq_discBd_euclideanPlane hD
 
 theorem interior_eq_discInt_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    interior D = discInt D := by
-  ext x
-  simp only [discInt, mem_sdiff, ← frontier_eq_discBd_plane hD, frontier,
-    hD.isCompact.isClosed.closure_eq]
-  exact ⟨fun hx => ⟨interior_subset hx, fun h => h.2 hx⟩,
-    fun ⟨hxD, hnf⟩ => by_contra fun hni => hnf ⟨hxD, hni⟩⟩
+    interior D = discInt D :=
+  Surface.interior_eq_discInt_euclideanPlane hD
 
 /-- Radial shrink factor on `ℂ` fixing a subset `F₀` of the unit circle and shrinking the rest
 toward the origin. -/

@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM15.Section7
 import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM10.TangleLemmas
+import LeanPool.GraphMinor.GM10.GraphSubhypergraph
 import LeanPool.GraphMinor.GM11.RadialExists
 import LeanPool.GraphMinor.GM11.Section5b
 
@@ -112,48 +113,6 @@ theorem ControlsCliqueMinor.mono {G : Graph α β} {p₁ p₂ : ℕ}
       (fun heq => hij ((Fin.castLE_injective hp) heq)),
     fun i j hij => hlink (Fin.castLE hp i) (Fin.castLE hp j) hij,
     fun A B hAB hord i => hno_small hAB (lt_of_lt_of_le hord hp) (Fin.castLE hp i)⟩
-
-/-- The subgraph of `G` corresponding to a subhypergraph `H ≤ Hypergraph.ofGraph G hV hE`. -/
-private def subgraphOfSubhypergraph (G : Graph α β) (H : Hypergraph α β) : Graph α β :=
-  (G.induce H.vertexSet).restrict H.edgeSet
-
-private theorem subgraphOfSubhypergraph_le {G : Graph α β} {hV : V(G).Finite} {hE : E(G).Finite}
-    {H : Hypergraph α β} (hH : H ≤ Hypergraph.ofGraph G hV hE) :
-    subgraphOfSubhypergraph G H ≤ G :=
-  restrict_le.trans (G.induce_le hH.vertexSet_subset)
-
-private theorem edgeSet_subgraphOfSubhypergraph {G : Graph α β} {hV : V(G).Finite} {hE :
-  E(G).Finite}
-    {H : Hypergraph α β} (hH : H ≤ Hypergraph.ofGraph G hV hE) :
-    E(subgraphOfSubhypergraph G H) = H.edgeSet := by
-  ext e
-  simp only [subgraphOfSubhypergraph, edgeSet_restrict, mem_inter_iff, Graph.edgeSet_induce]
-  refine ⟨fun h => h.2, fun he => ⟨?_, he⟩⟩
-  have heG : e ∈ E(G) := hH.edgeSet_subset he
-  obtain ⟨x, y, hlink⟩ := exists_isLink_of_mem_edgeSet heG
-  have hx_end : x ∈ (Hypergraph.ofGraph G hV hE).ends e := ⟨y, hlink⟩
-  have hy_end : y ∈ (Hypergraph.ofGraph G hV hE).ends e := ⟨x, hlink.symm⟩
-  rw [hH.ends_eq e he] at hx_end hy_end
-  exact ⟨x, y, hlink, H.vertex_mem_of_inc hx_end, H.vertex_mem_of_inc hy_end⟩
-
-private theorem ofGraph_subgraphOfSubhypergraph {G : Graph α β} {hV : V(G).Finite} {hE :
-  E(G).Finite}
-    {H : Hypergraph α β} (hH : H ≤ Hypergraph.ofGraph G hV hE) :
-    Hypergraph.ofGraph (subgraphOfSubhypergraph G H) H.vertexSet_finite
-      (H.edgeSet_finite.subset (by rw [edgeSet_subgraphOfSubhypergraph hH])) = H := by
-  have hleG : subgraphOfSubhypergraph G H ≤ G := subgraphOfSubhypergraph_le hH
-  have hle_of : Hypergraph.ofGraph (subgraphOfSubhypergraph G H) H.vertexSet_finite
-      (H.edgeSet_finite.subset (by rw [edgeSet_subgraphOfSubhypergraph hH])) ≤
-      Hypergraph.ofGraph G hV hE := by
-    refine ⟨hH.vertexSet_subset, ?_, ?_⟩
-    · change E(subgraphOfSubhypergraph G H) ⊆ E(G)
-      rw [edgeSet_subgraphOfSubhypergraph hH]
-      exact hH.edgeSet_subset
-    · intro e he
-      ext v
-      exact (hleG.inc_congr he).symm
-  exact GM10.eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle_of hH rfl
-    (edgeSet_subgraphOfSubhypergraph hH)
 
 private theorem isLink_of_inc_of_inc_of_ne {G : Graph α β} {e : β} {u v : α}
     (hu : G.Inc e u) (hv : G.Inc e v) (huv : u ≠ v) : G.IsLink e u v := by

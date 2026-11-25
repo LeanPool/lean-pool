@@ -30,8 +30,7 @@ J. Combin. Theory Ser. B **41** (1986), 92–114, Sections 1–7 (pages 92–109
     such that `TreeWidthLE G w` holds).
   - Relabelling of tree-decompositions along an equivalence `e : ι ≃ ι'`
     (`IsTreeDecomposition.relabel`, `treeWidthLE_of_isTreeDecomposition`).
-  - Separations `(V₁, V₂)` of a graph `G` (`IsSeparation`) and connected components of a subgraph
-    (`IsComponentOf`).
+  - Separations `(V₁, V₂)` of a graph `G` (`IsSeparation`).
 - **Section 2 (pages 94–95):**
   - The function `α(k, n)` (`α θ k n`) and the parameters `θ₁, …, θ₉` and `φ_k` (`θ₁ θ`, …,
     `θ₉ θ`, `φ θ k`).
@@ -44,7 +43,7 @@ J. Combin. Theory Ser. B **41** (1986), 92–114, Sections 1–7 (pages 92–109
 - **Section 5 (pages 100–102):**
   - `(m, n)`-meshes (`IsMesh`, `HasMesh`).
 - **Section 6 (pages 102–106):**
-  - 2-connected graphs (`IsTwoConnected`) and the vertex-weight sum `w(X)` (`weightSum w X`).
+  - The vertex-weight sum `w(X)` (`weightSum w X`).
 -/
 
 @[expose] public section
@@ -170,16 +169,6 @@ structure IsSeparation (G : (⊤ : SimpleGraph V).Subgraph) (V₁ V₂ : Set V) 
   union_eq : V₁ ∪ V₂ = G.verts
   /-- No vertex of `V₁ - V₂` is adjacent in `G` to any vertex of `V₂ - V₁`. -/
   not_adj : ∀ ⦃u v : V⦄, u ∈ V₁ \ V₂ → v ∈ V₂ \ V₁ → ¬ G.Adj u v
-
-/-- `C` is a connected component (maximal connected subgraph) of `H`
-(Graph Minors V, Sections 5–6, pages 100–106). -/
-structure IsComponentOf (C H : (⊤ : SimpleGraph V).Subgraph) : Prop where
-  /-- `C` is a subgraph of `H`. -/
-  le : C ≤ H
-  /-- `C` is connected (nonempty and preconnected). -/
-  connected : C.Connected
-  /-- `C` is maximal among connected subgraphs of `H`. -/
-  eq_of_le : ∀ ⦃C' : (⊤ : SimpleGraph V).Subgraph⦄, C ≤ C' → C' ≤ H → C'.Connected → C' = C
 
 /-! ## Section 2: The Parameters `α`, `θ₁, …, θ₉`, and `φ_k` -/
 
@@ -392,16 +381,7 @@ def HasMesh (G : (⊤ : SimpleGraph V).Subgraph) (m n : ℕ) : Prop :=
   ∃ (A : Fin m → (⊤ : SimpleGraph V).Subgraph) (B : Fin n → (⊤ : SimpleGraph V).Subgraph),
     IsMesh G A B
 
-/-! ## Section 6: 2-Connected Graphs and Vertex Weights -/
-
-/-- `G` is 2-connected (Graph Minors V, Section 6, pages 103–104): `G` is connected and deleting
-any single vertex of `G` leaves a connected (or empty) subgraph, that is, `G \ v` does not have
-more than one component. -/
-structure IsTwoConnected (G : (⊤ : SimpleGraph V).Subgraph) : Prop where
-  /-- `G` is connected. -/
-  connected : G.Connected
-  /-- For every vertex `v ∈ V(G)`, `G \ v` is preconnected (has at most one component). -/
-  deleteVerts_preconnected : ∀ v ∈ G.verts, (G.deleteVerts {v}).Preconnected
+/-! ## Section 6: Vertex Weights -/
 
 /-- The sum `w(X) = ∑_{v ∈ X} w(v)` of a non-negative integer vertex weight `w : V → ℕ` over a set
 `X ⊆ V(G)` (Graph Minors V, Section 6, page 103):

@@ -29,14 +29,14 @@ From Graph Minors XIX:
 
 From Graph Minors XVII, used for (10.3) of XX. All but the last hold under the standing hypotheses
 of the section of that paper (`GM17.Standing`):
-* `GM17Theorem82Statement`, (8.2) (page 182);
-* `GM17Theorem83Statement`, (8.3) (page 183);
-* `GM17Theorem84Statement`, (8.4) (page 183);
-* `GM17Theorem85Statement`, (8.5) (page 183);
-* `GM17Theorem87Statement`, (8.7) (page 184);
-* `GM17Theorem88Statement`, (8.8) (page 184);
-* `GM17Theorem91Statement`, (9.1) (page 186);
-* `GM17Theorem98Statement`, (9.8) (page 188);
+* `GM17Theorem82Statement`, (8.2) (page 181);
+* `GM17Theorem83Statement`, (8.3) (page 182);
+* `GM17Theorem84Statement`, (8.4) (page 182);
+* `GM17Theorem85Statement`, (8.5) (page 182);
+* `GM17Theorem87Statement`, (8.7) (page 182);
+* `GM17Theorem88Statement`, (8.8) (page 183);
+* `GM17Theorem91Statement`, (9.1) (page 183);
+* `GM17Theorem98Statement`, (9.8) (pages 187–188);
 * `GM17Theorem117Statement`, (11.7) (page 195);
 * `GM17Theorem142Statement`, (14.2) (page 209).
 -/
@@ -123,7 +123,7 @@ end GM17
 
 open GraphMinor.GM17
 
-/-- Graph Minors XVII, (8.3) (page 183): "For every $\Gamma$-normal $I$-arc $F$ with $|F \cap
+/-- Graph Minors XVII, (8.3) (page 182): "For every $\Gamma$-normal $I$-arc $F$ with $|F \cap
 N(\Gamma)| = 2$, there is a disc $\Delta
 \subseteq \Sigma$ with $F \subseteq bd(\Delta) \subseteq F \cup bd(\Sigma)$ such that
 $\Delta \cap N(\Gamma) \subseteq F$ and $\Delta$ includes exactly one cell of $\Gamma$." Standing

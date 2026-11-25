@@ -230,7 +230,7 @@ theorem lt_vDist_of_not_flawed (D : TangleDatum cap χ) {a : ℕ} (hrep : a < D.
   by_contra hle
   exact hf ⟨hrep, hdist, r₁, h₁, r₂, h₂, hne, not_lt.mp hle⟩
 
-/-- **Graph Minors XIX, (12.2)** (page 364): "There exists $X_1 \subseteq V(\Gamma^*)$ with $|X_1|
+/-- **Graph Minors XIX, (12.2)** (page 363): "There exists $X_1 \subseteq V(\Gamma^*)$ with $|X_1|
 \le m + c(\Sigma_\chi)$ and $P^*
 \subseteq X_1$, such that for every $e \in Z$ there exists $x \in X_1$ with $d(e, x) \le n$." -/
 theorem theorem_12_2_proof (D : TangleDatum cap χ) {m n k : ℕ} {ω₀ : α} (hn : 4 ≤ n)

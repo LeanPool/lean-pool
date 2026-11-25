@@ -23,8 +23,7 @@ This file formalizes the remaining definitions of N. Robertson and P. D. Seymour
   $M(\Gamma, \mathscr{L})$ (`RootedLocation.M`), outlines (`IsOutline`), $\chi$-places (`Place`),
   and well-behaved sets of $\chi$-places (`IsWellBehavedPlaces`).
 - **Section 10 (pages 353–357):** Tangle flaws: representativeness flaws (`IsRepFlaw`), distance
-  flaws (`IsFlawedInDistance`, `IsDistanceFlaw`), and freedom flaws (`IsFlawedInFreedom`,
-  `IsFreedomFlaw`).
+  flaws (`IsFlawedInDistance`), and freedom flaws (`IsFlawedInFreedom`).
 - **Section 11 (pages 357–361):** Border label flaws: bites at a pole $r^*$ (`IsBiteAt`), their
   arcs (`IsBiteArc`, `biteArc`), the
   border distance $l(e_1, e_2)$ (`borderEdgeDist`), $(n, (\omega_1, \dots, \omega_m))$-flaws on a
@@ -37,7 +36,7 @@ This file formalizes the remaining definitions of N. Robertson and P. D. Seymour
   $W$-hubs (`IsOptimalWheelHub`), boundary sector discs $\Delta_v$ and boundary sector circuits
   $D_v$ (`IsBoundarySector`).
 - **Section 14 (pages 375–379):** Singular and regular boundary region vertices
-  (`IsSingularBoundaryRegion`) and $\omega_0$-flaws (`IsOmega0Flaw`).
+  (`IsSingularBoundaryRegion`).
 -/
 
 @[expose] public section
@@ -334,42 +333,6 @@ def IsFlawedInDistance (D : TangleDatum cap χ) (n : ℕ) : Prop :=
   ∃ r₁ ∈ D.rad.poles, ∃ r₂ ∈ D.rad.poles, r₁ ≠ r₂ ∧ D.vDist r₁ r₂ ≤ n
 
 open Classical in
-/-- A pair `(F, X)` is a *distance flaw* for `(Γ, φ, λ, 𝒯)` (Graph Minors XIX, Section 10,
-pages 355–356:
-"By 8.5 we may choose $F$ such that every circuit of $F$ is $\lambda$-linked to
-$\mathscr{T}$. (To see this, choose $F$ with $ins(F)$ maximal.) In this case we call $(F,
-ins(F))$ a *distance flaw* for $(\Gamma, \phi, \lambda, \mathscr{T})$"). -/
-structure IsDistanceFlaw (D : TangleDatum cap χ) (n : ℕ) (F : Drawing Shat)
-    (X : Set Shat) : Prop where
-  sub_rad : F.IsSubdrawing D.rad.G
-  X_eq : X = F.U ∪ ⋃ (C : Drawing Shat) (_ : C.IsCircuitOf F), D.ins C
-  all_linked : ∀ C : Drawing Shat, C.IsCircuitOf F → IsLambdaLinkedCircuit D.tb D.ord D.𝒯 C
-  cases_flaw :
-    (F.IsCircuitOf D.rad.G ∧ F.E.ncard ≤ 2 * n ∧
-      (((F.U ∩ cap.emb '' bd S).ncard ≤ 1 ∧ F.U ⊆ range cap.emb) ∨
-        ((F.U ∩ cap.emb '' bd S).ncard = 2 ∧ ¬ F.U ⊆ range cap.emb)) ∧
-      2 ≤ (D.rad.poles ∩ D.ins F).ncard) ∨
-    (∃ (F₀ F₁ : Drawing Shat) (rstar u : Shat),
-      F.V = F₀.V ∪ F₁.V ∧ F.E = F₀.E ∪ F₁.E ∧
-      2 * F₀.E.ncard + F₁.E.ncard ≤ 2 * n ∧
-      rstar ≠ u ∧ F₀.IsPathOf D.rad.G rstar u ∧ F₁.IsCircuitOf D.rad.G ∧
-      rstar ∈ D.rad.poles ∧ F₀.V ∩ F₁.V = {u} ∧
-      (∀ v ∈ F₀.V, v = rstar ∨ (∃ e ∈ F₀.E, closure e ∩ F₀.V = {rstar, v}) ∨
-        v ∈ cap.emb '' (univ \ bd S)) ∧
-      (∀ v ∈ F₁.V \ F₀.V, v ∈ cap.emb '' (univ \ bd S)) ∧
-      (D.rad.poles ∩ D.ins F₁).ncard = 1 ∧ rstar ∉ D.ins F₁) ∨
-    (∃ (F₀ F₁ F₂ : Drawing Shat) (v₁ v₂ : Shat),
-      F.V = F₀.V ∪ F₁.V ∪ F₂.V ∧ F.E = F₀.E ∪ F₁.E ∪ F₂.E ∧
-      2 * F₀.E.ncard + F₁.E.ncard + F₂.E.ncard ≤ 2 * n ∧
-      F₀.IsPathOf D.rad.G v₁ v₂ ∧ F₁.IsCircuitOf D.rad.G ∧ F₂.IsCircuitOf D.rad.G ∧
-      F₀.V ∩ F₁.V = {v₁} ∧ F₀.V ∩ F₂.V = {v₂} ∧
-      (F₀.U ∪ F₁.U) ⊆ cap.emb '' (univ \ bd S) ∧
-      F₂.U ⊆ range cap.emb ∧ (F₂.U ∩ cap.emb '' bd S).ncard ≤ 1 ∧
-      ((F₀.E = ∅ ∧ F₀.V = F₁.V ∩ F₂.V) ∨ (F₀.E.Nonempty ∧ Disjoint F₁.V F₂.V)) ∧
-      ∃ r₁ ∈ D.rad.poles, ∃ r₂ ∈ D.rad.poles, r₁ ≠ r₂ ∧
-        D.rad.poles ∩ D.ins F₁ = {r₁} ∧ D.rad.poles ∩ D.ins F₂ = {r₂})
-
-open Classical in
 /-- A datum `(Γ, φ, λ, 𝒯) ∈ 𝒟` is *$n$-flawed in freedom* (Graph Minors XIX, Section 10, page 357:
 "We say that $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ is *$n$-flawed in
 freedom* if $rep(\mathscr{T}) > n$, and $d(r^*_1, r^*_2) > n$ for every two distinct poles
@@ -382,19 +345,6 @@ def IsFlawedInFreedom (D : TangleDatum cap χ) (n : ℕ) : Prop :=
   ∃ F : Drawing Shat, F.IsCircuitOf D.rad.G ∧ F.E.ncard ≤ 2 * n ∧
     ((∃ side ∈ χ.Φ.longSides, cap.emb '' side ⊆ D.ins F) ∨
       F.E.ncard < 2 * ((cap.emb '' χ.Φ.V) ∩ D.ins F).ncard)
-
-open Classical in
-/-- A circuit `F` of `Γ*` is a *freedom flaw* for `(Γ, φ, λ, 𝒯)` (Graph Minors XIX, Section 10,
-page 357:
-"Then $F$ may be chosen to be $\lambda$-linked to $\mathscr{T}$ (by choosing $F$ with
-$ins(F)$ maximal), and in this case we call it a *freedom flaw* for $(\Gamma, \phi, \lambda,
-\mathscr{T})$"). -/
-structure IsFreedomFlaw (D : TangleDatum cap χ) (n : ℕ) (F : Drawing Shat) : Prop where
-  is_circuit : F.IsCircuitOf D.rad.G
-  card_le : F.E.ncard ≤ 2 * n
-  linked : IsLambdaLinkedCircuit D.tb D.ord D.𝒯 F
-  flaw_cond : (∃ side ∈ χ.Φ.longSides, cap.emb '' side ⊆ D.ins F) ∨
-    F.E.ncard < 2 * ((cap.emb '' χ.Φ.V) ∩ D.ins F).ncard
 
 /-! ## Section 11: Border label flaws -/
 
@@ -751,27 +701,6 @@ def IsSingularBoundaryRegion (D : TangleDatum cap χ) (W : Set Shat) (H : Drawin
       f₁ ∈ D.rad.G.E ∧ f₁ ⊆ discBd W ∧ tilde f₁ = {rstar, v₁} ∧
       f₂ ∈ D.rad.G.E ∧ f₂ ⊆ discBd W ∧ tilde f₂ = {rstar, v₂} ∧
       D.IsSpoke W H v₁ h₁ S₁ ∧ D.IsSpoke W H v₂ h₂ S₂))
-
-open Classical in
-/-- An `ω₀`-flaw `(⋃ (G(W) : W ∈ 𝒲), 𝒲)` in `(Γ, φ, λ, 𝒯)` (Graph Minors XIX, Section 14,
-page 375:
-"We call $(\bigcup(G(W) : W \in \mathscr{W}), \mathscr{W})$ an $\omega_0$-flaw in $(\Gamma,
-\phi, \lambda, \mathscr{T})$"). -/
-structure IsOmega0Flaw (D : TangleDatum cap χ) (m n : ℕ) (ω₀ : α)
-    (Gflaw : Drawing Shat) (𝒲 : Set (Set Shat)) : Prop where
-  is_cover : D.IsWheelCover ω₀ 𝒲
-  card_le : 𝒲.ncard ≤ m + numCuffs S
-  radius_le : ∀ W ∈ 𝒲, D.wheelRadius W ≤ 2 * n * 5 ^ (2 * m)
-  flaw_drawing : ∃ (H : Set Shat → Drawing Shat) (SW NW : Set Shat → Set Shat),
-    (∀ W ∈ 𝒲, D.IsOptimalWheelHub W (H W) (D.wheelRadius W)) ∧
-    (∀ W ∈ 𝒲, ∃ rstar₀ ∈ D.rad.Rstar ∩ discBd W,
-      SW W = {rstar | D.IsSingularBoundaryRegion W (H W) rstar₀ rstar}) ∧
-    (∀ W ∈ 𝒲, NW W = {v ∈ (cap.emb '' D.Γ.V) ∩ discBd W |
-      ∃ rstar ∈ SW W, ∃ f ∈ D.rad.G.E, f ⊆ discBd W ∧ tilde f = {rstar, v}}) ∧
-    Gflaw.U = ⋃ W ∈ 𝒲, (discBd W ∪ (H W).U ∪
-      ⋃ v ∈ NW W, ⋃ (h : Shat) (S : Drawing Shat) (_ : D.IsSpoke W (H W) v h S), S.U) ∧
-    Gflaw.V = ⋃ W ∈ 𝒲, (SW W ∪ NW W ∪ (H W).V ∪
-      ⋃ v ∈ NW W, ⋃ (h : Shat) (S : Drawing Shat) (_ : D.IsSpoke W (H W) v h S), S.V)
 
 end TangleDatum
 

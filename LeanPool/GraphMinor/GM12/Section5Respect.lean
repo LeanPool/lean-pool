@@ -708,7 +708,7 @@ theorem theorem_5_4_proof [ConnectedSpace T] (h : IsCappedSplit C P₁ P₂ ι D
   exact ⟨R, Δ, Δ₁, hd.line, fun x hx => hN k ⟨hk hx.1, hx.2⟩, hk.trans (subset_iUnion C k),
     hd.count, hd.disc, hd.sub_P, hd.bd, hd.disc₁, hd.sub₁, hd.frontier₁, hd.mem⟩
 
-/-- **Graph Minors XII, (5.3)** (page 255). -/
+/-- **Graph Minors XII, (5.3)** (pages 254–255). -/
 theorem theorem_5_3_proof [NeZero n] [ConnectedSpace T] (h : IsCappedSplit C P₁ P₂ ι D)
     (hΓ : IsCappedDrawing ι Γ Γ₁) (hN : ∀ k, Γ.IsNormal (C k)) (hT : IsTangle Γ₁.toHypergraph θ 𝒯)
     (hR : (PaintingOrDrawing.drawing Γ₁).IsRespectful θ 𝒯)

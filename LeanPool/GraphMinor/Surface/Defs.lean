@@ -33,7 +33,7 @@ drawn on surfaces, shared by Graph Minors VI–IX and XI–XX:
 - Topological drawings (`Drawing`) and paintings (`Painting`) in a surface $S$, their edges,
   regions, atoms, subdrawings, $\Gamma$-normality, restrictions $\Gamma \cap \Delta$, 2-cell
   drawings, radial drawings, dual drawings, walks and curves tracing walks, homotopy of forests,
-  and the canonical bridge to `Graph` (`Drawing.toGraph`, `GraphDrawing`, `GraftDrawing`) and
+  and the canonical bridge to `Graph` (`Drawing.toGraph`, `GraphDrawing`) and
   `Hypergraph` (`Painting.toHypergraph`).
 -/
 
@@ -502,17 +502,6 @@ structure ProperGraphDrawing {α : Type u} {β : Type v} (G : Graph α β)
     (S : Type w) [TopologicalSpace S] extends GraphDrawing G S where
   /-- No edge of the drawing meets $\operatorname{bd}(\Sigma)$. -/
   isProper : drawing.IsProper
-
-/-- A *drawing of a graft* $(G, T)$ in $\Sigma$, where $T \subseteq V(G)$, is a proper drawing of
-$G$ in $\Sigma$ such that a vertex $v \in V(G)$ is drawn in $\operatorname{bd}(\Sigma)$ if and only
-if $v \in T$.
-Graph Minors VIII, Section 5 (page 262). -/
-structure GraftDrawing {α : Type u} {β : Type v} (G : Graph α β) (T : Set α)
-    (S : Type w) [TopologicalSpace S] extends ProperGraphDrawing G S where
-  /-- $T$ is a subset of $V(G)$. -/
-  T_subset_V : T ⊆ V(G)
-  /-- A vertex $v \in V(G)$ maps to $\operatorname{bd}(\Sigma)$ if and only if $v \in T$. -/
-  mem_bd_iff : ∀ (v : α) (hv : v ∈ V(G)), (iso.vertexEquiv ⟨v, hv⟩).1 ∈ bd S ↔ v ∈ T
 
 /-! ## 5. Paintings and Radial / Dual Drawings -/
 

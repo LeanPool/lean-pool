@@ -24,6 +24,7 @@ import LeanPool.GraphMinor.GM17.MarkCross
 import LeanPool.GraphMinor.GM17.PasteCuff
 
 import LeanPool.GraphMinor.GM17.ReplaceDisc
+import LeanPool.GraphMinor.GM17.CellLinkage
 
 /-!
 # Graph Minors XVII: proved deductions of Section7
@@ -425,118 +426,6 @@ private theorem disjoint_active_cell_sides
         · rw [Set.disjoint_left]
           exact fun x hx₁ hx₂ => (hN₂_sub hx₂).2 (hΘ_bd (hI₁_sub hx₁).1)
       exact Set.disjoint_left.mp hdisj_NI (he₁ hn₀) (he₂ hn₀)
-
-private theorem path_lifts_to_cell_unions
-    {α : Type u}
-    {β : Type v}
-    {G : Hypergraph α β}
-    (π : Portrayal G)
-    {Δ : Set π.S}
-    {n₁ : π.S}
-    {n₂ : π.S}
-    {p : ℕ}
-    (P : Fin (p + 1) → PathFromTo (π.areaGraph Δ).skeleton (π.borderPlus n₁) (π.borderPlus n₂))
-    (m₁ : π.S)
-    (m₂ : π.S)
-    (c : Set π.S)
-    (I₁ : Set π.S)
-    (I₂ : Set π.S)
-    (N₁ : Set π.S)
-    (N₂ : Set π.S)
-    (hc_C : c ∈ π.Γ.C)
-    (htilde_c : tilde c = {m₁, m₂})
-    (hborder_split : ∀ d ∈ π.Γ.C, d ⊆ Δ → (d ∩ bd π.S).Nonempty → d ≠ c → tilde d ⊆ I₁ ∨ tilde d ⊆
-      I₂)
-    (hint_split : ∀ d ∈ π.Γ.C, d ⊆ Δ → ¬(d ∩ bd π.S).Nonempty → (fun d => {n | n ∈ tilde d ∩
-      π.domγ ∧ ∃ l, (fun d l => 2 ≤ {z | z ∈ (P l).walk.support ∧ z ∈ π.nodeVertex '' (tilde d ∩
-      π.domγ)}.ncard) d l ∧ π.nodeVertex n ∈ (P l).walk.support}) d ⊆ N₁ ∪ I₁ ∨ (fun d => {n | n ∈
-      tilde d ∩ π.domγ ∧ ∃ l, (fun d l => 2 ≤ {z | z ∈ (P l).walk.support ∧ z ∈ π.nodeVertex ''
-      (tilde d ∩ π.domγ)}.ncard) d l ∧ π.nodeVertex n ∈ (P l).walk.support}) d ⊆ N₂ ∪ I₂)
-    (hc_bd : (c ∩ bd π.S).Nonempty)
-    (j : Fin (p + 1))
-    (Q : PathFromTo (π.areaGraph Δ).skeleton (⋃ n ∈ I₁ ∩ π.Γ.N, π.borderPlus n) (⋃ n ∈ I₂ ∩ π.Γ.N,
-      π.borderPlus n))
-    (hQ_sub : {z | z ∈ Q.walk.support} ⊆ {z | z ∈ (P j).walk.support})
-    :
-    let activeFor := fun d l => 2 ≤
-      {z | z ∈ (P l).walk.support ∧ z ∈ π.nodeVertex '' (tilde d ∩ π.domγ)}.ncard
-    let e := fun d =>
-      {n | n ∈ tilde d ∩ π.domγ ∧ ∃ l, activeFor d l ∧ π.nodeVertex n ∈ (P l).walk.support}
-    let I_Δ := {d | d ∈ π.Γ.C ∧ d ⊆ Δ}
-    let D₁ := {d | d ∈ I_Δ ∧ ((d ∩ bd π.S).Nonempty ∧ d ≠ c ∧ tilde d ⊆ I₁ ∨
-      ¬(d ∩ bd π.S).Nonempty ∧ activeFor d j ∧ e d ⊆ N₁ ∪ I₁)}
-    let D₂ := {d | d ∈ I_Δ ∧ ((d ∩ bd π.S).Nonempty ∧ d ≠ c ∧ tilde d ⊆ I₂ ∨
-      ¬(d ∩ bd π.S).Nonempty ∧ activeFor d j ∧ e d ⊆ N₂ ∪ I₂)}
-    let H₁ := π.cellsUnion D₁
-    let H₂ := π.cellsUnion D₂
-    let Hc := π.cellGraph c
-    (∀ {d : Set π.S}, d ∈ I_Δ → ¬(d ∩ bd π.S).Nonempty →
-      ∀ {x y : α}, x ∈ (P j).walk.support → y ∈ (P j).walk.support → x ≠ y →
-      ∀ {e₀ : β}, (π.cellGraph d).Inc e₀ x → (π.cellGraph d).Inc e₀ y → activeFor d j) →
-    D₁ ⊆ π.Γ.C → D₂ ⊆ π.Γ.C → Disjoint D₁ D₂ → c ∉ D₁ → c ∉ D₂ →
-    Disjoint H₁.edgeSet (H₂ ∪ Hc).edgeSet → Disjoint H₂.edgeSet Hc.edgeSet →
-    ∃ w₀ : (H₁ ∪ (H₂ ∪ Hc)).skeleton.Walk Q.first Q.last, w₀.support = Q.walk.support := by
-  intro activeFor e I_Δ D₁ D₂ H₁ H₂ Hc hcell_active hD₁_sub hD₂_sub hdisj_D₁_D₂
-    hc_not_D₁ hc_not_D₂ hdisjE_1_2c hdisjE_2_c
-  have hstep_all : ∀ {x y : α}, x ∈ (P j).walk.support → y ∈ (P j).walk.support →
-      (π.areaGraph Δ).skeleton.Adj x y → (H₁ ∪ (H₂ ∪ Hc)).skeleton.Adj x y := by
-    rintro x y hx hy ⟨hxy, e₀, hincx, hincy⟩
-    have he₀_mem : e₀ ∈ (π.areaGraph Δ).edgeSet :=
-      (π.areaGraph Δ).edge_mem_of_inc hincx
-    change e₀ ∈ ⋃ d ∈ _, _ at he₀_mem
-    rw [mem_iUnion₂] at he₀_mem
-    rcases he₀_mem with ⟨d, ⟨hd_I, hd_C⟩, hed⟩
-    have hincx_G : G.Inc e₀ x :=
-      (inc_iff_of_le (π.cellsUnion_le I_Δ) ((π.areaGraph Δ).edge_mem_of_inc hincx)).mp hincx
-    have hincy_G : G.Inc e₀ y :=
-      (inc_iff_of_le (π.cellsUnion_le I_Δ) ((π.areaGraph Δ).edge_mem_of_inc hincy)).mp hincy
-    have hincx_d : (π.cellGraph d).Inc e₀ x :=
-      (inc_iff_of_le (π.cellGraph_le d hd_C) hed).mpr hincx_G
-    have hincy_d : (π.cellGraph d).Inc e₀ y :=
-      (inc_iff_of_le (π.cellGraph_le d hd_C) hed).mpr hincy_G
-    by_cases hdc : d = c
-    · subst hdc
-      exact ⟨hxy, e₀, Or.inr (Or.inr hincx_d), Or.inr (Or.inr hincy_d)⟩
-    · by_cases hbd_d : (d ∩ bd π.S).Nonempty
-      · rcases hborder_split d hd_I.1 hd_I.2 hbd_d hdc with ht₁ | ht₂
-        · have hd_D₁ : d ∈ D₁ := ⟨hd_I, Or.inl ⟨hbd_d, hdc, ht₁⟩⟩
-          refine ⟨hxy, e₀,
-            Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₁ hd_C) hed).mp hincx_d),
-            Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₁ hd_C) hed).mp hincy_d)⟩
-        · have hd_D₂ : d ∈ D₂ := ⟨hd_I, Or.inl ⟨hbd_d, hdc, ht₂⟩⟩
-          refine ⟨hxy, e₀,
-            Or.inr (Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₂ hd_C) hed).mp
-              hincx_d)),
-            Or.inr (Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₂ hd_C) hed).mp
-              hincy_d))⟩
-      · have hact_d : activeFor d j :=
-          hcell_active hd_I hbd_d hx hy hxy hincx_d hincy_d
-        rcases hint_split d hd_I.1 hd_I.2 hbd_d with he₁ | he₂
-        · have hd_D₁ : d ∈ D₁ := ⟨hd_I, Or.inr ⟨hbd_d, hact_d, he₁⟩⟩
-          refine ⟨hxy, e₀,
-            Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₁ hd_C) hed).mp hincx_d),
-            Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₁ hd_C) hed).mp hincy_d)⟩
-        · have hd_D₂ : d ∈ D₂ := ⟨hd_I, Or.inr ⟨hbd_d, hact_d, he₂⟩⟩
-          refine ⟨hxy, e₀,
-            Or.inr (Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₂ hd_C) hed).mp
-              hincx_d)),
-            Or.inr (Or.inl ((inc_iff_of_le (π.cellGraph_le_cellsUnion hd_D₂ hd_C) hed).mp
-              hincy_d))⟩
-  have hlift_walk : ∀ {a b : α} (w : (π.areaGraph Δ).skeleton.Walk a b),
-      {z | z ∈ w.support} ⊆ {z | z ∈ (P j).walk.support} →
-      ∃ w₀ : (H₁ ∪ (H₂ ∪ Hc)).skeleton.Walk a b, w₀.support = w.support := by
-    intro a b w hw_sub
-    induction w with
-    | nil => exact ⟨.nil, rfl⟩
-    | @cons a x b hadj tail ih =>
-      have ha_P : a ∈ (P j).walk.support := hw_sub (SimpleGraph.Walk.start_mem_support _)
-      have hx_P : x ∈ (P j).walk.support :=
-        hw_sub (List.mem_cons_of_mem a (SimpleGraph.Walk.start_mem_support tail))
-      obtain ⟨tail₀, hsup⟩ := ih (fun z hz => hw_sub (List.mem_cons_of_mem a hz))
-      refine ⟨.cons (hstep_all ha_P hx_P hadj) tail₀, ?_⟩
-      dsimp [SimpleGraph.Walk.support]
-      rw [hsup]
-  exact hlift_walk Q.walk hQ_sub
 
 private theorem first_side_path_boundary
     {α : Type u}
@@ -1082,10 +971,8 @@ private theorem path_family_restricts_to_middle_cell
     -- Lift `Q.walk` to `(H₁ ∪ (H₂ ∪ Hc)).skeleton`.
     have hQ_lift_all : ∃ w₀ : (H₁ ∪ (H₂ ∪ Hc)).skeleton.Walk Q.first Q.last,
         w₀.support = Q.walk.support := by
-      exact path_lifts_to_cell_unions (α := α) (β := β) (G := G) π (Δ := Δ) (n₁ := n₁)
-        (n₂ := n₂) (p := p) P m₁ m₂ c I₁ I₂ N₁ N₂ hc_C htilde_c hborder_split
-        hint_split hc_bd j Q hQ_sub hcell_active hD₁_sub hD₂_sub hdisj_D₁_D₂ hc_not_D₁
-        hc_not_D₂ hdisjE_1_2c hdisjE_2_c
+      exact walk_lifts_to_three_areas π (fun d ↦ activeFor d j) e hborder_split hint_split
+        Q.walk hQ_sub hcell_active
     obtain ⟨w₀, hw₀_sup⟩ := hQ_lift_all
     have hw₀_path : w₀.IsPath := by
       rw [SimpleGraph.Walk.isPath_def, hw₀_sup]
@@ -1323,74 +1210,9 @@ theorem theorem_7_3_proof
       hN₂_sub hdisj_N hord_I c₁_end hc₁_C hc₁_Δ hc₁_bd hn₁_c₁ c₂_end hc₂_C hc₂_Δ hc₂_bd hn₂_c₂
       hborder_split hint_split hc_bd hbp₁_sub_B₁ hbp₂_sub_B₂ hbp_m₁_sub_B₁ hbp_m₂_sub_B₂
   -- Assemble the linkage `{Q'_0, ..., Q'_p}` in `α(c)` from `β(m₁+)` to `β(m₂+)` (page 180).
-  let Q' : Fin (p + 1) → PathFromTo (π.cellGraph c).skeleton (π.borderPlus m₁) (π.borderPlus m₂) :=
-    fun j => Classical.choose (hclaim j)
-  have hQ'_sub : ∀ j, {z | z ∈ (Q' j).walk.support} ⊆ {z | z ∈ (P j).walk.support} :=
-    fun j => (Classical.choose_spec (hclaim j)).1
-  have hQ'_disj : Pairwise fun i j =>
-      Disjoint {z | z ∈ (Q' i).walk.support} {z | z ∈ (Q' j).walk.support} :=
-    fun _ _ hij => (hP_disj hij).mono (hQ'_sub _) (hQ'_sub _)
-  have hinj_Q'_first : Function.Injective (fun j => (Q' j).first) := by
-    intro i j hij
-    change (Q' i).first = (Q' j).first at hij
-    by_contra hne_ij
-    have hi_mem : (Q' j).first ∈ {z | z ∈ (Q' i).walk.support} :=
-      hij ▸ SimpleGraph.Walk.start_mem_support (Q' i).walk
-    exact Set.disjoint_left.mp (hQ'_disj hne_ij) hi_mem
-      (SimpleGraph.Walk.start_mem_support (Q' j).walk)
-  have hinj_Q'_last : Function.Injective (fun j => (Q' j).last) := by
-    intro i j hij
-    change (Q' i).last = (Q' j).last at hij
-    by_contra hne_ij
-    have hi_mem : (Q' j).last ∈ {z | z ∈ (Q' i).walk.support} :=
-      hij ▸ SimpleGraph.Walk.end_mem_support (Q' i).walk
-    exact Set.disjoint_left.mp (hQ'_disj hne_ij) hi_mem
-      (SimpleGraph.Walk.end_mem_support (Q' j).walk)
-  have hm₁_bd : m₁ ∈ π.Γ.N ∩ bd π.S := ⟨hm₁_mem.1, hΘ_bd hm₁_mem.2.1⟩
-  have hm₂_bd : m₂ ∈ π.Γ.N ∩ bd π.S := ⟨hm₂_mem.1, hΘ_bd hm₂_mem.2.1⟩
-  have hm₁_tc : m₁ ∈ tilde c := htilde_c ▸ mem_insert _ _
-  have hm₂_tc : m₂ ∈ tilde c := htilde_c ▸ mem_insert_of_mem _ (mem_singleton _)
-  have hcw_le : π.cellWarp c ≤ p := (π.cellWarp_le_warpAt hc_C hc_Θ).trans hwarp
-  have hspec_c := π.cellWarp_spec hc_C hc_bd m₁ hm₁_tc m₂ hm₂_tc hm_ne
-  have hbp_m₁_le : (π.borderPlus m₁).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hm₁_bd).trans (Nat.add_le_add_right hspec_c.1 1)
-  have hbp_m₂_le : (π.borderPlus m₂).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hm₂_bd).trans (Nat.add_le_add_right hspec_c.2.1 1)
-  have hbp_m₁_ge : p + 1 ≤ (π.borderPlus m₁).ncard := by
-    have hsub : Set.range (fun j => (Q' j).first) ⊆ π.borderPlus m₁ := by
-      rintro _ ⟨j, rfl⟩; exact (Q' j).first_mem
-    have hcard_r : (Set.range (fun j => (Q' j).first)).ncard = p + 1 := by
-      rw [ncard_range_of_injective hinj_Q'_first, Nat.card_eq_fintype_card, Fintype.card_fin]
-    exact hcard_r ▸ ncard_le_ncard hsub (π.borderPlus_finite hm₁_bd)
-  have hbp_m₂_ge : p + 1 ≤ (π.borderPlus m₂).ncard := by
-    have hsub : Set.range (fun j => (Q' j).last) ⊆ π.borderPlus m₂ := by
-      rintro _ ⟨j, rfl⟩; exact (Q' j).last_mem
-    have hcard_r : (Set.range (fun j => (Q' j).last)).ncard = p + 1 := by
-      rw [ncard_range_of_injective hinj_Q'_last, Nat.card_eq_fintype_card, Fintype.card_fin]
-    exact hcard_r ▸ ncard_le_ncard hsub (π.borderPlus_finite hm₂_bd)
-  have hcw_eq : π.cellWarp c = p := by omega
-  have hlink_c : Portrayal.LinkagePairs (π.cellGraph c).skeleton
-      (π.borderPlus m₁) (π.borderPlus m₂) (p + 1) (π.nodeVertex m₁) (π.nodeVertex m₂) := by
-    have h1 : (π.borderPlus m₁).ncard = π.cellWarp c + 1 := by omega
-    have h2 : (π.borderPlus m₂).ncard = π.cellWarp c + 1 := by omega
-    have h0 := hspec_c.2.2 h1 h2
-    rwa [hcw_eq] at h0
-  have hm₂_dom : m₂ ∈ π.domγ := by
-    by_contra hm₂_not
-    have hbp_eq : π.borderPlus m₂ = π.borderSet m₂ := by
-      ext v; simp [Portrayal.borderPlus, hm₂_not]
-    rw [hbp_eq] at hbp_m₂_ge
-    have := hspec_c.2.1
-    omega
-  obtain ⟨j₁, hj₁_first, hj₁_last⟩ := hlink_c Q' hQ'_disj
-  have hj₁_eq_j₀ : j₁ = j₀ := by
-    by_contra hne_j
-    exact Set.disjoint_left.mp (hP_disj hne_j)
-      (hQ'_sub j₁ (hj₁_first ▸ SimpleGraph.Walk.start_mem_support (Q' j₁).walk))
-      hP_m₁.2
-  have hm₂_in_P₀ : π.nodeVertex m₂ ∈ (P j₀).walk.support :=
-    hj₁_eq_j₀ ▸ hQ'_sub j₁ (hj₁_last ▸ SimpleGraph.Walk.end_mem_support (Q' j₁).walk)
-  exact hP_m₂ ⟨hm₂_dom, hm₂_in_P₀⟩
+  exact no_partial_middle_cell_linkage π (fun j ↦ {z | z ∈ (P j).walk.support}) hP_disj hwarp
+    ⟨hm₁_mem.1, hΘ_bd hm₁_mem.2.1⟩ ⟨hm₂_mem.1, hΘ_bd hm₂_mem.2.1⟩ hm_ne hc_C hc_Θ hc_bd
+    htilde_c hP_m₁.2 hP_m₂ (fun j ↦ (hclaim j).imp fun _ h ↦ h.1)
 
 private lemma isTruer_of_le_of_lt {α : Type u} {β : Type v} {G : Hypergraph α β}
     {π' π : Portrayal G} (hle : ∀ i : Fin 6, π'.truth i ≤ π.truth i)

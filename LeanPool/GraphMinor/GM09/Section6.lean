@@ -548,29 +548,7 @@ theorem exists_minimal_separation_of_separating {P : Graph α β} {a b : α}
   exact ⟨G₁, G₂, H, hsep, hinter, hP_G₁, hab_G₁, hba_G₂, hHG, hH_del_G₂, hH_del_G,
     hVH_eq_diff, rfl, hcatch_H⟩
 
-/-! ## Counterexample properties (1)–(4) and Claims (5)–(9) (pages 55–57) -/
-
-/-- Properties `(1)–(4)` of a minimal counterexample `(G, Ω)` in the proof of (6.1)
-(Graph Minors IX, Section 6, pages 55–56):
-- `(1)` "`G` is simple."
-- `(2)` "No vertex `v ∈ ΩBar` is isolated."
-- `(3)` "If $v \in \bar{\Omega}$ has valency 1, then its neighbor is in $\bar{\Omega}$."
-- `(4)` "If $u, v \in \bar{\Omega}$ are distinct and $\Omega(u, v) = \emptyset$, then $u$ and $v$
-  are
-not adjacent in $G$." -/
-structure CounterexampleProperties : Prop where
-  /-- (1) "`G` is simple." -/
-  isSimple : IsSimpleGraph S.G
-  /-- (2) "No vertex `v ∈ ΩBar` is isolated." -/
-  no_isolated_in_bar : ∀ v ∈ S.Ω.bar, ∃ u : α, S.G.Adj v u
-  /-- (3) "If $v \in \bar{\Omega}$ has valency 1, then its neighbor is in $\bar{\Omega}$." -/
-  neighbor_in_bar_of_degree_one : ∀ v ∈ S.Ω.bar, ∀ u : α,
-    S.G.Adj v u → (∀ w : α, S.G.Adj v w → w = u) → u ∈ S.Ω.bar
-  /-- (4) "If $u, v \in \bar{\Omega}$ are distinct and $\Omega(u, v) = \emptyset$, then $u$ and $v$
-  are
-not adjacent in $G$." -/
-  not_adj_of_interval_empty : ∀ u ∈ S.Ω.bar, ∀ v ∈ S.Ω.bar,
-    u ≠ v → S.Ω.interval u v = ∅ → ¬ S.G.Adj u v
+/-! ## Claims (5)–(9) (pages 55–57) -/
 
 /-- **Graph Minors IX, (6.1), Claim (5)** (page 56):
 "If $P'$ is an $\Omega$-path with $P' \subseteq G_1$, then $C(\mathcal{P}) \subseteq

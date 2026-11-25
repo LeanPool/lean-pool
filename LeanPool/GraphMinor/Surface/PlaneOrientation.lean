@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM19.Winding
 public import LeanPool.GraphMinor.Surface.Cap
 public import LeanPool.GraphMinor.Surface.OpenDisc
+public import LeanPool.GraphMinor.Surface.PlaneDisc
 
 /-!
 # The orientation of the plane
@@ -749,38 +750,6 @@ def IsClockwiseDiscHomeo (D : Set EuclideanPlane) {C : Set EuclideanPlane}
     (φ : Circle ≃ₜ C) : Prop :=
   ∀ x ∈ interior D, 0 < wind (fun w => complexPlane.symm (φ w).1) (complexPlane.symm x)
 
-protected theorem subBd_eq_frontier {S : Type*} [TopologicalSpace S] (A : Set S) :
-    subBd A = frontier A := by
-  rw [subBd, ← compl_eq_univ_sdiff, frontier_eq_closure_inter_closure]
-
-theorem subBd_eq_discBd_complex {Δ : Set ℂ} (hΔ : IsClosedDisc Δ) :
-    subBd Δ = discBd Δ := by
-  obtain ⟨φ₀⟩ := hΔ.isOArc_discBd
-  let φ : Circle → ℂ := fun w => (φ₀ w).1
-  have hc : Continuous φ := continuous_subtype_val.comp φ₀.continuous
-  have hi : Function.Injective φ := fun a b h => φ₀.injective (Subtype.ext h)
-  have hr : range φ = discBd Δ := by
-    ext z
-    exact ⟨fun ⟨w, hw⟩ => hw ▸ (φ₀ w).2, fun hz => ⟨φ₀.symm ⟨z, hz⟩, by simp [φ]⟩⟩
-  obtain ⟨G, hG, hD⟩ := exists_plane_extension hΔ hc hi hr
-  have hfr : frontier Δ = G '' sphere 0 1 := by
-    rw [← hD, ← G.image_frontier, frontier_closedBall 0 one_ne_zero]
-  rw [Surface.subBd_eq_frontier, hfr, image_sphere_of_extension G hG, hr]
-
-theorem interior_eq_discInt_complex {Δ : Set ℂ} (hΔ : IsClosedDisc Δ) :
-    interior Δ = discInt Δ := by
-  obtain ⟨φ₀⟩ := hΔ.isOArc_discBd
-  let φ : Circle → ℂ := fun w => (φ₀ w).1
-  have hc : Continuous φ := continuous_subtype_val.comp φ₀.continuous
-  have hi : Function.Injective φ := fun a b h => φ₀.injective (Subtype.ext h)
-  have hr : range φ = discBd Δ := by
-    ext z
-    exact ⟨fun ⟨w, hw⟩ => hw ▸ (φ₀ w).2, fun hz => ⟨φ₀.symm ⟨z, hz⟩, by simp [φ]⟩⟩
-  obtain ⟨G, hG, hD⟩ := exists_plane_extension hΔ hc hi hr
-  have hint : interior Δ = G '' ball 0 1 := by
-    rw [← hD, ← G.image_interior, interior_closedBall 0 one_ne_zero]
-  rw [discInt_eq_of_extension G hG hr hD, hint]
-
 theorem isClosedDisc_symm_image_complexPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
     IsClosedDisc (complexPlane.symm '' D) :=
   (hD.image complexPlane.symm.continuous.continuousOn complexPlane.continuous.continuousOn
@@ -791,27 +760,6 @@ theorem discBd_symm_image_complexPlane_eq_image_discBd {D : Set EuclideanPlane}
     discBd (complexPlane.symm '' D) = complexPlane.symm '' discBd D :=
   (hD.image complexPlane.symm.continuous.continuousOn complexPlane.continuous.continuousOn
     (fun x _ => complexPlane.apply_symm_apply x)).2
-
-theorem subBd_eq_discBd_euclideanPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    subBd D = discBd D := by
-  have h1 := subBd_eq_discBd_complex (isClosedDisc_symm_image_complexPlane hD)
-  have hfr : frontier (complexPlane.symm '' D) = complexPlane.symm '' frontier D :=
-    (complexPlane.symm.toHomeomorph.image_frontier D).symm
-  rw [Surface.subBd_eq_frontier, hfr, discBd_symm_image_complexPlane_eq_image_discBd hD] at h1
-  rw [Surface.subBd_eq_frontier]
-  exact Set.image_injective.mpr complexPlane.symm.injective h1
-
-theorem interior_eq_discInt_euclideanPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    interior D = discInt D := by
-  have h1 := interior_eq_discInt_complex (isClosedDisc_symm_image_complexPlane hD)
-  have h2 : discInt (complexPlane.symm '' D) = complexPlane.symm '' discInt D := by
-    rw [discInt, discBd_symm_image_complexPlane_eq_image_discBd hD,
-      ← Set.image_sdiff complexPlane.symm.injective]
-    rfl
-  have hint : interior (complexPlane.symm '' D) = complexPlane.symm '' interior D :=
-    (complexPlane.symm.toHomeomorph.image_interior D).symm
-  rw [hint, h2] at h1
-  exact Set.image_injective.mpr complexPlane.symm.injective h1
 
 theorem discBd_symm_image_complexPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
     discBd (complexPlane.symm '' D) = complexPlane.symm '' subBd D := by

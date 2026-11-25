@@ -274,8 +274,8 @@ theorem lemma_8_1_claim_2 {P : Patchwork Ω α β} {P' : Patchwork Ω α' β'}
   · by_contra hne'
     exact Set.disjoint_left.mp (hη₂.vertex_disjoint u₁ hu₁ u₂ hu₂ hne') hv'₁ hv'₂
 
-/-- First half of Graph Minors IV, (8.1) (page 248): the glued map `(glueVertex, glueEdge)` is an
-expansion of `P` in `P'`. -/
+/-- First half of Graph Minors IV, (8.1) (pages 247–248). The glued map `(glueVertex, glueEdge)` is
+an expansion of `P` in `P'`. -/
 theorem theorem_8_1_expansion {P : Patchwork Ω α β} {P' : Patchwork Ω α' β'}
     {G₁ G₂ : RootedHypergraph α β} {G'₁ G'₂ : RootedHypergraph α' β'}
     (hsep : P.G.IsSeparation G₁ G₂) (hsep' : P'.G.IsSeparation G'₁ G'₂)

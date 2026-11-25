@@ -31,7 +31,7 @@ This file states as `Prop`s the results from *Graph Minors IX. Disjoint crossed 
     XV.
 - **From Graph Minors IX:**
   - `GM09Theorem71Statement`: (7.1) (page 59), quoted as (6.2) in Graph Minors XV (page 134).
-  - `GM09Theorem81Statement`: (8.1) (page 60), used in (2.1) of Graph Minors XV (page 116).
+  - `GM09Theorem81Statement`: (8.1) (page 60), nonempty-boundary case used in XV (2.1) (page 116).
   - `GM09Theorem1111Statement`: (11.11) (page 74), used to deduce (6.1) of Graph Minors XV
     (page 134).
 - **From Graph Minors XI:**
@@ -81,8 +81,8 @@ def GM09Theorem71Statement : Prop :=
       (P'.ncard = τ₁ ∧ S.IsLeapTransaction P') ∨
       (P'.ncard = τ₂ ∧ S.IsDoublecrossTransaction P')
 
-/-- Statement of Graph Minors IX, (8.1) (page 60), used in (2.1) of Graph Minors XV (page 116)
-and (3.2) of Graph Minors XVI (page 50):
+/-- The nonempty-boundary case of Graph Minors IX, (8.1) (page 60), used in (2.1) of XV
+(page 116) and (3.2) of XVI (page 50). The corrected full theorem also covers the null graph.
 Every society `(G, Ω)` with `ΩBar ≠ ∅` and with no transaction of cardinality `> k` has a linear
 decomposition of depth `≤ k`. -/
 def GM09Theorem81Statement : Prop :=

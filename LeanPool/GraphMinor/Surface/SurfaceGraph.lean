@@ -72,13 +72,17 @@ theorem IsGraph.isClosed_gr [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGra
   obtain ⟨u, v, -, hl, -⟩ := h.edge e he
   exact hl.isCompact.isClosed
 
-theorem IsGraph.add_point [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGraph V E) (x : X) :
-    ∃ E', IsGraph (insert x V) E' ∧ gr (insert x V) E' = insert x (gr V E) ∧ ⋃₀ E ⊆ ⋃₀ E' := by
+/-- Insert a vertex, subdividing at most one edge. Each resulting edge lies in an old edge. -/
+theorem IsGraph.add_point_counted [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGraph V E)
+  (x : X) :
+    ∃ E', IsGraph (insert x V) E' ∧ gr (insert x V) E' = insert x (gr V E) ∧ ⋃₀ E ⊆ ⋃₀ E'
+      ∧ E'.ncard ≤ E.ncard + 1 ∧
+      ∀ f ∈ E', ∃ e ∈ E, f ⊆ e := by
   classical
   by_cases hV : x ∈ V
-  · refine ⟨E, by rwa [insert_eq_of_mem hV], ?_, subset_rfl⟩
-    have hx : x ∈ gr V E := Or.inl hV
-    rw [insert_eq_of_mem hV, insert_eq_of_mem hx]
+  · refine ⟨E, by rwa [insert_eq_of_mem hV], ?_, subset_rfl, by omega, fun f hf ↦ ⟨f, hf,
+      subset_rfl⟩⟩
+    rw [insert_eq_of_mem hV, insert_eq_of_mem (Or.inl hV : x ∈ gr V E)]
   by_cases hE : ∃ e ∈ E, x ∈ e
   · obtain ⟨e, he, hx⟩ := hE
     obtain ⟨u, v, huv, hl, hi⟩ := h.edge e he
@@ -96,7 +100,7 @@ theorem IsGraph.add_point [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGraph
     have huL : u ∉ L₂ := fun hc => hxu (mem_singleton_iff.mp (hin ▸ (⟨h₁.left_mem, hc⟩ : u ∈ L₁ ∩
       L₂))).symm
     refine ⟨insert L₁ (insert L₂ (E \ {e})), ⟨h.fin.insert x, ((h.fine.sdiff).insert _).insert _,
-      ?_, ?_⟩, ?_, ?_⟩
+      ?_, ?_⟩, ?_, ?_, ?_, ?_⟩
     · rintro f (rfl | rfl | ⟨hf, hne⟩)
       · refine ⟨u, x, hxu.symm, h₁, ?_⟩
         ext y
@@ -171,13 +175,28 @@ theorem IsGraph.add_point [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGraph
         · exact ⟨L₁, .inl rfl, hy⟩
         · exact ⟨L₂, .inr (.inl rfl), hy⟩
       · exact ⟨f, .inr (.inr ⟨hf, hfe⟩), hy⟩
+    · have h1 : (insert L₁ (insert L₂ (E \ {e}))).ncard ≤ (insert L₂ (E \ {e})).ncard + 1
+      := ncard_insert_le _ _
+      have h2 : (insert L₂ (E \ {e})).ncard ≤ (E \ {e}).ncard + 1 := ncard_insert_le _ _
+      have h3 : (E \ {e}).ncard + 1 = E.ncard := ncard_sdiff_singleton_add_one he h.fine
+      omega
+    · rintro f (rfl | rfl | ⟨hf, -⟩)
+      · exact ⟨e, he, hs1⟩
+      · exact ⟨e, he, hs2⟩
+      · exact ⟨f, hf, subset_rfl⟩
   · push Not at hE
     refine ⟨E, ⟨h.fin.insert x, h.fine, fun e he => ?_, fun e he f hf hne =>
-      (h.disj e he f hf hne).trans (subset_insert _ _)⟩, ?_, subset_rfl⟩
+      (h.disj e he f hf hne).trans (subset_insert _ _)⟩, ?_, subset_rfl, by omega, fun f hf ↦ ⟨f,
+        hf, subset_rfl⟩⟩
     · obtain ⟨a, b, hab, hl', hi'⟩ := h.edge e he
       refine ⟨a, b, hab, hl', ?_⟩
       rw [inter_insert_of_notMem (hE e he), hi']
     · simp only [gr, insert_union]
+
+theorem IsGraph.add_point [T2Space X] {V : Set X} {E : Set (Set X)} (h : IsGraph V E) (x : X) :
+    ∃ E', IsGraph (insert x V) E' ∧ gr (insert x V) E' = insert x (gr V E) ∧ ⋃₀ E ⊆ ⋃₀ E' := by
+  obtain ⟨E', hGraph, hPointSet, hCover, _, _⟩ := h.add_point_counted x
+  exact ⟨E', hGraph, hPointSet, hCover⟩
 
 /-- Adding an arc whose ends are vertices and which misses the rest of the graph. -/
 theorem IsGraph.add_arc {V : Set X} {E : Set (Set X)} (h : IsGraph V E) {A : Set X} {p q : X}

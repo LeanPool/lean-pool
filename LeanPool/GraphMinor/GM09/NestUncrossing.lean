@@ -15,6 +15,7 @@ import LeanPool.GraphMinor.GM09.Section3a
 import LeanPool.GraphMinor.GM09.Section11b
 import LeanPool.GraphMinor.GM14.DiscSlope
 import LeanPool.GraphMinor.Surface.DiscGrow
+import LeanPool.GraphMinor.Surface.PlaneDisc
 
 /-!
 # The Nest-and-Paths Uncrossing Argument (Graph Minors III, Theorem (4.1))
@@ -1401,123 +1402,6 @@ theorem disjoint_detour_of_isGraphPath_inter {G P P_sub R₁ C : Graph α β} {x
 
 open Topology Metric
 
-private theorem isInteriorPoint_plane (x : EuclideanPlane) : IsInteriorPoint x := by
-  let B : Set ℂ := ball (complexPlane.symm x) 1
-  let U : Set EuclideanPlane := complexPlane.symm ⁻¹' B
-  have hU : IsOpen U := isOpen_ball.preimage complexPlane.symm.continuous
-  have hxU : x ∈ U := mem_ball_self zero_lt_one
-  let f₁ : U ≃ₜ B := {
-    toFun := fun y => ⟨complexPlane.symm y.1, y.2⟩
-    invFun := fun z => ⟨complexPlane z.1, by
-      change complexPlane.symm (complexPlane z.1) ∈ B
-      rw [LinearIsometryEquiv.symm_apply_apply]
-      exact z.2⟩
-    left_inv := fun y => Subtype.ext (LinearIsometryEquiv.apply_symm_apply complexPlane y.1)
-    right_inv := fun z => Subtype.ext (LinearIsometryEquiv.symm_apply_apply complexPlane z.1)
-    continuous_toFun := Continuous.subtype_mk
-      (complexPlane.symm.continuous.comp continuous_subtype_val) (fun y => y.2)
-    continuous_invFun := Continuous.subtype_mk
-      (complexPlane.continuous.comp continuous_subtype_val) (fun z => by
-        change complexPlane.symm (complexPlane z.1) ∈ B
-        rw [LinearIsometryEquiv.symm_apply_apply]
-        exact z.2)
-  }
-  obtain ⟨f₂⟩ := exists_homeomorph_ball (complexPlane.symm x) zero_lt_one
-  exact ⟨U, hU, hxU, ⟨f₁.trans f₂⟩⟩
-
-private theorem isManifoldPoint_plane (x : EuclideanPlane) : IsManifoldPoint x :=
-  (isInteriorPoint_plane x).isManifoldPoint
-
-private theorem frontier_eq_discBd_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    frontier D = discBd D := by
-  have hman : ∀ x : EuclideanPlane, IsManifoldPoint x := isManifoldPoint_plane
-  have hcl : IsClosed D := hD.isCompact.isClosed
-  obtain ⟨h, g, c⟩ := hD.exists_isChart
-  obtain ⟨u1, -⟩ := c.union_ball
-  have hO := c.isOpen_image_ball hman
-  have hsub : g '' ball 0 1 ⊆ D := fun x hx => u1 ▸ Or.inl hx
-  apply subset_antisymm
-  · intro x hx
-    have hxD : x ∈ D := hcl.frontier_subset hx
-    rw [← u1] at hxD
-    rcases hxD with h' | h'
-    · exact absurd (interior_maximal hsub hO h') hx.2
-    · exact h'
-  · intro x hx
-    have hxD : x ∈ D := Surface.discBd_subset _ hx
-    refine ⟨subset_closure hxD, fun hint => ?_⟩
-    obtain ⟨U, hU, hxU, ⟨f⟩⟩ := isInteriorPoint_plane x
-    classical
-    let G : ℂ → EuclideanPlane := fun w =>
-      if hw : complexPlane w ∈ OpenUnitDisc then (f.symm ⟨_, hw⟩).1 else x
-    let M : Set ℂ := complexPlane ⁻¹' OpenUnitDisc
-    have hMo : IsOpen M := by
-      have : IsOpen OpenUnitDisc := by
-        have := Metric.isOpen_ball (x := (0 : EuclideanPlane)) (ε := 1)
-        convert this using 1
-        ext y
-        simp [OpenUnitDisc]
-      exact this.preimage complexPlane.continuous
-    have hG : ∀ w (hw : w ∈ M), G w = (f.symm ⟨_, hw⟩).1 := fun w hw => by
-      have hw' : complexPlane w ∈ OpenUnitDisc := hw
-      simp only [G, hw', dite_true]
-    have hGc : ContinuousOn G M := by
-      rw [continuousOn_iff_continuous_domRestrict]
-      have : M.domRestrict G = fun w : M => (f.symm ⟨complexPlane w.1, w.2⟩).1 :=
-        funext fun w => hG w.1 w.2
-      rw [this]
-      refine continuous_subtype_val.comp (f.symm.continuous.comp ?_)
-      exact Continuous.subtype_mk (complexPlane.continuous.comp continuous_subtype_val)
-        (fun w => w.2)
-    have hGi : InjOn G M := by
-      intro a ha b hb hab
-      rw [hG a ha, hG b hb] at hab
-      have h₁ := f.symm.injective (Subtype.ext hab)
-      exact complexPlane.injective (congrArg Subtype.val h₁)
-    let B : Set ℂ := M ∩ G ⁻¹' interior D
-    have hBo : IsOpen B := hGc.isOpen_inter_preimage hMo isOpen_interior
-    have hBD : MapsTo G B D := fun w hw => interior_subset hw.2
-    have hHc : ContinuousOn (h ∘ G) B := c.hc.comp (hGc.mono inter_subset_left) hBD
-    have hHi : InjOn (h ∘ G) B := by
-      intro a ha b hb hab
-      apply hGi ha.1 hb.1
-      have := congrArg g hab
-      simpa [c.gh (hBD ha), c.gh (hBD hb)] using this
-    have hOpen := isOpen_image_of_injOn hBo hHc hHi
-    set w₀ : ℂ := complexPlane.symm (f ⟨x, hxU⟩).1 with hw₀
-    have hw₀M : w₀ ∈ M := by
-      change complexPlane w₀ ∈ OpenUnitDisc
-      rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      exact (f ⟨x, hxU⟩).2
-    have hGw : G w₀ = x := by
-      rw [hG w₀ hw₀M]
-      have : (⟨complexPlane w₀, hw₀M⟩ : OpenUnitDisc) = f ⟨x, hxU⟩ := by
-        apply Subtype.ext
-        change complexPlane w₀ = _
-        rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      rw [this, f.symm_apply_apply]
-    have hw₀B : w₀ ∈ B := ⟨hw₀M, show G w₀ ∈ interior D from hGw ▸ hint⟩
-    have hball : h x ∈ interior (closedBall (0 : ℂ) 1) := by
-      refine mem_interior.mpr ⟨_, ?_, hOpen, ⟨w₀, hw₀B, by simp [hGw]⟩⟩
-      rintro _ ⟨w, hw, rfl⟩
-      exact c.hm (hBD hw)
-    rw [interior_closedBall _ one_ne_zero] at hball
-    have hsph : h x ∈ sphere (0 : ℂ) 1 := c.bd ▸ mem_image_of_mem h hx
-    rw [mem_ball, mem_sphere.mp hsph] at hball
-    exact lt_irrefl _ hball
-
-private theorem subBd_eq_discBd_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    subBd D = discBd D := by
-  rw [GraphMinor.GM11.subBd_eq_frontier, frontier_eq_discBd_plane hD]
-
-private theorem interior_eq_discInt_plane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
-    interior D = discInt D := by
-  ext x
-  simp only [discInt, mem_sdiff, ← frontier_eq_discBd_plane hD, frontier,
-    hD.isCompact.isClosed.closure_eq]
-  exact ⟨fun hx => ⟨interior_subset hx, fun h => h.2 hx⟩,
-    fun ⟨hxD, hnf⟩ => by_contra fun hni => hnf ⟨hxD, hni⟩⟩
-
 private theorem IsLineWithEnds.isPreconnected_sdiff_left {L : Set EuclideanPlane}
     {a b : EuclideanPlane} (h : IsLineWithEnds L a b) : IsPreconnected (L \ {a}) := by
   obtain ⟨f, hf0, _⟩ := h
@@ -1575,7 +1459,8 @@ private theorem outer_chord_disc_contains {Y D A₁ A₂ L : Set EuclideanPlane}
     (hLY : L ⊆ Y) (hLD : L ∩ D = {s, t}) :
     (∃ Δ₁ ⊆ Y, IsClosedDisc Δ₁ ∧ discBd Δ₁ = L ∪ A₁ ∧ D ⊆ Δ₁) ∨
     (∃ Δ₂ ⊆ Y, IsClosedDisc Δ₂ ∧ discBd Δ₂ = L ∪ A₂ ∧ D ⊆ Δ₂) := by
-  have hman : ∀ x : EuclideanPlane, IsManifoldPoint x := isManifoldPoint_plane
+  have hman : ∀ x : EuclideanPlane, IsManifoldPoint x :=
+    fun x ↦ (Surface.isInteriorPoint_euclideanPlane x).isManifoldPoint
   have hbdD : discBd D ⊆ D := Surface.discBd_subset D
   have hA₁D : A₁ ⊆ discBd D := hA_union ▸ subset_union_left
   have hA₂D : A₂ ⊆ discBd D := hA_union ▸ subset_union_right
@@ -2162,7 +2047,7 @@ private theorem detour_dichotomy {G C P_sub : Graph α β}
   set t_pt := (Γ.iso.vertexEquiv ⟨v', hv'G⟩).1
   obtain ⟨hline, hne⟩ := isLineWithEnds_graphDrawingSubgraphU Γ hP_sub hvv'
   have hbd_inter : graphDrawingSubgraphU Γ P_sub ∩ discBd D = {s_pt, t_pt} := by
-    rw [← subBd_eq_discBd_plane hD, hD_bd,
+    rw [← Surface.subBd_eq_discBd_euclideanPlane hD, hD_bd,
       graphDrawingSubgraphU_inter_of_disjoint_edgeSet Γ hP_sub.le hCG hEC, hVC,
       biUnion_insert, biUnion_singleton,
       graphDrawingVertexSet_eq_singleton Γ hvG, graphDrawingVertexSet_eq_singleton Γ hv'G,
@@ -2171,7 +2056,7 @@ private theorem detour_dichotomy {G C P_sub : Graph α β}
   have hpre : IsPreconnected (graphDrawingSubgraphU Γ P_sub \ {s_pt, t_pt}) :=
     GraphMinor.GM14.IsLineWithEnds.isPreconnected_sdiff_pair hline
   have hdisj_fr : Disjoint (graphDrawingSubgraphU Γ P_sub \ {s_pt, t_pt}) (frontier D) := by
-    rw [frontier_eq_discBd_plane hD, disjoint_left]
+    rw [Surface.plane_disc_frontier hD, disjoint_left]
     rintro x ⟨hxP, hx_nst⟩ hx_bd
     exact hx_nst (hbd_inter ▸ ⟨hxP, hx_bd⟩)
   have hs_in : s_pt ∈ graphDrawingSubgraphU Γ P_sub ∩ discBd D := by
@@ -2228,7 +2113,7 @@ theorem circuit_two_arcs_drawing {G C : Graph α β}
       singleton_union]
   have hunion_U : graphDrawingSubgraphU Γ Q₁ ∪ graphDrawingSubgraphU Γ Q₂ = discBd D := by
     rw [← graphDrawingSubgraphU_subgraphUnion Γ hQ₁.le hQ₂.le, hunion, ← hD_bd,
-      subBd_eq_discBd_plane hD]
+      Surface.subBd_eq_discBd_euclideanPlane hD]
   exact ⟨Q₁, Q₂, hQ₁C, hQ₂C, hQ₁, hQ₂, hV, hE, hunion, hline₁, hline₂, hinter, hunion_U⟩
 
 private theorem move2_replace_with_arc {N : Neighborhood α β} (P_pres : Presentation N)
@@ -2305,7 +2190,7 @@ private theorem move2_replace_with_arc {N : Neighborhood α β} (P_pres : Presen
       · subst hmj
         simp only [D', C', C_new, Function.update_self]
         refine ⟨hΔ_keep, ?_⟩
-        rw [subBd_eq_discBd_plane hΔ_keep, hΔ_keep_bd,
+        rw [Surface.subBd_eq_discBd_euclideanPlane hΔ_keep, hΔ_keep_bd,
           graphDrawingSubgraphU_subgraphUnion P_pres.Γ hP_sub.le hQ_keep.le]
       · simp only [D', C', Function.update_of_ne hmj]
         exact hD_disc m
@@ -2329,7 +2214,7 @@ private theorem move2_replace_with_arc {N : Neighborhood α β} (P_pres : Presen
           refine union_subset (hP_sub_in_D m₂ hlt) ?_
           have hQ_sub : graphDrawingSubgraphU P_pres.Γ Q_keep ⊆ D m₁ := by
             refine (graphDrawingSubgraphU_mono P_pres.Γ hQ_keepC).trans ?_
-            rw [← (hD_disc m₁).2, subBd_eq_discBd_plane (hD_disc m₁).1]
+            rw [← (hD_disc m₁).2, Surface.subBd_eq_discBd_euclideanPlane (hD_disc m₁).1]
             exact Surface.discBd_subset (D m₁)
           exact hQ_sub.trans (hD_mono m₁ m₂ hm₁₂)
       · by_cases hm₂ : m₂ = j
@@ -2403,7 +2288,7 @@ private theorem move2_outer_detour {N : Neighborhood α β} (P_pres : Presentati
         graphDrawingVertexSet_subset_subgraphU_of_mem P_pres.Γ hwP ⟨hwG, rfl⟩
       have hpw_Cm : pw ∈ graphDrawingSubgraphU P_pres.Γ (C m) :=
         graphDrawingVertexSet_subset_subgraphU_of_mem P_pres.Γ hwCm ⟨hwG, rfl⟩
-      rw [← (hD_disc m).2, subBd_eq_discBd_plane (hD_disc m).1] at hpw_Cm
+      rw [← (hD_disc m).2, Surface.subBd_eq_discBd_euclideanPlane (hD_disc m).1] at hpw_Cm
       have hpw_Dj : pw ∈ D j :=
         hD_mono m j (le_of_lt hlt) (Surface.discBd_subset (D m) hpw_Cm)
       have hpw_st : pw ∈ ({s_pt, t_pt} : Set EuclideanPlane) :=
@@ -2475,7 +2360,7 @@ theorem isClosedDisc_Δ₀_and_mem_of_mem_bar₀ {N : Neighborhood α β}
   · refine ⟨hΔ₀_disc, ?_⟩
     have hpy_bd : (P_pres.Γ.iso.vertexEquiv ⟨y, hyG⟩).1 ∈ subBd P_pres.Δ₀ :=
       (P_pres.mem_bd_Δ₀_iff y hyG).mpr hy ⟨hyG, rfl⟩
-    rw [subBd_eq_discBd_plane hΔ₀_disc] at hpy_bd
+    rw [Surface.subBd_eq_discBd_euclideanPlane hΔ₀_disc] at hpy_bd
     exact Surface.discBd_subset P_pres.Δ₀ hpy_bd
 
 private theorem prop2_inner_walk {N : Neighborhood α β} (P_pres : Presentation N)
@@ -2494,7 +2379,7 @@ private theorem prop2_inner_walk {N : Neighborhood α β} (P_pres : Presentation
   obtain ⟨_, hpy_Δ₀⟩ := isClosedDisc_Δ₀_and_mem_of_mem_bar₀ P_pres hy
   have hpy_Dj : (P_pres.Γ.iso.vertexEquiv ⟨y, hyG⟩).1 ∈ D_j := hΔ₀_sub hpy_Δ₀
   have hCj_Dj : graphDrawingSubgraphU P_pres.Γ C_j ⊆ D_j := by
-    rw [← hD_bd, subBd_eq_discBd_plane hD]
+    rw [← hD_bd, Surface.subBd_eq_discBd_euclideanPlane hD]
     exact Surface.discBd_subset D_j
   intro n
   induction n using Nat.strong_induction_on with
@@ -2666,13 +2551,13 @@ private theorem prop2_inner_walk {N : Neighborhood α β} (P_pres : Presentation
           set py := (P_pres.Γ.iso.vertexEquiv ⟨y, hyG⟩).1
           obtain ⟨hline_R, hpvy_ne⟩ := isLineWithEnds_graphDrawingSubgraphU P_pres.Γ hR_path hvy
           have hbd_inter : graphDrawingSubgraphU P_pres.Γ R ∩ discBd D_j = {pv} := by
-            rw [← subBd_eq_discBd_plane hD, hD_bd,
+            rw [← Surface.subBd_eq_discBd_euclideanPlane hD, hD_bd,
               graphDrawingSubgraphU_inter_of_disjoint_edgeSet P_pres.Γ hR_path.le hC.1 hEC_R,
               hVC_R, biUnion_singleton, graphDrawingVertexSet_eq_singleton P_pres.Γ hvG]
           have hpre_R : IsPreconnected (graphDrawingSubgraphU P_pres.Γ R \ {pv}) :=
             IsLineWithEnds.isPreconnected_sdiff_left hline_R
           have hdisj_fr : Disjoint (graphDrawingSubgraphU P_pres.Γ R \ {pv}) (frontier D_j) := by
-            rw [frontier_eq_discBd_plane hD, disjoint_left]
+            rw [Surface.plane_disc_frontier hD, disjoint_left]
             rintro x ⟨hxR, hx_npv⟩ hx_bd
             exact hx_npv (hbd_inter ▸ ⟨hxR, hx_bd⟩)
           rcases GraphMinor.GM14.subset_or_disjoint_of_frontier hD.isClosed hpre_R hdisj_fr with
@@ -2882,7 +2767,7 @@ private theorem theorem_10_1_step {N : Neighborhood α β} (P_pres : Presentatio
       obtain ⟨Q₁, Q₂, hQ₁C, hQ₂C, hQ₁, hQ₂, _, _, _, hline₁, hline₂, hQ_inter_U, hQ_union_U⟩ :=
         circuit_two_arcs_drawing P_pres.Γ (hC_circ j) (hD_disc j).1 (hD_disc j).2 hvC hv'C hvv'
       have hΔ₀_disj_L : Disjoint (discInt P_pres.Δ₀) (graphDrawingSubgraphU P_pres.Γ P_sub) := by
-        rw [← interior_eq_discInt_plane hΔ₀_disc, disjoint_left]
+        rw [← Surface.interior_eq_discInt_euclideanPlane hΔ₀_disc, disjoint_left]
         intro x hx_int hxP
         exact ((P_pres.U_subset (graphDrawingSubgraphU_subset_U P_pres.Γ P_sub hxP)).2 hx_int).elim
       rcases inner_chord_separates_from_core (hD_disc j).1 hΔ₀_disc (hD_bounds j).1

@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.GM11.Section7
 public import LeanPool.GraphMinor.Surface.DiscsInSurface
 import LeanPool.GraphMinor.Surface.CircleMove
 import LeanPool.GraphMinor.GM09.Section4b
+import LeanPool.GraphMinor.Surface.PlaneDisc
 
 /-!
 # Homeomorphisms matching marked disc boundaries
@@ -29,91 +30,18 @@ namespace GraphMinor.GM14
 open Set Topology Surface GM09
 
 /-- Every point of the Euclidean plane is a surface interior point. -/
-theorem isInteriorPoint_euclideanPlane (x : EuclideanPlane) : IsInteriorPoint x := by
-  let U : Set EuclideanPlane := (fun y : EuclideanPlane => y + x) '' OpenUnitDisc
-  have hHomeo := (Homeomorph.addRight x).image OpenUnitDisc
-  have hOpen_ball : IsOpen OpenUnitDisc := Metric.isOpen_ball
-  have hOpen_U : IsOpen U := (Homeomorph.addRight x).isOpenMap OpenUnitDisc hOpen_ball
-  have hxU : x ∈ U := ⟨0, by simp [OpenUnitDisc], by simp⟩
-  exact ⟨U, hOpen_U, hxU, ⟨hHomeo.symm⟩⟩
+theorem isInteriorPoint_euclideanPlane (x : EuclideanPlane) : IsInteriorPoint x :=
+  Surface.isInteriorPoint_euclideanPlane x
 
 /-- The frontier of a closed disc in the plane is its disc boundary. -/
 theorem isClosedDisc_frontier_eq_discBd_euclideanPlane {D : Set EuclideanPlane}
-    (hD : IsClosedDisc D) : frontier D = discBd D := by
-  have hman : ∀ x : EuclideanPlane, IsManifoldPoint x :=
-    fun x => (isInteriorPoint_euclideanPlane x).isManifoldPoint
-  have hcl : IsClosed D := hD.isCompact.isClosed
-  obtain ⟨h, g, c⟩ := hD.exists_isChart
-  obtain ⟨u1, -⟩ := c.union_ball
-  have hO := c.isOpen_image_ball hman
-  have hsub : g '' Metric.ball 0 1 ⊆ D := fun x hx => u1 ▸ Or.inl hx
-  apply subset_antisymm
-  · intro x hx
-    have hxD : x ∈ D := hcl.frontier_subset hx
-    rw [← u1] at hxD
-    rcases hxD with h' | h'
-    · exact absurd (interior_maximal hsub hO h') hx.2
-    · exact h'
-  · intro x hx
-    have hxD : x ∈ D := Surface.discBd_subset _ hx
-    refine ⟨subset_closure hxD, fun hint => ?_⟩
-    obtain ⟨U, hU, hxU, ⟨f⟩⟩ := isInteriorPoint_euclideanPlane x
-    classical
-    let G : ℂ → EuclideanPlane := fun w =>
-      if hw : complexPlane w ∈ OpenUnitDisc then (f.symm ⟨_, hw⟩).1 else x
-    let M : Set ℂ := complexPlane ⁻¹' OpenUnitDisc
-    have hMo : IsOpen M := Metric.isOpen_ball.preimage complexPlane.continuous
-    have hG : ∀ w (hw : w ∈ M), G w = (f.symm ⟨_, hw⟩).1 := fun w hw => by
-      have hw' : complexPlane w ∈ OpenUnitDisc := hw
-      simp only [G, hw', dite_true]
-    have hGc : ContinuousOn G M := by
-      rw [continuousOn_iff_continuous_domRestrict]
-      have : M.domRestrict G = fun w : M => (f.symm ⟨complexPlane w.1, w.2⟩).1 :=
-        funext fun w => hG w.1 w.2
-      rw [this]
-      refine continuous_subtype_val.comp (f.symm.continuous.comp ?_)
-      exact Continuous.subtype_mk (complexPlane.continuous.comp continuous_subtype_val) _
-    have hGi : InjOn G M := by
-      intro a ha b hb hab
-      rw [hG a ha, hG b hb] at hab
-      have h₁ := f.symm.injective (Subtype.ext hab)
-      exact complexPlane.injective (congrArg Subtype.val h₁)
-    let B : Set ℂ := M ∩ G ⁻¹' interior D
-    have hBo : IsOpen B := hGc.isOpen_inter_preimage hMo isOpen_interior
-    have hBD : MapsTo G B D := fun w hw => interior_subset hw.2
-    have hHc : ContinuousOn (h ∘ G) B := c.hc.comp (hGc.mono inter_subset_left) hBD
-    have hHi : InjOn (h ∘ G) B := by
-      intro a ha b hb hab
-      apply hGi ha.1 hb.1
-      have := congrArg g hab
-      simpa [c.gh (hBD ha), c.gh (hBD hb)] using this
-    have hOpen := isOpen_image_of_injOn hBo hHc hHi
-    set w₀ : ℂ := complexPlane.symm (f ⟨x, hxU⟩).1 with hw₀
-    have hw₀M : w₀ ∈ M := by
-      change complexPlane w₀ ∈ OpenUnitDisc
-      rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      exact (f ⟨x, hxU⟩).2
-    have hGw : G w₀ = x := by
-      rw [hG w₀ hw₀M]
-      have : (⟨complexPlane w₀, hw₀M⟩ : OpenUnitDisc) = f ⟨x, hxU⟩ := by
-        apply Subtype.ext
-        change complexPlane w₀ = _
-        rw [hw₀, LinearIsometryEquiv.apply_symm_apply]
-      rw [this, f.symm_apply_apply]
-    have hw₀B : w₀ ∈ B := ⟨hw₀M, show G w₀ ∈ interior D from hGw ▸ hint⟩
-    have hball : h x ∈ interior (Metric.closedBall (0 : ℂ) 1) := by
-      refine mem_interior.mpr ⟨_, ?_, hOpen, ⟨w₀, hw₀B, by simp [hGw]⟩⟩
-      rintro _ ⟨w, hw, rfl⟩
-      exact c.hm (hBD hw)
-    rw [interior_closedBall _ one_ne_zero] at hball
-    have hsph : h x ∈ Metric.sphere (0 : ℂ) 1 := c.bd ▸ mem_image_of_mem h hx
-    rw [Metric.mem_ball, Metric.mem_sphere.mp hsph] at hball
-    exact lt_irrefl _ hball
+    (hD : IsClosedDisc D) : frontier D = discBd D :=
+  Surface.plane_disc_frontier hD
 
 /-- The surface and disc boundaries agree for a closed disc in the plane. -/
 theorem isClosedDisc_subBd_eq_discBd_euclideanPlane {D : Set EuclideanPlane}
-    (hD : IsClosedDisc D) : subBd D = discBd D := by
-  rw [GM11.subBd_eq_frontier, isClosedDisc_frontier_eq_discBd_euclideanPlane hD]
+    (hD : IsClosedDisc D) : subBd D = discBd D :=
+  Surface.subBd_eq_discBd_euclideanPlane hD
 
 /-- Two strictly ordered finite lists of real points admit strictly monotone interpolation. -/
 theorem exists_strictMonoOn_interp (n : ℕ) (a b : ℕ → ℝ)

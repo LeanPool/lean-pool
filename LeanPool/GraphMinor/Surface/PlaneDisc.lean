@@ -600,4 +600,57 @@ theorem IsCut.components {F : Set ℂ} {a b e : 𝕀 → ℂ} (c : IsCut F a b e
     obtain ⟨z, hz⟩ := hA
     exact Set.disjoint_left.mp hd1 (subset_closure hz) (h ▸ hz)
 
+/-- In the complex plane a closed disc has frontier equal to its
+intrinsic boundary. -/
+theorem complex_disc_frontier {D : Set ℂ} (hD : IsClosedDisc D) :
+    frontier D = discBd D := by
+  obtain ⟨φ⟩ := hD.isOArc_discBd
+  have J := isJordanParts φ
+  have heq : closedInner (discBd D) = (outer (discBd D))ᶜ := by
+    ext z
+    change (z ∈ inner (discBd D) ∨ z ∈ discBd D) ↔ z ∉ outer (discBd D)
+    constructor
+    · rintro (hz | hz)
+      · exact J.disjoint.notMem_of_mem_left hz
+      · exact fun h => h.1 hz
+    · intro hz
+      by_cases hb : z ∈ discBd D
+      · exact Or.inr hb
+      · have hmem : z ∈ inner (discBd D) ∪ outer (discBd D) :=
+          J.union_eq.symm ▸ hb
+        exact Or.inl (hmem.resolve_right hz)
+  conv_lhs => rw [eq_closedInner_of_discBd ⟨φ⟩ hD rfl, heq, frontier_compl, J.frontier_outer]
+
+/-- In the Euclidean plane the frontier and intrinsic disc boundary
+also agree. -/
+theorem plane_disc_frontier {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
+    frontier D = discBd D := by
+  let e : EuclideanPlane ≃ₜ ℂ := complexPlane.symm.toHomeomorph
+  obtain ⟨hDc, hb⟩ := hD.image (f := e) (f' := e.symm)
+    e.continuous.continuousOn e.symm.continuous.continuousOn
+    (fun _ _ => e.symm_apply_apply _)
+  apply e.injective.image_injective
+  rw [e.image_frontier, complex_disc_frontier hDc, hb]
+
+/-- Every point of the Euclidean plane is a surface interior point. -/
+theorem isInteriorPoint_euclideanPlane (x : EuclideanPlane) : IsInteriorPoint x := by
+  let U : Set EuclideanPlane := (fun y : EuclideanPlane => y + x) '' OpenUnitDisc
+  have hHomeo := (Homeomorph.addRight x).image OpenUnitDisc
+  have hOpen_ball : IsOpen OpenUnitDisc := Metric.isOpen_ball
+  have hOpen_U : IsOpen U := (Homeomorph.addRight x).isOpenMap OpenUnitDisc hOpen_ball
+  have hxU : x ∈ U := ⟨0, by simp [OpenUnitDisc], by simp⟩
+  exact ⟨U, hOpen_U, hxU, ⟨hHomeo.symm⟩⟩
+
+protected theorem subBd_eq_frontier {S : Type*} [TopologicalSpace S] (A : Set S) :
+    subBd A = frontier A := by
+  rw [subBd, ← compl_eq_univ_sdiff, frontier_eq_closure_inter_closure]
+
+theorem subBd_eq_discBd_complex {Δ : Set ℂ} (hΔ : IsClosedDisc Δ) :
+    subBd Δ = discBd Δ :=
+  (Surface.subBd_eq_frontier Δ).trans (complex_disc_frontier hΔ)
+
+theorem subBd_eq_discBd_euclideanPlane {D : Set EuclideanPlane} (hD : IsClosedDisc D) :
+    subBd D = discBd D :=
+  (Surface.subBd_eq_frontier D).trans (plane_disc_frontier hD)
+
 end GraphMinor.Surface

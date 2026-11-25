@@ -26,6 +26,7 @@ import LeanPool.GraphMinor.Surface.Epstein
 import LeanPool.GraphMinor.GM12.Section710
 
 import LeanPool.GraphMinor.GM12.Section77
+import LeanPool.GraphMinor.GM12.Section4SpanSeparation
 
 /-!
 # Graph Minors XV, Section 4: Rearrangement
@@ -1800,108 +1801,6 @@ theorem theorem_4_5_proof
       rfl rfl le_rfl
   exact Set.Subset.antisymm hsub1 hsub2
 
-/-- Pullback of a subhypergraph `A ≤ Hypergraph.ofGraph G` along `η : SpanEmbedding H G`. -/
-private def restrictSubhypergraph {S : Type w} [TopologicalSpace S] {α : Type u} {β : Type v}
-    {G : Graph α β} (hV : V(G).Finite) (hE : E(G).Finite)
-    (H : Drawing S) (η : SpanEmbedding H G) (A : Hypergraph α β)
-    (hA : A ≤ Hypergraph.ofGraph G hV hE) : Hypergraph S (Set S) where
-  vertexSet := {v ∈ H.V | η.vMap v ∈ A.vertexSet}
-  edgeSet := {e ∈ H.E | η.eMap e ∈ A.edgeSet}
-  Inc e v := H.toHypergraph.Inc e v ∧ e ∈ H.E ∧ η.eMap e ∈ A.edgeSet
-  vertex_mem_of_inc e v h := by
-    refine ⟨h.1.2.1, ?_⟩
-    have hinc_im : η.imageGraph.Inc (η.eMap e) (η.vMap v) :=
-      (η.inc_iff e h.2.1 v h.1.2.1).mpr h.1.2.2
-    obtain ⟨w, hlink_im⟩ := hinc_im
-    have hlink_G : G.IsLink (η.eMap e) (η.vMap v) w :=
-      (η.imageGraph_le.isLink_iff (η.bijOn_e.mapsTo h.2.1)).mp hlink_im
-    have hinc_G : (Hypergraph.ofGraph G hV hE).Inc (η.eMap e) (η.vMap v) := ⟨w, hlink_G⟩
-    have hv_ends : η.vMap v ∈ A.ends (η.eMap e) := by
-      rw [← hA.ends_eq (η.eMap e) h.2.2]
-      exact hinc_G
-    exact A.vertex_mem_of_inc hv_ends
-  edge_mem_of_inc _ _ h := h.2
-  vertexSet_finite := H.finite_V.subset fun _ h => h.1
-  edgeSet_finite := H.finite_edges.subset fun _ h => h.1
-
-private theorem restrictSubhypergraph_le {S : Type w} [TopologicalSpace S] {α : Type u} {β : Type v}
-    {G : Graph α β} (hV : V(G).Finite) (hE : E(G).Finite)
-    (H : Drawing S) (η : SpanEmbedding H G) (A : Hypergraph α β)
-    (hA : A ≤ Hypergraph.ofGraph G hV hE) :
-    restrictSubhypergraph hV hE H η A hA ≤ H.toHypergraph := by
-  refine ⟨fun _ h => h.1, fun _ h => h.1, fun e he => ?_⟩
-  ext v
-  change H.toHypergraph.Inc e v ↔ H.toHypergraph.Inc e v ∧ e ∈ H.E ∧ η.eMap e ∈ A.edgeSet
-  exact ⟨fun h => ⟨h, he.1, he.2⟩, fun h => h.1⟩
-
-private theorem isRestrictedSeparation_restrictSubhypergraph
-    {S : Type w} [TopologicalSpace S] {α : Type u} {β : Type v}
-    {G : Graph α β} (hV : V(G).Finite) (hE : E(G).Finite)
-    (H : Drawing S) (η : SpanEmbedding H G) {A B : Hypergraph α β}
-    (hsep : (Hypergraph.ofGraph G hV hE).IsSeparation A B) :
-    IsRestrictedSeparation H G η A B
-      (restrictSubhypergraph hV hE H η A hsep.left_le)
-      (restrictSubhypergraph hV hE H η B hsep.right_le) := by
-  have hAl := restrictSubhypergraph_le hV hE H η A hsep.left_le
-  have hBl := restrictSubhypergraph_le hV hE H η B hsep.right_le
-  refine ⟨(isSeparation_iff_of_le hAl hBl).mpr ⟨?_, ?_, ?_⟩, ?_, ?_, ?_, ?_⟩
-  · ext v
-    change (v ∈ H.V ∧ η.vMap v ∈ A.vertexSet ∨ v ∈ H.V ∧ η.vMap v ∈ B.vertexSet) ↔ v ∈ H.V
-    constructor
-    · rintro (⟨hv, _⟩ | ⟨hv, _⟩) <;> exact hv
-    · intro hv
-      have hvG : η.vMap v ∈ A.vertexSet ∪ B.vertexSet := by
-        rw [hsep.vertexSet_union]
-        exact η.imageGraph_le.vertexSet_mono (η.bijOn_v.mapsTo hv)
-      rcases hvG with hvA | hvB
-      · exact Or.inl ⟨hv, hvA⟩
-      · exact Or.inr ⟨hv, hvB⟩
-  · ext e
-    change (e ∈ H.E ∧ η.eMap e ∈ A.edgeSet ∨ e ∈ H.E ∧ η.eMap e ∈ B.edgeSet) ↔ e ∈ H.E
-    constructor
-    · rintro (⟨he, _⟩ | ⟨he, _⟩) <;> exact he
-    · intro he
-      have heG : η.eMap e ∈ A.edgeSet ∪ B.edgeSet := by
-        rw [hsep.edgeSet_union]
-        exact η.imageGraph_le.edgeSet_mono (η.bijOn_e.mapsTo he)
-      rcases heG with heA | heB
-      · exact Or.inl ⟨he, heA⟩
-      · exact Or.inr ⟨he, heB⟩
-  · ext e
-    change ((e ∈ H.E ∧ η.eMap e ∈ A.edgeSet) ∧ (e ∈ H.E ∧ η.eMap e ∈ B.edgeSet)) ↔
-      e ∈ (∅ : Set (Set S))
-    simp only [mem_empty_iff_false, iff_false]
-    rintro ⟨⟨_, heA⟩, ⟨_, heB⟩⟩
-    exact hsep.notMem_edgeSet_right heA heB
-  · ext x
-    constructor
-    · rintro ⟨v, ⟨hvH, hvA⟩, rfl⟩
-      exact ⟨hvA, η.bijOn_v.mapsTo hvH⟩
-    · rintro ⟨hxA, hxIm⟩
-      obtain ⟨v, hvH, rfl⟩ := η.bijOn_v.surjOn hxIm
-      exact ⟨v, ⟨hvH, hxA⟩, rfl⟩
-  · ext f
-    constructor
-    · rintro ⟨e, ⟨heH, heA⟩, rfl⟩
-      exact ⟨heA, η.bijOn_e.mapsTo heH⟩
-    · rintro ⟨hfA, hfIm⟩
-      obtain ⟨e, heH, rfl⟩ := η.bijOn_e.surjOn hfIm
-      exact ⟨e, ⟨heH, hfA⟩, rfl⟩
-  · ext x
-    constructor
-    · rintro ⟨v, ⟨hvH, hvB⟩, rfl⟩
-      exact ⟨hvB, η.bijOn_v.mapsTo hvH⟩
-    · rintro ⟨hxB, hxIm⟩
-      obtain ⟨v, hvH, rfl⟩ := η.bijOn_v.surjOn hxIm
-      exact ⟨v, ⟨hvH, hxB⟩, rfl⟩
-  · ext f
-    constructor
-    · rintro ⟨e, ⟨heH, heB⟩, rfl⟩
-      exact ⟨heB, η.bijOn_e.mapsTo heH⟩
-    · rintro ⟨hfB, hfIm⟩
-      obtain ⟨e, heH, rfl⟩ := η.bijOn_e.surjOn hfIm
-      exact ⟨e, ⟨heH, hfB⟩, rfl⟩
-
 private theorem restrictedSeparation_props {S : Type w} [TopologicalSpace S] {α : Type u} {β : Type
   v}
     {G : Graph α β}
@@ -2020,10 +1919,9 @@ theorem theorem_4_6_proof
         IsRestrictedSeparation H' G η' A B A_H' B_H' →
         (A, B) ∈ T_star → (A_H', B_H') ∈ T' := by
     intro A B hsepAB hordAB A_H' B_H' hRestr' hAB_star
-    let A_H := restrictSubhypergraph hV_star hE_star H η A hsepAB.left_le
-    let B_H := restrictSubhypergraph hV_star hE_star H η B hsepAB.right_le
-    have hRestrH := isRestrictedSeparation_restrictSubhypergraph hV_star hE_star H η hsepAB
-    obtain ⟨he_iff_H, hord_H, _⟩ := restrictedSeparation_props hRestrH
+    obtain ⟨A_H, B_H, hRestrH, _, _, _, _, hord_H⟩ :=
+      GM12.exists_span_restricted_separation hV_star hE_star H η hsepAB
+    have he_iff_H := (restrictedSeparation_props hRestrH).1
     obtain ⟨he_iff_H', hord_H', _⟩ := restrictedSeparation_props hRestr'
     have hAH_in_T : (A_H, B_H) ∈ T :=
       (hSpan.isControlling.controls hsepAB (by omega) hRestrH).mp hAB_star
