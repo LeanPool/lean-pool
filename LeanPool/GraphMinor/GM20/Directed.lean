@@ -97,29 +97,28 @@ theorem ofSubgraph_head (G : Digraph α β) (H : Graph α β) (hH : H ≤ G.toGr
 
 /-- The vertex set of the component of `v` used by `GraphMinor.contract`. -/
 abbrev comp (G : Graph α β) (C : Set β) (v : α) : Set α :=
-  {w | ReflTransGen (fun x y ↦ ∃ e ∈ C, G.IsLink e x y) v w}
+  contractComponent G C v
 
 theorem contract_isLink (G : Graph α β) (C : Set β) (e : β) (X Y : Set α) :
     (GraphMinor.contract G C).IsLink e X Y ↔
-      e ∉ C ∧ ∃ x y, G.IsLink e x y ∧ comp G C x = X ∧ comp G C y = Y := by
-  simp only [GraphMinor.contract, deleteEdges_isLink, map_isLink, Relation.Map]
-  exact and_comm
+      e ∉ C ∧ ∃ x y, G.IsLink e x y ∧ comp G C x = X ∧ comp G C y = Y :=
+  GraphMinor.contract_isLink G C e X Y
 
 theorem vertexSet_contract (G : Graph α β) (C : Set β) :
-    V(GraphMinor.contract G C) = comp G C '' V(G) := by
-  simp [GraphMinor.contract]
+    V(GraphMinor.contract G C) = comp G C '' V(G) :=
+  GraphMinor.vertexSet_contract G C
 
 theorem edgeSet_contract (G : Graph α β) (C : Set β) :
-    E(GraphMinor.contract G C) = E(G) \ C := by
-  simp [GraphMinor.contract]
+    E(GraphMinor.contract G C) = E(G) \ C :=
+  GraphMinor.edgeSet_contract G C
 
 theorem mem_vertexSet_contract {G : Graph α β} {C : Set β} {X : Set α} :
-    X ∈ V(GraphMinor.contract G C) ↔ ∃ v ∈ V(G), comp G C v = X := by
-  simp [GraphMinor.contract]
+    X ∈ V(GraphMinor.contract G C) ↔ ∃ v ∈ V(G), comp G C v = X :=
+  GraphMinor.mem_vertexSet_contract
 
 theorem mem_edgeSet_contract {G : Graph α β} {C : Set β} {e : β} :
-    e ∈ E(GraphMinor.contract G C) ↔ e ∈ E(G) ∧ e ∉ C := by
-  simp [GraphMinor.contract]
+    e ∈ E(GraphMinor.contract G C) ↔ e ∈ E(G) ∧ e ∉ C :=
+  GraphMinor.mem_edgeSet_contract
 
 /-- The directed graph obtained from `G` by contracting the edges in `C`. Its underlying undirected
 graph is `GraphMinor.contract G.toGraph C`, and each uncontracted edge `e` has tail and head equal
@@ -256,222 +255,15 @@ section DirModelToMinor
 
 variable {H : Digraph α' β'} {G : Digraph α β} {ηv : α' → Set α} {ηe : β' → β}
 
-private noncomputable def chosenK (h : IsMinorModel H.toGraph G.toGraph ηv ηe) (v : α')
-    (hv : v ∈ V(H.toGraph)) : Graph α β :=
-  (h.connected v hv).choose
-
-private lemma chosenK_le (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) : chosenK h v hv ≤ G.toGraph.deleteEdges (ηe '' E(H.toGraph)) :=
-  (h.connected v hv).choose_spec.1
-
-private lemma chosenK_le_G (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) : chosenK h v hv ≤ G.toGraph :=
-  (chosenK_le h hv).trans deleteEdges_le
-
-private lemma chosenK_vertexSet (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) : V(chosenK h v hv) = ηv v :=
-  (h.connected v hv).choose_spec.2.1
-
-private lemma chosenK_connected (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) : GraphConnected (chosenK h v hv) :=
-  (h.connected v hv).choose_spec.2.2
-
-private noncomputable def modelContractEdges (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    Set β :=
-  ⋃ (v : α') (hv : v ∈ V(H.toGraph)), E(chosenK h v hv)
-
-private noncomputable def modelSubgraph (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    Graph α β :=
-  (G.toGraph.induce (⋃ v ∈ V(H.toGraph), ηv v)).restrict
-    (ηe '' E(H.toGraph) ∪ modelContractEdges h)
-
-private lemma modelSubgraph_le (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    modelSubgraph h ≤ G.toGraph :=
-  restrict_le.trans (G.toGraph.induce_le (iUnion₂_subset h.vertex_subset))
-
-private lemma vertexSet_modelSubgraph (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    V(modelSubgraph h) = ⋃ v ∈ V(H.toGraph), ηv v := rfl
-
-private lemma chosenK_edge_ends_mem (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) {e : β} {x y : α} (hl : (chosenK h v hv).IsLink e x y) :
-    x ∈ ηv v ∧ y ∈ ηv v := by
-  rw [← chosenK_vertexSet h hv]
-  exact ⟨hl.left_mem, hl.right_mem⟩
-
-private lemma modelContractEdges_subset (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    modelContractEdges h ⊆ E(modelSubgraph h) := by
-  rintro e ⟨_, ⟨v, rfl⟩, _, ⟨hv, rfl⟩, he⟩
-  obtain ⟨x, y, hl⟩ := exists_isLink_of_mem_edgeSet he
-  obtain ⟨hx, hy⟩ := chosenK_edge_ends_mem h hv hl
-  have hlG : G.toGraph.IsLink e x y := hl.mono (chosenK_le_G h hv)
-  have hxU : x ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion hv hx
-  have hyU : y ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion hv hy
-  have heI : e ∈ E(G.toGraph.induce (⋃ v ∈ V(H.toGraph), ηv v)) := ⟨x, y, hlG, hxU, hyU⟩
-  exact ⟨heI, Or.inr (mem_iUnion₂_of_mem hv he)⟩
-
-private lemma image_edge_subset (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    ηe '' E(H.toGraph) ⊆ E(modelSubgraph h) := by
-  rintro _ ⟨e, he, rfl⟩
-  obtain ⟨u, w, huw⟩ := exists_isLink_of_mem_edgeSet he
-  obtain ⟨x, hx, hincx⟩ := (h.inc_iff u huw.left_mem e he).1 huw.inc_left
-  obtain ⟨y, hy⟩ := hincx
-  have hxU : x ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion huw.left_mem hx
-  have hyU : y ∈ ⋃ v ∈ V(H.toGraph), ηv v := by
-    by_cases hloop : H.toGraph.IsLoopAt e u
-    · have hyu := (h.isLoopAt_iff u huw.left_mem e he).1 hloop y hy.inc_right
-      exact mem_biUnion huw.left_mem hyu
-    · have huw_ne : u ≠ w := fun h' ↦ hloop (h' ▸ huw)
-      obtain ⟨z, hz, hincz⟩ := (h.inc_iff w huw.right_mem e he).1 huw.inc_right
-      have hxz : x ≠ z :=
-        (h.vertex_disjoint u huw.left_mem w huw.right_mem huw_ne).ne_of_mem hx hz
-      have hzy : z = y := hincz.eq_of_isLink_of_ne_left hy hxz.symm
-      exact mem_biUnion huw.right_mem (hzy ▸ hz)
-  exact ⟨⟨x, y, hy, hxU, hyU⟩, Or.inl (mem_image_of_mem ηe he)⟩
-
-private lemma disjoint_image_modelContractEdges (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    Disjoint (ηe '' E(H.toGraph)) (modelContractEdges h) := by
-  rw [disjoint_left]
-  rintro _ ⟨e, he, rfl⟩ ⟨_, ⟨v, rfl⟩, _, ⟨hv, rfl⟩, heK⟩
-  have heD := (chosenK_le h hv).edgeSet_mono heK
-  exact heD.2 (mem_image_of_mem ηe he)
-
-private lemma edgeSet_contract_modelSubgraph (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    E(GraphMinor.contract (modelSubgraph h) (modelContractEdges h)) = ηe '' E(H.toGraph) := by
-  rw [Digraph.edgeSet_contract]
-  apply Subset.antisymm
-  · rintro e ⟨⟨_, he | he⟩, heC⟩
-    · exact he
-    · exact absurd he heC
-  · intro e he
-    exact ⟨image_edge_subset h he,
-      (disjoint_image_modelContractEdges h).notMem_of_mem_left he⟩
-
-private lemma comp_modelSubgraph_eq (h : IsMinorModel H.toGraph G.toGraph ηv ηe) {v : α'}
-    (hv : v ∈ V(H.toGraph)) {x : α} (hx : x ∈ ηv v) :
-    Digraph.comp (modelSubgraph h) (modelContractEdges h) x = ηv v := by
-  ext y
-  simp only [mem_ofPred_eq]
-  constructor
-  · intro hxy
-    induction hxy with
-    | refl => exact hx
-    | @tail a b _ hab ih =>
-      obtain ⟨e, ⟨_, ⟨w, rfl⟩, _, ⟨hw, rfl⟩, heK⟩, hl⟩ := hab
-      have hlG : G.toGraph.IsLink e a b := hl.mono (modelSubgraph_le h)
-      have hlK : (chosenK h w hw).IsLink e a b :=
-        ((chosenK_le_G h hw).isLink_iff heK).2 hlG
-      obtain ⟨ha_w, hb_w⟩ := chosenK_edge_ends_mem h hw hlK
-      by_cases hvw : v = w
-      · exact hvw ▸ hb_w
-      · exact absurd ha_w ((h.vertex_disjoint v hv w hw hvw).notMem_of_mem_left ih)
-  · intro hy
-    have hconn := (chosenK_connected h hv).2 x (by rwa [chosenK_vertexSet h hv])
-      y (by rwa [chosenK_vertexSet h hv])
-    induction hconn with
-    | refl => exact .refl
-    | @tail a b _ hab ih =>
-      obtain ⟨e, hlK⟩ := hab
-      have heC : e ∈ modelContractEdges h := mem_iUnion₂_of_mem hv hlK.edge_mem
-      have hlG : G.toGraph.IsLink e a b := hlK.mono (chosenK_le_G h hv)
-      obtain ⟨ha, hb⟩ := chosenK_edge_ends_mem h hv hlK
-      have haU : a ∈ ⋃ u ∈ V(H.toGraph), ηv u := mem_biUnion hv ha
-      have hbU : b ∈ ⋃ u ∈ V(H.toGraph), ηv u := mem_biUnion hv hb
-      exact (ih ha).tail ⟨e, heC, Or.inr heC, hlG, haU, hbU⟩
-
-private lemma vertexSet_contract_modelSubgraph (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    V(GraphMinor.contract (modelSubgraph h) (modelContractEdges h)) = ηv '' V(H.toGraph) := by
-  rw [Digraph.vertexSet_contract, vertexSet_modelSubgraph]
-  ext X
-  simp only [mem_image, mem_iUnion]
-  constructor
-  · rintro ⟨x, ⟨v, hv, hx⟩, rfl⟩
-    exact ⟨v, hv, (comp_modelSubgraph_eq h hv hx).symm⟩
-  · rintro ⟨v, hv, rfl⟩
-    obtain ⟨x, hx⟩ := h.vertex_nonempty v hv
-    exact ⟨x, ⟨v, hv, hx⟩, comp_modelSubgraph_eq h hv hx⟩
-
-private lemma ηv_injOn (h : IsMinorModel H.toGraph G.toGraph ηv ηe) :
-    InjOn ηv V(H.toGraph) := by
-  intro v₁ hv₁ v₂ hv₂ heq
-  by_contra hne
-  obtain ⟨x, hx⟩ := h.vertex_nonempty v₁ hv₁
-  exact (h.vertex_disjoint v₁ hv₁ v₂ hv₂ hne).notMem_of_mem_left hx (heq ▸ hx)
-
-private lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H.toGraph G.toGraph ηv ηe)
-    {e : β'} (he : e ∈ E(H.toGraph)) {u w : α'} (hu : u ∈ V(H.toGraph))
-    (hw : w ∈ V(H.toGraph)) :
-    H.toGraph.IsLink e u w ↔
-      (GraphMinor.contract (modelSubgraph h) (modelContractEdges h)).IsLink
-        (ηe e) (ηv u) (ηv w) := by
-  rw [Digraph.contract_isLink]
-  constructor
-  · intro hl
-    have heC : ηe e ∉ modelContractEdges h :=
-      (disjoint_image_modelContractEdges h).notMem_of_mem_left (mem_image_of_mem ηe he)
-    refine ⟨heC, ?_⟩
-    obtain ⟨x, hx, hincx⟩ := (h.inc_iff u hu e he).1 hl.inc_left
-    obtain ⟨y, hy⟩ := hincx
-    have hxU : x ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion hu hx
-    by_cases hloop : H.toGraph.IsLoopAt e u
-    · have huw : u = w := hloop.eq_of_inc hl.inc_right
-      subst huw
-      have hy_u : y ∈ ηv u := (h.isLoopAt_iff u hu e he).1 hloop y hy.inc_right
-      have hyU : y ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion hu hy_u
-      have hlM : (modelSubgraph h).IsLink (ηe e) x y :=
-        ⟨Or.inl (mem_image_of_mem ηe he), hy, hxU, hyU⟩
-      exact ⟨x, y, hlM, comp_modelSubgraph_eq h hu hx, comp_modelSubgraph_eq h hu hy_u⟩
-    · have huw_ne : u ≠ w := fun h' ↦ hloop (h' ▸ hl)
-      obtain ⟨z, hz, hincz⟩ := (h.inc_iff w hw e he).1 hl.inc_right
-      have hxz : x ≠ z := (h.vertex_disjoint u hu w hw huw_ne).ne_of_mem hx hz
-      have hzy : z = y := hincz.eq_of_isLink_of_ne_left hy hxz.symm
-      have hy_w : y ∈ ηv w := hzy ▸ hz
-      have hyU : y ∈ ⋃ v ∈ V(H.toGraph), ηv v := mem_biUnion hw hy_w
-      have hlM : (modelSubgraph h).IsLink (ηe e) x y :=
-        ⟨Or.inl (mem_image_of_mem ηe he), hy, hxU, hyU⟩
-      exact ⟨x, y, hlM, comp_modelSubgraph_eq h hu hx, comp_modelSubgraph_eq h hw hy_w⟩
-  · rintro ⟨_, x, y, hlM, hcx, hcy⟩
-    have hlG : G.toGraph.IsLink (ηe e) x y := hlM.mono (modelSubgraph_le h)
-    obtain ⟨v₁, hv₁, hx₁⟩ := mem_iUnion₂.1 hlM.left_mem
-    obtain ⟨v₂, hv₂, hy₂⟩ := mem_iUnion₂.1 hlM.right_mem
-    have hvu : v₁ = u :=
-      ηv_injOn h hv₁ hu ((comp_modelSubgraph_eq h hv₁ hx₁).symm.trans hcx)
-    have hvw : v₂ = w :=
-      ηv_injOn h hv₂ hw ((comp_modelSubgraph_eq h hv₂ hy₂).symm.trans hcy)
-    have hx_u : x ∈ ηv u := hvu ▸ hx₁
-    have hy_w : y ∈ ηv w := hvw ▸ hy₂
-    have hinc_u : H.toGraph.Inc e u := (h.inc_iff u hu e he).2 ⟨x, hx_u, hlG.inc_left⟩
-    have hinc_w : H.toGraph.Inc e w := (h.inc_iff w hw e he).2 ⟨y, hy_w, hlG.inc_right⟩
-    rw [isLink_iff_inc]
-    refine ⟨hinc_u, hinc_w, fun z hz ↦ ?_⟩
-    obtain ⟨a, ha_z, hinc_a⟩ := (h.inc_iff z hz.vertex_mem e he).1 hz
-    obtain rfl | rfl := hinc_a.eq_or_eq_of_isLink hlG
-    · left
-      by_contra hzu
-      exact (h.vertex_disjoint z hz.vertex_mem u hu hzu).notMem_of_mem_left ha_z hx_u
-    · right
-      by_contra hzw
-      exact (h.vertex_disjoint z hz.vertex_mem w hw hzw).notMem_of_mem_left ha_z hy_w
-
-/-- A directed minor model gives a directed minor (Graph Minors IV, Section 7, pages 242–243, and
-Graph Minors XX, Section 10, page 356: "By the discussion in Section 7 of [2], it follows that $G_i$
-is isomorphic to a minor of $G_j$, as required."). -/
+/-- A directed minor model gives a directed minor. This is the step in the proof of Graph Minors XX,
+(10.5), page 356, that invokes Graph Minors IV, Section 7, pages 242–243 (reference [1] in XX,
+misprinted as [2] on page 356). -/
 theorem isIsoMinor_of_isDirMinorModel (h : IsDirMinorModel H G ηv ηe) : H.IsIsoMinor G := by
   let hm := h.toIsMinorModel
   refine ⟨modelSubgraph hm, modelSubgraph_le hm, modelContractEdges hm,
     modelContractEdges_subset hm, ⟨?_⟩⟩
-  refine
-    { vertexEquiv :=
-        (Equiv.Set.imageOfInjOn ηv V(H.toGraph) (ηv_injOn hm)).trans
-          (Equiv.subtypeEquivRight fun _ ↦ by
-            rw [Digraph.contract_toGraph, Digraph.ofSubgraph_toGraph,
-              vertexSet_contract_modelSubgraph])
-      edgeEquiv :=
-        (Equiv.Set.imageOfInjOn ηe E(H.toGraph) hm.edge_injOn).trans
-          (Equiv.subtypeEquivRight fun _ ↦ by
-            rw [Digraph.contract_toGraph, Digraph.ofSubgraph_toGraph,
-              edgeSet_contract_modelSubgraph])
-      isLink_iff := fun ⟨e, he⟩ ⟨u, hu⟩ ⟨w, hw⟩ ↦
-        contract_modelSubgraph_isLink_iff hm he hu hw
+  exact
+    { toIso := modelContractionIso hm
       tail_eq := fun e ↦
         (comp_modelSubgraph_eq hm (H.tail_mem e) (h.tail_mem e)).symm
       head_eq := fun e ↦
@@ -810,10 +602,10 @@ theorem isFree_digraphPatchwork (G : Digraph α β) (hV : V(G.toGraph).Finite)
     ext x y
     exact ⟨fun hxy ↦ h ⟨x, y, hxy⟩, fun hxy ↦ (not_emptySubgraph_adj hxy).elim⟩
 
-/-- Graph Minors XX, proof of (10.5) (page 356): "By the discussion in Section 7 of [2], it follows
-that $G_i$ is isomorphic to a minor of $G_j$, as required."
-If `digraphPatchwork H hVH hEH` is simulated in `digraphPatchwork G hVG hEG`, then there is a
-directed minor model of `H` in `G`. -/
+/-- If `digraphPatchwork H hVH hEH` is simulated in `digraphPatchwork G hVG hEG`, then there is a
+directed minor model of `H` in `G`. This uses the discussion in Graph Minors IV, Section 7,
+pages 242–243, cited in Graph Minors XX, proof of (10.5), page 356 (reference [1], misprinted as
+[2] there). -/
 theorem isDirMinorModel_of_simulated {H G : Digraph α β}
     {hVH : V(H.toGraph).Finite} {hEH : E(H.toGraph).Finite}
     {hVG : V(G.toGraph).Finite} {hEG : E(G.toGraph).Finite}

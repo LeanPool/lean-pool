@@ -47,28 +47,30 @@ open Graph Set Relation
 variable {α β α' β' α'' β'' : Type*}
 
 /-- The vertex set of the component of `v` used by `contract`. -/
-private abbrev comp (G : Graph α β) (C : Set β) (v : α) : Set α :=
+public abbrev contractComponent (G : Graph α β) (C : Set β) (v : α) : Set α :=
   {w | ReflTransGen (fun x y ↦ ∃ e ∈ C, G.IsLink e x y) v w}
 
-private theorem contract_isLink (G : Graph α β) (C : Set β) (e : β) (X Y : Set α) :
+local notation "comp" => contractComponent
+
+public theorem contract_isLink (G : Graph α β) (C : Set β) (e : β) (X Y : Set α) :
     (contract G C).IsLink e X Y ↔ e ∉ C ∧ ∃ x y, G.IsLink e x y ∧ comp G C x = X ∧
       comp G C y = Y := by
   simp only [contract, deleteEdges_isLink, map_isLink, Relation.Map]
   exact and_comm
 
-private theorem vertexSet_contract (G : Graph α β) (C : Set β) :
+public theorem vertexSet_contract (G : Graph α β) (C : Set β) :
     V(contract G C) = comp G C '' V(G) := by
   simp [contract]
 
-private theorem edgeSet_contract (G : Graph α β) (C : Set β) :
+public theorem edgeSet_contract (G : Graph α β) (C : Set β) :
     E(contract G C) = E(G) \ C := by
   simp [contract]
 
-private lemma mem_vertexSet_contract {G : Graph α β} {C : Set β} {X : Set α} :
+public lemma mem_vertexSet_contract {G : Graph α β} {C : Set β} {X : Set α} :
     X ∈ V(contract G C) ↔ ∃ v ∈ V(G), comp G C v = X := by
   simp [contract]
 
-private lemma mem_edgeSet_contract {G : Graph α β} {C : Set β} {e : β} :
+public lemma mem_edgeSet_contract {G : Graph α β} {C : Set β} {e : β} :
     e ∈ E(contract G C) ↔ e ∈ E(G) ∧ e ∉ C := by
   simp [contract]
 
@@ -96,13 +98,16 @@ private lemma chosenK_connected (h : IsMinorModel H G ηv ηe) {v : α'} (hv : v
     GraphConnected (chosenK h v hv) :=
   (h.connected v hv).choose_spec.2.2
 
-private noncomputable def modelContractEdges (h : IsMinorModel H G ηv ηe) : Set β :=
+/-- The edges within the chosen connected branch subgraphs of a minor model. -/
+public noncomputable def modelContractEdges (h : IsMinorModel H G ηv ηe) : Set β :=
   ⋃ (v : α') (hv : v ∈ V(H)), E(chosenK h v hv)
 
-private noncomputable def modelSubgraph (h : IsMinorModel H G ηv ηe) : Graph α β :=
+/-- The subgraph retaining the branch subgraphs and the images of the modeled edges. -/
+public noncomputable def modelSubgraph (h : IsMinorModel H G ηv ηe) : Graph α β :=
   (G.induce (⋃ v ∈ V(H), ηv v)).restrict (ηe '' E(H) ∪ modelContractEdges h)
 
-private lemma modelSubgraph_le (h : IsMinorModel H G ηv ηe) : modelSubgraph h ≤ G :=
+/-- The subgraph realizing a minor model is a subgraph of the host graph. -/
+public lemma modelSubgraph_le (h : IsMinorModel H G ηv ηe) : modelSubgraph h ≤ G :=
   restrict_le.trans (G.induce_le (iUnion₂_subset h.vertex_subset))
 
 private lemma vertexSet_modelSubgraph (h : IsMinorModel H G ηv ηe) :
@@ -113,7 +118,8 @@ private lemma chosenK_edge_ends_mem (h : IsMinorModel H G ηv ηe) {v : α'} (hv
   rw [← chosenK_vertexSet h hv]
   exact ⟨hl.left_mem, hl.right_mem⟩
 
-private lemma modelContractEdges_subset (h : IsMinorModel H G ηv ηe) :
+/-- Every edge to be contracted occurs in the subgraph realizing the model. -/
+public lemma modelContractEdges_subset (h : IsMinorModel H G ηv ηe) :
     modelContractEdges h ⊆ E(modelSubgraph h) := by
   rintro e ⟨_, ⟨v, rfl⟩, _, ⟨hv, rfl⟩, he⟩
   obtain ⟨x, y, hl⟩ := exists_isLink_of_mem_edgeSet he
@@ -161,7 +167,8 @@ private lemma edgeSet_contract_modelSubgraph (h : IsMinorModel H G ηv ηe) :
     exact ⟨image_edge_subset h he,
       (disjoint_image_modelContractEdges h).notMem_of_mem_left he⟩
 
-private lemma comp_modelSubgraph_eq (h : IsMinorModel H G ηv ηe) {v : α'} (hv : v ∈ V(H))
+/-- The contraction component of a branch vertex is its branch set. -/
+public lemma comp_modelSubgraph_eq (h : IsMinorModel H G ηv ηe) {v : α'} (hv : v ∈ V(H))
     {x : α} (hx : x ∈ ηv v) :
     comp (modelSubgraph h) (modelContractEdges h) x = ηv v := by
   ext y
@@ -205,13 +212,15 @@ private lemma vertexSet_contract_modelSubgraph (h : IsMinorModel H G ηv ηe) :
     obtain ⟨x, hx⟩ := h.vertex_nonempty v hv
     exact ⟨x, ⟨v, hv, hx⟩, comp_modelSubgraph_eq h hv hx⟩
 
-private lemma ηv_injOn (h : IsMinorModel H G ηv ηe) : InjOn ηv V(H) := by
+/-- The branch sets of distinct model vertices are distinct. -/
+public lemma modelVertexMap_injOn (h : IsMinorModel H G ηv ηe) : InjOn ηv V(H) := by
   intro v₁ hv₁ v₂ hv₂ heq
   by_contra hne
   obtain ⟨x, hx⟩ := h.vertex_nonempty v₁ hv₁
   exact (h.vertex_disjoint v₁ hv₁ v₂ hv₂ hne).notMem_of_mem_left hx (heq ▸ hx)
 
-private lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H G ηv ηe)
+/-- The contraction of the realizing subgraph preserves and reflects links of modeled edges. -/
+public lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H G ηv ηe)
     {e : β'} (he : e ∈ E(H)) {u w : α'} (hu : u ∈ V(H)) (hw : w ∈ V(H)) :
     H.IsLink e u w ↔
       (contract (modelSubgraph h) (modelContractEdges h)).IsLink (ηe e) (ηv u) (ηv w) := by
@@ -246,9 +255,9 @@ private lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H G ηv ηe)
     obtain ⟨v₁, hv₁, hx₁⟩ := mem_iUnion₂.1 hlM.left_mem
     obtain ⟨v₂, hv₂, hy₂⟩ := mem_iUnion₂.1 hlM.right_mem
     have hvu : v₁ = u :=
-      ηv_injOn h hv₁ hu ((comp_modelSubgraph_eq h hv₁ hx₁).symm.trans hcx)
+      modelVertexMap_injOn h hv₁ hu ((comp_modelSubgraph_eq h hv₁ hx₁).symm.trans hcx)
     have hvw : v₂ = w :=
-      ηv_injOn h hv₂ hw ((comp_modelSubgraph_eq h hv₂ hy₂).symm.trans hcy)
+      modelVertexMap_injOn h hv₂ hw ((comp_modelSubgraph_eq h hv₂ hy₂).symm.trans hcy)
     have hx_u : x ∈ ηv u := hvu ▸ hx₁
     have hy_w : y ∈ ηv w := hvw ▸ hy₂
     have hinc_u : H.Inc e u := (h.inc_iff u hu e he).2 ⟨x, hx_u, hlG.inc_left⟩
@@ -264,19 +273,34 @@ private lemma contract_modelSubgraph_isLink_iff (h : IsMinorModel H G ηv ηe)
       by_contra hzw
       exact (h.vertex_disjoint z hz.vertex_mem w hw hzw).notMem_of_mem_left ha_z hy_w
 
+/-- The isomorphism from a minor model to the contraction of its realizing subgraph. Its vertex
+and edge equivalences act by the model's maps. -/
+@[expose] public noncomputable def modelContractionIso (h : IsMinorModel H G ηv ηe) :
+    Iso H (contract (modelSubgraph h) (modelContractEdges h)) :=
+  { vertexEquiv :=
+      (Equiv.Set.imageOfInjOn ηv V(H) (modelVertexMap_injOn h)).trans
+        (Equiv.subtypeEquivRight fun _ ↦ by rw [vertexSet_contract_modelSubgraph])
+    edgeEquiv :=
+      (Equiv.Set.imageOfInjOn ηe E(H) h.edge_injOn).trans
+        (Equiv.subtypeEquivRight fun _ ↦ by rw [edgeSet_contract_modelSubgraph])
+    isLink_iff := fun ⟨e, he⟩ ⟨u, hu⟩ ⟨w, hw⟩ ↦
+      contract_modelSubgraph_isLink_iff h he hu hw }
+
+/-- Realise a minor model by contraction, retaining both of its maps. -/
+public theorem exists_contraction_realizing_model
+    {H : Graph α' β'} {G : Graph α β} {ηv : α' → Set α} {ηe : β' → β}
+    (h : IsMinorModel H G ηv ηe) :
+    ∃ (G' : Graph α β) (_ : G' ≤ G) (C : Set β) (_ : C ⊆ E(G'))
+      (φ : Iso H (contract G' C)),
+      (∀ v : V(H), (φ.vertexEquiv v).val = ηv v.val) ∧
+      (∀ e : E(H), (φ.edgeEquiv e).val = ηe e.val) :=
+  ⟨modelSubgraph h, modelSubgraph_le h, modelContractEdges h, modelContractEdges_subset h,
+    modelContractionIso h, fun _ ↦ rfl, fun _ ↦ rfl⟩
+
 private theorem isIsoMinor_of_isMinorModel_uncond {H : Graph α' β'} {G : Graph α β}
-    {ηv : α' → Set α} {ηe : β' → β} (h : IsMinorModel H G ηv ηe) : IsIsoMinor H G := by
-  refine ⟨modelSubgraph h, modelSubgraph_le h, modelContractEdges h,
-    modelContractEdges_subset h, ⟨?_⟩⟩
-  refine
-    { vertexEquiv :=
-        (Equiv.Set.imageOfInjOn ηv V(H) (ηv_injOn h)).trans
-          (Equiv.subtypeEquivRight fun _ ↦ by rw [vertexSet_contract_modelSubgraph])
-      edgeEquiv :=
-        (Equiv.Set.imageOfInjOn ηe E(H) h.edge_injOn).trans
-          (Equiv.subtypeEquivRight fun _ ↦ by rw [edgeSet_contract_modelSubgraph])
-      isLink_iff := fun ⟨e, he⟩ ⟨u, hu⟩ ⟨w, hw⟩ ↦
-        contract_modelSubgraph_isLink_iff h he hu hw }
+    {ηv : α' → Set α} {ηe : β' → β} (h : IsMinorModel H G ηv ηe) : IsIsoMinor H G :=
+  ⟨modelSubgraph h, modelSubgraph_le h, modelContractEdges h, modelContractEdges_subset h,
+    ⟨modelContractionIso h⟩⟩
 
 end ModelToMinor
 
@@ -512,7 +536,8 @@ private lemma isIsoMinor_of_edgeSet_eq_empty {H : Graph α'' β''} {G : Graph α
       edgeEquiv := eE'
       isLink_iff := fun ⟨e, he⟩ _ _ ↦ absurd he (by simp [hE_H]) }
 
-private lemma isMinorModel_comp {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
+/-- Compose minor models by taking unions of branch sets and composing edge maps. -/
+public lemma isMinorModel_comp {H : Graph α'' β''} {K : Graph α' β'} {G : Graph α β}
     {ηv : α'' → Set α'} {ηe : β'' → β'} {ηv' : α' → Set α} {ηe' : β' → β}
     (h₁ : IsMinorModel H K ηv ηe) (h₂ : IsMinorModel K G ηv' ηe') :
     IsMinorModel H G (fun v ↦ ⋃ v' ∈ ηv v, ηv' v') (ηe' ∘ ηe) where

@@ -371,6 +371,7 @@ public import LeanPool.GraphMinor.GM11.CutEdges
 public import LeanPool.GraphMinor.GM11.Cylinder
 public import LeanPool.GraphMinor.GM11.Defs
 public import LeanPool.GraphMinor.GM11.DrawingOps
+public import LeanPool.GraphMinor.GM11.DrawingTopology
 public import LeanPool.GraphMinor.GM11.EdgeChart
 public import LeanPool.GraphMinor.GM11.EdgeSides
 public import LeanPool.GraphMinor.GM11.EvenCircuit
@@ -1216,6 +1217,8 @@ public import LeanPool.GraphMinor.GM14.ClaimOneReduction
 public import LeanPool.GraphMinor.GM14.CylinderCut
 public import LeanPool.GraphMinor.GM14.CylinderParts
 public import LeanPool.GraphMinor.GM14.Defs
+public import LeanPool.GraphMinor.GM14.DiscArrangement
+public import LeanPool.GraphMinor.GM14.DiscBoundaryHomeomorphism
 public import LeanPool.GraphMinor.GM14.DiscSlope
 public import LeanPool.GraphMinor.GM14.DiscTangleSep
 public import LeanPool.GraphMinor.GM14.FewCircuits

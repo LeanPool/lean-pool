@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM11.Section5b
+public import LeanPool.GraphMinor.GM11.DrawingTopology
 public import LeanPool.GraphMinor.GM11.ThreeCircuits
 public import LeanPool.GraphMinor.Surface.Crossing
 
@@ -29,96 +30,6 @@ open Set Topology GraphMinor.Surface Metric Complex
 universe u
 
 variable {S : Type u} [TopologicalSpace S]
-
-/-- The image of the open disc under coordinates on a closed disc is open: this is invariance of
-domain, in a chart of the surface around each point. -/
-private theorem isOpen_image_ball (hS : IsClosedSurface S) {g : ℂ → S}
-    (hg : ContinuousOn g (ball 0 1)) (hinj : InjOn g (ball 0 1)) : IsOpen (g '' ball 0 1) := by
-  have : T2Space S := hS.2.1
-  rw [isOpen_iff_mem_nhds]
-  rintro _ ⟨z, hz, rfl⟩
-  obtain ⟨U, hU, hxU, ⟨f⟩⟩ := hS.2.2 (g z)
-  classical
-  let F : S → ℂ := fun y => if hy : y ∈ U then complexPlane.symm (f ⟨y, hy⟩).1 else 0
-  have hF : ∀ y (hy : y ∈ U), F y = complexPlane.symm (f ⟨y, hy⟩).1 := fun y hy => by
-    simp only [F, hy, dite_true]
-  have hFc : ContinuousOn F U := by
-    rw [continuousOn_iff_continuous_domRestrict]
-    have : U.domRestrict F = fun y : U => complexPlane.symm (f y).1 := by
-      ext y
-      exact hF y.1 y.2
-    rw [this]
-    exact complexPlane.symm.continuous.comp (continuous_subtype_val.comp f.continuous)
-  have hFi : InjOn F U := by
-    intro a ha b hb hab
-    rw [hF a ha, hF b hb] at hab
-    have h₁ := complexPlane.symm.injective hab
-    have h₂ := f.injective (Subtype.ext h₁)
-    exact congrArg Subtype.val h₂
-  let B : Set ℂ := ball 0 1 ∩ g ⁻¹' U
-  have hBo : IsOpen B := hg.isOpen_inter_preimage isOpen_ball hU
-  have hzB : z ∈ B := ⟨hz, hxU⟩
-  have hGc : ContinuousOn (F ∘ g) B :=
-    hFc.comp (hg.mono inter_subset_left) fun w hw => hw.2
-  have hGi : InjOn (F ∘ g) B := fun a ha b hb hab =>
-    hinj ha.1 hb.1 (hFi ha.2 hb.2 hab)
-  have hOpen := isOpen_image_of_injOn hBo hGc hGi
-  have hO' : IsOpen (U ∩ F ⁻¹' ((F ∘ g) '' B)) := hFc.isOpen_inter_preimage hU hOpen
-  refine Filter.mem_of_superset (hO'.mem_nhds ⟨hxU, z, hzB, rfl⟩) ?_
-  rintro y ⟨hyU, w, hw, hwy⟩
-  exact ⟨w, hw.1, hFi hw.2 hyU hwy⟩
-
-/-- The interior of a closed disc in a closed surface is connected. -/
-theorem IsClosedDisc.isPreconnected_diff_frontier (hS : IsClosedSurface S) {D : Set S}
-    (hD : IsClosedDisc D) : IsPreconnected (D \ frontier D) := by
-  obtain ⟨h, g, -, hg, hhD, hgD, hl, hr, -⟩ := IsClosedDisc.exists_chart hD
-  have hgb : ContinuousOn g (ball 0 1) := hg.mono ball_subset_closedBall
-  have hinj : InjOn g (ball 0 1) := by
-    intro a ha b hb hab
-    have ha' := hr (ball_subset_closedBall ha)
-    have hb' := hr (ball_subset_closedBall hb)
-    rw [← ha', ← hb']
-    exact congrArg h hab
-  have hO := isOpen_image_ball hS hgb hinj
-  have hsub : g '' ball 0 1 ⊆ D := by
-    rintro _ ⟨z, hz, rfl⟩
-    exact hgD (ball_subset_closedBall hz)
-  have hpre : IsPreconnected (g '' ball 0 1) :=
-    (convex_ball (0 : ℂ) 1).isPreconnected.image g hgb
-  refine hpre.subset_closure ?_ ?_
-  · intro y hy
-    refine ⟨hsub hy, fun hfr => hfr.2 ?_⟩
-    exact interior_maximal hsub hO hy
-  · rintro y ⟨hy, -⟩
-    have hz := hhD hy
-    have hzc : h y ∈ closure (ball (0 : ℂ) 1) := by
-      rw [closure_ball (0 : ℂ) one_ne_zero]
-      exact hz
-    have hwithin : ContinuousWithinAt g (ball 0 1) (h y) :=
-      (hg (h y) hz).mono ball_subset_closedBall
-    have := hwithin.mem_closure_image hzc
-    rwa [hl hy] at this
-
-/-- A connected set that misses the frontier of a closed set lies in it or misses it. -/
-theorem subset_or_disjoint_of_frontier {X A : Set S} (hX : IsClosed X) (hA : IsPreconnected A)
-    (hdis : Disjoint A (frontier X)) : A ⊆ X ∨ Disjoint A X := by
-  have hcov : A ⊆ interior X ∪ Xᶜ := by
-    intro y hy
-    by_cases hyX : y ∈ X
-    · refine Or.inl ?_
-      by_contra hi
-      exact disjoint_left.mp hdis hy ⟨subset_closure hyX, hi⟩
-    · exact Or.inr hyX
-  by_cases hm : (A ∩ X).Nonempty
-  · left
-    obtain ⟨x, hxA, hxX⟩ := hm
-    have hxi : x ∈ interior X := (hcov hxA).resolve_right fun h => h hxX
-    intro y hy
-    by_contra hyX
-    obtain ⟨z, -, hz₁, hz₂⟩ := hA _ _ isOpen_interior hX.isOpen_compl hcov ⟨x, hxA, hxi⟩ ⟨y, hy,
-      hyX⟩
-    exact hz₂ (interior_subset hz₁)
-  · exact Or.inr (disjoint_iff_inter_eq_empty.mpr (not_nonempty_iff_eq_empty.mp hm))
 
 variable {Γ : Drawing S} {k : ℕ} {ins : Drawing S → Set S}
 

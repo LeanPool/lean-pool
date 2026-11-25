@@ -20,7 +20,7 @@ XX cites. Each is the statement of the cited paper, over the actual objects, and
 another file.
 
 From Graph Minors XVIII:
-* `GM18Theorem67Statement`, (6.7) (page 107), which is (3.1) of XX. It is proved as `gm18Theorem67`
+* `GM18Theorem67Statement`, (6.7) (page 106), which is (3.1) of XX. It is proved as `gm18Theorem67`
   in
   `Section3.lean`.
 
@@ -51,7 +51,7 @@ universe u v w
 
 /-! ### Graph Minors XVIII -/
 
-/-- Graph Minors XVIII, (6.7) (page 105):
+/-- Graph Minors XVIII, (6.7) (page 106):
 "**6.7.** *Let $\Omega$ be a well-quasi-order, let $\mathscr{C}$ be a well-behaved class of rootless
 partial $\Omega$-patchworks, and let $\theta \ge 1$ be an integer. Let $\mathscr{D}$ be a class of
 rootless, robust $\Omega$-patchworks and suppose that for each $P \in \mathscr{D}$ there is a

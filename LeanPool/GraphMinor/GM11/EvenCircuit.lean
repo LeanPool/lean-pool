@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM11.Corners
+public import LeanPool.GraphMinor.GM11.DrawingTopology
 
 /-!
 # Even valency gives circuits
@@ -44,17 +45,6 @@ theorem isCircuit_walkDrawing (N : Drawing S) {u : S} {W : GraphWalk N.toGraph u
     exact lt_of_lt_of_eq hpos this.symm
   · rw [walkDrawing_V, hs]
   · rw [walkDrawing_E, he]
-
-omit [T1Space S] in
-/-- The edges of a walk of a drawing are edges of the drawing. -/
-theorem mem_E_of_mem_edges {N : Drawing S} {u v : S} (W : GraphWalk N.toGraph u v) {e : Set S}
-    (he : e ∈ W.edges) : e ∈ N.E := by
-  induction W with
-  | nil => exact absurd he List.not_mem_nil
-  | cons h r ih =>
-    rcases List.mem_cons.mp he with rfl | h'
-    · exact h.1
-    · exact ih h'
 
 variable [T2Space S] {Γ N : Drawing S} {γ : Set S → I → S}
 

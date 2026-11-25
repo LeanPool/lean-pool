@@ -17,6 +17,7 @@ import LeanPool.GraphMinor.GM14.Section6b
 import LeanPool.GraphMinor.GM14.Section8
 import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM11.RadialBasics
+import LeanPool.GraphMinor.GM14.DiscArrangement
 
 /-!
 # Graph Minors XIV, Section 9: Cylinder Rerouting Lemmas for (9.6)
@@ -1133,41 +1134,6 @@ private theorem bridge_sUnion_disjoint_and_inter {α : Type u} {β : Type v}
       have hEq : B₁ = B₂ :=
         (isBridge_eq_of_inter (hB_J B₁ hB₁) (hB_rem B₂ hB₂)).1 v ⟨hvB₁, hvB₂⟩ hv_not_H
       exact Set.disjoint_left.mp hDisj_B hB₁ (hEq ▸ hB₂)
-
-/-- If `subBd Δ` is `α`-normal for a surface arrangement `(S_seg, α_disc, α_pt)` on a closed
-surface `S`, and `A ∈ S_seg` satisfies `¬ α_disc A ⊆ Δ`, then `α_disc A ∩ Δ ⊆ subBd Δ` and
-`α_disc A ∩ Δ ⊆ α_pt '' A.Ω.bar`. -/
-private theorem inter_disc_subset_subBd_of_not_subset [T2Space S] {α : Type u} {β : Type v}
-    (hS : IsClosedSurface S)
-    {S_seg : Set (Society α β)} {α_disc : Society α β → Set S} {α_pt : α → S}
-    (hArr : IsSurfaceArrangement S_seg α_disc α_pt)
-    {Δ : Set S} (hΔ : IsClosedDisc Δ)
-    (hNorm : IsArrangementNormal S_seg α_disc α_pt (subBd Δ))
-    {A : Society α β} (hA : A ∈ S_seg) (hnot_sub : ¬ α_disc A ⊆ Δ) :
-    α_disc A ∩ Δ ⊆ subBd Δ ∧ α_disc A ∩ Δ ⊆ α_pt '' A.Ω.bar := by
-  let D := α_disc A
-  obtain ⟨hD, hD_bd⟩ := hArr.isClosedDisc A hA
-  have hfr_D : frontier D = subBd D := (subBd_eq_frontier D).symm
-  have hfr_Δ : frontier Δ = subBd Δ := (subBd_eq_frontier Δ).symm
-  have hdis_fr : Disjoint (D \ frontier D) (frontier Δ) := by
-    rw [hfr_D, hfr_Δ, Set.disjoint_left]
-    rintro x ⟨hxD, hx_not_bd⟩ hx_bdΔ
-    obtain ⟨v, hv, rfl⟩ := hNorm A hA ⟨hx_bdΔ, hxD⟩
-    exact hx_not_bd (hD_bd v hv)
-  have hdis_Δ : Disjoint (D \ frontier D) Δ := by
-    refine (subset_or_disjoint_of_frontier hΔ.isClosed
-      (IsClosedDisc.isPreconnected_diff_frontier hS hD) hdis_fr).resolve_left ?_
-    intro hsub
-    exact hnot_sub ((IsClosedDisc.subset_closure_diff_frontier hS hD).trans
-      (hΔ.isClosed.closure_subset_iff.mpr hsub))
-  have hD_compl : D ⊆ closure Δᶜ :=
-    (IsClosedDisc.subset_closure_diff_frontier hS hD).trans
-      (closure_mono (Set.disjoint_left.mp hdis_Δ))
-  have hsub_bd : D ∩ Δ ⊆ subBd Δ := by
-    rintro x ⟨hxD, hxΔ⟩
-    rw [← hfr_Δ, frontier_eq_closure_inter_closure]
-    exact ⟨subset_closure hxΔ, hD_compl hxD⟩
-  refine ⟨hsub_bd, fun x hx => hNorm A hA ⟨hsub_bd hx, hx.1⟩⟩
 
 /-- Dichotomy for discs of `S_seg` with respect to the cylinder `Δ \ discInt Δ₂` when both `subBd Δ`
 and `subBd Δ₂` are `α`-normal. -/
