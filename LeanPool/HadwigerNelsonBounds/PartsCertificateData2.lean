@@ -206,4 +206,19 @@ def partsBaseCertificate29 : PartsCertificate := {
   ]
 }
 
+theorem partsBaseCertificate0_verifies :
+    partsBaseCertificate0.Verifies := by decide +kernel
+
+theorem partsBaseCertificate4_verifies :
+    partsBaseCertificate4.Verifies := by decide +kernel
+
+theorem partsBaseCertificate14_verifies :
+    partsBaseCertificate14.Verifies := by decide +kernel
+
+theorem partsBaseCertificate19_verifies :
+    partsBaseCertificate19.Verifies := by decide +kernel
+
+theorem partsBaseCertificate29_verifies :
+    partsBaseCertificate29.Verifies := by decide +kernel
+
 end HadwigerNelsonBounds

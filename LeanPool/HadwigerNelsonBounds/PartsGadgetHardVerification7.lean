@@ -20,14 +20,14 @@ namespace HadwigerNelsonBounds
 
 theorem partsGadgetHardCertificate28_verifies :
     partsGadgetHardCertificate28.Verifies := by
-  decide
+  decide +kernel
 
 theorem partsGadgetHardCertificate29_verifies :
     partsGadgetHardCertificate29.Verifies := by
-  decide
+  decide +kernel
 
 theorem partsGadgetHardCertificate30_verifies :
     partsGadgetHardCertificate30.Verifies := by
-  decide
+  decide +kernel
 
 end HadwigerNelsonBounds
