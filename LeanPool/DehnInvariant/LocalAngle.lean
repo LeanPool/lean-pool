@@ -10,12 +10,8 @@ module
 
 public import LeanPool.DehnInvariant.Polytope
 public import LeanPool.DehnInvariant.AngleSum
-public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith
@@ -123,6 +119,14 @@ lemma wedgeSet_subset_ball (T : Set E) (K : Submodule ℝ E) : wedgeSet T K ⊆ 
 lemma wedge_vol_ne_top (T : Set E) (K : Submodule ℝ E) : volume (wedgeSet T K) ≠ ⊤ :=
   ((measure_mono (wedgeSet_subset_ball T K)).trans_lt measure_ball_lt_top).ne
 
+/-- The orthogonal hyperplane of a nonzero vector has zero volume. -/
+lemma volume_orthogonal_singleton {v : E} (hv : v ≠ 0) :
+    volume ((ℝ ∙ v)ᗮ : Set E) = 0 := by
+  apply Measure.addHaar_submodule
+  intro top_eq
+  apply hv
+  exact Submodule.span_singleton_eq_bot.mp ((Submodule.orthogonal_eq_top_iff (ℝ ∙ v)).mp top_eq)
+
 /-- **Angles add.** A plane through the line `K` (normal `c ⟂ K`) cuts the cone in two; the two
 angles add up
 to the angle of the cone, exactly. -/
@@ -134,14 +138,8 @@ lemma wedgeAngle_split (T : Set E) (K : Submodule ℝ E) {c : E} (hc : c ≠ 0) 
   let Hle : Set Kᗮ := {w | ⟪c, (w : E)⟫ ≤ 0}
   have hHle : MeasurableSet Hle := (isClosed_le (by fun_prop) continuous_const).measurableSet
   let N : Submodule ℝ Kᗮ := (ℝ ∙ (⟨c, hcK⟩ : Kᗮ))ᗮ
-  have hN : N ≠ ⊤ := by
-    intro h
-    have h1 : (⟨c, hcK⟩ : Kᗮ) ∈ N := by rw [h]; trivial
-    have h2 : ⟪(⟨c, hcK⟩ : Kᗮ), (⟨c, hcK⟩ : Kᗮ)⟫ = 0 :=
-      Submodule.mem_orthogonal_singleton_iff_inner_right.1 h1
-    have h3 : (⟨c, hcK⟩ : Kᗮ) = 0 := inner_self_eq_zero.1 h2
-    exact hc (congrArg Subtype.val h3)
-  have hN0 : volume (N : Set Kᗮ) = 0 := Measure.addHaar_submodule volume N hN
+  have hN0 : volume (N : Set Kᗮ) = 0 :=
+    volume_orthogonal_singleton (fun h => hc (congrArg Subtype.val h))
   have e1 : wedgeSet (T ∩ {v | ⟪c, v⟫ ≤ 0}) K = S ∩ Hle := by
     ext w; constructor
     · rintro ⟨⟨h1, h2⟩, h3⟩; exact ⟨⟨h1, h3⟩, h2⟩
@@ -237,12 +235,7 @@ lemma wedgeAngle_mem_ratPi_of_line [Fact (finrank ℝ E = 3)] {T : Set E} {K : S
   have hHp : MeasurableSet Hp := (isOpen_lt continuous_const (by fun_prop)).measurableSet
   have hHn : MeasurableSet Hn := (isOpen_lt (by fun_prop) continuous_const).measurableSet
   let N : Submodule ℝ Kᗮ := (ℝ ∙ n)ᗮ
-  have hN : volume (N : Set Kᗮ) = 0 := by
-    apply Measure.addHaar_submodule
-    intro h
-    have h1 : n ∈ N := by rw [h]; trivial
-    have h2 : ⟪n, n⟫ = 0 := Submodule.mem_orthogonal_singleton_iff_inner_right.1 h1
-    exact hn0 (inner_self_eq_zero.1 h2)
+  have hN : volume (N : Set Kᗮ) = 0 := volume_orthogonal_singleton hn0
   have hsplit : ∀ X : Set Kᗮ, volume X = volume (X ∩ Hp) + volume (X ∩ Hn) := by
     intro X
     have h1 := measure_inter_add_sdiff (μ := volume) X hHp

@@ -197,8 +197,8 @@ every μ. -/
 theorem dehnSet_fairDie18 (μ : ℝ) : dehnSet (cubeRDSet 1 (μ * √2)) = 0 := dehnSet_cubeRD 1 _
 
 /-- The same invariant as every cube. -/
-theorem dehnSet_cubeRD_eq_cube (s c t : ℝ) (ht : 0 < t) :
+theorem dehnSet_cubeRD_eq_cube (s c t : ℝ) :
     dehnSet (cubeRDSet s c) = dehnSet (cubeSet t) := by
-  rw [dehnSet_cubeRD, dehnSet_cube t ht]
+  rw [dehnSet_cubeRD, dehnSet_cube t]
 
 end DehnCanon.Library

@@ -12,7 +12,6 @@ public import LeanPool.DehnInvariant.ConeAngles
 public import LeanPool.DehnInvariant.PlaneCut
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Algebra.Ring.IsFormallyReal
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Hausdorff
@@ -137,17 +136,11 @@ theorem theta_cone_eq_zero_of_rational [Finite ι] (a : ι → E) (A : Set ι) (
         intro v hv
         exact hv i hi⟩
       let N : Submodule ℝ (linCone a A)ᗮ := (ℝ ∙ normal)ᗮ
-      have hN : N ≠ ⊤ := by
-        intro h
-        have perpendicular : normal ∈ N := by rw [h]; trivial
-        have zero : ⟪normal, normal⟫ = 0 :=
-          Submodule.mem_orthogonal_singleton_iff_inner_right.1 perpendicular
-        exact hne i (congrArg Subtype.val (inner_self_eq_zero.1 zero : normal = 0))
       have hset : {w : (linCone a A)ᗮ | ⟪a i, (w : E)⟫ = 0} = (N : Set (linCone a A)ᗮ) := by
         ext w
         exact (Submodule.mem_orthogonal_singleton_iff_inner_right (u := normal) (v := w)).symm
       rw [hset]
-      exact Measure.addHaar_submodule volume N hN
+      exact volume_orthogonal_singleton (fun h => hne i (congrArg Subtype.val h))
     simp only [wedgeAngle_formula]
     rw [hnull]
     simp

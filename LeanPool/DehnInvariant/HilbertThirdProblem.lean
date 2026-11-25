@@ -17,7 +17,6 @@ public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Haar.InnerProductSpace
-public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.NormNum

@@ -14,8 +14,6 @@ public import LeanPool.DehnInvariant.TetrahedronData
 public import Mathlib.Algebra.Module.StablyFree.Basic
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Push
 
 /-!

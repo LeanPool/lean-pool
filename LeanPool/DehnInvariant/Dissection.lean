@@ -14,7 +14,6 @@ public import Mathlib.Analysis.Normed.Affine.Isometry
 public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 public import Mathlib.MeasureTheory.Constructions.BorelSpace.Basic
-public import Mathlib.Order.CompletePartialOrder
 
 /-!
 Lean study 2 of the shape-language canon (DICTO, 19 Nov 2026): the bridge layer of Dehn's theorem.

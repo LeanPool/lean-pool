@@ -10,15 +10,12 @@ module
 
 public import LeanPool.DehnInvariant.Dissection
 public import LeanPool.DehnInvariant.EuclideanSpace
+public import LeanPool.DehnInvariant.RationalAngles
 public import LeanPool.DehnInvariant.Simplex
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
-public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith
@@ -27,7 +24,6 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.Push
 public import Mathlib.Tactic.Ring
-public import Mathlib.Topology.Separation.CompletelyRegular
 
 /-!
 Lean study 3 of the shape-language canon (DICTO, 19 Nov 2026), part J: the cube and the regular
@@ -102,72 +98,39 @@ lemma inner_cubeN (p : Fin 3 × Bool) (v : R3) :
   · rw [ite_eq_left hb, ite_eq_left hb, EuclideanSpace.inner_single_left]; simp
   · rw [ite_eq_right hb, ite_eq_right hb, inner_neg_left, EuclideanSpace.inner_single_left]; simp
 
-lemma inner_cubeN_eq_zero {p : Fin 3 × Bool} {v : R3} (h : ⟪cubeN p, v⟫ = 0) : v p.1 = 0 := by
-  rw [inner_cubeN] at h
-  by_cases hb : p.2 = true
-  · rwa [ite_eq_left hb] at h
-  · rw [ite_eq_right hb] at h; linarith
+lemma cubeN_inner_self (p : Fin 3 × Bool) : ⟪cubeN p, cubeN p⟫ = 1 := by
+  rw [inner_cubeN, cubeN_apply, ite_eq_left rfl]
+  cases p.2 <;> norm_num
 
-lemma fin3_cover : ∀ a b c : Fin 3, a ≠ b → a ≠ c → b ≠ c → ∀ m, m = a ∨ m = b ∨ m = c := by decide
+lemma cubeN_ne_zero (p : Fin 3 × Bool) : cubeN p ≠ 0 := by
+  intro zero
+  have one := cubeN_inner_self p
+  rw [zero, inner_zero_left] at one
+  exact zero_ne_one one
 
-/-- Every point of the cube has angle class 0: where two faces meet, the angle is π/2. -/
-lemma edgeAngle_cube (s : ℝ) (hs : 0 < s) (x : R3) : edgeAngle (cubeSet s) x = 0 := by
+lemma cubeN_angle (p q : Fin 3 × Bool) :
+    InnerProductGeometry.angle (cubeN p) (cubeN q) ∈ ratPi := by
+  have gram : ⟪cubeN p, cubeN q⟫ ^ 2 = if p.1 = q.1 then 1 else 0 := by
+    rw [inner_cubeN, cubeN_apply]
+    by_cases same : p.1 = q.1 <;> cases p.2 <;> cases q.2 <;> norm_num [same]
+  by_cases same : p.1 = q.1
+  · apply angle_mem_ratPi_of_gram (cubeN_ne_zero p) (cubeN_ne_zero q) (k := 4) (by decide)
+    rw [gram, ite_eq_left same, cubeN_inner_self, cubeN_inner_self]
+    norm_num
+  · apply angle_mem_ratPi_of_gram (cubeN_ne_zero p) (cubeN_ne_zero q) (k := 0) (by decide)
+    rw [gram, ite_eq_right same]
+    norm_num
+
+/-- Every point of the cube has angle class zero. -/
+lemma edgeAngle_cube (s : ℝ) (x : R3) : edgeAngle (cubeSet s) x = 0 := by
   by_cases hx : x ∈ cubeSet s
-  swap
+  · rw [show edgeAngle (cubeSet s) x = _ from edgeAngle_sol _ _ hx]
+    exact theta_cone_eq_zero_of_rational cubeN _ cubeN_ne_zero cubeN_angle
   · exact edgeAngle_of_notMem hx
-  change edgeAngle (sol cubeN fun _ => s) x = 0
-  rw [edgeAngle_sol _ _ hx]
-  set A := act cubeN (fun _ => s) x with hAdef
-  by_cases hfin : finrank ℝ (linCone cubeN A) = 1
-  swap
-  · unfold theta; rw [linSpace_cone, ite_eq_right hfin]
-  -- two tight constraints on one axis would be the two opposite faces
-  have hcons : ∀ p ∈ A, ∀ q ∈ A, p.1 = q.1 → p = q := by
-    rintro ⟨i, b⟩ hp ⟨j, c⟩ hq hij
-    have hij' : i = j := hij
-    subst hij'
-    have hp' : ⟪cubeN (i, b), x⟫ = s := hp
-    have hq' : ⟪cubeN (i, c), x⟫ = s := hq
-    rw [inner_cubeN] at hp' hq'
-    cases b <;> cases c <;> simp at hp' hq' ⊢ <;> linarith
-  have hind : ∀ p ∈ A, ∀ q ∈ A, ∀ r ∈ A, p ≠ q → p ≠ r → q ≠ r →
-      ∀ v : R3, ⟪cubeN p, v⟫ = 0 → ⟪cubeN q, v⟫ = 0 → ⟪cubeN r, v⟫ = 0 → v = 0 := by
-    intro p hp q hq r hr hpq hpr hqr v h1 h2 h3
-    have e1 := inner_cubeN_eq_zero h1
-    have e2 := inner_cubeN_eq_zero h2
-    have e3 := inner_cubeN_eq_zero h3
-    ext m
-    change v m = 0
-    rcases fin3_cover p.1 q.1 r.1 (fun h => hpq (hcons p hp q hq h)) (fun h => hpr (hcons p hp r
-        hr h))
-      (fun h => hqr (hcons q hq r hr h)) m with rfl | rfl | rfl
-    · exact e1
-    · exact e2
-    · exact e3
-  obtain ⟨p, q, hpq, hA⟩ := pair_of_finrank_one cubeN hfin hind
-  have hpA : p ∈ A := by rw [hA]; exact mem_insert _ _
-  have hqA : q ∈ A := by rw [hA]; exact mem_insert_of_mem _ rfl
-  have hax : p.1 ≠ q.1 := fun h => hpq (hcons p hpA q hqA h)
-  have i12 : ⟪cubeN p, cubeN q⟫ = 0 := by
-    rw [inner_cubeN, cubeN_apply, ite_eq_right hax]; simp
-  have i11 : ⟪cubeN p, cubeN p⟫ = 1 := by
-    rw [inner_cubeN, cubeN_apply, ite_eq_left rfl]
-    by_cases hb : p.2 = true <;> simp [hb]
-  have i22 : ⟪cubeN q, cubeN q⟫ = 1 := by
-    rw [inner_cubeN, cubeN_apply, ite_eq_left rfl]
-    by_cases hb : q.2 = true <;> simp [hb]
-  have hli : LinearIndependent ℝ ![cubeN p, cubeN q] :=
-    linIndep_pair_of_gram (by rw [i11, i22, i12]; norm_num)
-  rw [theta_pair cubeN hA hli, (InnerProductGeometry.inner_eq_zero_iff_angle_eq_pi_div_two _ _).1
-      i12,
-    Submodule.Quotient.mk_eq_zero, mem_ratPi_iff]
-  exact ⟨1 / 2, by push_cast; ring⟩
 
-/-- **Gap 2 of study 2, closed (cube).** The Dehn invariant of the cube `[-s, s]³`, as a set, is
-zero. -/
-theorem dehnSet_cube (s : ℝ) (hs : 0 < s) : dehnSet (cubeSet s) = 0 := by
-  rw [dehnSet_eq_single (cubeSet s) 0 (fun x => Or.inl (edgeAngle_cube s hs x)),
-      TensorProduct.tmul_zero]
+/-- The Dehn invariant of the cube is zero for every offset. -/
+theorem dehnSet_cube (s : ℝ) : dehnSet (cubeSet s) = 0 :=
+  dehnSet_sol_eq_zero_of_rational cubeN (fun _ => s) cubeN_ne_zero cubeN_angle
 
 /-! ### The regular tetrahedron -/
 
@@ -253,10 +216,10 @@ theorem dehnSet_tetra : dehnSet tetraSet = dehn (tetrahedron (2 * √2)) := by
 /-- **Dehn's theorem.** The regular tetrahedron is not scissors congruent to any cube: it cannot
 be cut into
 finitely many convex polytopes that, moved rigidly, fill a cube. -/
-theorem tetra_not_scissorsCongruent_cube (s : ℝ) (hs : 0 < s) :
+theorem tetra_not_scissorsCongruent_cube (s : ℝ) :
     ¬ ScissorsCongruent tetraSet (cubeSet s) := by
   apply not_scissorsCongruent_of_dehnSet_ne isPoly_tetra (isPoly_cube s)
-  rw [dehnSet_tetra, dehnSet_cube s hs]
+  rw [dehnSet_tetra, dehnSet_cube s]
   exact dehn_tetrahedron_ne_zero (by positivity)
 
 end DehnCanon.Library

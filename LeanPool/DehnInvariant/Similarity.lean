@@ -11,8 +11,6 @@ module
 public import LeanPool.DehnInvariant.CubeAndTetrahedron
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Positivity
 
 /-!
@@ -155,6 +153,6 @@ cube
 theorem similarTetra_not_scissorsCongruent_similarCube {T Q : Set R3}
     (hT : IsSimilarCopy tetraSet T) (hQ : IsSimilarCopy (cubeSet 1) Q) : ¬ ScissorsCongruent T Q :=
   not_scissorsCongruent_similarCopies isPoly_tetra (isPoly_cube 1) dehnSet_tetra_ne_zero
-    (dehnSet_cube 1 one_pos) hT hQ
+    (dehnSet_cube 1) hT hQ
 
 end DehnCanon.Library

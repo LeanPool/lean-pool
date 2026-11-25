@@ -9,10 +9,7 @@ Authors: DICTO
 module
 
 public import LeanPool.DehnInvariant.LocalAngle
-public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.Abel
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith
@@ -348,6 +345,7 @@ lemma support_finite [Finite ι] (a : ι → E) (b : ι → ℝ) (hb : Bornology
             · rw [hausdorffMeasure_real]; exact measure_Icc_lt_top
   exact ((measure_mono hsub).trans_lt (measure_biUnion_lt_top Set.finite_univ hR)).ne
 
+omit [FiniteDimensional ℝ E] in
 /-- The points where an edge crosses the cutting plane have length zero. -/
 lemma exc_null [Finite ι] (a : ι → E) (b : ι → ℝ) (c : E) (d : ℝ) :
     μH[1] {x | x ∈ sol a b ∧ ⟪c, x⟫ = d ∧ finrank ℝ (linCone a (act a b x)) = 1 ∧

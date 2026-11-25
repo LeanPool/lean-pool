@@ -11,7 +11,6 @@ module
 public import LeanPool.DehnInvariant.TensorInvariant
 public import Mathlib.Analysis.RCLike.Basic
 public import Mathlib.MeasureTheory.Measure.Basic
-public import Mathlib.Order.CompletePartialOrder
 
 /-!
 Lean study 2 of the shape-language canon (DICTO, 19 Nov 2026), part C: adding up a finitely-valued

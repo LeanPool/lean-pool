@@ -13,11 +13,7 @@ public import LeanPool.DehnInvariant.EdgeData
 public import Mathlib.Algebra.Order.Star.Real
 public import Mathlib.Analysis.Convex.Exposed
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
-public import Mathlib.LinearAlgebra.FreeModule.PID
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.Order.CompletePartialOrder
-public import Mathlib.RingTheory.Flat.TorsionFree
-public import Mathlib.RingTheory.SimpleRing.Principal
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith
@@ -641,31 +637,35 @@ lemma edge_segment_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
     exact ⟨c, (congrArg Subtype.val hc).symm⟩
   exact tightSet_eq_segment hb hx hd0' d.2 hspan
 
+private lemma normalized_facets_of_tight [Finite ι]
+    (interior_nonempty : (interior (sol a b)).Nonempty) {A : Set ι} {x u v : E}
+    (hx : x ∈ faceSet a b A) (rank_one : finrank ℝ (linCone a A) = 1)
+    (distinct : u ≠ v) (segment_eq : tightSet a b A = segment ℝ u v) :
+    ∃ p q, LinearIndependent ℝ ![a p, a q] ∧ cone a A = cone a {p, q} ∧
+      0 < ‖a p‖⁻¹ ∧ 0 < ‖a q‖⁻¹ ∧
+      LinearIndependent ℝ ![‖a p‖⁻¹ • a p, ‖a q‖⁻¹ • a q] ∧
+      facetNormals (sol a b) (tightSet a b A) = {‖a p‖⁻¹ • a p, ‖a q‖⁻¹ • a q} := by
+  obtain ⟨p, hp, q, hq, independent, cone_eq⟩ := exists_pair_cone interior_nonempty hx rank_one
+  have hp0 : a p ≠ 0 := by simpa using independent.ne_zero 0
+  have hq0 : a q ≠ 0 := by simpa using independent.ne_zero 1
+  have hp_pos : 0 < ‖a p‖⁻¹ := inv_pos.2 (norm_pos_iff.2 hp0)
+  have hq_pos : 0 < ‖a q‖⁻¹ := inv_pos.2 (norm_pos_iff.2 hq0)
+  exact ⟨p, q, independent, cone_eq, hp_pos, hq_pos,
+    (LinearIndependent.pair_smul_smul_iff hp_pos.ne'.isUnit hq_pos.ne'.isUnit).2 independent,
+    facetNormals_tightSet hx rank_one hp hq independent cone_eq distinct segment_eq⟩
+
 variable [MeasurableSpace E] [BorelSpace E]
 
-/-- All the facts about a set `A` of constraints that is the tight set of a point and whose
-direction space is
-a line. -/
-lemma edge_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
+/-- The length and angle class computed from an active face agree with its closed edge. -/
+lemma edge_measure_and_angle [Finite ι] (hb : Bornology.IsBounded (sol a b))
     (hint : (interior (sol a b)).Nonempty) {A : Set ι} (hfin : finrank ℝ (linCone a A) = 1)
     (hne : (faceSet a b A).Nonempty) :
-    ∃ u v n₁ n₂ : E, u ≠ v ∧ tightSet a b A = segment ℝ u v ∧
-      IsEdge (sol a b) (tightSet a b A) ∧
-      (μH[1] (faceSet a b A)).toReal = (μH[1] (tightSet a b A)).toReal ∧
-      LinearIndependent ℝ ![n₁, n₂] ∧
-      facetNormals (sol a b) (tightSet a b A) = {n₁, n₂} ∧
+    (μH[1] (faceSet a b A)).toReal = (μH[1] (tightSet a b A)).toReal ∧
       theta (cone a A) = (Submodule.Quotient.mk (dihedral (sol a b) (tightSet a b A)) : Angle) := by
   obtain ⟨x, hx⟩ := hne
   obtain ⟨u, v, huv, hseg, hopen⟩ := edge_segment_of_tight hb hx hfin
-  obtain ⟨p, hp, q, hq, hli, hcone⟩ := exists_pair_cone hint hx hfin
-  have hfac := facetNormals_tightSet hx hfin hp hq hli hcone huv hseg
-  have hap : a p ≠ 0 := by simpa using hli.ne_zero 0
-  have haq : a q ≠ 0 := by simpa using hli.ne_zero 1
-  have hnp : 0 < ‖a p‖⁻¹ := inv_pos.2 (norm_pos_iff.2 hap)
-  have hnq : 0 < ‖a q‖⁻¹ := inv_pos.2 (norm_pos_iff.2 haq)
-  refine ⟨u, v, (‖a p‖⁻¹ : ℝ) • a p, (‖a q‖⁻¹ : ℝ) • a q, huv, hseg, ⟨isExposed_tightSet hx, u, v,
-      huv, hseg⟩,
-    ?_, ?_, hfac, ?_⟩
+  obtain ⟨p, q, hli, hcone, hnp, hnq, _, hfac⟩ := normalized_facets_of_tight hint hx hfin huv hseg
+  constructor
   · have hfinite : μH[1] (segment ℝ u v) ≠ ⊤ := by
       rw [hausdorffMeasure_segment]
       exact edist_ne_top _ _
@@ -678,7 +678,6 @@ lemma edge_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
         ENNReal.toReal_ofReal dist_nonneg]
     rw [h1]
     exact ENNReal.toReal_mono (ne_top_of_le_ne_top hfinite hle) (measure_mono hopen)
-  · exact (LinearIndependent.pair_smul_smul_iff hnp.ne'.isUnit hnq.ne'.isUnit).2 hli
   · rw [hcone, theta_pair a rfl hli, dihedral_eq_of_pair hfac,
       InnerProductGeometry.angle_smul_left_of_pos _ _ hnp,
       InnerProductGeometry.angle_smul_right_of_pos _ _ hnq]
@@ -718,7 +717,7 @@ theorem dehnSet_sol_eq_edge_sum [Finite ι] (hb : Bornology.IsBounded (sol a b))
   have hterm : ∀ A ∈ edgeSets a b, t A = (μH[1] (tightSet a b A)).toReal ⊗ₜ[ℚ]
       (Submodule.Quotient.mk (dihedral (sol a b) (tightSet a b A)) : Angle) := by
     intro A hA
-    obtain ⟨u, v, n₁, n₂, -, -, -, hlen, -, -, hth⟩ := edge_of_tight hb hint hA.1 hA.2
+    obtain ⟨hlen, hth⟩ := edge_measure_and_angle hb hint hA.1 hA.2
     change (μH[1] (faceSet a b A)).toReal ⊗ₜ[ℚ] theta (cone a A) = _
     rw [hlen, hth]
   calc dehnSet (sol a b) = ∑ A : Set ι, t A := dehnSet_eq_sum_faceSet a b hb
@@ -754,16 +753,11 @@ theorem IsEdge.facetNormals_eq_pair {P F : Set E} (hP : IsPoly P) (hint : (inter
   obtain ⟨A, hfin, hne, rfl⟩ := exists_tight_of_edge hF
   obtain ⟨x, hx⟩ := hne
   obtain ⟨_, _, distinct, segment_eq, _⟩ := edge_segment_of_tight hb hx hfin
-  obtain ⟨p, hp, q, hq, independent, cone_eq⟩ := exists_pair_cone hint hx hfin
-  have hfac := facetNormals_tightSet hx hfin hp hq independent cone_eq distinct segment_eq
+  obtain ⟨p, q, _, _, _, _, independent, hfac⟩ :=
+    normalized_facets_of_tight hint hx hfin distinct segment_eq
   let n₁ := (‖a p‖⁻¹ : ℝ) • a p
   let n₂ := (‖a q‖⁻¹ : ℝ) • a q
-  have hp0 : a p ≠ 0 := by simpa using independent.ne_zero 0
-  have hq0 : a q ≠ 0 := by simpa using independent.ne_zero 1
-  have hli : LinearIndependent ℝ ![n₁, n₂] :=
-    (LinearIndependent.pair_smul_smul_iff
-      (inv_ne_zero (norm_ne_zero_iff.mpr hp0)).isUnit
-      (inv_ne_zero (norm_ne_zero_iff.mpr hq0)).isUnit).2 independent
+  have hli : LinearIndependent ℝ ![n₁, n₂] := independent
   have hd := dihedral_eq_of_pair hfac
   have hpair := LinearIndependent.pair_iff.1 hli
   have h0 : InnerProductGeometry.angle n₁ n₂ ≠ 0 := by

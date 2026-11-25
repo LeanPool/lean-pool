@@ -13,7 +13,6 @@ public import LeanPool.DehnInvariant.EuclideanSpace
 public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 public import Mathlib.Analysis.Convex.Measure
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
-public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Tactic.FinCases
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.NormNum
@@ -33,8 +32,7 @@ namespace DehnCanon.Library
 
 lemma vol_eq_of_sub_null {X : Type*} [MeasurableSpace X] {μ : Measure X} {s t z : Set X}
     (h1 : s ⊆ t) (h2 : t ⊆ s ∪ z) (hz : μ z = 0) : μ s = μ t :=
-  le_antisymm (measure_mono h1)
-    ((measure_mono h2).trans ((measure_union_le _ _).trans (by rw [hz, add_zero])))
+  measure_eq_of_off_null hz (h1.trans subset_union_left) h2
 
 /-- **Volume is additive over a dissection into convex polytopes** (pairwise disjoint interiors). -/
 theorem volume_iUnion_poly {κ : Type} [Fintype κ] {p : κ → Set R3} (hp : ∀ k, IsPoly (p k))

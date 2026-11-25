@@ -10,7 +10,6 @@ module
 
 public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
 public import Mathlib.Analysis.Normed.Affine.AddTorsorBases
-public import Mathlib.Order.CompletePartialOrder
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity

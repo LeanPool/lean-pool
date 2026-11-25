@@ -12,7 +12,6 @@ public import LeanPool.DehnInvariant.PlaneCut
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Algebra.Order.Star.Real
-public import Mathlib.Analysis.CStarAlgebra.Classes
 public import Mathlib.Analysis.SpecialFunctions.PolarCoord
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Lebesgue.VolumeOfBalls
