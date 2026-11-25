@@ -7,9 +7,11 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.TetrahedronPacking
+public import LeanPool.TetrahedronPacking.ClearanceCertificate
 public import LeanPool.TetrahedronPacking.IntegerCertificate
 public import LeanPool.TetrahedronPacking.IntegerProjections
 public import LeanPool.TetrahedronPacking.PackingMeasure
+public import LeanPool.TetrahedronPacking.PeriodicClearance
 public import LeanPool.TetrahedronPacking.PeriodicDensity
 public import LeanPool.TetrahedronPacking.PeriodicSeparation
 public import LeanPool.TetrahedronPacking.RecordArithmetic
