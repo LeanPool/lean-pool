@@ -1,0 +1,152 @@
+slug: sophie-germain-archives
+title: Statements read in Sophie Germain's manuscripts
+summary: Lean proofs of selected statements and modern consequences from three volumes of Sophie
+  Germain's papers at the Bibliothèque nationale de France, digitised in Gallica (Français 9115,
+  Français 9118, NAF 4073), following the modernised readings of the edition germain-project. In
+  number theory, Manuscript C on 2z^{2n} = x^{2n} + y^{2n} (the statement for odd n > 1 fails at
+  x = y = z = 1, solutions with coprime x and y are odd, a common divisor of x² + y² and Φ divides
+  n, with n = 5, x = 1, y = 3 as a case where 5 divides both), the working notes on quadratic residues
+  (every non-square integer is a non-residue of some prime, the false extension refuted by −5,
+  −17, −21, 3 a primitive root of primes 12n + 5 with 3n + 1 prime, every non-residue of a Fermat
+  prime a primitive root), the drafts to Gauss (Germain's generalisation of art. 357 deduced
+  from it, the passage x ↦ −x, the first case of Fermat's equation for exponent p − 1), the
+  primality of p⁴ + 4 only for p = 1 (by the Sophie Germain identity, which Mathlib has), the
+  edition's list of reduced forms of determinant −295, and the note of uncertain authorship in
+  NAF 4073 that the triangular number of a square is the sum of the squares of two consecutive
+  triangular numbers, with its generalisations (T(mn), a triangular system for odd power sums,
+  and Lagrange's S_3 = T_n² as the only case of S_p = T_n^q beyond S_1 = T_n,
+  through Levi ben Gershon's 2^p + 1 = 3^q). In mechanics and geometry, Euler's 1779 memoir on
+  the vibrating lamina and Germain's « Remarques » on it (the six end conditions and their
+  determinants, the first root of cos ω cosh ω = 1, the lamina on three supports, the second
+  family of § 51 shown to be a genuine mode against the « Remarques », the free lamina touched
+  by a stylet), the plate equation of the memoir for the Institut, and Euler's theorem on normal
+  sections, the mean curvature as the mean over all directions and the sum of inverse radii on
+  the sphere. Also the Sophie Germain chapter of the edition's exercise book.
+branch: number theory
+entry_module: LeanPool.SophieGermainArchives
+authors:
+- Michel Hua
+source:
+  title: Papiers de Sophie Germain, Bibliothèque nationale de France, Français 9115, Français
+    9118 and NAF 4073 (Gallica), in the modernised readings of germain-project
+  url: https://gallica.bnf.fr/ark:/12148/btv1b90724875
+  github_repo: mycaule/lean-pool
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- LeanPool.SophieGermainArchives.Naf4073.triangular_of_square
+- LeanPool.SophieGermainArchives.Naf4073.lagrange_unique
+- LeanPool.SophieGermainArchives.Fr9115Arithmetic.manuscriptC_odd
+- LeanPool.SophieGermainArchives.Fr9115Arithmetic.dvd_n_of_dvd_both
+- LeanPool.SophieGermainArchives.Fr9115Arithmetic.exists_prime_nonresidue
+- LeanPool.SophieGermainArchives.Fr9115Arithmetic.three_primitive_root
+- LeanPool.SophieGermainArchives.Fr9115Arithmetic.fermat_primitive_root
+- LeanPool.SophieGermainArchives.Fr9118.generalisation
+- LeanPool.SophieGermainArchives.Fr9118.p4_add_four_prime_iff
+- LeanPool.SophieGermainArchives.Fr9115Elasticity.exists_mode_iff
+- LeanPool.SophieGermainArchives.Fr9115Elasticity.first_root_free_free
+- LeanPool.SophieGermainArchives.Fr9115Elasticity.second_family_is_mode
+- LeanPool.SophieGermainArchives.Fr9115Elasticity.free_stylet_iff
+- LeanPool.SophieGermainArchives.Fr9115Curvature.euler_principal
+- LeanPool.SophieGermainArchives.Fr9115Curvature.integral_kappa
+main_results:
+- declaration: LeanPool.SophieGermainArchives.Naf4073.triangular_of_square
+  informal: The note of NAF 4073 (view 42) — the triangular number of a square is the sum of the
+    squares of the two consecutive triangular numbers, T_n² + T_{n+1}² = T_{(n+1)²}.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.leaf_identity
+  informal: The formula of the leaf, ((n² − n)/2)² + ((n² + n)/2)² = (n⁴ + n²)/2, over any field
+    in which 2 is nonzero.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.T_mul
+  informal: T(mn) = T(m) T(n) + T(m − 1) T(n − 1) for the triangular numbers T; the note is the
+    case m = n.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.T_pow_eq_sum
+  informal: For k ≥ 1, 2^{k−1} T_n^k is the sum over m ≤ k with k − m odd of C(k, m) S_{k+m}(n),
+    where S_p(n) = 1^p + ⋯ + n^p. These identities give a triangular system for the odd power sums.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.gersonides
+  informal: 2^p + 1 = 3^q with p, q ≥ 1 holds only for (p, q) = (1, 1) and (3, 2) (Levi ben
+    Gershon).
+- declaration: LeanPool.SophieGermainArchives.Naf4073.lagrange_unique
+  informal: If S_p(n) = T_n^q for every n, with p, q ≥ 1, then (p, q) is (1, 1) or (3, 2), so
+    Lagrange's formula S_3 = T_n² is the only case beyond S_1 = T_n.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.manuscriptC_not_as_written
+  informal: For every natural n, the equation 2z^{2n} = x^{2n} + y^{2n} has the solution
+    x = y = z = 1, with x and y coprime. This refutes the claim in Manuscript C for odd n > 1.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.manuscriptC_odd
+  informal: Solutions of x^{2n} + y^{2n} = 2z^{2n} with n ≥ 1 and x and y coprime have x, y and z odd.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.dvd_n_of_dvd_both
+  informal: For n odd and x, y coprime, a common divisor of x² + y² and Φ = (x^{2n} +
+    y^{2n})/(x² + y²) divides n.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.exists_prime_nonresidue
+  informal: An integer that is not a square is a quadratic non-residue of some prime not dividing
+    it (view 722).
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.false_extension
+  informal: Each of −5, −17 and −21 is a square modulo every prime q ≡ 3 (mod 4) smaller than
+    its absolute value, counting zero as a square. This refutes the extension of view 720.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.three_primitive_root
+  informal: 3 is a primitive root modulo every prime 12n + 5 for which 3n + 1 is prime (view 729).
+- declaration: LeanPool.SophieGermainArchives.Fr9115Arithmetic.fermat_primitive_root
+  informal: Every quadratic non-residue modulo a Fermat prime is a primitive root (view 730).
+- declaration: LeanPool.SophieGermainArchives.Fr9118.generalisation
+  informal: A variant of Germain's generalisation of Gauss's art. 357 with n natural and c odd.
+    If 4(Xⁿ − 1)/(X − 1) = Y² − cZ² in ℤ[X], then for every natural s,
+    4(X^{n^s} − 1)/(X − 1) = Y_s² − cZ_s² for some Y_s, Z_s in ℤ[X].
+- declaration: LeanPool.SophieGermainArchives.Fr9118.passage_neg
+  informal: For n odd, if 4(Xⁿ − 1)/(X − 1) = Y² − cZ², then 4(Xⁿ + 1)/(X + 1) = Y(−X)² −
+    cZ(−X)².
+- declaration: LeanPool.SophieGermainArchives.Fr9118.fermat_first_case
+  informal: If the prime p divides none of x, y, z, then x^{p−1} + y^{p−1} ≠ z^{p−1}.
+- declaration: LeanPool.SophieGermainArchives.Fr9118.p4_add_four_prime_iff
+  informal: p⁴ + 4 is prime exactly when p = 1.
+- declaration: LeanPool.SophieGermainArchives.Fr9118.reduced_forms_295
+  informal: Every reduced properly primitive form (a, b, c) of determinant b² − ac = −295, in
+    Gauss's convention, occurs in the edition's list (1, 0, 295), (5, 0, 59), (8, ±1, 37),
+    (13, ±2, 23) and (16, ±3, 19).
+- declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.exists_mode_iff
+  informal: For a nonzero frequency ω and each pair of end conditions of the lamina (free,
+    supported, clamped), a nonzero combination of cosh, sinh, cos and sin satisfying them exists
+    iff the 4 × 4 determinant of the conditions vanishes.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.first_root_free_free
+  informal: The first positive root of cos ω cosh ω = 1 lies in ]3π/2, 3π/2 + 1/50[ and is its
+    only root in ]0, 2π[.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.second_family_is_mode
+  informal: Against the « Remarques », Euler's second solution (§ 51) is a genuine mode — for
+    every root ω > 0 of tan(ω/2) = tanh(ω/2), the two halves satisfy the eight conditions of the
+    lamina on three supports, are not zero, and y''' jumps at the middle support.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.free_stylet_iff
+  informal: For a frequency ω > 0 and a stylet at λ in ]0, 1[, there exists a nonzero motion
+    satisfying the eight free-lamina conditions, with each half a combination of cosh, sinh, cos
+    and sin, iff C₊(μω) P(λω) + C₊(λω) P(μω) = 0, with μ = 1 − λ,
+    P(t) = cosh t sin t − sinh t cos t and
+    C₊(t) = 1 + cosh t cos t.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.sympathetic_iff_rational
+  informal: Some sin(kπu) with k ≥ 1 vanishes at the position λ of the stylet exactly when λ is
+    rational.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Curvature.euler_principal
+  informal: Euler's theorem on normal sections — given the coefficients (r, s, t) of a second
+    fundamental form in an orthonormal tangent basis, there are principal curvatures κ₂ ≤ κ₁ with
+    sum r + t and product rt − s², and an angle θ₀, with normal curvature
+    κ₁ cos²(A − θ₀) + κ₂ sin²(A − θ₀) in the direction A.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Curvature.integral_kappa
+  informal: The integral of the normal curvature κ₁ cos² φ + κ₂ sin² φ over a full turn is 2π
+    times the mean curvature (κ₁ + κ₂)/2.
+- declaration: LeanPool.SophieGermainArchives.Fr9115Curvature.sphere_sum
+  informal: The formula of view 650 for the sum of the inverse principal radii gives −2/ρ on
+    the open upper hemisphere z = √(ρ² − x² − y²), with ρ > 0 and x² + y² < ρ².
+- declaration: LeanPool.SophieGermainArchives.Exercises.manuscriptC_n_two
+  informal: Admitting Fermat's theorem that X⁴ − Y⁴ = W² has no solution with X, Y, W nonzero,
+    the coprime solutions of x⁴ + y⁴ = 2z⁴ have x² = y² = z² = 1.
+tags:
+- sophie-germain
+- history-of-mathematics
+- quadratic-residues
+- triangular-numbers
+- elasticity
+msc:
+- 11A15
+- 11D41
+- 11B83
+- 74K20
+- 74H45
+- 53A05
+- 01A50
