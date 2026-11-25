@@ -99,25 +99,7 @@ variable [MeasurableSpace E] [BorelSpace E]
 their deficit on any measurable subset of the germ domain. -/
 theorem PlurisubharmonicOn.measurable_indicator_deficit (hu : PlurisubharmonicOn u U)
     (hK : MeasurableSet K) (hKU : K ⊆ U) (C : ℝ) :
-    Measurable (K.indicator (fun x => ((C : EReal) - u x).toENNReal)) := by
-  classical
-  have hsc : UpperSemicontinuousOn (fun x : K => u x) univ :=
-    hu.upperSemicontinuousOn.comp continuous_subtype_val.continuousOn
-      (fun x _ => hKU x.property)
-  have hm : Measurable (fun x : K => ((C : EReal) - u x).toENNReal) :=
-    (continuous_finiteDeficit C).measurable.comp
-      (upperSemicontinuousOn_univ_iff.mp hsc).measurable
-  refine measurable_of_restrict_of_restrict_compl hK ?_ ?_
-  · convert hm using 1
-    funext x
-    simp [Set.domRestrict, x.property]
-  · have hzero : Kᶜ.domRestrict
-        (K.indicator (fun x => ((C : EReal) - u x).toENNReal)) =
-        fun _ : (Kᶜ : Set E) => (0 : ℝ≥0∞) := by
-      funext x
-      change K.indicator (fun x => ((C : EReal) - u x).toENNReal) (x : E) = 0
-      exact Set.indicator_of_notMem x.property _
-    rw [hzero]
-    exact measurable_const
+    Measurable (K.indicator (fun x => ((C : EReal) - u x).toENNReal)) :=
+  measurable_indicator_deficit_of_upperSemicontinuousOn hu.upperSemicontinuousOn hK hKU C
 
 end SGPT.Foundations.Analysis

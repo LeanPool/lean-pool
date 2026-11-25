@@ -38,14 +38,15 @@ theorem affineClosedDisc_subset_ball (a v : E) {R : ℝ} (hv : ‖v‖ < R) :
 
 variable [MeasurableSpace E] [BorelSpace E]
 
+omit [NormedSpace ℂ E] in
 /-- Local upper semicontinuity gives a measurable zero extension of the deficit.
 No regularity outside the indicated measurable set is assumed. -/
-theorem DiscPshOn.measurable_indicator_deficit {u : E → EReal} {U s : Set E}
-    (hu : DiscPshOn u U) (hs : MeasurableSet s) (hsU : s ⊆ U) (C : ℝ) :
+theorem measurable_indicator_deficit_of_upperSemicontinuousOn {u : E → EReal} {U s : Set E}
+    (hu : UpperSemicontinuousOn u U) (hs : MeasurableSet s) (hsU : s ⊆ U) (C : ℝ) :
     Measurable (s.indicator (fun x => ((C : EReal) - u x).toENNReal)) := by
   classical
   have hsc : UpperSemicontinuousOn (fun x : s => u x) univ :=
-    hu.upperSemicontinuousOn.comp continuous_subtype_val.continuousOn
+    hu.comp continuous_subtype_val.continuousOn
       (fun x _ => hsU x.property)
   have hm : Measurable (fun x : s => ((C : EReal) - u x).toENNReal) :=
     (continuous_finiteDeficit C).measurable.comp
@@ -62,6 +63,13 @@ theorem DiscPshOn.measurable_indicator_deficit {u : E → EReal} {U s : Set E}
       exact Set.indicator_of_notMem x.property _
     rw [hzero]
     exact measurable_const
+
+/-- Local upper semicontinuity gives a measurable zero extension of the deficit.
+No regularity outside the indicated measurable set is assumed. -/
+theorem DiscPshOn.measurable_indicator_deficit {u : E → EReal} {U s : Set E}
+    (hu : DiscPshOn u U) (hs : MeasurableSet s) (hsU : s ⊆ U) (C : ℝ) :
+    Measurable (s.indicator (fun x => ((C : EReal) - u x).toENNReal)) :=
+  measurable_indicator_deficit_of_upperSemicontinuousOn hu.upperSemicontinuousOn hs hsU C
 
 theorem DiscPshOn.aemeasurable_deficit_restrict {u : E → EReal} {U s : Set E}
     (hu : DiscPshOn u U) (hs : MeasurableSet s) (hsU : s ⊆ U) (C : ℝ)

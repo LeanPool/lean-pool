@@ -260,24 +260,13 @@ def HasLocallyFiniteMass : Prop :=
 theorem integrable_test_mul_glueDensity (hm : hF.HasLocallyFiniteMass) (γ : formSpan n q)
     {c : (ComplexModel n) → ℝ} (hc : Measurable c) (hcb : ∀ x, |c x| ≤ 1) (φ : 𝓓(U, ℝ)) :
     Integrable (fun x => φ x * (c x * hF.glueDensity x γ)) hF.glueMeasure := by
-  obtain ⟨Cφ, hCφ⟩ := φ.continuous.bounded_above_of_compact_support φ.hasCompactSupport
-  have hK : IsCompact (tsupport φ) := φ.hasCompactSupport
-  have hon : IntegrableOn (fun x => φ x * (c x * hF.glueDensity x γ)) (tsupport φ)
-      hF.glueMeasure := by
-    refine Measure.integrableOn_of_bounded (M := Cφ * orderUnitConst γ)
-      (hm _ hK φ.tsupport_subset).ne
-      (φ.continuous.measurable.mul (hc.mul (hF.measurable_glueDensity γ))).aestronglyMeasurable
-      (ae_restrict_of_ae ?_)
-    filter_upwards [hF.ae_abs_glueDensity_le γ] with x hx
-    rw [norm_mul, norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-    have h1 : ‖φ x‖ ≤ Cφ := hCφ x
-    rw [Real.norm_eq_abs] at h1
-    calc |φ x| * (|c x| * |hF.glueDensity x γ|) ≤ Cφ * (1 * orderUnitConst γ) :=
-          mul_le_mul h1 (mul_le_mul (hcb x) hx (abs_nonneg _) zero_le_one)
-            (mul_nonneg (abs_nonneg _) (abs_nonneg _)) ((abs_nonneg _).trans h1)
-      _ = Cφ * orderUnitConst γ := by ring
-  exact hon.integrable_of_forall_notMem_eq_zero fun x hx => by
-    rw [image_eq_zero_of_notMem_tsupport hx, zero_mul]
+  refine MeasureLocality.integrable_mul_of_ae_bounded_on_tsupport (C := orderUnitConst γ)
+    φ.continuous φ.hasCompactSupport (hm _ φ.hasCompactSupport φ.tsupport_subset)
+    (hc.mul (hF.measurable_glueDensity γ)).aestronglyMeasurable ?_
+  apply ae_restrict_of_ae
+  filter_upwards [hF.ae_abs_glueDensity_le γ] with x hx
+  rw [abs_mul]
+  exact (mul_le_mul (hcb x) hx (abs_nonneg _) zero_le_one).trans_eq (one_mul _)
 
 theorem isMeasureDensity (hm : hF.HasLocallyFiniteMass) :
     IsMeasureDensity U hF.glueMeasure hF.glueDensity :=

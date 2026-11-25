@@ -205,6 +205,24 @@ def IsLocallyBoundedPshOn (Ω : Opens (ComplexModel n))
     ∀ z ∈ Ω, ∃ V : Opens (ComplexModel n), z ∈ V ∧ V ≤ Ω ∧
       ∃ C : ℝ, ∀ w ∈ V, |u w| ≤ C
 
+open Metric in
+theorem isLocallyBoundedPshOn_of_continuousOn {U : Opens (ComplexModel n)} {g : ComplexModel n → ℝ}
+    (hp : PlurisubharmonicOn (fun z => (g z : EReal)) U) (hc : ContinuousOn g U) :
+    IsLocallyBoundedPshOn U g := by
+  refine ⟨hp, fun z hz => ?_⟩
+  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp U.isOpen z hz
+  have hcb : closedBall z (r / 2) ⊆ (U : Set (ComplexModel n)) :=
+    (closedBall_subset_ball (by linarith)).trans hball
+  obtain ⟨C, hC⟩ := (isCompact_closedBall z (r / 2)).exists_bound_of_continuousOn (hc.mono hcb)
+  exact ⟨⟨ball z (r / 2), isOpen_ball⟩, mem_ball_self (by linarith),
+    fun w hw => hcb (ball_subset_closedBall hw), C, fun w hw => by
+      simpa [Real.norm_eq_abs] using hC w (ball_subset_closedBall hw)⟩
+
+/-- A smooth PSH function is locally bounded. -/
+theorem isLocallyBoundedPshOn_of_isSmoothPshOn {U : Opens (ComplexModel n)}
+    {g : ComplexModel n → ℝ} (hg : IsSmoothPshOn U g) : IsLocallyBoundedPshOn U g :=
+  isLocallyBoundedPshOn_of_continuousOn hg.2.1 hg.1.continuousOn
+
 /-- Relative compactness includes the closure-in-domain condition, not just
 boundedness or the inclusion of the open sets. -/
 def RelativelyCompactIn (U Ω : Opens (ComplexModel n)) : Prop :=

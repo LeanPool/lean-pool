@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionSeminorms
+public import Mathlib.Analysis.Convex.Cone.Extension
 public import Mathlib.Analysis.Normed.Module.HahnBanach
 public import Mathlib.Analysis.Normed.Module.TransferInstance
 

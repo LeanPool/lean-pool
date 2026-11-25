@@ -103,16 +103,8 @@ theorem IsSmoothPsdOn.plurisubharmonicOn {U : Opens (ComplexModel n)}
   exact congrArg (fun t : ℝ ↦ (t : EReal)) (heqW hx).symm
 
 theorem IsSmoothPsdOn.isLocallyBoundedPshOn {Ω : Opens (ComplexModel n)}
-    {g : ComplexModel n → ℝ} (hg : IsSmoothPsdOn Ω g) : IsLocallyBoundedPshOn Ω g := by
-  refine ⟨hg.plurisubharmonicOn, fun z hz ↦ ?_⟩
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp Ω.isOpen z hz
-  have hcb : closedBall z (r / 2) ⊆ (Ω : Set (ComplexModel n)) :=
-    (closedBall_subset_ball (by linarith)).trans hball
-  obtain ⟨D, hD⟩ := (isCompact_closedBall z (r / 2)).exists_bound_of_continuousOn
-    (hg.1.continuousOn.mono hcb)
-  refine ⟨⟨ball z (r / 2), isOpen_ball⟩, mem_ball_self (by linarith),
-    fun w hw ↦ hcb (ball_subset_closedBall hw), D, fun w hw ↦ ?_⟩
-  simpa [Real.norm_eq_abs] using hD w (ball_subset_closedBall hw)
+    {g : ComplexModel n → ℝ} (hg : IsSmoothPsdOn Ω g) : IsLocallyBoundedPshOn Ω g :=
+  isLocallyBoundedPshOn_of_continuousOn hg.plurisubharmonicOn hg.1.continuousOn
 
 /-- **A common mollifier.** On a relatively compact subdomain, one radial
 mollifier with kernel support of radius at most `δ` regularizes every locally

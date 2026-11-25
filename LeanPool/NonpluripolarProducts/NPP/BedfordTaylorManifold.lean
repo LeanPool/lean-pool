@@ -25,9 +25,8 @@ be computed in holomorphic charts: the products defined in two charts agree on t
 
 ## Currents on a complex manifold
 
-`M` is a complex manifold of dimension `n` (mathlib's holomorphic atlas: a charted space modelled
-on `ℂⁿ` with holomorphic transition maps; no Hausdorff, countability or compactness assumption is
-needed below).  A *positive current of bidimension `(q,q)`* on `M` (bidegree `(n-q,n-q)`) is
+Lean uses a charted space `M` modelled on `ℂⁿ` with holomorphic transition maps.
+A *positive current of bidimension `(q,q)`* on `M` (bidegree `(n-q,n-q)`) is
 recorded by its local expressions in all atlas charts (`PositiveCurrent`):
 
 * in a chart `e` it is a positive current of bidimension `(q,q)` on the open coordinate domain
@@ -38,11 +37,14 @@ recorded by its local expressions in all atlas charts (`PositiveCurrent`):
   pull-back, along the holomorphic coordinate change `f ∘ e⁻¹`, of the expression in `f`
   (`LocalCurrentPullback.pullback`, `⟨τ^* T, φ γ⟩ = ⟨T, σ^*(φ γ)⟩`).
 
-This is the usual description of a current on a manifold through its restrictions to coordinate
-charts.  Closedness (`PositiveCurrent.IsClosed`) and weak convergence
-(`PositiveCurrent.WeakTendsto`) are tested in every chart; since every test form is a finite sum of
-test forms supported in coordinate charts (partition of unity), chartwise weak convergence is weak
-convergence of currents on `M`.
+The Lean closedness and convergence predicates test the compatible expressions
+in every chart. In particular, `PositiveCurrent.WeakTendsto` means convergence
+against constant forms and compactly supported scalar tests on each chart
+target. Xia uses paracompact Hausdorff manifolds and a smooth partition of
+unity to pass from coordinate tests to global compactly supported forms.
+The monotone convergence theorems below prove the chartwise variant.
+[Xia's manifold definition](https://github.com/MingchenXia/foundations-of-pluripotential-theory/blob/5d7f16338ae82d4933193a0cb331365e737824db/chapters/q01-complex-differential-forms-and-positive-currents.tex#L45-L49),
+[localization of currents](https://github.com/MingchenXia/foundations-of-pluripotential-theory/blob/5d7f16338ae82d4933193a0cb331365e737824db/chapters/q01-complex-differential-forms-and-positive-currents.tex#L176-L182).
 
 ## The Bedford–Taylor product
 
@@ -104,7 +106,7 @@ namespace PositiveCurrent
 
 variable [IsManifold (𝓘(ℂ, ComplexModel n)) ∞ M] {q : ℕ}
 
-/-- Weak convergence of currents on `M`: convergence of the coordinate expressions against every
+/-- Chartwise weak convergence of currents: convergence of the coordinate expressions against every
 constant form and every test function, in every chart. -/
 def WeakTendsto (T : ℕ → PositiveCurrent n M q) (T₀ : PositiveCurrent n M q) : Prop :=
   ∀ e, LocalBedfordTaylorContinuity.WeakTendsto (fun k => (T k).inChart e) (T₀.inChart e)
@@ -243,11 +245,11 @@ theorem bedfordTaylor_comp_perm (hqp : q + p = n) (u : Fin p → M → ℝ)
   exact LocalBedfordTaylorCalculus.btProduct_comp_perm p q _ (isPositive_oneCurrentOf hqp)
     (isClosedAny_oneCurrentOf hqp) (fun i z => u i (e.val.symm z)) (fun i => (hu i).chart e) σ
 
-/-! ### Decreasing continuity (`thm:contMA`) -/
+/-! ### Chartwise decreasing continuity -/
 
-/-- **`thm:contMA`, decreasing sequences, unweighted form**: if `u_i^k ↓ u_i` pointwise, with all
+/-- **Chartwise decreasing convergence, unweighted form**: if `u_i^k ↓ u_i` pointwise, with all
 functions locally bounded psh, then `dd^c u_1^k ∧ ⋯ ∧ dd^c u_p^k → dd^c u_1 ∧ ⋯ ∧ dd^c u_p`
-weakly as currents on `M`. -/
+weakly in every chart. -/
 theorem weakTendsto_bedfordTaylor_of_antitone (hqp : q + p = n) (u : ℕ → Fin p → M → ℝ)
     (u₀ : Fin p → M → ℝ) (hu : ∀ k i, IsLocallyBoundedPSH (n := n) (u k i))
     (hu₀ : ∀ i, IsLocallyBoundedPSH (n := n) (u₀ i))
@@ -287,7 +289,7 @@ theorem weakTendsto_weightedBedfordTaylorInChart_of_antitone (hqp : q + p = n)
     (fun k i => (hu k i).chart e) (fun i => (hu₀ i).chart e)
     (fun i z _ => hanti i (e.val.symm z)) (fun i z _ => hlim i (e.val.symm z))
 
-/-! ### Increasing continuity (`thm:contMA`) -/
+/-! ### Chartwise increasing continuity -/
 
 /-- Convergence almost everywhere on `M`: in every atlas chart, for Lebesgue-almost every point of
 the coordinate domain (the null sets of a manifold are measured by the Lebesgue measures of the
@@ -303,9 +305,9 @@ private theorem ae_imp_of_tendstoAE {u : ℕ → M → ℝ} {u₀ : M → ℝ} (
       Tendsto (fun k => u k (e.val.symm z)) atTop (𝓝 (u₀ (e.val.symm z))) :=
   (ae_restrict_iff' (chartTarget e).isOpen.measurableSet).mp (h e)
 
-/-- **`thm:contMA`, increasing sequences, unweighted form**: if `u_i^k ↑ u_i` almost everywhere,
+/-- **Chartwise increasing convergence, unweighted form**: if `u_i^k ↑ u_i` almost everywhere,
 with all functions locally bounded psh, then
-`dd^c u_1^k ∧ ⋯ ∧ dd^c u_p^k → dd^c u_1 ∧ ⋯ ∧ dd^c u_p` weakly as currents on `M`. -/
+`dd^c u_1^k ∧ ⋯ ∧ dd^c u_p^k → dd^c u_1 ∧ ⋯ ∧ dd^c u_p` weakly in every chart. -/
 theorem weakTendsto_bedfordTaylor_of_monotone (hqp : q + p = n) (u : ℕ → Fin p → M → ℝ)
     (u₀ : Fin p → M → ℝ) (hu : ∀ k i, IsLocallyBoundedPSH (n := n) (u k i))
     (hu₀ : ∀ i, IsLocallyBoundedPSH (n := n) (u₀ i))

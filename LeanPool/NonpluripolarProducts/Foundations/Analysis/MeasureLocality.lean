@@ -55,4 +55,22 @@ theorem integrable_of_tsupport_subset {X : Type*} [TopologicalSpace X]
   exact Measure.integrableOn_of_bounded (M := M) (hμ _ hφc hφΩ).ne
     hφ.aestronglyMeasurable (Eventually.of_forall hM)
 
+/-- A continuous compactly supported function times an a.e. bounded density
+is integrable if the measure is finite on the support. -/
+theorem integrable_mul_of_ae_bounded_on_tsupport {X : Type*} [TopologicalSpace X]
+    [MeasurableSpace X] [OpensMeasurableSpace X] {μ : Measure X} {φ w : X → ℝ}
+    (hφ : Continuous φ) (hφc : HasCompactSupport φ) (hμ : μ (tsupport φ) < ⊤)
+    (hw : AEStronglyMeasurable w μ) {C : ℝ}
+    (hC : ∀ᵐ x ∂μ.restrict (tsupport φ), |w x| ≤ C) :
+    Integrable (fun x => φ x * w x) μ := by
+  obtain ⟨M, hM⟩ := hφc.exists_bound_of_continuous hφ
+  have hsupp : Function.support (fun x => φ x * w x) ⊆ tsupport φ := fun x hx =>
+    subset_tsupport φ (left_ne_zero_of_mul hx)
+  refine (integrableOn_iff_integrable_of_support_subset hsupp).mp ?_
+  refine Measure.integrableOn_of_bounded (M := M * C) hμ.ne
+    (hφ.aestronglyMeasurable.mul hw) ?_
+  filter_upwards [hC] with x hx
+  rw [norm_mul, Real.norm_eq_abs]
+  exact mul_le_mul (hM x) hx (abs_nonneg _) ((norm_nonneg _).trans (hM x))
+
 end SGPT.Foundations.Analysis.MeasureLocality

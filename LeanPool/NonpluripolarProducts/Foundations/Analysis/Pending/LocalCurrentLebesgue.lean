@@ -205,17 +205,10 @@ theorem integrable_densityForm (hT : IsPositive T) {ν : Measure E}
     (hν : ν ≤ hT.traceMeasure) (γ : formSpan n q) (φ : 𝓓(U, ℝ)) :
     Integrable (fun x => φ x * densityForm hT x γ) ν := by
   obtain ⟨C, -, hC⟩ := exists_abs_densityForm_le hT γ
-  obtain ⟨Cφ, hCφ⟩ := φ.continuous.bounded_above_of_compact_support φ.hasCompactSupport
-  have hsupp : Function.support (fun x => φ x * densityForm hT x γ) ⊆ tsupport φ := fun x hx =>
-    subset_tsupport φ (left_ne_zero_of_mul hx)
-  refine (integrableOn_iff_integrable_of_support_subset hsupp).mp ?_
-  refine Measure.integrableOn_of_bounded (M := Cφ * C)
-    ((Measure.le_iff'.mp hν _).trans_lt
-      (hT.traceMeasure_lt_top φ.hasCompactSupport φ.tsupport_subset)).ne
-    (φ.continuous.aestronglyMeasurable.mul (measurable_densityForm hT γ).aestronglyMeasurable) ?_
-  filter_upwards with x
-  rw [norm_mul, Real.norm_eq_abs]
-  exact mul_le_mul (hCφ x) (hC x) (abs_nonneg _) ((norm_nonneg _).trans (hCφ x))
+  exact MeasureLocality.integrable_mul_of_ae_bounded_on_tsupport φ.continuous
+    φ.hasCompactSupport ((Measure.le_iff'.mp hν _).trans_lt
+      (hT.traceMeasure_lt_top φ.hasCompactSupport φ.tsupport_subset))
+    (measurable_densityForm hT γ).aestronglyMeasurable (ae_restrict_of_ae (Eventually.of_forall hC))
 
 /-- **The part of a positive current carried by a measure** `ν ≤ σ_T`: `γ ↦ L_x(γ) ν`. -/
 def ofMeasure (hT : IsPositive T) (ν : Measure E) (hν : ν ≤ hT.traceMeasure) :

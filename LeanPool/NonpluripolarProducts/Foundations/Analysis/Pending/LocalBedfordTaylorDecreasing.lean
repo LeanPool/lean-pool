@@ -897,19 +897,6 @@ theorem tendsto_integral_traceMeasure_of_weakTendsto {m : ℕ} {S : ℕ → Loca
     hg.continuousOn (fun u hu x _ => ⟨univ, univ_mem, Eventually.of_forall fun _ y _ =>
       refl_mem_uniformity hu⟩) (kahlerPower n m) χ'
 
-/-- A smooth PSH function on `U` is locally bounded PSH on `U`. -/
-theorem isLocallyBoundedPshOn_of_isSmoothPshOn {f : E → ℝ} (hf : IsSmoothPshOn U f) :
-    IsLocallyBoundedPshOn U f := by
-  refine ⟨hf.2.1, fun z hz => ?_⟩
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp U.isOpen z hz
-  have hcb : Metric.closedBall z (r / 2) ⊆ (U : Set E) :=
-    (Metric.closedBall_subset_ball (by linarith)).trans hball
-  obtain ⟨C, hC⟩ := (isCompact_closedBall z (r / 2)).exists_bound_of_continuousOn
-    (hf.1.continuousOn.mono hcb)
-  exact ⟨⟨Metric.ball z (r / 2), Metric.isOpen_ball⟩, Metric.mem_ball_self (by linarith),
-    fun w hw => hcb (Metric.ball_subset_closedBall hw), C, fun w hw => by
-      simpa [Real.norm_eq_abs] using hC w (Metric.ball_subset_closedBall hw)⟩
-
 /-- **The locally bounded Monge--Ampère measure is the limit for every decreasing sequence**
 (`bt:decreasing-continuity`, last assertion): for locally bounded PSH `u_k ↓ u` on `U`,
 `(dd^c u_k)^n = B(u_k, …, u_k; [1]) → (dd^c u)^n` weakly as currents and vaguely as Radon measures

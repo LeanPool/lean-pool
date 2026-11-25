@@ -26,6 +26,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitLocaliz
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionDerivatives
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRestriction
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionSeminorms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BTTruncations
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ChartDomains
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CircleDeficitMajorants
@@ -36,10 +37,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Coor
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.DiscPshSupremum
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExtendedDifference
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExteriorDerivative
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FiniteMeasureGluing
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FiniteTranslation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FormPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GeometricForms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalMeasureNoncharging
@@ -62,7 +61,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Mixe
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.MongeAmpere
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PluripolarSets
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PositiveClasses
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PotentialL1
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PshClosedDiscMaximum
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PshContinuousBoundarySubmean
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PshDiscLocalGlobal
@@ -270,6 +268,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.RegularDistrib
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothDistribution
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothPlurisubharmonic
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothTestCutoff
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SubmeanLaplacian
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.TestLeviPairing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.TranslationPairing

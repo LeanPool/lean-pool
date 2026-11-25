@@ -369,17 +369,10 @@ theorem integrable_mul_pbDensity (h : IsBiholomorphicPair A B τ σ) (hT : IsPos
     (γ : formSpan n q)
     (φ : 𝓓(A, ℝ)) : Integrable (fun x => φ x * pbDensity A τ σ hT γ x) (pbMeasure σ hT) := by
   obtain ⟨C, hC⟩ := exists_abs_pbDensity_le h hT γ φ.hasCompactSupport φ.tsupport_subset
-  obtain ⟨Cφ, hCφ⟩ := φ.continuous.bounded_above_of_compact_support φ.hasCompactSupport
-  have hsupp : Function.support (fun x => φ x * pbDensity A τ σ hT γ x) ⊆ tsupport φ := fun x hx =>
-    subset_tsupport φ (left_ne_zero_of_mul hx)
-  refine (integrableOn_iff_integrable_of_support_subset hsupp).mp ?_
-  refine Measure.integrableOn_of_bounded (M := Cφ * C)
-    (pbMeasure_lt_top h hT φ.hasCompactSupport φ.tsupport_subset).ne
-    (φ.continuous.aestronglyMeasurable.mul (measurable_pbDensity h hT γ).aestronglyMeasurable) ?_
-  refine (ae_restrict_iff' φ.hasCompactSupport.measurableSet).mpr (Eventually.of_forall fun x hx
-    => ?_)
-  rw [norm_mul, Real.norm_eq_abs]
-  exact mul_le_mul (hCφ x) (hC x hx) (abs_nonneg _) ((norm_nonneg _).trans (hCφ x))
+  apply MeasureLocality.integrable_mul_of_ae_bounded_on_tsupport φ.continuous φ.hasCompactSupport
+    (pbMeasure_lt_top h hT φ.hasCompactSupport φ.tsupport_subset)
+    (measurable_pbDensity h hT γ).aestronglyMeasurable
+  exact (ae_restrict_iff' φ.hasCompactSupport.measurableSet).mpr (Eventually.of_forall hC)
 
 /-- **The pull-back `τ^* T` of a positive current** along a biholomorphism `τ : A → B` with
     inverse `σ`:

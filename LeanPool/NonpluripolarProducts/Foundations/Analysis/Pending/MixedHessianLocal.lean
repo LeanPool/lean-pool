@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedHessianDivergence
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothTestCutoff
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalTwoFormPoincare
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientPositivity
 

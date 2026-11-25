@@ -361,17 +361,6 @@ end TwoForm
 
 section Smooth
 
-/-- A smooth psh function is locally bounded psh. -/
-theorem isLocallyBoundedPshOn_of_isSmoothPshOn {n : ℕ} {U : Opens (ComplexModel n)} {g :
-    ComplexModel n → ℝ}
-    (hg : IsSmoothPshOn U g) : IsLocallyBoundedPshOn U g := by
-  refine ⟨hg.2.1, fun z hz => ?_⟩
-  obtain ⟨K, hK, hzK, hKU⟩ := exists_compact_subset U.isOpen hz
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn (hg.1.continuousOn.mono hKU)
-  refine ⟨⟨interior K, isOpen_interior⟩, hzK, fun w hw => hKU (interior_subset hw), C,
-    fun w hw => ?_⟩
-  simpa [Real.norm_eq_abs] using hC w (interior_subset hw)
-
 variable {m : ℕ} {A B : Opens (ComplexModel (m + 1))} {τ σ : ComplexModel (m + 1)
     → ComplexModel (m + 1)}
 

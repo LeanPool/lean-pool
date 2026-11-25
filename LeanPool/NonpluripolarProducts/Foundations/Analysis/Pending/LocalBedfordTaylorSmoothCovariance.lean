@@ -73,7 +73,7 @@ theorem pullback_smooth_btProduct (hdegree : r + q = n)
     (hup : ∀ i, PlurisubharmonicOn (fun z => (u i z : EReal)) B) :
     pullback h (isPositive_btProduct q r u (oneCurrentOf hdegree)
       (isPositive_oneCurrentOf hdegree) (isClosedAny_oneCurrentOf hdegree)
-      (fun i => LocalBedfordTaylorDecreasing.isLocallyBoundedPshOn_of_isSmoothPshOn
+      (fun i => isLocallyBoundedPshOn_of_isSmoothPshOn
         (isSmoothPshOn_of_psh (hu i) (hup i)))).1 =
       btProduct q r (fun i x => u i (τ x)) (oneCurrentOf (U := A) hdegree) := by
   have huA (i : Fin q) : ContDiffOn ℝ ∞ (fun x => u i (τ x)) A :=
@@ -96,7 +96,7 @@ theorem pullback_smooth_btProduct (hdegree : r + q = n)
       isSemipositiveOneOne_smoothDDC (hu i) (hup i) hy)
   have ePB : pullback h (isPositive_btProduct q r u (oneCurrentOf hdegree)
       (isPositive_oneCurrentOf hdegree) (isClosedAny_oneCurrentOf hdegree)
-      (fun i => LocalBedfordTaylorDecreasing.isLocallyBoundedPshOn_of_isSmoothPshOn
+      (fun i => isLocallyBoundedPshOn_of_isSmoothPshOn
         (isSmoothPshOn_of_psh (hu i) (hup i)))).1 =
       pullback h (isPositive_wedgeForm hdegree isPositive_oneCurrent
         (contDiffOn_wedgeProd q (fun i => ddcForm (u i))

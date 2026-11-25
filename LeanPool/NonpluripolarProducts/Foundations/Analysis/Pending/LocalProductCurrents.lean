@@ -15,6 +15,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDeg
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HermitianGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Upstream.KahlerClosed
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 
 /-!
@@ -577,16 +578,10 @@ theorem integrable_mul_of_bounded (hT : IsPositive T) {ψ w : ComplexModel n →
     (hψ : Continuous ψ) (hψc : HasCompactSupport ψ) (hψU : tsupport ψ ⊆ U)
     (hw : AEStronglyMeasurable w (traceMeasure hT)) (hwb : ∃ M, ∀ x ∈ tsupport ψ, |w x| ≤ M) :
     Integrable (fun x => ψ x * w x) (traceMeasure hT) := by
-  obtain ⟨M, hM⟩ := hwb
-  obtain ⟨Cψ, hCψ⟩ := hψ.bounded_above_of_compact_support hψc
-  have hsupp : Function.support (fun x => ψ x * w x) ⊆ tsupport ψ := fun x hx =>
-    subset_tsupport ψ (left_ne_zero_of_mul hx)
-  refine (integrableOn_iff_integrable_of_support_subset hsupp).mp ?_
-  refine Measure.integrableOn_of_bounded (M := Cψ * M)
-    (traceMeasure_lt_top hT hψc hψU).ne (hψ.aestronglyMeasurable.mul hw) ?_
-  filter_upwards [ae_restrict_mem (isClosed_tsupport ψ).measurableSet] with x hx
-  rw [norm_mul, Real.norm_eq_abs]
-  exact mul_le_mul (hCψ x) (hM x hx) (abs_nonneg _) ((norm_nonneg _).trans (hCψ x))
+  obtain ⟨C, hC⟩ := hwb
+  apply MeasureLocality.integrable_mul_of_ae_bounded_on_tsupport hψ hψc
+    (traceMeasure_lt_top hT hψc hψU) hw
+  exact (ae_restrict_iff' (isClosed_tsupport ψ).measurableSet).mpr (Eventually.of_forall hC)
 
 /-- Two bounded measurable densities giving the same distribution agree almost everywhere for the
 trace measure. -/

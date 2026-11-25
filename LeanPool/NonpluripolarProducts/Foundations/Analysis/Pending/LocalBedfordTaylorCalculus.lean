@@ -335,18 +335,6 @@ theorem isLocallyBoundedPshOn_add {a a' : E → ℝ} (ha : IsLocallyBoundedPshOn
     exact ⟨V ⊓ V', ⟨hzV, hzV'⟩, inf_le_left.trans hVU, C + C', fun y hy =>
       (abs_add_le _ _).trans (add_le_add (hC y hy.1) (hC' y hy.2))⟩
 
-theorem isLocallyBoundedPshOn_of_continuousOn {g : E → ℝ}
-    (hp : PlurisubharmonicOn (fun z => (g z : EReal)) U) (hc : ContinuousOn g U) :
-    IsLocallyBoundedPshOn U g := by
-  refine ⟨hp, fun z hz => ?_⟩
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp U.isOpen z hz
-  have hcb : closedBall z (r / 2) ⊆ (U : Set E) := (closedBall_subset_ball (by linarith)).trans
-    hball
-  obtain ⟨C, hC⟩ := (isCompact_closedBall z (r / 2)).exists_bound_of_continuousOn (hc.mono hcb)
-  exact ⟨⟨ball z (r / 2), isOpen_ball⟩, mem_ball_self (by linarith),
-    fun w hw => hcb (ball_subset_closedBall hw), C, fun w hw => by
-      simpa [Real.norm_eq_abs] using hC w (ball_subset_closedBall hw)⟩
-
 /-- `dd^c((a + a') S) = dd^c(a S) + dd^c(a' S)`. -/
 theorem ddcMul_add {m : ℕ} {S : LocalProductCurrent n U (m + 1)} (hS : IsPositive S)
     {a a' : E → ℝ} (ha : Measurable ((U : Set E).indicator a))

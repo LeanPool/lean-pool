@@ -61,7 +61,7 @@ theorem pullback_btProduct (hdegree : r + q = n)
   have huV : ∀ i, IsLocallyBoundedPshOn V (u i) :=
     fun i => isLocallyBoundedPshOn_mono (hu i) hVB
   have hS : ∀ j i, IsLocallyBoundedPshOn V (f i j) :=
-    fun j i => LocalBedfordTaylorDecreasing.isLocallyBoundedPshOn_of_isSmoothPshOn
+    fun j i => isLocallyBoundedPshOn_of_isSmoothPshOn
       ((hf i).1 j)
   have eB : restrict hVB (btProduct q r u (oneCurrentOf (U := B) hdegree)) =
       btProduct q r u (oneCurrentOf (U := V) hdegree) := by

@@ -9,6 +9,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshRegularizationData
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothTestCutoff
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionSeminorms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.AdaptedKernelCoordinates
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.AdaptedKernelNeighborhood
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.AdaptedRadialKernel
@@ -39,32 +41,6 @@ namespace SGPT.Foundations.Analysis.Pending
 
 open AdaptedRadialKernel
 open FirstPass
-
-/-- A compact subset of an open finite-dimensional real vector space admits a
-smooth test-function cutoff which equals one on a neighborhood of the compact
-set and takes values in `[0, 1]`. -/
-theorem exists_testFunction_eq_one_nhds_compact
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    [FiniteDimensional ℝ E] {Ω : Opens E} {K : Set E}
-    (hK : IsCompact K) (hKΩ : K ⊆ Ω) :
-    ∃ χ : 𝓓(Ω, ℝ),
-      (∀ᶠ x in 𝓝ˢ K, χ x = 1) ∧ ∀ x, χ x ∈ Set.Icc (0 : ℝ) 1 := by
-  obtain ⟨V, hVo, hKV, hVΩ, hVc⟩ :=
-    exists_open_between_and_isCompact_closure hK Ω.isOpen hKΩ
-  have hKintV : K ⊆ interior V := by simpa [hVo.interior_eq] using hKV
-  obtain ⟨f, hfK, hfV, hfrange⟩ :=
-    exists_contMDiffMap_one_nhds_of_subset_interior
-      (n := (⊤ : ℕ∞)) (𝓘(ℝ, E)) hK.isClosed hKintV
-  have hsupp : Function.support f ⊆ V := by
-    intro x hx
-    by_contra hxV
-    exact hx (hfV x hxV)
-  let χ : 𝓓(Ω, ℝ) :=
-    ⟨f, f.contMDiff.contDiff,
-      HasCompactSupport.of_support_subset_isCompact hVc
-        (hsupp.trans subset_closure),
-      (closure_mono hsupp).trans hVΩ⟩
-  exact ⟨χ, hfK, hfrange⟩
 
 section AdaptedKernelData
 
@@ -370,53 +346,5 @@ def AdaptedRadialKernelData.distributionRegularizedValue
     (D.localizedKernelSupportedIn j z))
 
 end LocalizedAdaptedKernel
-
-/-- On a fixed compact set, a distribution is controlled by finitely many of the
-standard derivative seminorms on smooth functions supported in that compact set. -/
-theorem exists_finite_seminorm_bound_on_compact
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {Ω : Opens E} (T : 𝓓'(Ω, ℝ)) (K : Compacts E)
-    (hKΩ : (K : Set E) ⊆ Ω) :
-    ∃ (s : Finset ℕ) (C : ℝ≥0), C ≠ 0 ∧
-      ∀ φ : ContDiffMapSupportedIn E ℝ ⊤ K,
-        |T (TestFunction.ofSupportedIn hKΩ φ)| ≤
-          (C : ℝ) *
-            (s.sup (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K)) φ := by
-  let TK := T.comp (TestFunction.ofSupportedInCLM ℝ hKΩ)
-  let q : Seminorm ℝ (ContDiffMapSupportedIn E ℝ ⊤ K) :=
-    (normSeminorm ℝ ℝ).comp TK.toLinearMap
-  have hq : Continuous q := continuous_norm.comp TK.continuous
-  obtain ⟨s, C, hC, hbound⟩ := Seminorm.bound_of_continuous
-    (ContDiffMapSupportedIn.withSeminorms ℝ E ℝ ⊤ K) q hq
-  refine ⟨s, C, hC, fun φ ↦ ?_⟩
-  have h := hbound φ
-  change |T ((TestFunction.ofSupportedInCLM ℝ hKΩ) φ)| ≤
-    (C : ℝ) * (s.sup (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K)) φ
-  change |T ((TestFunction.ofSupportedInCLM ℝ hKΩ) φ)| ≤
-    (C : ℝ) * (s.sup (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K)) φ at h
-  exact h
-
-/-- A distribution has finite order on every fixed compact subset of its domain:
-one common derivative order controls its value on all smooth functions supported
-in that compact set. -/
-theorem exists_finite_order_seminorm_bound_on_compact
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-    {Ω : Opens E} (T : 𝓓'(Ω, ℝ)) (K : Compacts E)
-    (hKΩ : (K : Set E) ⊆ Ω) :
-    ∃ (m : ℕ) (C : ℝ≥0), C ≠ 0 ∧
-      ∀ φ : ContDiffMapSupportedIn E ℝ ⊤ K,
-        |T (TestFunction.ofSupportedIn hKΩ φ)| ≤
-          (C : ℝ) *
-            ((Finset.Iic m).sup
-              (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K)) φ := by
-  obtain ⟨s, C, hC, hbound⟩ := exists_finite_seminorm_bound_on_compact T K hKΩ
-  refine ⟨s.sup id, C, hC, fun φ ↦ (hbound φ).trans ?_⟩
-  apply mul_le_mul_of_nonneg_left _ C.coe_nonneg
-  have hseminorm :
-      s.sup (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K) ≤
-        (Finset.Iic (s.sup id)).sup
-          (ContDiffMapSupportedIn.seminorm ℝ E ℝ ⊤ K) :=
-    Finset.sup_mono s.subset_Iic_sup_id
-  exact hseminorm φ
 
 end SGPT.Foundations.Analysis.Pending

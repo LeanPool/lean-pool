@@ -769,14 +769,10 @@ theorem leviForm_ballPot (A : ℝ) (z₀ : E) (R : ℝ) (x v : E) :
 
 theorem isLocallyBoundedPshOn_ballPot {A : ℝ} (hA : 0 ≤ A) (z₀ : E) (R : ℝ) :
     IsLocallyBoundedPshOn U (ballPot A z₀ R) := by
-  refine ⟨plurisubharmonicOn_of_levi_nonneg
+  refine isLocallyBoundedPshOn_of_continuousOn ?_ (contDiff_ballPot A z₀ R).continuous.continuousOn
+  exact plurisubharmonicOn_of_levi_nonneg
     ((contDiff_ballPot A z₀ R).of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2))
-    U.isOpen fun x _ v => by rw [leviForm_ballPot]; positivity, fun z hz => ?_⟩
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp U.isOpen z hz
-  obtain ⟨C, hC⟩ := (isCompact_closedBall z r).exists_bound_of_continuousOn
-    (contDiff_ballPot A z₀ R).continuous.continuousOn
-  exact ⟨⟨ball z r, isOpen_ball⟩, mem_ball_self hr, fun w hw => hball hw, C, fun w hw => by
-    simpa [Real.norm_eq_abs] using hC w (ball_subset_closedBall hw)⟩
+    U.isOpen fun x _ v => by rw [leviForm_ballPot]; positivity
 
 theorem isLocallyBoundedPshOn_max {f g : E → ℝ} (hf : IsLocallyBoundedPshOn U f)
     (hg : IsLocallyBoundedPshOn U g) : IsLocallyBoundedPshOn U fun z => max (f z) (g z) := by

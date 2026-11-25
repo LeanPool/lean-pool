@@ -258,19 +258,9 @@ variable {μ : Measure (ComplexModel n)} {g : (ComplexModel n) → formSpan n q 
 
 theorem IsMeasureDensity.integrable_test (hμ : IsMeasureDensity U μ g) (γ : formSpan n q)
     (φ : 𝓓(U, ℝ)) : Integrable (fun x => φ x * g x γ) μ := by
-  obtain ⟨Cφ, hCφ⟩ := φ.continuous.bounded_above_of_compact_support φ.hasCompactSupport
-  have hon : IntegrableOn (fun x => φ x * g x γ) (tsupport φ) μ := by
-    refine Measure.integrableOn_of_bounded (M := Cφ * orderUnitConst γ)
-      (hμ.lt_top _ φ.hasCompactSupport φ.tsupport_subset).ne
-      (φ.continuous.measurable.mul (hμ.measurable γ)).aestronglyMeasurable
-      (ae_restrict_of_ae ?_)
-    filter_upwards [hμ.bounded γ] with x hx
-    rw [norm_mul, Real.norm_eq_abs, Real.norm_eq_abs]
-    have h1 : ‖φ x‖ ≤ Cφ := hCφ x
-    rw [Real.norm_eq_abs] at h1
-    exact mul_le_mul h1 hx (abs_nonneg _) ((abs_nonneg _).trans h1)
-  exact hon.integrable_of_forall_notMem_eq_zero fun x hx => by
-    rw [image_eq_zero_of_notMem_tsupport hx, zero_mul]
+  exact MeasureLocality.integrable_mul_of_ae_bounded_on_tsupport φ.continuous φ.hasCompactSupport
+    (hμ.lt_top _ φ.hasCompactSupport φ.tsupport_subset)
+    (hμ.measurable γ).aestronglyMeasurable (ae_restrict_of_ae (hμ.bounded γ))
 
 theorem IsMeasureDensity.locallyIntegrableOn (hμ : IsMeasureDensity U μ g) (γ : formSpan n q) :
     LocallyIntegrableOn (fun x => g x γ) U μ := by
