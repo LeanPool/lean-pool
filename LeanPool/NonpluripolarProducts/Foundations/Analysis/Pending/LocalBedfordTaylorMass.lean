@@ -55,8 +55,8 @@ theorem integrable_testFunction_on (μ : Measure U) [IsLocallyFiniteMeasure μ] 
 /-- **The densities are bounded by every order-unit constant**, uniformly in the current. -/
 theorem abs_density_le_of_orderUnit {k : ℕ} {T : LocalProductCurrent n U k} (hT : IsPositive T)
     (γ : formSpan n k) {C : ℝ}
-    (h₁ : C • formPower (kahlerForm n) k - (γ : RealForm n (2 * k)) ∈ spCone k)
-    (h₂ : C • formPower (kahlerForm n) k + (γ : RealForm n (2 * k)) ∈ spCone k) :
+    (h₁ : C • formPower (standardHermitianTwoForm n) k - (γ : RealForm n (2 * k)) ∈ spCone k)
+    (h₂ : C • formPower (standardHermitianTwoForm n) k + (γ : RealForm n (2 * k)) ∈ spCone k) :
     ∀ᵐ x ∂hT.traceMeasure, |hT.density γ x| ≤ C := by
   let _ : LocallyCompactSpace U := U.isOpen.locallyCompactSpace
   have hloc := hT.isLocallyFiniteMeasure_traceMeasureOn
@@ -65,7 +65,7 @@ theorem abs_density_le_of_orderUnit {k : ℕ} {T : LocalProductCurrent n U k} (h
   have hfm : Measurable (fun x : U => hT.density γ x) :=
     (hT.measurable_density γ).comp measurable_subtype_coe
   have key : ∀ (s : ℝ),
-      C • formPower (kahlerForm n) k + s • (γ : RealForm n (2 * k)) ∈ spCone k →
+      C • formPower (standardHermitianTwoForm n) k + s • (γ : RealForm n (2 * k)) ∈ spCone k →
       ∀ᵐ x : U ∂σU, 0 ≤ C + s * hT.density γ (x : E) := by
     intro s hmem
     let γs : formSpan n k := C • kahlerPower n k + s • γ
@@ -146,8 +146,9 @@ theorem exists_mass_ddcMul_le {K L : Set E} (hK : IsCompact K) (hKU : K ⊆ U) (
   let γ : Fin (n * 2) → Fin (n * 2) → formSpan n (m + 1) := fun a b =>
     wedgeLM m (isOneOne_coeffForm a b) (kahlerPower n m)
   have hord : ∀ a b, ∃ C : ℝ, 0 ≤ C ∧
-      C • formPower (kahlerForm n) (m + 1) - (γ a b : RealForm n (2 * (m + 1))) ∈ spCone (m + 1) ∧
-      C • formPower (kahlerForm n) (m + 1) + (γ a b : RealForm n (2 * (m + 1))) ∈
+      C • formPower (standardHermitianTwoForm n) (m + 1) - (γ a b : RealForm n (2 * (m + 1))) ∈
+        spCone (m + 1) ∧
+      C • formPower (standardHermitianTwoForm n) (m + 1) + (γ a b : RealForm n (2 * (m + 1))) ∈
         spCone (m + 1) := fun a b => exists_orderUnit (γ a b).2
   choose Cγ hCγ0 hCγ1 hCγ2 using hord
   refine ⟨(1 / (4 * Real.pi)) * ∑ a, ∑ b, Cψ a b * Cγ a b, ?_, ?_⟩

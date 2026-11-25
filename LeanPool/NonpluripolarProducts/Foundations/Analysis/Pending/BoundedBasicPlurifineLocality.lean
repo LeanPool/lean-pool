@@ -12,7 +12,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Bounde
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCanonicalTraceMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorFixedWeight
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCalculus
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineStrictSuperlevelCover
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineEuclideanComparison
 
 /-! # Original mixed agreement on a genuine bounded PSH superlevel
 

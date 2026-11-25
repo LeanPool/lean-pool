@@ -30,6 +30,29 @@ open FirstPass FirstPass.MixedMongeAmpere Matrix
 
 variable {n : ℕ}
 
+/-- A unitary matrix with a prescribed unit first column. -/
+theorem exists_unitary_col_zero {m : ℕ} (y : Fin (m + 1) → ℂ) (hy : star y ⬝ᵥ y = 1) :
+    ∃ W : Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ, Wᴴ * W = 1 ∧ W * Wᴴ = 1 ∧ ∀ i, W i 0 = y i := by
+  classical
+  set v : EuclideanSpace ℂ (Fin (m + 1)) := WithLp.toLp 2 y with hvdef
+  have hv : Orthonormal ℂ (({0} : Set (Fin (m + 1))).domRestrict fun _ => v) := by
+    rw [orthonormal_iff_ite]
+    intro i j
+    have hij : i = j := Subsingleton.elim i j
+    subst hij
+    simp only [ite_true]
+    rw [EuclideanSpace.inner_eq_star_dotProduct]
+    change y ⬝ᵥ star y = 1
+    rw [dotProduct_comm]
+    exact hy
+  obtain ⟨b, hb⟩ := hv.exists_orthonormalBasis_extension_of_card_eq
+    (by simp) (v := fun _ => v) (s := {0})
+  set s := EuclideanSpace.basisFun (Fin (m + 1)) ℂ
+  refine ⟨s.toBasis.toMatrix b, s.toMatrix_orthonormalBasis_conjTranspose_mul_self b,
+    s.toMatrix_orthonormalBasis_self_mul_conjTranspose b, fun i => ?_⟩
+  rw [Module.Basis.toMatrix_apply, hb 0 rfl]
+  simp [s, hvdef]
+
 /-- The diagonal unit matrix `E_k = diag(e_k)`. -/
 noncomputable def unitDiag (k : Fin n) : Matrix (Fin n) (Fin n) ℂ := diagonal (Pi.single k 1)
 

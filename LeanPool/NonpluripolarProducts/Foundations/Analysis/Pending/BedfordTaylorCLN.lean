@@ -44,7 +44,8 @@ variable {n : ℕ}
 
 theorem mixedDensity_collar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexModel n) :
     mixedDensity (fun _ ↦ collar z₀ A R) z = (n.factorial : ℝ) / Real.pi ^ n * A ^ n := by
-  rw [mixedDensity_diagonal, smoothDensity, complexHessian_collar, Matrix.det_smul]
+  rw [mixedDensity_diagonal, smoothDensity, SmoothMax.complexHessian_quadraticCollar,
+    Matrix.det_smul]
   simp [← Complex.ofReal_pow]
 
 open SmoothMax in

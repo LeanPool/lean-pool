@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoLocalComplexStokes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoComplexDifferential
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ProductTestForms
 
 /-!
@@ -28,7 +28,7 @@ open scoped Topology Manifold ContDiff
 namespace SGPT.Foundations.Analysis.Pending.XiaoChartLocalization
 
 open FirstPass StronglyPositiveForms ProductTestForms XiaoComplexDifferential
-    XiaoLocalComplexStokes
+    XiaoComplexDifferential
 
 noncomputable section
 

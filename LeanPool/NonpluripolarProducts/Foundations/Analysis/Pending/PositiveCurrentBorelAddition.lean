@@ -92,10 +92,10 @@ theorem mulBorel_add_currents
   obtain ⟨C, _, hm, hp⟩ := exists_orderUnit γ.2
   let δ : formSpan n q := C • kahlerPower n q
   have hm' : δ - γ ∈ posCone n q := by
-    change C • formPower (kahlerForm n) q - (γ : RealForm n (2 * q)) ∈ spCone q
+    change C • formPower (standardHermitianTwoForm n) q - (γ : RealForm n (2 * q)) ∈ spCone q
     exact hm
   have hp' : δ + γ ∈ posCone n q := by
-    change C • formPower (kahlerForm n) q + (γ : RealForm n (2 * q)) ∈ spCone q
+    change C • formPower (standardHermitianTwoForm n) q + (γ : RealForm n (2 * q)) ∈ spCone q
     exact hp
   have em := positive_coefficient_add hD hR hf hfb hm' φ
   have ep := positive_coefficient_add hD hR hf hfb hp' φ

@@ -692,7 +692,7 @@ theorem leviForm_comp_sub_const (φ : E → ℝ) (z₀ x v : E) :
 /-- **`β = dd^c|z - z₀|² = ω₀ / π`**: the form `β` of `bt:collar-comparison` is `π⁻¹` times the
 Kähler form `ω₀` of the trace measures. -/
 theorem smoothDDC_norm_sub_sq (z₀ z : E) :
-    smoothDDC (fun y => ‖y - z₀‖ ^ 2) z = (Real.pi)⁻¹ • kahlerForm n := by
+    smoothDDC (fun y => ‖y - z₀‖ ^ 2) z = (Real.pi)⁻¹ • standardHermitianTwoForm n := by
   have h2 : ContDiffAt ℝ 2 (fun y : E => ‖y - z₀‖ ^ 2) z :=
     ((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).contDiffAt
   have hH : ∀ a b : E, realHessian (fun y : E => ‖y - z₀‖ ^ 2) z a b = 2 * inner ℝ a b :=
@@ -704,7 +704,7 @@ theorem smoothDDC_norm_sub_sq (z₀ z : E) :
       rw [e, realHessian_norm_sq]
   ext w
   rw [eq_vec_two w, smoothDDC_apply_eq_realHessian h2, hH, hH,
-    ContinuousAlternatingMap.smul_apply, kahlerForm, Kahler.fundamentalFormAlt_apply]
+    ContinuousAlternatingMap.smul_apply, standardHermitianTwoForm, Kahler.fundamentalFormAlt_apply]
   simp only [Matrix.cons_val_zero, Matrix.cons_val_one, Kahler.fundamentalForm]
   have hri : ∀ a b : E, inner ℝ a b = (inner ℂ a b).re := fun a b => by
     simp [PiLp.inner_apply, Complex.inner, Complex.re_sum, mul_comm]
@@ -720,7 +720,7 @@ theorem smoothDDC_norm_sub_sq (z₀ z : E) :
 `traceIntegral`s. -/
 theorem formPower_smoothDDC_norm_sub_sq (z₀ z : E) (m : ℕ) :
     formPower (smoothDDC (fun y => ‖y - z₀‖ ^ 2) z) m =
-      ((Real.pi)⁻¹) ^ m • formPower (kahlerForm n) m := by
+      ((Real.pi)⁻¹) ^ m • formPower (standardHermitianTwoForm n) m := by
   rw [smoothDDC_norm_sub_sq]
   induction m with
   | zero => simp
@@ -737,19 +737,17 @@ theorem contDiff_ballPot (A : ℝ) (z₀ : E) (R : ℝ) : ContDiff ℝ ∞ (ball
 
 theorem leviForm_ballPot (A : ℝ) (z₀ : E) (R : ℝ) (x v : E) :
     leviForm (ballPot A z₀ R) x v = A * ‖v‖ ^ 2 := by
-  have e : ballPot A z₀ R = fun y => (fun w : E => A * (‖w‖ ^ 2 - R ^ 2)) (y - z₀) := rfl
-  rw [e]
-  refine (leviForm_comp_sub_const (fun w : E => A * (‖w‖ ^ 2 - R ^ 2)) z₀ x v).trans ?_
-  have e2 : (fun w : E => A * (‖w‖ ^ 2 - R ^ 2)) =
-      A • (fun w : E => ‖w‖ ^ 2) + fun _ => -(A * R ^ 2) := by
-    funext w
-    simp only [Pi.add_apply, Pi.smul_apply, smul_eq_mul]
-    ring
-  have h2 : ContDiffAt ℝ 2 (fun w : E => ‖w‖ ^ 2) (x - z₀) :=
-    (contDiff_norm_sq ℝ).contDiffAt
-  rw [e2, leviForm_add (u := A • fun w : E => ‖w‖ ^ 2) (v := fun _ => -(A * R ^ 2))
-    (h2.const_smul A) contDiffAt_const, leviForm_smul h2, leviForm_norm_sq, leviForm_const,
-    add_zero]
+  have hpot : ContDiffAt ℝ 2 (ballPot A z₀ R) x :=
+    ((contDiff_ballPot A z₀ R).of_le (by simp)).contDiffAt
+  have hnorm : ContDiffAt ℝ 2 (fun z : E => ‖z‖ ^ 2) x := (contDiff_norm_sq ℝ).contDiffAt
+  let coordinates : Fin n → ℂ := fun i => star (v i)
+  have hp := complexHessian_dotProduct_mulVec_eq_leviForm hpot coordinates
+  have hn := complexHessian_dotProduct_mulVec_eq_leviForm hnorm coordinates
+  simp only [SmoothMax.complexHessian_quadraticCollar, Matrix.smul_mulVec,
+    dotProduct_smul, coordinates, conjugateCoordinateCombination_star] at hp
+  simp only [complexHessian_norm_sq, coordinates, conjugateCoordinateCombination_star,
+    leviForm_norm_sq] at hn
+  exact Complex.ofReal_injective (by rw [← hp, hn, Complex.ofReal_mul, smul_eq_mul])
 
 theorem isLocallyBoundedPshOn_ballPot {A : ℝ} (hA : 0 ≤ A) (z₀ : E) (R : ℝ) :
     IsLocallyBoundedPshOn U (ballPot A z₀ R) := by

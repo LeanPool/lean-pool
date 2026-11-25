@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DirectionalLeviDensity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.TopDegreeDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CompactDdcCoordinateExpansion
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CompactVariableCurrentTests
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ScalarFullTestTranspose
@@ -55,7 +55,7 @@ open SGPT.Foundations.Analysis.FirstPass.MixedMongeAmpere
 open SGPT.Foundations.Analysis.Pending
 open SGPT.Foundations.Analysis.Pending.StronglyPositiveForms
 open SGPT.Foundations.Analysis.Pending.TopDegreeDensity
-open SGPT.Foundations.Analysis.Pending.DirectionalLeviDensity
+open SGPT.Foundations.Analysis.Pending.MixedMongeAmpere
 open SGPT.Foundations.Analysis.Pending.ClosedProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts

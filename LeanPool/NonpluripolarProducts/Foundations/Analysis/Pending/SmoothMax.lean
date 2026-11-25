@@ -179,6 +179,31 @@ theorem contDiff_quadraticCollar {V : Type*} [NormedAddCommGroup V] [InnerProduc
   contDiff_const.mul (((contDiff_norm_sq ℝ).comp (contDiff_id.sub contDiff_const)).sub
     contDiff_const)
 
+theorem complexHessian_quadraticCollar (z₀ : ComplexModel n) (A R : ℝ) (z : ComplexModel n) :
+    complexHessian (quadraticCollar z₀ A R) z = (A : ℂ) • 1 := by
+  have h2 : (2 : WithTop ℕ∞) ≤ ∞ := WithTop.coe_le_coe.mpr le_top
+  have hq : ContDiff ℝ 2 (fun y : ComplexModel n ↦ ‖y‖ ^ 2) := (contDiff_norm_sq ℝ).of_le h2
+  have hsplit : quadraticCollar z₀ A R = A • ((fun y ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) +
+      fun _ ↦ -R ^ 2) := by
+    funext y; simp [SmoothMax.quadraticCollar, sub_eq_add_neg, add_comm]
+  have hsh : ContDiff ℝ 2
+      (fun y : ComplexModel n ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) :=
+    hq.comp (contDiff_const.add (ContinuousLinearMap.id ℝ _).contDiff)
+  have hR : realHessian (fun y : ComplexModel n ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) z =
+      realHessian (fun y : ComplexModel n ↦ ‖y‖ ^ 2) ((-z₀) + z) := by
+    funext a b
+    simpa using realHessian_comp_affine hq (ContinuousLinearMap.id ℝ (ComplexModel n)) (-z₀) z a b
+  have hH : complexHessian (fun y : ComplexModel n ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2) z
+      = complexHessian (fun y : ComplexModel n ↦ ‖y‖ ^ 2) ((-z₀) + z) := by
+    ext j k; simp only [complexHessian, hR]
+  set q : ComplexModel n → ℝ := fun y ↦ ‖(-z₀) + ContinuousLinearMap.id ℝ _ y‖ ^ 2 with hq_def
+  have hqc : ContDiffAt ℝ 2 (q + fun _ ↦ -R ^ 2) z := (hsh.add contDiff_const).contDiffAt
+  rw [hsplit, complexHessian_smul hqc, complexHessian_add (u := q) (v := fun _ ↦ -R ^ 2)
+    hsh.contDiffAt contDiffAt_const, hH, complexHessian_norm_sq]
+  have hc : complexHessian (fun _ : ComplexModel n ↦ -R ^ 2) z = 0 := by
+    ext j k; simp [complexHessian]
+  rw [hc, add_zero]
+
 /-- The regularized maximum `smoothMax f g = g + P(f - g)`. -/
 def smoothMax {E : Type*} (f g : E → ℝ) : E → ℝ := fun z ↦ g z + posPart (f z - g z)
 

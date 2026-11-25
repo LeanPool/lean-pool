@@ -165,6 +165,9 @@ theorem ae_forall_posCone_nonneg {ν : Measure (ComplexModel n)} {g : (ComplexMo
     → formSpan n q →ₗ[ℝ] ℝ}
     (hgp : ∀ γ ∈ posCone n q, ∀ᵐ x ∂ν, 0 ≤ g x γ) :
     ∀ᵐ x ∂ν, ∀ γ ∈ posCone n q, 0 ≤ g x γ := by
+  let : SecondCountableTopology (formSpan n q) :=
+    (formBasis n q).equivFunL.toHomeomorph.secondCountableTopology
+  let : SeparableSpace (formSpan n q) := SecondCountableTopology.to_separableSpace
   obtain ⟨D, hDC, hDc, hCD⟩ :=
     (IsSeparable.of_separableSpace (posCone n q)).exists_countable_dense_subset
   have _ := hDc.to_subtype

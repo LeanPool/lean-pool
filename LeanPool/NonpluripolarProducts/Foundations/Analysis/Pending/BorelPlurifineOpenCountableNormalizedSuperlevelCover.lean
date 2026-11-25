@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ChoquetRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineSingleSuperlevelNeighborhoods
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineEuclideanComparison
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineStrictSuperlevelCover
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineEuclideanComparison
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.RegularizedIncreasingPshGapCapacityZero
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorFixedWeight
 

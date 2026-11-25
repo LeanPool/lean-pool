@@ -80,26 +80,16 @@ theorem mem_formSpan_of_mem_spCone {q : ℕ} {P : RealForm n (2 * q)} (hP : P �
     P ∈ formSpan n q :=
   Submodule.subset_span hP
 
-variable (n) in
-/-- The standard Kähler form of `ℂⁿ`, `ω₀(u, v) = Im ⟨u, v⟩`, so `ω₀(v, i v) = ‖v‖²`. -/
-def kahlerForm : RealForm n 2 := Kahler.fundamentalFormAlt
-
-theorem kahlerForm_apply_I (v : ComplexModel n) :
-    kahlerForm n ![v, Complex.I • v] = ‖v‖ ^ 2 := by
-  simp only [kahlerForm, Kahler.fundamentalFormAlt_apply, Matrix.cons_val_zero,
-    Matrix.cons_val_one]
-  exact Kahler.fundamentalForm_complexStructure_self v
-
-theorem isSemipositiveOneOne_kahlerForm : IsSemipositiveOneOne (kahlerForm n) := by
+theorem isSemipositiveOneOne_kahlerForm : IsSemipositiveOneOne (standardHermitianTwoForm n) := by
   refine ⟨flatFundamentalForm_isOneOne n, fun v => ?_⟩
-  rw [kahlerForm_apply_I]
+  rw [standardHermitianTwoForm_apply_I_smul_self]
   positivity
 
 /-- Every real `(1,1)`-form is bounded by a multiple of `ω₀`: `K ω₀ ± β` are semipositive for
 `K = ‖β‖`. -/
 theorem isSemipositiveOneOne_norm_smul_kahlerForm {β : RealForm n 2} (hβ : IsOneOne β) :
-    IsSemipositiveOneOne (‖β‖ • kahlerForm n - β) ∧
-      IsSemipositiveOneOne (‖β‖ • kahlerForm n + β) := by
+    IsSemipositiveOneOne (‖β‖ • standardHermitianTwoForm n - β) ∧
+      IsSemipositiveOneOne (‖β‖ • standardHermitianTwoForm n + β) := by
   have hω := flatFundamentalForm_isOneOne n
   have hbound : ∀ v : ComplexModel n, |β ![v, Complex.I • v]| ≤ ‖β‖ * ‖v‖ ^ 2 := by
     intro v
@@ -111,17 +101,17 @@ theorem isSemipositiveOneOne_norm_smul_kahlerForm {β : RealForm n 2} (hβ : IsO
   refine ⟨⟨fun u v => ?_, fun v => ?_⟩, ⟨fun u v => ?_, fun v => ?_⟩⟩
   · simp only [ContinuousAlternatingMap.sub_apply, ContinuousAlternatingMap.smul_apply,
       smul_eq_mul]
-    rw [show kahlerForm n = Kahler.fundamentalFormAlt from rfl, hω u v, hβ u v]
+    rw [show standardHermitianTwoForm n = Kahler.fundamentalFormAlt from rfl, hω u v, hβ u v]
   · simp only [ContinuousAlternatingMap.sub_apply, ContinuousAlternatingMap.smul_apply,
-      smul_eq_mul, kahlerForm_apply_I]
+      smul_eq_mul, standardHermitianTwoForm_apply_I_smul_self]
     have := hbound v
     rw [abs_le] at this
     linarith [this.2]
   · simp only [ContinuousAlternatingMap.add_apply, ContinuousAlternatingMap.smul_apply,
       smul_eq_mul]
-    rw [show kahlerForm n = Kahler.fundamentalFormAlt from rfl, hω u v, hβ u v]
+    rw [show standardHermitianTwoForm n = Kahler.fundamentalFormAlt from rfl, hω u v, hβ u v]
   · simp only [ContinuousAlternatingMap.add_apply, ContinuousAlternatingMap.smul_apply,
-      smul_eq_mul, kahlerForm_apply_I]
+      smul_eq_mul, standardHermitianTwoForm_apply_I_smul_self]
     have := hbound v
     rw [abs_le] at this
     linarith [this.1]
@@ -143,7 +133,8 @@ theorem mem_spCone_one {β : RealForm n 2} (hβ : IsSemipositiveOneOne β) :
 theorem oneOne_mem_formSpan {β : RealForm n 2} (hβ : IsOneOne β) :
     (β : RealForm n (2 * 1)) ∈ formSpan n 1 := by
   obtain ⟨h₁, h₂⟩ := isSemipositiveOneOne_norm_smul_kahlerForm hβ
-  have e : β = (1 / 2 : ℝ) • ((‖β‖ • kahlerForm n + β) - (‖β‖ • kahlerForm n - β)) := by
+  have e : β = (1 / 2 : ℝ) • ((‖β‖ • standardHermitianTwoForm n + β) -
+      (‖β‖ • standardHermitianTwoForm n - β)) := by
     module
   rw [e]
   exact Submodule.smul_mem _ _ (Submodule.sub_mem _ (mem_formSpan_of_mem_spCone (mem_spCone_one
@@ -158,7 +149,8 @@ theorem wedge_mem_formSpan {q : ℕ} {γ : RealForm n (2 * q)} (hγ : γ ∈ for
   have hpos : ∀ P ∈ spCone (n := n) q, ∀ β' : RealForm n 2, IsSemipositiveOneOne β' →
       coordinateWedge P β' ∈ formSpan n (q + 1) := fun P hP β' hβ' =>
     mem_formSpan_of_mem_spCone (wedge_mem_spCone hP hβ')
-  have hβe : β = (1 / 2 : ℝ) • ((‖β‖ • kahlerForm n + β) - (‖β‖ • kahlerForm n - β)) := by
+  have hβe : β = (1 / 2 : ℝ) • ((‖β‖ • standardHermitianTwoForm n + β) -
+      (‖β‖ • standardHermitianTwoForm n - β)) := by
     module
   have hgen : ∀ P ∈ spCone (n := n) q, coordinateWedge P β ∈ formSpan n (q + 1) := by
     intro P hP
@@ -195,8 +187,8 @@ def wedgeLM (q : ℕ) {β : RealForm n 2} (hβ : IsOneOne β) :
 
 /-- The forms `P` with `C ω₀^q ± P` strongly positive for some `C` form a submodule. -/
 def orderUnitSubmodule (q : ℕ) : Submodule ℝ (RealForm n (2 * q)) where
-  carrier := {P | ∃ C : ℝ, C • formPower (kahlerForm n) q - P ∈ spCone q ∧
-    C • formPower (kahlerForm n) q + P ∈ spCone q}
+  carrier := {P | ∃ C : ℝ, C • formPower (standardHermitianTwoForm n) q - P ∈ spCone q ∧
+    C • formPower (standardHermitianTwoForm n) q + P ∈ spCone q}
   add_mem' := by
     rintro P P' ⟨C, h₁, h₂⟩ ⟨C', h₁', h₂'⟩
     refine ⟨C + C', ?_, ?_⟩
@@ -255,12 +247,12 @@ theorem spCone_le_orderUnitSubmodule :
 
 /-- **`ω₀^q` is an order unit of `Λ_q`.** -/
 theorem exists_orderUnit {q : ℕ} {γ : RealForm n (2 * q)} (hγ : γ ∈ formSpan n q) :
-    ∃ C : ℝ, 0 ≤ C ∧ C • formPower (kahlerForm n) q - γ ∈ spCone q ∧
-      C • formPower (kahlerForm n) q + γ ∈ spCone q := by
+    ∃ C : ℝ, 0 ≤ C ∧ C • formPower (standardHermitianTwoForm n) q - γ ∈ spCone q ∧
+      C • formPower (standardHermitianTwoForm n) q + γ ∈ spCone q := by
   have hle : formSpan n q ≤ orderUnitSubmodule q :=
     Submodule.span_le.mpr fun P hP => spCone_le_orderUnitSubmodule q P hP
   obtain ⟨C, h₁, h₂⟩ := hle hγ
-  have hω : formPower (kahlerForm n) q ∈ spCone q :=
+  have hω : formPower (standardHermitianTwoForm n) q ∈ spCone q :=
     formPower_mem_spCone isSemipositiveOneOne_kahlerForm q
   refine ⟨max C 0, le_max_right _ _, ?_, ?_⟩
   · have := (spCone (n := n) q).add_mem h₁ (smul_mem_spCone hω (sub_nonneg.mpr (le_max_left C 0)))
@@ -270,12 +262,13 @@ theorem exists_orderUnit {q : ℕ} {γ : RealForm n (2 * q)} (hγ : γ ∈ formS
     convert this using 1
     module
 
-theorem formPower_mem_formSpan (q : ℕ) : formPower (kahlerForm n) q ∈ formSpan n q :=
+theorem formPower_mem_formSpan (q : ℕ) : formPower (standardHermitianTwoForm n) q ∈ formSpan n q :=
   mem_formSpan_of_mem_spCone (formPower_mem_spCone isSemipositiveOneOne_kahlerForm q)
 
 variable (n) in
 /-- `ω₀^q` as an element of `Λ_q`. -/
-def kahlerPower (q : ℕ) : formSpan n q := ⟨formPower (kahlerForm n) q, formPower_mem_formSpan q⟩
+def kahlerPower (q : ℕ) : formSpan n q :=
+  ⟨formPower (standardHermitianTwoForm n) q, formPower_mem_formSpan q⟩
 
 end Constant
 
@@ -343,7 +336,8 @@ theorem exists_density_of_measure (hT : IsPositive T) (σ : Measure U) [IsLocall
   set γ₁ : formSpan n q := C • w₀ + (-1 : ℝ) • γ with hγ₁def
   set γ₂ : formSpan n q := C • w₀ + γ with hγ₂def
   have hγ₁ : (γ₁ : RealForm n (2 * q)) ∈ spCone q := by
-    have e : (γ₁ : RealForm n (2 * q)) = C • formPower (kahlerForm n) q - (γ : RealForm n (2 * q))
+    have e : (γ₁ : RealForm n (2 * q)) =
+        C • formPower (standardHermitianTwoForm n) q - (γ : RealForm n (2 * q))
       := by
       simp only [γ₁, w₀, kahlerPower, Submodule.coe_add, Submodule.coe_smul]
       module

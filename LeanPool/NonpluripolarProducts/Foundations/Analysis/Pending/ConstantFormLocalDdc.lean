@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoCovectorProducts
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoLocalComplexStokes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoComplexDifferential
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicMixedDensity
 
 /-! # Normalized local differentials of scalar times constant type forms -/
@@ -24,7 +24,7 @@ open scoped Topology ContDiff
 namespace SGPT.Foundations.Analysis.Pending.ConstantFormLocalDdc
 
 open FirstPass FirstPass.MongeAmpere StronglyPositiveForms ConstantFormProducts
-  ClosedProductCurrents LocalProductCurrents XiaoCovectorProducts XiaoLocalComplexStokes
+  ClosedProductCurrents LocalProductCurrents XiaoCovectorProducts XiaoComplexDifferential
 
 /-- The genuine normalized first identity only needs pointwise differentiability. -/
 theorem localDc_smul_const_form_at {n q : ℕ}

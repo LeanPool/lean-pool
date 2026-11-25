@@ -27,7 +27,7 @@ open scoped Topology Manifold ContDiff
 
 namespace SGPT.Foundations.Analysis.Pending.XiaoComplexDifferential
 
-open FirstPass FirstPass.MongeAmpere ProductTestForms
+open FirstPass FirstPass.MongeAmpere ProductTestForms StronglyPositiveForms
 
 noncomputable section
 
@@ -108,6 +108,18 @@ theorem ddc_geometricallyEq {a b : SmoothRealForm n M k}
 /-- Every actual `ddᶜ` form is closed by the actual exterior derivative theorem. -/
 theorem ddc_isClosed (a : SmoothRealForm n M k) : (ddc a).IsClosed :=
   (dc a).exteriorDerivative_isClosed
+
+/-- The actual chart formula for the normalized complex differential in degree `k`. -/
+def localDc (a : ComplexModel n → RealForm n k) (z : ComplexModel n) : RealForm n (k + 1) :=
+  ((-1 : ℝ) ^ (k + 1) / (4 * Real.pi)) •
+    (extDeriv (fun y => (a y).compContinuousLinearMap (modelComplexStructure n))
+      z).compContinuousLinearMap
+      (modelComplexStructure n)
+
+/-- The local construction is precisely the existing actual global coefficient. -/
+theorem localDc_eq_dc_coeff
+    (a : SmoothRealForm n M k) (e : ComplexChart n M) (z : ComplexModel n) :
+    localDc (a.coeff e) z = (dc a).coeff e z := rfl
 
 /-- On smooth scalar zero-forms the normalization is exactly the existing `dᶜ`. -/
 theorem dc_smulFun_unitForm (f : M → ℝ) (hf : ChartSmooth (n := n) f) :

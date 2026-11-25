@@ -22,7 +22,7 @@ open scoped Topology ContDiff Distributions
 namespace SGPT.Foundations.Analysis.Pending.CompactDifferentialTests
 
 open FirstPass FirstPass.MongeAmpere StronglyPositiveForms LocalProductCurrents
-  ConstantFormProducts ClosedProductCurrents XiaoLocalComplexStokes ConstantFormLocalDdc
+  ConstantFormProducts ClosedProductCurrents XiaoComplexDifferential ConstantFormLocalDdc
 
 /-- The genuine exterior derivative maps actual smooth compact form tests continuously. -/
 def exteriorTestCLM {n k : ℕ} {U : Opens (ComplexModel n)} :

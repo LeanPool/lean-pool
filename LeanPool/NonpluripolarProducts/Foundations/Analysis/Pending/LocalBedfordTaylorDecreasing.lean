@@ -604,7 +604,7 @@ theorem tendsto_mulBorel_collarMax {q m : ℕ} (hR : 0 < R) (hA : 0 < A)
   have hΦ0 : 0 ≤ Φ := (abs_nonneg _).trans (hΦ' z₀)
   set c := Φ * C with hc_def
   have hc0 : 0 ≤ c := mul_nonneg hΦ0 hC0
-  have hω : formPower (kahlerForm n) m ∈ spCone m :=
+  have hω : formPower (standardHermitianTwoForm n) m ∈ spCone m :=
     formPower_mem_spCone isSemipositiveOneOne_kahlerForm m
   have key : ∀ s : ℝ, (s = 1 ∨ s = -1) → ∀ b, c * A₀ + -s * mulBorel S₀ f₀ γ φ < b →
       ∀ᶠ k in atTop, c * Ak k + -s * mulBorel (S k) (f k) γ φ < b := by
@@ -614,7 +614,8 @@ theorem tendsto_mulBorel_collarMax {q m : ℕ} (hR : 0 < R) (hA : 0 < A)
     have hpos : ∀ x, ∑ i, φs i x • (γs i : RealForm n (2 * m)) ∈ spCone m := by
       intro x
       have e : ∑ i, φs i x • (γs i : RealForm n (2 * m)) =
-          (c * χ x) • formPower (kahlerForm n) m + (-s * φ x) • (γ : RealForm n (2 * m)) := by
+          (c * χ x) • formPower (standardHermitianTwoForm n) m +
+            (-s * φ x) • (γ : RealForm n (2 * m)) := by
         rw [Fin.sum_univ_two]
         simp only [hγs, hφs, Matrix.cons_val_zero, Matrix.cons_val_one,
           FunLike.coe_smul, Pi.smul_apply, smul_eq_mul, hχ'_apply]

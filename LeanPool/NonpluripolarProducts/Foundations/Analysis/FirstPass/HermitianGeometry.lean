@@ -204,6 +204,22 @@ theorem flatFundamentalForm_isStrictlyPositive (n : ℕ) :
     Matrix.cons_val_one, Matrix.head_cons] using
     Kahler.fundamentalForm_complexStructure_self_pos hu
 
+/-- The standard Hermitian two-form `ω(v, w) = Im ⟪v, w⟫` on `ℂⁿ`. -/
+def standardHermitianTwoForm (n : ℕ) : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ :=
+  Kahler.fundamentalFormAlt
+
+@[simp] theorem standardHermitianTwoForm_apply (v w : ComplexModel n) :
+    standardHermitianTwoForm n ![v, w] = (inner ℂ v w).im := by
+  simp [standardHermitianTwoForm, Kahler.fundamentalForm]
+
+theorem standardHermitianTwoForm_eq_fundamentalFormAlt (n : ℕ) :
+    standardHermitianTwoForm n = Kahler.fundamentalFormAlt := rfl
+
+/-- On complex lines the standard form is the squared norm. -/
+theorem standardHermitianTwoForm_apply_I_smul_self (u : ComplexModel n) :
+    standardHermitianTwoForm n ![u, Complex.I • u] = ‖u‖ ^ 2 := by
+  simp [inner_smul_right, ← Complex.ofReal_pow]
+
 /-- The constant standard form on the model space. Its atlas contains only
 the identity chart, so its overlap equation is the identity pullback. -/
 def flatKahlerForm (n : ℕ) : SmoothRealForm n (ComplexModel n) 2 where

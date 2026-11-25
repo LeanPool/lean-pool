@@ -586,7 +586,8 @@ theorem coe_powerSpan {q : ℕ} {β : RealForm n 2} (h : IsSemipositiveOneOne β
     (powerSpan q β : RealForm n (2 * q)) = formPower β q := by
   rw [powerSpan, dite_eq_left h]
 
-theorem powerSpan_kahlerForm (q : ℕ) : powerSpan q (kahlerForm n) = kahlerPower n q := by
+theorem powerSpan_kahlerForm (q : ℕ) :
+    powerSpan q (standardHermitianTwoForm n) = kahlerPower n q := by
   rw [powerSpan, dite_eq_left isSemipositiveOneOne_kahlerForm]
   rfl
 
@@ -604,7 +605,7 @@ def wedgePowerMeasure (T : LocalProductCurrent n U q) (α : (ComplexModel n) →
 
 /-- For the Euclidean Kähler form, `T ∧ ω₀^q` is the trace measure of `T`. -/
 theorem wedgePowerMeasure_kahlerForm {T : LocalProductCurrent n U q} (hT : IsPositive T) :
-    wedgePowerMeasure T (fun _ => kahlerForm n) = hT.traceMeasure := by
+    wedgePowerMeasure T (fun _ => standardHermitianTwoForm n) = hT.traceMeasure := by
   rw [wedgePowerMeasure, dite_eq_left hT]
   simp_rw [powerSpan_kahlerForm]
   rw [withDensity_congr_ae (g := 1) (by
@@ -617,7 +618,7 @@ theorem wedgePowerMeasure_le {T : LocalProductCurrent n U q} (hT : IsPositive T)
     {α : (ComplexModel n) → RealForm n 2} {c : ℝ} {K A : Set (ComplexModel n)} (hK : MeasurableSet
       K) (hA : MeasurableSet A)
     (hα : ∀ x ∈ K, IsSemipositiveOneOne (α x))
-    (hαc : ∀ x ∈ K, IsSemipositiveOneOne (c • kahlerForm n - α x)) :
+    (hαc : ∀ x ∈ K, IsSemipositiveOneOne (c • standardHermitianTwoForm n - α x)) :
     wedgePowerMeasure T α (K ∩ A) ≤ ENNReal.ofReal (c ^ q) * hT.traceMeasure (K ∩ A) := by
   rw [wedgePowerMeasure, dite_eq_left hT, withDensity_apply _ (hK.inter hA), ← setLIntegral_const]
   refine lintegral_mono_ae ?_
@@ -638,14 +639,15 @@ theorem wedgePowerMeasure_le {T : LocalProductCurrent n U q} (hT : IsPositive T)
 theorem exists_smul_kahlerForm_sub {α : (ComplexModel n) → RealForm n 2} {K : Set (ComplexModel
     n)} (hK : IsCompact K)
     (hαc : ContinuousOn α K) (hα : ∀ x ∈ K, IsOneOne (α x)) :
-    ∃ c : ℝ, 0 ≤ c ∧ ∀ x ∈ K, IsSemipositiveOneOne (c • kahlerForm n - α x) := by
+    ∃ c : ℝ, 0 ≤ c ∧ ∀ x ∈ K, IsSemipositiveOneOne (c • standardHermitianTwoForm n - α x) := by
   obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn hαc
   refine ⟨max C 0, le_max_right _ _, fun x hx => ?_⟩
   have h1 := (isSemipositiveOneOne_norm_smul_kahlerForm (hα x hx)).1
-  have h2 : IsSemipositiveOneOne ((max C 0 - ‖α x‖) • kahlerForm n) :=
+  have h2 : IsSemipositiveOneOne ((max C 0 - ‖α x‖) • standardHermitianTwoForm n) :=
     isSemipositiveOneOne_kahlerForm.smul (sub_nonneg.mpr ((hC x hx).trans (le_max_left _ _)))
-  have e : max C 0 • kahlerForm n - α x =
-      (max C 0 - ‖α x‖) • kahlerForm n + (‖α x‖ • kahlerForm n - α x) := by
+  have e : max C 0 • standardHermitianTwoForm n - α x =
+      (max C 0 - ‖α x‖) • standardHermitianTwoForm n +
+        (‖α x‖ • standardHermitianTwoForm n - α x) := by
     module
   rw [e]
   exact h2.add h1
@@ -735,7 +737,7 @@ theorem isWellDefinedOn_iff (hφ : ∀ i, PlurisubharmonicOn (φ i) U) :
     have hbound : ∀ x (hx : x ∈ t), ⨆ k, (hF.isPositive k).traceMeasure
         (K ∩ Metric.closedBall x (ε x / 2) ∩ O k) < ⊤ := fun x hx => by
       have h := hW (V x) (hVU x hx) ((convex_ball x (ε x)).isConnected
-        (Metric.nonempty_ball.mpr (hεpos x))) (fun _ => kahlerForm n) contDiffOn_const
+        (Metric.nonempty_ball.mpr (hεpos x))) (fun _ => standardHermitianTwoForm n) contDiffOn_const
         (fun _ _ => isSemipositiveOneOne_kahlerForm) _ (hKc x) (hKV x)
       simp_rw [wedgePowerMeasure_kahlerForm (LocalBedfordTaylorLocality.isPositive_restrict
         (hF.isPositive _) (hVU x hx))] at h

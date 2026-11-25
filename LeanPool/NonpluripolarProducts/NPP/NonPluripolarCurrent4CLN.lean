@@ -142,7 +142,7 @@ theorem leviForm_ballPot_nonneg {A : ℝ} (hA : 0 ≤ A) (z₀ : (ComplexModel n
 
 /-- `dd^c (A(|z - z₀|² - R²)) = (A/π) ω₀`. -/
 theorem smoothDDC_ballPot (A : ℝ) (z₀ : (ComplexModel n)) (R : ℝ) (z : (ComplexModel n)) :
-    smoothDDC (ballPot A z₀ R) z = (A / Real.pi) • kahlerForm n := by
+    smoothDDC (ballPot A z₀ R) z = (A / Real.pi) • standardHermitianTwoForm n := by
   have e : ballPot A z₀ R = fun y => A • ((fun y => ‖y - z₀‖ ^ 2) y - (fun _ => R ^ 2) y) := by
     funext y
     simp [SmoothMax.quadraticCollar, smul_eq_mul]
@@ -158,7 +158,7 @@ theorem wedgeSpan_kahlerPower_one (m : ℕ) :
     wedgeSpan n rfl (kahlerPower n m) (kahlerPower n 1) = kahlerPower n (m + 1) := by
   apply Subtype.ext
   rw [coe_wedgeSpan_apply rfl _ _ (by omega)]
-  have h1 : ((kahlerPower n 1 : formSpan n 1) : RealForm n (2 * 1)) = kahlerForm n :=
+  have h1 : ((kahlerPower n 1 : formSpan n 1) : RealForm n (2 * 1)) = standardHermitianTwoForm n :=
     coordinateWedge_unit_eq _
   rw [h1]
   rfl

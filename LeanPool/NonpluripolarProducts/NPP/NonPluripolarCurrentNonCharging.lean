@@ -72,7 +72,7 @@ theorem traceMeasure_btProduct_eq {p q : ℕ} {U : Opens (ComplexModel (q + p))}
     (isPositive_btProduct p q u (oneCurrentOf (U := U) rfl) (isPositive_oneCurrentOf _)
         (isClosedAny_oneCurrentOf _) hu).1.traceMeasure =
       LocalBedfordTaylorSmoothTraceMeasure.recursiveMixedTraceMeasure U
-        (Fin.append (fun _ => BedfordTaylorTopDegree.quadPot (kahlerForm (q + p))) u)
+        (Fin.append (fun _ => BedfordTaylorTopDegree.quadPot (standardHermitianTwoForm (q + p))) u)
         (BedfordTaylorTopDegree.isLocallyBoundedPshOn_append
           (fun _ => BedfordTaylorTopDegree.isLocallyBoundedPshOn_quadPot
             isSemipositiveOneOne_kahlerForm U) hu) := by
@@ -83,17 +83,19 @@ theorem traceMeasure_btProduct_eq {p q : ℕ} {U : Opens (ComplexModel (q + p))}
       isSemipositiveOneOne_kahlerForm U) hu
   have hM := (isPositive_btProduct (q + p) 0 _ (oneCurrentOf (U := U) (Nat.zero_add (q + p)))
     (isPositive_oneCurrentOf _) (isClosedAny_oneCurrentOf _) hℓ).1
-  have hP : TopDegreeDensity.wedgeProd q (fun _ => kahlerForm (q + p)) ∈ formSpan (q + p) q := by
+  have hP :
+      TopDegreeDensity.wedgeProd q (fun _ => standardHermitianTwoForm (q + p)) ∈
+        formSpan (q + p) q := by
     rw [wedgeProd_const]
     exact formPower_mem_formSpan q
-  have hk : (⟨TopDegreeDensity.wedgeProd q (fun _ => kahlerForm (q + p)), hP⟩ :
+  have hk : (⟨TopDegreeDensity.wedgeProd q (fun _ => standardHermitianTwoForm (q + p)), hP⟩ :
       formSpan (q + p) q) = kahlerPower (q + p) q :=
     Subtype.ext (wedgeProd_const _ q)
   refine LocalBedfordTaylorLocality.eq_of_forall_testFunction_integral_eq (U := U)
     hB.traceMeasure_compl hM.traceMeasure_compl (fun K hK hKU => hB.traceMeasure_lt_top hK hKU)
     (fun K hK hKU => hM.traceMeasure_lt_top hK hKU) fun φ => ?_
   rw [hB.integral_traceMeasure, ← hk, BedfordTaylorTopDegree.btProduct_apply_wedgeProd p q u hu
-    (fun _ => kahlerForm (q + p)) (fun _ => isSemipositiveOneOne_kahlerForm) hP φ]
+    (fun _ => standardHermitianTwoForm (q + p)) (fun _ => isSemipositiveOneOne_kahlerForm) hP φ]
 
 /-- **Bedford–Taylor products of every degree do not charge pluripolar sets**: their trace
 measures give zero outer mass to every locally pluripolar subset of `U`. -/

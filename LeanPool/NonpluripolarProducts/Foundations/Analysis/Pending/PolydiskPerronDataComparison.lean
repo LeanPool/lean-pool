@@ -18,11 +18,16 @@ Perron–Bremermann competitors are compared using the full polydisk boundary
 gives monotonicity of the envelope. Constant shifts then give the sup-norm
 estimate and uniform stability with respect to the boundary data.
 
-Błocki uses decreasing `C^{1,1}` data on the full boundary in the
-[proof of Theorem 2.3.1](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=52).
-The Lean comparison applies to continuous data, including the smooth data
-that occur in such an approximation. It gives uniform envelope convergence
-when the boundary data converge uniformly.
+The stability statements compare admissible data. Each datum is continuous on
+the closed polydisk and plurisubharmonic on its interior. Uniform boundary
+convergence to an admissible limit gives uniform envelope convergence in the
+interior. For pointwise decreasing admissible data with an admissible limit,
+Dini's theorem supplies the uniform convergence on the compact boundary.
+
+In the [proof of Błocki's Theorem 2.3.1](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=52)
+the decreasing `C^{1,1}` boundary functions approximate the restriction of a
+locally bounded maximal plurisubharmonic function. The uniform stability here
+uses the stronger admissibility and convergence assumptions stated above.
 -/
 
 @[expose] public section
@@ -161,9 +166,10 @@ theorem IsPerronData.abs_perronEnvelope_sub_le {v v' : ComplexModel n → ℝ}
       have := (abs_le.mp (hle ζ hζ)).1; linarith) hz
   exact abs_le.mpr ⟨by linarith, by linarith⟩
 
-/-- **Uniformly convergent data have uniformly convergent envelopes.**
-Together with Dini's theorem this covers every decreasing sequence of data
-continuous on the compact `PBar`. -/
+/-- Uniform convergence on the full boundary to an admissible limit gives
+uniform convergence of the envelopes in the interior. For pointwise
+decreasing admissible data, Dini's theorem gives the boundary convergence
+when the limit is continuous on the compact boundary and is admissible. -/
 theorem forall_abs_perronEnvelope_sub_le_of_uniform
     {v : ℕ → ComplexModel n → ℝ} {vlim : ComplexModel n → ℝ}
     (hv : ∀ j, IsPerronData (v j)) (hvlim : IsPerronData vlim)

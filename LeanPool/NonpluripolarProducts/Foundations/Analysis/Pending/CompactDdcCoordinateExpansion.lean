@@ -25,7 +25,7 @@ namespace SGPT.Foundations.Analysis.Pending.CompactDdcCoordinateExpansion
 open FirstPass FirstPass.MongeAmpere StronglyPositiveForms LocalProductCurrents
   LocalBedfordTaylorProducts LocalBedfordTaylorForms CompactVariableCurrentTests
   CompactDifferentialTests ConstantFormProducts LocalCurrentLebesgue
-  TopDegreeDensity ScalarFullTestTranspose XiaoLocalComplexStokes
+  TopDegreeDensity ScalarFullTestTranspose XiaoComplexDifferential
 
 attribute [local instance] LocalCurrentLebesgue.addCommGroupFormSpan
 

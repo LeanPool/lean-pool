@@ -9,7 +9,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerSmoothPotentials
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerBoundedTruncation
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerDomination
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BoundedGlobalTruncation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlotMonotoneMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ChartPartition

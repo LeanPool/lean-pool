@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.XiaoComplexProducts
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ProductTestForms
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ConstantFormProducts
 
 /-!
 # Genuine covector product calculus in arbitrary degree
