@@ -206,14 +206,17 @@ theorem Holder.inner_edges (h : Holder H Δ F D x y) (f : Frame H J Δ a) (hS : 
     have hgH := f.mem_E_of_interior h.sub hg hqg hqi
     exact mem_interSet_E.mpr ⟨hgH, h.meets hS hgH ⟨q, hqg, interior_subset hqi⟩⟩
 
-/-- Two paths of dials with an edge in only one of them cannot both exist. -/
-theorem no_two_paths [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hS : IsClosedSurface S)
-    (hsph : IsSphere S) {F' D' : Set S} (h₁ : Holder H Δ F D x y) (h₂ : Holder H Δ F' D' x y)
-    {e e' : Set S} (he : e ∈ (H.interSet D).E) (he' : e' ∈ (H.interSet D').E)
-    (hne : e' ∉ (H.interSet D).E) : False := by
+/-- Two holder paths with an edge belonging only to the second meet exactly at their ends
+and form a circuit. -/
+theorem Holder.paths_form_circuit (hS : IsClosedSurface S) {F' D' : Set S}
+    (h₁ : Holder H Δ F D x y) (h₂ : Holder H Δ F' D' x y)
+    {e' : Set S} (he' : e' ∈ (H.interSet D').E) (hne : e' ∉ (H.interSet D).E) :
+    let P := H.interSet D
+    let P' := H.interSet D'
+    P.V ∩ P'.V = {x, y} ∧ Disjoint P.E P'.E ∧ (H.sup P P').IsCircuit := by
   classical
-  set P := H.interSet D with hP
-  set P' := H.interSet D' with hP'
+  set P := H.interSet D
+  set P' := H.interSet D'
   have hPs : P.IsSubdrawing H := Drawing.span_isSubdrawing H _ _
   have hPs' : P'.IsSubdrawing H := Drawing.span_isSubdrawing H _ _
   have hxy := h₁.ne
@@ -264,14 +267,24 @@ theorem no_two_paths [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hS
     refine disjoint_left.mpr fun g hg hg' => ?_
     obtain ⟨z, hz⟩ := hg.1
     exact disjoint_left.mp hdis (hedge hg' hz) ((mem_interSet_E.mp hg).2 hz)
-  -- The circuit `K`, and the disc it bounds in `Δ`.
+  exact ⟨hV, hE, Drawing.isCircuit_sup h₁.path h₂.path hPs hPs' hxy hV hE⟩
+
+/-- Two paths of dials with an edge in only one of them cannot both exist. -/
+theorem no_two_paths [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hS : IsClosedSurface S)
+    (hsph : IsSphere S) {F' D' : Set S} (h₁ : Holder H Δ F D x y) (h₂ : Holder H Δ F' D' x y)
+    {e e' : Set S} (he : e ∈ (H.interSet D).E) (he' : e' ∈ (H.interSet D').E)
+    (hne : e' ∉ (H.interSet D).E) : False := by
+  classical
+  set P := H.interSet D
+  set P' := H.interSet D'
+  have hPs : P.IsSubdrawing H := Drawing.span_isSubdrawing H _ _
+  have hPs' : P'.IsSubdrawing H := Drawing.span_isSubdrawing H _ _
+  have hxy := h₁.ne
+  obtain ⟨-, -, hK⟩ := h₁.paths_form_circuit hS h₂ he' hne
   let K := H.sup P P'
-  have hK : K.IsCircuit := Drawing.isCircuit_sup h₁.path h₂.path hPs hPs' hxy hV hE
   have hKU : K.U = P.U ∪ P'.U := sup_U hPs hPs'
   have hKE : K.E = P.E ∪ P'.E := Drawing.sup_E hPs hPs'
-  have hKV : K.V = P.V ∪ P'.V := Drawing.sup_V hPs hPs'
-  have hKs : K.IsSubdrawing H := ⟨by rw [hKV]; exact union_subset hPs.1 hPs'.1,
-    by rw [hKE]; exact union_subset hPs.2 hPs'.2⟩
+  have hKs : K.IsSubdrawing H := Drawing.sup_isSubdrawing _ _ _
   have hPΔ : P.U ⊆ Δ := hPs.U_subset.trans f.Usub
   have hPΔ' : P'.U ⊆ Δ := hPs'.U_subset.trans f.Usub
   have hKΔ : K.U ⊆ Δ := hKU ▸ union_subset hPΔ hPΔ'

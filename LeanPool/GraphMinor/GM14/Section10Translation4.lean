@@ -184,57 +184,11 @@ theorem no_two_paths_tangle [ConnectedSpace S] {J Γ' : Drawing S} {θ : ℕ}
   have hPs : P.IsSubdrawing J := Drawing.span_isSubdrawing J _ _
   have hPs' : P'.IsSubdrawing J := Drawing.span_isSubdrawing J _ _
   have hxy := h₁.ne
-  have hline' : IsLineWithEnds P'.U x y := isLine_of_isPathBetween h₂.path hxy
-  have hxF : x ∈ F ∩ J.V := h₁.cap ▸ Or.inl rfl
-  have hyF : y ∈ F ∩ J.V := h₁.cap ▸ Or.inr rfl
-  have hxF' : x ∈ F' ∩ J.V := h₂.cap ▸ Or.inl rfl
-  have hyF' : y ∈ F' ∩ J.V := h₂.cap ▸ Or.inr rfl
-  have hFD : F ⊆ D := h₁.bd ▸ Surface.discBd_subset D
-  have hFD' : F' ⊆ D' := h₂.bd ▸ Surface.discBd_subset D'
-  have hxP : x ∈ P.V := (h₁.VU hS).1 ▸ ⟨hxF.2, hFD hxF.1⟩
-  have hyP : y ∈ P.V := (h₁.VU hS).1 ▸ ⟨hyF.2, hFD hyF.1⟩
-  have hxP' : x ∈ P'.V := (h₂.VU hS).1 ▸ ⟨hxF'.2, hFD' hxF'.1⟩
-  have hyP' : y ∈ P'.V := (h₂.VU hS).1 ▸ ⟨hyF'.2, hFD' hyF'.1⟩
-  have hoff : P'.U \ {x, y} ⊆ J.U \ F := fun z hz => by
-    have hzU : z ∈ J.U := hPs'.U_subset hz.1
-    refine ⟨hzU, fun hzF => hz.2 ?_⟩
-    rw [← h₁.cap]
-    exact ⟨hzF, h₁.norm ⟨hzF, hzU⟩⟩
-  have hedge : ∀ {g}, g ∈ P'.E → g ⊆ P'.U \ {x, y} := fun {g} hg z hz => by
-    refine ⟨P'.closure_subset_U hg (subset_closure hz), ?_⟩
-    rintro (rfl | rfl)
-    · exact Whitney.edge_notMem_V hg hz hxP'
-    · exact Whitney.edge_notMem_V hg hz hyP'
-  have hdis : Disjoint (P'.U \ {x, y}) D := by
-    rcases subset_or_disjoint_of_frontier h₁.disc.isClosed
-      (IsLineWithEnds.isPreconnected_sdiff_pair hline')
-      (by
-        rw [h₁.fr hS]
-        exact disjoint_left.mpr fun z hz hzF => (hoff hz).2 hzF) with h₃ | h₃
-    · exfalso
-      exact hne (mem_interSet_E.mpr ⟨hPs'.2 he', (hedge he').trans h₃⟩)
-    · exact h₃
-  have hV : P.V ∩ P'.V = {x, y} := by
-    ext z
-    constructor
-    · rintro ⟨hz, hz'⟩
-      by_contra hn
-      have hzD : z ∈ D := ((h₁.VU hS).1 ▸ hz).2
-      exact disjoint_left.mp hdis ⟨P'.V_subset_U hz', hn⟩ hzD
-    · rintro (rfl | rfl)
-      · exact ⟨hxP, hxP'⟩
-      · exact ⟨hyP, hyP'⟩
-  have hE : Disjoint P.E P'.E := by
-    refine disjoint_left.mpr fun g hg hg' => ?_
-    obtain ⟨z, hz⟩ := hg.1
-    exact disjoint_left.mp hdis (hedge hg' hz) ((mem_interSet_E.mp hg).2 hz)
+  obtain ⟨hV, hE, hK⟩ := h₁.paths_form_circuit hS h₂ he' hne
   let K := J.sup P P'
-  have hK : K.IsCircuit := Drawing.isCircuit_sup h₁.path h₂.path hPs hPs' hxy hV hE
   have hKU : K.U = P.U ∪ P'.U := sup_U hPs hPs'
   have hKE : K.E = P.E ∪ P'.E := Drawing.sup_E hPs hPs'
-  have hKV : K.V = P.V ∪ P'.V := Drawing.sup_V hPs hPs'
-  have hKs : K.IsSubdrawing J := ⟨by rw [hKV]; exact union_subset hPs.1 hPs'.1,
-    by rw [hKE]; exact union_subset hPs.2 hPs'.2⟩
+  have hKs : K.IsSubdrawing J := Drawing.sup_isSubdrawing _ _ _
   have hKarc : IsOArc K.U := IsCircuit.isOArc_U hK
   have hKnull : IsNullHomotopicOArc K.U := hdisj_K hE.symm hV
   obtain ⟨E₀, -, hE₀, hbE⟩ := epstein_first (IsClosedSurface.isSurface hS) hKarc (subset_univ _)

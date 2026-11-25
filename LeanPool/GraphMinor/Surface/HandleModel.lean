@@ -31,24 +31,20 @@ local notation "𝕀" => unitInterval
 
 variable {S S' : Type u} [TopologicalSpace S] [TopologicalSpace S']
 
-/-- **Adding a handle, twisted or not, raises `2 a + b` by two.** -/
-theorem handle_model [ConnectedSpace S] [ConnectedSpace S'] (hS : IsSurface S) (hb : bd S = ∅)
-  (hS' : IsSurface S') (hb' : bd S' = ∅) {Λ₁ Λ₂ : Set S} {S₁ S₂ : Set S'}
+/-- Reconstruct the closed model from the complement of two discs and an attached cylinder. -/
+theorem handle_model_of_surface_pieces [ConnectedSpace S] [T2Space S']
+    (hS : IsSurface S) (hb : bd S = ∅) {Λ₁ Λ₂ : Set S} {S₁ S₂ : Set S'}
     (hΛ₁ : IsOpenDisc Λ₁) (hΛ₂ : IsOpenDisc Λ₂) (hd : Disjoint (closure Λ₁) (closure Λ₂))
-      (hu : S₁ ∪ S₂ = univ) (h1 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₁)
-    (h2 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₂) (e₁ : ↥((univ : Set S) \ (Λ₁ ∪ Λ₂)) ≃ₜ S₁)
-      (e₂ : ClosedCylinder ≃ₜ S₂) {a b : ℕ} (e : S ≃ₜ SurfaceModel a b 0) :
+    (hS₁ : IsSurface ↥S₁) (hS₂ : IsSurface ↥S₂)
+    (hu : S₁ ∪ S₂ = univ) (h1 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₁)
+    (h2 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₂)
+    (e₁ : ↥((univ : Set S) \ (Λ₁ ∪ Λ₂)) ≃ₜ S₁) (e₂ : ClosedCylinder ≃ₜ S₂)
+    {a b : ℕ} (e : S ≃ₜ SurfaceModel a b 0) :
     ∃ a' b', Nonempty (S' ≃ₜ SurfaceModel a' b' 0) ∧ 2 * a' + b' = 2 * a + b + 2 := by
-  have ht2 := hS.2.1
-  have hcS := hS.1
-  have ht2' := hS'.2.1
-  obtain ⟨m⟩ := nonempty_cyl_homeo
-  have hS₂ : IsSurface ↥S₂ := isSurface_of_homeo (m.trans e₂) (isSurface_model 0 0 2).1
+  have := hS.2.1
+  have : Nonempty S' := ⟨(e₂ (cylEnd 1 (by norm_num) 1)).1⟩
   let e₁' : ↥(Λ₁ ∪ Λ₂)ᶜ ≃ₜ S₁ := (Homeomorph.setCongr (compl_eq_univ_sdiff _)).trans e₁
-  have hXc : IsClosed (Λ₁ ∪ Λ₂)ᶜ := (hΛ₁.1.union hΛ₂.1).isClosed_compl
-  have hcX : CompactSpace ↥(Λ₁ ∪ Λ₂)ᶜ := isCompact_iff_compactSpace.mp hXc.isCompact
-  have hc₁ : CompactSpace ↥S₁ := e₁'.surjective.compactSpace e₁'.continuous
-  have hS₁ : IsSurface ↥S₁ := piece_surface hS' hb' hc₁ hS₂ hu h1 h2
+  have hc₁ : CompactSpace ↥S₁ := hS₁.1
   have hX : IsSurface ↥(Λ₁ ∪ Λ₂)ᶜ := isSurface_of_homeo e₁'.symm hS₁
   have hval₂ : IsClosedEmbedding (Subtype.val : ↥S₂ → S') := (isCompact_iff_compactSpace.mpr
     hS₂.1).isClosed.isClosedEmbedding_subtypeVal
@@ -223,5 +219,25 @@ theorem handle_model [ConnectedSpace S] [ConnectedSpace S'] (hS : IsSurface S) (
     obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
     rw [hlen] at e'
     exact ⟨a₁, b₁ + 2, ⟨e'⟩, by omega⟩
+
+/-- **Adding a handle, twisted or not, raises `2 a + b` by two.** -/
+theorem handle_model [ConnectedSpace S] [ConnectedSpace S'] (hS : IsSurface S) (hb : bd S = ∅)
+  (hS' : IsSurface S') (hb' : bd S' = ∅) {Λ₁ Λ₂ : Set S} {S₁ S₂ : Set S'}
+    (hΛ₁ : IsOpenDisc Λ₁) (hΛ₂ : IsOpenDisc Λ₂) (hd : Disjoint (closure Λ₁) (closure Λ₂))
+      (hu : S₁ ∪ S₂ = univ) (h1 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₁)
+    (h2 : S₁ ∩ S₂ = Subtype.val '' bd ↥S₂) (e₁ : ↥((univ : Set S) \ (Λ₁ ∪ Λ₂)) ≃ₜ S₁)
+      (e₂ : ClosedCylinder ≃ₜ S₂) {a b : ℕ} (e : S ≃ₜ SurfaceModel a b 0) :
+    ∃ a' b', Nonempty (S' ≃ₜ SurfaceModel a' b' 0) ∧ 2 * a' + b' = 2 * a + b + 2 := by
+  have ht2 := hS.2.1
+  have hcS := hS.1
+  have ht2' := hS'.2.1
+  obtain ⟨m⟩ := nonempty_cyl_homeo
+  have hS₂ : IsSurface ↥S₂ := isSurface_of_homeo (m.trans e₂) (isSurface_model 0 0 2).1
+  let e₁' : ↥(Λ₁ ∪ Λ₂)ᶜ ≃ₜ S₁ := (Homeomorph.setCongr (compl_eq_univ_sdiff _)).trans e₁
+  have hXc : IsClosed (Λ₁ ∪ Λ₂)ᶜ := (hΛ₁.1.union hΛ₂.1).isClosed_compl
+  have hcX : CompactSpace ↥(Λ₁ ∪ Λ₂)ᶜ := isCompact_iff_compactSpace.mp hXc.isCompact
+  have hc₁ : CompactSpace ↥S₁ := e₁'.surjective.compactSpace e₁'.continuous
+  have hS₁ : IsSurface ↥S₁ := piece_surface hS' hb' hc₁ hS₂ hu h1 h2
+  exact handle_model_of_surface_pieces hS hb hΛ₁ hΛ₂ hd hS₁ hS₂ hu h1 h2 e₁ e₂ e
 
 end GraphMinor.Surface

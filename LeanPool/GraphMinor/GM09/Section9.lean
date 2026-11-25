@@ -2002,97 +2002,19 @@ theorem exists_cross_in_interval_of_mem_separating {S : Society α β}
       S.OmegaPathsCross P₁ P₂ ∧
       pathEnds S.G P₁ ⊆ S.Ω.interval a b ∧
       pathEnds S.G P₂ ⊆ S.Ω.interval a b := by
-  obtain ⟨A, B, hfence⟩ := hcrooked.1
-  have hnot_periph_Q : ¬ S.IsPeripheralIn P_set Q := hcrooked.2 Q hQ_in
   have hne : (S.Ω.interval a b ∩ S.transactionEnds P_set).Nonempty := by
     by_contra h_empty
     rw [not_nonempty_iff_eq_empty, ← disjoint_iff_inter_eq_empty] at h_empty
-    exact hnot_periph_Q ⟨hQ_in, a, b, hQ_ends, Or.inl h_empty⟩
-  have hex_good : ∀ R ∈ P_set, (pathEnds S.G R ∩ S.Ω.interval a b).Nonempty →
-      ∃ s t : α, S.IsOmegaPathWithEnds R s t ∧
-        s ∈ S.Ω.interval a b ∧ t ∈ S.Ω.interval a b ∧
-        S.Ω.interval s t ⊆ S.Ω.interval a b ∧ Disjoint V(R) V(Q) := by
-    intro R hR ⟨x, hx_end, hx_ab⟩
-    obtain ⟨u, huA, v, hvB, hR_uv⟩ := hfence.2.2 R hR
-    have huv_ne : u ≠ v := fun h => disjoint_left.mp hfence.2.1.2.2.1 huA (h ▸ hvB)
-    have hRQ : R ≠ Q := by
-      rintro rfl
-      rw [hQ_ends.1.pathEnds_eq, mem_insert_iff, mem_singleton_iff] at hx_end
-      exact hx_ab.1.2 hx_end
-    have hdisj_RQ : Disjoint V(R) V(Q) := hfence.1.2 hR hQ_in hRQ
-    rw [hR_uv.1.pathEnds_eq, mem_insert_iff, mem_singleton_iff] at hx_end
-    have hu_ab : u ∈ S.Ω.interval a b := by
-      rcases hx_end with rfl | rfl
-      · exact hx_ab
-      · exact S.both_ends_mem_interval_of_separating hQ_ends hQ_sep (hR_uv.symm S) hdisj_RQ hx_ab
-    have hv_ab : v ∈ S.Ω.interval a b :=
-      S.both_ends_mem_interval_of_separating hQ_ends hQ_sep hR_uv hdisj_RQ hu_ab
-    rcases S.Ω.interval_subset_interval_or_swap hu_ab hv_ab huv_ne with hsub_uv | hsub_vu
-    · exact ⟨u, v, hR_uv, hu_ab, hv_ab, hsub_uv, hdisj_RQ⟩
-    · exact ⟨v, u, hR_uv.symm S, hv_ab, hu_ab, hsub_vu, hdisj_RQ⟩
-  have hex_cand : ∃ n : ℕ, ∃ P ∈ P_set, ∃ s t : α,
-      S.IsOmegaPathWithEnds P s t ∧
-      s ∈ S.Ω.interval a b ∧ t ∈ S.Ω.interval a b ∧
-      S.Ω.interval s t ⊆ S.Ω.interval a b ∧
-      (S.Ω.interval s t).ncard = n := by
-    rcases hne with ⟨x, hx_ab, P₀, hP₀, y₀, hP₀_xy⟩
-    have hx_end : x ∈ pathEnds S.G P₀ := by
-      rw [hP₀_xy.1.pathEnds_eq]; exact Or.inl rfl
-    obtain ⟨s₀, t₀, hP₀_st, hs₀, ht₀, hsub₀, _⟩ := hex_good P₀ hP₀ ⟨x, hx_end, hx_ab⟩
-    exact ⟨(S.Ω.interval s₀ t₀).ncard, P₀, hP₀, s₀, t₀, hP₀_st, hs₀, ht₀, hsub₀, rfl⟩
-  classical
-  let n_min := Nat.find hex_cand
-  obtain ⟨P, hP_in, s, t, hP_ends, hs_ab, ht_ab, hsub_st, hcard_st⟩ := Nat.find_spec hex_cand
-  have hmin_st : ∀ P' ∈ P_set, ∀ s' t' : α,
-      S.IsOmegaPathWithEnds P' s' t' →
-      s' ∈ S.Ω.interval a b → t' ∈ S.Ω.interval a b →
-      S.Ω.interval s' t' ⊆ S.Ω.interval a b →
-      n_min ≤ (S.Ω.interval s' t').ncard :=
-    fun P' hP' s' t' hP'_st hs' ht' hsub' =>
-      Nat.find_min' hex_cand ⟨P', hP', s', t', hP'_st, hs', ht', hsub', rfl⟩
-  have hnot_periph : ¬ S.IsPeripheralIn P_set P := hcrooked.2 P hP_in
-  have hhit_st : (S.Ω.interval s t ∩ S.transactionEnds P_set).Nonempty := by
-    by_contra h_empty
-    rw [not_nonempty_iff_eq_empty, ← disjoint_iff_inter_eq_empty] at h_empty
-    exact hnot_periph ⟨hP_in, s, t, hP_ends, Or.inl h_empty⟩
-  rcases hhit_st with ⟨x', hx'_st, P', hP'_in, y', hP'_ends⟩
-  have hP'_ne_P : P' ≠ P := by
-    rintro rfl
-    rcases hP_ends.ends_eq S hP'_ends with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · exact hx'_st.1.2 (Or.inl rfl)
-    · exact hx'_st.1.2 (Or.inr rfl)
-  have hdisj_PP' : Disjoint V(P) V(P') := hfence.1.2 hP_in hP'_in hP'_ne_P.symm
-  have hx'_ab : x' ∈ S.Ω.interval a b := hsub_st hx'_st
-  have hx'_end : x' ∈ pathEnds S.G P' := by rw [hP'_ends.1.pathEnds_eq]; exact Or.inl rfl
-  obtain ⟨_, _, _, _, _, _, hdisj_P'Q⟩ := hex_good P' hP'_in ⟨x', hx'_end, hx'_ab⟩
-  have hy'_ab : y' ∈ S.Ω.interval a b :=
-    S.both_ends_mem_interval_of_separating hQ_ends hQ_sep hP'_ends hdisj_P'Q hx'_ab
-  have hx'y'_ne : x' ≠ y' := hP'_ends.2.1
-  have hy'_not_st : y' ∉ S.Ω.interval s t := by
-    intro hy'_st
-    have hfin_st : (S.Ω.interval s t).Finite := S.Ω.finite_bar.subset (S.Ω.interval_subset_bar s t)
-    rcases S.Ω.interval_subset_interval_or_swap hx'_st hy'_st hx'y'_ne with hsub' | hsub'
-    · have hlt : (S.Ω.interval x' y').ncard < (S.Ω.interval s t).ncard :=
-        ncard_lt_ncard ⟨hsub', fun h_all => (h_all hy'_st).1.2 (Or.inr rfl)⟩ hfin_st
-      have hge := hmin_st P' hP'_in x' y' hP'_ends hx'_ab hy'_ab (hsub'.trans hsub_st)
-      omega
-    · have hlt : (S.Ω.interval y' x').ncard < (S.Ω.interval s t).ncard :=
-        ncard_lt_ncard ⟨hsub', fun h_all => (h_all hx'_st).1.2 (Or.inr rfl)⟩ hfin_st
-      have hge := hmin_st P' hP'_in y' x' (hP'_ends.symm S) hy'_ab hx'_ab (hsub'.trans hsub_st)
-      omega
-  have hy'_ne_s : y' ≠ s := fun h =>
-    disjoint_left.mp hdisj_PP' (h ▸ hP_ends.1.left_mem) hP'_ends.1.right_mem
-  have hy'_ne_t : y' ≠ t := fun h =>
-    disjoint_left.mp hdisj_PP' (h ▸ hP_ends.1.right_mem) hP'_ends.1.right_mem
-  have hy'_ts : y' ∈ S.Ω.interval t s := by
-    rcases S.Ω.mem_interval_or_interval_swap hP_ends.2.2.1 hP_ends.2.2.2
-      hP'_ends.2.2.2 hP_ends.2.1 hy'_ne_s hy'_ne_t with h_st | h_ts
-    · exact (hy'_not_st h_st).elim
-    · exact h_ts
-  refine ⟨P, hP_in, P', hP'_in, ⟨hdisj_PP', s, t, x', y', hP_ends, hP'_ends,
-    S.Ω.crosses_iff_interval.mpr (Or.inl ⟨hx'_st, hy'_ts⟩)⟩, ?_, ?_⟩
-  · rw [hP_ends.1.pathEnds_eq]; rintro z (rfl | rfl) <;> assumption
-  · rw [hP'_ends.1.pathEnds_eq]; rintro z (rfl | rfl) <;> assumption
+    exact hcrooked.2 Q hQ_in ⟨hQ_in, a, b, hQ_ends, Or.inl h_empty⟩
+  refine S.exists_cross_in_interval_of_disjoint_paths hQ_ends hQ_sep hcrooked ?_
+    (by simpa only [inter_comm] using hne)
+  intro R hR hends
+  obtain ⟨A, B, hfence⟩ := hcrooked.1
+  apply hfence.1.2 hR hQ_in
+  rintro rfl
+  obtain ⟨x, hx_end, hx_ab⟩ := hends
+  rw [hQ_ends.1.pathEnds_eq, mem_insert_iff, mem_singleton_iff] at hx_end
+  exact hx_ab.1.2 hx_end
 
 /-- In a rural composition `S_comp.IsComposition S N`, no member `Q` of a crooked transaction
 `P_set`
@@ -3076,100 +2998,6 @@ private theorem cardinalityAfterReplacingPath
   exact ⟨hcard_le,
     ncard_lt_ncard ⟨hE_sub, fun hall => heQ_not_U' (hall heQ_in_U)⟩ hEU_fin⟩
 
-private theorem crookedAfterTwoSwitches
-    {S : Society α β} {P_set : Set (Graph α β)} {A B : Set α} {P₁ L₁ L₂ : Graph α β}
-    (hdisj_LR : ∀ R ∈ P_set \ {P₁}, Disjoint V(L₁) V(R) ∧ Disjoint V(L₂) V(R))
-    (hfence : S.IsFenceFor P_set A B)
-    (hW'_bar : (S.transactionEnds (P_set \ {P₁})) ⊆ S.Ω.bar) {a_0 : α}
-    (ha_0 : a_0 ∈ A ∩ (S.transactionEnds (P_set \ {P₁}))) {a'_0 : α}
-    (ha'_0 : a'_0 ∈ A ∩ (S.transactionEnds (P_set \ {P₁}))) {b_0 : α}
-    (hb_0 : b_0 ∈ B ∩ (S.transactionEnds (P_set \ {P₁}))) {b'_0 : α}
-    (hb'_0 : b'_0 ∈ B ∩ (S.transactionEnds (P_set \ {P₁})))
-    (hd_ab : Disjoint (S.Ω.interval a'_0 b_0) (S.transactionEnds (P_set \ {P₁})))
-    (hd_ba : Disjoint (S.Ω.interval b'_0 a_0) (S.transactionEnds (P_set \ {P₁}))) {e₁ e₂ : α}
-    (he₁_G₁ : e₁ ∈ S.Ω.interval a'_0 b_0) (he₂_G₂ : e₂ ∈ S.Ω.interval b'_0 a_0)
-    {u₁ u₂ : α} (hdisj_L12 : Disjoint V(L₁) V(L₂)) (hL₁_ends : S.IsOmegaPathWithEnds L₁ u₁ e₁)
-    (hL₂_ends : S.IsOmegaPathWithEnds L₂ u₂ e₂) (hu₁_bar : u₁ ∈ S.Ω.bar)
-    (hu₁_not_W' : u₁ ∉ (S.transactionEnds (P_set \ {P₁}))) (hu₁_G₁ : u₁ ∉ S.Ω.interval a'_0 b_0)
-    (hu₁_G₂ : u₁ ∉ S.Ω.interval b'_0 a_0) (hu₂_bar : u₂ ∈ S.Ω.bar)
-    (hu₂_not_W' : u₂ ∉ (S.transactionEnds (P_set \ {P₁}))) (hu₂_G₁ : u₂ ∉ S.Ω.interval a'_0 b_0)
-    (hu₂_G₂ : u₂ ∉ S.Ω.interval b'_0 a_0) :
-    S.IsCrookedTransaction (P_set \ {P₁} ∪ {L₁, L₂}) := by
-  classical
-  let W' := S.transactionEnds (P_set \ {P₁})
-  let P_set'' := (P_set \ {P₁}) ∪ {L₁, L₂}
-  obtain ⟨A_f, B_f, hff, hAf, hBf, h_u₁e₁, h_u₂e₂⟩ :=
-    Society.exists_fence_for_two_switches hfence.2.1 hW'_bar ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-      he₁_G₁ he₂_G₂ hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar hu₂_not_W' hu₂_G₁ hu₂_G₂
-  have hdisj'' : S.IsDisjointOmegaPathSet P_set'' := by
-    refine ⟨?_, ?_⟩
-    · rintro R (hR | rfl | rfl)
-      · exact hfence.1.1 R hR.1
-      · exact ⟨u₁, e₁, hL₁_ends⟩
-      · exact ⟨u₂, e₂, hL₂_ends⟩
-    · rintro M₁ (hM₁ | rfl | rfl) M₂ (hM₂ | rfl | rfl) hne
-      · exact hfence.1.2 hM₁.1 hM₂.1 hne
-      · exact (hdisj_LR M₁ hM₁).1.symm
-      · exact (hdisj_LR M₁ hM₁).2.symm
-      · exact (hdisj_LR M₂ hM₂).1
-      · exact (hne rfl).elim
-      · exact hdisj_L12
-      · exact (hdisj_LR M₂ hM₂).2
-      · exact hdisj_L12.symm
-      · exact (hne rfl).elim
-  have hfence'' : S.IsFenceFor P_set'' A_f B_f := by
-    refine ⟨hdisj'', hff, ?_⟩
-    rintro R (hR | rfl | rfl)
-    · obtain ⟨a_R, ha_R, b_R, hb_R, hR_ends⟩ := hfence.2.2 R hR.1
-      have ha_R_W' : a_R ∈ A ∩ W' := ⟨ha_R, hR_ends.mem_transactionEnds_left S hR⟩
-      have hb_R_W' : b_R ∈ B ∩ W' := ⟨hb_R, hR_ends.mem_transactionEnds_right S hR⟩
-      exact ⟨a_R, hAf ha_R_W', b_R, hBf hb_R_W', hR_ends⟩
-    · rcases h_u₁e₁ with ⟨hu₁A, he₁B⟩ | ⟨he₁A, hu₁B⟩
-      · exact ⟨u₁, hu₁A, e₁, he₁B, hL₁_ends⟩
-      · exact ⟨e₁, he₁A, u₁, hu₁B, hL₁_ends.symm S⟩
-    · rcases h_u₂e₂ with ⟨hu₂A, he₂B⟩ | ⟨he₂A, hu₂B⟩
-      · exact ⟨u₂, hu₂A, e₂, he₂B, hL₂_ends⟩
-      · exact ⟨e₂, he₂A, u₂, hu₂B, hL₂_ends.symm S⟩
-  have hW'_sub_ends : W' ⊆ S.transactionEnds P_set'' :=
-    fun z ⟨R, hR, y_e, hR_e⟩ => ⟨R, Or.inl hR, y_e, hR_e⟩
-  have he₁_mem_ends : e₁ ∈ S.transactionEnds P_set'' :=
-    hL₁_ends.mem_transactionEnds_right S (Or.inr (Or.inl rfl))
-  have he₂_mem_ends : e₂ ∈ S.transactionEnds P_set'' :=
-    hL₂_ends.mem_transactionEnds_right S (Or.inr (Or.inr rfl))
-  refine ⟨⟨A_f, B_f, hfence''⟩, ?_⟩
-  rintro R (hR | rfl | rfl) hper
-  · obtain ⟨a_R, ha_R, b_R, hb_R, hR_ends⟩ := hfence.2.2 R hR.1
-    have ha_R_W' : a_R ∈ A ∩ W' := ⟨ha_R, hR_ends.mem_transactionEnds_left S hR⟩
-    have hb_R_W' : b_R ∈ B ∩ W' := ⟨hb_R, hR_ends.mem_transactionEnds_right S hR⟩
-    have hper' := (hR_ends.isPeripheralIn_iff S (Or.inl hR)).mp hper
-    rcases hper' with hd₁ | hd₂
-    · have hsub₁ := S.Ω.interval_subset_of_disjoint_AB hfence.2.1 hW'_bar
-        ha'_0 hb_0 hd_ab ha_R_W' hb_R_W'
-      exact disjoint_left.mp hd₁ (hsub₁ he₁_G₁) he₁_mem_ends
-    · have hsub₂ := S.Ω.interval_subset_of_disjoint_AB hfence.2.1.symm hW'_bar
-        hb'_0 ha_0 hd_ba hb_R_W' ha_R_W'
-      exact disjoint_left.mp hd₂ (hsub₂ he₂_G₂) he₂_mem_ends
-  · have hper' := (hL₁_ends.isPeripheralIn_iff S (Or.inr (Or.inl rfl))).mp hper
-    have ha'_ne_b : a'_0 ≠ b_0 := fun h =>
-      disjoint_left.mp hfence.2.1.2.2.1 ha'_0.1 (h ▸ hb_0.1)
-    have hu₁_ne_a' : u₁ ≠ a'_0 := fun h => hu₁_not_W' (h ▸ ha'_0.2)
-    have hu₁_ne_b : u₁ ≠ b_0 := fun h => hu₁_not_W' (h ▸ hb_0.2)
-    have h_in := Society.mem_interval_of_mem_gap_and_not_mem
-      (hW'_bar ha'_0.2) (hW'_bar hb_0.2) ha'_ne_b he₁_G₁ hu₁_bar hu₁_ne_a' hu₁_ne_b hu₁_G₁
-    rcases hper' with hd₁ | hd₂
-    · exact disjoint_left.mp hd₁ h_in.2 (hW'_sub_ends ha'_0.2)
-    · exact disjoint_left.mp hd₂ h_in.1 (hW'_sub_ends hb_0.2)
-  · have hper' := (hL₂_ends.isPeripheralIn_iff S (Or.inr (Or.inr rfl))).mp hper
-    have hb'_ne_a : b'_0 ≠ a_0 := fun h =>
-      disjoint_left.mp hfence.2.1.2.2.1 ha_0.1 (h ▸ hb'_0.1)
-    have hu₂_ne_b' : u₂ ≠ b'_0 := fun h => hu₂_not_W' (h ▸ hb'_0.2)
-    have hu₂_ne_a : u₂ ≠ a_0 := fun h => hu₂_not_W' (h ▸ ha_0.2)
-    have h_in := Society.mem_interval_of_mem_gap_and_not_mem
-      (hW'_bar hb'_0.2) (hW'_bar ha_0.2) hb'_ne_a he₂_G₂ hu₂_bar hu₂_ne_b' hu₂_ne_a hu₂_G₂
-    rcases hper' with hd₁ | hd₂
-    · exact disjoint_left.mp hd₁ h_in.2 (hW'_sub_ends hb'_0.2)
-    · exact disjoint_left.mp hd₂ h_in.1 (hW'_sub_ends ha_0.2)
-
 private theorem replaceByOneEndPath
     {S : Society α β} {P_set : Set (Graph α β)} {P P_left P_right : Graph α β} {s t x y : α}
     (hP_in : P ∈ P_set) (hP_ends : S.IsOmegaPathWithEnds P s t)
@@ -3437,8 +3265,8 @@ private theorem replaceByBothEndPaths
       S.IsCrookedTransaction ((P_set \ {P₁}) ∪ {L₁, L₂}) := by
     intro L₁ L₂ u₁ u₂ hdisj_L12 hdisj_LR hL₁_ends hL₂_ends
       hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar hu₂_not_W' hu₂_G₁ hu₂_G₂
-    exact crookedAfterTwoSwitches hdisj_LR hfence hW'_bar ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-      he₁_G₁ he₂_G₂ hdisj_L12 hL₁_ends hL₂_ends hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar
+    exact S.crookedTransaction_of_two_switches hfence ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
+      he₁_G₁ he₂_G₂ hdisj_L12 hdisj_LR hL₁_ends hL₂_ends hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar
       hu₂_not_W' hu₂_G₁ hu₂_G₂
   have hdisj_LR_R : ∀ R ∈ P_set \ {P₁}, Disjoint V(P_left) V(R) ∧ Disjoint V(P_right) V(R) :=
     fun R hR =>

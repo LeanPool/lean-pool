@@ -345,8 +345,8 @@ private theorem no_circuit_in_arrangement_piece [T2Space S]
     {θ : ℕ} {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     {d : Set S → Set S → ℕ} {z Δ₁ Δ₂ Δ_i : Set S}
     {S_seg : Set (Society α β)} (hθ : 6 ≤ θ) (hd : HasTangleMetric H θ T d)
-    (hz : z ∈ H.A) (_hΔ₁ : IsClosedDisc Δ₁) (_hΔ₂ : IsClosedDisc Δ₂) (hΔ_i : IsClosedDisc Δ_i)
-    (hz_sub : z ⊆ Δ₂ \ subBd Δ₂) (_hΔ₂_sub₁ : Δ₂ ⊆ Δ₁ \ subBd Δ₁)
+    (hz : z ∈ H.A) (hΔ_i : IsClosedDisc Δ_i)
+    (hz_sub : z ⊆ Δ₂ \ subBd Δ₂)
     (hΔ₂_sub_i : Δ₂ ⊆ Δ_i) (hΔ_i_sub₁ : Δ_i ⊆ Δ₁)
     (hii : ∀ x ∈ H.A, x ⊆ Δ₁ → d z x ≤ θ - 4)
     (hiii : ∀ x ∈ H.A, d z x ≤ 3 → x ⊆ Δ₂ \ subBd Δ₂)
@@ -459,11 +459,11 @@ private theorem no_two_circuits_in_arrangement_piece [T2Space S]
     · exact absurd rfl hij
   obtain ⟨i, hi⟩ := exists_inter_ncard_le_one_of_ncard_lt_two_mul hP_disj hX_fin hX_lt
   fin_cases i
-  · exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hΔ₂ hΔ₁ hz_sub
-      hΔ₂_sub₁ (hΔ₂_sub₁.trans sdiff_subset) subset_rfl hii hiii hC₁ hC₁s hbd₁ hSeg hLoc hS₀
+  · exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hz_sub
+      (hΔ₂_sub₁.trans sdiff_subset) subset_rfl hii hiii hC₁ hC₁s hbd₁ hSeg hLoc hS₀
       he₁ he₁_S₀ hi
-  · exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hΔ₂ hΔ₂ hz_sub
-      hΔ₂_sub₁ subset_rfl (hΔ₂_sub₁.trans sdiff_subset) hii hiii hC₂ hC₂s hbd₂ hSeg hLoc hS₀
+  · exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₂ hz_sub
+      subset_rfl (hΔ₂_sub₁.trans sdiff_subset) hii hiii hC₂ hC₂s hbd₂ hSeg hLoc hS₀
       he₂ he₂_S₀ hi
 
 /-- If `S₀ ∈ S_seg` contains an edge of `C₂`, then `(α_pt '' S₀.Ω.bar).ncard ≥ 2`. -/
@@ -475,7 +475,7 @@ private theorem two_le_bar_image_ncard_of_mem_C2 [T2Space S]
     {d : Set S → Set S → ℕ} {z Δ₁ Δ₂ : Set S}
     {S_seg : Set (Society α β)} {α_disc : Society α β → Set S} {α_pt : α → S}
     (hθ : 6 ≤ θ) (hd : HasTangleMetric H θ T d)
-    (hz : z ∈ H.A) (hΔ₁ : IsClosedDisc Δ₁) (hΔ₂ : IsClosedDisc Δ₂)
+    (hz : z ∈ H.A) (hΔ₂ : IsClosedDisc Δ₂)
     (hz_sub : z ⊆ Δ₂ \ subBd Δ₂) (hΔ₂_sub₁ : Δ₂ ⊆ Δ₁ \ subBd Δ₁)
     (hii : ∀ x ∈ H.A, x ⊆ Δ₁ → d z x ≤ θ - 4)
     (hiii : ∀ x ∈ H.A, d z x ≤ 3 → x ⊆ Δ₂ \ subBd Δ₂)
@@ -503,8 +503,8 @@ private theorem two_le_bar_image_ncard_of_mem_C2 [T2Space S]
           = (η.vMap '' (C₂.V ∩ {v ∈ H.V | η.vMap v ∈ S₀.Ω.bar})).ncard := hinj_η.ncard_image.symm
         _ ≤ S₀.Ω.bar.ncard := ncard_le_ncard hsub S₀.Ω.finite_bar
         _ ≤ 1 := hle1_bar
-    exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hΔ₂ hΔ₂ hz_sub
-      hΔ₂_sub₁ subset_rfl (hΔ₂_sub₁.trans sdiff_subset) hii hiii hC₂ hC₂s hbd₂ hSeg hLoc hS₀
+    exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₂ hz_sub
+      subset_rfl (hΔ₂_sub₁.trans sdiff_subset) hii hiii hC₂ hC₂s hbd₂ hSeg hLoc hS₀
       he₂ he₂_S₀ hle1
   refine ⟨hcard_eq ▸ h2, ?_⟩
   exact (ncard_pos S₀.Ω.finite_bar).mp (by omega)
@@ -792,7 +792,7 @@ private theorem circuit_edge_isLineWithEnds [T2Space S]
         exact h_eq ▸ hΔ₂_sub_clΛ (hΔ₂.isClosed.closure_eq ▸ (hbd₂ ▸ (he₂.2.1 hxe₂).1).1)
       have he₂_S₀ : η.eMap e₂ ∈ E(S₀.G) :=
         (hComp.inter_E_iff S₀ hS₀ e₂ (hC₂s.2 he₂)).mp he₂_sub
-      have h2 := (two_le_bar_image_ncard_of_mem_C2 hS hConn hθ hd hz hΔ₁ hΔ₂ hz_sub
+      have h2 := (two_le_bar_image_ncard_of_mem_C2 hS hConn hθ hd hz hΔ₂ hz_sub
         hΔ₂_sub₁ hii hiii hC₂ hC₂s hbd₂ hSeg hLoc hArr hS₀ he₂ he₂_S₀).1
       have hle1 : (α_pt '' S₀.Ω.bar).ncard ≤ 1 :=
         (ncard_le_ncard hbar_sub_u (finite_singleton u)).trans (by simp)
@@ -825,8 +825,8 @@ private theorem circuit_edge_isLineWithEnds [T2Space S]
                 hinj_η.ncard_image.symm
             _ ≤ S₁.Ω.bar.ncard := ncard_le_ncard hsub S₁.Ω.finite_bar
             _ ≤ 1 := hbar_le1
-        exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hΔ₂ hΔ₁ hz_sub
-          hΔ₂_sub₁ (hΔ₂_sub₁.trans sdiff_subset) subset_rfl hii hiii hC₁ hC₁s hbd₁ hSeg hLoc hS₁
+        exact no_circuit_in_arrangement_piece hS hConn hθ hd hz hΔ₁ hz_sub
+          (hΔ₂_sub₁.trans sdiff_subset) subset_rfl hii hiii hC₁ hC₁s hbd₁ hSeg hLoc hS₁
           he₁ he₁_S₁ hle1
       · obtain ⟨q₁, hq₁⟩ := atom_nonempty (Or.inl (Or.inr (hC₁s.2 he₁)))
         have hq₁_S₁ : q₁ ∈ α_disc S₁ \ subBd (α_disc S₁) := he₁_diff hq₁

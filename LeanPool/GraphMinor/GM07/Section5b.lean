@@ -16,6 +16,7 @@ public import LeanPool.GraphMinor.Surface.PushOff
 public import LeanPool.GraphMinor.Surface.SurfacePull
 public import LeanPool.GraphMinor.GM11.ArcDrawings
 import LeanPool.GraphMinor.GM19.Section6a
+import LeanPool.GraphMinor.GM07.Section2Base
 
 /-!
 # Graph Minors VII, Section 5 (Part B): (5.5)–(5.7)
@@ -2508,161 +2509,22 @@ theorem exists_short_component_oArc_diff_pair [T2Space S] {F₀ V : Set S} (hF�
     (hV : V.Finite) {x y : S} (hx : x ∈ F₀) (hy : y ∈ F₀) (hxy : x ≠ y) :
     ∃ B ∈ componentsIn (F₀ \ {x, y}), B ⊆ F₀ ∧ 2 * (V ∩ B).ncard ≤ (V ∩ F₀).ncard ∧
       IsLineWithEnds (B ∪ {x, y}) x y := by
-  obtain ⟨φ⟩ := id hF₀
-  let a : Circle := φ.symm ⟨x, hx⟩
-  let b : Circle := φ.symm ⟨y, hy⟩
-  have hab : a ≠ b := by
-    intro h
-    have h' : (⟨x, hx⟩ : F₀) = ⟨y, hy⟩ := by simpa [a, b] using congrArg φ h
-    exact hxy (congrArg Subtype.val h')
-  let ι : Circle → S := fun w => (φ w).1
-  have hι : Continuous ι := continuous_subtype_val.comp φ.continuous
-  have hιinj : Injective ι := fun u w h => φ.injective (Subtype.ext h)
-  have hιa : ι a = x := by simp [ι, a]
-  have hιb : ι b = y := by simp [ι, b]
-  have h_arc_props : ∀ c d : Circle, c ≠ d → (c = a ∧ d = b ∨ c = b ∧ d = a) →
-      ι '' circleOpenArc c d ∈ componentsIn (F₀ \ {x, y}) ∧
-      ι '' circleOpenArc c d ⊆ F₀ ∧
-      IsLineWithEnds (ι '' circleOpenArc c d ∪ {x, y}) x y := by
-    intro c d hcd hor
-    have hsub_diff : ι '' circleOpenArc c d ⊆ F₀ \ {x, y} := by
-      rintro _ ⟨w, hw, rfl⟩
-      refine ⟨(φ w).2, ?_⟩
-      have h₁ : w ∈ ({a, b}ᶜ : Set Circle) := by
-        rw [compl_pair_eq_union_circleOpenArc hab]
-        rcases hor with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-        · exact Or.inl hw
-        · exact Or.inr hw
-      rintro (h | h)
-      · exact h₁ (Or.inl (hιinj (h.trans hιa.symm)))
-      · exact h₁ (Or.inr (mem_singleton_iff.mpr (hιinj ((mem_singleton_iff.mp h).trans hιb.symm))))
-    have hsub_rev : ι '' circleOpenArc d c ⊆ F₀ \ {x, y} := by
-      rintro _ ⟨w, hw, rfl⟩
-      refine ⟨(φ w).2, ?_⟩
-      have h₁ : w ∈ ({a, b}ᶜ : Set Circle) := by
-        rw [compl_pair_eq_union_circleOpenArc hab]
-        rcases hor with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-        · exact Or.inr hw
-        · exact Or.inl hw
-      rintro (h | h)
-      · exact h₁ (Or.inl (hιinj (h.trans hιa.symm)))
-      · exact h₁ (Or.inr (mem_singleton_iff.mpr (hιinj ((mem_singleton_iff.mp h).trans hιb.symm))))
-    let m : I := ⟨1 / 2, by norm_num, by norm_num⟩
-    have hm_ioo : m ∈ Ioo (0 : I) 1 :=
-      ⟨by change (0 : ℝ) < 1 / 2; norm_num, by change (1 / 2 : ℝ) < 1; norm_num⟩
-    let w₀ : Circle := Circle.path c d m
-    have hw₀ : w₀ ∈ circleOpenArc c d := ⟨m, hm_ioo, rfl⟩
-    have hconn : IsPreconnected (ι '' circleOpenArc c d) :=
-      (isPathConnected_circleOpenArc c d).isConnected.isPreconnected.image _ hι.continuousOn
-    have h_sub_cc : ι '' circleOpenArc c d ⊆ connectedComponentIn (F₀ \ {x, y}) (ι w₀) :=
-      hconn.subset_connectedComponentIn ⟨w₀, hw₀, rfl⟩ hsub_diff
-    have h_cc_sub : connectedComponentIn (F₀ \ {x, y}) (ι w₀) ⊆ ι '' circleOpenArc c d := by
-      intro z hz
-      have hz_diff : z ∈ F₀ \ {x, y} := connectedComponentIn_subset _ _ hz
-      let K₁ : Set S := range (ι ∘ Circle.path c d)
-      let K₂ : Set S := range (ι ∘ Circle.path d c)
-      have hK₁_closed : IsClosed K₁ := (isCompact_range (hι.comp (Circle.path c
-        d).continuous)).isClosed
-      have hK₂_closed : IsClosed K₂ := (isCompact_range (hι.comp (Circle.path d
-        c).continuous)).isClosed
-      have h_disj_cd : Disjoint (circleOpenArc c d) (circleOpenArc d c) :=
-        disjoint_circleOpenArc hcd
-      have h_open_in_K₂c : ι '' circleOpenArc c d ⊆ K₂ᶜ := by
-        rintro _ ⟨w, hw, rfl⟩ ⟨t, ht⟩
-        have hwt : Circle.path d c t = w := hιinj ht
-        rw [← compl_range_circlePath hcd.symm] at hw
-        exact hw ⟨t, hwt⟩
-      have h_rev_in_K₁c : ι '' circleOpenArc d c ⊆ K₁ᶜ := by
-        rintro _ ⟨w, hw, rfl⟩ ⟨t, ht⟩
-        have hwt : Circle.path c d t = w := hιinj ht
-        rw [← compl_range_circlePath hcd] at hw
-        exact hw ⟨t, hwt⟩
-      have h_diff_union : F₀ \ {x, y} = (ι '' circleOpenArc c d) ∪ (ι '' circleOpenArc d c) := by
-        ext p
-        constructor
-        · rintro ⟨hpF₀, hp_xy⟩
-          let w : Circle := φ.symm ⟨p, hpF₀⟩
-          have hιw : ι w = p := by simp [ι, w]
-          have hw_ab : w ∈ ({a, b}ᶜ : Set Circle) := by
-            rintro (h | h)
-            · exact hp_xy (Or.inl (by rw [← hιw, h, hιa]))
-            · exact hp_xy (Or.inr (mem_singleton_iff.mpr (by rw [← hιw, mem_singleton_iff.mp h,
-                hιb])))
-          rw [compl_pair_eq_union_circleOpenArc hab] at hw_ab
-          rcases hor with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-          · rcases hw_ab with h | h
-            · exact Or.inl ⟨w, h, hιw⟩
-            · exact Or.inr ⟨w, h, hιw⟩
-          · rcases hw_ab with h | h
-            · exact Or.inr ⟨w, h, hιw⟩
-            · exact Or.inl ⟨w, h, hιw⟩
-        · rintro (h | h)
-          · exact hsub_diff h
-          · exact hsub_rev h
-      by_contra hz_not
-      have hz_rev : z ∈ ι '' circleOpenArc d c :=
-        (h_diff_union ▸ hz_diff).resolve_left hz_not
-      have hcov : connectedComponentIn (F₀ \ {x, y}) (ι w₀) ⊆ K₂ᶜ ∪ K₁ᶜ := fun p hp => by
-        rcases h_diff_union ▸ connectedComponentIn_subset _ _ hp with h | h
-        · exact Or.inl (h_open_in_K₂c h)
-        · exact Or.inr (h_rev_in_K₁c h)
-      obtain ⟨q, hq_cc, hqK₂, hqK₁⟩ :=
-        isPreconnected_connectedComponentIn K₂ᶜ K₁ᶜ hK₂_closed.isOpen_compl hK₁_closed.isOpen_compl
-          hcov ⟨ι w₀, mem_connectedComponentIn (hsub_diff ⟨w₀, hw₀, rfl⟩), h_open_in_K₂c ⟨w₀, hw₀,
-            rfl⟩⟩
-          ⟨z, hz, h_rev_in_K₁c hz_rev⟩
-      rcases h_diff_union ▸ connectedComponentIn_subset _ _ hq_cc with ⟨w, ⟨t, _, rfl⟩, rfl⟩ | ⟨w,
-        ⟨t, _, rfl⟩, rfl⟩
-      · exact hqK₁ ⟨t, rfl⟩
-      · exact hqK₂ ⟨t, rfl⟩
-    have h_eq_cc : ι '' circleOpenArc c d = connectedComponentIn (F₀ \ {x, y}) (ι w₀) :=
-      Subset.antisymm h_sub_cc h_cc_sub
-    have h_mem_comp : ι '' circleOpenArc c d ∈ componentsIn (F₀ \ {x, y}) :=
-      ⟨ι w₀, hsub_diff ⟨w₀, hw₀, rfl⟩, h_eq_cc.symm⟩
-    have h_line_cd : IsLineWithEnds (ι '' circleOpenArc c d ∪ {ι c, ι d}) (ι c) (ι d) := by
-      have heq_range : ι '' circleOpenArc c d ∪ {ι c, ι d} = range (ι ∘ Circle.path c d) := by
-        ext p
-        constructor
-        · rintro (⟨w, ⟨t, ht, rfl⟩, rfl⟩ | (rfl | hp))
-          · exact ⟨t, rfl⟩
-          · exact ⟨0, by simp⟩
-          · rw [mem_singleton_iff.mp hp]
-            exact ⟨1, by simp⟩
-        · rintro ⟨t, rfl⟩
-          by_cases ht0 : t = 0
-          · subst ht0; exact Or.inr (Or.inl (by simp))
-          · by_cases ht1 : t = 1
-            · subst ht1; exact Or.inr (Or.inr (by simp))
-            · exact Or.inl ⟨Circle.path c d t, ⟨t, ⟨unitInterval.pos_iff_ne_zero.mpr ht0,
-                unitInterval.lt_one_iff_ne_one.mpr ht1⟩, rfl⟩, rfl⟩
-      rw [heq_range]
-      have h_inj : Function.Injective (ι ∘ Circle.path c d) :=
-        hιinj.comp (Circle.path_injective_of_ne hcd)
-      have hemb : IsEmbedding (ι ∘ Circle.path c d) :=
-        ((hι.comp (Circle.path c d).continuous).isClosedEmbedding h_inj).isEmbedding
-      exact ⟨hemb.toHomeomorph, by simp, by simp⟩
-    refine ⟨h_mem_comp, hsub_diff.trans sdiff_subset, ?_⟩
-    rcases hor with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-    · rwa [hιa, hιb] at h_line_cd
-    · rw [hιa, hιb, pair_comm y x] at h_line_cd
-      exact h_line_cd.symm
-  have h₁ := h_arc_props a b hab (Or.inl ⟨rfl, rfl⟩)
-  have h₂ := h_arc_props b a hab.symm (Or.inr ⟨rfl, rfl⟩)
-  let B₁ := ι '' circleOpenArc a b
-  let B₂ := ι '' circleOpenArc b a
-  have h_disj : Disjoint (V ∩ B₁) (V ∩ B₂) := by
-    refine disjoint_left.mpr ?_
-    rintro z ⟨_, w₁, hw₁, rfl⟩ ⟨_, w₂, hw₂, h_eq⟩
-    obtain rfl : w₁ = w₂ := hιinj h_eq.symm
-    exact disjoint_left.mp (disjoint_circleOpenArc hab) hw₁ hw₂
-  have h_sub_F₀ : (V ∩ B₁) ∪ (V ∩ B₂) ⊆ V ∩ F₀ :=
-    union_subset (inter_subset_inter_right V h₁.2.1) (inter_subset_inter_right V h₂.2.1)
-  have h_sum : (V ∩ B₁).ncard + (V ∩ B₂).ncard ≤ (V ∩ F₀).ncard := by
-    rw [← ncard_union_eq h_disj (hV.inter_of_left B₁) (hV.inter_of_left B₂)]
-    exact ncard_le_ncard h_sub_F₀ (hV.inter_of_left F₀)
+  obtain ⟨B₁, B₂, hcomponents, hdisjoint, hcover, hline₁, hline₂⟩ :=
+    Net.oArc_components_diff_pair hF₀ hx hy hxy
+  have hsub : B₁ ∪ B₂ ⊆ F₀ := by
+    rw [← hcover]
+    exact sdiff_subset
+  have hsub₁ : B₁ ⊆ F₀ := subset_union_left.trans hsub
+  have hsub₂ : B₂ ⊆ F₀ := subset_union_right.trans hsub
+  have hsum : (V ∩ B₁).ncard + (V ∩ B₂).ncard ≤ (V ∩ F₀).ncard := by
+    rw [← ncard_union_eq (hdisjoint.mono inter_subset_right inter_subset_right)
+      (hV.inter_of_left B₁) (hV.inter_of_left B₂)]
+    exact ncard_le_ncard
+      (union_subset (inter_subset_inter_right V hsub₁) (inter_subset_inter_right V hsub₂))
+      (hV.inter_of_left F₀)
   rcases le_or_gt (2 * (V ∩ B₁).ncard) (V ∩ F₀).ncard with hle | hgt
-  · exact ⟨B₁, h₁.1, h₁.2.1, hle, h₁.2.2⟩
-  · exact ⟨B₂, h₂.1, h₂.2.1, by omega, h₂.2.2⟩
+  · exact ⟨B₁, by rw [hcomponents]; exact mem_insert _ _, hsub₁, hle, hline₁⟩
+  · exact ⟨B₂, by rw [hcomponents]; exact mem_insert_of_mem _ rfl, hsub₂, by omega, hline₂⟩
 
 /-- Every `O`-arc is connected (`IsConnected`). -/
 theorem isConnected_of_isOArc {F : Set S} (hF : IsOArc F) : IsConnected F := by

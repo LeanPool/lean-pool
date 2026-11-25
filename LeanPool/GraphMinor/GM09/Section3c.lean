@@ -696,7 +696,8 @@ private theorem exists_overpass_gaps (S : Society α β)
   exact ⟨a_0, ha_0, a'_0, ha'_0, b_0, hb_0, b'_0, hb'_0, hd_ab, hd_ba, e₁, e₂,
     hP₁_ends, he₁_G₁, he₂_G₂⟩
 
-private theorem crookedTransaction_of_two_switches (S : Society α β)
+/-- Replacing one path by two disjoint switches across its gaps preserves crookedness. -/
+theorem crookedTransaction_of_two_switches (S : Society α β)
     {P_set : Set (Graph α β)} {P₁ L₁ L₂ : Graph α β} {A B : Set α}
     {a_0 a'_0 b_0 b'_0 e₁ e₂ u₁ u₂ : α}
     (hfence : S.IsFenceFor P_set A B)

@@ -645,65 +645,15 @@ theorem exists_boundary_disc_merge (hS : IsSurface S) [ConnectedSpace S]
     · exact hPY_step (hEb ▸ hxb)
     · exact Or.inl (Or.inl ⟨hgY (hE_bHalf hx),
         fun hbd => hbd (isInteriorPoint_of_mem_discInt hman hE ⟨hx, hxb⟩)⟩)
-  by_cases h2 : ∃ x y, x ∈ P ∧ y ∈ P ∧ x ∈ D ∧ y ∈ D ∧ x ≠ y
-  · obtain ⟨x, y, hxP, hyP, hxD, hyD, hxy⟩ := h2
-    rw [hU2] at htame
-    obtain ⟨F, hFf, hFc, hFu⟩ := htame
-    let F₂ : Set (Set S) := {J ∈ F | Disjoint J D}
-    have hF₂ : ⋃₀ F₂ = P \ D := by
-      ext w
-      constructor
-      · rintro ⟨J, ⟨hJ, hJD⟩, hw⟩
-        have h3 : w ∈ P \ discBd D := hFu ▸ mem_sUnion_of_mem hw hJ
-        exact ⟨h3.1, fun h4 => Set.disjoint_left.mp hJD hw h4⟩
-      · rintro ⟨hwP, hwD⟩
-        have h3 : w ∈ P \ discBd D := ⟨hwP, fun h4 => hwD (discBd_subset D h4)⟩
-        rw [← hFu] at h3
-        obtain ⟨J, hJ, hwJ⟩ := h3
-        have hJb : Disjoint J (discBd D) := by
-          rw [Set.disjoint_left]
-          intro v hv hv'
-          have : v ∈ P \ discBd D := hFu ▸ mem_sUnion_of_mem hv hJ
-          exact this.2 hv'
-        rcases hD.side hman (hFc J hJ) hJb with h4 | h4
-        · exact absurd (h4 hwJ).1 hwD
-        · exact ⟨J, ⟨hJ, h4⟩, hwJ⟩
-    have hDY_step : D ⊆ Y_step := fun w hw => Or.inl (Or.inr hw)
-    obtain ⟨D', hD'Y, hD', hDD', hPD'⟩ := exists_disc_cover hman hH_step hPY_step hPO hxP hyP hxy
-      _ D F₂ hDY_step hD hxD hyD (hFf.subset fun J hJ => hJ.1) le_rfl (fun J hJ => hFc J hJ.1) hF₂
-    obtain ⟨Δ, ⟨hΔD, hΔ, hΔb, -⟩, -⟩ := disc_oArc.{u} D' P hD' hPD' hPO
-    have hEΔ : E = Δ := eq_of_discBd_eq hS hns hE hΔ (hEb.trans hΔb.symm)
-    exact ⟨D', hD'Y, hD', hDD', hhalf_E.trans (hEΔ ▸ hΔD)⟩
-  · push Not at h2
-    have hdisj : Disjoint (discInt D) P := by
-      rw [Set.disjoint_left]
-      intro x hx hxP
-      have hopen : IsOpen ({x}ᶜ : Set S) := isOpen_compl_singleton
-      have hother : ∃ w ∈ P, w ≠ x := by
-        obtain ⟨φP⟩ := id hPO
-        by_cases h3 : (φP 1).1 = x
-        · refine ⟨(φP (Circle.exp Real.pi)).1, (φP _).2, fun h4 => ?_⟩
-          have h5 := φP.injective (Subtype.ext (h4.trans h3.symm))
-          have h6 := congrArg (fun w : Circle => (w : ℂ)) h5
-          simp at h6
-          norm_num at h6
-        · exact ⟨_, (φP 1).2, h3⟩
-      obtain ⟨w, hwP, hwx⟩ := hother
-      obtain ⟨v, hvP, hv1, hv2⟩ := hPO.isPreconnected _ _ (hD.isOpen_discInt hman) hopen
-        (fun y _ => by
-          by_cases h3 : y = x
-          · exact .inl (h3 ▸ hx)
-          · exact .inr h3) ⟨x, hxP, hx⟩ ⟨w, hwP, hwx⟩
-      exact hv2 (h2 x v hxP hvP hx.1 hv1.1).symm
-    have h0_in : (0 : ℂ) ∈ closedBall 0 2 ∩ bHalf :=
-      ⟨mem_closedBall_zero_iff.mpr (by norm_num), mem_ball_zero_iff.mpr (by norm_num),
-        capH52_nonneg 0⟩
-    have hbdE : Disjoint (discInt D) (discBd E) := hEb ▸ hdisj
-    rcases hE.side hman hD.isPreconnected_discInt hbdE with h3 | h3
-    · refine ⟨E, hEY_step, hE, ?_, hhalf_E⟩
-      exact hD.subset_closure_discInt.trans
-        (closure_minimal (h3.trans (discInt_subset E)) hE.isClosed)
-    · exact absurd (hclosedin ⟨0, h0_in, rfl⟩) (Set.disjoint_left.mp h3 hg0)
+  rw [hU2] at htame
+  have h0_in : (0 : ℂ) ∈ closedBall 0 2 ∩ bHalf :=
+    ⟨mem_closedBall_zero_iff.mpr (by norm_num), mem_ball_zero_iff.mpr (by norm_num),
+      capH52_nonneg 0⟩
+  have hzE : (discInt D ∩ E).Nonempty := ⟨g 0, hg0, hclosedin ⟨0, h0_in, rfl⟩⟩
+  obtain ⟨D', hD'Y, hD', hDD', hED'⟩ :=
+    exists_disc_cover_union hS hH_step (fun h => hns h.1) (fun _ hx => Or.inl (Or.inr hx))
+      hD hEY_step hE hEb hPO htame hzE
+  exact ⟨D', hD'Y, hD', hDD', hhalf_E.trans hED'⟩
 
 /-! ## 4. Collar Chart Data and Induction Over Boundary Charts -/
 

@@ -465,16 +465,11 @@ private theorem exists_borderSet_disjoint_of_sdiff_card
   have hvn' : v ∈ π.borderSet n \ A.vertexSet := h_eq.symm ▸ hvn
   exact hvn'.2 hvA
 
-/-- **Graph Minors XVII, (6.5)** (page 175):
-"Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $z$-redundant $\mathscr{T}$-central
-portrayal of a hypergraph $G$ with $warp \le q$, let $(A, B) \in \mathscr{T}$ have order
-$\le z$, let $\Theta$ be a cuff of $\Sigma$, and let $\pi$ have warp $p$ at $\Theta$. Let
-$ord(\mathscr{T}) > z + 2q + 2$. Then there exists either* (i) *a node $n$ bordering
-$\Theta$ with $|\beta(n)| = p$ and $\beta(n) \cap V(A) = \emptyset$, or* (ii) *a cell $c$
-bordering $\Theta$ with ends $n_1, n_2 \in dom(\gamma)$, such that $\gamma(n_1), \gamma(n_2)
-\notin V(A)$, there is no path of $(A \cap \alpha(c))^*$ between $\beta(n_1)$ and
-$\beta(n_2)$, and* $$|\beta(n_1) - V(A)| = |\beta(n_2) - V(A)| = p - 1 \ge 1.$$" -/
-theorem theorem_6_5_proof
+/-- Vertex-support form of **Graph Minors XVII, (6.5)** (page 175). In case (ii), no walk $W$ of
+$\alpha(c)^*$ between $\beta(n_1)$ and $\beta(n_2)$ has
+vertex support lies in $V(A)$ (since the $p$ paths in $\alpha'(c) = (\alpha(c) \cap B)/Z$ lift to
+$p$ disjoint paths in $\alpha(c)^*$ with vertex support in $V(\alpha(c)) \setminus V(A)$). -/
+theorem theorem_6_5_walk_subset
     {α : Type u} {β : Type v} {G : Hypergraph α β}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ q p z : ℕ}
     (h𝒯 : IsTangle G θ 𝒯) (π : Portrayal G) (hT : π.IsCentral 𝒯)
@@ -486,9 +481,8 @@ theorem theorem_6_5_proof
     (∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ ∃ n₁ n₂ : π.S, n₁ ≠ n₂ ∧ tilde c = {n₁, n₂} ∧
       n₁ ∈ π.domγ ∧ n₂ ∈ π.domγ ∧
       π.nodeVertex n₁ ∉ A.vertexSet ∧ π.nodeVertex n₂ ∉ A.vertexSet ∧
-      (∀ u ∈ (A ∩ π.cellGraph c).vertexSet ∩ π.borderSet n₁,
-       ∀ v ∈ (A ∩ π.cellGraph c).vertexSet ∩ π.borderSet n₂,
-       IsEmpty ((A ∩ π.cellGraph c).skeleton.Walk u v)) ∧
+      (∀ u ∈ π.borderSet n₁, ∀ v ∈ π.borderSet n₂,
+       ∀ W : (π.cellGraph c).skeleton.Walk u v, ¬ ({z | z ∈ W.support} ⊆ A.vertexSet)) ∧
       (π.borderSet n₁ \ A.vertexSet).ncard = p - 1 ∧
       (π.borderSet n₂ \ A.vertexSet).ncard = p - 1 ∧ 2 ≤ p) := by
   classical
@@ -630,22 +624,13 @@ theorem theorem_6_5_proof
       · exact (hm_ne rfl).elim
     refine ⟨c, hc, hcΘ, m₁, m₂, hm_ne, htilde_m, hm₁_dom'.1, hm₂_dom'.1, hm₁_dom'.2, hm₂_dom'.2,
       ?_, hm₁_card, hm₂_card, hp_ge2⟩
-    intro u₀ hu₀ v₀ hv₀
-    refine ⟨fun W_A => ?_⟩
-    let W_Ap := W_A.toPath.1
-    have hW_Ap_path : W_Ap.IsPath := W_A.toPath.2
-    have hle_Ac : A ∩ π.cellGraph c ≤ π.cellGraph c :=
-      inter_le_right hsep.left_le (π.cellGraph_le c hc)
-    obtain ⟨W_c, hsupp_c⟩ := walk_skeleton_mono hle_Ac W_Ap
-    have hW_c_path : W_c.IsPath := by
-      rw [SimpleGraph.Walk.isPath_def, hsupp_c]
-      exact SimpleGraph.Walk.IsPath.support_nodup hW_Ap_path
-    have hW_c_supp_A : {z | z ∈ W_c.support} ⊆ A.vertexSet := by
-      intro z hz
-      rw [hsupp_c] at hz
-      exact (walk_support_subset_vertexSet hu₀.1 W_Ap hz).1
+    intro u₀ hu₀ v₀ hv₀ W_c hW_sub
+    let W_cp := W_c.toPath.1
+    have hW_cp_path : W_cp.IsPath := W_c.toPath.2
+    have hW_cp_supp_A : {z | z ∈ W_cp.support} ⊆ A.vertexSet :=
+      fun z hz => hW_sub (SimpleGraph.Walk.support_toPath_subset_support W_c hz)
     let Q_extra : PathFromTo (π.cellGraph c).skeleton (π.borderPlus m₁) (π.borderPlus m₂) :=
-      ⟨u₀, v₀, W_c, hW_c_path, Or.inl hu₀.2, Or.inl hv₀.2⟩
+      ⟨u₀, v₀, W_cp, hW_cp_path, Or.inl hu₀, Or.inl hv₀⟩
     have hbp₁ := π.restrictQuotient_borderPlus A B hsep c' hc' m₁
     have hbp₂ := π.restrictQuotient_borderPlus A B hsep c' hc' m₂
     have hlift_linkage : ∀ i : Fin p,
@@ -661,7 +646,7 @@ theorem theorem_6_5_proof
       fun i => if h : i.1 < p then Q ⟨i.1, h⟩ else Q_extra
     have hQ_all_disj : Pairwise fun i j =>
         Disjoint {z | z ∈ (Q_all i).walk.support} {z | z ∈ (Q_all j).walk.support} := by
-      apply disjoint_paths_with_one_extra Q Q_extra _ _ hW_c_supp_A
+      apply disjoint_paths_with_one_extra Q Q_extra _ _ hW_cp_supp_A
       · intro i j hij
         simpa only [hQ_supp] using hP_disj hij
       · exact fun i _ hz => (hQ_sub i hz).2
@@ -681,7 +666,49 @@ theorem theorem_6_5_proof
     · exact hP_not_pair ⟨i.1, hi⟩
         ((hQ_first ⟨i.1, hi⟩).symm.trans hfirst_i)
         ((hQ_last ⟨i.1, hi⟩).symm.trans hlast_i)
-    · exact hm₁_dom'.2 (hfirst_i ▸ hu₀.1.1)
+    · have hu₀_A : u₀ ∈ A.vertexSet := hW_cp_supp_A W_cp.start_mem_support
+      exact hm₁_dom'.2 (hfirst_i ▸ hu₀_A)
+
+/-- **Graph Minors XVII, (6.5)** (page 175):
+"Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $z$-redundant $\mathscr{T}$-central
+portrayal of a hypergraph $G$ with $warp \le q$, let $(A, B) \in \mathscr{T}$ have order
+$\le z$, let $\Theta$ be a cuff of $\Sigma$, and let $\pi$ have warp $p$ at $\Theta$. Let
+$ord(\mathscr{T}) > z + 2q + 2$. Then there exists either* (i) *a node $n$ bordering
+$\Theta$ with $|\beta(n)| = p$ and $\beta(n) \cap V(A) = \emptyset$, or* (ii) *a cell $c$
+bordering $\Theta$ with ends $n_1, n_2 \in dom(\gamma)$, such that $\gamma(n_1), \gamma(n_2)
+\notin V(A)$, there is no path of $(A \cap \alpha(c))^*$ between $\beta(n_1)$ and
+$\beta(n_2)$, and* $$|\beta(n_1) - V(A)| = |\beta(n_2) - V(A)| = p - 1 \ge 1.$$" -/
+theorem theorem_6_5_proof
+    {α : Type u} {β : Type v} {G : Hypergraph α β}
+    {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ q p z : ℕ}
+    (h𝒯 : IsTangle G θ 𝒯) (π : Portrayal G) (hT : π.IsCentral 𝒯)
+    (hwarp : π.warp ≤ q) (hred : π.IsRedundant 𝒯 θ z)
+    (hθ : z + max 3 (2 * q + 2) < θ)
+    {A B : Hypergraph α β} (hAB : (A, B) ∈ 𝒯) (hord : separationOrder A B ≤ z)
+    {Θ : Set π.S} (hΘ : Θ ∈ cuffs π.S) (hp : π.warpAt Θ = p) :
+    (∃ n ∈ π.Γ.N ∩ Θ, (π.borderSet n).ncard = p ∧ Disjoint (π.borderSet n) A.vertexSet) ∨
+    (∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ ∃ n₁ n₂ : π.S, n₁ ≠ n₂ ∧ tilde c = {n₁, n₂} ∧
+      n₁ ∈ π.domγ ∧ n₂ ∈ π.domγ ∧
+      π.nodeVertex n₁ ∉ A.vertexSet ∧ π.nodeVertex n₂ ∉ A.vertexSet ∧
+      (∀ u ∈ (A ∩ π.cellGraph c).vertexSet ∩ π.borderSet n₁,
+       ∀ v ∈ (A ∩ π.cellGraph c).vertexSet ∩ π.borderSet n₂,
+       IsEmpty ((A ∩ π.cellGraph c).skeleton.Walk u v)) ∧
+      (π.borderSet n₁ \ A.vertexSet).ncard = p - 1 ∧
+      (π.borderSet n₂ \ A.vertexSet).ncard = p - 1 ∧ 2 ≤ p) := by
+  rcases theorem_6_5_walk_subset h𝒯 π hT hwarp hred hθ hAB hord hΘ hp with
+    hnode | ⟨c, hc, hcΘ, n₁, n₂, hne, ht, hd₁, hd₂, hv₁, hv₂, hwalk, hc₁, hc₂, hp₂⟩
+  · exact Or.inl hnode
+  · refine Or.inr ⟨c, hc, hcΘ, n₁, n₂, hne, ht, hd₁, hd₂, hv₁, hv₂, ?_, hc₁, hc₂, hp₂⟩
+    intro u hu v hv
+    refine ⟨fun W => ?_⟩
+    have hsep := h𝒯.isSeparation hAB
+    have hle : A ∩ π.cellGraph c ≤ π.cellGraph c :=
+      inter_le_right hsep.left_le (π.cellGraph_le c hc)
+    obtain ⟨W', hsupp⟩ := walk_skeleton_mono hle W
+    apply hwalk u hu.2 v hv.2 W'
+    intro z hz
+    rw [hsupp] at hz
+    exact (walk_support_subset_vertexSet hu.1 W hz).1
 
 /-! ## 4. Hitting All Border-Plus Sets on a Cuff: (6.6) (Pages 176–177) -/
 

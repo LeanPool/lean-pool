@@ -15,12 +15,12 @@ import LeanPool.GraphMinor.Surface.Epstein
 import LeanPool.GraphMinor.Surface.PushOff
 
 /-!
-# Graph Minors VII, Section 11a: Levine's Theorem by Capping Cuffs
+# Disc bounding by capping cuffs for Graph Minors VII, Section 11
 
-This file proves Levine's theorem [2] for general surfaces (with possibly nonempty boundary),
-as used in Graph Minors VII, Section 2 (page 214), (4.1) (page 222), and Section 11 (page 253):
-every `O`-arc `F ⊆ Z` in a surface `S` that is null-homotopic in `Z` bounds a closed disc `Δ ⊆ Z`
-with `discBd Δ = F` (`nullHomotopicOArcIn_bounds_disc`, `nullHomotopicOArc_bounds_disc`).
+An `O`-arc in `Z` that is null-homotopic in `Z` bounds a closed disc in `Z`. The relative
+lemma extends Robertson and Seymour's Graph Minors XI (7.2), page 93, to surfaces with
+boundary. The case `Z = univ` gives the ambient disc-bounding result that Graph Minors VII,
+Section 2, page 214, cites to H. I. Levine.
 
 The proof reduces to `Surface.EpsteinStatement` (which applies to `O`-arcs disjoint from the
 surface boundary in a connected surface) by capping all cuffs of `S` via `Surface.exists_capAll`
@@ -147,9 +147,9 @@ private theorem isSurface_and_bd_empty_of_isClosedSurface {T : Type u} [Topologi
   intro x hx
   exact hx (hT.2.2 x)
 
-/-- Levine's theorem [2] for an `O`-arc `F ⊆ Z` in any surface `S` (where `bd S` may be nonempty):
-if `F` is null-homotopic in `Z`, then `F` bounds a closed disc `Δ ⊆ Z` with `discBd Δ = F`.
-Proved from `Surface.epstein` by capping all cuffs of `S` via `Surface.exists_capAll`. -/
+/-- Relative disc bounding for an `O`-arc null-homotopic in `Z`. This extends Robertson and
+Seymour's Graph Minors XI (7.2), page 93, to surfaces with boundary. The proof caps the cuffs of
+`S` and applies the relative clause of `Surface.epstein`. -/
 theorem nullHomotopicOArcIn_bounds_disc
     (hS : IsSurface S) {Z F : Set S} (_hF : IsOArc F) (hFZ : F ⊆ Z)
     (hnull : IsNullHomotopicOArcIn Z F) :
@@ -276,8 +276,8 @@ theorem nullHomotopicOArcIn_bounds_disc
     change j_inv (j x) = x
     exact hj_inv_left (mem_univ x)
 
-/-- Levine's theorem [2] for `Z = univ`: every null-homotopic `O`-arc `F` in a surface `S` bounds
-a closed disc `Δ ⊆ S` with `discBd Δ = F`. -/
+/-- The ambient disc-bounding result cited to H. I. Levine in Graph Minors VII, Section 2,
+page 214. This is the case `Z = univ` of `nullHomotopicOArcIn_bounds_disc`. -/
 theorem nullHomotopicOArc_bounds_disc
     (hS : IsSurface S) {F : Set S} (hF : IsOArc F) (hnull : IsNullHomotopicOArc F) :
     ∃ Δ : Set S, IsClosedDisc Δ ∧ discBd Δ = F := by

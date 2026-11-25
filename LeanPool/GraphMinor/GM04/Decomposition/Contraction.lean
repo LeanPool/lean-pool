@@ -128,13 +128,6 @@ private theorem IsContraction.self_mem_componentAt (hF : F ⊆ T.edges) (hS : T.
     (T.isComponentRoot_self (hS.verts_subset_of_subset hF hs)
       ((hS.mem_verts_iff_of_subset hF).mp hs))
 
-private theorem IsContraction.disjoint_componentAt (_hF : F ⊆ T.edges) (_hS : T.IsContraction F S)
-    {s₁ s₂ : ι} (hne : s₁ ≠ s₂) :
-    Disjoint (T.componentAt F s₁) (T.componentAt F s₂) := by
-  rw [Finset.disjoint_left]
-  intro x hx₁ hx₂
-  exact hne (T.isComponentRoot_unique (T.mem_componentAt.mp hx₁) (T.mem_componentAt.mp hx₂))
-
 theorem IsContraction.reaches_of_reaches (hF : F ⊆ T.edges) (hS : T.IsContraction F S)
     {s₁ s₂ : ι} (h : S.Reaches s₁ s₂) : T.Reaches s₁ s₂ := by
   obtain ⟨hs₂, n, rfl⟩ := h
@@ -297,7 +290,7 @@ theorem contraction {ι : Type*} {G : RootedHypergraph α β}
     rintro ⟨x₁, hx₁, he₁⟩ ⟨x₂, hx₂, he₂⟩
     have hx_ne : x₁ ≠ x₂ := by
       rintro rfl
-      exact Finset.disjoint_left.mp (hS.disjoint_componentAt hF hne) hx₁ hx₂
+      exact Finset.disjoint_left.mp (T.disjoint_componentAt (F := F) hne) hx₁ hx₂
     have he : e ∈ ((τ x₁).toHypergraph ∩ (τ x₂).toHypergraph).edgeSet := ⟨he₁, he₂⟩
     rw [h.edgeSet_inter_eq x₁ (T.componentAt_subset_verts F s₁ hx₁)
       x₂ (T.componentAt_subset_verts F s₂ hx₂) hx_ne] at he
@@ -329,7 +322,7 @@ theorem contraction {ι : Type*} {G : RootedHypergraph α β}
           rintro ⟨x₁, hx₁, he₁⟩ ⟨x₃, hx₃, he₃⟩
           have hx_ne : x₁ ≠ x₃ := by
             rintro rfl
-            exact Finset.disjoint_left.mp (hS.disjoint_componentAt hF h₁₃) hx₁ hx₃
+            exact Finset.disjoint_left.mp (T.disjoint_componentAt (F := F) h₁₃) hx₁ hx₃
           have he : e ∈ ((τ x₁).toHypergraph ∩ (τ x₃).toHypergraph).edgeSet := ⟨he₁, he₃⟩
           rw [h.edgeSet_inter_eq x₁ (T.componentAt_subset_verts F s₁ hx₁)
             x₃ (T.componentAt_subset_verts F s₃ hx₃) hx_ne] at he

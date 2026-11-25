@@ -53,7 +53,7 @@ private theorem convex_halfPlane : Convex ℝ halfPlane := by
 
 /-- In a Hausdorff space, two points `a, b ∈ Z` are joined by a path in `Z` (`JoinedIn Z a b`) if
 and only if `a = b` or there is a `[0, 1]`-arc in `Z` with ends `a, b`. -/
-private theorem joinedIn_iff_eq_or_exists_isLineWithEnds' [T2Space S] {Z : Set S} {a b : S}
+theorem joinedIn_iff_eq_or_exists_isLineWithEnds [T2Space S] {Z : Set S} {a b : S}
     (ha : a ∈ Z) (hb : b ∈ Z) :
     JoinedIn Z a b ↔ a = b ∨ ∃ L : Set S, L ⊆ Z ∧ IsLineWithEnds L a b := by
   constructor
@@ -78,12 +78,23 @@ private theorem joinedIn_iff_eq_or_exists_isLineWithEnds' [T2Space S] {Z : Set S
           target' := hf1 }
       exact ⟨p, fun t => hLZ (f t).2⟩
 
+/-- In a Hausdorff space, `IsArcConnected Z` is equivalent to `∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b`. -/
+theorem isArcConnected_iff_joinedIn [T2Space S] {Z : Set S} :
+    IsArcConnected Z ↔ ∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b := by
+  constructor
+  · intro h a ha b hb
+    rw [joinedIn_iff_eq_or_exists_isLineWithEnds ha hb]
+    rcases eq_or_ne a b with rfl | hne
+    · exact Or.inl rfl
+    · exact Or.inr (h a ha b hb hne)
+  · intro h a ha b hb hne
+    have hj := (joinedIn_iff_eq_or_exists_isLineWithEnds ha hb).mp (h a ha b hb)
+    exact hj.resolve_left hne
+
 /-- In a Hausdorff space, a path-connected subset is arc-connected. -/
-private theorem isArcConnected_of_isPathConnected [T2Space S] {Z : Set S}
-    (hZ : IsPathConnected Z) : IsArcConnected Z := by
-  intro a ha b hb hne
-  exact ((joinedIn_iff_eq_or_exists_isLineWithEnds' ha hb).mp
-    (hZ.joinedIn a ha b hb)).resolve_left hne
+theorem IsPathConnected.isArcConnected [T2Space S] {Z : Set S} (hZ : IsPathConnected Z) :
+    IsArcConnected Z :=
+  isArcConnected_iff_joinedIn.mpr fun _ ha _ hb => hZ.joinedIn _ ha _ hb
 
 /-- In a Hausdorff space, if `Z` is arc-connected and `a, b ∈ Z`, there is a continuous path
 `γ : C(unitInterval, S)` in `Z` from `a` to `b`. -/
@@ -176,7 +187,7 @@ theorem exists_chart_ball_interp (hS : IsSurface S) (x : S) {A : Set S}
       exact ⟨j y, hjW hy, hkjW hy⟩
   have hW_arc : IsArcConnected W := by
     rw [← hW_eq]
-    exact isArcConnected_of_isPathConnected (hB_pc.image' hkB_cont)
+    exact IsPathConnected.isArcConnected (hB_pc.image' hkB_cont)
   have hW_flat : IsFlat W := by
     intro φ hφW
     let L : Circle × unitInterval → ℂ :=
@@ -956,7 +967,7 @@ theorem flat_locallyArcConnected_open_superset (hS : IsSurface S) {Z : Set S}
     have hj₁ : JoinedIn Y a z₁ := ⟨p₁, fun t => mem_iUnion₂.mpr ⟨z₁, hz₁Z, hγ₁ (mem_range_self t)⟩⟩
     have hj₂ : JoinedIn Y z₁ z₂ := ⟨p₂, fun t => hZY (hγ₂ (mem_range_self t))⟩
     have hj₃ : JoinedIn Y z₂ b := ⟨p₃, fun t => mem_iUnion₂.mpr ⟨z₂, hz₂Z, hγ₃ (mem_range_self t)⟩⟩
-    exact ((joinedIn_iff_eq_or_exists_isLineWithEnds' ha hb).mp
+    exact ((joinedIn_iff_eq_or_exists_isLineWithEnds ha hb).mp
       (hj₁.trans (hj₂.trans hj₃))).resolve_left hne
   -- Step 5: Check `IsFlat Y`.
   refine ⟨Y, hZY, hY_open, ?_, hY_lac, hY_arc_imp⟩

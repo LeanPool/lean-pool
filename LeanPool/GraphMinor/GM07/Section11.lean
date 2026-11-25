@@ -10,9 +10,9 @@ module
 
 public import LeanPool.GraphMinor.GM07.Defs
 import LeanPool.GraphMinor.GM07.Section11a
-import LeanPool.GraphMinor.GM07.Section11b
+public import LeanPool.GraphMinor.GM07.Section11b
 import LeanPool.GraphMinor.GM07.Section11c
-import LeanPool.GraphMinor.GM07.Section11d
+public import LeanPool.GraphMinor.GM07.Section11d
 import LeanPool.GraphMinor.GM07.Section11e
 import LeanPool.GraphMinor.GM07.Section11g
 import LeanPool.GraphMinor.Surface.ArcInPath
@@ -181,51 +181,6 @@ theorem theorem_11_1_proof (hS : IsSurface S) (φ : C(unitInterval, S)) (hne : �
   have he_emb : IsEmbedding e := (he_cont.isClosedEmbedding he_inj).isEmbedding
   exact ⟨range e, he_sub, he_emb.toHomeomorph, he0, he1⟩
 
-/-- In a Hausdorff space, two points `a, b ∈ Z` are joined by a path in `Z` (`JoinedIn Z a b`) if
-and only if `a = b` or there is a `[0, 1]`-arc in `Z` with ends `a, b`. -/
-theorem joinedIn_iff_eq_or_exists_isLineWithEnds [T2Space S] {Z : Set S} {a b : S}
-    (ha : a ∈ Z) (hb : b ∈ Z) :
-    JoinedIn Z a b ↔ a = b ∨ ∃ L : Set S, L ⊆ Z ∧ IsLineWithEnds L a b := by
-  constructor
-  · intro h
-    rcases eq_or_ne a b with rfl | hne
-    · exact Or.inl rfl
-    · obtain ⟨γ, hγ⟩ := h
-      obtain ⟨e, he_cont, he_inj, he0, he1, he_sub⟩ :=
-        exists_arc_of_path γ.continuous (by simpa [γ.source, γ.target] using hne)
-      have he_emb : IsEmbedding e := (he_cont.isClosedEmbedding he_inj).isEmbedding
-      refine Or.inr ⟨range e, ?_, he_emb.toHomeomorph, ?_, ?_⟩
-      · intro x hx
-        obtain ⟨t, rfl⟩ := he_sub hx
-        exact hγ t
-      · exact he0.trans γ.source
-      · exact he1.trans γ.target
-  · rintro (rfl | ⟨L, hLZ, f, hf0, hf1⟩)
-    · exact JoinedIn.refl ha
-    · let p : Path a b :=
-        { toContinuousMap := ⟨fun t => (f t).1, continuous_subtype_val.comp f.continuous⟩
-          source' := hf0
-          target' := hf1 }
-      exact ⟨p, fun t => hLZ (f t).2⟩
-
-/-- In a Hausdorff space, `IsArcConnected Z` is equivalent to `∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b`. -/
-theorem isArcConnected_iff_joinedIn [T2Space S] {Z : Set S} :
-    IsArcConnected Z ↔ ∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b := by
-  constructor
-  · intro h a ha b hb
-    rw [joinedIn_iff_eq_or_exists_isLineWithEnds ha hb]
-    rcases eq_or_ne a b with rfl | hne
-    · exact Or.inl rfl
-    · exact Or.inr (h a ha b hb hne)
-  · intro h a ha b hb hne
-    have hj := (joinedIn_iff_eq_or_exists_isLineWithEnds ha hb).mp (h a ha b hb)
-    exact hj.resolve_left hne
-
-/-- In a Hausdorff space, a path-connected subset is arc-connected. -/
-theorem IsPathConnected.isArcConnected [T2Space S] {Z : Set S} (hZ : IsPathConnected Z) :
-    IsArcConnected Z :=
-  isArcConnected_iff_joinedIn.mpr fun _ ha _ hb => hZ.joinedIn _ ha _ hb
-
 /-- In a Hausdorff space, a nonempty subset is arc-connected if and only if it is path-connected. -/
 theorem isArcConnected_iff_isPathConnected [T2Space S] {Z : Set S} (hne : Z.Nonempty) :
     IsArcConnected Z ↔ IsPathConnected Z := by
@@ -294,17 +249,6 @@ theorem theorem_11_2_proof
     (hφ : ¬ ClosedCurveIsNullHomotopicIn univ φ) :
     ∃ F : Set S, IsOArc F ∧ F ⊆ range φ ∧ ¬ IsNullHomotopicOArc F :=
   nonNullHomotopicOArc_in_curve hS φ hφ
-
-/-- Contrapositive of (11.2): a subset `Z ⊆ S` is flat if every `O`-arc `F ⊆ Z` is null-homotopic
-in `S`. -/
-theorem isFlat_of_forall_isNullHomotopicOArc
-    (hS : IsSurface S) {Z : Set S}
-    (h : ∀ F : Set S, F ⊆ Z → IsOArc F → IsNullHomotopicOArc F) :
-    IsFlat Z := by
-  intro φ hφZ
-  by_contra hnot
-  obtain ⟨F, hF_oarc, hF_range, hF_not_null⟩ := theorem_11_2_proof hS φ hnot
-  exact hF_not_null (h F (hF_range.trans hφZ) hF_oarc)
 
 /-- "By (11.2), a simply connected set is flat." (Graph Minors VII, Section 11, page 253). -/
 theorem IsSimplyConnectedSubset.isFlat
@@ -470,48 +414,6 @@ theorem theorem_11_6_proof (hS : IsSurface S) {Z₁ Z₂ : Set S}
 
 /-! ## (11.7): Finiteness of Arc-Components of Solid Sets and Solid Flat Arc-Connected Superset -/
 
-/-- `arcComponentsIn Z` is the image of `Z` under `pathComponentIn Z`. -/
-theorem arcComponentsIn_eq_image_pathComponentIn (Z : Set S) :
-    arcComponentsIn Z = (pathComponentIn Z) '' Z := by
-  ext C
-  constructor
-  · rintro ⟨⟨x, hxC⟩, hCZ, hC_pc, hC_max⟩
-    have hxZ : x ∈ Z := hCZ hxC
-    refine ⟨x, hxZ, ?_⟩
-    exact hC_max (pathComponentIn Z x) pathComponentIn_subset (isPathConnected_pathComponentIn hxZ)
-      (hC_pc.subset_pathComponentIn hxC hCZ)
-  · rintro ⟨x, hxZ, rfl⟩
-    exact pathComponentIn_mem_arcComponentsIn hxZ
-
-/-- Every solid subset of a surface has only finitely many arc-components. This formalizes the
-first step of the proof of Graph Minors VII, (11.7) (page 253): "Hence $Z$ has only finitely many
-arc-components." -/
-theorem arcComponentsIn_finite_of_isSolid (hS : IsSurface S) {Z : Set S} (hZ : IsSolid Z) :
-    (arcComponentsIn Z).Finite := by
-  have : CompactSpace S := hS.1
-  have : T2Space S := hS.2.1
-  have hZ_compact : IsCompact Z := hZ.2.isCompact
-  have hex : ∀ z : S, ∃ A : Set S, IsOpen A ∧ z ∈ A ∧ (z ∈ Z → IsArcConnected (Z ∩ A)) := by
-    intro z
-    by_cases hz : z ∈ Z
-    · obtain ⟨A, _, hzA, hA_open, hZA_arc⟩ := hZ.1 z hz univ isOpen_univ (mem_univ z)
-      exact ⟨A, hA_open, hzA, fun _ => hZA_arc⟩
-    · exact ⟨univ, isOpen_univ, mem_univ z, fun hz' => absurd hz' hz⟩
-  choose A hA_open hzA hZA_arc using hex
-  have hcov : Z ⊆ ⋃ z ∈ Z, A z := fun z hz => mem_iUnion₂.mpr ⟨z, hz, hzA z⟩
-  obtain ⟨t, htZ, ht_fin, ht_cov⟩ :=
-    hZ_compact.elim_finite_subcover_image (fun z _ => hA_open z) hcov
-  rw [arcComponentsIn_eq_image_pathComponentIn]
-  refine (ht_fin.image (pathComponentIn Z)).subset ?_
-  rintro _ ⟨y, hyZ, rfl⟩
-  obtain ⟨z, hzt, hyAz⟩ := mem_iUnion₂.mp (ht_cov hyZ)
-  have hzZ : z ∈ Z := htZ hzt
-  have hj : JoinedIn (Z ∩ A z) z y :=
-    isArcConnected_iff_joinedIn.mp (hZA_arc z hzZ) z ⟨hzZ, hzA z⟩ y ⟨hyZ, hyAz⟩
-  have hjZ : JoinedIn Z z y := hj.mono inter_subset_left
-  refine ⟨z, hzt, ?_⟩
-  exact (pathComponentIn_congr hjZ).symm
-
 /-- If `arcComponentsIn Z` is finite and has `ncard ≤ 1`, then `Z` is arc-connected. -/
 theorem isArcConnected_of_arcComponentsIn_ncard_le_one [T2Space S] {Z : Set S}
     (hfin : (arcComponentsIn Z).Finite) (hle : (arcComponentsIn Z).ncard ≤ 1) :
@@ -649,14 +551,6 @@ theorem isArcConnected_union_closedDisc (hS : IsSurface S) {Y Δ : Set S}
   have hY_pc : IsPathConnected Y := (isArcConnected_iff_isPathConnected ⟨x₀, hx₀_Y⟩).mp hY
   have hΔ_pc : IsPathConnected Δ := hΔ.isPathConnected
   exact IsPathConnected.isArcConnected (hY_pc.union hΔ_pc ⟨x₀, hx₀_Y, hx₀_Δ⟩)
-
-/-- Every `O`-arc `F` contained in a flat subset `Y ⊆ S` is null-homotopic in `S`. -/
-theorem isNullHomotopicOArc_of_isFlat {Y F : Set S} (hY : IsFlat Y) (hFY : F ⊆ Y)
-    (hF : IsOArc F) : IsNullHomotopicOArc F := by
-  obtain ⟨φ⟩ := hF
-  refine ⟨φ, hY ⟨fun x => (φ x).1, continuous_subtype_val.comp φ.continuous⟩ ?_⟩
-  rintro _ ⟨x, rfl⟩
-  exact hFY (φ x).2
 
 /-- Graph Minors VII, (11.8) for closed surfaces (`bd S = ∅`), proved from `Surface.epstein` and
 (11.3). -/

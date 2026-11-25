@@ -113,14 +113,14 @@ theorem exists_mem_line_ne {a b : T} {c : Set T} (hc : IsLineWithEnds c a b) (_h
 
 private theorem beside_cap_aux [T2Space T] (hman : ∀ x : T, IsManifoldPoint x)
     {R E B c Δ₁ Q D₁ D₂ L L' : Set T} {a b : T} (hab : a ≠ b)
-    (_hE : IsClosedDisc E) (hB : IsLineWithEnds B a b) (hBE : B ∩ E ⊆ {a, b})
+    (hB : IsLineWithEnds B a b) (hBE : B ∩ E ⊆ {a, b})
     (hc : IsLineWithEnds c a b) (hcE : c ⊆ E) (hcbd : c ∩ discBd E = {a, b})
     (hΔ₁ : IsClosedDisc Δ₁) (hbΔ₁ : discBd Δ₁ = B ∪ c)
     (hQΔ : Q ∩ Δ₁ ⊆ c) (hbdR : discBd R = B ∪ Q)
-    (_hD₁ : IsClosedDisc D₁) (hD₂ : IsClosedDisc D₂) (hDu : D₁ ∪ D₂ = E)
+    (hD₂ : IsClosedDisc D₂) (hDu : D₁ ∪ D₂ = E)
     (hb₁ : discBd D₁ = L' ∪ c) (hb₂ : discBd D₂ = L ∪ c)
     (hL : IsLineWithEnds L a b) (hLE : L ⊆ discBd E) (hL'E : L' ⊆ discBd E)
-    (_hint₁ : discInt D₁ ⊆ discInt E) (hint₂ : discInt D₂ ⊆ discInt E)
+    (hint₂ : discInt D₂ ⊆ discInt E)
     (hin : discInt D₂ ⊆ discInt Δ₁) (hout : Disjoint (discInt D₁) Δ₁) :
     ∃ Z, IsClosedDisc Z ∧ discBd Z = L ∪ B ∧ Disjoint Z (discInt E) ∧
       Disjoint (L \ {a, b}) (discBd R) := by
@@ -339,11 +339,11 @@ theorem exists_disc_beside_cap [T2Space T] (hman : ∀ x : T, IsManifoldPoint x)
       · exact disjoint_left.mp h₁ h hy₁.1
       · exact disjoint_left.mp h₂ h hy₁.1
   rcases hcase with ⟨hin, hout⟩ | ⟨hin, hout⟩
-  · obtain ⟨Z, hZ, hbZ, hZE, hoffR⟩ := beside_cap_aux hman hab hE hB hBE hc hcE hcbd hd₁ hb₁
-      hQΔ hbdR hD₁ hD₂ huE hbD₁ hbD₂ hP₂ hP₂E hP₁E hint₁ hint₂ hin hout
+  · obtain ⟨Z, hZ, hbZ, hZE, hoffR⟩ := beside_cap_aux hman hab hB hBE hc hcE hcbd hd₁ hb₁
+      hQΔ hbdR hD₂ huE hbD₁ hbD₂ hP₂ hP₂E hP₁E hint₂ hin hout
     exact ⟨Z, P₂, hP₂, hP₂E, hZ, hbZ, hZE, hoffR⟩
-  · obtain ⟨Z, hZ, hbZ, hZE, hoffR⟩ := beside_cap_aux hman hab hE hB hBE hc hcE hcbd hd₁ hb₁
-      hQΔ hbdR hD₂ hD₁ (by rw [union_comm]; exact huE) hbD₂ hbD₁ hP hP₁E hP₂E hint₂ hint₁ hin hout
+  · obtain ⟨Z, hZ, hbZ, hZE, hoffR⟩ := beside_cap_aux hman hab hB hBE hc hcE hcbd hd₁ hb₁
+      hQΔ hbdR hD₁ (by rwa [union_comm]) hbD₂ hbD₁ hP hP₁E hP₂E hint₁ hin hout
     exact ⟨Z, P, hP, hP₁E, hZ, hbZ, hZE, hoffR⟩
 
 end GraphMinor.GM07

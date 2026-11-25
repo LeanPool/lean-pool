@@ -661,42 +661,21 @@ theorem exists_tame_curve [CompactSpace S] [T2Space S] (hman : ∀ x : S, IsMani
   have h2 : ‖z‖ ≤ 2 := mem_closedBall_zero_iff.mp hz
   linarith
 
-/-- The heart of `exists_disc_merge`, when the chart has a small ball around a point `r` of the
-positive real axis that misses the boundary of the disc. -/
-theorem exists_disc_merge_aux [CompactSpace S] [T2Space S] [ConnectedSpace S]
-    (hint : ∀ x : S, IsInteriorPoint x) {Y : Set S}
+/-- Two overlapping closed discs lie in a common disc if the second boundary meets the first
+in finitely many connected pieces off its boundary and every circle in the region bounds there. -/
+theorem exists_disc_cover_union [ConnectedSpace S] (hS : IsSurface S) {Y D E P : Set S}
     (H : ∀ F : Set S, F ⊆ Y → IsOArc F → ∃ Δ : Set S, Δ ⊆ Y ∧ IsClosedDisc Δ ∧ discBd Δ = F)
-    (hns : ¬ (IsSphere S ∧ Y = univ)) {D : Set S} (hDY : D ⊆ Y) (hD : IsClosedDisc D)
-    {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y)
-    (hz : (discInt D ∩ g '' ball 0 1).Nonempty) {r ρ : ℝ} (hr2 : 2 < r) (hr3 : r < 3) (hρ : 0 < ρ)
-    (hfree : ∀ z ∈ ball (r : ℂ) ρ, g z ∉ discBd D) :
-    ∃ D' : Set S, D' ⊆ Y ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
+    (hns : ¬ (IsSphere S ∧ Y = univ)) (hDY : D ⊆ Y) (hD : IsClosedDisc D)
+    (hEY : E ⊆ Y) (hE : IsClosedDisc E) (hEb : discBd E = P) (hPO : IsOArc P)
+    (htame : FinConn (P \ discBd D)) (hz : (discInt D ∩ E).Nonempty) :
+    ∃ D' : Set S, D' ⊆ Y ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ E ⊆ D' := by
   classical
-  have hman : ∀ x : S, IsManifoldPoint x := fun x => (hint x).isManifoldPoint
-  -- the boundary of `D` as two arcs
-  have hG := hD.isOArc_discBd
-  obtain ⟨φG⟩ := id hG
-  have hne : (φG 1).1 ≠ (φG (Circle.exp Real.pi)).1 := fun he => by
-    have h1 := φG.injective (Subtype.ext he)
-    have h2 := congrArg (fun w : Circle => (w : ℂ)) h1
-    simp at h2
-    norm_num at h2
-  obtain ⟨α, β, hαβ, -, -, hr⟩ := hG.exists_arcs (φG 1).2 (φG _).2 hne
-  obtain ⟨P, E, hPO, htame, hE, hEb, hclosedin, hEU, -⟩ := exists_tame_curve hman c [α, β]
-    (by simpa using ⟨hαβ.1, hαβ.2⟩) hr2 hr3 hρ fun z hz γ hγ h1 => hfree z hz (by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hγ
-      rcases hγ with rfl | rfl
-      · exact hr ▸ subset_union_left h1
-      · exact hr ▸ subset_union_right h1)
-  have hPU : P ⊆ U := (hEb ▸ discBd_subset E).trans hEU
-  have hPY : P ⊆ Y := hPU.trans hUY
-  have hb2 : closedBall (0 : ℂ) 2 ⊆ ball 0 3 := closedBall_subset_ball (by norm_num)
+  have := hS.1
+  have := hS.2.1
+  have hman := hS.2.2
+  have hPY : P ⊆ Y := (hEb ▸ discBd_subset E).trans hEY
   by_cases h2 : ∃ x y, x ∈ P ∧ y ∈ P ∧ x ∈ D ∧ y ∈ D ∧ x ≠ y
   · obtain ⟨x, y, hxP, hyP, hxD, hyD, hxy⟩ := h2
-    have hU2 : (⋃ g' ∈ [α, β], range g') = discBd D := by
-      rw [← hr]
-      simp
-    rw [hU2] at htame
     obtain ⟨F, hFf, hFc, hFu⟩ := htame
     let F₂ : Set (Set S) := {J ∈ F | Disjoint J D}
     have hF₂ : ⋃₀ F₂ = P \ D := by
@@ -720,9 +699,8 @@ theorem exists_disc_merge_aux [CompactSpace S] [T2Space S] [ConnectedSpace S]
     obtain ⟨D', hD'Y, hD', hDD', hPD'⟩ := exists_disc_cover hman H hPY hPO hxP hyP hxy _ D F₂ hDY hD
       hxD hyD (hFf.subset fun J hJ => hJ.1) le_rfl (fun J hJ => hFc J hJ.1) hF₂
     obtain ⟨Δ, ⟨hΔD, hΔ, hΔb, -⟩, -⟩ := disc_oArc.{u} D' P hD' hPD' hPO
-    have hS : IsSurface S := ⟨inferInstance, inferInstance, hman⟩
     by_cases hEΔ : E = Δ
-    · exact ⟨D', hD'Y, hD', hDD', hclosedin.trans (hEΔ ▸ hΔD)⟩
+    · exact ⟨D', hD'Y, hD', hDD', hEΔ ▸ hΔD⟩
     · exfalso
       have hsph : IsSphere S := by
         by_contra hns'
@@ -732,7 +710,6 @@ theorem exists_disc_merge_aux [CompactSpace S] [T2Space S] [ConnectedSpace S]
         rw [eq_univ_iff_forall]
         intro w
         have hw : w ∈ Δ₁ ∪ Δ₂ := hu ▸ mem_univ w
-        have hEY : E ⊆ Y := hEU.trans hUY
         have hΔY : Δ ⊆ Y := hΔD.trans hD'Y
         rcases huniq E hE hEb with h3 | h3 <;> rcases huniq Δ hΔ hΔb with h4 | h4
         · exact absurd (h3.trans h4.symm) hEΔ
@@ -765,23 +742,58 @@ theorem exists_disc_merge_aux [CompactSpace S] [T2Space S] [ConnectedSpace S]
           · exact .inl (h3 ▸ hx)
           · exact .inr h3) ⟨x, hxP, hx⟩ ⟨w, hwP, hwx⟩
       exact hv2 (h2 x v hxP hvP hx.1 hv1.1).symm
-    obtain ⟨z, hzD, w, hw, rfl⟩ := hz
-    have hwin : w ∈ closedBall (0 : ℂ) 2 :=
-      closedBall_subset_closedBall (by norm_num) (ball_subset_closedBall hw)
+    obtain ⟨z, hzD, hzE⟩ := hz
     have hbdE : Disjoint (discInt D) (discBd E) := hEb ▸ hdisj
     rcases hE.side hman hD.isPreconnected_discInt hbdE with h3 | h3
-    · refine ⟨E, hEU.trans hUY, hE, ?_, hclosedin⟩
+    · refine ⟨E, hEY, hE, ?_, subset_rfl⟩
       exact hD.subset_closure_discInt.trans
         (closure_minimal (h3.trans (discInt_subset E)) hE.isClosed)
-    · exact absurd (hclosedin ⟨w, hwin, rfl⟩) (Set.disjoint_left.mp h3 hzD)
+    · exact absurd hzE (Set.disjoint_left.mp h3 hzD)
+
+/-- Merge a disc and a ball chart when a small ball around a point `r` of the
+positive real axis that misses the boundary of the disc. -/
+theorem exists_disc_merge_in_chart_aux [ConnectedSpace S] (hS : IsSurface S) {Y : Set S}
+    (H : ∀ F : Set S, F ⊆ Y → IsOArc F → ∃ Δ : Set S, Δ ⊆ Y ∧ IsClosedDisc Δ ∧ discBd Δ = F)
+    (hns : ¬ (IsSphere S ∧ Y = univ)) {D : Set S} (hDY : D ⊆ Y) (hD : IsClosedDisc D)
+    {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y)
+    (hz : (discInt D ∩ g '' ball 0 1).Nonempty) {r ρ : ℝ} (hr2 : 2 < r) (hr3 : r < 3) (hρ : 0 < ρ)
+    (hfree : ∀ z ∈ ball (r : ℂ) ρ, g z ∉ discBd D) :
+    ∃ D' : Set S, D' ⊆ Y ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
+  classical
+  have := hS.1
+  have := hS.2.1
+  have hman := hS.2.2
+  -- the boundary of `D` as two arcs
+  have hG := hD.isOArc_discBd
+  obtain ⟨φG⟩ := id hG
+  have hne : (φG 1).1 ≠ (φG (Circle.exp Real.pi)).1 := fun he => by
+    have h1 := φG.injective (Subtype.ext he)
+    have h2 := congrArg (fun w : Circle => (w : ℂ)) h1
+    simp at h2
+    norm_num at h2
+  obtain ⟨α, β, hαβ, -, -, hr⟩ := hG.exists_arcs (φG 1).2 (φG _).2 hne
+  obtain ⟨P, E, hPO, htame, hE, hEb, hclosedin, hEU, -⟩ := exists_tame_curve hman c [α, β]
+    (by simpa using ⟨hαβ.1, hαβ.2⟩) hr2 hr3 hρ fun z hz γ hγ h1 => hfree z hz (by
+      simp only [List.mem_cons, List.not_mem_nil, or_false] at hγ
+      rcases hγ with rfl | rfl
+      · exact hr ▸ subset_union_left h1
+      · exact hr ▸ subset_union_right h1)
+  have hU2 : (⋃ g' ∈ [α, β], range g') = discBd D := by rw [← hr]; simp
+  rw [hU2] at htame
+  have hzE : (discInt D ∩ E).Nonempty := by
+    obtain ⟨z, hzD, w, hw, rfl⟩ := hz
+    exact ⟨g w, hzD, hclosedin ⟨w,
+      closedBall_subset_closedBall (by norm_num) (ball_subset_closedBall hw), rfl⟩⟩
+  obtain ⟨D', hD'Y, hD', hDD', hED'⟩ :=
+    exists_disc_cover_union hS H hns hDY hD (hEU.trans hUY) hE hEb hPO htame hzE
+  exact ⟨D', hD'Y, hD', hDD', hclosedin.trans hED'⟩
 
 /-- **Merging.** A closed disc of `Y` and a chart in `Y` that overlap it: the round disc of radius
 `2`
 of the chart and the closed disc lie in a common closed disc of `Y`, unless `Y` is a whole sphere.
 See
 the module docstring. -/
-theorem exists_disc_merge [CompactSpace S] [T2Space S] [ConnectedSpace S]
-    (hint : ∀ x : S, IsInteriorPoint x) {Y : Set S}
+theorem exists_disc_merge_in_chart [ConnectedSpace S] (hS : IsSurface S) {Y : Set S}
     (H : ∀ F : Set S, F ⊆ Y → IsOArc F → ∃ Δ : Set S, Δ ⊆ Y ∧ IsClosedDisc Δ ∧ discBd Δ = F)
     (hns : ¬ (IsSphere S ∧ Y = univ)) {D : Set S} (hDY : D ⊆ Y) (hD : IsClosedDisc D)
     {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y)
@@ -809,7 +821,7 @@ theorem exists_disc_merge [CompactSpace S] [T2Space S] [ConnectedSpace S]
     rintro _ ⟨z, hz, rfl⟩
     exact hcon z (hball hz)
   obtain ⟨w, hwΩ, hwG⟩ := hex
-  have : T2Space S := inferInstance
+  have := hS.2.1
   have hopen : IsOpen (Ω₀ ∩ g ⁻¹' (discBd D)ᶜ) :=
     (c.gc.mono hΩ₀b).isOpen_inter_preimage hΩ₀ hG.isCompact.isClosed.isOpen_compl
   obtain ⟨ρ, hρ, hball⟩ := Metric.isOpen_iff.mp hopen w ⟨hwΩ, hwG⟩
@@ -827,7 +839,7 @@ theorem exists_disc_merge [CompactSpace S] [T2Space S] [ConnectedSpace S]
   have hmulcl : ∀ {t : ℝ} {z : ℂ}, z ∈ closedBall (0 : ℂ) t →
       ((u⁻¹ : Circle) : ℂ) * z ∈ closedBall (0 : ℂ) t :=
     fun hz => by simpa [norm_mul] using hz
-  obtain ⟨D', h1, h2, h3, h4⟩ := exists_disc_merge_aux hint H hns hDY hD (c.rotate u) hUY
+  obtain ⟨D', h1, h2, h3, h4⟩ := exists_disc_merge_in_chart_aux hS H hns hDY hD (c.rotate u) hUY
     (by
       obtain ⟨x, hx, z, hz, rfl⟩ := hz
       refine ⟨g z, hx, ((u⁻¹ : Circle) : ℂ) * z, hmulball hz, ?_⟩
@@ -843,5 +855,34 @@ theorem exists_disc_merge [CompactSpace S] [T2Space S] [ConnectedSpace S]
   rintro _ ⟨z, hz, rfl⟩
   have := h4 ⟨((u⁻¹ : Circle) : ℂ) * z, hmulcl hz, rfl⟩
   simpa only [hcan] using this
+
+/-- The heart of `exists_disc_merge`, when the chart has a small ball around a point `r` of the
+positive real axis that misses the boundary of the disc. -/
+theorem exists_disc_merge_aux [CompactSpace S] [T2Space S] [ConnectedSpace S]
+    (hint : ∀ x : S, IsInteriorPoint x) {Y : Set S}
+    (H : ∀ F : Set S, F ⊆ Y → IsOArc F → ∃ Δ : Set S, Δ ⊆ Y ∧ IsClosedDisc Δ ∧ discBd Δ = F)
+    (hns : ¬ (IsSphere S ∧ Y = univ)) {D : Set S} (hDY : D ⊆ Y) (hD : IsClosedDisc D)
+    {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y)
+    (hz : (discInt D ∩ g '' ball 0 1).Nonempty) {r ρ : ℝ} (hr2 : 2 < r) (hr3 : r < 3) (hρ : 0 < ρ)
+    (hfree : ∀ z ∈ ball (r : ℂ) ρ, g z ∉ discBd D) :
+    ∃ D' : Set S, D' ⊆ Y ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
+  exact exists_disc_merge_in_chart_aux
+    ⟨inferInstance, inferInstance, fun x => (hint x).isManifoldPoint⟩
+    H hns hDY hD c hUY hz hr2 hr3 hρ hfree
+
+/-- **Merging.** A closed disc of `Y` and a chart in `Y` that overlap it: the round disc of radius
+`2`
+of the chart and the closed disc lie in a common closed disc of `Y`, unless `Y` is a whole sphere.
+See
+the module docstring. -/
+theorem exists_disc_merge [CompactSpace S] [T2Space S] [ConnectedSpace S]
+    (hint : ∀ x : S, IsInteriorPoint x) {Y : Set S}
+    (H : ∀ F : Set S, F ⊆ Y → IsOArc F → ∃ Δ : Set S, Δ ⊆ Y ∧ IsClosedDisc Δ ∧ discBd Δ = F)
+    (hns : ¬ (IsSphere S ∧ Y = univ)) {D : Set S} (hDY : D ⊆ Y) (hD : IsClosedDisc D)
+    {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y)
+    (hz : (discInt D ∩ g '' ball 0 1).Nonempty) :
+    ∃ D' : Set S, D' ⊆ Y ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
+  exact exists_disc_merge_in_chart
+    ⟨inferInstance, inferInstance, fun x => (hint x).isManifoldPoint⟩ H hns hDY hD c hUY hz
 
 end GraphMinor.Surface

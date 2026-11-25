@@ -423,88 +423,8 @@ theorem exists_disc_merge_interior_aux (hS : IsSurface S) [ConnectedSpace S]
     (hz : (discInt D ∩ g '' ball 0 1).Nonempty) {r ρ : ℝ} (hr2 : 2 < r) (hr3 : r < 3) (hρ : 0 < ρ)
     (hfree : ∀ z ∈ ball (r : ℂ) ρ, g z ∉ discBd D) :
     ∃ D' : Set S, D' ⊆ Y' ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
-  classical
-  have : CompactSpace S := hS.1
-  have : T2Space S := hS.2.1
-  have hman : ∀ x : S, IsManifoldPoint x := hS.2.2
-  have hG := hD.isOArc_discBd
-  obtain ⟨φG⟩ := id hG
-  have hne : (φG 1).1 ≠ (φG (Circle.exp Real.pi)).1 := fun he => by
-    have h1 := φG.injective (Subtype.ext he)
-    have h2 := congrArg (fun w : Circle => (w : ℂ)) h1
-    simp at h2
-    norm_num at h2
-  obtain ⟨α, β, hαβ, -, -, hr⟩ := hG.exists_arcs (φG 1).2 (φG _).2 hne
-  obtain ⟨P, E, hPO, htame, hE, hEb, hclosedin, hEU, -⟩ := exists_tame_curve hman c [α, β]
-    (by simpa using ⟨hαβ.1, hαβ.2⟩) hr2 hr3 hρ fun z hz γ hγ h1 => hfree z hz (by
-      simp only [List.mem_cons, List.not_mem_nil, or_false] at hγ
-      rcases hγ with rfl | rfl
-      · exact hr ▸ subset_union_left h1
-      · exact hr ▸ subset_union_right h1)
-  have hPU : P ⊆ U := (hEb ▸ discBd_subset E).trans hEU
-  have hPY : P ⊆ Y' := hPU.trans hUY
-  by_cases h2 : ∃ x y, x ∈ P ∧ y ∈ P ∧ x ∈ D ∧ y ∈ D ∧ x ≠ y
-  · obtain ⟨x, y, hxP, hyP, hxD, hyD, hxy⟩ := h2
-    have hU2 : (⋃ g' ∈ [α, β], range g') = discBd D := by
-      rw [← hr]
-      simp
-    rw [hU2] at htame
-    obtain ⟨F, hFf, hFc, hFu⟩ := htame
-    let F₂ : Set (Set S) := {J ∈ F | Disjoint J D}
-    have hF₂ : ⋃₀ F₂ = P \ D := by
-      ext w
-      constructor
-      · rintro ⟨J, ⟨hJ, hJD⟩, hw⟩
-        have h3 : w ∈ P \ discBd D := hFu ▸ mem_sUnion_of_mem hw hJ
-        exact ⟨h3.1, fun h4 => Set.disjoint_left.mp hJD hw h4⟩
-      · rintro ⟨hwP, hwD⟩
-        have h3 : w ∈ P \ discBd D := ⟨hwP, fun h4 => hwD (discBd_subset D h4)⟩
-        rw [← hFu] at h3
-        obtain ⟨J, hJ, hwJ⟩ := h3
-        have hJb : Disjoint J (discBd D) := by
-          rw [Set.disjoint_left]
-          intro v hv hv'
-          have : v ∈ P \ discBd D := hFu ▸ mem_sUnion_of_mem hv hJ
-          exact this.2 hv'
-        rcases hD.side hman (hFc J hJ) hJb with h4 | h4
-        · exact absurd (h4 hwJ).1 hwD
-        · exact ⟨J, ⟨hJ, h4⟩, hwJ⟩
-    obtain ⟨D', hD'Y, hD', hDD', hPD'⟩ := exists_disc_cover hman H' hPY hPO hxP hyP hxy _ D F₂ hDY
-      hD
-      hxD hyD (hFf.subset fun J hJ => hJ.1) le_rfl (fun J hJ => hFc J hJ.1) hF₂
-    obtain ⟨Δ, ⟨hΔD, hΔ, hΔb, -⟩, -⟩ := disc_oArc.{u} D' P hD' hPD' hPO
-    have hEΔ : E = Δ := eq_of_discBd_eq hS hns hE hΔ (hEb.trans hΔb.symm)
-    exact ⟨D', hD'Y, hD', hDD', hclosedin.trans (hEΔ ▸ hΔD)⟩
-  · push Not at h2
-    have hdisj : Disjoint (discInt D) P := by
-      rw [Set.disjoint_left]
-      intro x hx hxP
-      have hopen : IsOpen ({x}ᶜ : Set S) := isOpen_compl_singleton
-      have hother : ∃ w ∈ P, w ≠ x := by
-        obtain ⟨φP⟩ := id hPO
-        by_cases h3 : (φP 1).1 = x
-        · refine ⟨(φP (Circle.exp Real.pi)).1, (φP _).2, fun h4 => ?_⟩
-          have h5 := φP.injective (Subtype.ext (h4.trans h3.symm))
-          have h6 := congrArg (fun w : Circle => (w : ℂ)) h5
-          simp at h6
-          norm_num at h6
-        · exact ⟨_, (φP 1).2, h3⟩
-      obtain ⟨w, hwP, hwx⟩ := hother
-      obtain ⟨v, hvP, hv1, hv2⟩ := hPO.isPreconnected _ _ (hD.isOpen_discInt hman) hopen
-        (fun y _ => by
-          by_cases h3 : y = x
-          · exact .inl (h3 ▸ hx)
-          · exact .inr h3) ⟨x, hxP, hx⟩ ⟨w, hwP, hwx⟩
-      exact hv2 (h2 x v hxP hvP hx.1 hv1.1).symm
-    obtain ⟨z, hzD, w, hw, rfl⟩ := hz
-    have hwin : w ∈ closedBall (0 : ℂ) 2 :=
-      closedBall_subset_closedBall (by norm_num) (ball_subset_closedBall hw)
-    have hbdE : Disjoint (discInt D) (discBd E) := hEb ▸ hdisj
-    rcases hE.side hman hD.isPreconnected_discInt hbdE with h3 | h3
-    · refine ⟨E, hEU.trans hUY, hE, ?_, hclosedin⟩
-      exact hD.subset_closure_discInt.trans
-        (closure_minimal (h3.trans (discInt_subset E)) hE.isClosed)
-    · exact absurd (hclosedin ⟨w, hwin, rfl⟩) (Set.disjoint_left.mp h3 hzD)
+  exact exists_disc_merge_in_chart_aux hS H' (fun h => hns h.1)
+    hDY hD c hUY hz hr2 hr3 hρ hfree
 
 /-- Merging a closed disc `D ⊆ Y'` with an overlapping `BallChart 3 U h g` in `Y'`. -/
 theorem exists_disc_merge_interior (hS : IsSurface S) [ConnectedSpace S]
@@ -514,62 +434,7 @@ theorem exists_disc_merge_interior (hS : IsSurface S) [ConnectedSpace S]
     {U : Set S} {h : S → ℂ} {g : ℂ → S} (c : BallChart 3 U h g) (hUY : U ⊆ Y')
     (hz : (discInt D ∩ g '' ball 0 1).Nonempty) :
     ∃ D' : Set S, D' ⊆ Y' ∧ IsClosedDisc D' ∧ D ⊆ D' ∧ g '' closedBall 0 2 ⊆ D' := by
-  have : CompactSpace S := hS.1
-  have : T2Space S := hS.2.1
-  have hG := hD.isOArc_discBd
-  let Ω₀ : Set ℂ := {z | 2 < ‖z‖ ∧ ‖z‖ < 3}
-  have hΩ₀ : IsOpen Ω₀ := (isOpen_lt continuous_const continuous_norm).inter
-    (isOpen_lt continuous_norm continuous_const)
-  have hΩ₀b : Ω₀ ⊆ ball 0 3 := fun z hz => mem_ball_zero_iff.mpr hz.2
-  have hex : ∃ w ∈ Ω₀, g w ∉ discBd D := by
-    by_contra hcon
-    push Not at hcon
-    have hball : ball ((5 / 2 : ℝ) : ℂ) (1 / 4) ⊆ Ω₀ := fun z hz => by
-      have h1 : ‖z - ((5 / 2 : ℝ) : ℂ)‖ < 1 / 4 := by rwa [mem_ball, dist_eq_norm] at hz
-      have h2 : ‖((5 / 2 : ℝ) : ℂ)‖ = 5 / 2 := by
-        rw [Complex.norm_real, Real.norm_eq_abs, abs_of_pos (by norm_num)]
-      have h3 := norm_sub_norm_le z ((5 / 2 : ℝ) : ℂ)
-      have h4 := norm_sub_norm_le ((5 / 2 : ℝ) : ℂ) z
-      rw [norm_sub_rev ((5 / 2 : ℝ) : ℂ) z] at h4
-      exact ⟨by linarith, by linarith⟩
-    refine not_image_ball_subset_oArc hG (by norm_num) (g := g)
-      (c.gc.mono (hball.trans hΩ₀b)) (c.hg.injOn.mono (hball.trans hΩ₀b)) ?_
-    rintro _ ⟨z, hz, rfl⟩
-    exact hcon z (hball hz)
-  obtain ⟨w, hwΩ, hwG⟩ := hex
-  have hopen : IsOpen (Ω₀ ∩ g ⁻¹' (discBd D)ᶜ) :=
-    (c.gc.mono hΩ₀b).isOpen_inter_preimage hΩ₀ hG.isCompact.isClosed.isOpen_compl
-  obtain ⟨ρ, hρ, hball⟩ := Metric.isOpen_iff.mp hopen w ⟨hwΩ, hwG⟩
-  let u : Circle := Circle.exp (Complex.arg w)
-  have huw : (u : ℂ) * (‖w‖ : ℝ) = w := by
-    have := Complex.norm_mul_exp_arg_mul_I w
-    rw [Circle.coe_exp, mul_comm]
-    exact this
-  have hcan : ∀ z : ℂ, (u : ℂ) * (((u⁻¹ : Circle) : ℂ) * z) = z := fun z => by
-    rw [← mul_assoc, ← Circle.coe_mul]
-    simp
-  have hmulball : ∀ {t : ℝ} {z : ℂ}, z ∈ ball (0 : ℂ) t →
-      ((u⁻¹ : Circle) : ℂ) * z ∈ ball (0 : ℂ) t :=
-    fun hz => by simpa [norm_mul] using hz
-  have hmulcl : ∀ {t : ℝ} {z : ℂ}, z ∈ closedBall (0 : ℂ) t →
-      ((u⁻¹ : Circle) : ℂ) * z ∈ closedBall (0 : ℂ) t :=
-    fun hz => by simpa [norm_mul] using hz
-  obtain ⟨D', h1, h2, h3, h4⟩ := exists_disc_merge_interior_aux hS hns H' hDY hD (c.rotate u) hUY
-    (by
-      obtain ⟨x, hx, z, hz, rfl⟩ := hz
-      refine ⟨g z, hx, ((u⁻¹ : Circle) : ℂ) * z, hmulball hz, ?_⟩
-      change g ((u : ℂ) * (((u⁻¹ : Circle) : ℂ) * z)) = g z
-      rw [hcan])
-    (r := ‖w‖) (ρ := ρ) hwΩ.1 hwΩ.2 hρ (fun z hz => by
-      show g ((u : ℂ) * z) ∉ discBd D
-      refine (hball ?_).2
-      rw [mem_ball, ← huw, dist_eq_norm, ← mul_sub, norm_mul, Circle.norm_coe, one_mul,
-        ← dist_eq_norm]
-      exact hz)
-  refine ⟨D', h1, h2, h3, ?_⟩
-  rintro _ ⟨z, hz, rfl⟩
-  have := h4 ⟨((u⁻¹ : Circle) : ℂ) * z, hmulcl hz, rfl⟩
-  simpa only [hcan] using this
+  exact exists_disc_merge_in_chart hS H' (fun h => hns h.1) hDY hD c hUY hz
 
 /-- If a closed disc in `Y'` overlaps the unit ball of a chart in `Y'`, a larger closed disc in `Y'`
 contains that unit ball in its inside. -/

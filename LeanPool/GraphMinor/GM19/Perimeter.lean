@@ -221,46 +221,8 @@ vertex. -/
 theorem exists_sectors' (hS : IsClosedSurface T) (D : Drawing T) {γ : Set T → I → T}
     (hγ : EdgePar D γ) {v : T} (hv : v ∈ D.V) (h2 : 2 ≤ Nat.card (halfEdges D γ v)) :
     ∃ next ρ P W Q τ, IsSectors D γ v next ρ P W Q τ ∧ (W \ D.U ⊆ ⋃ k, P k) ∧ ∀ k, P k ⊆ Q k := by
-  have hB : DiscBoundaryStatement.{0} := disc_boundary
-  have hI : DiscIArcStatement.{0} := disc_iArc
-  have : LocallyConnectedSpace T := IsClosedSurface.locallyConnectedSpace hS
-  have : T2Space T := hS.2.1
-  obtain ⟨next, P, W, Q, hW, hvW, hinj, hne, hreach, hconn, hdis, hcl, hcov, hsid, hQ, hQQ, hoff,
-    hbdU, τ, hτ, hτl, hτr⟩ := exists_rotation_sectors hS D hγ hv h2
-  have hex : ∀ k, ∃ r ∈ D.R, P k ⊆ r := by
-    intro k
-    obtain ⟨x, hx⟩ : (P k).Nonempty := by
-      by_contra h
-      have h0 := not_nonempty_iff_eq_empty.mp h
-      have := hcl k
-      rw [h0] at this
-      simp at this
-    obtain ⟨r, hr, hxr⟩ := exists_region_of_notMem (disjoint_left.mp (hdis k) hx)
-    exact ⟨r, hr, subset_region hr (hconn k) (hdis k) hx hxr⟩
-  choose ρ hρ hsub using hex
-  have hin : ∀ {r x}, r ∈ D.R → x ∈ r → ∀ k, x ∈ P k → r = ρ k := fun hr hx k hk ↦
-    region_eq_of_mem hr (hρ k) hx (hsub k hk)
-  refine ⟨next, ρ, P, W, Q, τ, ⟨⟨hinj, hreach, hρ, fun k ↦ closure_mono (hsub k) (hcl k), ?_, ?_,
-    ?_, ?_⟩, hne, hW, hvW, hsub, hcov, fun k ↦ (hQ k).2.2.1, fun k ↦ (hQ k).1, fun k ↦ (hQ k).2.1,
-    fun k ↦ (hQ k).2.2.2, hQQ, hoff, hbdU, hτ, hτl, hτr⟩, hcov, fun k ↦ (hQ k).2.2.1⟩
-  · intro r hr hvr
-    obtain ⟨x, hxW, hxr⟩ := mem_closure_iff.mp hvr W hW hvW
-    obtain ⟨k, hk⟩ := mem_iUnion.mp (hcov ⟨hxW, region_subset hr hxr⟩)
-    exact ⟨k, hin hr hxr k hk⟩
-  · intro k
-    obtain ⟨q, hq, O, -, -, -, h₁, -⟩ := hsid k
-    exact edge_subset_closure_of_incident hS (next k).2.1 (hρ k)
-      ⟨q, hq, closure_mono (hsub k) h₁⟩
-  · intro k
-    obtain ⟨q, hq, O, -, -, -, -, h₂⟩ := hsid k
-    exact edge_subset_closure_of_incident hS (next k).2.1 (hρ _)
-      ⟨q, hq, closure_mono (hsub _) h₂⟩
-  · intro k r hr hsubr
-    obtain ⟨q, hq, O, hO, hqO, hOs, -, -⟩ := hsid k
-    obtain ⟨x, hxO, hxr⟩ := mem_closure_iff.mp (hsubr hq) O hO hqO
-    rcases hOs ⟨hxO, region_subset hr hxr⟩ with h | h
-    · exact Or.inl (hin hr hxr _ h)
-    · exact Or.inr (hin hr hxr _ h)
+  obtain ⟨next, ρ, P, W, Q, τ, h⟩ := GM11.exists_sectors hS D hγ hv h2
+  exact ⟨next, ρ, P, W, Q, τ, h, h.cover, h.subQ⟩
 
 /-- A line from `v` into a sector, close to `v`. -/
 theorem exists_line_in_sector [T2Space T] {D : Drawing T} {γ : Set T → I

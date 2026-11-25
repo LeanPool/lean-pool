@@ -610,7 +610,9 @@ private theorem subpath_lies_in_terminal_cell
     exact hQ_no_inter Q.first (SimpleGraph.Walk.start_mem_support Q.walk) ⟨Q.first_mem, hs_B₂⟩
   · exact ⟨wc, hwc_sup.trans hw₂c_sup⟩
 
-private theorem path_family_restricts_to_middle_cell
+/-- A linkage across the two sides of a partitioned disc restricts to the middle cell,
+preserving containment in the support of each original path. -/
+theorem path_family_restricts_to_middle_cell
     {α : Type u}
     {β : Type v}
     {G : Hypergraph α β}
@@ -623,10 +625,10 @@ private theorem path_family_restricts_to_middle_cell
     (hΘ : Θ ∈ cuffs π.S)
     (hn₁ : n₁ ∈ π.Γ.N ∩ Θ)
     (hn₂ : n₂ ∈ π.Γ.N ∩ Θ)
-    (hinter_sub : ∀ n ∈ π.Γ.N ∩ discBd Δ, π.borderPlus n₁ ∩ π.borderPlus n₂ ⊆ π.borderPlus n)
+    (hinter_sub : ∀ n ∈ π.Γ.N ∩ (Θ ∩ discBd Δ),
+      π.borderPlus n₁ ∩ π.borderPlus n₂ ⊆ π.borderPlus n)
     (hΘ_bd : Θ ⊆ bd π.S)
     (P : Fin (p + 1) → PathFromTo (π.areaGraph Δ).skeleton (π.borderPlus n₁) (π.borderPlus n₂))
-    (P_mark : π.S → Prop)
     (m₁ : π.S)
     (m₂ : π.S)
     (c : Set π.S)
@@ -636,9 +638,6 @@ private theorem path_family_restricts_to_middle_cell
     (N₂ : Set π.S)
     (hm₁_mem : m₁ ∈ π.Γ.N ∩ (Θ ∩ discBd Δ))
     (hm₂_mem : m₂ ∈ π.Γ.N ∩ (Θ ∩ discBd Δ))
-    (hm_ne : m₁ ≠ m₂)
-    (hP_m₁ : P_mark m₁)
-    (hP_m₂ : ¬P_mark m₂)
     (hc_C : c ∈ π.Γ.C)
     (htilde_c : tilde c = {m₁, m₂})
     (hI₁_sub : I₁ ⊆ Θ ∩ discBd Δ)
@@ -697,7 +696,7 @@ private theorem path_family_restricts_to_middle_cell
             Q'.first ∈ B₁ ∧ Q'.last ∈ B₂ := by
       exact common_boundary_vertex_yields_trivial_path (α := α) (β := β) (G := G) π (Θ := Θ) (Δ
         := Δ) (n₁ := n₁) (n₂ := n₂) (p := p) hΘ hn₁ hn₂
-        (fun n hn ↦ hinter_sub n ⟨hn.1, hn.2.2⟩) P m₁ m₂ c I₁ I₂ hm₁_mem hm₂_mem
+        hinter_sub P m₁ m₂ c I₁ I₂ hm₁_mem hm₂_mem
         hI₁_sub hI₂_sub hord_I j Q hQ_sub hst
     exact hSingletonPath
   · -- Case 2: `s_j ≠ t_j` (page 180).
@@ -999,11 +998,11 @@ theorem theorem_7_3_proof
       ∃ Q' : PathFromTo (π.cellGraph c).skeleton (π.borderPlus m₁) (π.borderPlus m₂),
         {z | z ∈ Q'.walk.support} ⊆ {z | z ∈ (P j).walk.support} ∧
         Q'.first ∈ B₁ ∧ Q'.last ∈ B₂ := by
-    exact path_family_restricts_to_middle_cell (α := α) (β := β) (G := G) π (Θ := Θ) (Δ := Δ) (n₁
-      := n₁) (n₂ := n₂) (p := p) hΘ hn₁ hn₂ hinter_sub hΘ_bd P P_mark m₁ m₂ c I₁ I₂ N₁ N₂ hm₁_mem
-      hm₂_mem hm_ne hP_m₁ hP_m₂ hc_C htilde_c hI₁_sub hI₂_sub hdisj_I hm₁_I₁ hm₂_I₂ hN₁_sub
-      hN₂_sub hdisj_N hord_I c₁_end hc₁_C hc₁_Δ hc₁_bd hn₁_c₁ c₂_end hc₂_C hc₂_Δ hc₂_bd hn₂_c₂
-      hborder_split hint_split hc_bd hbp₁_sub_B₁ hbp₂_sub_B₂ hbp_m₁_sub_B₁ hbp_m₂_sub_B₂
+    exact path_family_restricts_to_middle_cell π hΘ hn₁ hn₂
+      (fun n hn ↦ hinter_sub n ⟨hn.1, hn.2.2⟩) hΘ_bd P m₁ m₂ c I₁ I₂ N₁ N₂ hm₁_mem hm₂_mem hc_C
+      htilde_c hI₁_sub hI₂_sub hdisj_I hm₁_I₁ hm₂_I₂ hN₁_sub hN₂_sub hdisj_N hord_I
+      c₁_end hc₁_C hc₁_Δ hc₁_bd hn₁_c₁ c₂_end hc₂_C hc₂_Δ hc₂_bd hn₂_c₂ hborder_split hint_split
+      hc_bd hbp₁_sub_B₁ hbp₂_sub_B₂ hbp_m₁_sub_B₁ hbp_m₂_sub_B₂
   -- Assemble the linkage `{Q'_0, ..., Q'_p}` in `α(c)` from `β(m₁+)` to `β(m₂+)` (page 180).
   exact no_partial_middle_cell_linkage π (fun j ↦ {z | z ∈ (P j).walk.support}) hP_disj hwarp
     ⟨hm₁_mem.1, hΘ_bd hm₁_mem.2.1⟩ ⟨hm₂_mem.1, hΘ_bd hm₂_mem.2.1⟩ hm_ne hc_C hc_Θ hc_bd

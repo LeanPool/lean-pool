@@ -270,6 +270,69 @@ theorem CyclicPerm.mem_interval_of_around {Ω : CyclicPerm α} {s : ℕ} {a b : 
     simp
   rwa [e₁, e₂, e₃] at hm
 
+/-- A separating family in a rural neighborhood gives a transaction in the restricted society. -/
+theorem exists_restricted_separating_transaction
+    {S_comp S₀ : Society α β} {N : Neighborhood α β} {s : ℕ} {Y : Set α}
+    (hcomp : S_comp.IsComposition S₀ N) (hY : Y ⊆ S_comp.Ω.bar)
+    (P_pres : Presentation N) (hNest : ∃ C : Fin (s + 2) → Graph α β, N.IsNest P_pres C)
+    {a b : Fin (s + 2) → α} (ha : ∀ i, a i ∈ Y) (hb : ∀ i, b i ∈ Y)
+    (hW : N.IsWeaklyLinked (range a ∪ range b))
+    (hL₀ : N.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b)) :
+    let S' := S_comp.restrictOmega Y hY
+    ∃ Q : Fin (s + 2) → Graph α β, Injective Q ∧
+      S'.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b) ∧
+      (∀ i, S'.IsOmegaPathWithEnds (Q i) (a i) (b i)) ∧ S'.IsTransaction (range Q) ∧
+      (∀ i, S'.IsSeparatingOmegaPath (Q i)) ∧
+      (∀ i, S'.Ω.interval (a i) (b i) ⊆ S_comp.Ω.interval (a i) (b i) ∧
+        S'.Ω.interval (b i) (a i) ⊆ S_comp.Ω.interval (b i) (a i)) ∧
+      ∀ i, ∃ G₁ G₂ : Graph α β, IsGraphSeparation N.G G₁ G₂ ∧ V(G₁) ∩ V(G₂) = V(Q i) ∧
+        Q i ≤ G₁ ∧ N.Ω.interval (a i) (b i) ⊆ V(G₁) ∧ N.Ω.interval (b i) (a i) ⊆ V(G₂) ∧
+        N.Ω₀.bar ⊆ V(G₂) := by
+  classical
+  have hΩ : N.Ω = S_comp.Ω := hcomp.2.1
+  have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
+  obtain ⟨Q, hQ, hQd, hQs⟩ := theorem_10_2_proof P_pres hNest hW hL₀
+  obtain ⟨-, -, -, hab, -, -⟩ := CyclicPerm.isClockwise3_of_ofFn hL₀
+  let S' := S_comp.restrictOmega Y hY
+  have hR := S_comp.Ω.isRestriction_restrict hY
+  have hbarS' : S'.Ω.bar = Y := S_comp.Ω.restrict_bar hY
+  have hcw' : S'.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b) := by
+    refine hR.isClockwiseSeq_iff.mpr ⟨?_, hΩ ▸ hL₀⟩
+    change _ ⊆ S'.Ω.bar
+    rw [hbarS']
+    rintro v hv
+    simp only [mem_ofPred_eq, List.mem_append, List.mem_reverse, List.mem_ofFn'] at hv
+    rcases hv with ⟨i, rfl⟩ | ⟨i, rfl⟩
+    · exact ha i
+    · exact hb i
+  have hendsQ : ∀ i, S'.IsOmegaPathWithEnds (Q i) (a i) (b i) := fun i =>
+    (S_comp.isOmegaPathWithEnds_restrictOmega_iff hY).mpr
+      ⟨⟨(hQ i).mono hNG, hab i i, hY (ha i), hY (hb i)⟩, ha i, hb i⟩
+  have hinj : Function.Injective Q := by
+    intro i j e
+    by_contra hne
+    exact Set.disjoint_left.mp (hQd hne) (hQ i).left_mem (e ▸ (hQ i).left_mem)
+  have htr : S'.IsTransaction (range Q) := by
+    obtain ⟨A, B, hf, hA, hB⟩ := CyclicPerm.exists_isFence_of_ofFn (s := s) hcw'
+    refine ⟨A, B, ⟨?_, ?_⟩, hf, ?_⟩
+    · rintro _ ⟨i, rfl⟩
+      exact ⟨_, _, hendsQ i⟩
+    · rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ hne
+      exact hQd fun e => hne (congrArg Q e)
+    · rintro _ ⟨i, rfl⟩
+      exact ⟨_, hA i, _, hB i, hendsQ i⟩
+  have hint : ∀ i, S'.Ω.interval (a i) (b i) ⊆ S_comp.Ω.interval (a i) (b i) ∧
+      S'.Ω.interval (b i) (a i) ⊆ S_comp.Ω.interval (b i) (a i) := fun i =>
+    ⟨(S_comp.Ω.interval_restrict hY _ _ (ha i) (hb i)).subset.trans inter_subset_left,
+      (S_comp.Ω.interval_restrict hY _ _ (hb i) (ha i)).subset.trans inter_subset_left⟩
+  have hsep_Q : ∀ i, S'.IsSeparatingOmegaPath (Q i) := by
+    intro i
+    obtain ⟨G₁, G₂, hsep, hinter, -, h₁, h₂, h₀⟩ := hQs i
+    obtain ⟨hs2, hV2⟩ := hcomp.isGraphSeparation_union hsep h₀
+    exact S'.isSeparatingOmegaPath_of_separation (hendsQ i) hs2 (hV2.trans hinter)
+      ((hint i).1.trans (hΩ ▸ h₁)) ((hint i).2.trans ((hΩ ▸ h₂).trans subset_union_left))
+  exact ⟨Q, hinj, hcw', hendsQ, htr, hsep_Q, hint, hQs⟩
+
 /-- One step of (10.3): the vertex `x` of `Y - X` can be taken off the ends. -/
 theorem theorem_10_3_step {S_comp S₀ : Society α β} {N : Neighborhood α β} {p : ℕ} {X Y : Set α}
     (hp2 : 2 ≤ p) (hp3 : p ≠ 3) (hrural : N.IsRural) (hbreadth : N.HasBreadthGe (p + 4))
@@ -282,7 +345,6 @@ theorem theorem_10_3_step {S_comp S₀ : Society α β} {N : Neighborhood α β}
   classical
   obtain ⟨P_pres, C, hC⟩ := hbreadth
   have hΩ : N.Ω = S_comp.Ω := hcomp.2.1
-  have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
   have hXb : X ⊆ N.Ω.bar := hX.1
   obtain ⟨a, b, ha, hb, hL⟩ := CyclicPerm.exists_ofFn_around (s := p + 4) hXb
     (hΩ ▸ hY hxY : x ∈ N.Ω.bar) hxX (by omega)
@@ -292,46 +354,11 @@ theorem theorem_10_3_step {S_comp S₀ : Society α β} {N : Neighborhood α β}
     rintro _ (⟨i, rfl⟩ | ⟨i, rfl⟩)
     · exact ha i
     · exact hb i
-  obtain ⟨Q, hQ, hQd, hQs⟩ := theorem_10_2_proof P_pres ⟨C, hC⟩ hW hL₀
-  obtain ⟨-, -, -, hab, -, -⟩ := CyclicPerm.isClockwise3_of_ofFn hL₀
   let S' := S_comp.restrictOmega Y hY
-  have hR := S_comp.Ω.isRestriction_restrict hY
   have hbarS' : S'.Ω.bar = Y := S_comp.Ω.restrict_bar hY
-  have hcw' : S'.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b) := by
-    refine hR.isClockwiseSeq_iff.mpr ⟨?_, hΩ ▸ hL₀⟩
-    change _ ⊆ S'.Ω.bar
-    rw [hbarS']
-    rintro v hv
-    simp only [mem_ofPred_eq, List.mem_append, List.mem_reverse, List.mem_ofFn'] at hv
-    rcases hv with ⟨i, rfl⟩ | ⟨i, rfl⟩
-    · exact hXY (ha i)
-    · exact hXY (hb i)
-  have hendsQ : ∀ i, S'.IsOmegaPathWithEnds (Q i) (a i) (b i) := fun i =>
-    (S_comp.isOmegaPathWithEnds_restrictOmega_iff hY).mpr
-      ⟨⟨(hQ i).mono hNG, hab i i, hY (hXY (ha i)), hY (hXY (hb i))⟩, hXY (ha i), hXY (hb i)⟩
-  have hinj : Function.Injective Q := by
-    intro i j e
-    by_contra hne
-    exact Set.disjoint_left.mp (hQd hne) (hQ i).left_mem (e ▸ (hQ i).left_mem)
-  have htr : S'.IsTransaction (range Q) := by
-    obtain ⟨A, B, hf, hA, hB⟩ := CyclicPerm.exists_isFence_of_ofFn (s := p + 2) hcw'
-    refine ⟨A, B, ⟨?_, ?_⟩, hf, ?_⟩
-    · rintro _ ⟨i, rfl⟩
-      exact ⟨_, _, hendsQ i⟩
-    · rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ hne
-      exact hQd fun e => hne (congrArg Q e)
-    · rintro _ ⟨i, rfl⟩
-      exact ⟨_, hA i, _, hB i, hendsQ i⟩
-  have hint : ∀ i, S'.Ω.interval (a i) (b i) ⊆ S_comp.Ω.interval (a i) (b i) ∧
-      S'.Ω.interval (b i) (a i) ⊆ S_comp.Ω.interval (b i) (a i) := fun i =>
-    ⟨(S_comp.Ω.interval_restrict hY _ _ (hXY (ha i)) (hXY (hb i))).subset.trans inter_subset_left,
-      (S_comp.Ω.interval_restrict hY _ _ (hXY (hb i)) (hXY (ha i))).subset.trans inter_subset_left⟩
-  have hsep_Q : ∀ i, S'.IsSeparatingOmegaPath (Q i) := by
-    intro i
-    obtain ⟨G₁, G₂, hsep, hinter, -, h₁, h₂, h₀⟩ := hQs i
-    obtain ⟨hs2, hV2⟩ := hcomp.isGraphSeparation_union hsep h₀
-    exact S'.isSeparatingOmegaPath_of_separation (hendsQ i) hs2 (hV2.trans hinter)
-      ((hint i).1.trans (hΩ ▸ h₁)) ((hint i).2.trans ((hΩ ▸ h₂).trans subset_union_left))
+  obtain ⟨Q, hinj, hcw', hendsQ, htr, hsep_Q, hint, hQs⟩ :=
+    exists_restricted_separating_transaction (s := p + 2) hcomp hY P_pres ⟨C, hC⟩
+      (fun i => hXY (ha i)) (fun i => hXY (hb i)) hW hL₀
   let t : Fin (p + 4) := ⟨p + 3, by omega⟩
   obtain ⟨G₁, G₂, hsep, hinter, -, h₁, h₂, h₀⟩ := hQs t
   obtain ⟨hs2, hV2⟩ := hcomp.isGraphSeparation_union hsep h₀

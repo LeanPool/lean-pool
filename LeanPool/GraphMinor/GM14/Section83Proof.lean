@@ -569,7 +569,6 @@ private theorem theorem_10_3_p2_step {S_comp S₀ : Society α β} {N : Neighbor
   classical
   obtain ⟨P_pres, C, hC⟩ := hbreadth
   have hΩ : N.Ω = S_comp.Ω := hcomp.2.1
-  have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
   have hXb : X ⊆ N.Ω.bar := hX.1
   obtain ⟨a, b, ha, hb, hL⟩ := CyclicPerm.exists_ofFn_around (s := 2) hXb
     (hΩ ▸ hY hxY : x ∈ N.Ω.bar) hxX (by omega)
@@ -579,46 +578,11 @@ private theorem theorem_10_3_p2_step {S_comp S₀ : Society α β} {N : Neighbor
     rintro _ (⟨i, rfl⟩ | ⟨i, rfl⟩)
     · exact ha i
     · exact hb i
-  obtain ⟨Q, hQ, hQd, hQs⟩ := GraphMinor.GM09.theorem_10_2_proof P_pres ⟨C, hC⟩ hW hL₀
-  obtain ⟨-, -, -, hab, -, -⟩ := CyclicPerm.isClockwise3_of_ofFn hL₀
   let S' := S_comp.restrictOmega Y hY
-  have hR := S_comp.Ω.isRestriction_restrict hY
   have hbarS' : S'.Ω.bar = Y := S_comp.Ω.restrict_bar hY
-  have hcw' : S'.Ω.IsClockwiseSeq ((List.ofFn a).reverse ++ List.ofFn b) := by
-    refine hR.isClockwiseSeq_iff.mpr ⟨?_, hΩ ▸ hL₀⟩
-    change _ ⊆ S'.Ω.bar
-    rw [hbarS']
-    rintro v hv
-    simp only [mem_ofPred_eq, List.mem_append, List.mem_reverse, List.mem_ofFn'] at hv
-    rcases hv with ⟨i, rfl⟩ | ⟨i, rfl⟩
-    · exact hXY (ha i)
-    · exact hXY (hb i)
-  have hendsQ : ∀ i, S'.IsOmegaPathWithEnds (Q i) (a i) (b i) := fun i =>
-    (S_comp.isOmegaPathWithEnds_restrictOmega_iff hY).mpr
-      ⟨⟨(hQ i).mono hNG, hab i i, hY (hXY (ha i)), hY (hXY (hb i))⟩, hXY (ha i), hXY (hb i)⟩
-  have hinj : Function.Injective Q := by
-    intro i j e
-    by_contra hne
-    exact Set.disjoint_left.mp (hQd hne) (hQ i).left_mem (e ▸ (hQ i).left_mem)
-  have htr : S'.IsTransaction (range Q) := by
-    obtain ⟨A, B, hf, hA, hB⟩ := CyclicPerm.exists_isFence_of_ofFn (s := 0) hcw'
-    refine ⟨A, B, ⟨?_, ?_⟩, hf, ?_⟩
-    · rintro _ ⟨i, rfl⟩
-      exact ⟨_, _, hendsQ i⟩
-    · rintro _ ⟨i, rfl⟩ _ ⟨j, rfl⟩ hne
-      exact hQd fun e => hne (congrArg Q e)
-    · rintro _ ⟨i, rfl⟩
-      exact ⟨_, hA i, _, hB i, hendsQ i⟩
-  have hint : ∀ i, S'.Ω.interval (a i) (b i) ⊆ S_comp.Ω.interval (a i) (b i) ∧
-      S'.Ω.interval (b i) (a i) ⊆ S_comp.Ω.interval (b i) (a i) := fun i =>
-    ⟨(S_comp.Ω.interval_restrict hY _ _ (hXY (ha i)) (hXY (hb i))).subset.trans inter_subset_left,
-      (S_comp.Ω.interval_restrict hY _ _ (hXY (hb i)) (hXY (ha i))).subset.trans inter_subset_left⟩
-  have hsep_Q : ∀ i, S'.IsSeparatingOmegaPath (Q i) := by
-    intro i
-    obtain ⟨G₁, G₂, hsep, hinter, -, h₁, h₂, h₀⟩ := hQs i
-    obtain ⟨hs2, hV2⟩ := hcomp.isGraphSeparation_union hsep h₀
-    exact S'.isSeparatingOmegaPath_of_separation (hendsQ i) hs2 (hV2.trans hinter)
-      ((hint i).1.trans (hΩ ▸ h₁)) ((hint i).2.trans ((hΩ ▸ h₂).trans subset_union_left))
+  obtain ⟨Q, hinj, hcw', hendsQ, htr, hsep_Q, hint, hQs⟩ :=
+    exists_restricted_separating_transaction (s := 0) hcomp hY P_pres ⟨C, hC⟩
+      (fun i => hXY (ha i)) (fun i => hXY (hb i)) hW hL₀
   obtain ⟨G₁, G₂, hsep, hinter, hQ1_le, h₁, h₂, h₀⟩ := hQs 1
   obtain ⟨hs2, hV2⟩ := hcomp.isGraphSeparation_union hsep h₀
   rcases theorem_5_2_p2_without_no_internal S'
@@ -707,112 +671,6 @@ private theorem exists_clean_paths_p2 {N : Neighborhood α β} (P_pres : Present
       Pairwise (fun i j => Disjoint V(P i) V(P j)) ∧
       ∀ i j, ∃ I, IsGraphPath N.G I ∧ I ≤ P i ∧ I ≤ C j ∧ V(I) = V(P i) ∩ V(C j) :=
   GM09.exists_clean_paths_of_nest P_pres (n := 2) (by decide) hC' hX
-
-private theorem outer_perimeter_contains_boundary
-    {α : Type u}
-    {β : Type v}
-    {N : Neighborhood α β}
-    (P_pres : Presentation N)
-    (C : Fin 2 → Graph α β)
-    (hCbar : ∀ (j : Fin 2), Disjoint V(C j) N.Ω.bar)
-    (last : Fin 2)
-    (D : Fin 2 → Set EuclideanPlane)
-    (hDs : ∀ (i : Fin 2), P_pres.Δ₀ ⊆ D i ∧ D i ⊆ P_pres.Δ)
-    (H₂ : Graph α β)
-    (hY₂ : ∀ v ∈ V(N.G), graphDrawingVertexSet P_pres.Γ v ⊆ P_pres.Δ \ D last → v ∈ V(H₂))
-    (hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet P_pres.Γ v = {q})
-    (hbdK : ∀ v ∈ V(N.G), graphDrawingVertexSet P_pres.Γ v ⊆ subBd (D last) ↔ v ∈ V(C last)) :
-    N.Ω.bar ⊆ V(H₂) := by
-  intro v hv
-  have hvG := N.bar_subset hv
-  obtain ⟨q, hq⟩ := hpt v hvG
-  refine hY₂ v hvG ?_
-  rw [hq, singleton_subset_iff]
-  have hb := (P_pres.mem_bd_Δ_iff v hvG).mpr hv
-  have hqm : q ∈ graphDrawingVertexSet P_pres.Γ v := hq ▸ mem_singleton q
-  refine ⟨GM09.subBd_subset_of_isClosed (isClosed_of_isClosedDisc P_pres.isClosedDisc_Δ) (hb hqm),
-    fun hqD => ?_⟩
-  have : graphDrawingVertexSet P_pres.Γ v ⊆ subBd (D last) := by
-    rw [hq, singleton_subset_iff]
-    refine inter_subBd_subset_subBd (hDs last).2 ⟨hqD, hb hqm⟩
-  exact Set.disjoint_left.mp (hCbar last) ((hbdK v hvG).mp this) hv
-
-private theorem inner_perimeter_contains_boundary
-    {α : Type u}
-    {β : Type v}
-    {N : Neighborhood α β}
-    (P_pres : Presentation N)
-    (C : Fin 2 → Graph α β)
-    (last : Fin 2)
-    (D : Fin 2 → Set EuclideanPlane)
-    (hDs : ∀ (i : Fin 2), P_pres.Δ₀ ⊆ D i ∧ D i ⊆ P_pres.Δ)
-    (H₁ : Graph α β)
-    (hKH₁ : C last ≤ H₁)
-    (hY₁ : ∀ v ∈ V(N.G), graphDrawingVertexSet P_pres.Γ v ⊆ D last \ subBd (D last) → v ∈ V(H₁))
-    (hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet P_pres.Γ v = {q})
-    (hbdK : ∀ v ∈ V(N.G), graphDrawingVertexSet P_pres.Γ v ⊆ subBd (D last) ↔ v ∈ V(C last)) :
-    N.Ω₀.bar ⊆ V(H₁) := by
-  intro v hv
-  have hvG := N.bar₀_subset hv
-  by_cases hvK : v ∈ V(C last)
-  · exact hKH₁.vertexSet_mono hvK
-  obtain ⟨q, hq⟩ := hpt v hvG
-  refine hY₁ v hvG ?_
-  rw [hq, singleton_subset_iff]
-  have hq' : q = _ :=
-    (singleton_injective ((graphDrawingVertexSet_eq_singleton P_pres.Γ hvG).symm.trans hq)).symm
-  refine ⟨(hDs last).1 (hq' ▸ (isClosedDisc_Δ₀_and_mem_of_mem_bar₀ P_pres hv).2),
-    fun hb => hvK ?_⟩
-  exact (hbdK v hvG).mp (by rw [hq, singleton_subset_iff]; exact hb)
-
-private theorem nested_circuits_lie_inside
-    {α : Type u}
-    {β : Type v}
-    {N : Neighborhood α β}
-    (P_pres : Presentation N)
-    (C : Fin 2 → Graph α β)
-    (hcir : ∀ (i : Fin 2), IsGraphCircuit N.G (C i))
-    (hdisj : Pairwise fun i j => Disjoint V(C i) V(C j))
-    (D : Fin 2 → Set EuclideanPlane)
-    (hDd : ∀ (i : Fin 2), IsClosedDisc (D i) ∧ subBd (D i) = graphDrawingSubgraphU P_pres.Γ (C i))
-    (hDm : ∀ (i j : Fin 2), i ≤ j → D i ⊆ D j)
-    (H₁ : Graph α β)
-    (H₂ : Graph α β)
-    (hsep : IsGraphSeparation N.G H₁ H₂)
-    (hcut : V(H₁) ∩ V(H₂) = V(C (1 : Fin 2)))
-    (hKH₁ : C (1 : Fin 2) ≤ H₁)
-    (hY₁ : ∀ v ∈ V(N.G),
-      graphDrawingVertexSet P_pres.Γ v ⊆ D (1 : Fin 2) \ subBd (D (1 : Fin 2)) → v ∈ V(H₁))
-    (hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet P_pres.Γ v = {q})
-    (hbdK : ∀ v ∈ V(N.G),
-      graphDrawingVertexSet P_pres.Γ v ⊆ subBd (D (1 : Fin 2)) ↔ v ∈ V(C (1 : Fin 2))) :
-    ∀ (j : Fin 2), C j ≤ H₁ := by
-  let last : Fin 2 := 1
-  intro j
-  by_cases hj : j = last
-  · subst hj
-    exact hKH₁
-  refine IsGraphSeparation.le_left_of_disjoint hsep (hcir j).1 (Set.disjoint_left.mpr ?_)
-  intro v hv hv₂
-  have hvG := (hcir j).1.vertexSet_mono hv
-  have hnK : v ∉ V(C last) := fun h => Set.disjoint_left.mp (hdisj hj) hv h
-  have hv₁ : v ∈ V(H₁) := by
-    obtain ⟨q, hq⟩ := hpt v hvG
-    refine hY₁ v hvG ?_
-    have hqm : q ∈ graphDrawingVertexSet P_pres.Γ v := hq ▸ mem_singleton q
-    have hjle : j ≤ last := by
-      have hjlt : j.1 < 2 := j.2
-      exact Fin.mk_le_mk.mpr (by change j.1 ≤ 1; omega)
-    have hqD : q ∈ D last := by
-      refine hDm j last hjle (GM09.subBd_subset_of_isClosed (isClosed_of_isClosedDisc
-        (hDd j).1) ?_)
-      rw [(hDd j).2]
-      exact graphDrawingVertexSet_subset_subgraphU_of_mem P_pres.Γ hv hqm
-    rw [hq, singleton_subset_iff]
-    refine ⟨hqD, fun hb => hnK ((hbdK v hvG).mp ?_)⟩
-    rw [hq, singleton_subset_iff]
-    exact hb
-  exact hnK (hcut ▸ ⟨hv₁, hv₂⟩)
 
 private theorem paths_split_at_last_circuit
     {α : Type u}
@@ -1272,26 +1130,15 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
   obtain ⟨hcir, hdisj, D, hDd, hDs, hDm⟩ := hC
   let Γ := P_pres.Γ
   have hKG : C last ≤ N.G := (hcir last).1
-  have hUΔ : Γ.drawing.U ⊆ P_pres.Δ := P_pres.U_subset.trans sdiff_subset
-  obtain ⟨H₁, H₂, hsep, hcut, hKH₁, hY₁, hY₂, hUH₁, hUH₂⟩ := exists_separation_of_disc Γ
-    (isClosed_of_isClosedDisc P_pres.isClosedDisc_Δ) hUΔ hKG (hDd last).1 (hDs last).2 (hDd last).2
+  obtain ⟨hbdK, H₁, H₂, hsep, hcut, hKH₁, hY₁, hUH₁, hUH₂, hbarH₂, hbar₀H₁⟩ :=
+    P_pres.separate_at_circuit C D last (hcir last) (hDd last).1 (hDd last).2
+      (hDs last).1 (hDs last).2 (hCbar last)
   have hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet Γ v = {q} := fun v hv =>
     ⟨_, graphDrawingVertexSet_eq_singleton Γ hv⟩
-  have hbdK : ∀ v ∈ V(N.G), (graphDrawingVertexSet Γ v ⊆ subBd (D last) ↔ v ∈ V(C last)) := by
-    intro v hv
-    rw [(hDd last).2]
-    exact ⟨mem_vertexSet_of_graphDrawingVertexSet_subset_subgraphU Γ hKG hv,
-      graphDrawingVertexSet_subset_subgraphU_of_mem Γ⟩
   have hK₂ : V(C last) ⊆ V(H₂) := fun v hv => (hcut.symm ▸ hv : v ∈ V(H₁) ∩ V(H₂)).2
-  have hbarH₂ : N.Ω.bar ⊆ V(H₂) := by
-    exact outer_perimeter_contains_boundary (α := α) (β := β) (N := N) P_pres C hCbar last D hDs
-      H₂ hY₂ hpt hbdK
-  have hbar₀H₁ : N.Ω₀.bar ⊆ V(H₁) := by
-    exact inner_perimeter_contains_boundary (α := α) (β := β) (N := N) P_pres C last D hDs H₁
-      hKH₁ hY₁ hpt hbdK
-  have hCH₁ : ∀ j, C j ≤ H₁ := by
-    exact nested_circuits_lie_inside (α := α) (β := β) (N := N) P_pres C
-      hcir hdisj D hDd hDm H₁ H₂ hsep hcut hKH₁ hY₁ hpt hbdK
+  have hCH₁ : ∀ j, C j ≤ H₁ := fun j =>
+    nestedCircuitsOnInnerSide Γ hcir hdisj hDd hDm
+      (fun i => Fin.le_last i) hsep hcut hKH₁ hY₁ hpt hbdK j
   have hKne : V(C last).Nonempty := by
     obtain ⟨e, he⟩ := (hcir last).edgeSet_nonempty
     obtain ⟨u, w, hl⟩ : ∃ u w, (C last).IsLink e u w := exists_isLink_of_mem_edgeSet he

@@ -709,14 +709,12 @@ private theorem circuit_of_sep_in_zone
 T`
 and its separator vertex set is `D.V ∩ H'.V`. -/
 private theorem inter_ins_mem_of_cleared [T2Space S] (hS : IsClosedSurface S)
-  (_hConn : ConnectedSpace S)
     {H K' D : Drawing S} {θ lam : ℕ}
     {T T' : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     {d d' : Set S → Set S → ℕ} {ins' : Drawing S → Set S} {z Δ₂ : Set S}
     (hMetric : HasTangleMetric H θ T d)
     (hZone₂ : IsLambdaZoneAround H d lam z (Δ₂ \ subBd Δ₂))
     (hCleared : IsClearedTangle H T d θ lam (Δ₂ \ subBd Δ₂) T' d')
-    (_hΔ₂ : IsClosedDisc Δ₂)
     (hK' : (PaintingOrDrawing.drawing (clearedSubdrawing H (Δ₂ \ subBd Δ₂))).IsRadialDrawing K')
     (hd' : IsDerivedSlope (PaintingOrDrawing.drawing (clearedSubdrawing H (Δ₂ \ subBd Δ₂)))
       K' (θ - 4 * lam - 2) T' ins')
@@ -729,6 +727,7 @@ private theorem inter_ins_mem_of_cleared [T2Space S] (hS : IsClosedSurface S)
         (PaintingOrDrawing.drawing H).interOutside (ins' D)).vertexSet ⊆
         D.V ∩ (clearedSubdrawing H (Δ₂ \ subBd Δ₂)).V := by
   have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  have : ConnectedSpace S := hMetric.1.2.2.1
   set Λ₂ := Δ₂ \ subBd Δ₂
   set H' := clearedSubdrawing H Λ₂
   set θ' := θ - 4 * lam - 2
@@ -1031,7 +1030,7 @@ theorem theorem_7_8_proof
       hvj_Δi (hrange_A' ⟨j, rfl⟩) hdis_Pj hne_Ci_Pj hle_Ci
   have hΔ₂_sub_D : Δ₂ ⊆ ins' D := (hv_C i).2.2.2.2.1.trans hΔi_sub_D
   obtain ⟨hAB_H, hAB_H_sub⟩ :=
-    inter_ins_mem_of_cleared hS hConn hMetric hiii hCleared hΔ₂ hK' hd' hD hDs hDlen hΔ₂_sub_D
+    inter_ins_mem_of_cleared hS hMetric hiii hCleared hK' hd' hD hDs hDlen hΔ₂_sub_D
   set A_H := (PaintingOrDrawing.drawing H).inter (ins' D)
   set B_H := (PaintingOrDrawing.drawing H).interOutside (ins' D)
   have hAB_H_sub_AB' : (A_H ∩ B_H).vertexSet ⊆ (A' ∩ B').vertexSet := hAB_H_sub.trans hDV

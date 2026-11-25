@@ -40,7 +40,7 @@ variable {S : Type u} [TopologicalSpace S]
 
 /-- Contrapositive of (11.2): a subset `Z ⊆ S` is flat if every `O`-arc `F ⊆ Z` is null-homotopic
 in `S`. -/
-private theorem isFlat_of_forall_isNullHomotopicOArc' (hS : IsSurface S) {Z : Set S}
+theorem isFlat_of_forall_isNullHomotopicOArc (hS : IsSurface S) {Z : Set S}
     (h : ∀ F : Set S, F ⊆ Z → IsOArc F → IsNullHomotopicOArc F) :
     IsFlat Z := by
   intro φ hφZ
@@ -49,43 +49,15 @@ private theorem isFlat_of_forall_isNullHomotopicOArc' (hS : IsSurface S) {Z : Se
   exact hF_not_null (h F (hF_range.trans hφZ) hF_oarc)
 
 /-- Every `O`-arc `F` contained in a flat subset `Y ⊆ S` is null-homotopic in `S`. -/
-private theorem isNullHomotopicOArc_of_isFlat' {Y F : Set S} (hY : IsFlat Y) (hFY : F ⊆ Y)
+theorem isNullHomotopicOArc_of_isFlat {Y F : Set S} (hY : IsFlat Y) (hFY : F ⊆ Y)
     (hF : IsOArc F) : IsNullHomotopicOArc F := by
   obtain ⟨φ⟩ := hF
   refine ⟨φ, hY ⟨fun x => (φ x).1, continuous_subtype_val.comp φ.continuous⟩ ?_⟩
   rintro _ ⟨x, rfl⟩
   exact hFY (φ x).2
 
-/-- In a Hausdorff space, `IsArcConnected Z` is equivalent to `∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b`. -/
-private theorem isArcConnected_iff_joinedIn' [T2Space S] {Z : Set S} :
-    IsArcConnected Z ↔ ∀ a ∈ Z, ∀ b ∈ Z, JoinedIn Z a b := by
-  constructor
-  · intro h a ha b hb
-    rcases eq_or_ne a b with rfl | hne
-    · exact JoinedIn.refl ha
-    · obtain ⟨L, hLZ, f, hf0, hf1⟩ := h a ha b hb hne
-      let p : Path a b :=
-        { toContinuousMap := ⟨fun t => (f t).1, continuous_subtype_val.comp f.continuous⟩
-          source' := hf0
-          target' := hf1 }
-      exact ⟨p, fun t => hLZ (f t).2⟩
-  · intro h a ha b hb hne
-    obtain ⟨γ, hγ⟩ := h a ha b hb
-    obtain ⟨e, he_cont, he_inj, he0, he1, he_sub⟩ :=
-      exists_arc_of_path γ.continuous (by simpa [γ.source, γ.target] using hne)
-    have he_emb : IsEmbedding e := (he_cont.isClosedEmbedding he_inj).isEmbedding
-    refine ⟨range e, ?_, he_emb.toHomeomorph, he0.trans γ.source, he1.trans γ.target⟩
-    intro x hx
-    obtain ⟨t, rfl⟩ := he_sub hx
-    exact hγ t
-
-/-- In a Hausdorff space, a path-connected subset is arc-connected. -/
-private theorem IsPathConnected.isArcConnected' [T2Space S] {Z : Set S} (hZ : IsPathConnected Z) :
-    IsArcConnected Z :=
-  isArcConnected_iff_joinedIn'.mpr fun _ ha _ hb => hZ.joinedIn _ ha _ hb
-
 /-- `arcComponentsIn Z` is the image of `Z` under `pathComponentIn Z`. -/
-private theorem arcComponentsIn_eq_image_pathComponentIn' (Z : Set S) :
+theorem arcComponentsIn_eq_image_pathComponentIn (Z : Set S) :
     arcComponentsIn Z = (pathComponentIn Z) '' Z := by
   ext C
   constructor
@@ -98,7 +70,7 @@ private theorem arcComponentsIn_eq_image_pathComponentIn' (Z : Set S) :
     exact pathComponentIn_mem_arcComponentsIn hxZ
 
 /-- Every solid subset of a surface has only finitely many arc-components. -/
-private theorem arcComponentsIn_finite_of_isSolid' (hS : IsSurface S) {Z : Set S} (hZ : IsSolid Z) :
+theorem arcComponentsIn_finite_of_isSolid (hS : IsSurface S) {Z : Set S} (hZ : IsSolid Z) :
     (arcComponentsIn Z).Finite := by
   have : CompactSpace S := hS.1
   have : T2Space S := hS.2.1
@@ -113,13 +85,13 @@ private theorem arcComponentsIn_finite_of_isSolid' (hS : IsSurface S) {Z : Set S
   have hcov : Z ⊆ ⋃ z ∈ Z, A z := fun z hz => mem_iUnion₂.mpr ⟨z, hz, hzA z⟩
   obtain ⟨t, htZ, ht_fin, ht_cov⟩ :=
     hZ_compact.elim_finite_subcover_image (fun z _ => hA_open z) hcov
-  rw [arcComponentsIn_eq_image_pathComponentIn']
+  rw [arcComponentsIn_eq_image_pathComponentIn]
   refine (ht_fin.image (pathComponentIn Z)).subset ?_
   rintro _ ⟨y, hyZ, rfl⟩
   obtain ⟨z, hzt, hyAz⟩ := mem_iUnion₂.mp (ht_cov hyZ)
   have hzZ : z ∈ Z := htZ hzt
   have hj : JoinedIn (Z ∩ A z) z y :=
-    isArcConnected_iff_joinedIn'.mp (hZA_arc z hzZ) z ⟨hzZ, hzA z⟩ y ⟨hyZ, hyAz⟩
+    isArcConnected_iff_joinedIn.mp (hZA_arc z hzZ) z ⟨hzZ, hzA z⟩ y ⟨hyZ, hyAz⟩
   have hjZ : JoinedIn Z z y := hj.mono inter_subset_left
   exact ⟨z, hzt, (pathComponentIn_congr hjZ).symm⟩
 
@@ -137,14 +109,14 @@ theorem isClosed_pathComponentIn_and_sdiff_of_isSolid (hS : IsSurface S) {Z : Se
     obtain ⟨C, _, hxC, hC_open, hZC_arc⟩ := hZ.1 x (hA_sub hxA) univ isOpen_univ (mem_univ x)
     refine ⟨C, hC_open, hxC, fun y hy => ?_⟩
     have hj : JoinedIn (Z ∩ C) x y :=
-      isArcConnected_iff_joinedIn'.mp hZC_arc x ⟨hA_sub hxA, hxC⟩ y hy
+      isArcConnected_iff_joinedIn.mp hZC_arc x ⟨hA_sub hxA, hxC⟩ y hy
     exact JoinedIn.trans hxA (hj.mono inter_subset_left)
   have hB_open_in_Z : ∀ x ∈ B, ∃ C : Set S, IsOpen C ∧ x ∈ C ∧ Z ∩ C ⊆ B := by
     intro x hxB
     obtain ⟨C, _, hxC, hC_open, hZC_arc⟩ := hZ.1 x hxB.1 univ isOpen_univ (mem_univ x)
     refine ⟨C, hC_open, hxC, fun y hy => ⟨hy.1, fun hyA => hxB.2 ?_⟩⟩
     have hj : JoinedIn (Z ∩ C) y x :=
-      isArcConnected_iff_joinedIn'.mp hZC_arc y hy x ⟨hxB.1, hxC⟩
+      isArcConnected_iff_joinedIn.mp hZC_arc y hy x ⟨hxB.1, hxC⟩
     exact JoinedIn.trans hyA (hj.mono inter_subset_left)
   set U_A : Set S := ⋃ (x : S) (hx : x ∈ A), (hA_open_in_Z x hx).choose
   set U_B : Set S := ⋃ (x : S) (hx : x ∈ B), (hB_open_in_Z x hx).choose
@@ -198,7 +170,7 @@ theorem isArcConnected_univ_of_isSurface (hS : IsSurface S) [ConnectedSpace S] :
   have hA_clopen : IsClopen A := ⟨hA_closed, hA_open⟩
   have hA_univ : A = univ := hA_clopen.eq_univ ⟨z₀, hz₀A⟩
   rw [← hA_univ]
-  exact IsPathConnected.isArcConnected' (isPathConnected_pathComponentIn (mem_univ z₀))
+  exact IsPathConnected.isArcConnected (isPathConnected_pathComponentIn (mem_univ z₀))
 
 /-- Every `[0, 1]`-arc `T` in a surface `S` is solid (`IsSolid T`). -/
 theorem isSolid_of_isLineWithEnds (hS : IsSurface S) {T : Set S} {a b : S}
@@ -255,7 +227,7 @@ theorem isSolid_of_isLineWithEnds (hS : IsSurface S) {T : Set S} {a b : S}
       (Metric.mem_ball_self hr_pos)⟩
   have hTA'_arc : IsArcConnected (T ∩ A') := by
     rw [hT_inter]
-    exact IsPathConnected.isArcConnected' (hball_pc.image he_cont)
+    exact IsPathConnected.isArcConnected (hball_pc.image he_cont)
   exact ⟨A', inter_subset_right, hzA', hW₀_open.inter hA_open, hTA'_arc⟩
 
 /-- Every nonempty open subset `W` of `Circle` contains at least two distinct points. -/
@@ -313,7 +285,7 @@ private theorem flat_union_of_bridge_arc (hS : IsSurface S) {Z A : Set S}
   have : T2Space S := hS.2.1
   let B := Z \ A
   let T := range e
-  refine isFlat_of_forall_isNullHomotopicOArc' hS fun F hF_sub hF_oarc => ?_
+  refine isFlat_of_forall_isNullHomotopicOArc hS fun F hF_sub hF_oarc => ?_
   -- For any interior point `t ∈ Ioo 0 1` with `e t ∈ F`, `F` is contained in
   -- `K₁ t := A ∪ e '' Iic t` or `K₂ t := B ∪ e '' Ici t`.
   let K₁ : unitInterval → Set S := fun t => A ∪ e '' Iic t
@@ -406,7 +378,7 @@ private theorem flat_union_of_bridge_arc (hS : IsSurface S) {Z A : Set S}
       · have hxV₂ : x ∉ K₁ t := h₂ ⟨hxF, hxt⟩
         exact (hK_union t (hF_sub hxF)).resolve_left hxV₂
   by_cases hFZ : F ⊆ Z
-  · exact isNullHomotopicOArc_of_isFlat' hZ_flat hFZ hF_oarc
+  · exact isNullHomotopicOArc_of_isFlat hZ_flat hFZ hF_oarc
   · obtain ⟨x₁, hx₁F, hx₁Z⟩ := not_subset.mp hFZ
     obtain ⟨φ⟩ := id hF_oarc
     let W : Set Circle := {z : Circle | (φ z).1 ∉ Z}
@@ -475,10 +447,10 @@ theorem solid_bridge_arc (hS : IsSurface S) [ConnectedSpace S] {Z : Set S}
   have : T2Space S := hS.2.1
   -- Step 1: Pick two distinct arc-components `A = pathComponentIn Z z₀` and `C₂ = pathComponentIn Z
   -- z₁`.
-  have hfin : (arcComponentsIn Z).Finite := arcComponentsIn_finite_of_isSolid' hS hZ_solid
+  have hfin : (arcComponentsIn Z).Finite := arcComponentsIn_finite_of_isSolid hS hZ_solid
   obtain ⟨C₁, C₂, hC₁, hC₂, hC_ne⟩ :=
     (Set.one_lt_ncard_iff hfin).mp (by omega : 1 < (arcComponentsIn Z).ncard)
-  rw [arcComponentsIn_eq_image_pathComponentIn'] at hC₁ hC₂
+  rw [arcComponentsIn_eq_image_pathComponentIn] at hC₁ hC₂
   obtain ⟨z₀, hz₀Z, rfl⟩ := hC₁
   obtain ⟨z₁, hz₁Z, rfl⟩ := hC₂
   set A : Set S := pathComponentIn Z z₀
@@ -628,7 +600,7 @@ theorem solid_bridge_arc (hS : IsSurface S) [ConnectedSpace S] {Z : Set S}
       rw [hg_eq a haZ, hg_eq b hbZ]
       exact (pathComponentIn_congr hj_ab).symm
     have hsub_img : arcComponentsIn (Z ∪ T) ⊆ g '' (arcComponentsIn Z \ {C_b}) := by
-      rw [arcComponentsIn_eq_image_pathComponentIn']
+      rw [arcComponentsIn_eq_image_pathComponentIn]
       rintro _ ⟨y, hyZT, rfl⟩
       have hex_z : ∃ z ∈ Z, pathComponentIn (Z ∪ T) y = pathComponentIn (Z ∪ T) z := by
         rcases hyZT with hyZ | hyT

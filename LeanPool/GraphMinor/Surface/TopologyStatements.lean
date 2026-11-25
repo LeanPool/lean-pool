@@ -373,10 +373,10 @@ def PasteDiscStatement : Prop :=
 `F` bounds a closed disc included in `Z`. This is equivalent to `F` lying inside a closed disc
 included in `Z`. If `S` is
 not a sphere, a closed disc bounded by `F` is unique.
-Graph Minors VII, Section 2 (page 214), citing H. I. Levine, *Homotopic curves on surfaces*;
-Epstein's *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107, Theorem 1.7,
-gives ambient disc bounding and is quoted as Graph Minors XI (7.1). Robertson and Seymour's
-XI (7.2) (page 93) gives disc containment in the subset `Z`. -/
+Graph Minors VII, Section 2, page 214, cites H. I. Levine, *Homotopic curves on surfaces*, for
+disc bounding in the ambient surface. Graph Minors XI (7.1) quotes the ambient result from
+D. B. A. Epstein, *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107, Theorem 1.7.
+Robertson and Seymour's XI (7.2), page 93, gives disc containment in the subset `Z`. -/
 def EpsteinStatement : Prop :=
   ∀ (S : Type u) [TopologicalSpace S] (Z F : Set S), IsSurface S → ConnectedSpace S →
     IsOArc F → F ⊆ Z → Disjoint F (bd S) →

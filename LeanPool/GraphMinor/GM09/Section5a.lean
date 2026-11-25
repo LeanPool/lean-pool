@@ -160,16 +160,14 @@ theorem both_ends_mem_interval_of_separating {Q P : Graph α β} {a b s t : α}
       S.Ω.crosses_iff_interval.mpr (Or.inl ⟨hs_in, ht_ba⟩)
     exact hQ_sep.2 ⟨P, hdisj, s, t, a, b, hP_ends, hQ_ends, hcr_ends.symm⟩
 
-/-- **Graph Minors IX, (5.1)** (page 52):
-"Let $Q$ be a separating $\Omega$-path in $(G, \Omega)$ with ends $a, b$. If $\mathcal{P}$ is
-a crooked transaction in $(G, \Omega)$ with $Q \cap \bigcup \mathcal{P}$ null and with
-$V(\mathcal{P}) \cap \Omega(a, b) \ne \emptyset$ then there is a cross $\mathcal{P}'
-\subseteq \mathcal{P}$ with all four ends in $\Omega(a, b)$." -/
-theorem theorem_5_1_proof {Q : Graph α β} {a b : α} {P_set : Set (Graph α β)}
+/-- A crooked transaction crosses inside an interval if the paths with an end there
+are disjoint from a separating path across the interval. -/
+theorem exists_cross_in_interval_of_disjoint_paths
+    {Q : Graph α β} {a b : α} {P_set : Set (Graph α β)}
     (hQ_ends : S.IsOmegaPathWithEnds Q a b)
     (hQ_sep : S.IsSeparatingOmegaPath Q)
     (hcrooked : S.IsCrookedTransaction P_set)
-    (hdisj : Disjoint V(Q) V(S.transactionUnion P_set))
+    (hdisj : ∀ R ∈ P_set, (pathEnds S.G R ∩ S.Ω.interval a b).Nonempty → Disjoint V(R) V(Q))
     (hne : (S.transactionEnds P_set ∩ S.Ω.interval a b).Nonempty) :
     ∃ P₁ ∈ P_set, ∃ P₂ ∈ P_set,
       S.OmegaPathsCross P₁ P₂ ∧
@@ -184,10 +182,7 @@ theorem theorem_5_1_proof {Q : Graph α β} {a b : α} {P_set : Set (Graph α β
     intro R hR ⟨x, hx_end, hx_ab⟩
     obtain ⟨u, huA, v, hvB, hR_uv⟩ := hfence.2.2 R hR
     have huv_ne : u ≠ v := fun h => disjoint_left.mp hfence.2.1.2.2.1 huA (h ▸ hvB)
-    have hdisj_RQ : Disjoint V(R) V(Q) := by
-      rw [disjoint_left]
-      intro z hzR hzQ
-      exact disjoint_left.mp hdisj hzQ (mem_iUnion₂.mpr ⟨R, hR, hzR⟩)
+    have hdisj_RQ := hdisj R hR ⟨x, hx_end, hx_ab⟩
     rw [hR_uv.1.pathEnds_eq, mem_insert_iff, mem_singleton_iff] at hx_end
     have hu_ab : u ∈ S.Ω.interval a b := by
       rcases hx_end with rfl | rfl
@@ -234,11 +229,9 @@ theorem theorem_5_1_proof {Q : Graph α β} {a b : α} {P_set : Set (Graph α β
     · exact hx'_st.1.2 (Or.inr rfl)
   have hdisj_PP' : Disjoint V(P) V(P') := hfence.1.2 hP_in hP'_in hP'_ne_P.symm
   -- Find the other end `y'` of `P'`.
-  have hdisj_P'Q : Disjoint V(P') V(Q) := by
-    rw [disjoint_left]
-    intro z hzP' hzQ
-    exact disjoint_left.mp hdisj hzQ (mem_iUnion₂.mpr ⟨P', hP'_in, hzP'⟩)
   have hx'_ab : x' ∈ S.Ω.interval a b := hsub_st hx'_st
+  have hdisj_P'Q : Disjoint V(P') V(Q) :=
+    hdisj P' hP'_in ⟨x', by rw [hP'_ends.1.pathEnds_eq]; exact Or.inl rfl, hx'_ab⟩
   have hy'_ab : y' ∈ S.Ω.interval a b :=
     S.both_ends_mem_interval_of_separating hQ_ends hQ_sep hP'_ends hdisj_P'Q hx'_ab
   have hx'y'_ne : x' ≠ y' := hP'_ends.2.1
@@ -282,6 +275,26 @@ theorem theorem_5_1_proof {Q : Graph α β} {a b : α} {P_set : Set (Graph α β
     rintro z (rfl | rfl)
     · exact hx'_ab
     · exact hy'_ab
+
+/-- **Graph Minors IX, (5.1)** (page 52):
+"Let $Q$ be a separating $\Omega$-path in $(G, \Omega)$ with ends $a, b$. If $\mathcal{P}$ is
+a crooked transaction in $(G, \Omega)$ with $Q \cap \bigcup \mathcal{P}$ null and with
+$V(\mathcal{P}) \cap \Omega(a, b) \ne \emptyset$ then there is a cross $\mathcal{P}'
+\subseteq \mathcal{P}$ with all four ends in $\Omega(a, b)$." -/
+theorem theorem_5_1_proof {Q : Graph α β} {a b : α} {P_set : Set (Graph α β)}
+    (hQ_ends : S.IsOmegaPathWithEnds Q a b)
+    (hQ_sep : S.IsSeparatingOmegaPath Q)
+    (hcrooked : S.IsCrookedTransaction P_set)
+    (hdisj : Disjoint V(Q) V(S.transactionUnion P_set))
+    (hne : (S.transactionEnds P_set ∩ S.Ω.interval a b).Nonempty) :
+    ∃ P₁ ∈ P_set, ∃ P₂ ∈ P_set,
+      S.OmegaPathsCross P₁ P₂ ∧
+      pathEnds S.G P₁ ⊆ S.Ω.interval a b ∧
+      pathEnds S.G P₂ ⊆ S.Ω.interval a b := by
+  refine S.exists_cross_in_interval_of_disjoint_paths hQ_ends hQ_sep hcrooked ?_ hne
+  intro R hR _
+  exact disjoint_left.mpr fun z hzR hzQ =>
+    disjoint_left.mp hdisj hzQ (mem_iUnion₂.mpr ⟨R, hR, hzR⟩)
 
 /-! ## Proof of (5.2) (pages 52–53) -/
 
