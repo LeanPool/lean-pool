@@ -98,6 +98,39 @@ lemma linSpace_cone (a : ι → E) (A : Set ι) : linSpace (cone a A) = linCone 
   linSpace_eq_of (cone_lin a A)
 
 omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+/-- Common directions are perpendicular to the span of the active normals. -/
+lemma linCone_eq_orthogonal_span (a : ι → E) (A : Set ι) :
+    linCone a A = (Submodule.span ℝ (a '' A))ᗮ := by
+  ext v
+  rw [mem_linCone, Submodule.mem_orthogonal]
+  constructor
+  · intro hv u hu
+    refine Submodule.span_induction (p := fun w _ => ⟪w, v⟫ = 0) ?_ ?_ ?_ ?_ hu
+    · rintro _ ⟨i, hi, rfl⟩
+      exact hv i hi
+    · exact inner_zero_left _
+    · intro x y _ _ hx hy
+      rw [inner_add_left, hx, hy, add_zero]
+    · intro r x _ hx
+      rw [inner_smul_left, hx, mul_zero]
+  · intro hv i hi
+    exact hv (a i) (Submodule.subset_span ⟨i, hi, rfl⟩)
+
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
+lemma normal_mem_linCone_orthogonal (a : ι → E) {A : Set ι} {i : ι} (hi : i ∈ A) :
+    a i ∈ (linCone a A)ᗮ := by
+  rw [Submodule.mem_orthogonal']
+  intro v hv
+  exact hv i hi
+
+omit [MeasurableSpace E] [BorelSpace E] in
+lemma finrank_orthogonal_linCone [Fact (finrank ℝ E = 3)] (a : ι → E) (A : Set ι)
+    (rank_one : finrank ℝ (linCone a A) = 1) : finrank ℝ (linCone a A)ᗮ = 2 := by
+  have dimension : finrank ℝ E = 3 := Fact.out
+  have := Submodule.finrank_add_finrank_orthogonal (linCone a A)
+  omega
+
+omit [FiniteDimensional ℝ E] [MeasurableSpace E] [BorelSpace E] in
 /-- At a point of a polytope, the directions that stay inside are given by the active constraints.
 -/
 lemma tcone_sol [Finite ι] (a : ι → E) (b : ι → ℝ) {x : E} (hx : x ∈ sol a b) :

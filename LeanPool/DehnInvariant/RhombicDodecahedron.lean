@@ -25,14 +25,47 @@ open Set MeasureTheory Measure Module TensorProduct
 
 namespace DehnCanon.Library
 
-/-- The 18 face normals of the cube ∩ rhombic dodecahedron solids, in whole numbers: ± the three
-coordinate
-directions (cube), then the twelve vectors ±eᵢ ± eⱼ (rhombic dodecahedron). -/
-def crZ : Fin 18 → Fin 3 → ℤ :=
-  ![![1, 0, 0], ![-1, 0, 0], ![0, 1, 0], ![0, -1, 0], ![0, 0, 1], ![0, 0, -1],
-    ![1, 1, 0], ![1, -1, 0], ![-1, 1, 0], ![-1, -1, 0],
-    ![1, 0, 1], ![1, 0, -1], ![-1, 0, 1], ![-1, 0, -1],
-    ![0, 1, 1], ![0, 1, -1], ![0, -1, 1], ![0, -1, -1]]
+private def coordinateIndex (i : Fin 3) (negative : Bool) : Fin 18 :=
+  ⟨2 * i.val + negative.toNat, by cases negative <;> simp <;> omega⟩
+
+private def pairIndex (pair : Fin 3) (negativeFirst negativeSecond : Bool) : Fin 18 :=
+  ⟨6 + 4 * pair.val + 2 * negativeFirst.toNat + negativeSecond.toNat,
+    by cases negativeFirst <;> cases negativeSecond <;> simp <;> omega⟩
+
+/-- The smaller coordinate in each of the three unordered pairs. -/
+def firstCoordinate : Fin 3 → Fin 3 := ![0, 0, 1]
+/-- The larger coordinate in each of the three unordered pairs. -/
+def secondCoordinate : Fin 3 → Fin 3 := ![1, 2, 2]
+/-- The coefficient selected by the negative-sign flag. -/
+def normalSign (negative : Bool) : ℤ := if negative then -1 else 1
+
+/-- The signed coordinate and signed pair families of normals. -/
+inductive NormalIndex
+  | coordinate (index : Fin 3) (negative : Bool)
+  | pair (index : Fin 3) (negativeFirst negativeSecond : Bool)
+  deriving DecidableEq
+
+/-- Decode a face number into its coordinate or coordinate-pair normal. -/
+def normalIndex (i : Fin 18) : NormalIndex :=
+  if firstSix : i.val < 6 then
+    .coordinate ⟨i.val / 2, by omega⟩ (i.val % 2 == 1)
+  else
+    .pair ⟨(i.val - 6) / 4, by have := i.isLt; omega⟩
+      ((i.val - 6) % 4 / 2 == 1) ((i.val - 6) % 2 == 1)
+
+private lemma normalIndex_coordinate : ∀ (i : Fin 3) (negative : Bool),
+    normalIndex (coordinateIndex i negative) = .coordinate i negative := by decide +kernel
+
+private lemma normalIndex_pair : ∀ (p : Fin 3) (n₁ n₂ : Bool),
+    normalIndex (pairIndex p n₁ n₂) = .pair p n₁ n₂ := by decide +kernel
+
+/-- The signed coordinate and pair normals of the cube–rhombic-dodecahedron intersection. -/
+def crZ (i : Fin 18) (j : Fin 3) : ℤ :=
+  match normalIndex i with
+  | .coordinate index negative => if j = index then normalSign negative else 0
+  | .pair index negativeFirst negativeSecond =>
+    (if j = firstCoordinate index then normalSign negativeFirst else 0) +
+      (if j = secondCoordinate index then normalSign negativeSecond else 0)
 
 /-- Dot products of the normals. -/
 def crDot (i j : Fin 18) : ℤ := crZ i 0 * crZ j 0 + crZ i 1 * crZ j 1 + crZ i 2 * crZ j 2
@@ -41,7 +74,10 @@ def crDot (i j : Fin 18) : ℤ := crZ i 0 * crZ j 0 + crZ i 1 * crZ j 1 + crZ i 
 noncomputable def crN (i : Fin 18) : R3 := !₂[(crZ i 0 : ℝ), (crZ i 1 : ℝ), (crZ i 2 : ℝ)]
 
 /-- Offsets: `s` for the six cube faces, `c` for the twelve rhombic dodecahedron faces. -/
-def crB (s c : ℝ) : Fin 18 → ℝ := fun i => if (i : ℕ) < 6 then s else c
+def crB (s c : ℝ) (i : Fin 18) : ℝ :=
+  match normalIndex i with
+  | .coordinate .. => s
+  | .pair .. => c
 
 /-- **The cube ∩ rhombic dodecahedron solids**: the points with `|x i| ≤ s` (cube) and `|x i ± x
 j| ≤ c`
@@ -84,17 +120,6 @@ lemma crN_angle (i j : Fin 18) : InnerProductGeometry.angle (crN i) (crN j) ∈ 
   rw [crN_inner, crN_inner, crN_inner]
   exact_mod_cast hk
 
-private def coordinateIndex (i : Fin 3) (negative : Bool) : Fin 18 :=
-  ⟨2 * i.val + negative.toNat, by cases negative <;> simp <;> omega⟩
-
-private def pairIndex (pair : Fin 3) (negativeFirst negativeSecond : Bool) : Fin 18 :=
-  ⟨6 + 4 * pair.val + 2 * negativeFirst.toNat + negativeSecond.toNat,
-    by cases negativeFirst <;> cases negativeSecond <;> simp <;> omega⟩
-
-private def firstCoordinate : Fin 3 → Fin 3 := ![0, 0, 1]
-private def secondCoordinate : Fin 3 → Fin 3 := ![1, 2, 2]
-private def normalSign (negative : Bool) : ℤ := if negative then -1 else 1
-
 private lemma crZ_coordinate : ∀ (i : Fin 3) (negative : Bool) (j : Fin 3),
     crZ (coordinateIndex i negative) j = if j = i then normalSign negative else 0 := by
   decide +kernel
@@ -116,13 +141,11 @@ private lemma coordinate_ne : ∀ p, firstCoordinate p ≠ secondCoordinate p :=
 
 private lemma crB_coordinate (s c : ℝ) (i : Fin 3) (negative : Bool) :
     crB s c (coordinateIndex i negative) = s := by
-  have bound : 2 * i.val + negative.toNat < 6 := by cases negative <;> simp <;> omega
-  simp [crB, coordinateIndex, bound]
+  simp [crB, normalIndex_coordinate]
 
 private lemma crB_pair (s c : ℝ) (p : Fin 3) (n₁ n₂ : Bool) :
     crB s c (pairIndex p n₁ n₂) = c := by
-  have bound : ¬ 6 + 4 * p.val + 2 * n₁.toNat + n₂.toNat < 6 := by omega
-  simp [crB, pairIndex, bound]
+  simp [crB, normalIndex_pair]
 
 private lemma inner_crN (i : Fin 18) (x : R3) :
     ⟪crN i, x⟫ = ∑ j : Fin 3, (crZ i j : ℝ) * x j := by

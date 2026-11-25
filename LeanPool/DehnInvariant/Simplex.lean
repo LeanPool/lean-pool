@@ -11,10 +11,8 @@ module
 public import LeanPool.DehnInvariant.ConeAngles
 public import LeanPool.DehnInvariant.EdgeData
 public import LeanPool.DehnInvariant.TetrahedronData
-public import Mathlib.Algebra.Module.StablyFree.Basic
 public import Mathlib.Geometry.Euclidean.Angle.Unoriented.Basic
 public import Mathlib.MeasureTheory.Measure.Hausdorff
-public import Mathlib.Tactic.Push
 
 /-!
 # The Dehn invariant of a tetrahedron
@@ -30,30 +28,6 @@ open scoped RealInnerProductSpace
 open Set MeasureTheory Measure Module TensorProduct
 
 namespace DehnCanon.Library
-
-/-- **A test for "not zero".** If the length `L₁` is not a rational multiple of the length `L₂`,
-and the angle
-class `θ₁` is not zero (the angle is not a rational multiple of π), then `L₁ ⊗ θ₁ + L₂ ⊗ θ₂ ≠ 0`,
-whatever
-`θ₂` is. -/
-theorem tmul_add_tmul_ne_zero {L₁ L₂ : ℝ} {θ₁ θ₂ : Angle} (hL : L₁ ∉ Submodule.span ℚ {L₂})
-    (hθ : θ₁ ≠ 0) : L₁ ⊗ₜ[ℚ] θ₁ + L₂ ⊗ₜ[ℚ] θ₂ ≠ (0 : DehnSpace) := by
-  intro h
-  obtain ⟨f, hf, hf0⟩ := Submodule.exists_dual_map_eq_bot_of_notMem hL inferInstance
-  have hf2 : f L₂ = 0 := by
-    have h1 : f L₂ ∈ (Submodule.span ℚ {L₂}).map f :=
-      Submodule.mem_map_of_mem (Submodule.mem_span_singleton_self _)
-    rw [hf0] at h1
-    exact (Submodule.mem_bot ℚ).1 h1
-  obtain ⟨g, hg⟩ : ∃ g : Module.Dual ℚ Angle, g θ₁ ≠ 0 := by
-    by_contra hc
-    push Not at hc
-    exact hθ ((Module.forall_dual_apply_eq_zero_iff ℚ _).1 hc)
-  have h2 := congrArg (TensorProduct.lift ((LinearMap.mul ℚ ℚ).compl₁₂ f g)) h
-  rw [map_add, TensorProduct.lift.tmul, TensorProduct.lift.tmul, map_zero, LinearMap.compl₁₂_apply,
-    LinearMap.compl₁₂_apply, LinearMap.mul_apply', LinearMap.mul_apply', hf2, zero_mul,
-        add_zero] at h2
-  exact mul_ne_zero hf hg h2
 
 variable {E : Type*} [NormedAddCommGroup E] [InnerProductSpace ℝ E]
 

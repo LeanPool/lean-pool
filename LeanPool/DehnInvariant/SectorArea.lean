@@ -215,22 +215,7 @@ lemma finrank_linCone_pair [FiniteDimensional ℝ E] [Fact (finrank ℝ E = 3)] 
   set S : Submodule ℝ E := Submodule.span ℝ (Set.range ![a₁, a₂]) with hS
   have hSf : finrank ℝ S = 2 := by rw [hS, finrank_span_eq_card h]; simp
   have hK : linCone ![a₁, a₂] Set.univ = Sᗮ := by
-    ext v
-    rw [mem_linCone_pair, Submodule.mem_orthogonal']
-    constructor
-    · rintro ⟨h1, h2⟩ u hu
-      have hle : S ≤ (ℝ ∙ v)ᗮ := by
-        rw [hS, Submodule.span_le]
-        rintro _ ⟨i, rfl⟩
-        refine Submodule.mem_orthogonal_singleton_iff_inner_right.2 ?_
-        fin_cases i
-        · simpa [real_inner_comm] using h1
-        · simpa [real_inner_comm] using h2
-      exact Submodule.mem_orthogonal_singleton_iff_inner_right.1 (hle hu)
-    · intro hv
-      have m1 : a₁ ∈ S := Submodule.subset_span ⟨0, rfl⟩
-      have m2 : a₂ ∈ S := Submodule.subset_span ⟨1, rfl⟩
-      exact ⟨by rw [real_inner_comm]; exact hv _ m1, by rw [real_inner_comm]; exact hv _ m2⟩
+    rw [linCone_eq_orthogonal_span, Set.image_univ]
   have h1 := Submodule.finrank_add_finrank_orthogonal S
   rw [hK]; omega
 
@@ -327,8 +312,9 @@ theorem wedgeAngle_two_planes_unit [FiniteDimensional ℝ E] [MeasurableSpace E]
   have hcos : Real.cos β = n / 2 := by
     have hc0 : 0 ≤ Real.cos β := Real.cos_arcsin_nonneg _
     have hsq : Real.cos β ^ 2 = (n / 2) ^ 2 := by
-      have := Real.sin_sq_add_cos_sq β
-      rw [hsin] at this; nlinarith
+      have trigonometric := Real.sin_sq_add_cos_sq β
+      rw [hsin] at trigonometric
+      nlinarith only [trigonometric, hmn]
     exact (sq_eq_sq₀ hc0 (by positivity)).1 hsq
   -- the wedge is carried to the sector
   have a1 : ∀ z : ℂ, ⟪u₁, z.re • e₁ + z.im • e₂⟫ = -(Real.sin β) * z.re + Real.cos β * z.im := by

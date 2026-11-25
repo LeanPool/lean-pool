@@ -258,15 +258,8 @@ lemma cone_eq_pair_of_strict [Finite ι] (a : ι → E) {A : Set ι} {v₀ : E}
     ∃ p ∈ A, ∃ q ∈ A, LinearIndependent ℝ ![a p, a q] ∧ cone a A = cone a {p, q} := by
   classical
   let := Fintype.ofFinite ι
-  have hE : finrank ℝ E = 3 := Fact.out
-  have hW : finrank ℝ (linCone a A)ᗮ = 2 := by
-    have := Submodule.finrank_add_finrank_orthogonal (linCone a A)
-    omega
-  have hmem : ∀ i ∈ A, a i ∈ (linCone a A)ᗮ := by
-    intro i hi
-    rw [Submodule.mem_orthogonal']
-    intro u hu
-    exact hu i hi
+  have hW := finrank_orthogonal_linCone a A hfin
+  have hmem : ∀ i ∈ A, a i ∈ (linCone a A)ᗮ := fun _ => normal_mem_linCone_orthogonal a
   let s : Finset ι := Finset.univ.filter fun i => i ∈ A ∧ a i ≠ 0
   have hs : ∀ i, i ∈ s ↔ i ∈ A ∧ a i ≠ 0 := by intro i; simp [s]
   have hsne : s.Nonempty := by
@@ -280,7 +273,7 @@ lemma cone_eq_pair_of_strict [Finite ι] (a : ι → E) {A : Set ι} {v₀ : E}
         rw [hno] at h1
         exact absurd h1 (Finset.notMem_empty _)
       rw [h0, inner_zero_left]
-    rw [htop, finrank_top] at hfin
+    rw [htop, finrank_top, Fact.out (p := finrank ℝ E = 3)] at hfin
     omega
   obtain ⟨p, hp, q, hq, hpq⟩ := two_extreme hW a v₀ s hsne
     (fun i hi => hmem i ((hs i).1 hi).1) (fun i hi => hv0 i ((hs i).1 hi).1 ((hs i).1 hi).2)

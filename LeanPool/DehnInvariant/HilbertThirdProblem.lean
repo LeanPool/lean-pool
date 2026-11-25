@@ -214,20 +214,7 @@ theorem isPoly_orthoTet : IsPoly orthoTet := hil2_isTetraData.isPoly
 
 lemma range_four {α : Type*} (a b c d : α) : Set.range ![a, b, c, d] = {a, b, c, d} := by
   ext x
-  simp only [Set.mem_range, Fin.exists_fin_succ, Matrix.cons_val_zero, Matrix.cons_val_succ,
-    Set.mem_insert_iff, Set.mem_singleton_iff]
-  constructor
-  · rintro (h | h | h | h | ⟨i, -⟩)
-    · exact Or.inl h.symm
-    · exact Or.inr (Or.inl h.symm)
-    · exact Or.inr (Or.inr (Or.inl h.symm))
-    · exact Or.inr (Or.inr (Or.inr h.symm))
-    · exact i.elim0
-  · rintro (h | h | h | h)
-    · exact Or.inl h.symm
-    · exact Or.inr (Or.inl h.symm)
-    · exact Or.inr (Or.inr (Or.inl h.symm))
-    · exact Or.inr (Or.inr (Or.inr (Or.inl h.symm)))
+  simp [Matrix.range_cons, or_comm, or_left_comm]
 
 /-- The first tetrahedron is the convex hull of `A`, `B`, `C`, `D`. -/
 theorem cornerTet_eq_convexHull :
@@ -315,10 +302,6 @@ lemma cornerTet_eq : cornerTet = WithLp.ofLp ⁻¹' hilCornerF := by
     norm_num [hil1N, hilB, inner3] at h0 h1 h2 h3
     exact ⟨h1, h2, h3, h0⟩
   · rintro ⟨h1, h2, h3, h0⟩
-    have h1' : 0 ≤ x 0 := h1
-    have h2' : 0 ≤ x 1 := h2
-    have h3' : 0 ≤ x 2 := h3
-    have h0' : x 0 + x 1 + x 2 ≤ 1 := h0
     intro m
     fin_cases m <;> simp [hil1N, hilB, inner3] <;> linarith
 
@@ -330,10 +313,6 @@ lemma orthoTet_eq : orthoTet = WithLp.ofLp ⁻¹' hilOrthoF := by
     norm_num [hil2N, hilB, inner3] at h0 h1 h2 h3
     exact ⟨h1, h3, by linarith, h0⟩
   · rintro ⟨h1, h3, h2, h0⟩
-    have h1' : 0 ≤ x 0 := h1
-    have h3' : 0 ≤ x 2 := h3
-    have h2' : x 2 ≤ x 1 := h2
-    have h0' : x 0 + x 1 ≤ 1 := h0
     intro m
     fin_cases m <;> simp [hil2N, hilB, inner3] <;> linarith
 

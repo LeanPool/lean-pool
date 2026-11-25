@@ -512,15 +512,8 @@ lemma eq_of_mem_facetNormals [Finite ι] {A : Set ι} {x : E} {p q : ι} (hx : x
     by_contra hpos
     push Not at hpos
     nlinarith [mul_pos ht hpos]
-  have hE : finrank ℝ E = 3 := Fact.out
-  have hW : finrank ℝ (linCone a A)ᗮ = 2 := by
-    have := Submodule.finrank_add_finrank_orthogonal (linCone a A)
-    omega
-  have hmem : ∀ i ∈ A, a i ∈ (linCone a A)ᗮ := by
-    intro i hi
-    rw [Submodule.mem_orthogonal']
-    intro u hu
-    exact hu i hi
+  have hW := finrank_orthogonal_linCone a A hfin
+  have hmem : ∀ i ∈ A, a i ∈ (linCone a A)ᗮ := fun _ => normal_mem_linCone_orthogonal a
   have hnW : n ∈ (linCone a A)ᗮ := by
     rw [Submodule.mem_orthogonal']
     intro w hw

@@ -84,6 +84,7 @@ theorem IsPoly.exists_Hpolytope [Nontrivial E] {P : Set E} (hP : IsPoly P) :
   · rintro hx _ ⟨index, rfl⟩
     exact (equivalent index).mpr (hx index.1)
 
+omit [CompleteSpace E] in
 /-- In finite dimension, the Dehn invariant's polytopes are exactly the finite convex hulls. -/
 theorem isPoly_iff_exists_Vpolytope [Nontrivial E] [FiniteDimensional ℝ E] (P : Set E) :
     IsPoly P ↔ ∃ (S : Set E) (hS : S.Finite), Vpolytope hS = P := by
