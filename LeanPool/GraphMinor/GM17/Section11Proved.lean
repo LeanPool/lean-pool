@@ -1826,105 +1826,26 @@ private theorem area_cells_share_only_frontier_vertices
     · exact Or.inl (Or.inl hvn)
     · exact Or.inl (Or.inr hvn)
 
-private theorem warp_at_replacement_border_cell_le
-    {α : Type u}
-    {β : Type v}
-    {G : Hypergraph α β}
-    {𝒯 : Set (Hypergraph α β × Hypergraph α β)}
-    {θ : ℕ}
-    {p : ℕ}
-    (h𝒯 : IsTangle G θ 𝒯)
-    (π : Portrayal G)
-    (htrue : π.IsTrue 𝒯)
-    (hred : π.IsRedundant 𝒯 θ (2 * p + 4))
-    (hwarp : π.warp ≤ p)
-    (hθ : 6 * p + 8 < θ)
-    {F : Set π.S}
-    {Δ : Set π.S}
-    {n₁ : π.S}
-    {n₂ : π.S}
-    {n₃ : π.S}
-    (hnorm : π.Γ.IsNormal F)
-    (hF : IsLineWithEnds F n₁ n₂)
-    (hFbd : F ∩ bd π.S = {n₁, n₂})
-    (hFN : F ∩ π.Γ.N = {n₁, n₂, n₃})
-    (hFN_card : (F ∩ π.Γ.N).ncard = 3)
-    (hΔ : IsClosedDisc Δ)
-    (hsmall : IsSmallWrt 𝒯 (π.areaGraph Δ))
-    (hF_bd : F ⊆ discBd Δ)
-    (hbd_sub : discBd Δ ⊆ F ∪ bd π.S)
-    (A₁ : Hypergraph α β)
-    (A₂ : Hypergraph α β)
-    (hsep : (π.areaGraph Δ).IsSeparation A₁ A₂)
-    (hinter_V : (A₁ ∩ A₂).vertexSet = {π.nodeVertex n₁, π.nodeVertex n₂})
-    (hn₃_A₁ : π.nodeVertex n₃ ∈ A₁.vertexSet)
-    (hbs_A₂ : π.borderSet n₁ ∪ π.borderSet n₂ ⊆ A₂.vertexSet)
-    (hdom : π.domγ = π.Γ.N)
-    (Γ' : Painting π.S)
-    (Θ : Set π.S)
-    (c₁ : Set π.S)
-    (c₂ : Set π.S)
-    (hN'_eq : Γ'.N = π.Γ.N \ Δ ∪ {n₁, n₂, n₃})
-    (hN'_sub : Γ'.N ⊆ π.Γ.N)
-    (hΘ : Θ ∈ cuffs π.S)
-    (hn₁_Θ : n₁ ∈ π.Γ.N ∩ Θ)
-    (hn₂_Θ : n₂ ∈ π.Γ.N ∩ Θ)
-    (hbd_Θ : discBd Δ ⊆ F ∪ Θ)
-    (hdich : ∀ c ∈ π.Γ.C, c ⊆ Δ ∨ c ⊆ Δᶜ)
-    (htilde_I₂ : ∀ c ∈ π.Γ.C, c ⊆ Δᶜ → tilde c ⊆ Γ'.N)
-    (hc₁_mem : c₁ ∈ Γ'.C)
-    (hc₁_int : ¬(c₁ ∩ bd π.S).Nonempty)
-    (htilde_c₁ : tilde c₁ = {n₁, n₂, n₃})
-    (hc₂_mem : c₂ ∈ Γ'.C)
-    (hc₂_Θ : (c₂ ∩ Θ).Nonempty)
-    (htilde_c₂ : tilde c₂ = {n₁, n₂})
-    (hc₁_ne_c₂ : c₁ ≠ c₂)
-    (hc₁_not_I₂ : c₁ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hc₂_not_I₂ : c₂ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hC' : Γ'.C = insert c₁ (insert c₂ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hΘ_bd : Θ ⊆ bd π.S)
-    (hc₂_bd : (c₂ ∩ bd π.S).Nonempty)
-    (hn₁_bd : n₁ ∈ π.Γ.N ∩ bd π.S)
-    (hn₂_bd : n₂ ∈ π.Γ.N ∩ bd π.S)
-    (hn₃_FN : n₃ ∈ F ∩ π.Γ.N)
-    (hn₁_dom : n₁ ∈ π.domγ)
-    (hn₂_dom : n₂ ∈ π.domγ)
-    (hn₃_dom : n₃ ∈ π.domγ)
-    (hne₁₂ : n₁ ≠ n₂)
-    (hne₃₁ : n₃ ≠ n₁)
-    (hne₃₂ : n₃ ≠ n₂)
-    (hn₁_A₁A₂ : π.nodeVertex n₁ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₂_A₁A₂ : π.nodeVertex n₂ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₃_not_A₂ : π.nodeVertex n₃ ∉ A₂.vertexSet)
-    (hbp_c₂_sub_A₂ : ∀ {n : π.S}, n ∈ tilde c₂ → π.borderPlus n ⊆ A₂.vertexSet)
-    (htilde_c₂_N' : tilde c₂ ⊆ Γ'.N ∩ bd π.S)
-    (htilde_c₁_N' : tilde c₁ ⊆ Γ'.N)
-    (hdisj_I : Disjoint ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}) ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hinter_I₁_I₂ : (π.areaGraph Δ).vertexSet ∩ (π.cellsUnion ({c : Set π.S | c ∈ π.Γ.C
-      ∧ c ⊆ Δᶜ})).vertexSet ⊆ π.borderSet n₁ ∪
-      π.borderSet n₂ ∪ {π.nodeVertex n₁, π.nodeVertex n₂, π.nodeVertex n₃})
-    (cellG : Set π.S → Hypergraph α β)
-    (hcellG_c₁ : cellG c₁ = A₁)
-    (hcellG_c₂ : cellG c₂ = A₂)
-    (hcellG_I₂ : ∀ {c : Set π.S}, c ∈ ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}) → cellG c
-      = π.cellGraph c)
-    (hA₁_le_G : A₁ ≤ G)
-    (hA₂_le_G : A₂ ≤ G) :
-    let π' : Portrayal G := portrayal_after_two_cell_replacement (α := α) (β := β) (G := G) π (F
-      := F) (Δ := Δ) (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) hF hFbd hFN A₁ A₂ hsep hinter_V hn₃_A₁
-      hbs_A₂ Γ' Θ c₁ c₂ hN'_eq hN'_sub hn₁_Θ hn₂_Θ hdich htilde_I₂ hc₁_mem hc₁_int htilde_c₁
-      hc₂_mem hc₂_Θ htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂ hc₂_not_I₂ hC' hc₂_bd hn₁_bd hn₂_bd
-      hn₃_FN hn₁_dom hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂ hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂ hbp_c₂_sub_A₂
-      htilde_c₂_N' htilde_c₁_N' hdisj_I hinter_I₁_I₂ cellG hcellG_c₁ hcellG_c₂ hcellG_I₂ hA₁_le_G
-      hA₂_le_G
-    (∀ {n : π.S}, n ∈ Γ'.N → π'.borderPlus n = π.borderPlus n) →
-    (∀ {n : π.S}, n ∈ π.Γ.N ∩ Θ → (π.borderSet n).ncard ≤ (π.warpAt Θ)) →
-    π'.cellWarp c₂ ≤ (π.warpAt Θ) := by
-  let I₁ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}
-  let I₂ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}
+private theorem replacement_border_linkage
+    {α : Type u} {β : Type v} {G : Hypergraph α β}
+    {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ p : ℕ}
+    (h𝒯 : IsTangle G θ 𝒯) (π : Portrayal G) (htrue : π.IsTrue 𝒯)
+    (hred : π.IsRedundant 𝒯 θ (2 * p + 4)) (hwarp : π.warp ≤ p) (hθ : 6 * p + 8 < θ)
+    {F Δ Θ c₂ : Set π.S} {n₁ n₂ : π.S}
+    (hnorm : π.Γ.IsNormal F) (hF : IsLineWithEnds F n₁ n₂) (hFbd : F ∩ bd π.S = {n₁, n₂})
+    (hFN_card : (F ∩ π.Γ.N).ncard = 3) (hΔ : IsClosedDisc Δ)
+    (hsmall : IsSmallWrt 𝒯 (π.areaGraph Δ)) (hF_bd : F ⊆ discBd Δ)
+    (hbd_sub : discBd Δ ⊆ F ∪ bd π.S) {A₂ : Hypergraph α β} (hA₂_le : A₂ ≤ π.areaGraph Δ)
+    (hdom : π.domγ = π.Γ.N) (hΘ : Θ ∈ cuffs π.S)
+    (hn₁_Θ : n₁ ∈ π.Γ.N ∩ Θ) (hn₂_Θ : n₂ ∈ π.Γ.N ∩ Θ) (hbd_Θ : discBd Δ ⊆ F ∪ Θ)
+    (htilde_c₂ : tilde c₂ = {n₁, n₂}) (hΘ_bd : Θ ⊆ bd π.S)
+    (hbs_le_q : ∀ {n : π.S}, n ∈ π.Γ.N ∩ Θ → (π.borderSet n).ncard ≤ π.warpAt Θ) :
+    ∀ u₁ ∈ tilde c₂, ∀ u₂ ∈ tilde c₂, u₁ ≠ u₂ →
+      (π.borderSet u₁).ncard ≤ π.warpAt Θ ∧ (π.borderSet u₂).ncard ≤ π.warpAt Θ ∧
+      ((π.borderPlus u₁).ncard = π.warpAt Θ + 1 → (π.borderPlus u₂).ncard = π.warpAt Θ + 1 →
+        Portrayal.LinkagePairs A₂.skeleton (π.borderPlus u₁) (π.borderPlus u₂)
+          (π.warpAt Θ + 1) (π.nodeVertex u₁) (π.nodeVertex u₂)) := by
   let q := π.warpAt Θ
-  intro π' hbp'_eq  hbs_le_q
-  apply csInf_le (OrderBot.bddBelow _)
   intro u₁ hu₁ u₂ hu₂ hu_ne
   have hu₁_pair : u₁ = n₁ ∨ u₁ = n₂ := by
     have h : u₁ ∈ ({n₁, n₂} : Set π.S) := htilde_c₂ ▸ hu₁
@@ -1932,11 +1853,6 @@ private theorem warp_at_replacement_border_cell_le
   have hu₂_pair : u₂ = n₁ ∨ u₂ = n₂ := by
     have h : u₂ ∈ ({n₁, n₂} : Set π.S) := htilde_c₂ ▸ hu₂
     exact h
-  have hu₁_N' : u₁ ∈ Γ'.N := (htilde_c₂_N' hu₁).1
-  have hu₂_N' : u₂ ∈ Γ'.N := (htilde_c₂_N' hu₂).1
-  have hcg_c₂ : π'.cellGraph c₂ = A₂ := hcellG_c₂
-  rw [hbp'_eq hu₁_N', hbp'_eq hu₂_N', hcg_c₂]
-  clear hu₁ hu₂ hu₁_N' hu₂_N'
   have hu₁_Θ : u₁ ∈ π.Γ.N ∩ Θ := by
     rcases hu₁_pair with h | h <;> rw [h] <;> assumption
   have hu₂_Θ : u₂ ∈ π.Γ.N ∩ Θ := by
@@ -1996,11 +1912,11 @@ private theorem warp_at_replacement_border_cell_le
     have hstep_A₂ : ∀ {a b : α}, A₂.skeleton.Adj a b → (π.areaGraph Δ).skeleton.Adj a b := by
       rintro a b ⟨hab, e, hinca, hincb⟩
       have he_A₂ : e ∈ A₂.edgeSet := A₂.edge_mem_of_inc hinca
-      have he_Δ : e ∈ (π.areaGraph Δ).edgeSet := hsep.right_le.edgeSet_subset he_A₂
+      have he_Δ : e ∈ (π.areaGraph Δ).edgeSet := hA₂_le.edgeSet_subset he_A₂
       have hinca_Δ : (π.areaGraph Δ).Inc e a :=
-        (inc_iff_of_le hsep.right_le he_A₂).mp hinca
+        (inc_iff_of_le hA₂_le he_A₂).mp hinca
       have hincb_Δ : (π.areaGraph Δ).Inc e b :=
-        (inc_iff_of_le hsep.right_le he_A₂).mp hincb
+        (inc_iff_of_le hA₂_le he_A₂).mp hincb
       exact ⟨hab, e, hinca_Δ, hincb_Δ⟩
     have hlift_A₂ : ∀ {a b : α} (w : A₂.skeleton.Walk a b),
         ∃ w' : (π.areaGraph Δ).skeleton.Walk a b, w'.support = w.support := by
@@ -2036,106 +1952,19 @@ private theorem warp_at_replacement_border_cell_le
     exact hlink_Δ L' hL'_disj
 
 private theorem replacement_does_not_increase_internal_cells
-    {α : Type u}
-    {β : Type v}
-    {G : Hypergraph α β}
-    {𝒯 : Set (Hypergraph α β × Hypergraph α β)}
-    {p : ℕ}
-    (π : Portrayal G)
-    {F : Set π.S}
-    {Δ : Set π.S}
-    {c₀ : Set π.S}
-    {n₁ : π.S}
-    {n₂ : π.S}
-    {n₃ : π.S}
-    (hF : IsLineWithEnds F n₁ n₂)
-    (hFbd : F ∩ bd π.S = {n₁, n₂})
-    (hFN : F ∩ π.Γ.N = {n₁, n₂, n₃})
-    (hc₀ : c₀ ∈ π.Γ.C)
-    (hc₀_Δ : c₀ ⊆ Δ)
-    (hc₀_card : (tilde c₀).ncard = 3)
-    (A₁ : Hypergraph α β)
-    (A₂ : Hypergraph α β)
-    (hsep : (π.areaGraph Δ).IsSeparation A₁ A₂)
-    (hinter_V : (A₁ ∩ A₂).vertexSet = {π.nodeVertex n₁, π.nodeVertex n₂})
-    (hn₃_A₁ : π.nodeVertex n₃ ∈ A₁.vertexSet)
-    (hbs_A₂ : π.borderSet n₁ ∪ π.borderSet n₂ ⊆ A₂.vertexSet)
-    (Γ' : Painting π.S)
-    (Θ : Set π.S)
-    (c₁ : Set π.S)
-    (c₂ : Set π.S)
-    (hN'_eq : Γ'.N = π.Γ.N \ Δ ∪ {n₁, n₂, n₃})
-    (hN'_sub : Γ'.N ⊆ π.Γ.N)
-    (hn₁_Θ : n₁ ∈ π.Γ.N ∩ Θ)
-    (hn₂_Θ : n₂ ∈ π.Γ.N ∩ Θ)
-    (hdich : ∀ c ∈ π.Γ.C, c ⊆ Δ ∨ c ⊆ Δᶜ)
-    (htilde_I₂ : ∀ c ∈ π.Γ.C, c ⊆ Δᶜ → tilde c ⊆ Γ'.N)
-    (hc₁_mem : c₁ ∈ Γ'.C)
-    (hc₁_int : ¬(c₁ ∩ bd π.S).Nonempty)
-    (htilde_c₁ : tilde c₁ = {n₁, n₂, n₃})
-    (hc₂_mem : c₂ ∈ Γ'.C)
-    (hc₂_Θ : (c₂ ∩ Θ).Nonempty)
-    (htilde_c₂ : tilde c₂ = {n₁, n₂})
-    (hc₁_ne_c₂ : c₁ ≠ c₂)
-    (hc₁_not_I₂ : c₁ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hc₂_not_I₂ : c₂ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hC' : Γ'.C = insert c₁ (insert c₂ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hc₂_bd : (c₂ ∩ bd π.S).Nonempty)
-    (hn₁_bd : n₁ ∈ π.Γ.N ∩ bd π.S)
-    (hn₂_bd : n₂ ∈ π.Γ.N ∩ bd π.S)
-    (hn₃_FN : n₃ ∈ F ∩ π.Γ.N)
-    (hn₁_dom : n₁ ∈ π.domγ)
-    (hn₂_dom : n₂ ∈ π.domγ)
-    (hn₃_dom : n₃ ∈ π.domγ)
-    (hne₁₂ : n₁ ≠ n₂)
-    (hne₃₁ : n₃ ≠ n₁)
-    (hne₃₂ : n₃ ≠ n₂)
-    (hn₁_A₁A₂ : π.nodeVertex n₁ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₂_A₁A₂ : π.nodeVertex n₂ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₃_not_A₂ : π.nodeVertex n₃ ∉ A₂.vertexSet)
-    (hbp_c₂_sub_A₂ : ∀ {n : π.S}, n ∈ tilde c₂ → π.borderPlus n ⊆ A₂.vertexSet)
-    (htilde_c₂_N' : tilde c₂ ⊆ Γ'.N ∩ bd π.S)
-    (htilde_c₁_N' : tilde c₁ ⊆ Γ'.N)
-    (hdisj_I : Disjoint ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}) ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hinter_I₁_I₂ : (π.areaGraph Δ).vertexSet ∩ (π.cellsUnion ({c : Set π.S | c ∈ π.Γ.C
-      ∧ c ⊆ Δᶜ})).vertexSet ⊆ π.borderSet n₁ ∪
-      π.borderSet n₂ ∪ {π.nodeVertex n₁, π.nodeVertex n₂, π.nodeVertex n₃})
-    (cellG : Set π.S → Hypergraph α β)
-    (hcellG_c₁ : cellG c₁ = A₁)
-    (hcellG_c₂ : cellG c₂ = A₂)
-    (hcellG_I₂ : ∀ {c : Set π.S}, c ∈ ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}) → cellG c
-      = π.cellGraph c)
-    (hA₁_le_G : A₁ ≤ G)
-    (hA₂_le_G : A₂ ≤ G) :
-    let π' : Portrayal G := portrayal_after_two_cell_replacement (α := α) (β := β) (G := G) π (F
-      := F) (Δ := Δ) (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) hF hFbd hFN A₁ A₂ hsep hinter_V hn₃_A₁
-      hbs_A₂ Γ' Θ c₁ c₂ hN'_eq hN'_sub hn₁_Θ hn₂_Θ hdich htilde_I₂ hc₁_mem hc₁_int htilde_c₁
-      hc₂_mem hc₂_Θ htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂ hc₂_not_I₂ hC' hc₂_bd hn₁_bd hn₂_bd
-      hn₃_FN hn₁_dom hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂ hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂ hbp_c₂_sub_A₂
-      htilde_c₂_N' htilde_c₁_N' hdisj_I hinter_I₁_I₂ cellG hcellG_c₁ hcellG_c₂ hcellG_I₂ hA₁_le_G
-      hA₂_le_G
-    (∀ {n : π.S}, n ∈ Γ'.N → π'.borderPlus n = π.borderPlus n) →
-    (∀ {c : Set π.S}, c ∈ ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}) → (c ∩ bd π.S).Nonempty
-      → π'.cellWarp c = π.cellWarp c) →
-    ∀ (q : ℕ),
-    (π'.cellWarp c₂ ≤ q) →
-    (∀ Θ' ∈ cuffs π.S, π'.warpAt Θ' ≤ π.warpAt Θ') →
-    (π'.warp ≤ p) →
-    (π'.IsCentral 𝒯) →
-    (∀ Θ' ∈ cuffs π.S, π'.warpAt Θ' = π.warpAt Θ') →
-    (π'.Resembles π) →
-    ((tilde c₁).ncard = 3) →
-    (¬(c₀ ∩ bd π.S).Nonempty) →
-    π'.truth 0 ≤ π.truth 0 := by
-  let I₁ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}
-  let I₂ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}
-  intro π' hbp'_eq hcw_I₂ q hcw_c₂ hwarpAt_le hwarp' hπ'_central hwarpAt_eq hπ'_resembles hc₁_card
-    hc₀_int
-  simp only [Portrayal.truth, Fin.val_zero, Nat.sub_zero]
-  simp only [show (0 : ℕ) < 4 by decide, ↓reduceIte]
-  let B₀ := {c ∈ I₂ | ¬ (c ∩ bd π.S).Nonempty ∧ (tilde c).ncard = 3}
-  have hB₀_fin : B₀.Finite := π.Γ.finite_cells.subset fun _ h => h.1.1
-  have hset_new : {c ∈ Γ'.C | ¬ (c ∩ bd π.S).Nonempty ∧ (tilde c).ncard = 3} =
+    {S : Type} [TopologicalSpace S] (Γ Γ' : Painting S)
+    {Δ c₀ c₁ c₂ : Set S} (hc₀ : c₀ ∈ Γ.C) (hc₀_int : ¬ (c₀ ∩ bd S).Nonempty)
+    (hc₀_card : (tilde c₀).ncard = 3) (hc₁_int : ¬ (c₁ ∩ bd S).Nonempty)
+    (hc₁_card : (tilde c₁).ncard = 3) (hc₂_bd : (c₂ ∩ bd S).Nonempty)
+    (hc₀_not_I₂ : c₀ ∉ {c | c ∈ Γ.C ∧ c ⊆ Δᶜ})
+    (hc₁_not_I₂ : c₁ ∉ {c | c ∈ Γ.C ∧ c ⊆ Δᶜ})
+    (hC' : Γ'.C = insert c₁ (insert c₂ {c | c ∈ Γ.C ∧ c ⊆ Δᶜ})) :
+    {c ∈ Γ'.C | ¬ (c ∩ bd S).Nonempty ∧ (tilde c).ncard = 3}.ncard ≤
+      {c ∈ Γ.C | ¬ (c ∩ bd S).Nonempty ∧ (tilde c).ncard = 3}.ncard := by
+  let I₂ := {c | c ∈ Γ.C ∧ c ⊆ Δᶜ}
+  let B₀ := {c ∈ I₂ | ¬ (c ∩ bd S).Nonempty ∧ (tilde c).ncard = 3}
+  have hB₀_fin : B₀.Finite := Γ.finite_cells.subset fun _ h => h.1.1
+  have hset_new : {c ∈ Γ'.C | ¬ (c ∩ bd S).Nonempty ∧ (tilde c).ncard = 3} =
       insert c₁ B₀ := by
     ext c
     simp only [B₀, mem_ofPred_eq, hC', mem_insert_iff]
@@ -2149,112 +1978,15 @@ private theorem replacement_does_not_increase_internal_cells
       · exact ⟨Or.inr (Or.inr hc_I₂), hint, hcard_c⟩
   have hc₁_not_B₀ : c₁ ∉ B₀ := fun h => hc₁_not_I₂ h.1
   have hsub_old : insert c₀ B₀ ⊆
-      {c ∈ π.Γ.C | ¬ (c ∩ bd π.S).Nonempty ∧ (tilde c).ncard = 3} := by
+      {c ∈ Γ.C | ¬ (c ∩ bd S).Nonempty ∧ (tilde c).ncard = 3} := by
     rintro c (rfl | ⟨hc_I₂, hint, hcard_c⟩)
     · exact ⟨hc₀, hc₀_int, hc₀_card⟩
     · exact ⟨hc_I₂.1, hint, hcard_c⟩
-  have hc₀_not_B₀ : c₀ ∉ B₀ :=
-    fun h => Set.disjoint_left.mp hdisj_I ⟨hc₀, hc₀_Δ⟩ h.1
+  have hc₀_not_B₀ : c₀ ∉ B₀ := fun h => hc₀_not_I₂ h.1
   rw [hset_new, ncard_insert_of_notMem hc₁_not_B₀ hB₀_fin]
-  have hle_old := ncard_le_ncard hsub_old (π.Γ.finite_cells.subset fun _ h => h.1)
+  have hle_old := ncard_le_ncard hsub_old (Γ.finite_cells.subset fun _ h => h.1)
   rw [ncard_insert_of_notMem hc₀_not_B₀ hB₀_fin] at hle_old
   exact hle_old
-
-private theorem replacement_does_not_increase_cuff_warp
-    {α : Type u}
-    {β : Type v}
-    {G : Hypergraph α β}
-    (π : Portrayal G)
-    {F : Set π.S}
-    {Δ : Set π.S}
-    {n₁ : π.S}
-    {n₂ : π.S}
-    {n₃ : π.S}
-    (hF : IsLineWithEnds F n₁ n₂)
-    (hFbd : F ∩ bd π.S = {n₁, n₂})
-    (hFN : F ∩ π.Γ.N = {n₁, n₂, n₃})
-    (A₁ : Hypergraph α β)
-    (A₂ : Hypergraph α β)
-    (hsep : (π.areaGraph Δ).IsSeparation A₁ A₂)
-    (hinter_V : (A₁ ∩ A₂).vertexSet = {π.nodeVertex n₁, π.nodeVertex n₂})
-    (hn₃_A₁ : π.nodeVertex n₃ ∈ A₁.vertexSet)
-    (hbs_A₂ : π.borderSet n₁ ∪ π.borderSet n₂ ⊆ A₂.vertexSet)
-    (Γ' : Painting π.S)
-    (Θ : Set π.S)
-    (c₁ : Set π.S)
-    (c₂ : Set π.S)
-    (hΘ : Θ ∈ cuffs π.S)
-    (hN'_eq : Γ'.N = π.Γ.N \ Δ ∪ {n₁, n₂, n₃})
-    (hN'_sub : Γ'.N ⊆ π.Γ.N)
-    (hn₁_Θ : n₁ ∈ π.Γ.N ∩ Θ)
-    (hn₂_Θ : n₂ ∈ π.Γ.N ∩ Θ)
-    (hdich : ∀ c ∈ π.Γ.C, c ⊆ Δ ∨ c ⊆ Δᶜ)
-    (htilde_I₂ : ∀ c ∈ π.Γ.C, c ⊆ Δᶜ → tilde c ⊆ Γ'.N)
-    (hc₁_mem : c₁ ∈ Γ'.C)
-    (hc₁_int : ¬(c₁ ∩ bd π.S).Nonempty)
-    (htilde_c₁ : tilde c₁ = {n₁, n₂, n₃})
-    (hc₂_mem : c₂ ∈ Γ'.C)
-    (hc₂_Θ : (c₂ ∩ Θ).Nonempty)
-    (htilde_c₂ : tilde c₂ = {n₁, n₂})
-    (hc₁_ne_c₂ : c₁ ≠ c₂)
-    (hc₁_not_I₂ : c₁ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hc₂_not_I₂ : c₂ ∉ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ})
-    (hC' : Γ'.C = insert c₁ (insert c₂ {c | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hc₂_bd : (c₂ ∩ bd π.S).Nonempty)
-    (hn₁_bd : n₁ ∈ π.Γ.N ∩ bd π.S)
-    (hn₂_bd : n₂ ∈ π.Γ.N ∩ bd π.S)
-    (hn₃_FN : n₃ ∈ F ∩ π.Γ.N)
-    (hn₁_dom : n₁ ∈ π.domγ)
-    (hn₂_dom : n₂ ∈ π.domγ)
-    (hn₃_dom : n₃ ∈ π.domγ)
-    (hne₁₂ : n₁ ≠ n₂)
-    (hne₃₁ : n₃ ≠ n₁)
-    (hne₃₂ : n₃ ≠ n₂)
-    (hn₁_A₁A₂ : π.nodeVertex n₁ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₂_A₁A₂ : π.nodeVertex n₂ ∈ (A₁ ∩ A₂).vertexSet)
-    (hn₃_not_A₂ : π.nodeVertex n₃ ∉ A₂.vertexSet)
-    (hbp_c₂_sub_A₂ : ∀ {n : π.S}, n ∈ tilde c₂ → π.borderPlus n ⊆ A₂.vertexSet)
-    (htilde_c₂_N' : tilde c₂ ⊆ Γ'.N ∩ bd π.S)
-    (htilde_c₁_N' : tilde c₁ ⊆ Γ'.N)
-    (hdisj_I : Disjoint ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}) ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}))
-    (hinter_I₁_I₂ : (π.areaGraph Δ).vertexSet ∩ (π.cellsUnion ({c : Set π.S | c ∈ π.Γ.C
-      ∧ c ⊆ Δᶜ})).vertexSet ⊆ π.borderSet n₁ ∪
-      π.borderSet n₂ ∪ {π.nodeVertex n₁, π.nodeVertex n₂, π.nodeVertex n₃})
-    (cellG : Set π.S → Hypergraph α β)
-    (hcellG_c₁ : cellG c₁ = A₁)
-    (hcellG_c₂ : cellG c₂ = A₂)
-    (hcellG_I₂ : ∀ {c : Set π.S}, c ∈ ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}) → cellG c
-      = π.cellGraph c)
-    (hA₁_le_G : A₁ ≤ G)
-    (hA₂_le_G : A₂ ≤ G) :
-    let π' : Portrayal G := portrayal_after_two_cell_replacement (α := α) (β := β) (G := G) π (F
-      := F) (Δ := Δ) (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) hF hFbd hFN A₁ A₂ hsep hinter_V hn₃_A₁
-      hbs_A₂ Γ' Θ c₁ c₂ hN'_eq hN'_sub hn₁_Θ hn₂_Θ hdich htilde_I₂ hc₁_mem hc₁_int htilde_c₁
-      hc₂_mem hc₂_Θ htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂ hc₂_not_I₂ hC' hc₂_bd hn₁_bd hn₂_bd
-      hn₃_FN hn₁_dom hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂ hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂ hbp_c₂_sub_A₂
-      htilde_c₂_N' htilde_c₁_N' hdisj_I hinter_I₁_I₂ cellG hcellG_c₁ hcellG_c₂ hcellG_I₂ hA₁_le_G
-      hA₂_le_G
-    ( ∀ {c : Set π.S}, c ∈ ({c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}) → (c ∩ bd π.S).Nonempty
-      → π'.cellWarp c = π.cellWarp c) →
-    (π'.cellWarp c₂ ≤ π.warpAt Θ) →
-    ∀ Θ' ∈ cuffs π.S, π'.warpAt Θ' ≤ π.warpAt Θ' := by
-  let I₁ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δ}
-  let I₂ := {c : Set π.S | c ∈ π.Γ.C ∧ c ⊆ Δᶜ}
-  intro π' hcw_I₂ hcw_c₂ Θ' hΘ'
-  apply csSup_le'
-  rintro r ⟨c, hc_mem, hc_Θ', rfl⟩
-  have hΘ'_bd : Θ' ⊆ bd π.S := by
-    rcases hΘ' with ⟨x₀, _, rfl⟩
-    exact connectedComponentIn_subset (bd π.S) x₀
-  have hbd_c : (c ∩ bd π.S).Nonempty := hc_Θ'.mono (inter_subset_inter_right _ hΘ'_bd)
-  rcases hC' ▸ hc_mem with h1 | h2 | hc_I₂
-  · exact False.elim (hc₁_int (h1 ▸ hbd_c))
-  · have hΘ'_eq : Θ' = Θ :=
-      (Γ'.border_cell_subset_cuff hc₂_mem hΘ hc₂_Θ).2.2.2.2 Θ' hΘ' (h2 ▸ hc_Θ')
-    rw [h2, hΘ'_eq]
-    exact hcw_c₂
-  · rw [hcw_I₂ hc_I₂ hbd_c]
-    exact π.cellWarp_le_warpAt hc_I₂.1 hc_Θ'
 
 private theorem replacement_preserves_truth_profile
     {α : Type u}
@@ -2419,22 +2151,29 @@ private theorem replacement_portrayal_keeps_all_disc_nodes
     exact (π.ncard_borderSet_le_cellWarp hc_range.1 hbd_c hn_t).trans
       (π.cellWarp_le_warpAt hc_range.1 hc_range.2)
   have hcw_c₂ : π'.cellWarp c₂ ≤ q := by
-    exact warp_at_replacement_border_cell_le (α := α) (β := β) (G := G) (𝒯 := 𝒯) (θ := θ) (p :=
-      p) h𝒯 π htrue hred hwarp hθ (F := F) (Δ := Δ) (n₁ := n₁) (n₂ := n₂) (n₃ := n₃)
-      hnorm hF hFbd hFN hFN_card hΔ hsmall hF_bd hbd_sub A₁ A₂ hsep hinter_V hn₃_A₁ hbs_A₂ hdom
-      Γ' Θ c₁ c₂ hN'_eq hN'_sub hΘ hn₁_Θ hn₂_Θ hbd_Θ hdich htilde_I₂ hc₁_mem hc₁_int htilde_c₁
-      hc₂_mem hc₂_Θ htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂ hc₂_not_I₂ hC'   hΘ_bd hc₂_bd hn₁_bd
-      hn₂_bd hn₃_FN hn₁_dom hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂ hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂
-      hbp_c₂_sub_A₂ htilde_c₂_N' htilde_c₁_N' hdisj_I hinter_I₁_I₂ cellG hcellG_c₁ hcellG_c₂
-      hcellG_I₂ hA₁_le_G hA₂_le_G  hbp'_eq  hbs_le_q
+    apply csInf_le (OrderBot.bddBelow _)
+    intro u₁ hu₁ u₂ hu₂ hu_ne
+    have hcg_c₂ : π'.cellGraph c₂ = A₂ := hcellG_c₂
+    rw [hbp'_eq (htilde_c₂_N' hu₁).1, hbp'_eq (htilde_c₂_N' hu₂).1, hcg_c₂]
+    exact replacement_border_linkage h𝒯 π htrue hred hwarp hθ hnorm hF hFbd hFN_card
+      hΔ hsmall hF_bd hbd_sub hsep.right_le hdom hΘ hn₁_Θ hn₂_Θ hbd_Θ htilde_c₂ hΘ_bd
+      hbs_le_q u₁ hu₁ u₂ hu₂ hu_ne
   have hwarpAt_le : ∀ Θ' ∈ cuffs π.S, π'.warpAt Θ' ≤ π.warpAt Θ' := by
-    exact replacement_does_not_increase_cuff_warp (α := α) (β := β) (G := G) π (F := F) (Δ := Δ)
-      (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) hF hFbd hFN A₁ A₂ hsep hinter_V hn₃_A₁ hbs_A₂ Γ' Θ c₁ c₂
-      hΘ hN'_eq hN'_sub hn₁_Θ hn₂_Θ hdich htilde_I₂ hc₁_mem hc₁_int htilde_c₁ hc₂_mem hc₂_Θ
-      htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂ hc₂_not_I₂ hC' hc₂_bd hn₁_bd hn₂_bd hn₃_FN hn₁_dom
-      hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂ hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂ hbp_c₂_sub_A₂ htilde_c₂_N'
-      htilde_c₁_N' hdisj_I hinter_I₁_I₂ cellG hcellG_c₁ hcellG_c₂ hcellG_I₂ hA₁_le_G hA₂_le_G
-      hcw_I₂ hcw_c₂
+    intro Θ' hΘ'
+    apply csSup_le'
+    rintro r ⟨c, hc_mem, hc_Θ', rfl⟩
+    have hΘ'_bd : Θ' ⊆ bd π.S := by
+      rcases hΘ' with ⟨x₀, _, rfl⟩
+      exact connectedComponentIn_subset (bd π.S) x₀
+    have hbd_c : (c ∩ bd π.S).Nonempty := hc_Θ'.mono (inter_subset_inter_right _ hΘ'_bd)
+    rcases hC' ▸ hc_mem with h1 | h2 | hc_I₂
+    · exact False.elim (hc₁_int (h1 ▸ hbd_c))
+    · have hΘ'_eq : Θ' = Θ :=
+        (Γ'.border_cell_subset_cuff hc₂_mem hΘ hc₂_Θ).2.2.2.2 Θ' hΘ' (h2 ▸ hc_Θ')
+      rw [h2, hΘ'_eq]
+      exact hcw_c₂
+    · rw [hcw_I₂ hc_I₂ hbd_c]
+      exact π.cellWarp_le_warpAt hc_I₂.1 hc_Θ'
   have hwarp' : π'.warp ≤ p := by
     have hne_cuffs : (cuffs π'.S).Nonempty := ⟨Θ, hΘ⟩
     have hSup_bdd : ∀ r ∈ {r | ∃ Θ' ∈ cuffs π'.S, r = π'.warpAt Θ'}, r ≤ p := by
@@ -2494,14 +2233,9 @@ private theorem replacement_portrayal_keeps_all_disc_nodes
     have h2 : (tilde c₀).ncard = 2 := by rw [htilde₀, ncard_pair hne_uv]
     omega
   have htruth_le_0 : π'.truth 0 ≤ π.truth 0 := by
-    exact replacement_does_not_increase_internal_cells (α := α) (β := β) (G := G) (𝒯 := 𝒯) (p :=
-      p) π (F := F) (Δ := Δ) (c₀ := c₀) (n₁ := n₁) (n₂ := n₂) (n₃ := n₃) hF hFbd hFN hc₀ hc₀_Δ
-      hc₀_card A₁ A₂ hsep hinter_V hn₃_A₁ hbs_A₂ Γ' Θ c₁ c₂ hN'_eq hN'_sub hn₁_Θ hn₂_Θ hdich
-      htilde_I₂ hc₁_mem hc₁_int htilde_c₁ hc₂_mem hc₂_Θ htilde_c₂ hc₁_ne_c₂ hc₁_not_I₂
-      hc₂_not_I₂ hC' hc₂_bd hn₁_bd hn₂_bd hn₃_FN hn₁_dom hn₂_dom hn₃_dom hne₁₂ hne₃₁ hne₃₂
-      hn₁_A₁A₂ hn₂_A₁A₂ hn₃_not_A₂ hbp_c₂_sub_A₂ htilde_c₂_N' htilde_c₁_N' hdisj_I hinter_I₁_I₂
-      cellG hcellG_c₁ hcellG_c₂ hcellG_I₂ hA₁_le_G hA₂_le_G  hbp'_eq hcw_I₂ q hcw_c₂
-      hwarpAt_le hwarp' hπ'_central hwarpAt_eq hπ'_resembles hc₁_card hc₀_int
+    simp only [Portrayal.truth, Fin.val_zero, Nat.sub_zero, show (0 : ℕ) < 4 by decide, ↓reduceIte]
+    exact replacement_does_not_increase_internal_cells π.Γ Γ' hc₀ hc₀_int hc₀_card hc₁_int
+      hc₁_card hc₂_bd (fun hc => Set.disjoint_left.mp hdisj_I ⟨hc₀, hc₀_Δ⟩ hc) hc₁_not_I₂ hC'
   have htruth_le : ∀ i : Fin 6, π'.truth i ≤ π.truth i := by
     intro i
     by_cases hi0 : i = 0

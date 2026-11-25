@@ -95,11 +95,6 @@ private theorem isConnected_biUnion_fin {S : Type u} [TopologicalSpace S]
         ext; dsimp [j_last]; omega
       rwa [← h_idx]
 
-private theorem not_mem_U_of_mem_region {S : Type u} [TopologicalSpace S]
-    (G : Drawing S) {r : Set S} (hr : r ∈ G.R) {z : S} (hz : z ∈ r) : z ∉ G.U := by
-  rcases hr with ⟨z₀, _, rfl⟩
-  exact (connectedComponentIn_subset (univ \ G.U) z₀ hz).2
-
 /-- Every $(x, y)$-chain $A$ in a proper drawing $G$ on a closed disc space $S$ yields a compact
 connected set $F \subseteq S$ containing $x$ and $y$ such that
 $F \cap U(G) \subseteq \{v \in V(G) \mid \text{Sum.inl } v \in A\}$. -/
@@ -111,96 +106,10 @@ theorem exists_separatingSet_of_isXYChain
       F ∩ G.U ⊆ {v ∈ G.V | Sum.inl v ∈ A} := by
   have hm : 0 < A.length := List.length_pos_of_ne_nil hChain.ne_nil
   -- For each index i : Fin A.length, define its left endpoint p(i) and right endpoint q(i)
-  let leftPt : Fin A.length → S := fun i =>
-    match A[i.1]'i.2 with
-    | .inl v => v
-    | .inr _ =>
-      if hi0 : i.1 = 0 then x
-      else
-        match A[i.1 - 1]'(Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2) with
-        | .inl v => v
-        | .inr _ => x
-  let rightPt : Fin A.length → S := fun i =>
-    match A[i.1]'i.2 with
-    | .inl v => v
-    | .inr _ =>
-      if hi1 : i.1 + 1 = A.length then y
-      else
-        match A[i.1 + 1]'(Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1) with
-        | .inl v => v
-        | .inr _ => y
-  have h_chain_rel : ∀ (j : ℕ) (hj : j + 1 < A.length),
-      ChainTerm.AreIncident G A[j] A[j + 1] :=
-    fun j hj => List.isChain_iff_getElem.mp hChain.isChain j hj
-  have h_left_closure : ∀ (i : Fin A.length) (r : Set S),
-      A[i.1]'i.2 = .inr r → leftPt i ∈ closure r ∧
-        (leftPt i ∈ G.U → leftPt i ∈ G.V ∧ Sum.inl (leftPt i) ∈ A) := by
-    intro i r hir
-    have hrR : r ∈ G.R := by
-      have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
-      simpa [hir, ChainTerm.IsValid] using hv
-    by_cases hi0 : i.1 = 0
-    · have hhead : A.head hChain.ne_nil = A[i.1]'i.2 := by
-        rw [List.head_eq_getElem_zero]
-        congr 1; omega
-      have hmatch := hChain.head_matches
-      rw [hhead, hir] at hmatch
-      change x ∈ r at hmatch
-      have hleft : leftPt i = x := by
-        dsimp [leftPt]
-        rw [hir]
-        simp [hi0]
-      rw [hleft]
-      refine ⟨subset_closure hmatch, fun hxU => ?_⟩
-      exfalso
-      exact not_mem_U_of_mem_region G hrR hmatch hxU
-    · have hprev_lt : i.1 - 1 < A.length := Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2
-      have hstep : (i.1 - 1) + 1 < A.length := by omega
-      have hinc := h_chain_rel (i.1 - 1) hstep
-      have h_idx_eq : A[(i.1 - 1) + 1]'hstep = A[i.1]'i.2 := by congr 1; omega
-      rw [h_idx_eq, hir] at hinc
-      rcases h_prev : A[i.1 - 1]'hprev_lt with v | r'
-      · rw [h_prev] at hinc
-        rcases hinc with ⟨hvV, _, hv_cl⟩
-        have hleft : leftPt i = v := by simp [leftPt, hir, hi0, h_prev]
-        rw [hleft]
-        refine ⟨hv_cl, fun _ => ⟨hvV, ?_⟩⟩
-        rw [← h_prev]
-        exact List.getElem_mem hprev_lt
-      · rw [h_prev] at hinc
-        exact False.elim hinc
-  have h_right_closure : ∀ (i : Fin A.length) (r : Set S),
-      A[i.1]'i.2 = .inr r → rightPt i ∈ closure r ∧
-        (rightPt i ∈ G.U → rightPt i ∈ G.V ∧ Sum.inl (rightPt i) ∈ A) := by
-    intro i r hir
-    have hrR : r ∈ G.R := by
-      have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
-      simpa [hir, ChainTerm.IsValid] using hv
-    by_cases hi1 : i.1 + 1 = A.length
-    · have hlast : A.getLast hChain.ne_nil = A[i.1]'i.2 := by
-        rw [List.getLast_eq_getElem]
-        congr 1; omega
-      have hmatch := hChain.last_matches
-      rw [hlast, hir] at hmatch
-      change y ∈ r at hmatch
-      have hright : rightPt i = y := by simp [rightPt, hir, hi1]
-      rw [hright]
-      refine ⟨subset_closure hmatch, fun hyU => ?_⟩
-      exfalso
-      exact not_mem_U_of_mem_region G hrR hmatch hyU
-    · have hnext_lt : i.1 + 1 < A.length := Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1
-      have hinc := h_chain_rel i.1 hnext_lt
-      rw [hir] at hinc
-      rcases h_next : A[i.1 + 1]'hnext_lt with v | r'
-      · rw [h_next] at hinc
-        rcases hinc with ⟨hvV, _, hv_cl⟩
-        have hright : rightPt i = v := by simp [rightPt, hir, hi1, h_next]
-        rw [hright]
-        refine ⟨hv_cl, fun _ => ⟨hvV, ?_⟩⟩
-        rw [← h_next]
-        exact List.getElem_mem hnext_lt
-      · rw [h_next] at hinc
-        exact False.elim hinc
+  let leftPt := ChainTerm.leftEndpoint A x
+  let rightPt := ChainTerm.rightEndpoint A y
+  have h_left_closure := hChain.leftEndpoint_mem_closure
+  have h_right_closure := hChain.rightEndpoint_mem_closure
   -- Now construct K(i) for each i : Fin A.length
   have hK_exists : ∀ i : Fin A.length,
       ∃ K : Set S, IsCompact K ∧ IsConnected K ∧ leftPt i ∈ K ∧ rightPt i ∈ K ∧
@@ -208,8 +117,8 @@ theorem exists_separatingSet_of_isXYChain
     intro i
     rcases hir : A[i.1]'i.2 with v | r
     · refine ⟨{v}, isCompact_singleton, isConnected_singleton, ?_, ?_, ?_⟩
-      · simp [leftPt, hir]
-      · simp [rightPt, hir]
+      · simp [leftPt, ChainTerm.leftEndpoint, hir]
+      · simp [rightPt, ChainTerm.rightEndpoint, hir]
       · intro z hz
         have hzv : z = v := mem_singleton_iff.mp hz.1
         subst hzv
@@ -246,26 +155,10 @@ theorem exists_separatingSet_of_isXYChain
   refine ⟨⋃ i : Fin A.length, K i, isCompact_iUnion hK_comp, ?_, ?_, ?_, ?_⟩
   · refine isConnected_biUnion_fin A.length hm K hK_conn ?_
     intro i hi
-    have hinc := h_chain_rel i.1 hi
-    rcases hir : A[i.1]'i.2 with v | r
-    · rw [hir] at hinc
-      rcases hir1 : A[i.1 + 1]'hi with v' | r'
-      · rw [hir1] at hinc; exact False.elim hinc
-      · refine ⟨v, ?_, ?_⟩
-        · have hright : rightPt i = v := by simp [rightPt, hir]
-          rw [← hright]; exact hK_right i
-        · have hleft : leftPt ⟨i.1 + 1, hi⟩ = v := by
-            simp [leftPt, hir1, hir]
-          rw [← hleft]; exact hK_left ⟨i.1 + 1, hi⟩
-    · rw [hir] at hinc
-      rcases hir1 : A[i.1 + 1]'hi with v' | r'
-      · refine ⟨v', ?_, ?_⟩
-        · have hne_last : i.1 + 1 ≠ A.length := ne_of_lt hi
-          have hright : rightPt i = v' := by simp [rightPt, hir, hne_last, hir1]
-          rw [← hright]; exact hK_right i
-        · have hleft : leftPt ⟨i.1 + 1, hi⟩ = v' := by simp [leftPt, hir1]
-          rw [← hleft]; exact hK_left ⟨i.1 + 1, hi⟩
-      · rw [hir1] at hinc; exact False.elim hinc
+    refine ⟨rightPt i, hK_right i, ?_⟩
+    change ChainTerm.rightEndpoint A y i ∈ K ⟨i.1 + 1, hi⟩
+    rw [hChain.endpoints_eq i hi]
+    exact hK_left ⟨i.1 + 1, hi⟩
   · refine mem_iUnion.mpr ⟨⟨0, hm⟩, ?_⟩
     have hhead : A.head hChain.ne_nil = A[0]'hm := List.head_eq_getElem_zero _
     have hmatch := hChain.head_matches
@@ -273,9 +166,9 @@ theorem exists_separatingSet_of_isXYChain
     rcases hir0 : A[0]'hm with v | r
     · rw [hir0] at hmatch
       change v = x at hmatch
-      have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, hir0, hmatch]
+      have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, ChainTerm.leftEndpoint, hir0, hmatch]
       rw [← hleft]; exact hK_left ⟨0, hm⟩
-    · have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, hir0]
+    · have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, ChainTerm.leftEndpoint, hir0]
       rw [← hleft]; exact hK_left ⟨0, hm⟩
   · let i_last : Fin A.length := ⟨A.length - 1, Nat.sub_lt hm zero_lt_one⟩
     refine mem_iUnion.mpr ⟨i_last, ?_⟩
@@ -286,10 +179,11 @@ theorem exists_separatingSet_of_isXYChain
     rcases hir_last : A[i_last.1]'i_last.2 with v | r
     · rw [hir_last] at hmatch
       change v = y at hmatch
-      have hright : rightPt i_last = y := by simp [rightPt, hir_last, hmatch]
+      have hright : rightPt i_last = y := by
+        simp [rightPt, ChainTerm.rightEndpoint, hir_last, hmatch]
       rw [← hright]; exact hK_right i_last
     · have hi1 : i_last.1 + 1 = A.length := by dsimp [i_last]; omega
-      have hright : rightPt i_last = y := by simp [rightPt, hir_last, hi1]
+      have hright : rightPt i_last = y := by simp [rightPt, ChainTerm.rightEndpoint, hir_last, hi1]
       rw [← hright]; exact hK_right i_last
   · rintro z ⟨hz_u, hzU⟩
     rcases mem_iUnion.mp hz_u with ⟨i, hzi⟩
@@ -349,42 +243,6 @@ theorem isCrossFree_of_isFeasible
       subst heq
       exact disjoint_left.mp hE_disj he₁C he₂C
     exact disjoint_left.mp (disjoint_edges_of_ne G he₁G he₂G he_ne) hze₁ hze₂
-
-theorem ncard_inl_mem_le_chainLength {S : Type u} (A : List (ChainTerm S)) :
-    {v : S | Sum.inl v ∈ A}.ncard ≤ chainLength A := by
-  induction A with
-  | nil => simp [chainLength]
-  | cons hd tl ih =>
-    rcases hd with v | r
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
-          insert v {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      have h_len : chainLength ((Sum.inl v : ChainTerm S) :: tl) = chainLength tl + 1 := rfl
-      rw [h_eq, h_len]
-      exact (ncard_insert_le v _).trans (Nat.add_le_add_right ih 1)
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
-          {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      have h_len : chainLength ((Sum.inr r : ChainTerm S) :: tl) = chainLength tl := rfl
-      rw [h_eq, h_len]
-      exact ih
-
-theorem finite_inl_mem {S : Type u} (A : List (ChainTerm S)) :
-    {v : S | Sum.inl v ∈ A}.Finite := by
-  induction A with
-  | nil => simp
-  | cons hd tl ih =>
-    rcases hd with v | r
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
-          insert v {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      rw [h_eq]
-      exact ih.insert v
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
-          {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      rw [h_eq]
-      exact ih
 
 open Classical in
 /-- Necessity of (3.6)(ii): If $\Delta$ is feasible in $G$ on a closed disc space $S$, then every

@@ -394,6 +394,28 @@ def MatchesEnd (z : S) : ChainTerm S → Prop
   | .inl v => v = z
   | .inr r => z ∈ r
 
+/-- The left endpoint of a chain term, using `x` when the chain starts in a region. -/
+def leftEndpoint {S : Type u} (A : List (ChainTerm S)) (x : S) (i : Fin A.length) : S :=
+  match A[i.1]'i.2 with
+  | .inl v => v
+  | .inr _ =>
+    if i.1 = 0 then x
+    else
+      match A[i.1 - 1]'(Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2) with
+      | .inl v => v
+      | .inr _ => x
+
+/-- The right endpoint of a chain term, using `y` when the chain ends in a region. -/
+def rightEndpoint {S : Type u} (A : List (ChainTerm S)) (y : S) (i : Fin A.length) : S :=
+  match A[i.1]'i.2 with
+  | .inl v => v
+  | .inr _ =>
+    if hi : i.1 + 1 = A.length then y
+    else
+      match A[i.1 + 1]'(Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi) with
+      | .inl v => v
+      | .inr _ => y
+
 end ChainTerm
 
 /-- For $x, y \in W$, a sequence $A = [A_1, \dots, A_k]$ ($k \ge 1$) is an *$(x, y)$-chain* of $G$
@@ -418,11 +440,62 @@ structure IsXYChain {S : Type u} [TopologicalSpace S] (G : Drawing S) (x y : S)
   peripheral_iff : ∀ i : Fin A.length,
     (A[i]).IsPeripheral G ↔ (i.1 = 0 ∨ i.1 + 1 = A.length)
 
+/-- Consecutive terms of a chain share their endpoints at the intervening drawing vertex. -/
+theorem IsXYChain.endpoints_eq {S : Type u} [TopologicalSpace S] {G : Drawing S}
+    {A : List (ChainTerm S)} {x y : S} (h : IsXYChain G x y A)
+    (i : Fin A.length) (hi : i.1 + 1 < A.length) :
+    ChainTerm.rightEndpoint A y i = ChainTerm.leftEndpoint A x ⟨i.1 + 1, hi⟩ := by
+  have hinc := List.isChain_iff_getElem.mp h.isChain i.1 hi
+  rcases hcurrent : A[i.1]'i.2 with v | r <;>
+    rcases hnext : A[i.1 + 1]'hi with w | r'
+  · rw [hcurrent, hnext] at hinc
+    exact False.elim hinc
+  · simp [ChainTerm.rightEndpoint, ChainTerm.leftEndpoint, hcurrent, hnext]
+  · simp [ChainTerm.rightEndpoint, ChainTerm.leftEndpoint, hcurrent, hnext, ne_of_lt hi]
+  · rw [hcurrent, hnext] at hinc
+    exact False.elim hinc
+
 /-- The *length* of an $(x, y)$-chain is the number of terms which are vertices.
 Graph Minors VI, Section 3 (page 121): "The *length* of an $(x, y)$-chain is the number of terms
 which are vertices." -/
 def chainLength {S : Type u} (A : List (ChainTerm S)) : ℕ :=
   (A.filter (fun t => decide t.IsVertex)).length
+
+theorem ncard_inl_mem_le_chainLength {S : Type u} (A : List (ChainTerm S)) :
+    {v : S | Sum.inl v ∈ A}.ncard ≤ chainLength A := by
+  induction A with
+  | nil => simp [chainLength]
+  | cons hd tl ih =>
+    rcases hd with v | r
+    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
+          insert v {w : S | Sum.inl w ∈ tl} := by
+        ext w; simp
+      have h_len : chainLength ((Sum.inl v : ChainTerm S) :: tl) = chainLength tl + 1 := rfl
+      rw [h_eq, h_len]
+      exact (ncard_insert_le v _).trans (Nat.add_le_add_right ih 1)
+    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
+          {w : S | Sum.inl w ∈ tl} := by
+        ext w; simp
+      have h_len : chainLength ((Sum.inr r : ChainTerm S) :: tl) = chainLength tl := rfl
+      rw [h_eq, h_len]
+      exact ih
+
+theorem finite_inl_mem {S : Type u} (A : List (ChainTerm S)) :
+    {v : S | Sum.inl v ∈ A}.Finite := by
+  induction A with
+  | nil => simp
+  | cons hd tl ih =>
+    rcases hd with v | r
+    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
+          insert v {w : S | Sum.inl w ∈ tl} := by
+        ext w; simp
+      rw [h_eq]
+      exact ih.insert v
+    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
+          {w : S | Sum.inl w ∈ tl} := by
+        ext w; simp
+      rw [h_eq]
+      exact ih
 
 /-- The *$\Delta$-redundancy* of an $(x, y)$-chain in $G$ is its length minus $\Delta(x, y)$.
 Graph Minors VI, Section 3 (page 121): "The *$\Delta$-redundancy* of an $(x, y)$-chain in $G$ is

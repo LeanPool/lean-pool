@@ -121,31 +121,41 @@ theorem exists_dissection_lines (hS : IsSurface S) [ConnectedSpace S] {V₀ : Se
   · intro x hx
     exact mem_pull_gr hj hK hu hi hd hb1 (.inr (hsub (mem_image_of_mem j hx)))
 
-/-- The cuffs, a finite set `N` of points on the lines, and lines that meet only in `N`, make up a
-graph. -/
-theorem exists_graph_of_lines (hS : IsSurface S) {N : Set S} {𝓔 : Set (Set S)} (hN : N.Finite)
-  (h𝓔 : 𝓔.Finite)
-    (hline : ∀ L ∈ 𝓔, ∃ u v, u ≠ v ∧ IsLineWithEnds L u v ∧ L ∩ N = {u, v})
-    (hdisj : ∀ L ∈ 𝓔, ∀ L' ∈ 𝓔, L ≠ L' → L ∩ L' ⊆ N) (hbd : ∀ L ∈ 𝓔, L ∩ bd S ⊆ N)
-      (hNs : N ⊆ bd S ∪ ⋃₀ 𝓔) :
-    ∃ (V : Set S) (E : Set (Set S)), N ⊆ V ∧ IsGraph V E ∧ V ⊆ ⋃₀ E ∧ ⋃₀ E = bd S ∪ ⋃₀ 𝓔 ∧ 𝓔 ⊆ E
-      := by
+/-- A graph containing the cuffs and a finite family of lines, with a uniform bound on its
+edge count and the added edges lying in the boundary. -/
+theorem exists_counted_line_graph (hS : IsSurface S) :
+    ∃ B : ℕ, ∀ {N : Set S} {𝓔 : Set (Set S)}, N.Finite → 𝓔.Finite →
+      (∀ L ∈ 𝓔, ∃ u v, u ≠ v ∧ IsLineWithEnds L u v ∧ L ∩ N = {u, v}) →
+      (∀ L ∈ 𝓔, ∀ L' ∈ 𝓔, L ≠ L' → L ∩ L' ⊆ N) → (∀ L ∈ 𝓔, L ∩ bd S ⊆ N) → N ⊆ bd S ∪ ⋃₀ 𝓔 →
+      ∃ (V : Set S) (E : Set (Set S)), N ⊆ V ∧ IsGraph V E ∧ V ⊆ ⋃₀ E ∧ ⋃₀ E = bd S ∪ ⋃₀ 𝓔 ∧ 𝓔 ⊆ E ∧
+        E.ncard ≤ B + N.ncard + 𝓔.ncard ∧ (∀ e ∈ E, e ∉ 𝓔 → e ⊆ bd S) ∧ ∀ x ∈ bd S, ∃ e ∈ E, e ∉ 𝓔
+          ∧ x ∈ e := by
   classical
   obtain ⟨V₁, E₁, hg, hV, hgr⟩ := exists_cuff_graph hS
+  refine ⟨E₁.ncard, ?_⟩
+  intro N 𝓔 hN h𝓔 hline hdisj hbd hNs
   have hgr1 : gr V₁ E₁ = bd S := by
     rw [← hgr]
     exact union_eq_right.mpr hV
   have hpts : ∀ M : Set S, M.Finite → ∃ E', IsGraph (M ∪ V₁) E' ∧ gr (M ∪ V₁) E' = M ∪ bd S
-    ∧ bd S ⊆ ⋃₀ E' := by
+    ∧ bd S ⊆ ⋃₀ E' ∧
+      E'.ncard ≤ E₁.ncard + M.ncard ∧ ∀ f ∈ E', f ⊆ bd S := by
     intro M hM
     induction M, hM using Set.Finite.induction_on with
-    | empty => exact ⟨E₁, by simpa using hg, by simpa using hgr1, hgr.ge⟩
+    | empty =>
+      refine ⟨E₁, by simpa using hg, by simpa using hgr1, hgr.ge, by simp, fun f hf ↦ ?_⟩
+      rw [← hgr]
+      exact subset_sUnion_of_mem hf
     | @insert x M hx hfin ih =>
-      obtain ⟨E', h1, h2, h3⟩ := ih
-      obtain ⟨E'', h4, h5, h6⟩ := h1.add_point x
-      refine ⟨E'', by rwa [insert_union], ?_, h3.trans h6⟩
-      rw [insert_union, h5, h2, insert_union]
-  obtain ⟨E₂, hg2, hgr2, hbdE⟩ := hpts N hN
+      obtain ⟨E', h1, h2, h3, h3', h3''⟩ := ih
+      obtain ⟨E'', h4, h5, h6, h7, h8⟩ := h1.add_point_counted x
+      refine ⟨E'', by rwa [insert_union], ?_, h3.trans h6, ?_, fun f hf ↦ ?_⟩
+      · rw [insert_union, h5, h2, insert_union]
+      · rw [ncard_insert_of_notMem hx hfin]
+        omega
+      · obtain ⟨e, he, hfe⟩ := h8 f hf
+        exact hfe.trans (h3'' e he)
+  obtain ⟨E₂, hg2, hgr2, hbdE, hcard2, hE₂bd⟩ := hpts N hN
   have hE₂ : ⋃₀ E₂ ⊆ N ∪ bd S := hgr2 ▸ subset_union_right
   have harcs : ∀ 𝓔' : Set (Set S), 𝓔'.Finite → 𝓔' ⊆ 𝓔 →
       IsGraph (N ∪ V₁) (𝓔' ∪ E₂) ∧ gr (N ∪ V₁) (𝓔' ∪ E₂) = (N ∪ bd S) ∪ ⋃₀ 𝓔' := by
@@ -184,10 +194,41 @@ theorem exists_graph_of_lines (hS : IsSurface S) {N : Set S} {𝓔 : Set (Set S)
       · exact hNs h
       · exact .inl h
     · exact union_subset (hbdE.trans subset_union_right) subset_union_left
-  refine ⟨N ∪ V₁, 𝓔 ∪ E₂, subset_union_left, hg3, ?_, hU, subset_union_left⟩
-  rw [hU]
-  refine union_subset hNs ?_
-  exact (hgr ▸ hV).trans subset_union_left
+  refine ⟨N ∪ V₁, 𝓔 ∪ E₂, subset_union_left, hg3, ?_, hU, subset_union_left, ?_, ?_, ?_⟩
+  · rw [hU]
+    refine union_subset hNs ?_
+    exact (hgr ▸ hV).trans subset_union_left
+  · have := ncard_union_le 𝓔 E₂
+    omega
+  · rintro e (he | he) hne
+    · exact absurd he hne
+    · exact hE₂bd e he
+  · intro x hx
+    obtain ⟨e, he, hxe⟩ := hbdE hx
+    refine ⟨e, .inr he, fun hin ↦ ?_, hxe⟩
+    obtain ⟨u, v, huv, hl, hi⟩ := hline e hin
+    obtain ⟨a, ha, rfl, rfl, rfl⟩ := hl.exists_arc
+    have h12 : (1 / 2 : ℝ) ∈ Icc (0 : ℝ) 1 := by norm_num
+    have hm : a ⟨1 / 2, h12⟩ ∈ range a ∩ N := ⟨⟨_, rfl⟩, hbd _ hin ⟨⟨_, rfl⟩, hE₂bd _ he ⟨_, rfl⟩⟩⟩
+    rw [hi] at hm
+    rcases hm with h1 | h1
+    · have : (1 / 2 : ℝ) = 0 := congrArg Subtype.val (ha.2 h1)
+      norm_num at this
+    · have : (1 / 2 : ℝ) = 1 := congrArg Subtype.val (ha.2 h1)
+      norm_num at this
+
+/-- The cuffs, a finite set `N` of points on the lines, and lines that meet only in `N`, make up a
+graph. -/
+theorem exists_graph_of_lines (hS : IsSurface S) {N : Set S} {𝓔 : Set (Set S)} (hN : N.Finite)
+  (h𝓔 : 𝓔.Finite)
+    (hline : ∀ L ∈ 𝓔, ∃ u v, u ≠ v ∧ IsLineWithEnds L u v ∧ L ∩ N = {u, v})
+    (hdisj : ∀ L ∈ 𝓔, ∀ L' ∈ 𝓔, L ≠ L' → L ∩ L' ⊆ N) (hbd : ∀ L ∈ 𝓔, L ∩ bd S ⊆ N)
+      (hNs : N ⊆ bd S ∪ ⋃₀ 𝓔) :
+    ∃ (V : Set S) (E : Set (Set S)), N ⊆ V ∧ IsGraph V E ∧ V ⊆ ⋃₀ E ∧ ⋃₀ E = bd S ∪ ⋃₀ 𝓔 ∧ 𝓔 ⊆ E
+      := by
+  obtain ⟨_, h⟩ := exists_counted_line_graph hS
+  obtain ⟨V, E, hNV, hg, hV, hU, hE, _, _, _⟩ := h hN h𝓔 hline hdisj hbd hNs
+  exact ⟨V, E, hNV, hg, hV, hU, hE⟩
 
 variable {W : ℕ → List Letter} {f : ℕ × ℂ → S} {V : Set S} {E : Set (Set S)} {A : Set S
   → unitInterval → S}

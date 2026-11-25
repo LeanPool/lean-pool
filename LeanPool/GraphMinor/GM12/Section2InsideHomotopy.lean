@@ -18,11 +18,10 @@ import LeanPool.GraphMinor.GM07.Section11c
 For the deformation step in XII (2.1), Case 1, page 244, keep a
 point outside both chosen discs fixed. A second point lies outside
 one disc precisely when its boundary contracts without meeting
-either point. Epstein's disc theorem proves the reverse implication:
-a contracting boundary bounds a disc avoiding the points, and the
-common outside point makes that disc the original one. A homotopy
-avoiding both points therefore preserves membership of the second
-point in the two chosen insides.
+either point. By Graph Minors XI (7.2), a contracting boundary bounds
+a disc avoiding the points, and the common outside point makes that
+disc the original one. A homotopy avoiding both points therefore
+preserves membership of the second point in the two chosen insides.
 -/
 
 public section

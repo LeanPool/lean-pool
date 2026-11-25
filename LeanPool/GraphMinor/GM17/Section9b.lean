@@ -223,35 +223,8 @@ theorem theorem_9_5_proof {α : Type u} {β : Type v} (H : Hypergraph α β) {A 
 
 theorem subset_closure_diff_ends_of_isLineWithEnds {S : Type*} [TopologicalSpace S]
     {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) :
-    L ⊆ closure (L \ {u, v}) := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let g : ℝ → S := fun t => (f (projIcc 0 1 zero_le_one t)).1
-  have hg : Continuous g :=
-    continuous_subtype_val.comp (f.continuous.comp continuous_projIcc)
-  have hIoo_sub : g '' Ioo (0 : ℝ) 1 ⊆ L \ {u, v} := by
-    rintro _ ⟨t, ⟨h0, h1⟩, rfl⟩
-    refine ⟨(f _).2, ?_⟩
-    have hp : projIcc (0 : ℝ) 1 zero_le_one t = ⟨t, h0.le, h1.le⟩ :=
-      projIcc_of_mem zero_le_one ⟨h0.le, h1.le⟩
-    rintro (hx | hx)
-    · have : f (projIcc 0 1 zero_le_one t) = f 0 := Subtype.ext (hx.trans hf0.symm)
-      have hval := congrArg Subtype.val (f.injective this)
-      rw [hp] at hval; simp only [Icc.coe_zero] at hval; linarith
-    · have : f (projIcc 0 1 zero_le_one t) = f 1 :=
-        Subtype.ext ((mem_singleton_iff.mp hx).trans hf1.symm)
-      have hval := congrArg Subtype.val (f.injective this)
-      rw [hp] at hval; simp only [Icc.coe_one] at hval; linarith
-  have hL_sub : L ⊆ g '' Icc (0 : ℝ) 1 := by
-    intro x hxL
-    obtain ⟨t, ht⟩ := f.surjective ⟨x, hxL⟩
-    refine ⟨t.1, t.2, ?_⟩
-    have : projIcc (0 : ℝ) 1 zero_le_one t.1 = t := projIcc_val zero_le_one t
-    simp only [g, this, ht]
-  calc L
-    _ ⊆ g '' Icc (0 : ℝ) 1 := hL_sub
-    _ = g '' closure (Ioo (0 : ℝ) 1) := by rw [closure_Ioo zero_ne_one]
-    _ ⊆ closure (g '' Ioo (0 : ℝ) 1) := image_closure_subset_closure_image hg
-    _ ⊆ closure (L \ {u, v}) := closure_mono hIoo_sub
+    L ⊆ closure (L \ {u, v}) :=
+  hL.subset_closure_interior
 
 theorem closure_border_cell_subset_cuffPoint_Icc {S : Type} [TopologicalSpace S] [T2Space S]
     (Γ : Painting S) {Θ c₀ : Set S} (hΘ : Θ ∈ cuffs S) (hc₀ : c₀ ∈ Γ.C)

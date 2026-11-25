@@ -497,24 +497,8 @@ private theorem decide_isVertex_match (t : ChainTerm S) (f : Set S → Set S) :
 private theorem chain_endpoints_in_region_closure
     {G₁ : Drawing S} {U₁ : Set S} {x y : S} {A : List (ChainTerm S)}
     (hChain : IsXYChain G₁ x y A) (hx_mem : x ∈ G₁.U ∪ U₁) (hy_mem : y ∈ G₁.U ∪ U₁) :
-    let leftPt : Fin A.length → S := fun i =>
-      match A[i.1]'i.2 with
-      | .inl v => v
-      | .inr _ =>
-        if i.1 = 0 then x
-        else
-          match A[i.1 - 1]'(Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2) with
-          | .inl v => v
-          | .inr _ => x
-    let rightPt : Fin A.length → S := fun i =>
-      match A[i.1]'i.2 with
-      | .inl v => v
-      | .inr _ =>
-        if hi1 : i.1 + 1 = A.length then y
-        else
-          match A[i.1 + 1]'(Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1) with
-          | .inl v => v
-          | .inr _ => y
+    let leftPt := ChainTerm.leftEndpoint A x
+    let rightPt := ChainTerm.rightEndpoint A y
     (∀ (i : Fin A.length) (r' : Set S),
       A[i.1]'i.2 = .inr r' → leftPt i ∈ closure r' ∧ leftPt i ∈ G₁.U ∪ U₁) ∧
     (∀ (i : Fin A.length) (r' : Set S),
@@ -532,7 +516,7 @@ private theorem chain_endpoints_in_region_closure
       have hmatch := hChain.head_matches
       rw [hhead, hir] at hmatch
       have hleft : leftPt i = x := by
-        dsimp only [leftPt]; rw [hir]; simp only [hi0, ite_true]
+        dsimp only [leftPt, ChainTerm.leftEndpoint]; rw [hir]; simp only [hi0, ite_true]
       rw [hleft]
       exact ⟨subset_closure hmatch, hx_mem⟩
     · have hprev_lt : i.1 - 1 < A.length := Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2
@@ -543,7 +527,7 @@ private theorem chain_endpoints_in_region_closure
       rcases h_prev : A[i.1 - 1]'hprev_lt with v | r''
       · rw [h_prev] at hinc
         have hleft : leftPt i = v := by
-          dsimp only [leftPt]; rw [hir]; simp only [hi0, ↓reduceIte, h_prev]
+          dsimp only [leftPt, ChainTerm.leftEndpoint]; rw [hir]; simp only [hi0, ↓reduceIte, h_prev]
         rw [hleft]
         exact ⟨hinc.2.2, Or.inl (G₁.V_subset_U hinc.1)⟩
       · rw [h_prev] at hinc; exact False.elim hinc
@@ -556,7 +540,7 @@ private theorem chain_endpoints_in_region_closure
       have hmatch := hChain.last_matches
       rw [hlast, hir] at hmatch
       have hright : rightPt i = y := by
-        dsimp only [rightPt]; rw [hir]; simp only [hi1, ↓reduceDIte]
+        dsimp only [rightPt, ChainTerm.rightEndpoint]; rw [hir]; simp only [hi1, ↓reduceDIte]
       rw [hright]
       exact ⟨subset_closure hmatch, hy_mem⟩
     · have hnext_lt : i.1 + 1 < A.length := Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1
@@ -565,7 +549,9 @@ private theorem chain_endpoints_in_region_closure
       rcases h_next : A[i.1 + 1]'hnext_lt with v | r''
       · rw [h_next] at hinc
         have hright : rightPt i = v := by
-          dsimp only [rightPt]; rw [hir]; simp only [hi1, ↓reduceDIte, h_next]
+          dsimp only [rightPt, ChainTerm.rightEndpoint]
+          rw [hir]
+          simp only [hi1, ↓reduceDIte, h_next]
         rw [hright]
         exact ⟨hinc.2.2, Or.inl (G₁.V_subset_U hinc.1)⟩
       · rw [h_next] at hinc; exact False.elim hinc
@@ -615,24 +601,8 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
     rintro z (hzG₁ | hzU₁) hzK₂
     · exact hzK₂.2 hzG₁
     · exact (hU₁ hzU₁).2 hzK₂.1
-  let leftPt : Fin A.length → S := fun i =>
-    match A[i.1]'i.2 with
-    | .inl v => v
-    | .inr _ =>
-      if i.1 = 0 then x
-      else
-        match A[i.1 - 1]'(Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2) with
-        | .inl v => v
-        | .inr _ => x
-  let rightPt : Fin A.length → S := fun i =>
-    match A[i.1]'i.2 with
-    | .inl v => v
-    | .inr _ =>
-      if hi1 : i.1 + 1 = A.length then y
-      else
-        match A[i.1 + 1]'(Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1) with
-        | .inl v => v
-        | .inr _ => y
+  let leftPt := ChainTerm.leftEndpoint A x
+  let rightPt := ChainTerm.rightEndpoint A y
   have h_chain_rel : ∀ (j : ℕ) (hj : j + 1 < A.length),
       ChainTerm.AreIncident G₁ A[j] A[j + 1] :=
     fun j hj => List.isChain_iff_getElem.mp hChain.isChain j hj
@@ -690,7 +660,9 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
       · rw [hir1] at hinc; exact False.elim hinc
       · rw [hir1] at hinc
         have hleft : leftPt i1 = v := by
-          dsimp only [leftPt, i1]; rw [hir1]; simp only [Nat.succ_ne_zero, ↓reduceIte]
+          dsimp only [leftPt, ChainTerm.leftEndpoint, i1]
+          rw [hir1]
+          simp only [Nat.succ_ne_zero, ↓reduceIte]
           have h_idx : A[(j + 1) - 1]'(Nat.lt_of_le_of_lt (Nat.sub_le _ _) hjA) = A[i.1]'i.2 := rfl
           rw [h_idx, hir]
         refine ⟨hSub.1 hinc.1, hr_lift_R i1 r'' hir1, ?_⟩
@@ -701,7 +673,7 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
       · rw [hir1] at hinc
         have hne_last : i.1 + 1 ≠ A.length := ne_of_lt hjA
         have hright : rightPt i = v' := by
-          dsimp only [rightPt]; rw [hir]; simp only [hne_last, ↓reduceDIte]
+          dsimp only [rightPt, ChainTerm.rightEndpoint]; rw [hir]; simp only [hne_last, ↓reduceDIte]
           have h_idx : A[i.1 + 1]'hjA = A[i1.1]'i1.2 := rfl
           rw [h_idx, hir1]
         refine ⟨hSub.1 hinc.1, hr_lift_R i r' hir, ?_⟩
@@ -720,7 +692,7 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
     · rw [hir0] at hmatch
       change x ∈ r_lift ⟨0, hm⟩ r'
       have hleft : leftPt ⟨0, hm⟩ = x := by
-        dsimp only [leftPt]; rw [hir0]; simp only [ite_true]
+        dsimp only [leftPt, ChainTerm.leftEndpoint]; rw [hir0]; simp only [ite_true]
       rw [← hleft]
       exact hr_lift_left_in ⟨0, hm⟩ r' hir0 (hleft.symm ▸ hmatch)
   · let i_last : Fin A.length := ⟨A.length - 1, Nat.sub_lt hm zero_lt_one⟩
@@ -739,7 +711,7 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
       change y ∈ r_lift i_last r'
       have hi1 : i_last.1 + 1 = A.length := by dsimp [i_last]; omega
       have hright : rightPt i_last = y := by
-        dsimp only [rightPt]; rw [hir_last]; simp only [hi1, ↓reduceDIte]
+        dsimp only [rightPt, ChainTerm.rightEndpoint]; rw [hir_last]; simp only [hi1, ↓reduceDIte]
       rw [← hright]
       exact hr_lift_right_in i_last r' hir_last (hright.symm ▸ hmatch)
   · intro iG
@@ -780,7 +752,7 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
           rw [hhead_A, hir] at hmatch
           change x ∈ r' at hmatch
           have hleft : leftPt i = x := by
-            dsimp only [leftPt]; rw [hir]; simp only [hi0, ite_true]
+            dsimp only [leftPt, ChainTerm.leftEndpoint]; rw [hir]; simp only [hi0, ite_true]
           have hx_r : x ∈ r_lift i r' := by
             rw [← hleft]
             exact hr_lift_left_in i r' hir (hleft.symm ▸ hmatch)
@@ -791,7 +763,7 @@ theorem liftChain_of_subdrawing (hS : IsClosedDiscSpace S) {G G₁ : Drawing S}
           rw [hlast_A, hir] at hmatch
           change y ∈ r' at hmatch
           have hright : rightPt i = y := by
-            dsimp only [rightPt]; rw [hir]; simp only [hi1, ↓reduceDIte]
+            dsimp only [rightPt, ChainTerm.rightEndpoint]; rw [hir]; simp only [hi1, ↓reduceDIte]
           have hy_r : y ∈ r_lift i r' := by
             rw [← hright]
             exact hr_lift_right_in i r' hir (hright.symm ▸ hmatch)

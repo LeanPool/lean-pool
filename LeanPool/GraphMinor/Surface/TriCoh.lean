@@ -38,7 +38,11 @@ open Set Topology Metric Filter Matrix
 
 local notation "K" => ZMod 2
 
-variable {X : Type} [TopologicalSpace X]
+section Primitive
+
+universe u
+
+variable {X : Type u} [TopologicalSpace X]
 
 /-- A primitive of `φ` on the set `Φ`. -/
 def Prim (φ : X → X → K) (Φ : Set X) (g : X → K) : Prop :=
@@ -112,6 +116,10 @@ theorem Prim.const {φ : X → X → K} {Φ Φ' C : Set X} {g g' : X → K} (h :
     rw [h6, h5]
     exact CharTwo.add_self_eq_zero _
   exact CharTwo.add_eq_zero.mp h7
+
+end Primitive
+
+variable {X : Type} [TopologicalSpace X]
 
 variable [T2Space X]
 

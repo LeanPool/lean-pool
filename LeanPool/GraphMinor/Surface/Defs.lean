@@ -32,7 +32,7 @@ drawn on surfaces, shared by Graph Minors VI–IX and XI–XX:
   $O$-arcs, and simply connected subsets (`IsSimplyConnectedSet`).
 - Topological drawings (`Drawing`) and paintings (`Painting`) in a surface $S$, their edges,
   regions, atoms, subdrawings, $\Gamma$-normality, restrictions $\Gamma \cap \Delta$, 2-cell
-  drawings, radial drawings, dual drawings, walks and curves tracing walks, homotopy of forests,
+  drawings, walks and curves tracing walks, homotopy of forests,
   and the canonical bridge to `Graph` (`Drawing.toGraph`, `GraphDrawing`) and
   `Hypergraph` (`Painting.toHypergraph`).
 -/
@@ -188,6 +188,76 @@ $f \colon [0, 1] \simeq_t L$ mapping $0$ to $u$ and $1$ to $v$.
 Graph Minors VII, Section 2 (page 214); Graph Minors XI, Section 3 (page 74). -/
 def IsLineWithEnds {S : Type u} [TopologicalSpace S] (L : Set S) (u v : S) : Prop :=
   ∃ f : unitInterval ≃ₜ L, (f 0).1 = u ∧ (f 1).1 = v
+
+/-- The points of a line other than its two endpoints are parameterized by `(0, 1)`. -/
+theorem line_interior_eq_image {S : Type u} [TopologicalSpace S] {L : Set S} {a b : S}
+    (f : unitInterval ≃ₜ L) (ha : (f 0).1 = a) (hb : (f 1).1 = b) :
+    L \ {a, b} = (fun t : ℝ ↦ (f (projIcc 0 1 zero_le_one t)).1) '' Ioo (0 : ℝ) 1 := by
+  let g : ℝ → S := fun t => (f (projIcc 0 1 zero_le_one t)).1
+  change L \ {a, b} = g '' Ioo (0 : ℝ) 1
+  ext x
+  constructor
+  · rintro ⟨hxL, hx⟩
+    obtain ⟨t, ht⟩ := f.surjective ⟨x, hxL⟩
+    have ht0 : t ≠ 0 := by
+      rintro rfl
+      apply hx
+      have := congrArg Subtype.val ht
+      simp only [ha] at this
+      simp [← this]
+    have ht1 : t ≠ 1 := by
+      rintro rfl
+      apply hx
+      have := congrArg Subtype.val ht
+      simp only [hb] at this
+      simp [← this]
+    have h0 : (0 : ℝ) < t.1 := lt_of_le_of_ne t.2.1 fun h => ht0 (Subtype.ext h.symm)
+    have h1 : t.1 < 1 := lt_of_le_of_ne t.2.2 fun h => ht1 (Subtype.ext h)
+    refine ⟨t.1, ⟨h0, h1⟩, ?_⟩
+    have : projIcc (0 : ℝ) 1 zero_le_one t.1 = t := projIcc_val zero_le_one t
+    simp only [g, this, ht]
+  · rintro ⟨t, ⟨h0, h1⟩, rfl⟩
+    have hmem : (f (projIcc 0 1 zero_le_one t)).1 ∈ L := (f _).2
+    refine ⟨hmem, ?_⟩
+    have hp : projIcc (0 : ℝ) 1 zero_le_one t = ⟨t, h0.le, h1.le⟩ :=
+      projIcc_of_mem zero_le_one ⟨h0.le, h1.le⟩
+    intro hx
+    rcases hx with hx | hx
+    · have : f (projIcc 0 1 zero_le_one t) = f 0 := Subtype.ext (hx.trans ha.symm)
+      have := f.injective this
+      rw [hp] at this
+      have := congrArg Subtype.val this
+      simp only [Icc.coe_zero] at this
+      linarith
+    · have : f (projIcc 0 1 zero_le_one t) = f 1 :=
+        Subtype.ext ((mem_singleton_iff.mp hx).trans hb.symm)
+      have := f.injective this
+      rw [hp] at this
+      have := congrArg Subtype.val this
+      simp only [Icc.coe_one] at this
+      linarith
+
+/-- The interior of a line is path connected. -/
+theorem IsLineWithEnds.isPathConnected_interior {S : Type u} [TopologicalSpace S]
+    {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : IsPathConnected (L \ {a, b}) := by
+  obtain ⟨f, ha, hb⟩ := h
+  rw [line_interior_eq_image f ha hb]
+  exact ((convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image
+    (continuous_subtype_val.comp (f.continuous.comp continuous_projIcc))
+
+/-- Each point of a line lies in the closure of its interior. -/
+theorem IsLineWithEnds.subset_closure_interior {S : Type u} [TopologicalSpace S]
+    {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : L ⊆ closure (L \ {a, b}) := by
+  obtain ⟨f, ha, hb⟩ := h
+  let g : ℝ → S := fun t => (f (projIcc 0 1 zero_le_one t)).1
+  have hg : Continuous g := continuous_subtype_val.comp (f.continuous.comp continuous_projIcc)
+  rw [line_interior_eq_image f ha hb]
+  change L ⊆ closure (g '' Ioo (0 : ℝ) 1)
+  apply Subset.trans ?_ (image_closure_subset_closure_image hg)
+  rw [closure_Ioo zero_ne_one]
+  intro x hx
+  obtain ⟨t, ht⟩ := f.surjective ⟨x, hx⟩
+  exact ⟨t.1, t.2, by simp only [g, projIcc_val, ht]⟩
 
 /-- The set of ends of a line $L \subseteq \Sigma$.
 Graph Minors XI, Section 3 (page 74); Graph Minors XIX, Section 15 (page 381). -/
@@ -595,41 +665,6 @@ def toHypergraph (Γ : Painting S) : Hypergraph S (Set S) where
   edgeSet_finite := Γ.finite_edges
 
 end Painting
-
-/-- Pre-conditions (i)–(iv) of a *radial drawing* $\Gamma'$ of a 2-cell drawing $\Gamma$ in
-$\Sigma$:
-(i) $U(\Gamma) \cap U(\Gamma') = V(\Gamma) \subseteq V(\Gamma')$;
-(ii) each region $r$ of $\Gamma$ contains a unique vertex $v_r$ of $\Gamma'$, with
-$W = V(\Gamma') \setminus V(\Gamma)$;
-(iii) $\Gamma'$ is bipartite with bipartition $(V(\Gamma), W)$;
-(iv) if $e, f \in E(\Gamma')$ have the same ends $v \in V(\Gamma)$ and $v_r \in r$, then
-$\bar{e} \cup \bar{f}$ does not bound a closed disc in $r \cup \{v\}$.
-Graph Minors XI, Section 3 (page 75). -/
-def IsPreRadialDrawing {S : Type u} [TopologicalSpace S] (Γ Γ' : Drawing S) : Prop :=
-  Γ.U ∩ Γ'.U = Γ.V ∧
-  Γ.V ⊆ Γ'.V ∧
-  (∀ r ∈ Γ.R, ∃! w, w ∈ r ∧ w ∈ Γ'.V) ∧
-  (∀ w ∈ Γ'.V \ Γ.V, ∃ r ∈ Γ.R, w ∈ r) ∧
-  (∀ e ∈ Γ'.E, ∃ v ∈ Γ.V, ∃ w ∈ Γ'.V \ Γ.V, closure e ∩ Γ'.V = {v, w}) ∧
-  (∀ e ∈ Γ'.E, ∀ f ∈ Γ'.E, e ≠ f → ∀ v ∈ Γ.V, ∀ r ∈ Γ.R, ∀ w ∈ r ∩ Γ'.V,
-    closure e ∩ Γ'.V = {v, w} → closure f ∩ Γ'.V = {v, w} →
-    ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {v} ∧ subBd Δ = closure e ∪ closure f)
-
-/-- A drawing $\Gamma'$ is a *radial drawing* of a 2-cell drawing $\Gamma$ if it satisfies
-(i)–(iv) of `IsPreRadialDrawing` and (v) is maximal subject to (i)–(iv).
-Graph Minors XI, Section 3 (page 75). -/
-def IsRadialDrawing {S : Type u} [TopologicalSpace S] (Γ Γ' : Drawing S) : Prop :=
-  Γ.IsTwoCell ∧ IsPreRadialDrawing Γ Γ' ∧
-    ∀ Γ'' : Drawing S, IsPreRadialDrawing Γ Γ'' → Γ'.V = Γ''.V → Γ'.E ⊆ Γ''.E → Γ'.E = Γ''.E
-
-/-- A 2-cell drawing $\Gamma^*$ is a *surface dual* of a 2-cell drawing $\Gamma$ if they share a
-common radial drawing $\Gamma'$ with complementary vertex bipartitions
-$V(\Gamma^*) = V(\Gamma') \setminus V(\Gamma)$.
-Graph Minors XI, Section 6 (page 92). -/
-def IsSurfaceDual {S : Type u} [TopologicalSpace S] (Γ Γ_dual : Drawing S) : Prop :=
-  Γ.IsTwoCell ∧ Γ_dual.IsTwoCell ∧
-    ∃ Γ' : Drawing S, IsRadialDrawing Γ Γ' ∧ IsRadialDrawing Γ_dual Γ' ∧
-      Γ_dual.V = Γ'.V \ Γ.V
 
 /-! ## 6. Walks in Drawings, Tracing Curves, and Homotopy of Walks and Forests -/
 

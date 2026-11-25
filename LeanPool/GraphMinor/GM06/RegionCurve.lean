@@ -910,4 +910,96 @@ theorem exists_region_curve
       change 0 < 1 - (2 * (2 * (t : ℝ) - 1) - 1)
       linarith
 
+theorem not_mem_U_of_mem_region {S : Type u} [TopologicalSpace S]
+    (G : Drawing S) {r : Set S} (hr : r ∈ G.R) {z : S} (hz : z ∈ r) : z ∉ G.U := by
+  rcases hr with ⟨z₀, _, rfl⟩
+  exact (connectedComponentIn_subset (univ \ G.U) z₀ hz).2
+
+theorem IsXYChain.leftEndpoint_mem_closure
+    {S : Type u} [TopologicalSpace S] {G : Drawing S} {x y : S} {A : List (ChainTerm S)}
+    (hChain : IsXYChain G x y A) :
+    let leftPt := ChainTerm.leftEndpoint A x
+    ∀ (i : Fin A.length) (r : Set S),
+        A[i.1]'i.2 = .inr r → leftPt i ∈ closure r ∧
+          (leftPt i ∈ G.U → leftPt i ∈ G.V ∧ Sum.inl (leftPt i) ∈ A) := by
+  intro leftPt
+  have h_chain_rel : ∀ (j : ℕ) (hj : j + 1 < A.length),
+      ChainTerm.AreIncident G A[j] A[j + 1] :=
+    fun j hj => List.isChain_iff_getElem.mp hChain.isChain j hj
+  intro i r hir
+  have hrR : r ∈ G.R := by
+    have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
+    simpa [hir, ChainTerm.IsValid] using hv
+  by_cases hi0 : i.1 = 0
+  · have hhead : A.head hChain.ne_nil = A[i.1]'i.2 := by
+      rw [List.head_eq_getElem_zero]
+      congr 1; omega
+    have hmatch := hChain.head_matches
+    rw [hhead, hir] at hmatch
+    change x ∈ r at hmatch
+    have hleft : leftPt i = x := by
+      dsimp [leftPt, ChainTerm.leftEndpoint]
+      rw [hir]
+      simp [hi0]
+    rw [hleft]
+    refine ⟨subset_closure hmatch, fun hxU => ?_⟩
+    exfalso
+    exact not_mem_U_of_mem_region G hrR hmatch hxU
+  · have hprev_lt : i.1 - 1 < A.length := Nat.lt_of_le_of_lt (Nat.sub_le _ _) i.2
+    have hstep : (i.1 - 1) + 1 < A.length := by omega
+    have hinc := h_chain_rel (i.1 - 1) hstep
+    have h_idx_eq : A[(i.1 - 1) + 1]'hstep = A[i.1]'i.2 := by congr 1; omega
+    rw [h_idx_eq, hir] at hinc
+    rcases h_prev : A[i.1 - 1]'hprev_lt with v | r'
+    · rw [h_prev] at hinc
+      rcases hinc with ⟨hvV, _, hv_cl⟩
+      have hleft : leftPt i = v := by simp [leftPt, ChainTerm.leftEndpoint, hir, hi0, h_prev]
+      rw [hleft]
+      refine ⟨hv_cl, fun _ => ⟨hvV, ?_⟩⟩
+      rw [← h_prev]
+      exact List.getElem_mem hprev_lt
+    · rw [h_prev] at hinc
+      exact False.elim hinc
+
+theorem IsXYChain.rightEndpoint_mem_closure
+    {S : Type u} [TopologicalSpace S] {G : Drawing S} {x y : S} {A : List (ChainTerm S)}
+    (hChain : IsXYChain G x y A) :
+    let rightPt := ChainTerm.rightEndpoint A y
+    ∀ (i : Fin A.length) (r : Set S),
+        A[i.1]'i.2 = .inr r → rightPt i ∈ closure r ∧
+          (rightPt i ∈ G.U → rightPt i ∈ G.V ∧ Sum.inl (rightPt i) ∈ A) := by
+  intro rightPt
+  have h_chain_rel : ∀ (j : ℕ) (hj : j + 1 < A.length),
+      ChainTerm.AreIncident G A[j] A[j + 1] :=
+    fun j hj => List.isChain_iff_getElem.mp hChain.isChain j hj
+  intro i r hir
+  have hrR : r ∈ G.R := by
+    have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
+    simpa [hir, ChainTerm.IsValid] using hv
+  by_cases hi1 : i.1 + 1 = A.length
+  · have hlast : A.getLast hChain.ne_nil = A[i.1]'i.2 := by
+      rw [List.getLast_eq_getElem]
+      congr 1; omega
+    have hmatch := hChain.last_matches
+    rw [hlast, hir] at hmatch
+    change y ∈ r at hmatch
+    have hright : rightPt i = y := by simp [rightPt, ChainTerm.rightEndpoint, hir, hi1]
+    rw [hright]
+    refine ⟨subset_closure hmatch, fun hyU => ?_⟩
+    exfalso
+    exact not_mem_U_of_mem_region G hrR hmatch hyU
+  · have hnext_lt : i.1 + 1 < A.length := Nat.lt_of_le_of_ne (Nat.succ_le_of_lt i.2) hi1
+    have hinc := h_chain_rel i.1 hnext_lt
+    rw [hir] at hinc
+    rcases h_next : A[i.1 + 1]'hnext_lt with v | r'
+    · rw [h_next] at hinc
+      rcases hinc with ⟨hvV, _, hv_cl⟩
+      have hright : rightPt i = v := by simp [rightPt, ChainTerm.rightEndpoint, hir, hi1, h_next]
+      rw [hright]
+      refine ⟨hv_cl, fun _ => ⟨hvV, ?_⟩⟩
+      rw [← h_next]
+      exact List.getElem_mem hnext_lt
+    · rw [h_next] at hinc
+      exact False.elim hinc
+
 end GraphMinor.GM06

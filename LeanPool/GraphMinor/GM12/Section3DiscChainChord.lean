@@ -32,42 +32,6 @@ open Set Topology Surface GM06
 
 universe u
 
-private theorem ncard_inl_mem_le_chainLength {S : Type u} (A : List (ChainTerm S)) :
-    {v : S | Sum.inl v ∈ A}.ncard ≤ chainLength A := by
-  induction A with
-  | nil => simp [chainLength]
-  | cons hd tl ih =>
-    rcases hd with v | r
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
-          insert v {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      have h_len : chainLength ((Sum.inl v : ChainTerm S) :: tl) = chainLength tl + 1 := rfl
-      rw [h_eq, h_len]
-      exact (ncard_insert_le v _).trans (Nat.add_le_add_right ih 1)
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
-          {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      have h_len : chainLength ((Sum.inr r : ChainTerm S) :: tl) = chainLength tl := rfl
-      rw [h_eq, h_len]
-      exact ih
-
-private theorem finite_inl_mem {S : Type u} (A : List (ChainTerm S)) :
-    {v : S | Sum.inl v ∈ A}.Finite := by
-  induction A with
-  | nil => simp
-  | cons hd tl ih =>
-    rcases hd with v | r
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inl v : ChainTerm S) :: tl} =
-          insert v {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      rw [h_eq]
-      exact ih.insert v
-    · have h_eq : {w : S | Sum.inl w ∈ (Sum.inr r : ChainTerm S) :: tl} =
-          {w : S | Sum.inl w ∈ tl} := by
-        ext w; simp
-      rw [h_eq]
-      exact ih
-
 /-- A VI chain between distinct boundary points supplies the proper
 normal line used in the one-disc case of XII (3.2), with no more
 drawing vertices than the length of the chain. -/

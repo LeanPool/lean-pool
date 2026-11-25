@@ -54,61 +54,6 @@ section Subdrawing
 
 variable {S : Type u} [TopologicalSpace S]
 
-/-- The open interval `(0, 1)` of a line is path connected and is all of the line except its ends.
-This is the step that identifies an edge of a drawing with its closure minus its ends. -/
-private theorem isPathConnected_line_interior {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) :
-    IsPathConnected (L \ {u, v}) := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  have hIoo : IsPathConnected (Ioo (0 : ℝ) 1) :=
-    (convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩
-  let g : ℝ → S := fun t => (f (projIcc 0 1 zero_le_one t)).1
-  have hg : Continuous g :=
-    continuous_subtype_val.comp (f.continuous.comp continuous_projIcc)
-  have hEq : L \ {u, v} = g '' Ioo (0 : ℝ) 1 := by
-    ext x
-    constructor
-    · rintro ⟨hxL, hx⟩
-      obtain ⟨t, ht⟩ := f.surjective ⟨x, hxL⟩
-      have ht0 : t ≠ 0 := by
-        rintro rfl
-        apply hx
-        have := congrArg Subtype.val ht
-        simp only [hf0] at this
-        simp [← this]
-      have ht1 : t ≠ 1 := by
-        rintro rfl
-        apply hx
-        have := congrArg Subtype.val ht
-        simp only [hf1] at this
-        simp [← this]
-      have h0 : (0 : ℝ) < t.1 := lt_of_le_of_ne t.2.1 fun h => ht0 (Subtype.ext h.symm)
-      have h1 : t.1 < 1 := lt_of_le_of_ne t.2.2 fun h => ht1 (Subtype.ext h)
-      refine ⟨t.1, ⟨h0, h1⟩, ?_⟩
-      have : projIcc (0 : ℝ) 1 zero_le_one t.1 = t := projIcc_val zero_le_one t
-      simp only [g, this, ht]
-    · rintro ⟨t, ⟨h0, h1⟩, rfl⟩
-      have hmem : (f (projIcc 0 1 zero_le_one t)).1 ∈ L := (f _).2
-      refine ⟨hmem, ?_⟩
-      have hp : projIcc (0 : ℝ) 1 zero_le_one t = ⟨t, h0.le, h1.le⟩ :=
-        projIcc_of_mem zero_le_one ⟨h0.le, h1.le⟩
-      intro hx
-      rcases hx with hx | hx
-      · have : f (projIcc 0 1 zero_le_one t) = f 0 := Subtype.ext (hx.trans hf0.symm)
-        have := f.injective this
-        rw [hp] at this
-        have := congrArg Subtype.val this
-        simp only [Icc.coe_zero] at this
-        linarith
-      · have : f (projIcc 0 1 zero_le_one t) = f 1 :=
-          Subtype.ext ((mem_singleton_iff.mp hx).trans hf1.symm)
-        have := f.injective this
-        rw [hp] at this
-        have := congrArg Subtype.val this
-        simp only [Icc.coe_one] at this
-        linarith
-  rw [hEq]
-  exact hIoo.image hg
-
 /-- A circle minus one point is path connected. -/
 private theorem isPathConnected_compl_singleton_circle (c : Circle) :
     IsPathConnected ({c}ᶜ : Set Circle) := by
@@ -206,7 +151,7 @@ theorem closure_diff_V {e : Set S} (he : e ∈ Γ.E) : closure e \ Γ.V = e := b
       ext x
       simp only [mem_sdiff, mem_inter_iff, not_and]
       tauto
-    have hconn := isPathConnected_line_interior hL
+    have hconn := hL.isPathConnected_interior
     rw [hEq] at hconn
     exact he.2.2.2 _ (fun x hx => ⟨hU hx.1, hx.2⟩) hconn hsub
   · have hEq : closure e \ {u} = closure e \ Γ.V := by

@@ -457,58 +457,8 @@ theorem ends_subset_of_isLineWithEnds {L : Set S} {u v : S} (h : IsLineWithEnds 
 nonempty. -/
 theorem isPathConnected_diff_ends_of_isLineWithEnds {L : Set S} {u v : S}
     (hL : IsLineWithEnds L u v) :
-    (L \ {u, v}).Nonempty ∧ IsPathConnected (L \ {u, v}) := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  have hIoo_ne : (Ioo (0 : ℝ) 1).Nonempty := ⟨1 / 2, by norm_num, by norm_num⟩
-  have hIoo : IsPathConnected (Ioo (0 : ℝ) 1) :=
-    (convex_Ioo (0 : ℝ) 1).isPathConnected hIoo_ne
-  let g : ℝ → S := fun t => (f (projIcc 0 1 zero_le_one t)).1
-  have hg : Continuous g :=
-    continuous_subtype_val.comp (f.continuous.comp continuous_projIcc)
-  have hEq : L \ {u, v} = g '' Ioo (0 : ℝ) 1 := by
-    ext x
-    constructor
-    · rintro ⟨hxL, hx⟩
-      obtain ⟨t, ht⟩ := f.surjective ⟨x, hxL⟩
-      have ht0 : t ≠ 0 := by
-        rintro rfl
-        apply hx
-        have := congrArg Subtype.val ht
-        simp only [hf0] at this
-        simp [← this]
-      have ht1 : t ≠ 1 := by
-        rintro rfl
-        apply hx
-        have := congrArg Subtype.val ht
-        simp only [hf1] at this
-        simp [← this]
-      have h0 : (0 : ℝ) < t.1 := lt_of_le_of_ne t.2.1 fun h => ht0 (Subtype.ext h.symm)
-      have h1 : t.1 < 1 := lt_of_le_of_ne t.2.2 fun h => ht1 (Subtype.ext h)
-      refine ⟨t.1, ⟨h0, h1⟩, ?_⟩
-      have : projIcc (0 : ℝ) 1 zero_le_one t.1 = t := projIcc_val zero_le_one t
-      simp only [g, this, ht]
-    · rintro ⟨t, ⟨h0, h1⟩, rfl⟩
-      have hmem : (f (projIcc 0 1 zero_le_one t)).1 ∈ L := (f _).2
-      refine ⟨hmem, ?_⟩
-      have hp : projIcc (0 : ℝ) 1 zero_le_one t = ⟨t, h0.le, h1.le⟩ :=
-        projIcc_of_mem zero_le_one ⟨h0.le, h1.le⟩
-      intro hx
-      rcases hx with hx | hx
-      · have : f (projIcc 0 1 zero_le_one t) = f 0 := Subtype.ext (hx.trans hf0.symm)
-        have := f.injective this
-        rw [hp] at this
-        have := congrArg Subtype.val this
-        simp only [Icc.coe_zero] at this
-        linarith
-      · have : f (projIcc 0 1 zero_le_one t) = f 1 :=
-          Subtype.ext ((mem_singleton_iff.mp hx).trans hf1.symm)
-        have := f.injective this
-        rw [hp] at this
-        have := congrArg Subtype.val this
-        simp only [Icc.coe_one] at this
-        linarith
-  rw [hEq]
-  exact ⟨hIoo_ne.image g, hIoo.image hg⟩
+    (L \ {u, v}).Nonempty ∧ IsPathConnected (L \ {u, v}) :=
+  ⟨hL.isPathConnected_interior.nonempty, hL.isPathConnected_interior⟩
 
 end DiscsAndLines
 

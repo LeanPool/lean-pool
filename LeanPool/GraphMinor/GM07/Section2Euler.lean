@@ -995,65 +995,6 @@ theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
 
 local notation "K" => ZMod 2
 
-/-- Universe-polymorphic local primitive of `φ : X → X → K` on `Φ : Set X`. -/
-private def Prim {X : Type u} [TopologicalSpace X] (φ : X → X → K) (Φ : Set X) (g : X → K) : Prop :=
-  ∀ p ∈ Φ, ∃ W ∈ 𝓝 p, ∀ x ∈ W ∩ Φ, ∀ x' ∈ W ∩ Φ, φ x x' = g x + g x'
-
-private theorem exists_prim_disc {X : Type u} [TopologicalSpace X] {φ : X → X → K} (hφ : IsCoc φ)
-    {Φ : Set X} (hD : IsClosedDisc Φ) : ∃ g, Prim φ Φ g := by
-  obtain ⟨k, l, c⟩ := hD.exists_isChart
-  obtain ⟨G, ε, hε, hG⟩ := exists_prim hφ c.gc
-  refine ⟨G ∘ k, fun p hp => ?_⟩
-  have hk : ContinuousWithinAt k Φ p := c.hc p hp
-  have h1 : k ⁻¹' ball (k p) (ε / 2) ∈ 𝓝[Φ] p :=
-    hk.preimage_mem_nhdsWithin (ball_mem_nhds _ (by positivity))
-  obtain ⟨W, hW, hWs⟩ := mem_nhdsWithin_iff_exists_mem_nhds_inter.mp h1
-  refine ⟨W, hW, fun x hx x' hx' => ?_⟩
-  have h2 := hG (k x) (c.hm hx.2) (k x') (c.hm hx'.2) (by
-    have h3 : k x ∈ ball (k p) (ε / 2) := hWs hx
-    have h4 : k x' ∈ ball (k p) (ε / 2) := hWs hx'
-    rw [mem_ball, dist_eq_norm] at h3 h4
-    have h5 : ‖k x - k x'‖ ≤ ‖k x - k p‖ + ‖k x' - k p‖ := by
-      have : k x - k x' = (k x - k p) - (k x' - k p) := by ring
-      rw [this]
-      exact norm_sub_le _ _
-    linarith)
-  rw [c.gh hx.2, c.gh hx'.2] at h2
-  rw [h2, CharTwo.neg_eq]
-  rfl
-
-private theorem const_of_locally {X : Type u} [TopologicalSpace X] {C : Set X}
-  (hC : IsPreconnected C)
-    {u : X → K} (h : ∀ p ∈ C, ∃ W ∈ 𝓝 p, ∀ x ∈ W ∩ C, u x = u p)
-    {a b : X} (ha : a ∈ C) (hb : b ∈ C) : u a = u b := by
-  have hp : PreconnectedSpace C := isPreconnected_iff_preconnectedSpace.mp hC
-  let f : C → K := fun x => u x
-  have hf : IsLocallyConstant f := by
-    rw [IsLocallyConstant.iff_eventually_eq]
-    intro x
-    obtain ⟨W, hW, h1⟩ := h x.1 x.2
-    have h2 : Subtype.val ⁻¹' W ∈ 𝓝 x :=
-      continuous_subtype_val.continuousAt.preimage_mem_nhds hW
-    exact Filter.mem_of_superset h2 fun y hy => h1 y.1 ⟨hy, y.2⟩
-  exact hf.apply_eq_of_preconnectedSpace ⟨a, ha⟩ ⟨b, hb⟩
-
-private theorem Prim.const {X : Type u} [TopologicalSpace X] {φ : X → X → K} {Φ Φ' C : Set X}
-    {g g' : X → K} (h : Prim φ Φ g) (h' : Prim φ Φ' g') (hC : IsPreconnected C)
-    (hs : C ⊆ Φ) (hs' : C ⊆ Φ') {a b : X} (ha : a ∈ C) (hb : b ∈ C) :
-    g a + g' a = g b + g' b := by
-  refine const_of_locally hC (u := fun x => g x + g' x) (fun p hp => ?_) ha hb
-  obtain ⟨W, hW, h1⟩ := h p (hs hp)
-  obtain ⟨W', hW', h2⟩ := h' p (hs' hp)
-  refine ⟨W ∩ W', Filter.inter_mem hW hW', fun x hx => ?_⟩
-  have h3 := h1 p ⟨mem_of_mem_nhds hW, hs hp⟩ x ⟨hx.1.1, hs hx.2⟩
-  have h4 := h2 p ⟨mem_of_mem_nhds hW', hs' hp⟩ x ⟨hx.1.2, hs' hx.2⟩
-  have h5 := h3.symm.trans h4
-  have h6 : g x + g' x + (g p + g' p) = (g p + g x) + (g' p + g' x) := by ring
-  have h7 : g x + g' x + (g p + g' p) = 0 := by
-    rw [h6, h5]
-    exact CharTwo.add_self_eq_zero _
-  exact CharTwo.add_eq_zero.mp h7
-
 /-- The vertex set `N.seamV` of a net `N` is finite. -/
 theorem finite_seamV (N : Net S) : N.seamV.Finite := by
   refine (finite_iUnion fun i : Fin N.r =>
@@ -2442,7 +2383,7 @@ theorem seamGraph_euler_formula (S : Type u) [TopologicalSpace S]
         exact ((N.quotientMap_φ.continuous.comp continuous_fst).prodMk
           (N.quotientMap_φ.continuous.comp continuous_snd)).continuousAt.preimage_mem_nhds
           (hN_c (N.φ z))
-      obtain ⟨g', hg'_prim⟩ := Net.exists_prim_disc hpbk_coc N.isClosedDisc_D
+      obtain ⟨g', hg'_prim⟩ := Surface.exists_prim_disc hpbk_coc N.isClosedDisc_D
       let v : Fin N.r → K := fun i => g' (N.f i 0) + g' (N.f i 1)
       have hrel_v : CohRel (φ_v v) φ' := by
         rw [N.cohRel_iff_mem_range_δ hS hpos (hφ_v_coc v) hφ'_coc

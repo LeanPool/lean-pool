@@ -33,21 +33,19 @@ universe u
 
 variable {S : Type u} [TopologicalSpace S]
 
-/-- **(7.1)** of Graph Minors XI (page 93): "If $M$ is a triangulable connected 2-manifold, then any
-null-homotopic $O$-arc in $M$ bounds a disc in $M$."
-This is D. B. A. Epstein, *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107,
-Theorem 1.7; see `GraphMinor.Surface.epstein`. -/
+/-- The compact-surface case of Graph Minors XI, (7.1), page 93. A null-homotopic `O`-arc
+disjoint from the boundary of a connected compact surface bounds a disc in that surface.
+The paper cites D. B. A. Epstein, *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966)
+83–107, Theorem 1.7, which applies to connected triangulable 2-manifolds. -/
 theorem theorem_7_1_proof [ConnectedSpace S] (hS : IsSurface S)
     {F : Set S} (hF : IsOArc F) (hbd : Disjoint F (bd S)) (hn : IsNullHomotopicOArcIn univ F) :
     ∃ Δ : Set S, IsClosedDisc Δ ∧ discBd Δ = F := by
   obtain ⟨Δ, -, hd, hb⟩ := (epstein S univ F hS inferInstance hF (subset_univ F) hbd).1 hn
   exact ⟨Δ, hd, hb⟩
 
-/-- **(7.2)** of Graph Minors XI (page 93): "If $\Sigma$ is a connected surface, $Z \subseteq
-\Sigma$, and $F \subseteq Z$ is an $O$-arc
-null-homotopic in $Z$, then $F$ bounds a disc $\Delta \subseteq Z$." This is the first part of
-Epstein's
-theorem. -/
+/-- Robertson and Seymour, Graph Minors XI, (7.2), page 93. An `O`-arc null-homotopic in `Z`
+bounds a disc in `Z`. This is the closed-surface form of the first clause of
+`GraphMinor.Surface.EpsteinStatement`. -/
 theorem theorem_7_2_proof [ConnectedSpace S] (hS : IsClosedSurface S)
     {Z F : Set S} (hF : IsOArc F) (hFZ : F ⊆ Z) (hn : IsNullHomotopicOArcIn Z F) :
     ∃ Δ : Set S, Δ ⊆ Z ∧ IsClosedDisc Δ ∧ subBd Δ = F := by

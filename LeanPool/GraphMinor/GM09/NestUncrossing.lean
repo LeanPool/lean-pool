@@ -101,6 +101,114 @@ theorem not_mem_edgeSet_of_endpoint_mem_disjoint_family {s : ℕ} {G : Graph α 
   · have hCm_link : (C m).IsLink e u w := ((hCG m).isLink_iff hm).mpr hl
     exact disjoint_left.mp (hC_disj hmj) hCm_link.left_mem hu
 
+private theorem inter_walk_nil_path {G C : Graph α β} (hCG : C ≤ G)
+    {a : α} (ha : a ∈ V(C)) (haG : a ∈ V(G)) :
+    IsGraphPathWithEnds G (subgraphInter G C (walkSubgraph (GraphWalk.nil haG))) a a := by
+  have heq : subgraphInter G C (walkSubgraph (GraphWalk.nil haG)) =
+      walkSubgraph (GraphWalk.nil haG) := by
+    refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
+    · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
+      ext x
+      simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_nil, List.mem_singleton]
+      exact ⟨fun h => h.2, fun h => ⟨h ▸ ha, h⟩⟩
+    · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph]
+      simp
+  rw [heq]
+  exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+
+private theorem inter_walk_cons_path {G C : Graph α β} (hCG : C ≤ G)
+    {a w b u : α} {e : β} {hl : G.IsLink e a w} {r : GraphWalk G w b}
+    (ha : a ∈ V(C)) (heC : e ∈ E(C)) (ha_not_r : a ∉ r.support)
+    (hpath_r : IsGraphPathWithEnds G (subgraphInter G C (walkSubgraph r)) w u) :
+    IsGraphPathWithEnds G (subgraphInter G C (walkSubgraph (GraphWalk.cons hl r))) a u := by
+  obtain ⟨hsub_r, W_r, hW_r_s, hV_r, hE_r⟩ := hpath_r
+  obtain ⟨W_r_G, hs_r, he_r⟩ := exists_walk_up_of_le hsub_r W_r
+  have ha_not_Wr : a ∉ W_r_G.support := by
+    intro ha_in
+    rw [hs_r] at ha_in
+    have ha_mem : a ∈ V(subgraphInter G C (walkSubgraph r)) := by
+      rw [hV_r]; exact ha_in
+    rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at ha_mem
+    exact ha_not_r ha_mem.2
+  have hW_cons_s : (GraphWalk.cons hl W_r_G).IsSimple :=
+    List.nodup_cons.mpr ⟨ha_not_Wr, by rw [hs_r]; exact hW_r_s⟩
+  have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
+      walkSubgraph (GraphWalk.cons hl W_r_G) := by
+    refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
+    · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
+      ext x
+      simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons]
+      constructor
+      · rintro ⟨hxC, rfl | hxr⟩
+        · exact Or.inl rfl
+        · right
+          rw [hs_r]
+          have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
+            rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
+            exact ⟨hxC, hxr⟩
+          rwa [hV_r] at hx_in
+      · rintro (rfl | hxWr)
+        · exact ⟨ha, Or.inl rfl⟩
+        · rw [hs_r] at hxWr
+          have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
+            rw [hV_r]; exact hxWr
+          rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at hx_in
+          exact ⟨hx_in.1, Or.inr hx_in.2⟩
+    · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
+        edgeSet_walkSubgraph]
+      ext f
+      simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons]
+      constructor
+      · rintro ⟨hfC, rfl | hfr⟩
+        · exact Or.inl rfl
+        · right
+          rw [he_r]
+          have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
+            rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph]
+            exact ⟨hfC, hfr⟩
+          rwa [hE_r] at hf_in
+      · rintro (rfl | hfWr)
+        · exact ⟨heC, Or.inl rfl⟩
+        · rw [he_r] at hfWr
+          have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
+            rw [hE_r]; exact hfWr
+          rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph] at hf_in
+          exact ⟨hf_in.1, Or.inr hf_in.2⟩
+  rw [heq]
+  exact isGraphPathWithEnds_walkSubgraph hW_cons_s
+
+private theorem inter_walk_first_vertex_path {G C : Graph α β} (hCG : C ≤ G)
+    {a w b : α} {e : β} {hl : G.IsLink e a w} {r : GraphWalk G w b}
+    (ha : a ∈ V(C)) (heC : e ∉ E(C)) (hhit' : ∀ x ∈ r.support, x ∉ V(C)) :
+    IsGraphPathWithEnds G (subgraphInter G C (walkSubgraph (GraphWalk.cons hl r))) a a := by
+  have haG : a ∈ V(G) := hl.left_mem
+  have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
+      walkSubgraph (GraphWalk.nil haG) := by
+    refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
+    · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
+      ext x
+      simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons,
+        GraphWalk.support_nil, List.not_mem_nil, or_false]
+      constructor
+      · rintro ⟨hxC, rfl | hxr⟩
+        · rfl
+        · exact (hhit' x hxr hxC).elim
+      · rintro rfl
+        exact ⟨ha, Or.inl rfl⟩
+    · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
+        edgeSet_walkSubgraph]
+      ext f
+      simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons,
+        GraphWalk.edges_nil, List.not_mem_nil, iff_false, not_and]
+      rintro hfC (rfl | hfr)
+      · exact heC hfC
+      · obtain ⟨x, y, hxyC⟩ := C.exists_isLink_of_mem_edgeSet hfC
+        have hxyG : G.IsLink f x y := hxyC.mono hCG
+        have hx_r : x ∈ r.support := r.left_mem_support_of_mem_edges hfr hxyG
+        exact hhit' x hx_r hxyC.left_mem
+  rw [heq]
+  exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+
 /-- Along a simple walk `W` in `G` starting at `a ∈ V(C)` (where `C ≤ G`), either:
 1. `subgraphInter G C (walkSubgraph W)` is a path in `G` from `a` to some `u ∈ V(C)`, or
 2. there is a first edge `e ∈ W.edges \ E(C)` whose left endpoint `u` lies in `V(C)` and after
@@ -117,17 +225,7 @@ theorem walk_inter_isPath_or_exists_shorter_subwalk {G C : Graph α β} (hCG : C
   | @nil a haG =>
     left
     refine ⟨a, ha, ?_⟩
-    have heq : subgraphInter G C (walkSubgraph (GraphWalk.nil haG)) =
-        walkSubgraph (GraphWalk.nil haG) := by
-      refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-      · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
-        ext x
-        simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_nil, List.mem_singleton]
-        exact ⟨fun h => h.2, fun h => ⟨h ▸ ha, h⟩⟩
-      · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph]
-        simp
-    rw [heq]
-    exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+    exact inter_walk_nil_path hCG ha haG
   | @cons a w b e hl r ih =>
     have ha_not_r : a ∉ r.support := (List.nodup_cons.mp hW).1
     have hr_simple : r.IsSimple := (List.nodup_cons.mp hW).2
@@ -140,61 +238,7 @@ theorem walk_inter_isPath_or_exists_shorter_subwalk {G C : Graph α β} (hCG : C
         ⟨u, huC, w', e', he'r, hl', he'C, v, hvC, W', hW's, hW'V, hW'E, he'W'⟩
       · left
         refine ⟨u, huC, ?_⟩
-        obtain ⟨hsub_r, W_r, hW_r_s, hV_r, hE_r⟩ := hpath_r
-        obtain ⟨W_r_G, hs_r, he_r⟩ := exists_walk_up_of_le hsub_r W_r
-        have ha_not_Wr : a ∉ W_r_G.support := by
-          intro ha_in
-          rw [hs_r] at ha_in
-          have ha_mem : a ∈ V(subgraphInter G C (walkSubgraph r)) := by
-            rw [hV_r]; exact ha_in
-          rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at ha_mem
-          exact ha_not_r ha_mem.2
-        have hW_cons_s : (GraphWalk.cons hl W_r_G).IsSimple :=
-          List.nodup_cons.mpr ⟨ha_not_Wr, by rw [hs_r]; exact hW_r_s⟩
-        have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
-            walkSubgraph (GraphWalk.cons hl W_r_G) := by
-          refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-          · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
-            ext x
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons]
-            constructor
-            · rintro ⟨hxC, rfl | hxr⟩
-              · exact Or.inl rfl
-              · right
-                rw [hs_r]
-                have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
-                  rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
-                  exact ⟨hxC, hxr⟩
-                rwa [hV_r] at hx_in
-            · rintro (rfl | hxWr)
-              · exact ⟨ha, Or.inl rfl⟩
-              · rw [hs_r] at hxWr
-                have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
-                  rw [hV_r]; exact hxWr
-                rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at hx_in
-                exact ⟨hx_in.1, Or.inr hx_in.2⟩
-          · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
-              edgeSet_walkSubgraph]
-            ext f
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons]
-            constructor
-            · rintro ⟨hfC, rfl | hfr⟩
-              · exact Or.inl rfl
-              · right
-                rw [he_r]
-                have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
-                  rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph]
-                  exact ⟨hfC, hfr⟩
-                rwa [hE_r] at hf_in
-            · rintro (rfl | hfWr)
-              · exact ⟨heC, Or.inl rfl⟩
-              · rw [he_r] at hfWr
-                have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
-                  rw [hE_r]; exact hfWr
-                rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph] at hf_in
-                exact ⟨hf_in.1, Or.inr hf_in.2⟩
-        rw [heq]
-        exact isGraphPathWithEnds_walkSubgraph hW_cons_s
+        exact inter_walk_cons_path hCG ha heC ha_not_r hpath_r
       · right
         exact ⟨u, huC, w', e', List.mem_cons_of_mem e he'r, hl', he'C, v, hvC, W', hW's,
           fun x hx => List.mem_cons_of_mem a (hW'V x hx),
@@ -217,33 +261,7 @@ theorem walk_inter_isPath_or_exists_shorter_subwalk {G C : Graph α β} (hCG : C
       · left
         have hhit' : ∀ x ∈ r.support, x ∉ V(C) := fun x hx hxC => hhit ⟨x, hx, hxC⟩
         refine ⟨a, ha, ?_⟩
-        have haG : a ∈ V(G) := hl.left_mem
-        have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
-            walkSubgraph (GraphWalk.nil haG) := by
-          refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-          · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
-            ext x
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons,
-              GraphWalk.support_nil, List.not_mem_nil, or_false]
-            constructor
-            · rintro ⟨hxC, rfl | hxr⟩
-              · rfl
-              · exact (hhit' x hxr hxC).elim
-            · rintro rfl
-              exact ⟨ha, Or.inl rfl⟩
-          · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
-              edgeSet_walkSubgraph]
-            ext f
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons,
-              GraphWalk.edges_nil, List.not_mem_nil, iff_false, not_and]
-            rintro hfC (rfl | hfr)
-            · exact heC hfC
-            · obtain ⟨x, y, hxyC⟩ := C.exists_isLink_of_mem_edgeSet hfC
-              have hxyG : G.IsLink f x y := hxyC.mono hCG
-              have hx_r : x ∈ r.support := r.left_mem_support_of_mem_edges hfr hxyG
-              exact hhit' x hx_r hxyC.left_mem
-        rw [heq]
-        exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+        exact inter_walk_first_vertex_path hCG ha heC hhit'
 
 /-- Path version of `walk_inter_isPath_or_exists_shorter_subwalk` (Graph Minors III, (4.1),
 paragraph 2, page 60): if `P` is a path in `G` from `a ∈ V(C)` to `b` and `C ∩ P` is not a path,
@@ -286,17 +304,7 @@ private theorem inter_or_detour_of_walk {G C : Graph α β} {v₀ b : α} (hCG :
   | @nil a haG =>
     left
     refine ⟨a, hv₀C, ?_⟩
-    have heq : subgraphInter G C (walkSubgraph (GraphWalk.nil haG)) =
-        walkSubgraph (GraphWalk.nil haG) := by
-      refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-      · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
-        ext x
-        simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_nil, List.mem_singleton]
-        exact ⟨fun h => h.2, fun h => ⟨h ▸ hv₀C, h⟩⟩
-      · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph]
-        simp
-    rw [heq]
-    exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+    exact inter_walk_nil_path hCG hv₀C haG
   | @cons a w b e hl r ih =>
     have ha_not_r : a ∉ r.support := (List.nodup_cons.mp hW₂s).1
     have hr_s : r.IsSimple := (List.nodup_cons.mp hW₂s).2
@@ -307,61 +315,7 @@ private theorem inter_or_detour_of_walk {G C : Graph α β} {v₀ b : α} (hCG :
         ⟨v, hvC, hvr, v', hv'C, hv'r, hvv', P_sub, hP_sub_r, hP_sub_path, hVC, hEC, hex_e⟩
       · left
         refine ⟨u, huC, ?_⟩
-        obtain ⟨hsub_r, W_r, hW_r_s, hV_r, hE_r⟩ := hpath_r
-        obtain ⟨W_r_G, hs_r, he_r⟩ := exists_walk_up_of_le hsub_r W_r
-        have ha_not_Wr : a ∉ W_r_G.support := by
-          intro ha_in
-          rw [hs_r] at ha_in
-          have ha_mem : a ∈ V(subgraphInter G C (walkSubgraph r)) := by
-            rw [hV_r]; exact ha_in
-          rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at ha_mem
-          exact ha_not_r ha_mem.2
-        have hW_cons_s : (GraphWalk.cons hl W_r_G).IsSimple :=
-          List.nodup_cons.mpr ⟨ha_not_Wr, by rw [hs_r]; exact hW_r_s⟩
-        have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
-            walkSubgraph (GraphWalk.cons hl W_r_G) := by
-          refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-          · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
-            ext x
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons]
-            constructor
-            · rintro ⟨hxC, rfl | hxr⟩
-              · exact Or.inl rfl
-              · right
-                rw [hs_r]
-                have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
-                  rw [vertexSet_subgraphInter, vertexSet_walkSubgraph]
-                  exact ⟨hxC, hxr⟩
-                rwa [hV_r] at hx_in
-            · rintro (rfl | hxWr)
-              · exact ⟨hv₀C, Or.inl rfl⟩
-              · rw [hs_r] at hxWr
-                have hx_in : x ∈ V(subgraphInter G C (walkSubgraph r)) := by
-                  rw [hV_r]; exact hxWr
-                rw [vertexSet_subgraphInter, vertexSet_walkSubgraph] at hx_in
-                exact ⟨hx_in.1, Or.inr hx_in.2⟩
-          · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
-              edgeSet_walkSubgraph]
-            ext f
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons]
-            constructor
-            · rintro ⟨hfC, rfl | hfr⟩
-              · exact Or.inl rfl
-              · right
-                rw [he_r]
-                have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
-                  rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph]
-                  exact ⟨hfC, hfr⟩
-                rwa [hE_r] at hf_in
-            · rintro (rfl | hfWr)
-              · exact ⟨heC, Or.inl rfl⟩
-              · rw [he_r] at hfWr
-                have hf_in : f ∈ E(subgraphInter G C (walkSubgraph r)) := by
-                  rw [hE_r]; exact hfWr
-                rw [edgeSet_subgraphInter hCG (walkSubgraph_le r), edgeSet_walkSubgraph] at hf_in
-                exact ⟨hf_in.1, Or.inr hf_in.2⟩
-        rw [heq]
-        exact isGraphPathWithEnds_walkSubgraph hW_cons_s
+        exact inter_walk_cons_path hCG hv₀C heC ha_not_r hpath_r
       · right
         have hr_le : walkSubgraph r ≤ walkSubgraph (GraphWalk.cons hl r) := by
           rw [(Compatible.of_le_le (walkSubgraph_le r) (walkSubgraph_le _)).le_iff,
@@ -428,33 +382,7 @@ private theorem inter_or_detour_of_walk {G C : Graph α β} {v₀ b : α} (hCG :
       · left
         have hhit' : ∀ x ∈ r.support, x ∉ V(C) := fun x hx hxC => hhit ⟨x, hx, hxC⟩
         refine ⟨a, hv₀C, ?_⟩
-        have haG : a ∈ V(G) := hl.left_mem
-        have heq : subgraphInter G C (walkSubgraph (GraphWalk.cons hl r)) =
-            walkSubgraph (GraphWalk.nil haG) := by
-          refine (Compatible.of_le_le (subgraphInter_le hCG) (walkSubgraph_le _)).ext ?_ ?_
-          · rw [vertexSet_subgraphInter, vertexSet_walkSubgraph, vertexSet_walkSubgraph]
-            ext x
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.support_cons, List.mem_cons,
-              GraphWalk.support_nil, List.not_mem_nil, or_false]
-            constructor
-            · rintro ⟨hxC, rfl | hxr⟩
-              · rfl
-              · exact (hhit' x hxr hxC).elim
-            · rintro rfl
-              exact ⟨hv₀C, Or.inl rfl⟩
-          · rw [edgeSet_subgraphInter hCG (walkSubgraph_le _), edgeSet_walkSubgraph,
-              edgeSet_walkSubgraph]
-            ext f
-            simp only [mem_inter_iff, mem_ofPred_eq, GraphWalk.edges_cons, List.mem_cons,
-              GraphWalk.edges_nil, List.not_mem_nil, iff_false, not_and]
-            rintro hfC (rfl | hfr)
-            · exact heC hfC
-            · obtain ⟨x, y, hxyC⟩ := C.exists_isLink_of_mem_edgeSet hfC
-              have hxyG : G.IsLink f x y := hxyC.mono hCG
-              have hx_r : x ∈ r.support := r.left_mem_support_of_mem_edges hfr hxyG
-              exact hhit' x hx_r hxyC.left_mem
-        rw [heq]
-        exact isGraphPathWithEnds_walkSubgraph (List.nodup_singleton a)
+        exact inter_walk_first_vertex_path hCG hv₀C heC hhit'
 
 /-- If a path `P` in `G` meets `V(C)` (where `C ≤ G`), then either `subgraphInter G C P` is a path
 in `G`, or there are distinct vertices `v, v' ∈ V(C) ∩ V(P)` and a detour subpath `P_sub ≤ P`
