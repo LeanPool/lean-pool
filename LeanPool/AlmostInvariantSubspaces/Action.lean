@@ -21,24 +21,22 @@ public import Mathlib.Algebra.Order.Group.End
 namespace AlmostInvariant
 
 /-- A linear automorphism acts on the lattice of submodules. -/
-def linearAct {R M G : Type*} [Ring R] [AddCommGroup M] [Module R M] [Group G] (ρ : G →* (M ≃ₗ[R]
-    M)) :
+def linearAct {R M G : Type*} [Semiring R] [AddCommMonoid M] [Module R M] [Monoid G]
+    (ρ : G →* (M ≃ₗ[R] M)) :
     G →* (Submodule R M ≃o Submodule R M) where
   toFun g := Submodule.orderIsoMapComap (ρ g)
   map_one' := by
     ext S x
     simp
   map_mul' g h := by
-    ext S x
-    simp only [map_mul, Submodule.orderIsoMapComap_apply, RelIso.mul_apply, Submodule.mem_map]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact ⟨ρ h y, ⟨y, hy, rfl⟩, rfl⟩
-    · rintro ⟨_, ⟨y, hy, rfl⟩, rfl⟩
-      exact ⟨y, hy, rfl⟩
+    apply RelIso.ext
+    intro S
+    change S.map (ρ (g * h) : M →ₗ[R] M) = (S.map (ρ h : M →ₗ[R] M)).map (ρ g : M →ₗ[R] M)
+    rw [map_mul]
+    exact Submodule.map_comp (ρ h : M →ₗ[R] M) (ρ g : M →ₗ[R] M) S
 
-theorem linearAct_mul_apply {R M G : Type*} [Ring R] [AddCommGroup M] [Module R M]
-    [Group G] (ρ : G →* (M ≃ₗ[R] M)) (g h : G) (S : Submodule R M) :
+theorem linearAct_mul_apply {R M G : Type*} [Semiring R] [AddCommMonoid M] [Module R M]
+    [Monoid G] (ρ : G →* (M ≃ₗ[R] M)) (g h : G) (S : Submodule R M) :
     linearAct ρ (g * h) S = linearAct ρ g (linearAct ρ h S) := by
   rw [map_mul, RelIso.mul_apply]
 

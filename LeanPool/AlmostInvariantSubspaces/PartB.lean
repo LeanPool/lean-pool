@@ -8,6 +8,7 @@ Authors: Jack Ryan
 
 module
 
+public import LeanPool.AlmostInvariantSubspaces.Action
 public import LeanPool.AlmostInvariantSubspaces.Length
 public import Mathlib.LinearAlgebra.Isomorphisms
 public import Mathlib.Basic.Real.Basic
@@ -394,19 +395,22 @@ theorem sumInter_map_eq (A : ι → Submodule R M) (W : Submodule R M) (φ : Sub
   have h2 := sumInter_map_le A W φ.symm hφA' (φ.symm_apply_eq.mpr hφW.symm)
   exact (OrderIso.symm_apply_le φ).mp h2
 
-theorem map_map_inv {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R] M)) (g : G) (S : Submodule R M) :
-    (S.map (ρ g⁻¹ : M →ₗ[R] M)).map (ρ g : M →ₗ[R] M) = S := by
-  have key : ∀ u : M, ρ g (ρ g⁻¹ u) = u := fun u => by
-    change (ρ g * ρ g⁻¹) u = u
-    rw [← map_mul, mul_inv_cancel, map_one]
+/-- **Invariance under a group acting by lattice automorphisms** (linear or semilinear actions),
+which permutes the
+members and fixes `W`. -/
+theorem sumInter_fixed_of_lattice_group {G : Type*} [Group G] (ρ : G →* (Submodule R M ≃o
+    Submodule R M))
+    (A : ι → Submodule R M) (W : Submodule R M) (hfam : ∀ g x, ∃ y, ρ g (A x) = A y) (hW : ∀ g,
+        ρ g W = W)
+    (g : G) : ρ g (sumInter A W) = sumInter A W := by
+  have h1 : ∀ h : G, ρ h (sumInter A W) ≤ sumInter A W := fun h => sumInter_map_le A W (ρ h)
+      (hfam h) (hW h)
+  refine le_antisymm (h1 g) ?_
+  have e : ρ g (ρ g⁻¹ (sumInter A W)) = sumInter A W := by
+    rw [← RelIso.mul_apply, ← map_mul, mul_inv_cancel, map_one]
     rfl
-  ext v
-  simp only [Submodule.mem_map, LinearEquiv.coe_coe]
-  constructor
-  · rintro ⟨_, ⟨u, hu, rfl⟩, rfl⟩
-    rwa [key]
-  · intro hv
-    exact ⟨ρ g⁻¹ v, ⟨v, hv, rfl⟩, key v⟩
+  calc sumInter A W = ρ g (ρ g⁻¹ (sumInter A W)) := e.symm
+    _ ≤ ρ g (sumInter A W) := (ρ g).monotone (h1 g⁻¹)
 
 /-- **Invariance under a group acting linearly** that permutes the members and fixes `W`. -/
 theorem sumInter_map_eq_of_group {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R] M)) (A : ι
@@ -414,12 +418,7 @@ theorem sumInter_map_eq_of_group {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R]
     (W : Submodule R M) (hfam : ∀ g x, ∃ y, (A x).map (ρ g : M →ₗ[R] M) = A y)
     (hW : ∀ g, W.map (ρ g : M →ₗ[R] M) = W) (g : G) :
     (sumInter A W).map (ρ g : M →ₗ[R] M) = sumInter A W := by
-  have h1 : ∀ h : G, (sumInter A W).map (ρ h : M →ₗ[R] M) ≤ sumInter A W := fun h =>
-    sumInter_map_le A W (Submodule.orderIsoMapComap (ρ h)) (fun x => hfam h x) (hW h)
-  refine le_antisymm (h1 g) ?_
-  calc sumInter A W = ((sumInter A W).map (ρ g⁻¹ : M →ₗ[R] M)).map (ρ g : M →ₗ[R] M) :=
-        (map_map_inv ρ g _).symm
-    _ ≤ (sumInter A W).map (ρ g : M →ₗ[R] M) := Submodule.map_mono (h1 g⁻¹)
+  exact sumInter_fixed_of_lattice_group (AlmostInvariant.linearAct ρ) A W hfam hW g
 
 /-- **Part B, module form.** Under the descent property, `D = sumInter A W` is a finite sum of
 finite nonempty
@@ -540,23 +539,6 @@ theorem descent_of_export {A : ι → Submodule R M} {W : Submodule R M} {r : �
   have hc : ∀ y ∈ s, w y * ((d ((A y ⊔ W) ⊓ E) W).toNat : ℝ) = w y * ((d (A y ⊓ E) W).toNat : ℝ) :=
     fun y _ => by rw [d_sup_inf_eq hWE]
   rwa [Finset.sum_congr rfl hc] at h
-
-/-- **Invariance under a group acting by lattice automorphisms** (linear or semilinear actions),
-which permutes the
-members and fixes `W`. -/
-theorem sumInter_fixed_of_lattice_group {G : Type*} [Group G] (ρ : G →* (Submodule R M ≃o
-    Submodule R M))
-    (A : ι → Submodule R M) (W : Submodule R M) (hfam : ∀ g x, ∃ y, ρ g (A x) = A y) (hW : ∀ g,
-        ρ g W = W)
-    (g : G) : ρ g (sumInter A W) = sumInter A W := by
-  have h1 : ∀ h : G, ρ h (sumInter A W) ≤ sumInter A W := fun h => sumInter_map_le A W (ρ h)
-      (hfam h) (hW h)
-  refine le_antisymm (h1 g) ?_
-  have e : ρ g (ρ g⁻¹ (sumInter A W)) = sumInter A W := by
-    rw [← RelIso.mul_apply, ← map_mul, mul_inv_cancel, map_one]
-    rfl
-  calc sumInter A W = ρ g (ρ g⁻¹ (sumInter A W)) := e.symm
-    _ ≤ ρ g (sumInter A W) := (ρ g).monotone (h1 g⁻¹)
 
 /-- Assemble the finite sum and its bounds from the data exported by the near-minimizer proof. -/
 theorem finite_form_of_export [Nonempty ι] (A : ι → Submodule R M) (W : Submodule R M) (r : ℕ)

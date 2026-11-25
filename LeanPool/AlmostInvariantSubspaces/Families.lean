@@ -10,6 +10,7 @@ module
 
 public import LeanPool.AlmostInvariantSubspaces.Action
 public import LeanPool.AlmostInvariantSubspaces.Average
+public import LeanPool.AlmostInvariantSubspaces.LatticeRank
 public import LeanPool.AlmostInvariantSubspaces.Length
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Group.End
@@ -77,6 +78,27 @@ variable (act : G → L ≃o L) (hmul : ∀ g h x, act (g * h) x = act g (act h 
   (hinv : ∀ g x, rk (act g x) = rk x) (u : L)
   {ι : Type} [Fintype ι] [Nonempty ι] (σ : ι → G)
 
+omit [Group G] [Nonempty ι] in
+theorem f_difference (t : ℝ) (s z : L) :
+    f act rk u σ t s - f act rk u σ t z =
+      t * ((rk s : ℝ) - rk z) -
+        avg (fun i => (rk (act (σ i) u ⊓ s) : ℝ) - rk (act (σ i) u ⊓ z)) := by
+  have sub_averages :
+      avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ s)) -
+        avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ z)) =
+        -avg (fun i => (rk (act (σ i) u ⊓ s) : ℝ) - rk (act (σ i) u ⊓ z)) := by
+    rw [← avg_sub]
+    have pointwise :
+        (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ s) - ((rk u : ℝ) - rk (act (σ i) u ⊓ z))) =
+          fun i => -((rk (act (σ i) u ⊓ s) : ℝ) - rk (act (σ i) u ⊓ z)) := by
+      funext i
+      ring
+    rw [pointwise]
+    simpa only [neg_one_mul] using
+      avg_mul (-1) (fun i => (rk (act (σ i) u ⊓ s) : ℝ) - rk (act (σ i) u ⊓ z))
+  unfold f
+  linarith
+
 include hstrict hinv in
 omit [Group G] in
 theorem f_nonneg {t : ℝ} (h0 : 0 ≤ t) (h1 : t ≤ 1) (s : L) : 0 ≤ f act rk u σ t s := by
@@ -108,19 +130,12 @@ include hstrict hmod in
 omit [Group G] [Nonempty ι] in
 theorem f_sub (t : ℝ) (s s' : L) : f act rk u σ t (s ⊓ s') + f act rk u σ t (s ⊔ s') ≤
     f act rk u σ t s + f act rk u σ t s' := by
-  have hm : Monotone rk := hstrict.monotone
   have h : ∀ i, ((rk u : ℝ) - rk (act (σ i) u ⊓ (s ⊓ s'))) + ((rk u : ℝ) - rk (act (σ i)
       u ⊓ (s ⊔ s'))) ≤
       ((rk u : ℝ) - rk (act (σ i) u ⊓ s)) + ((rk u : ℝ) - rk (act (σ i) u ⊓ s')) := by
     intro i
     set x := act (σ i) u
-    have h1 := hmod (x ⊓ s) (x ⊓ s')
-    have h2 : rk ((x ⊓ s) ⊔ (x ⊓ s')) ≤ rk (x ⊓ (s ⊔ s')) :=
-      hm (sup_le (inf_le_inf_left _ le_sup_left) (inf_le_inf_left _ le_sup_right))
-    have h3 : rk ((x ⊓ s) ⊓ (x ⊓ s')) ≤ rk (x ⊓ (s ⊓ s')) :=
-      hm (le_inf (inf_le_left.trans inf_le_left)
-        (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right)))
-    have h5 : rk (x ⊓ s) + rk (x ⊓ s') ≤ rk (x ⊓ (s ⊔ s')) + rk (x ⊓ (s ⊓ s')) := by linarith
+    have h5 := inf_rank_supermodular rk hstrict.monotone hmod x s s'
     have h6 : (rk (x ⊓ s) : ℝ) + rk (x ⊓ s') ≤ rk (x ⊓ (s ⊔ s')) + rk (x ⊓ (s ⊓ s')) := by
       exact_mod_cast h5
     linarith
@@ -161,11 +176,6 @@ theorem f_double (t : ℝ) (g : G) (s : L) :
   ring
 
 include hmul in
-theorem act_one (x : L) : act 1 x = x := by
-  apply (act 1).injective
-  rw [← hmul, one_mul]
-
-include hmul in
 theorem act_inv (g : G) (x : L) : act g (act g⁻¹ x) = x := by
   rw [← hmul, mul_inv_cancel, act_one act hmul]
 
@@ -201,7 +211,8 @@ theorem a_le_r {t : ℝ} (hstrict : StrictMono rk) (h0 : 0 ≤ t) (h1 : t ≤ 1)
 include hmul hstrict hinv in
 /-- Step 1: a near-minimizer for a doubled measure is a near-minimizer for `σ` and, after
 translation, again. -/
-theorem step_one {n : ℕ} (t : ℕ → ℝ) (ht0 : ∀ j, 0 ≤ t j) (ht1 : ∀ j, t j ≤ 1) {ε : ℝ} (hε : 0 < ε)
+theorem step_one {n : ℕ} (t : ℕ → ℝ) (ht0 : ∀ j < n, 0 ≤ t j) (ht1 : ∀ j < n, t j ≤ 1)
+    {ε : ℝ} (hε : 0 < ε)
     (hsup : ∀ (κ : Type) [Fintype κ] [Nonempty κ] (τ : κ → G),
       ∑ j ∈ Finset.range n, a act rk u τ (t j) ≤ ∑ j ∈ Finset.range n, a act rk u σ (t j) + ε)
     {j : ℕ} (hj : j < n) (g : G) :
@@ -209,20 +220,20 @@ theorem step_one {n : ℕ} (t : ℕ → ℝ) (ht0 : ∀ j, 0 ≤ t j) (ht1 : ∀
       f act rk u σ (t j) (act g⁻¹ s) ≤ a act rk u σ (t j) + 4 * ε := by
   have : Nonempty L := ⟨u⟩
   set τ := Sum.elim σ (fun i => g * σ i)
-  have hge : ∀ i, a act rk u σ (t i) ≤ a act rk u τ (t i) := fun i =>
-    a_double act hmul rk hstrict hinv u σ (ht0 i) (ht1 i) g
+  have hge : ∀ i < n, a act rk u σ (t i) ≤ a act rk u τ (t i) := fun i hi =>
+    a_double act hmul rk hstrict hinv u σ (ht0 i hi) (ht1 i hi) g
   have h1 := hsup (ι ⊕ ι) τ
   have h2 : a act rk u τ (t j) - a act rk u σ (t j) ≤
       ∑ i ∈ Finset.range n, (a act rk u τ (t i) - a act rk u σ (t i)) :=
     Finset.single_le_sum (f := fun i => a act rk u τ (t i) - a act rk u σ (t i))
-      (fun i _ => sub_nonneg.mpr (hge i)) (Finset.mem_range.mpr hj)
+      (fun i hi => sub_nonneg.mpr (hge i (Finset.mem_range.mp hi))) (Finset.mem_range.mpr hj)
   rw [Finset.sum_sub_distrib] at h2
   have h3 : a act rk u τ (t j) ≤ a act rk u σ (t j) + ε := by linarith
   obtain ⟨s, hs⟩ := exists_lt_of_ciInf_lt (f := f act rk u τ (t j))
     (show a act rk u τ (t j) < a act rk u τ (t j) + ε by linarith)
   have hd := f_double act rk u σ (t j) g s
-  have e1 := a_le act rk hstrict hinv u σ (ht0 j) (ht1 j) s
-  have e2 := a_translate act hmul rk hstrict hinv u σ (ht0 j) (ht1 j) g s
+  have e1 := a_le act rk hstrict hinv u σ (ht0 j hj) (ht1 j hj) s
+  have e2 := a_translate act hmul rk hstrict hinv u σ (ht0 j hj) (ht1 j hj) g s
   have e3 := f_translate act hmul rk hinv u σ (t j) g (act g⁻¹ s)
   rw [act_inv act hmul] at e3
   refine ⟨s, ?_, ?_⟩
@@ -269,15 +280,11 @@ theorem first_order {t θ : ℝ} (r : ℤ) (w B : L)
       exact_mod_cast e5
     have h2 := avg_mono key
     rw [avg_const] at h2
-    have e6 : avg (fun i => (rk (act (σ i) u ⊓ (w ⊔ B)) : ℝ) - rk (act (σ i) u ⊓ w)) =
-        avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ w)) -
-          avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ (w ⊔ B))) := by
-      rw [← avg_sub]; congr 1; funext i; ring
+    have e6 := f_difference act rk u σ t (w ⊔ B) w
     have e7 : ((rk (w ⊔ B) : ℤ) : ℝ) + rk (w ⊓ B) = rk w + rk B := by exact_mod_cast hmod w B
     have e8 : (rk (w ⊓ B) : ℝ) = rk (B ⊓ w) := by rw [inf_comm]
     have e9 : t * ((rk (w ⊔ B) : ℝ) - rk w) = t * ((rk B : ℝ) - rk (B ⊓ w)) := by
       congr 1; linarith
-    unfold f at h1
     linarith
   · -- the competitor `w ⊓ B`
     have h1 := hw (w ⊓ B)
@@ -294,11 +301,7 @@ theorem first_order {t θ : ℝ} (r : ℤ) (w B : L)
       exact_mod_cast e5
     have h2 := avg_mono key
     rw [avg_const] at h2
-    have e6 : avg (fun i => (rk (act (σ i) u ⊓ w) : ℝ) - rk (act (σ i) u ⊓ (w ⊓ B))) =
-        avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ (w ⊓ B))) -
-          avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ w)) := by
-      rw [← avg_sub]; congr 1; funext i; ring
-    unfold f at h1
+    have e6 := f_difference act rk u σ t w (w ⊓ B)
     linarith
 
 include hstrict hmod in
@@ -411,7 +414,7 @@ single-orbit file, the
 conclusion keeps the near-minimizer property itself (`f w ≤ a + 4 ε`), which the first-order
 inequalities need. -/
 theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) ≤ r)
-    {n : ℕ} (hn : 0 < n) (t : ℕ → ℝ) (ht0 : ∀ j, 0 ≤ t j) (ht1 : ∀ j, t j ≤ 1)
+    {n : ℕ} (hn : 0 < n) (t : ℕ → ℝ) (ht0 : ∀ j < n, 0 ≤ t j) (ht1 : ∀ j < n, t j ≤ 1)
     {ε κ : ℝ} (hε : 0 < ε) (hsep : ∀ i j, i < j → j < n → 16 * ε < t j - t i)
     (hκ : ∀ j, j < n → κ ≤ t j * (1 - t j)) (hbig : (r : ℝ) < n * (κ - 16 * ε))
     (hsup : ∀ (κ : Type) [Fintype κ] [Nonempty κ] (τ : κ → G),
@@ -419,8 +422,8 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
     ∃ j, j < n ∧ ∃ w, (∀ g, act g w = w) ∧ f act rk u σ (t j) w ≤ a act rk u σ (t j) + 4 * ε := by
   classical
   have : Nonempty L := ⟨u⟩
-  have aleq : ∀ j s, a act rk u σ (t j) ≤ f act rk u σ (t j) s := fun j s =>
-    a_le act rk hstrict hinv u σ (ht0 j) (ht1 j) s
+  have aleq : ∀ j < n, ∀ s, a act rk u σ (t j) ≤ f act rk u σ (t j) s := fun j hj s =>
+    a_le act rk hstrict hinv u σ (ht0 j hj) (ht1 j hj) s
   by_contra hno
   push Not at hno
   -- at every level there are two different near-minimizers
@@ -462,10 +465,10 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
           exact this.trans inf_le_left
         exact le_antisymm h1 h2
       · have := f_sub act rk hstrict hmod u σ (t j) S T
-        have := aleq j (S ⊔ T)
+        have := aleq j hj (S ⊔ T)
         linarith
       · have := f_sub act rk hstrict hmod u σ (t j) S T
-        have := aleq j (S ⊓ T)
+        have := aleq j hj (S ⊓ T)
         linarith
     · exact ⟨u, u, fun h => absurd h hj⟩
   choose P Q hPQ using two'
@@ -473,7 +476,7 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
   have hle : ∀ j, j < n → P j ≤ Q j := fun j hj => (hPQ j hj).1.le
   have hQP : ∀ j, j + 1 < n → Q (j + 1) ≤ P j := fun j hj =>
     chain act rk hstrict hmod u σ hε.le (hsep j (j + 1) (Nat.lt_succ_self j) hj) (P j) (Q (j + 1))
-      (hPQ j (by omega)).2.1 (hPQ (j + 1) hj).2.2 (aleq j) (aleq (j + 1))
+      (hPQ j (by omega)).2.1 (hPQ (j + 1) hj).2.2 (aleq j (by omega)) (aleq (j + 1) hj)
   -- numbers
   set d : ℕ → ι → ℝ := fun j i => (rk (act (σ i) u ⊓ Q j) : ℝ) - rk (act (σ i) u ⊓ P j)
   set c : ℕ → ι → ι → ℝ := fun j i k =>
@@ -512,7 +515,7 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
   have hlev : ∀ j, j < n → κ - 16 * ε ≤ avg (fun i => avg (fun k => d j i - c j i k)) := by
     intro j hj
     obtain ⟨hlt, hPn, hQn⟩ := hPQ j hj
-    have aP := aleq j (P j)
+    have aP := aleq j hj (P j)
     set tt := t j
     set nj : ℝ := (rk (Q j) : ℝ) - rk (P j)
     have hnj : 1 ≤ nj := by
@@ -521,27 +524,18 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
       have : (rk (P j) : ℝ) + 1 ≤ rk (Q j) := by exact_mod_cast this
       simp only [nj]; linarith
     -- f Q - f P = t n_j - mean d
-    have eQP : f act rk u σ tt (Q j) - f act rk u σ tt (P j) = tt * nj - avg (d j) := by
-      unfold f
-      have : avg (d j) = avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ P j)) -
-          avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ Q j)) := by
-        rw [← avg_sub]; congr 1; funext i; simp only [d]; ring
-      rw [this]; simp only [nj]; ring
+    have eQP : f act rk u σ tt (Q j) - f act rk u σ tt (P j) = tt * nj - avg (d j) :=
+      f_difference act rk u σ tt (Q j) (P j)
     have hd_lo : tt * nj - 8 * ε ≤ avg (d j) := by linarith
     have hd_hi : avg (d j) ≤ tt * nj + 8 * ε := by
-      have := aleq j (Q j); linarith
+      have := aleq j hj (Q j); linarith
     -- for each k: mean over i of c ≤ t d_k + 8 ε
     have hc : ∀ k, avg (fun i => c j i k) ≤ tt * d j k + 8 * ε := by
       intro k
       set R := (act (σ k) u ⊓ Q j) ⊔ P j
-      have aR := aleq j R
+      have aR := aleq j hj R
       have eR : f act rk u σ tt R - f act rk u σ tt (P j) = tt * ((rk R : ℝ) - rk (P j))
-          - avg (fun i => c j i k) := by
-        unfold f
-        have : avg (fun i => c j i k) = avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ P j)) -
-            avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ R)) := by
-          rw [← avg_sub]; congr 1; funext i; simp only [c, R]; ring
-        rw [this]; ring
+          - avg (fun i => c j i k) := f_difference act rk u σ tt R (P j)
       have hRP : (rk R : ℝ) - rk (P j) = d j k := by
         have h1 := hmod (act (σ k) u ⊓ Q j) (P j)
         have h2 : (act (σ k) u ⊓ Q j) ⊓ P j = act (σ k) u ⊓ P j := by
@@ -567,8 +561,8 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
       rw [this, avg_sub]
     rw [e]
     have hk := hκ j hj
-    have ht0' := ht0 j
-    have ht1' := ht1 j
+    have ht0' := ht0 j hj
+    have ht1' := ht1 j hj
     have m1 := mul_le_mul_of_nonneg_left hd_lo (show (0 : ℝ) ≤ 1 - tt by linarith)
     have m2 := mul_le_mul_of_nonneg_left hnj (mul_nonneg ht0' (show (0 : ℝ) ≤ 1 - tt by linarith))
     have m3 := mul_nonneg hε.le ht0'
@@ -627,28 +621,26 @@ theorem exists_fixed_near_minimizer (r : ℤ) (hr : ∀ g, rk u - rk (act g u �
   have hε1 : ε ≤ θ / 4 := min_le_left _ _
   have hε2 : ε ≤ η / 32 := (min_le_right _ _).trans (min_le_left _ _)
   have hε3 : ε ≤ κ / 32 := (min_le_right _ _).trans (min_le_right _ _)
-  set t : ℕ → ℝ := fun j => lo + (min j n : ℕ) * η with htdef
+  set t : ℕ → ℝ := fun j => lo + (j : ℝ) * η with htdef
   have hnη : (n : ℝ) * η = hi - lo := by rw [hηdef]; field_simp
   have htlo : ∀ j, lo ≤ t j := fun j => by
-    have : (0 : ℝ) ≤ (min j n : ℕ) * η := by positivity
+    have : (0 : ℝ) ≤ (j : ℝ) * η := by positivity
     simp only [htdef]; linarith
-  have hthi : ∀ j, t j ≤ hi := fun j => by
-    have h1 : ((min j n : ℕ) : ℝ) ≤ n := by exact_mod_cast min_le_right j n
-    have : ((min j n : ℕ) : ℝ) * η ≤ n * η := mul_le_mul_of_nonneg_right h1 hη.le
+  have hthi : ∀ j < n, t j ≤ hi := fun j hj => by
+    have h1 : (j : ℝ) ≤ n := by exact_mod_cast hj.le
+    have : (j : ℝ) * η ≤ n * η := mul_le_mul_of_nonneg_right h1 hη.le
     simp only [htdef]; linarith
-  have ht0 : ∀ j, 0 ≤ t j := fun j => (hlo.le.trans (htlo j))
-  have ht1 : ∀ j, t j ≤ 1 := fun j => (hthi j).trans hhi.le
+  have ht0 : ∀ j < n, 0 ≤ t j := fun j _ => hlo.le.trans (htlo j)
+  have ht1 : ∀ j < n, t j ≤ 1 := fun j hj => (hthi j hj).trans hhi.le
   have hsep : ∀ i j, i < j → j < n → 16 * ε < t j - t i := by
-    intro i j hij hjn
-    have e1 : min i n = i := min_eq_left (by omega)
-    have e2 : min j n = j := min_eq_left (by omega)
-    simp only [htdef, e1, e2]
+    intro i j hij _
+    simp only [htdef]
     have : ((i : ℝ) + 1) ≤ j := by exact_mod_cast hij
     nlinarith
   have hκt : ∀ j, j < n → κ ≤ t j * (1 - t j) := by
-    intro j _
+    intro j hj
     have a1 := htlo j
-    have a2 := hthi j
+    have a2 := hthi j hj
     have : lo * (1 - hi) ≤ t j * (1 - t j) := by nlinarith
     exact this
   have hbig : (r : ℝ) < n * (κ - 16 * ε) := by
@@ -663,8 +655,9 @@ theorem exists_fixed_near_minimizer (r : ℤ) (hr : ∀ g, rk u - rk (act g u �
   have hAbdd : BddAbove A := by
     refine ⟨n * r, ?_⟩
     rintro x ⟨ι, _, _, τ, rfl⟩
-    have := Finset.sum_le_sum (s := Finset.range n) (fun j _ =>
-      a_le_r act rk hinv u τ hstrict (ht0 j) (ht1 j) r hr)
+    have := Finset.sum_le_sum (s := Finset.range n) (fun j hj =>
+      a_le_r act rk hinv u τ hstrict (ht0 j (Finset.mem_range.mp hj))
+        (ht1 j (Finset.mem_range.mp hj)) r hr)
     rw [Finset.sum_const, Finset.card_range, nsmul_eq_mul] at this
     exact this
   obtain ⟨x, ⟨ι, hF, hN, σ, rfl⟩, hx⟩ := exists_lt_of_lt_csSup hAne (show sSup A - ε < sSup A by
@@ -679,7 +672,7 @@ theorem exists_fixed_near_minimizer (r : ℤ) (hr : ∀ g, rk u - rk (act g u �
   obtain ⟨j, hj, w, hw, hval⟩ := exists_fixed_of_levels act hmul rk hstrict hmod hinv u σ r hr hn0
       t ht0 ht1 hε
     hsep hκt hbig hsup
-  exact ⟨t j, htlo j, hthi j, w, hw, ι, hF, hN, σ, by linarith⟩
+  exact ⟨t j, htlo j, hthi j hj, w, hw, ι, hF, hN, σ, by linarith⟩
 
 include hmul hstrict hmod hinv in
 /-- **Levels and first-order bounds, for all groups.** For every interval `[lo, hi] ⊂ (0,1)` and
@@ -704,11 +697,7 @@ theorem exists_fixed_first_order (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u
   · exact first_order act rk hstrict hmod u σ r w B hnear hB1 hB2
   · -- the enlargement inequality (1) of section 2 of `PROOF.md`, for every competitor `E`
     have h1 := hnear E
-    have e6 : avg (fun i => (rk (act (σ i) u ⊓ E) : ℝ) - rk (act (σ i) u ⊓ w)) =
-        avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ w)) -
-          avg (fun i => (rk u : ℝ) - rk (act (σ i) u ⊓ E)) := by
-      rw [← avg_sub]; congr 1; funext i; ring
-    unfold f at h1
+    have e6 := f_difference act rk u σ t E w
     linarith
 
 include hmul hstrict hmod hinv in

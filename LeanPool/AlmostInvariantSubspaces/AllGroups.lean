@@ -139,24 +139,11 @@ theorem almost_invariant_subspace_all {K V G : Type*} [DivisionRing K] [AddCommG
   let act : G → Submodule K V ≃o Submodule K V := AlmostInvariant.linearAct ρ
   have hmul := AlmostInvariant.linearAct_mul_apply ρ
   set rk : Submodule K V → ℤ := fun S => (finrank K S : ℤ)
-  have hstrict : StrictMono rk := fun S T hST => by
-    have h := Submodule.finrank_lt_finrank_of_lt hST
-    change (finrank K S : ℤ) < finrank K T
-    exact_mod_cast h
-  have hmod : ∀ S T, rk (S ⊔ T) + rk (S ⊓ T) = rk S + rk T := fun S T => by
-    have h := Submodule.finrank_sup_add_finrank_inf_eq S T
-    change (finrank K (S ⊔ T : Submodule K V) : ℤ) + finrank K (S ⊓ T : Submodule K V)
-        = finrank K S + finrank K T
-    exact_mod_cast h
-  have hinv : ∀ g S, rk (act g S) = rk S := fun g S => by
-    have h := LinearEquiv.finrank_map_eq (ρ g) S
-    change (finrank K (S.map (ρ g : V →ₗ[K] V)) : ℤ) = finrank K S
-    exact_mod_cast h
-  have hr' : ∀ g, rk A - rk (act g A ⊓ A) ≤ r := fun g => by
-    have h' : (finrank K A : ℤ) ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V) + r := by
-      exact_mod_cast hr g
-    change (finrank K A : ℤ) - finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V) ≤ r
-    linarith
+  have hstrict : StrictMono rk := finrank_strictMono_int
+  have hmod : ∀ S T, rk (S ⊔ T) + rk (S ⊓ T) = rk S + rk T := finrank_modular_int
+  have hinv : ∀ g S, rk (act g S) = rk S := finrank_linearAct_int ρ
+  have hr' : ∀ g, rk A - rk (act g A ⊓ A) ≤ r := fun g =>
+    finrank_orbit_sub_le ρ g A r (hr g)
   constructor
   · obtain ⟨W, hW, h⟩ := AlmostInvariant.AllGroups.exists_fixed_total act hmul rk hstrict hmod
       hinv A r hr'

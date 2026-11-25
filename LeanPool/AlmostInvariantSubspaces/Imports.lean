@@ -13,6 +13,7 @@ public import LeanPool.AlmostInvariantSubspaces.Average
 public import LeanPool.AlmostInvariantSubspaces.Families
 public import LeanPool.AlmostInvariantSubspaces.FinalS2
 public import LeanPool.AlmostInvariantSubspaces.Finite
+public import LeanPool.AlmostInvariantSubspaces.LatticeRank
 public import LeanPool.AlmostInvariantSubspaces.Length
 public import LeanPool.AlmostInvariantSubspaces.OneSided
 public import LeanPool.AlmostInvariantSubspaces.PartB

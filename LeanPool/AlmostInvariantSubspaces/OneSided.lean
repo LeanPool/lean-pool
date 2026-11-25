@@ -8,7 +8,7 @@ Authors: Jack Ryan
 
 module
 
-public import LeanPool.AlmostInvariantSubspaces.Action
+public import LeanPool.AlmostInvariantSubspaces.LatticeRank
 public import Mathlib.Order.ModularLattice
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Hom.Lattice
@@ -73,14 +73,8 @@ theorem lattice_form {L G : Type*} [Lattice L] [Group G] [Fintype G]
     rw [← Finset.sum_add_distrib, ← Finset.sum_add_distrib]
     refine Finset.sum_le_sum fun g _ => ?_
     set a := act g u
-    have h1 := hmod (a ⊓ s) (a ⊓ t)
-    have h2 : rk ((a ⊓ s) ⊔ (a ⊓ t)) ≤ rk (a ⊓ (s ⊔ t)) :=
-      hmono (sup_le (inf_le_inf_left _ le_sup_left) (inf_le_inf_left _ le_sup_right))
-    have h3 : rk ((a ⊓ s) ⊓ (a ⊓ t)) ≤ rk (a ⊓ (s ⊓ t)) :=
-      hmono (le_inf (inf_le_left.trans inf_le_left)
-        (le_inf (inf_le_left.trans inf_le_right) (inf_le_right.trans inf_le_right)))
     have h4 := hmod s t
-    have h5 : rk (a ⊓ s) + rk (a ⊓ t) ≤ rk (a ⊓ (s ⊔ t)) + rk (a ⊓ (s ⊓ t)) := by linarith
+    have h5 := KPFamLat.inf_rank_supermodular rk hmono hmod a s t
     have h6 := mul_le_mul_of_nonneg_left h5 (show 0 ≤ α + β by linarith)
     have h7 : β * rk (s ⊔ t) + β * rk (s ⊓ t) = β * rk s + β * rk t := by
       rw [← mul_add, h4, mul_add]
@@ -101,10 +95,7 @@ theorem lattice_form {L G : Type*} [Lattice L] [Group G] [Fintype G]
     have h := Nat.find_min' hex ⟨s, (Int.toNat_of_nonneg (hnn s)).symm⟩
     have h' : (n0 : ℤ) ≤ ((f s).toNat : ℤ) := by exact_mod_cast h
     rwa [Int.toNat_of_nonneg (hnn s)] at h'
-  have hone : ∀ a, act 1 a = a := by
-    intro a
-    apply (act 1).injective
-    rw [← hmul, one_mul]
+  have hone := KPFamLat.act_one act hmul
   -- the rank of a minimizer is bounded below
   have hlow : ∀ s, f s = n0 → rk u - n0 ≤ rk s := by
     intro s hs
@@ -175,10 +166,7 @@ theorem lattice_bound {L G : Type*} [Lattice L] [Group G] [Finite G]
   classical
   let := Fintype.ofFinite G
   obtain ⟨w, hfix, hw⟩ := lattice_form act hmul rk hstrict hmod hinv u α β hα hβ
-  have hone : ∀ a, act 1 a = a := by
-    intro a
-    apply (act 1).injective
-    rw [← hmul, one_mul]
+  have hone := KPFamLat.act_one act hmul
   have hcard : (0 : ℤ) < Fintype.card G := by exact_mod_cast Fintype.card_pos
   have hsum : ∑ g, (rk u - rk (act g u ⊓ u)) ≤ ((Fintype.card G : ℤ) - 1) * r := by
     rw [← Finset.add_sum_erase _ _ (Finset.mem_univ (1 : G)), hone, inf_idem]
@@ -226,27 +214,8 @@ theorem weighted {K V G : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
   obtain ⟨W, h1, h2, h3⟩ := lattice_bound (L := Submodule K V) (G := G)
     (AlmostInvariant.linearAct ρ) (AlmostInvariant.linearAct_mul_apply ρ)
     (fun S => (finrank K S : ℤ))
-    (fun S T hST => by
-      have h := Submodule.finrank_lt_finrank_of_lt hST
-      change (finrank K S : ℤ) < finrank K T
-      exact_mod_cast h)
-    (fun S T => by
-      have h := Submodule.finrank_sup_add_finrank_inf_eq S T
-      change (finrank K (S ⊔ T : Submodule K V) : ℤ) + finrank K (S ⊓ T : Submodule K V) =
-        finrank K S + finrank K T
-      exact_mod_cast h)
-    (fun g S => by
-      have h := LinearEquiv.finrank_map_eq (ρ g) S
-      change (finrank K (S.map (ρ g : V →ₗ[K] V)) : ℤ) = finrank K S
-      exact_mod_cast h)
-    A r
-    (fun g => by
-      have h' : (finrank K A : ℤ) ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V)
-          + r := by
-        exact_mod_cast hr g
-      have h'' : AlmostInvariant.linearAct ρ g A = A.map (ρ g : V →ₗ[K] V) := rfl
-      rw [h'']
-      linarith)
+    finrank_strictMono_int finrank_modular_int (finrank_linearAct_int ρ)
+    A r (fun g => finrank_orbit_sub_le ρ g A r (hr g))
     α β hα hβ
   exact ⟨W, h1, h2, fun hpos => h3 (by exact_mod_cast hpos)⟩
 

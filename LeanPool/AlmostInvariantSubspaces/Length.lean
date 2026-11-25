@@ -8,6 +8,7 @@ Authors: Jack Ryan
 
 module
 
+public import Mathlib.Order.Hom.Set
 public import Mathlib.RingTheory.Length
 public import Mathlib.Tactic.GCongr
 public import Mathlib.Tactic.NormNum
@@ -174,16 +175,7 @@ theorem d_map (e : Submodule R M ≃o Submodule R M) (A B : Submodule R M) : d (
     = d A B := by
   have h : (d (e A) (e B) : WithBot ℕ∞) = d A B := by
     rw [d_eq_krullDim, d_eq_krullDim, ← OrderIso.map_inf]
-    refine (Order.krullDim_eq_of_orderIso ?_).symm
-    exact
-      { toFun := fun S => ⟨e S.1, e.monotone S.2.1, e.monotone S.2.2⟩
-        invFun := fun S => ⟨e.symm S.1, by rw [e.le_symm_apply]; exact S.2.1,
-            by rw [e.symm_apply_le]; exact S.2.2⟩
-        left_inv := fun S => by simp
-        right_inv := fun S => by simp
-        map_rel_iff' := by
-          rintro ⟨S, hS⟩ ⟨T, hT⟩
-          exact e.le_iff_le }
+    exact (Order.krullDim_eq_of_orderIso (e.Icc (A ⊓ B) A)).symm
   exact_mod_cast h
 
 theorem delta_map (e : Submodule R M ≃o Submodule R M) (A B : Submodule R M) : delta (e A) (e B)
