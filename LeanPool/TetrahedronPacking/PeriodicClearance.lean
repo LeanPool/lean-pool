@@ -29,7 +29,7 @@ open Set
 /-- A separating plane with a displacement budget on each side still
 separates the interiors after perturbation. Equality allows boundary contact. -/
 theorem disjoint_interiors_of_perturbed_plane
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {ι κ : Type*} {v v' : ι → E} {w w' : κ → E}
     (f : E →L[ℝ] ℝ) (hf : f ≠ 0) {a b εv εw : ℝ}
     (hv : ∀ i, f (v i) ≤ a) (hw : ∀ j, b ≤ f (w j))
@@ -53,7 +53,7 @@ theorem disjoint_interiors_of_perturbed_plane
 is computed in the perturbed chart, and the bound on shift displacement is
 only needed for the shifts in that box. -/
 theorem disjoint_interiors_of_perturbed_shift_certificates
-    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [CompleteSpace E]
+    {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
     {ι κ α : Type*} (C C' : E ≃ₗ[ℝ] (α → ℝ))
     (v v' : ι → E) (w w' : κ → E) (required : (α → ℤ) → Prop)
     (loV hiV loW hiW : α → ℝ) {εv εw : ℝ} (εshift : (α → ℤ) → ℝ)

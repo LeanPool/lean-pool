@@ -227,6 +227,10 @@ example : checkClearancePair (fun _ => ![0, 0, 0]) (fun _ => ![0, 0, 0])
     10 0 false [] = false := by decide
 example : checkClearancePair (fun _ => ![0, 0, 0]) (fun _ => ![0, 0, 0])
     0 0 true [] = false := by decide
+example : checkClearancePair (fun _ => ![0, 0, 0]) (fun _ => ![12, 0, 0])
+    10 2 false [(![-1, 0, 0], ![1, 0, 0])] = true := by decide
+example : checkClearancePair (fun _ => ![0, 0, 0]) (fun _ => ![12, 0, 0])
+    10 3 false [(![-1, 0, 0], ![1, 0, 0])] = false := by decide
 
 theorem disjoint_interiors_of_checkClearancePair {m : ℕ}
     (C : (Fin 3 → ℝ) ≃ₗ[ℝ] (Fin 3 → ℝ))
