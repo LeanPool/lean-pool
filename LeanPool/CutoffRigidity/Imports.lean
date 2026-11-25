@@ -53,6 +53,8 @@ public import LeanPool.CutoffRigidity.EuclideanMollifiedCompactness
 public import LeanPool.CutoffRigidity.EuclideanWeakHessianEstimates
 public import LeanPool.CutoffRigidity.FirstEigenspaceAffineCoordinates
 public import LeanPool.CutoffRigidity.Friedrichs.EnergyForm
+public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
+public import LeanPool.CutoffRigidity.Friedrichs.FormSublevels
 public import LeanPool.CutoffRigidity.Friedrichs.FunctionalCalculusSemigroup
 public import LeanPool.CutoffRigidity.Friedrichs.PositiveContraction
 public import LeanPool.CutoffRigidity.Friedrichs.Resolvent
