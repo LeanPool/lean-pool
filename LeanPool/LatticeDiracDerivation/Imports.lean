@@ -31,6 +31,7 @@ public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicSector
 public import LeanPool.LatticeDiracDerivation.V2.FinitePeriodicTangent
 public import LeanPool.LatticeDiracDerivation.V2.FirstPrinciplesFreeDirac
 public import LeanPool.LatticeDiracDerivation.V2.FlavorClassification
+public import LeanPool.LatticeDiracDerivation.V2.LorentzSpin
 public import LeanPool.LatticeDiracDerivation.V2.NativeC19CliffordRoot
 public import LeanPool.LatticeDiracDerivation.V2.NativeCubicalCompression
 public import LeanPool.LatticeDiracDerivation.V2.NativePhaseCharge
