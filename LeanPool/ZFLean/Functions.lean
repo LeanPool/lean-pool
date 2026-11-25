@@ -631,12 +631,13 @@ theorem _root_.ZFSet.IsPFunc.exists_unique_of_mem_dom {f A B : ZFSet}
 theorem _root_.ZFSet.fapply.of_pair
     {f A B : ZFSet} (hf : f.IsPFunc A B) {x y : ZFSet} (hxy : x.pair y ∈ f) :
   @ᶻf ⟨x, mem_dom hf hxy⟩ = ⟨y, And.right <| pair_mem_prod.mp <| hf.1 hxy⟩ := by
-  dsimp [fapply]
-  generalize_proofs y_def choose_B yB
-  congr
-  have spec := Classical.choose_spec y_def |>.2
-  obtain ⟨w, xw, uniq⟩ := IsPFunc.exists_unique_of_mem_dom hf (mem_dom hf hxy)
-  exact uniq _ hxy ▸ uniq _ spec
+  exact Subtype.ext (hf.2 x _ (fapply.def hf (mem_dom hf hxy)) y hxy)
+
+-- The graph characterizes evaluation, so inverse calculations can use membership directly.
+private theorem fapply_val_eq_iff_pair_mem {f A B : ZFSet} (hf : f.IsPFunc A B) {x y : ZFSet}
+    (hx : x ∈ Dom f hf.1) :
+    (fapply f hf ⟨x, hx⟩).val = y ↔ x.pair y ∈ f :=
+  ⟨fun h => h ▸ fapply.def hf hx, fun h => congrArg Subtype.val (fapply.of_pair hf h)⟩
 
 theorem _root_.ZFSet.IsPFunc.supset_of_range
     {f A B : ZFSet} (hf : f.IsPFunc A B) : f.Range ⊆ B :=
@@ -1277,23 +1278,18 @@ theorem Image_of_composition_self_inv_of_bijective {f A B : ZFSet} {f_is_func : 
 theorem fapply_inv_of_bijective {A B : ZFSet} {f : ZFSet} {hf : IsFunc A B f}
   (f_bij : f.IsBijective hf) {x y : ZFSet} (hx : x ∈ A) (hy : y ∈ B) :
     @ᶻf ⟨x, by rwa [is_func_dom_eq]⟩ = y → @ᶻf⁻¹ ⟨y, by rwa [is_func_dom_eq]⟩ = x := by
-  intro h
-  have hxy := fapply.def (is_func_is_pfunc hf) (by rwa [is_func_dom_eq hf] : x ∈ f.Dom)
-  rw [h] at hxy
-  exact congrArg Subtype.val
-    (fapply.of_pair (is_func_is_pfunc (inv_is_func_of_bijective f_bij)) ((mem_inv hf.1).mpr hxy))
+  have hInv := inv_is_func_of_bijective f_bij
+  rw [fapply_val_eq_iff_pair_mem (is_func_is_pfunc hf),
+    fapply_val_eq_iff_pair_mem (is_func_is_pfunc hInv)]
+  exact (mem_inv hf.1).mpr
 
 theorem fapply_inv_of_bijective_iff {A B : ZFSet} {f : ZFSet} {hf : IsFunc A B f}
   (f_bij : f.IsBijective hf) {x y : ZFSet} (hx : x ∈ A) (hy : y ∈ B) :
-    @ᶻf ⟨x, by rwa [is_func_dom_eq]⟩ = y ↔ @ᶻf⁻¹ ⟨y, by rwa [is_func_dom_eq]⟩ = x
-  where
-    mp := fapply_inv_of_bijective f_bij hx hy
-    mpr := by
-      intro h
-      have hyx := fapply.def (is_func_is_pfunc (inv_is_func_of_bijective f_bij))
-        (by rwa [is_func_dom_eq (inv_is_func_of_bijective f_bij)] : y ∈ (f⁻¹).Dom)
-      rw [h, mem_inv] at hyx
-      exact congrArg Subtype.val (fapply.of_pair (is_func_is_pfunc hf) hyx)
+    @ᶻf ⟨x, by rwa [is_func_dom_eq]⟩ = y ↔ @ᶻf⁻¹ ⟨y, by rwa [is_func_dom_eq]⟩ = x := by
+  have hInv := inv_is_func_of_bijective f_bij
+  rw [fapply_val_eq_iff_pair_mem (is_func_is_pfunc hf),
+    fapply_val_eq_iff_pair_mem (is_func_is_pfunc hInv)]
+  exact (mem_inv hf.1).symm
 
 /--
 A set is finite if it is equinumerous to a (ZF) natural number, i.e.

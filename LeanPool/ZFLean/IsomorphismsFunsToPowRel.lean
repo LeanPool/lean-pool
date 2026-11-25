@@ -67,8 +67,11 @@ theorem funsToPowRelG_isFunc {A B : ZFSet} :
   apply sep_mem_powerset
   rw [mem_powerset]
 
+-- The graph witnesses are already available, so composition can skip proof search.
 theorem funsToPowRel_left_inverse {A B : ZFSet} :
-    funsToPowRelG A B ∘ᶻ funsToPowRelF A B = 𝟙(A.funs B.powerset) := by
+    fcomp (funsToPowRelG A B) (funsToPowRelF A B)
+      (A := A.funs B.powerset) (B := (A.prod B).powerset) (C := A.funs B.powerset)
+      (by exact funsToPowRelG_isFunc) (by exact funsToPowRelF_isFunc) = 𝟙(A.funs B.powerset) := by
   classical
   let F := funsToPowRelF A B
   let G := funsToPowRelG A B
@@ -137,7 +140,9 @@ theorem funsToPowRel_left_inverse {A B : ZFSet} :
           · simp_all
 
 theorem funsToPowRel_right_inverse {A B : ZFSet} :
-    funsToPowRelF A B ∘ᶻ funsToPowRelG A B = 𝟙((A.prod B).powerset) := by
+    fcomp (funsToPowRelF A B) (funsToPowRelG A B)
+      (A := (A.prod B).powerset) (B := A.funs B.powerset) (C := (A.prod B).powerset)
+      (by exact funsToPowRelF_isFunc) (by exact funsToPowRelG_isFunc) = 𝟙((A.prod B).powerset) := by
   classical
   let F := funsToPowRelF A B
   let G := funsToPowRelG A B
