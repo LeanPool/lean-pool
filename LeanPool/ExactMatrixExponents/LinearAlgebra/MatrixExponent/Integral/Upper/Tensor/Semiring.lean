@@ -12,6 +12,7 @@ public import Mathlib.Logic.Equiv.Sum
 public import Mathlib.Logic.Equiv.Prod
 public import Mathlib.Algebra.Ring.Defs
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassSemiring
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassCharacter
 
 /-!
 # The semiring of actual finite tensors
@@ -45,20 +46,22 @@ abbrev emptyTensor :=
 abbrev unitTensor :=
   MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.unitTensor (K := O)
 
-/-- Normalized additive multiplicative monotone quantities on actual tensor
-classes. This definition asserts no existence theorem. -/
-structure Character where
-  /-- The `Character` component of type `TensorClass →+* ℝ≥0`. -/
-  toHom : TensorClass →+* ℝ≥0
-  monotone' : Monotone toHom
+/-- An order-preserving semiring homomorphism on these tensor classes. -/
+abbrev Character := MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.Character O
 
-noncomputable instance : CoeFun Character (fun _ => TensorClass → ℝ≥0) := ⟨fun f => f.toHom⟩
+namespace Character
 
-@[simp] theorem Character.map_zero (f : Character) : f 0 = 0 := f.toHom.map_zero
-@[simp] theorem Character.map_one (f : Character) : f 1 = 1 := f.toHom.map_one
-@[simp] theorem Character.map_add (f : Character) (A B : TensorClass) :
-    f (A + B) = f A + f B := f.toHom.map_add A B
-@[simp] theorem Character.map_mul (f : Character) (A B : TensorClass) :
-    f (A * B) = f A * f B := f.toHom.map_mul A B
+/-- The semiring homomorphism underlying the character. -/
+abbrev toHom (f : Character) : TensorClass →+* ℝ≥0 :=
+  MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.Character.toHom f
+
+/-- Characters preserve the restriction order. -/
+theorem monotone' (f : Character) : Monotone f.toHom :=
+  MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.Character.monotone' f
+
+export MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.Character
+  (map_zero map_one map_add map_mul)
+
+end Character
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.TensorClass

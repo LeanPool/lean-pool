@@ -78,7 +78,7 @@ theorem rank_of_omega_lt (h : omega F < b) :
   obtain ⟨a, ha, hab⟩ := exists_lt_of_csInf_lt ⟨3, admissible_three F⟩ h
   exact small_rank ha hab
 
-/-- The finite specialization lemma of Section 2, with an arbitrary strict threshold. -/
+/-- Specialize a strict asymptotic rank bound to a finite field. -/
 theorem finite_specialization (h : omega F < b) :
     ∃ (k : Type) (_ : Field k) (_ : Finite k), omega k < b := by
   obtain ⟨n, r, hn, hr, hrs⟩ := rank_of_omega_lt h

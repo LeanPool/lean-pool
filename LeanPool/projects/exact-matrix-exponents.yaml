@@ -3,13 +3,15 @@ title: Exact square, dual and rectangular matrix multiplication exponents
 summary: Determines the arithmetic exponent of square matrix multiplication as 9/4
   over every field and the dual exponent as 1/2. It also gives a symmetric formula
   for the rectangular exponent, using formal polynomial identities in division-free
-  arithmetic programs.
+  arithmetic programs. The pinned Lean source states all three exact results.
+  The accompanying preprint gives the square equality for circuits allowing
+  division and states bounds for the dual exponent and rectangular rank.
 branch: algebraic complexity theory
 entry_module: LeanPool.ExactMatrixExponents
 authors:
 - OpenAI
 source:
-  url: https://github.com/openai/math/tree/3344da59991ed94f9ba711217b29c1d760badfa6/lean
+  url: https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/lean/OAI/LinearAlgebra/SpectralBooks/ExactExponent.lean
   github_repo: openai/math
   commit: 3344da59991ed94f9ba711217b29c1d760badfa6
   paper_url: https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/preprints/The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026/paper.pdf

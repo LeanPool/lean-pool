@@ -227,10 +227,6 @@ open scoped Classical in
 local instance {V : Type} {h : ℕ} : DecidableEq (Site V h) := Classical.decEq _
 
 open scoped Classical in
-/-- The finite enumeration of supply coordinates in the reset correspondence. -/
-local instance {A : Type} [Fintype A] {n : ℕ} : Fintype (R.Supply A n) := inferInstance
-
-open scoped Classical in
 private theorem rotor_eval (v : U.G.V) (x : U.Value R) (t : R.Hardware) :
     U.rotorWeight R x ((v, q), t) =
     (R.deployRule (U.delivery.inputAt (v, q)) (U.delivery.outputAt (v, q))

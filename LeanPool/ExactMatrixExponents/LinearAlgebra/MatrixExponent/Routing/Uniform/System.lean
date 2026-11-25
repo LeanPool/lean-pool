@@ -410,14 +410,6 @@ structure ProductChart (M : ℕ) where
 
 variable {M : ℕ}
 
-instance : Finite (ProductChart M) := by
-  let f : ProductChart M → Σ c a b : Fin (M + 1), Fin M ≃ Fin c.val × (Fin a.val × Fin b.val) :=
-    fun p => ⟨p.c, p.a, p.b, p.split⟩
-  apply Finite.of_injective f
-  rintro ⟨c, a, b, e⟩ ⟨c', a', b', e'⟩ h
-  cases h
-  rfl
-
 /-- The apply used in the `ProductChart` construction. -/
 def ProductChart.apply (p : ProductChart M) (h : ℕ) :
     Words M h ≃ (Fin (length M h) → Fin p.c.val) ×

@@ -897,7 +897,7 @@ private theorem interpret_dot :
     change (∑ i : Fin 2, (if x = 0 then (1 : Coeff) else 0) *
       (if y = i then 1 else 0) * (if z = i then 1 else 0)) = T x y z
     by_cases he : x = 0 <;> simp [T, he, mul_ite]
-  rw [dotX, interpret_tensor]
+  rw [dotX, TensorSpectrum.TensorClass.dotX, interpret_tensor]
   change _ = Tensor.ofRaw W
   rw [← triple_read W, he]
   change Tensor.ofRaw (triple (CoefficientTensor.dotXCoeff 2)) = Tensor.ofRaw (triple T)
@@ -905,9 +905,11 @@ private theorem interpret_dot :
   apply Tensor.ofRaw_eq
   constructor
   · refine restricts_triple _ _ (fun x _ => δ x 0) δ δ fun x y z => ?_
-    fin_cases x <;> fin_cases y <;> fin_cases z <;> simp [δ, T, CoefficientTensor.dotXCoeff]
+    fin_cases x <;> fin_cases y <;> fin_cases z <;>
+      simp [δ, T, TensorSpectrum.CoefficientTensor.dotXCoeff]
   · refine restricts_triple _ _ (fun _ x => δ x 0) δ δ fun x y z => ?_
-    fin_cases y <;> fin_cases z <;> simp [δ, T, CoefficientTensor.dotXCoeff, Fin.sum_univ_two]
+    fin_cases y <;> fin_cases z <;>
+      simp [δ, T, TensorSpectrum.CoefficientTensor.dotXCoeff, Fin.sum_univ_two]
 
 theorem coeff_binary : BinaryLaw Coeff := by
   intro f hf p hp he m

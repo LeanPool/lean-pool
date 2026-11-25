@@ -39,7 +39,7 @@ theorem dvd_iff_eq_zero_of_bounds (N x : ℤ) (hN : 0 < N)
   · rintro rfl
     exact dvd_zero N
 
-/-- The paper's one-based label convention. -/
+/-- Convert a finite index to its one-based label. -/
 theorem projection_does_not_wrap
     (M h g u v : ℤ)
     (hM : 1 ≤ M) (hh0 : 1 ≤ h) (hhM : h ≤ M)

@@ -260,7 +260,7 @@ theorem equivalent_ofTensor_coeff (A : (TensorRep K)) : Equivalent (ofTensor A.c
 
 end TensorRep
 
-/-- The actual finite-tensor restriction quotient of the paper. -/
+/-- Finite coefficient tensors modulo mutual restriction. -/
 def TensorClass (K : Type*) [CommSemiring K] :=
   Quotient (TensorRep.mutualRestriction (K := K))
 

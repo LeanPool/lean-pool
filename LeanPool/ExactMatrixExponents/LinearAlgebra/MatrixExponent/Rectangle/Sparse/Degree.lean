@@ -47,7 +47,7 @@ theorem tag_nonneg (f : Character) {X Y Z : Type} [Fintype X] [Fintype Y] [Finty
     have he : Tensor.pullback id y z (Separation.shared A) =
         Separation.shared (fun j => A (i.succAbove j)) := by
       funext p q r
-      simp [Tensor.pullback, Separation.shared, y, z]
+      simp [Tensor.pullback, Tensor.sharedFirst, y, z]
     rw [← he]
     exact CoefficientTensor.Restricts.pullback _ _ _ _
 
@@ -225,7 +225,7 @@ private theorem read_label (T : Tensor Coeff X Y Z) (f : Character) {n : ℕ} (h
     convert he using 1
     congr 1
     funext x y z
-    simp only [Separation.shared, hA, id_eq]
+    simp only [Tensor.sharedFirst, hA, id_eq]
     by_cases hz : T x y.2 z.2 = 0
     · simp [hz]
     rw [← h _ _ _ hz]
@@ -319,7 +319,8 @@ theorem diagonal_price (f : Character) (w : Table Coeff i j k) (S : Finset (Cell
   have he : (fun x y z => (w (a x) (b x) (c x))⁻¹ * 1 * 1 *
       coeff w (a x, c x) (c y, b y) (a z, b z)) = CoefficientTensor.natTensor S.card := by
     funext x y z
-    simp only [coeff, CoefficientTensor.natTensor, Tensor.diagonal, mul_one]
+    simp only [coeff, CoefficientTensor.natTensor, TensorSpectrum.CoefficientTensor.natTensor,
+      Tensor.diagonal, mul_one]
     by_cases h : x = y ∧ x = z
     · obtain ⟨rfl, rfl⟩ := h
       simp [show w (a x) (b x) (c x) ≠ 0 from hs _ (T x).property]
@@ -472,7 +473,8 @@ theorem price_le_rank (f : Character) {r : ℕ} (h : WeightedRankLE w r) :
     funext x y z
     simp only [Tensor.rankOne]
     rw [he]
-    simp only [allRows, rows, inner, leaf, Upper.Separation.shared, CoefficientTensor.swapXY,
+    simp only [allRows, rows, inner, leaf, Tensor.sharedFirst,
+      CoefficientTensor.swapXY,
       CoefficientTensor.swapYZ]
     grind
   have hb := f.le_rank (ofTensor (allRows w))

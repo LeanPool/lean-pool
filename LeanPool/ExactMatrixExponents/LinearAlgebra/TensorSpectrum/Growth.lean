@@ -16,8 +16,8 @@ public import Mathlib.Tactic.Ring
 /-!
 # Exact scalar growth from the diagonal inequalities
 
-The auxiliary sequence is indexed from zero: `growthFactor n` is the paper's
-`G_(n+1)`.  Cubing its recurrence gives the exact estimate `n + 1 ≤ G_(n+1)^3`.
+The auxiliary sequence `growthFactor` starts at index zero. Cubing its recurrence gives
+the lower bound `n + 1 ≤ (growthFactor n)^3`.
 Thus no logarithmic asymptotic estimate is needed for this component.
 
 This module proves only the scalar consequence of the two diagonal inequalities.

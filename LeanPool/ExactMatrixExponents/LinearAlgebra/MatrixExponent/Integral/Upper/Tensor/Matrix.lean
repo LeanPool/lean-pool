@@ -11,6 +11,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Rank
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor
 public import Mathlib.Logic.Equiv.Fin.Basic
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassDots
 
 /-!
 # Square matrix tensors in the restriction semiring
@@ -62,12 +63,11 @@ end CoefficientTensor
 namespace TensorClass
 
 /-- The class of the actual `n` by `n` matrix multiplication tensor. -/
-noncomputable def square (n : ℕ) : TensorClass :=
-  ofTensor (Upper.matrixTensor n n n)
+abbrev square := MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.square (K := O)
 
 theorem square_mul (n m : ℕ) : square n * square m = square (n * m) := by
-  unfold square
-  rw [ofTensor_mul, ← CoefficientTensor.square_product_pullback]
+  unfold square TensorSpectrum.TensorClass.square
+  rw [ofTensor_mul, ← TensorSpectrum.CoefficientTensor.square_product_pullback]
   exact ofTensor_pullback_equiv _ _ _ _
 
 theorem square_mono {n m : ℕ} (h : n ≤ m) : square n ≤ square m :=
@@ -97,7 +97,7 @@ theorem square_pow (n j : ℕ) : square (n ^ j) = square n ^ j := by
 
 /-- The rank here is the least size of an actual rank-one decomposition. -/
 theorem rank_square_le (n : ℕ) : rank (square n) ≤ n ^ 3 := by
-  rw [square, rank_ofTensor]
+  rw [square, TensorSpectrum.TensorClass.square, rank_ofTensor]
   exact (CoefficientTensor.rank_le_iff _ _).mpr
     (CoefficientTensor.square_rankAtMost_cubic n)
 

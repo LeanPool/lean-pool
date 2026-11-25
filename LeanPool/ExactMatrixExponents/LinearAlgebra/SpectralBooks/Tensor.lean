@@ -15,7 +15,7 @@ public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 We use the finite coefficient tensors and Kronecker powers from the matrix
 multiplication library. The dimensions are the shared wire sizes, in the
-paper's order `12, 23, 31`. The first site's coordinates are consequently
+cyclic order `12, 23, 31`. The first site's coordinates are consequently
 indexed by `Fin n31 × Fin n12`.
 -/
 

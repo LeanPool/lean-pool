@@ -28,7 +28,7 @@ open Filter
 def PowerSize {F : Type} [Field F] {a b : Wire} (k : Val a → Val b → F) (d m : ℕ) : Prop :=
   ∃ v, Net F (copies a d) (copies b d) (power k d) v ∧ m = v + d * (wd a + wd b)
 
-/-- The conclusion of Theorem 2.1, uniformly in the starting network. -/
+/-- Uniform savings per copy for powers of networks with bounded initial size. -/
 def Compresses (F : Type) [Field F] : Prop :=
   ∀ η : ℝ, 0 < η → ∃ γ : ℝ, 0 < γ ∧ ∀ κ : ℝ, 0 < κ →
     ∀ᶠ n : ℕ in atTop, ∀ (a b : Wire) (k : Val a → Val b → F) (v : ℕ),
@@ -45,7 +45,7 @@ def Labeled {K : Type} [Field K] {a b : Wire} (k : Val a → Val b → K)
     (B s u : ℕ) : Prop :=
   ∃ L : Finset (Table K), L.card ≤ B ∧ Wide K u (↑L) a b k s
 
-/-- One application of the table-network lemma in Section 5. -/
+/-- One reduction step for a table network with bounded arity and label count. -/
 def ArityStep (K : Type) [Field K] (n B B' : ℕ) (b δ a ξ : ℝ) : Prop :=
   let h : ℝ := Nat.clog 2 n
   ∀ (x y : Wire) (k : Val x → Val y → K) (s u M : ℕ),

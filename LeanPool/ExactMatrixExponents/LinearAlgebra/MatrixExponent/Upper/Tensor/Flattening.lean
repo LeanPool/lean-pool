@@ -108,7 +108,7 @@ theorem card_le_flatteningRank_of_identity [Fintype X]
   · have h := card_le_flatteningRank_of_identity (natTensor n)
       (fun i : Fin n => (i, i)) id (by
         intro i j
-        simp [natTensor, Tensor.diagonal, eq_comm])
+        simp [natTensor, TensorSpectrum.CoefficientTensor.natTensor, Tensor.diagonal, eq_comm])
     simpa only [Fintype.card_fin] using h
 
 /-- Flattening rank is bounded by every actual rank-one decomposition. -/

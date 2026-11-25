@@ -41,14 +41,17 @@ theorem rank_of_dots {i j k r : ℕ} (h : dots i j k ≤ (r : TensorClass)) :
   have hr := (TensorClass.rank_mono h).trans (show TensorClass.rank (r : TensorClass) ≤ r by
     rw [natCast_eq_ofTensor_natTensor, rank_ofTensor]
     exact (CoefficientTensor.rank_le_iff _ _).mpr (CoefficientTensor.rankAtMost_natTensor r))
-  rw [ dots, dotX, dotY, dotZ, ofTensor_mul, ofTensor_mul, rank_ofTensor] at hr
+  rw [dots, dotX, dotY, dotZ, TensorSpectrum.TensorClass.dotX,
+    TensorSpectrum.TensorClass.dotY, TensorSpectrum.TensorClass.dotZ,
+    ofTensor_mul, ofTensor_mul, rank_ofTensor] at hr
   obtain ⟨a, b, c, he⟩ := (CoefficientTensor.rank_le_iff _ _).mp hr
   refine ⟨fun l x => a l (((), x.1), x.2), fun l y => b l ((y.2, ()), y.1),
     fun l z => c l ((z.2, z.1), ()), ?_⟩
   intro x y z
   have hh := congrFun (congrFun (congrFun he (((), x.1), x.2)) ((y.2, ()), y.1)) ((z.2, z.1), ())
   refine hh.symm.trans ?_
-  simp [Tensor.product, dotXCoeff, dotYCoeff, dotZCoeff, ite_and]
+  simp [Tensor.product, TensorSpectrum.CoefficientTensor.dotXCoeff,
+    TensorSpectrum.CoefficientTensor.dotYCoeff, TensorSpectrum.CoefficientTensor.dotZCoeff, ite_and]
   grind
 
 export MatrixMultiplicationAllFields.MatrixExponent.Rectangle (rounded_dot)

@@ -825,8 +825,8 @@ end
 # Balanced dyadic partitions
 
 The vertices share a single linear permutation of the block indices.
-Loads are normalized by the capacity of one part. In the paper's
-notation the minimum length is `A = 2 ^ k` and the edge delay is `2 * d`.
+Loads are normalized by the capacity of one part. The minimum length is
+`A = 2 ^ k` and the edge delay is `2 * d`.
 -/
 
 noncomputable section

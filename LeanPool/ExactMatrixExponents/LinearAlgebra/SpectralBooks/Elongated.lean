@@ -8,7 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.Rank
 
-/-! The exact threshold of the radical test for weights `(1,1,t)` (Section 6). -/
+/-! The exact threshold of the radical test for weights `(1,1,t)`. -/
 
 @[expose] public section
 

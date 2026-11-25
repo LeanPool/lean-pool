@@ -659,7 +659,7 @@ theorem minimum (F : Type) [Field F] (v : Fin n → Shape) (hn : 0 < n) :
   rintro _ ⟨q, hq, rfl⟩
   exact maximum_le v hn w hw hq
 
-/-- The heterogeneous direct-sum formula in Section 8. -/
+/-- The rectangular law evaluates the maximum for heterogeneous direct sums. -/
 theorem benchmark_maximum (v : Fin n → Shape) (hn : 0 < n)
     (hr : Rigidity F) (hs : MatrixExponent.omega F = 9 / 4) :
     IsGreatest (objective U v '' simplex n)

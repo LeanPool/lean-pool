@@ -10,7 +10,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Radix.Defs
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Diagram.Permute
 
-/-! # The tagged-permutation and stable-sort tensors of Theorem 3.1 -/
+/-! # Tensor specifications for tagged permutation and stable sorting -/
 
 @[expose] public section
 

@@ -12,6 +12,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.T
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Flattening
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor
 public import Mathlib.Logic.Equiv.Fin.Basic
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassDots
 
 /-!
 # Square matrix tensors in the restriction semiring
@@ -62,12 +63,11 @@ end CoefficientTensor
 namespace TensorClass
 
 /-- The class of the actual `n` by `n` matrix multiplication tensor. -/
-noncomputable def square (n : ℕ) : TensorClass :=
-  ofTensor (Upper.matrixTensor n n n)
+abbrev square := MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.square (K := Coeff)
 
 theorem square_mul (n m : ℕ) : square n * square m = square (n * m) := by
-  unfold square
-  rw [ofTensor_mul, ← CoefficientTensor.square_product_pullback]
+  unfold square TensorSpectrum.TensorClass.square
+  rw [ofTensor_mul, ← TensorSpectrum.CoefficientTensor.square_product_pullback]
   exact ofTensor_pullback_equiv _ _ _ _
 
 theorem square_mono {n m : ℕ} (h : n ≤ m) : square n ≤ square m :=
@@ -97,14 +97,14 @@ theorem square_pow (n j : ℕ) : square (n ^ j) = square n ^ j := by
 
 /-- The rank here is the least size of an actual rank-one decomposition. -/
 theorem rank_square_le (n : ℕ) : rank (square n) ≤ n ^ 3 := by
-  rw [square, rank_ofTensor]
+  rw [square, TensorSpectrum.TensorClass.square, rank_ofTensor]
   exact (CoefficientTensor.rank_le_iff _ _).mpr
     (CoefficientTensor.square_rankAtMost_cubic n)
 
 theorem square_rank_upper (n : ℕ) : rank (square n) ≤ n ^ 3 := rank_square_le n
 
 theorem flatteningRank_square (n : ℕ) : flatteningRank (square n) = n ^ 2 := by
-  rw [square, flatteningRank_ofTensor]
+  rw [square, TensorSpectrum.TensorClass.square, flatteningRank_ofTensor]
   exact CoefficientTensor.flatteningRank_square n
 
 theorem square_rank_lower (n : ℕ) : n ^ 2 ≤ rank (square n) := by

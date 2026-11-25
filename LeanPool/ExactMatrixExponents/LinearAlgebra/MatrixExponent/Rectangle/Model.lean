@@ -79,7 +79,7 @@ def U (a b c : ℝ) : ℝ :=
   else if a ≤ b then benchmark b c a
   else benchmark c a b
 
-/-- The part of the rectangular rigidity dichotomy used in Corollary 1.2.
+/-- The dichotomy between benchmark equality and strict savings at active shapes.
 An active shape is one where the benchmark exceeds every pair sum. -/
 def Rigidity (F : Type*) [Field F] : Prop :=
   (∀ a b c : ℝ, 0 < a → 0 < b → 0 < c → exponent F a b c = U a b c) ∨

@@ -37,7 +37,7 @@ theorem Character.shared_tag_optimized_of_pos (f : Character)
     (hA : ∀ i, 0 < (f (ofTensor (A i)) : ℝ)) (hp : 0 < f.pX) :
     (∑ i, (f (ofTensor (A i)) : ℝ) ^ (1 / f.pX)) ^ f.pX ≤
       (f (ofTensor (Separation.shared A)) : ℝ) := by
-  apply TensorSpectrum.tag_optimized_of_fiber_bounds hs f.pX hp
+  apply TensorSpectrum.tag_optimized_of_fiber_bounds 5 (by norm_num) hs f.pX hp
     (fun i => (f (ofTensor (A i)) : ℝ)) hA
     (f (ofTensor (Separation.shared A)) : ℝ)
     (f (ofTensor (Separation.shared A))).coe_nonneg

@@ -494,10 +494,7 @@ section
 /-
 # The rectangular expression in the verification characterization
 
-This evaluates the tradeoff and both critical budgets from the last
-paragraph of Section 8. Identifying the rectangular expression with
-the cost of randomized arithmetic and equality-test trees is a
-separate theorem of the cited work on verification.
+The rectangular benchmark evaluates the tradeoff and its two critical budgets.
 -/
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification

@@ -11,6 +11,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationWeights
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
 
 /-!
 # Charged finite separation by local Fourier maps
@@ -37,9 +38,9 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.Separation
 variable {X Y Z : Type*}
 
 /-- The branch labels occur only on the last two legs of the input. -/
-def shared {M : ℕ} (A : Fin M → Tensor O X Y Z) :
+abbrev shared {M : ℕ} (A : Fin M → Tensor O X Y Z) :
     Tensor O X (Fin M × Y) (Fin M × Z) :=
-  fun x y z => if y.1 = z.1 then A y.1 x y.2 z.2 else 0
+  Tensor.sharedFirst A
 
 /-- The auxiliary pairing has one coordinate on the first leg. -/
 def dotPairingX (U : Type*) [DecidableEq U] : Tensor O Unit U U :=
@@ -171,8 +172,8 @@ theorem fourier_restrict (A : Fin M → Tensor O X Y Z)
         _ = _ := by
           apply haverage <;> unfold phase <;> omega
     rw [hphase]
-    simp [shared, projected, hyz, ite_mul]
-  · simp [shared, projected, hyz]
+    simp [shared, Tensor.sharedFirst, projected, hyz, ite_mul]
+  · simp [shared, Tensor.sharedFirst, projected, hyz]
 
 end Projection
 

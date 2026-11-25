@@ -15,7 +15,7 @@ public import Lean.Elab.Tactic.Omega
 /-!
 # The three-sector polynomial degeneration
 
-These are the coefficient identities of Section 5.2.  The first input has
+The coefficient identities describe three sectors. The first input has
 weight zero throughout the degeneration.  Only when identifying the individual
 middle branch do we reverse its first index; its other two indices are swapped.
 -/

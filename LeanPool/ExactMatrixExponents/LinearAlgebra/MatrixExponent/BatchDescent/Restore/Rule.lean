@@ -47,7 +47,7 @@ theorem estimates :
     ((G).X : ℝ) ≤ 2 * resetWidth κ l * R.width + 2 * resetWidth κ l * (S.fringe.Z + σ) ∧
     S.first.Preserves G ∧ ((G).mass : ℝ) ≤ R.mass + 2 * R.width ∧
     S.first.Tracks G ((resetPositions P Δ + 1) * R.reach) := by
-  obtain ⟨eval, _, bounds, width, preserve, mass, tracks⟩ := (U).bounds P hf (slack h s hk q)
+  obtain ⟨eval, _, bounds, width, preserve, mass, tracks⟩ := (U).bounds P hf (slack h hk q)
   refine ⟨eval, ?_, ?_, q.val.preserved.trans preserve, ?_,
     q.property.tracks.trans tracks h.height (Nat.sub_le ..)⟩
   · rw [← gain_eq]; exact bounds
@@ -472,8 +472,9 @@ open History.Reset
 
 open scoped Classical in
 /-- Computes the board by the application `History.Reset.electedBoard q.val.encodes (ok h s hk
-q) s.enough s.space (unit h s)`. -/
-abbrev board := History.Reset.electedBoard q.val.encodes (ok h s hk q) s.enough s.space (unit h s)
+q) s.enough s.space (unit (t := t) h)`. -/
+abbrev board :=
+  History.Reset.electedBoard q.val.encodes (ok h s hk q) s.enough s.space (unit (t := t) h)
 
 include h in
 omit [Fintype F] in

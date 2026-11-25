@@ -506,13 +506,6 @@ N A → Key N A → Bool)`. -/
 abbrev Packet := (Σ s : Shape N, a.Cell m R s) × (Fin (2 ^ t) → Key N A → Key N A → Bool)
 
 open scoped Classical in
-instance : Fintype (a.Packet m t R) := by
-  let _ : Fintype (Shape N) := Fintype.ofFinite _
-  have _ (s : Shape N) : Finite (a.Record s m) := inferInstance
-  have _ (s : Shape N) : Finite (a.Cell m R s) := inferInstance
-  have _ : Finite (Key N A) := inferInstance
-  exact Fintype.ofFinite _
-
 open scoped Classical in
 /-- The indexed operation `∑ j, ∑ v ∈ univ.filter (fun v => x.2 j ⟨_, u⟩ ⟨(y j).1.1, v⟩ = true),
 a.changeAt (y j).1.1 m (y j).1.2.2.1 put (.inl v)`. -/

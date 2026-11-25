@@ -409,7 +409,7 @@ private theorem normalized (x : ℝ) (hb : x ≤ P.load) : x / W ≤ 1 / (2 : �
 
 include h in
 open scoped Classical in
-theorem unit (_s : Slice Δ Y w t) : (u : ℝ) / W ≤ 1 / (2 : ℝ) ^ t := normalized h u h.load
+theorem unit : (u : ℝ) / W ≤ 1 / (2 : ℝ) ^ t := normalized h u h.load
 
 include h hk in
 open scoped Classical in
@@ -452,12 +452,13 @@ theorem ok : Template.Encodes.Fits (G := q.val.G) a t Δ C g (denominator L)
 
 open scoped Classical in
 /-- Computes the poll by the application `q.val.q.core.elected (ok h s hC hk q) s.enough s.space
-(unit h s)`. -/
-abbrev poll := q.val.q.core.elected (ok h s hC hk q) s.enough s.space (unit h s)
+(unit (t := t) h)`. -/
+abbrev poll := q.val.q.core.elected (ok h s hC hk q) s.enough s.space (unit (t := t) h)
 open scoped Classical in
 /-- Computes the board by the application `History.Reset.electedBoard q.val.q.core (ok h s hC hk
-q) s.enough s.space (unit h s)`. -/
-abbrev board := History.Reset.electedBoard q.val.q.core (ok h s hC hk q) s.enough s.space (unit h s)
+q) s.enough s.space (unit (t := t) h)`. -/
+abbrev board :=
+  History.Reset.electedBoard q.val.q.core (ok h s hC hk q) s.enough s.space (unit (t := t) h)
 
 open scoped Classical in
 theorem fits (R : Rotor F Y w) {c : ℝ} (hc : 1 ≤ c) (cost : (Fintype.card R.E : ℝ) ≤ c * Y * w) :

@@ -40,7 +40,7 @@ theorem Character.shared_branch_le (f : Character)
   have heq : Tensor.pullback id (fun y => (i, y)) (fun z => (i, z))
       (Separation.shared A) = A i := by
     funext x y z
-    simp [Tensor.pullback, Separation.shared]
+    simp [Tensor.pullback, Separation.shared, Tensor.sharedFirst]
   rw [heq] at hr
   exact f.monotone' (ofTensor_le hr)
 

@@ -592,7 +592,7 @@ theorem minimum_rank (F : Type*) [Field F] (hi : 0 < i) (hj : 0 < j) (hk : 0 < k
   have h := asymptotic_density (w := w) hi hj hk (hd.symm ▸ zero_lt_one)
   rwa [hd, one_mul] at h
 
-/-- The fixed-format minimum in Section 8, using the rectangular law. -/
+/-- The ordinary multiplication tensor has minimum asymptotic rank among full-support weights. -/
 theorem minimum_eq_benchmark (hr : Rigidity F) (hs : MatrixExponent.omega F = 9 / 4)
     (hi : 0 < i) (hj : 0 < j) (hk : 0 < k) :
     asymptoticRank (ordinary F i j k) = Real.exp (U (Real.log i) (Real.log j) (Real.log k)) ∧

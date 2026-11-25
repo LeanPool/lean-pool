@@ -45,7 +45,7 @@ def registerPolynomial : {r : ℕ} → Program F I r → Fin r → MvPolynomial 
 @[simp] theorem registerPolynomial_succ {r : ℕ} (p : Program F I r) (g : Gate F I (Fin r))
     (i : Fin r) : registerPolynomial (p.step g) i.succ = registerPolynomial p i := rfl
 
-/-- Formal correctness in the paper, including over a finite ground field. -/
+/-- Formal polynomial correctness for a division-free program, including over finite fields. -/
 def FormalCorrect {a b c : ℕ} (P : MatrixAlgorithm F a b c) : Prop :=
   ∀ i k, registerPolynomial P.program (P.output i k) =
     ∑ j : Fin b, X (Sum.inl (i, j)) * X (Sum.inr (j, k))

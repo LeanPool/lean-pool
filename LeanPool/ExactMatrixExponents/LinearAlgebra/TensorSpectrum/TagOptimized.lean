@@ -55,16 +55,15 @@ theorem countWeight_rpow {s N : ℕ} (a : Fin s → ℝ)
   intro i _
   exact (Real.rpow_pow_comm (ha i) p (v i).val).symm
 
-/-- Optimized tag inequality from the finite-fiber inequalities. The constant
-`5` and the polynomial number of possible count vectors disappear in the
-tensor-power limit. The premise uses each fiber's actual finite cardinality. -/
-theorem tag_optimized_of_fiber_bounds
+/-- The positive constant and the polynomial number of count vectors disappear in the tensor-power
+limit. The premise uses each fiber's actual finite cardinality. -/
+theorem tag_optimized_of_fiber_bounds (factor : ℝ) (hfactor : 0 < factor)
     {s : ℕ} (hs : 0 < s) (p : ℝ) (hp : 0 < p)
     (c : Fin s → ℝ) (hc : ∀ i, 0 < c i) (x : ℝ) (hx : 0 ≤ x)
     (hfinite : ∀ N : ℕ, 1 ≤ N → ∀ v : TagWords.CountVector s N,
       0 < (TagWords.fiber v).card →
       ((TagWords.fiber v).card : ℝ) ^ p * TagWords.countWeight c v ≤
-        5 * x ^ N) :
+        factor * x ^ N) :
     (∑ i, (c i) ^ (1 / p)) ^ p ≤ x := by
   classical
   let a : Fin s → ℝ := fun i => (c i) ^ (1 / p)
@@ -76,8 +75,8 @@ theorem tag_optimized_of_fiber_bounds
     let i₀ : Fin s := ⟨0, hs⟩
     exact (ha i₀).trans_le
       (Finset.single_le_sum (fun i _ => (ha i).le) (Finset.mem_univ i₀))
-  apply le_of_pow_le_polynomial_mul_pow x ((∑ i, a i) ^ p) 5 ((s : ℝ) * p)
-    hx (by norm_num)
+  apply le_of_pow_le_polynomial_mul_pow x ((∑ i, a i) ^ p) factor ((s : ℝ) * p)
+    hx hfactor
   intro N hN
   obtain ⟨v, hv, havg⟩ :=
     TagWords.exists_nonempty_fiberMass_ge_average (N := N) a hasum
@@ -95,7 +94,7 @@ theorem tag_optimized_of_fiber_bounds
     rw [Real.mul_rpow (Nat.cast_nonneg _) hcount,
       countWeight_rpow a (fun i => (ha i).le) v p]
     simp_rw [haroot]
-  have hbound : (TagWords.fiberMass a v) ^ p ≤ 5 * x ^ N := by
+  have hbound : (TagWords.fiberMass a v) ^ p ≤ factor * x ^ N := by
     rw [hmasspow]
     exact hfinite N hN v (Finset.card_pos.mpr hv)
   have hraise := Real.rpow_le_rpow (pow_nonneg hasum.le N) hraw hp.le
@@ -108,8 +107,8 @@ theorem tag_optimized_of_fiber_bounds
     _ ≤ (((N : ℝ) + 1) ^ s * TagWords.fiberMass a v) ^ p := hraise
     _ = ((N : ℝ) + 1) ^ ((s : ℝ) * p) * (TagWords.fiberMass a v) ^ p := by
       rw [Real.mul_rpow (by positivity) hmass, hdenpow]
-    _ ≤ ((N : ℝ) + 1) ^ ((s : ℝ) * p) * (5 * x ^ N) :=
+    _ ≤ ((N : ℝ) + 1) ^ ((s : ℝ) * p) * (factor * x ^ N) :=
       mul_le_mul_of_nonneg_left hbound (Real.rpow_nonneg (by positivity) _)
-    _ = 5 * ((N : ℝ) + 1) ^ ((s : ℝ) * p) * x ^ N := by ring
+    _ = factor * ((N : ℝ) + 1) ^ ((s : ℝ) * p) * x ^ N := by ring
 
 end MatrixMultiplicationAllFields.TensorSpectrum

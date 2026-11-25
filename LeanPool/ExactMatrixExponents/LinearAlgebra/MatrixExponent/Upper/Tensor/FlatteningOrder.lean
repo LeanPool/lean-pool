@@ -58,12 +58,6 @@ theorem natCast_le_natCast_iff (m n : ℕ) :
     rw [natCast_eq_ofTensor_natTensor, natCast_eq_ofTensor_natTensor]
     exact ofTensor_le (CoefficientTensor.natTensor_restricts_of_le h)
 
-instance : Nontrivial TensorClass := ⟨⟨0, 1, by
-  intro h
-  have hr := congrArg flatteningRank h
-  simp only [flatteningRank_zero, flatteningRank_one] at hr
-  exact Nat.zero_ne_one hr⟩⟩
-
 /-- A positive scalar cannot be absorbed by a finite catalyst. This is where
 additive flattening rank is used, rather than additivity of ordinary rank. -/
 theorem not_add_positive_natCast_le (D : TensorClass) {m : ℕ} (hm : 0 < m) :

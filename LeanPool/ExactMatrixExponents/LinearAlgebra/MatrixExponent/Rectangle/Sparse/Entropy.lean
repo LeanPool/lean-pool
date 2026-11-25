@@ -131,7 +131,7 @@ theorem entropy_lower (hw : (support w).Nonempty) :
   rw [← Real.pow_rpow_inv_natCast h hn.ne']
   exact Real.rpow_le_rpow (pow_nonneg h _) (mass_bound w e n) (by positivity)
 
-/-- The bound in bits from Section 8. No rigidity premise is needed. -/
+/-- A support and entropy lower bound for asymptotic rank at square exponent nine fourths. -/
 theorem support_exponent (hω : omega F = 9 / 4) (hw : (support w).Nonempty) :
     (supportSize w : ℝ) ^ (3 / 4 : ℝ) * (2 : ℝ) ^ (premium (support w) / 4) ≤ asymptoticRank w := by
   let S := support w

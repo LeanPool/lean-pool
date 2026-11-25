@@ -76,7 +76,8 @@ theorem power_shared_pullback {s N : ℕ} (A : Fin s → Tensor Coeff X Y Z) :
       sharedLabels, ite_eq_left h, wordBranch, tensorWord]
     apply Finset.prod_congr rfl
     intro j hj
-    simp [Separation.shared, joinCoordinates, congrFun h j]
+    simp [Separation.shared, Tensor.sharedFirst, joinCoordinates,
+      congrFun h j]
   · have hex : ∃ j, y.1 j ≠ z.1 j := by
       by_contra hnone
       apply h
@@ -87,7 +88,7 @@ theorem power_shared_pullback {s N : ℕ} (A : Fin s → Tensor Coeff X Y Z) :
     simp only [Tensor.pullback, Equiv.refl_apply, Tensor.power,
       sharedLabels, ite_eq_right h]
     apply Finset.prod_eq_zero (Finset.mem_univ j)
-    simp [Separation.shared, joinCoordinates, hj]
+    simp [Separation.shared, Tensor.sharedFirst, joinCoordinates, hj]
 
 section Restriction
 
@@ -143,7 +144,7 @@ theorem restricts_power_shared_selected {s N M : ℕ}
       Separation.shared (fun i => wordBranch A (e i)) := by
     funext x y z
     by_cases hlabel : y.1 = z.1 <;>
-      simp [sharedLabels, Separation.shared, hlabel]
+      simp [sharedLabels, Separation.shared, Tensor.sharedFirst, hlabel]
   rw [← heq]
   exact h
 

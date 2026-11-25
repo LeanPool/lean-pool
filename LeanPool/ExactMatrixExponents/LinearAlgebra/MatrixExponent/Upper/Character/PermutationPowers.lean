@@ -9,6 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.Permutations
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.DotsPower
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorCharacterPermutationPowers
 
 /-!
 # The exponents of the six permuted characters
@@ -30,107 +31,68 @@ open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Upper.TensorClass
 
-/-- Scalar polynomial input and full output give the first-leg pairing,
-including the empty second input case. -/
+/-- A scalar first input makes polynomial multiplication a single dot tensor. -/
 theorem polynomialTensor_one_left_class (n : ℕ) :
-    ofTensor (polynomialTensor 1 n) = dotX n := by
-  let u : Fin 1 ≃ Unit := Equiv.ofUnique _ _
-  let e : Fin (1 + n - 1) ≃ Fin n := finCongr (by omega)
-  have h : polynomialTensor 1 n =
-      Tensor.pullback u (Equiv.refl _) e (CoefficientTensor.dotXCoeff n) := by
-    funext i j k
-    simp [Tensor.pullback, CoefficientTensor.dotXCoeff,
-      Fin.ext_iff, e]
-  change ofTensor (polynomialTensor 1 n) = ofTensor (CoefficientTensor.dotXCoeff n)
-  rw [h]
-  exact ofTensor_pullback_equiv _ _ _ _
+    ofTensor (polynomialTensor 1 n) = dotX n :=
+  TensorSpectrum.TensorClass.polynomialTensor_one_left_class n
 
 namespace Character
 
 theorem permuted_dotXValue (f : Character) (i : Fin 6) (n : ℕ) :
     (f.permuted i).dotXValue n =
       ![f.dotXValue n, f.dotYValue n, f.dotXValue n,
-        f.dotYValue n, f.dotZValue n, f.dotZValue n] i := by
-  unfold dotXValue
-  rw [f.permuted_dotX]
-  fin_cases i <;> rfl
+        f.dotYValue n, f.dotZValue n, f.dotZValue n] i :=
+  TensorSpectrum.TensorClass.Character.permuted_dotXValue f i n
 
-/-- The first-leg exponents of the six actual characters, with their
-multiplicities. Uniqueness is forced by the value at dimension two. -/
 theorem permuted_pX (f : Character) (i : Fin 6) :
-    (f.permuted i).pX = ![f.pX, f.pY, f.pX, f.pY, f.pZ, f.pZ] i := by
-  apply (Real.rpow_right_inj (by norm_num : (0 : ℝ) < 2) (by norm_num)).mp
-  have hvalue := (f.permuted i).dotXValue_eq_rpow 2 (by norm_num)
-  simp only [Nat.cast_ofNat] at hvalue
-  rw [← hvalue, permuted_dotXValue]
-  simp only [f.dotXValue_eq_rpow 2 (by norm_num),
-    f.dotYValue_eq_rpow 2 (by norm_num), f.dotZValue_eq_rpow 2 (by norm_num),
-    Nat.cast_ofNat]
-  fin_cases i <;> rfl
+    (f.permuted i).pX = ![f.pX, f.pY, f.pX, f.pY, f.pZ, f.pZ] i :=
+  TensorSpectrum.TensorClass.Character.permuted_pX f i
 
 theorem sum_permuted_pX (f : Character) :
-    (∑ i : Fin 6, (f.permuted i).pX) = 2 * (f.pX + f.pY + f.pZ) := by
-  simp [permuted_pX, Fin.sum_univ_succ]
-  ring
+    (∑ i : Fin 6, (f.permuted i).pX) = 2 * (f.pX + f.pY + f.pZ) :=
+  TensorSpectrum.TensorClass.Character.sum_permuted_pX f
 
-/-- The average of the character's three pairing exponents. -/
-def meanExponent (f : Character) : ℝ := (f.pX + f.pY + f.pZ) / 3
+/-- The specialization of `meanExponent` to this coefficient ring. -/
+abbrev meanExponent (f : Character) : ℝ :=
+  TensorSpectrum.TensorClass.Character.meanExponent f
 
 theorem meanExponent_nonneg (f : Character) : 0 ≤ f.meanExponent :=
-  div_nonneg f.sum_exponents_nonneg (by norm_num)
+  TensorSpectrum.TensorClass.Character.meanExponent_nonneg f
 
-theorem meanExponent_le_one (f : Character) : f.meanExponent ≤ 1 := by
-  unfold meanExponent
-  linarith [f.sum_exponents_le_three]
+theorem meanExponent_le_one (f : Character) : f.meanExponent ≤ 1 :=
+  TensorSpectrum.TensorClass.Character.meanExponent_le_one f
 
 theorem sum_exponents_eq_three_meanExponent (f : Character) :
-    f.pX + f.pY + f.pZ = 3 * f.meanExponent := by
-  unfold meanExponent
-  ring
+    f.pX + f.pY + f.pZ = 3 * f.meanExponent :=
+  TensorSpectrum.TensorClass.Character.sum_exponents_eq_three_meanExponent f
 
 theorem sum_permuted_pX_eq_six_meanExponent (f : Character) :
-    (∑ i : Fin 6, (f.permuted i).pX) = 6 * f.meanExponent := by
-  rw [sum_permuted_pX]
-  unfold meanExponent
-  ring
+    (∑ i : Fin 6, (f.permuted i).pX) = 6 * f.meanExponent :=
+  TensorSpectrum.TensorClass.Character.sum_permuted_pX_eq_six_meanExponent f
 
-/-- A permutation cannot change the sum of the three exponents, since it
-preserves the square matrix multiplication tensor at every dimension. -/
 theorem sum_exponents_permuted (f : Character) (i : Fin 6) :
     (f.permuted i).pX + (f.permuted i).pY + (f.permuted i).pZ =
-      f.pX + f.pY + f.pZ := by
-  apply (Real.rpow_right_inj (by norm_num : (0 : ℝ) < 2) (by norm_num)).mp
-  have hleft := (f.permuted i).square_value_eq_rpow 2 (by norm_num)
-  have hright := f.square_value_eq_rpow 2 (by norm_num)
-  simp only [Nat.cast_ofNat] at hleft hright
-  rw [← hleft, ← hright, f.permuted_square]
+      f.pX + f.pY + f.pZ :=
+  TensorSpectrum.TensorClass.Character.sum_exponents_permuted f i
 
-@[simp] theorem meanExponent_permuted (f : Character) (i : Fin 6) :
-    (f.permuted i).meanExponent = f.meanExponent := by
-  unfold meanExponent
-  rw [sum_exponents_permuted]
+theorem meanExponent_permuted (f : Character) (i : Fin 6) :
+    (f.permuted i).meanExponent = f.meanExponent :=
+  TensorSpectrum.TensorClass.Character.meanExponent_permuted f i
 
-theorem permuted_polynomialTensor_one_left_value
-    (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
+theorem permuted_polynomialTensor_one_left_value (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
     (f.permuted i (ofTensor (polynomialTensor 1 n)) : ℝ) =
-      (n : ℝ) ^ (f.permuted i).pX := by
-  rw [polynomialTensor_one_left_class]
-  exact (f.permuted i).dotXValue_eq_rpow n hn
+      (n : ℝ) ^ (f.permuted i).pX :=
+  TensorSpectrum.TensorClass.Character.permuted_polynomialTensor_one_left_value f i n hn
 
-/-- The six boundary values are the powers with exponents
-`pX, pY, pX, pY, pZ, pZ`. -/
-theorem permuted_polynomialTensor_one_left_vector
-    (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
+theorem permuted_polynomialTensor_one_left_vector (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
     (f.permuted i (ofTensor (polynomialTensor 1 n)) : ℝ) =
-      (n : ℝ) ^ (![f.pX, f.pY, f.pX, f.pY, f.pZ, f.pZ] i) := by
-  rw [permuted_polynomialTensor_one_left_value f i n hn, permuted_pX]
+      (n : ℝ) ^ (![f.pX, f.pY, f.pX, f.pY, f.pZ, f.pZ] i) :=
+  TensorSpectrum.TensorClass.Character.permuted_polynomialTensor_one_left_vector f i n hn
 
-theorem permuted_polynomialTensor_one_right_value
-    (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
+theorem permuted_polynomialTensor_one_right_value (f : Character) (i : Fin 6) (n : ℕ) (hn : 1 ≤ n) :
     (f.permuted i (ofTensor (polynomialTensor n 1)) : ℝ) =
-      (n : ℝ) ^ (f.permuted (permuteSwapXY i)).pX := by
-  rw [← swapXY_polynomialTensor 1 n, f.permuted_swapXY]
-  exact f.permuted_polynomialTensor_one_left_value (permuteSwapXY i) n hn
+      (n : ℝ) ^ (f.permuted (permuteSwapXY i)).pX :=
+  TensorSpectrum.TensorClass.Character.permuted_polynomialTensor_one_right_value f i n hn
 
 end Character
 end MatrixMultiplicationAllFields.MatrixExponent.Upper.TensorClass

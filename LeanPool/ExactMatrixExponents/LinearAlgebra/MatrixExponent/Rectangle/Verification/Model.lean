@@ -14,7 +14,7 @@ public import Mathlib.Algebra.MvPolynomial.Eval
 
 Each seed chooses a straight-line program followed by scalar equality
 tests. Its cost counts all binary arithmetic instructions and all tests.
-This is a subclass of the equality-test trees in Section 8.
+The straight-line program for a seed is chosen before its equality tests.
 -/
 
 @[expose] public section

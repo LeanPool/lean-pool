@@ -108,12 +108,12 @@ private theorem normalized (v : ℝ) (hv : v ≤ (R.load * S.z : ℕ)) : v / W �
 include h in
 omit [Field F] in
 open scoped Classical in
-theorem unit (_s : Slice Δ Y l t) : (u : ℝ) / W ≤ 1 / (2 : ℝ) ^ t
+theorem unit : (u : ℝ) / W ≤ 1 / (2 : ℝ) ^ t
     := normalized h u (Nat.cast_le.mpr h.load)
 
 include h in
 open scoped Classical in
-theorem slack (_s : Slice Δ Y l t) (hk : 2 ^ t ≤ K) (q : (frame S T u Δ R).state) : W *
+theorem slack (hk : 2 ^ t ≤ K) (q : (frame S T u Δ R).state) : W *
     (Fintype.card q.val.G.V * 2 ^ a : ℕ) ≤ σ := by
   have hv : Fintype.card q.val.G.V ≤ 2 ^ T.scheme.m := by
     simpa using Fintype.card_le_of_injective _ q.val.encodes.post.host.injective
@@ -214,8 +214,8 @@ theorem ok : Template.Encodes.Fits (G := q.val.G) a t Δ D g (2 ^ S.discount)
 
 open scoped Classical in
 /-- Computes the poll by the application `q.val.encodes.elected (ok h s hk q) s.enough s.space
-(unit h s)`. -/
-abbrev poll := q.val.encodes.elected (ok h s hk q) s.enough s.space (unit h s)
+(unit (t := t) h)`. -/
+abbrev poll := q.val.encodes.elected (ok h s hk q) s.enough s.space (unit (t := t) h)
 
 open scoped Classical in
 theorem fits (P : Rotor F Y l) {c : ℝ} (hc : 1 ≤ c) (cost : (Fintype.card P.E : ℝ) ≤ c * Y * l) :

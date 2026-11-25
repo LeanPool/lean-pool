@@ -29,6 +29,11 @@ def blockSum (T : Tensor K X Y Z) (S : Tensor K U V W) :
   | .inr u, .inr v, .inr w => S u v w
   | _, _, _ => 0
 
+/-- Assemble branches with a common first leg and matching sector labels on the other legs. -/
+def sharedFirst {M : ℕ} (A : Fin M → Tensor K X Y Z) :
+    Tensor K X (Fin M × Y) (Fin M × Z) :=
+  fun x y z => if y.1 = z.1 then A y.1 x y.2 z.2 else 0
+
 /-- Block diagonal local coefficient matrix, with no cross-summand maps. -/
 def blockMatrix (A : X' → X → K) (D : U' → U → K) :
     (X' ⊕ U') → (X ⊕ U) → K

@@ -349,8 +349,8 @@ theorem Compresses.lists (h : Compresses F) : Compression (Realizes F) := by
   · simpa only [wd_lists, wd, add_zero, Nat.mul_left_comm, Nat.mul_assoc] using heq
   · simpa only [Nat.cast_mul] using hc
 
-/-- Theorem 2.1 from ordinary-width sorting and the one-stage arity
-reduction. Batch lookup, descent and iteration are all proved here. -/
+/-- Compression from ordinary-width sorting and one-stage arity reduction. The construction
+uses batch lookup and iterates the resulting descent. -/
 theorem compresses_of_stages {p : ℝ} (hp : 1 < p) (hp' : p < 2)
     (sort : Lookup.Sorting F p) (reduce : ArityReduction F) : Compresses F := by
   obtain ⟨A, hA, lookup⟩ := Lookup.lookup_network hp.le sort

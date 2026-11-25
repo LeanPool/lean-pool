@@ -38,8 +38,8 @@ private theorem SortingBound.mono {h w : ℕ} {a b : ℝ}
   obtain ⟨n, hs, hn⟩ := h k e
   exact ⟨n, hs, hn.trans hab⟩
 
-/-- Theorem 3.1 for a fixed finite field, including stable ties, arbitrary
-ordered key bits, all bounded multiples of the height, and wide records. -/
+/-- A square exponent below nine fourths gives stable sorting bounds over a fixed finite field.
+The bounds cover bounded multiples of the height and sufficiently wide records. -/
 theorem conditional_sorting (F : Type) [Field F] [Finite F] (hs : omega F < 9 / 4) :
     (∃ p : ℝ, 1 < p ∧ p < 2 ∧ ∀ k : ℕ, ∃ C : ℝ, 0 < C ∧
       ∀ h w : ℕ, 1 ≤ h → w ≤ k * h → SortingBound F h w (C * (2 : ℝ) ^ h * (h : ℝ) ^ p)) ∧
