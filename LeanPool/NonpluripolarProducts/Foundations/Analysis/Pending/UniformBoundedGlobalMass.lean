@@ -363,7 +363,7 @@ theorem exists_local_uniform_truncation_bound (omega : KahlerBackground n M)
   have hgpsh : ∀ (k : ℕ) (i : Fin n),
       ThetaPlurisubharmonic (η i).val fun x => ((-(k : ℝ) - ψ i x : ℝ) : EReal) := by
     intro k i
-    have h := FirstPass.GlobalPotentialTransforms.thetaPlurisubharmonic_sub_const
+    have h := FirstPass.PositiveClasses.thetaPlurisubharmonic_sub_const
       (hCpsh i) (k : ℝ)
     have hfun : (fun x : M => ((-(k : ℝ) - ψ i x : ℝ) : EReal)) =
         fun x : M => (((-ψ i x : ℝ)) : EReal) - ((k : ℝ) : EReal) := by

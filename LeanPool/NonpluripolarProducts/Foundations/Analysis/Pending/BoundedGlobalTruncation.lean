@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BoundedGlobalProduct
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ThetaPshCompactBounds
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialTransforms
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PositiveClasses
 
 /-!
 # Bounded global truncations in a semipositive background
@@ -35,7 +35,7 @@ open Set MeasureTheory
 
 namespace SGPT.Foundations.Analysis.Pending.BoundedGlobalProduct
 
-open FirstPass FirstPass.GlobalPotentialTransforms FirstPass.GlobalPotentialPatches
+open FirstPass FirstPass.GlobalPotentialPatches
 open GlobalNonPluripolar
 
 noncomputable section
@@ -82,7 +82,7 @@ theorem thetaPlurisubharmonic_const (a : ClosedRealOneOneForm n M)
     ThetaPlurisubharmonic a.val (fun _ : M => (c : EReal)) := by
   have h0 : ThetaPlurisubharmonic a.val (fun _ : M => (0 : EReal)) :=
     (LocalPotentials.thetaPlurisubharmonic_zero_iff a).mpr ha
-  have h := thetaPlurisubharmonic_sub_const h0 (-c)
+  have h := PositiveClasses.thetaPlurisubharmonic_sub_const h0 (-c)
   simpa using h
 
 /-- **Truncation preserves raw theta-PSH in a semipositive background.** -/

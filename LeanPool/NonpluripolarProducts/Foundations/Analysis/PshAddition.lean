@@ -110,4 +110,16 @@ theorem PlurisubharmonicOn.add {u w : E → EReal} {U : Set E}
     PlurisubharmonicOn (fun y => u y + w y) U :=
   fun x hx => (hu x hx).add (hw x hx)
 
+/-- The `On`-form of `plurisubharmonicAt_const`: a real constant is
+plurisubharmonic on any set. -/
+theorem plurisubharmonicOn_const (c : ℝ) (U : Set E) :
+    PlurisubharmonicOn (fun _ : E => (c : EReal)) U :=
+  fun x _ => plurisubharmonicAt_const (c : EReal) (EReal.coe_ne_top c) x
+
+/-- Adding a real constant preserves plurisubharmonicity. -/
+theorem PlurisubharmonicOn.add_const {u : E → EReal} {U : Set E}
+    (hu : PlurisubharmonicOn u U) (c : ℝ) :
+    PlurisubharmonicOn (fun y => u y + (c : EReal)) U :=
+  hu.add (plurisubharmonicOn_const c U)
+
 end SGPT.Foundations.Analysis

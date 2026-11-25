@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineSuperlevelNeighborhoods
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PolydiskPerronDataComparison
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshAddition
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PshConvexCone
 
 /-!

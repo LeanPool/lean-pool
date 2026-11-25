@@ -427,6 +427,41 @@ theorem ddc_mulBorel_eq_ddcWedge {Q : LocalProductCurrent n U (m + 1)} (hQ : IsP
   · rw [testFunction_eq_zero_of_notMem φ hx]
     ring
 
+/-- A difference of weighted cutoff trace integrals is a sum of defect evaluations. -/
+theorem cutoffTraceDiff_eq_defectSum {Q : LocalProductCurrent n U (m + 1)} (hQ : IsPositive Q)
+    (hQc : IsClosedCurrent Q) {g : E → ℝ} (hg : IsLocallyBoundedPshOn U g)
+    {W : E → ℝ} (hW : ContDiffOn ℝ ∞ W U) (hWl : ∀ x ∈ U, ∀ v, 0 ≤ leviForm W x v)
+    (χ : 𝓓(U, ℝ)) :
+    (∫ x, χ x * W x ∂(isPositive_ddcMul hQ hQc hg).1.traceMeasure) -
+        ∫ x, χ x * g x ∂(isPositive_ddcWedge hQ hW hWl).traceMeasure =
+      ∑ a, ∑ b, (-(1 / (4 * Real.pi))) *
+        mulBorel Q ((U : Set E).indicator g)
+          (wedgeLM m (isOneOne_coeffForm a b) (kahlerPower n m)) (defectTest hW a b χ) := by
+  have hS := (isPositive_ddcMul hQ hQc hg).1
+  have hS' := isPositive_ddcWedge hQ hW hWl
+  have hum := measurable_indicator_of_isLocallyBoundedPshOn hg
+  have hub := isLocallyBoundedOn_indicator hg
+  have e1 : ∫ x, χ x * W x ∂hS.traceMeasure =
+      ddcMul Q g (kahlerPower n m) (mulSmoothOnCLM hW χ) := by
+    rw [← hS.integral_traceMeasure]
+    rfl
+  have hd : IsLocalDensity (U := U) hS'.traceMeasure (fun _ => 1) :=
+    ⟨hS'.traceMeasure_compl, fun K hK hKU => hS'.traceMeasure_lt_top hK hKU,
+      measurable_const, fun K _ _ => ⟨1, fun _ _ => by simp⟩⟩
+  have e2 : ∫ x, χ x * g x ∂hS'.traceMeasure =
+      mulBorel (ddcWedge Q hW) ((U : Set (ComplexModel n)).indicator g) (kahlerPower n m) χ := by
+    rw [mulBorel_apply_of_integral_eq hS' _ hd (fun ψ => by
+      rw [← hS'.integral_traceMeasure]
+      simp) hum hub χ]
+    refine integral_congr_ae (Eventually.of_forall fun x => ?_)
+    simp only [mul_one]
+    by_cases hx : x ∈ (U : Set (ComplexModel n))
+    · rw [Set.indicator_of_mem hx]
+    · rw [testFunction_eq_zero_of_notMem χ hx, zero_mul, zero_mul]
+  rw [e1, e2, ddcWedge_eq_wedgeForm, mulBorel_wedgeForm rfl hQ _ (ddcForm_mem_spCone hW hWl) hum
+    hub, ← ddcWedge_eq_wedgeForm]
+  exact ddc_sub_ddcWedge _ hW _ χ
+
 /-- **Integration by parts on `B` without boundary terms** (`bt:collar-comparison`, the identity
 `(*)`): for `Q` positive closed of bidimension `(m+1,m+1)`, `g` locally bounded PSH, `F` smooth on
 `U` with semipositive Levi form, and `F = g` on `B` off a compact subset of `B`,
@@ -459,7 +494,6 @@ theorem traceIntegral_ddcMul_eq {Q : LocalProductCurrent n U (m + 1)} (hQ : IsPo
   let χ' : 𝓓(U, ℝ) :=
     { toFun := χ, contDiff' := hχ, hasCompactSupport' := hχc,
       tsupport_subset' := hχB.trans hBU }
-  have hχ'_apply : ∀ x, χ' x = χ x := fun x => rfl
   have hχ0 : ∀ x ∉ (B : Set E), χ x = 0 := fun x hx =>
     image_eq_zero_of_notMem_tsupport fun h => hx (hχB h)
   have hχK : ∀ x ∈ K, χ x = 1 := fun x hx => (hχ1 x hx).eq_of_nhds
@@ -476,25 +510,9 @@ theorem traceIntegral_ddcMul_eq {Q : LocalProductCurrent n U (m + 1)} (hQ : IsPo
         (notMem_tsupport_iff_eventuallyEq.mp fun h => hxB (hχB h))
   -- the interior parts
   have hint : ∫ x, χ x * F x ∂hS.traceMeasure = ∫ x, χ x * g x ∂hS'.traceMeasure := by
-    have e1 : ∫ x, χ x * F x ∂hS.traceMeasure =
-        ddcMul Q g (kahlerPower n m) (mulSmoothOnCLM hF χ') := by
-      rw [← hS.integral_traceMeasure]
-      rfl
-    have hd : IsLocalDensity (U := U) hS'.traceMeasure (fun _ => 1) :=
-      ⟨hS'.traceMeasure_compl, fun K hK hKU => hS'.traceMeasure_lt_top hK hKU,
-        measurable_const, fun K _ _ => ⟨1, fun _ _ => by simp⟩⟩
-    have e2 : ∫ x, χ x * g x ∂hS'.traceMeasure =
-        mulBorel (ddcWedge Q hF) u (kahlerPower n m) χ' := by
-      rw [mulBorel_apply_of_integral_eq hS' _ hd (fun ψ => by
-        rw [← hS'.integral_traceMeasure]
-        simp) hum hub χ']
-      refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-      simp only [hχ'_apply, mul_one]
-      by_cases hx : x ∈ (B : Set E)
-      · rw [Set.indicator_of_mem (hBU hx)]
-      · rw [hχ0 x hx, zero_mul, zero_mul]
-    rw [e1, e2, ddcWedge_eq_wedgeForm, mulBorel_wedgeForm rfl hQ _ (ddcForm_mem_spCone hF hFl) hum
-      hub, ← ddcWedge_eq_wedgeForm]
+    apply sub_eq_zero.mp
+    change (∫ x, χ' x * F x ∂hS.traceMeasure) - ∫ x, χ' x * g x ∂hS'.traceMeasure = 0
+    rw [cutoffTraceDiff_eq_defectSum hQ hQc hg hF hFl χ', ← ddc_sub_ddcWedge, sub_eq_zero]
     exact ddc_mulBorel_eq_ddcWedge hQ hQc hF hum hub _ χ' fun a b x hx =>
       huu x (hdef a b x hx).1 (hdef a b x hx).2
   -- the collar parts: the two currents agree on `W = B \ K`

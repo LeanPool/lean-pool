@@ -80,6 +80,17 @@ theorem smoothDc_neg {h : ComplexModel n → ℝ} {z : ComplexModel n}
   simp only [smoothDDC, hzero, extDeriv, fderiv_zero, Pi.zero_apply]
   exact map_zero (ContinuousAlternatingMap.alternatizeUncurryFinCLM ℝ (ComplexModel n) ℝ)
 
+@[simp] theorem smoothDDC_const (c : ℝ) (z : ComplexModel n) :
+    smoothDDC (fun _ : ComplexModel n => c) z = 0 := by
+  have hdc : smoothDc (fun _ : ComplexModel n => c) =
+      smoothDc (fun _ : ComplexModel n => (0 : ℝ)) := by
+    funext y
+    ext v
+    simp [smoothDc_apply]
+  change extDeriv (smoothDc (fun _ : ComplexModel n => c)) z = 0
+  rw [hdc]
+  exact smoothDDC_zero z
+
 /-- Open-domain linearity uses equality of smooth germs, not arbitrary extensions. -/
 theorem smoothDDC_add {h g : ComplexModel n → ℝ} {U : Set (ComplexModel n)}
     (hU : IsOpen U) (hh : ContDiffOn ℝ ∞ h U) (hg : ContDiffOn ℝ ∞ g U)

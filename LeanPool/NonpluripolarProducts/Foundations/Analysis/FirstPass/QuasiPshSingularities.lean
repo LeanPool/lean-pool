@@ -107,6 +107,27 @@ theorem localQuasiPshPotentialOn_const (c : ℝ) {U : Set E} (hU : IsOpen U) :
     x).quasiPlurisubharmonicAt, ?_⟩
   exact fun x hx V _ hxV => ⟨x, ⟨hx, hxV⟩, EReal.coe_ne_bot c⟩
 
+/-- A quasi-PSH germ is upper semicontinuous at its base point. -/
+theorem QuasiPlurisubharmonicAt.upperSemicontinuousAt
+    {u : E → EReal} {x : E} (hu : QuasiPlurisubharmonicAt u x) :
+    UpperSemicontinuousAt u x := by
+  obtain ⟨p, h, hp, hh, heq⟩ := hu
+  have hhcont : ContinuousAt h x := hh.self_of_nhds.continuousAt
+  have hcoe : ContinuousAt (fun y => (h y : EReal)) x :=
+    continuous_coe_real_ereal.continuousAt.comp hhcont
+  have hsum : UpperSemicontinuousAt (fun y => p y + (h y : EReal)) x :=
+    hp.upperSemicontinuousAt.add' hcoe.upperSemicontinuousAt
+      (EReal.continuousAt_add (Or.inl hp.ne_top) (Or.inr (EReal.coe_ne_top _)))
+  rw [← upperSemicontinuousWithinAt_univ_iff]
+  exact (hsum.upperSemicontinuousWithinAt univ).congr_of_eventuallyEq (mem_univ x)
+    (heq.symm.filter_mono nhdsWithin_le_nhds)
+
+/-- Quasi-PSH functions are upper semicontinuous on their domain. -/
+theorem QuasiPlurisubharmonicOn.upperSemicontinuousOn
+    {u : E → EReal} {U : Set E} (hu : QuasiPlurisubharmonicOn u U) :
+    UpperSemicontinuousOn u U :=
+  fun x hx => (hu x hx).upperSemicontinuousAt.upperSemicontinuousWithinAt U
+
 end LocalPotentials
 
 section SingularityOrder

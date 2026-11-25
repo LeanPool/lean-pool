@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PotentialL1
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialTransforms
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.PositiveClasses
 
 /-!
 # Translation by finite constants
@@ -73,7 +73,7 @@ theorem IsThetaPshPotential.add_const {θ : SmoothRealForm n M 2}
     IsThetaPshPotential θ (fun x => u x + (c : EReal)) := by
   constructor
   · have hraw :=
-      GlobalPotentialTransforms.thetaPlurisubharmonic_sub_const hu.1 (-c)
+      PositiveClasses.thetaPlurisubharmonic_sub_const hu.1 (-c)
     simpa [sub_eq_add_neg] using hraw
   · intro x U hU hx
     obtain ⟨y, hy, hfin⟩ := hu.2 x U hU hx

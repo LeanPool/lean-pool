@@ -14,7 +14,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalB
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorIncreasing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothPlurisubharmonic
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedNonPluripolar
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialTransforms
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ClosedRealOneOneForms
 
 /-!
 # Bedford–Taylor products of arbitrary degree through top-degree products
@@ -584,7 +584,7 @@ theorem mulBorel_btProduct_max_const {p q : ℕ} (hqp : q + p = n) {U : Opens (C
   have hddc : ∀ i, ∀ x ∈ U, smoothDDC (ℓ i) x = β i := by
     intro i x hx
     rw [smoothDDC_add U.isOpen (contDiff_quadPot _).contDiffOn contDiffOn_const hx,
-      GlobalPotentialTransforms.smoothDDC_const, add_zero, smoothDDC_quadPot (hβ i).1 x]
+      smoothDDC_const, add_zero, smoothDDC_quadPot (hβ i).1 x]
   have hgt : ∀ i z, c < ℓ i z := fun i z => by
     have h1 := hq0 i z
     have h2 : c < C := by

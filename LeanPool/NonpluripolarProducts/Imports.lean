@@ -35,7 +35,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Cont
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.DiscPshSupremum
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ERealChordUSC
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExtendedDifference
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExteriorDerivative
@@ -46,7 +45,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Geom
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalMeasureNoncharging
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPatchMeasures
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialPatches
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentialTransforms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HarmonicCircleApproximation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HarmonicDiscPsh
@@ -78,7 +76,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Smoo
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothThetaCriterion
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.StandardHermitianTwoForm
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.StandardKahlerTopPower
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Subgeodesics
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ThetaPshCompactBounds
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.TopPowerDensityPositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscLipschitzMajorants
@@ -204,7 +201,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalP
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalProductCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalSmoothScalarCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalTwoFormPoincare
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MaximalPsh
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientCongruence
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoefficientPositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedCoordinateDensity
@@ -226,8 +222,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Plurif
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineSuperlevelNeighborhoods
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PluriharmonicLogNorm
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PolarizationAlgebra
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PolydiskPerronDataComparison
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PolydiskPerronEnvelope
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveCurrentBorelAddition
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveDistributionMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveProductCurrents
@@ -268,7 +262,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Plurisubharmon
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PlurisubharmonicPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PositiveDistributionMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshAddition
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshLeviPositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshRegularDistribution
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshRegularizationData
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshRepresentative

@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ERealChordUSC
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FiniteTranslation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.LocallyUniformUpperBounds

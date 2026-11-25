@@ -91,38 +91,8 @@ theorem integral_cutoff_ddcMul_sub_eq {Q : LocalProductCurrent n U (m + 1)} (hQ 
         ∫ x, χ x * g₁ x ∂(isPositive_ddcWedge hQ hW hWl).traceMeasure =
       (∫ x, χ x * W x ∂(isPositive_ddcMul hQ hQc hg₂).1.traceMeasure) -
         ∫ x, χ x * g₂ x ∂(isPositive_ddcWedge hQ hW hWl).traceMeasure := by
-  have key : ∀ {g : (ComplexModel n) → ℝ} (hg : IsLocallyBoundedPshOn U g),
-      (∫ x, χ x * W x ∂(isPositive_ddcMul hQ hQc hg).1.traceMeasure) -
-          ∫ x, χ x * g x ∂(isPositive_ddcWedge hQ hW hWl).traceMeasure =
-        ∑ a, ∑ b, (-(1 / (4 * Real.pi))) *
-          mulBorel Q ((U : Set (ComplexModel n)).indicator g)
-            (wedgeLM m (isOneOne_coeffForm a b) (kahlerPower n m)) (defectTest hW a b χ) := by
-    intro g hg
-    have hS := (isPositive_ddcMul hQ hQc hg).1
-    have hS' := isPositive_ddcWedge hQ hW hWl
-    have hum := measurable_indicator_of_isLocallyBoundedPshOn hg
-    have hub := isLocallyBoundedOn_indicator hg
-    have e1 : ∫ x, χ x * W x ∂hS.traceMeasure =
-        ddcMul Q g (kahlerPower n m) (mulSmoothOnCLM hW χ) := by
-      rw [← hS.integral_traceMeasure]
-      rfl
-    have hd : IsLocalDensity (U := U) hS'.traceMeasure (fun _ => 1) :=
-      ⟨hS'.traceMeasure_compl, fun K hK hKU => hS'.traceMeasure_lt_top hK hKU,
-        measurable_const, fun K _ _ => ⟨1, fun _ _ => by simp⟩⟩
-    have e2 : ∫ x, χ x * g x ∂hS'.traceMeasure =
-        mulBorel (ddcWedge Q hW) ((U : Set (ComplexModel n)).indicator g) (kahlerPower n m) χ := by
-      rw [mulBorel_apply_of_integral_eq hS' _ hd (fun ψ => by
-        rw [← hS'.integral_traceMeasure]
-        simp) hum hub χ]
-      refine integral_congr_ae (Eventually.of_forall fun x => ?_)
-      simp only [mul_one]
-      by_cases hx : x ∈ (U : Set (ComplexModel n))
-      · rw [Set.indicator_of_mem hx]
-      · rw [testFunction_eq_zero_of_notMem χ hx, zero_mul, zero_mul]
-    rw [e1, e2, ddcWedge_eq_wedgeForm, mulBorel_wedgeForm rfl hQ _ (ddcForm_mem_spCone hW hWl) hum
-      hub, ← ddcWedge_eq_wedgeForm]
-    exact ddc_sub_ddcWedge _ hW _ χ
-  rw [key hg₁, key hg₂]
+  rw [cutoffTraceDiff_eq_defectSum hQ hQc hg₁ hW hWl χ,
+    cutoffTraceDiff_eq_defectSum hQ hQc hg₂ hW hWl χ]
   refine Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b _ => ?_
   congr 1
   refine mulBorel_apply_eq_of_forall hQ (measurable_indicator_of_isLocallyBoundedPshOn hg₁)
@@ -151,7 +121,7 @@ theorem smoothDDC_ballPot (A : ℝ) (z₀ : (ComplexModel n)) (R : ℝ) (z : (Co
   rw [e, smoothDDC_smul isOpen_univ (h1.sub contDiffOn_const) A (mem_univ z),
     PositiveClasses.smoothDDC_sub isOpen_univ h1 contDiffOn_const (mem_univ z),
     smoothDDC_norm_sub_sq,
-    GlobalPotentialTransforms.smoothDDC_const, sub_zero, smul_smul, div_eq_mul_inv]
+    smoothDDC_const, sub_zero, smul_smul, div_eq_mul_inv]
 
 /-- `ω₀^m ∧ ω₀ = ω₀^{m+1}`. -/
 theorem wedgeSpan_kahlerPower_one (m : ℕ) :

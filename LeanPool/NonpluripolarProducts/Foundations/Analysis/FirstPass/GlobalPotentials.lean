@@ -99,6 +99,32 @@ theorem ChartSmooth.continuous {h : M → ℝ} (hh : ChartSmooth (n := n) h) : C
 variable [IsComplexManifold n M]
 
 omit [IsComplexManifold n M] in
+/-- A manifold quasi-PSH function is upper semicontinuous in the manifold
+topology. -/
+theorem ManifoldQuasiPlurisubharmonic.upperSemicontinuous
+    {u : M → EReal} (hu : ManifoldQuasiPlurisubharmonic (n := n) u) :
+    UpperSemicontinuous u := by
+  intro x
+  let e := complexChartAt (n := n) x
+  have hx : x ∈ e.val.source := mem_complexChartAt_source x
+  have hz : e.val x ∈ e.val.target := e.val.map_source hx
+  have hchart : UpperSemicontinuousAt (chartFunction u e) (e.val x) :=
+    (hu e (e.val x) hz).upperSemicontinuousAt
+  have hcomp : UpperSemicontinuousAt ((chartFunction u e) ∘ e.val) x :=
+    hchart.comp (e.val.continuousAt hx)
+  have heq : ((chartFunction u e) ∘ e.val) =ᶠ[𝓝 x] u := by
+    filter_upwards [e.val.open_source.mem_nhds hx] with y hy
+    simp only [Function.comp_apply, chartFunction, e.val.left_inv hy]
+  intro c hc
+  have hc' : ((chartFunction u e) ∘ e.val) x < c := by
+    rw [heq.eq_of_nhds]
+    exact hc
+  filter_upwards [hcomp c hc', heq] with y hy hyeq
+  rw [← hyeq]
+  exact hy
+
+
+omit [IsComplexManifold n M] in
 theorem ManifoldQuasiPlurisubharmonic.ne_top {u : M → EReal}
     (hu : ManifoldQuasiPlurisubharmonic (n := n) u) (x : M) : u x ≠ ⊤ := by
   let e := complexChartAt (n := n) x

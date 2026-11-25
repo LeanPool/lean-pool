@@ -132,6 +132,14 @@ theorem thetaPshPotential_sub_smooth {θ η : SmoothRealForm n M 2}
     rw [sub_eq_add_neg, ← EReal.coe_neg]
     exact EReal.add_ne_bot_iff.mpr ⟨hfin, EReal.coe_ne_bot _⟩
 
+/-- Subtracting a finite constant preserves the same raw theta-PSH class. -/
+theorem thetaPlurisubharmonic_sub_const {θ : SmoothRealForm n M 2} {u : M → EReal}
+    (hu : ThetaPlurisubharmonic θ u) (c : ℝ) :
+    ThetaPlurisubharmonic θ (fun x => u x - (c : EReal)) := by
+  apply thetaPlurisubharmonic_sub_smooth (fun _ => contDiffOn_const) _ hu
+  intro e z _
+  rw [smoothDDC_const, add_zero]
+
 end
 
 end SGPT.Foundations.Analysis.FirstPass.PositiveClasses

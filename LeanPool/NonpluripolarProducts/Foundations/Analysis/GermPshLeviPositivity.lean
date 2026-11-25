@@ -9,7 +9,11 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.LocalPshDiscControl
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshLeviPositivity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitConvolution
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitLocalization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.TestLeviPairing
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.CompactDiscLocalization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PshRegularDistribution
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.WeightedPairingSupermean
 
 /-!
@@ -123,6 +127,27 @@ theorem PlurisubharmonicOn.pshRegularDistribution_hasNonnegativeDistributionalLe
     HasNonnegativeDistributionalLevi (pshRegularDistribution hu μ hΩ hne) := by
   apply hu.hasNonnegativeDistributionalLevi_of_locallyIntegrable
   exact hu.ae_finite μ hΩ hne
+
+/-- A locally integrable disc-PSH potential with a.e. finite values induces
+a regular distribution with nonnegative Levi derivatives. -/
+theorem DiscPshOn.hasNonnegativeDistributionalLevi_of_locallyIntegrable
+    (hu : DiscPshOn u Ω)
+    (huL : LocallyIntegrableOn (fun x => (u x).toReal) Ω μ)
+    (hfin : ∀ᵐ x ∂μ.restrict Ω, u x ≠ ⊤ ∧ u x ≠ ⊥) :
+    HasNonnegativeDistributionalLevi
+      (regularDistribution μ (fun x => (u x).toReal) huL) :=
+  (hu.plurisubharmonicOn Ω.isOpen).hasNonnegativeDistributionalLevi_of_locallyIntegrable huL hfin
+
+/-- A nontrivial disc-PSH potential on a preconnected open domain induces an
+actual regular distribution with nonnegative Levi derivatives. Local
+integrability and a.e. finiteness are consequences of the stated hypotheses. -/
+theorem DiscPshOn.pshRegularDistribution_hasNonnegativeDistributionalLevi
+    (hu : DiscPshOn u Ω) (hΩ : IsPreconnected (Ω : Set E))
+    (hne : ∃ a ∈ Ω, u a ≠ ⊥) :
+    HasNonnegativeDistributionalLevi
+      (pshRegularDistribution (hu.plurisubharmonicOn Ω.isOpen) μ hΩ hne) := by
+  apply hu.hasNonnegativeDistributionalLevi_of_locallyIntegrable
+  exact (hu.plurisubharmonicOn Ω.isOpen).ae_finite μ hΩ hne
 
 end Positivity
 
