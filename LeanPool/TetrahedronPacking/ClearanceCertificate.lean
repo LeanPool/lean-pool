@@ -126,6 +126,7 @@ theorem integerClearance_plane (n : Fin 3 → ℤ) (v w : Fin 4 → Fin 3 → �
     linarith [mul_le_mul_of_nonneg_right hnorm hV, mul_le_mul_of_nonneg_right hnorm hW]
 
 
+/-- Minimum and maximum of the four integer vertex coordinates on axis `j`. -/
 def coordinateBounds (v : Fin 4 → Fin 3 → ℤ) (j : Fin 3) : ℤ × ℤ :=
   (min (min (v 0 j) (v 1 j)) (min (v 2 j) (v 3 j)),
    max (max (v 0 j) (v 1 j)) (max (v 2 j) (v 3 j)))
