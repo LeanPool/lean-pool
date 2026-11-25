@@ -1,5 +1,5 @@
 slug: lattice-dirac-derivation
-title: Free Dirac dynamics from a reciprocal C19 lattice action
+title: Free Dirac dynamics and cubical spin from a reciprocal C19 lattice action
 summary: >-
   Derives the linearized free Dirac equation for a reciprocal two-field action
   on the C19 cubic stencil, at an exact zero-energy vacuum of the action.
@@ -7,22 +7,25 @@ summary: >-
   four-component sectors carrying the same free generator. The development
   gives finite-periodic Fourier completeness, a bijective spectral readout,
   spatial and centered-time defect estimates, and the integrated
-  positive-frequency charge and current identities. The conventional chi-field
-  kinetic coefficient is 1197. The transverse result holds for every value of
-  that coefficient.
+  positive-frequency charge and current identities. Downstream cubical plane
+  bivectors determine the half-spin normalization within the declared local
+  class and provide the finite rotations, Lorentz Lie algebra, Dirac-symbol
+  covariance, and Pauli--Lubanski identities recorded by the V3.1 certificate.
+  The conventional chi-field kinetic coefficient is 1197. The transverse result
+  holds for every value of that coefficient.
 branch: mathematical physics
 entry_module: LeanPool.LatticeDiracDerivation
 authors:
 - G. D. Partin
 source:
-  title: Lean LFM-to-Dirac Derivation V2
+  title: Lean LFM-to-Dirac Derivation V3.1
   authors:
   - G. D. Partin
-  url: https://github.com/gpartin/LeanDiracDerivation/tree/9522a8d32f51e79f57fcf16e85f214a7d88b1ff2
+  url: https://github.com/gpartin/LeanDiracDerivation/tree/61a4798b8b3ebfcffd24065079dc4db9d7b43f75
   github_repo: gpartin/LeanDiracDerivation
-  commit: 9522a8d32f51e79f57fcf16e85f214a7d88b1ff2
-  announcement_url: https://github.com/gpartin/LeanDiracDerivation/pull/64
-  announcement_date: '2026-11-22'
+  commit: 61a4798b8b3ebfcffd24065079dc4db9d7b43f75
+  announcement_url: https://github.com/gpartin/LeanDiracDerivation/pull/72
+  announcement_date: '2026-11-25'
 license: MIT
 status: verified
 provenance: mix
@@ -36,6 +39,7 @@ main_declarations:
 - LeanDirac.V2.periodic_quantized_add_char_bijective
 - LeanDirac.V2.periodic_integrated_positive_packet_current_bridge
 - LeanDirac.V2.positive_packet_pointwise_bridge_is_false
+- LeanDirac.V2.lorentz_spin_half_from_native_action
 main_results:
 - declaration: LeanDirac.V2.complete_first_principles_free_dirac
   informal: >-
@@ -62,6 +66,15 @@ main_results:
   informal: >-
     A two-mode interference example disproves extending the separate-mode
     charge identity pointwise to all positive-frequency superpositions.
+- declaration: LeanDirac.V2.lorentz_spin_half_from_native_action
+  informal: >-
+    From the already-derived cubical Clifford root, the certificate constructs
+    the local plane-bivector spin generators, proves the scoped operational
+    half-spin normalization and its action on both four-component sectors,
+    establishes the finite two-pi sign and four-pi return, and collects the
+    Lorentz commutators, Dirac-symbol covariance, and Pauli--Lubanski
+    orthogonality and rest-frame Casimir identities. It changes no native
+    action term, vacuum, or continuum readout.
 tags:
 - mathematical-physics
 - dirac-operator

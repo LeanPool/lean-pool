@@ -8,14 +8,14 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V2.CompleteFreeDirac
+public import LeanPool.LatticeDiracDerivation.V2.LorentzSpin
 
 /-!
-# V2 free-Dirac proof facade
+# V3.1 free-Dirac, Lorentz, and spin-one-half proof facade
 
-The action-derived linear tangent and the two flavor sectors form the active
-Lean Pool development. The prepared-background V1 proofs remain available
-at the [original import commit](https://github.com/LeanPool/lean-pool/commit/f49758ce995f7806f146b65ca376794103966333).
+The action-derived linear tangent, two flavor sectors, and downstream cubical
+Lorentz/spin representation form the active Lean Pool development. V3.1
+changes no native field, action term, stencil, update, vacuum, or readout.
 -/
 
 @[expose] public section

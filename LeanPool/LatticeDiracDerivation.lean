@@ -9,16 +9,17 @@ module
 public import LeanPool.LatticeDiracDerivation.V2
 
 /-!
-# Free Dirac dynamics from a reciprocal C19 lattice action
+# Free Dirac dynamics and cubical spin from a reciprocal C19 lattice action
 
-Source: url:https://github.com/gpartin/LeanDiracDerivation/tree/9522a8d32f51e79f57fcf16e85f214a7d88b1ff2
+Source: url:https://github.com/gpartin/LeanDiracDerivation/tree/61a4798b8b3ebfcffd24065079dc4db9d7b43f75
 Authors: G. D. Partin
 Status: verified
 Main declarations: `LeanDirac.V2.complete_first_principles_free_dirac`,
   `LeanDirac.V2.cubical_flavor_classification`,
   `LeanDirac.V2.periodic_quantized_add_char_bijective`,
   `LeanDirac.V2.periodic_integrated_positive_packet_current_bridge`,
-  `LeanDirac.V2.positive_packet_pointwise_bridge_is_false`
+  `LeanDirac.V2.positive_packet_pointwise_bridge_is_false`,
+  `LeanDirac.V2.lorentz_spin_half_from_native_action`
 Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, fourier-analysis
 MSC: 81Q05, 15A66, 65M06, 81R20
 -/
