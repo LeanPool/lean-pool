@@ -6,7 +6,7 @@ Authors: Dawid Trela
 module
 
 import LeanPool.MovingSofa.KernelCertificate
-import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FixedPointResiduals
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
@@ -17,7 +17,7 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 -/
 
 -- Use sparse Horner evaluation for the closed rejection checks.
-attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejectedSparse
+attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.decidableRejected
 
 @[expose] public section
 

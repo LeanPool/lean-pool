@@ -6,7 +6,7 @@ Authors: Dawid Trela
 module
 
 import LeanPool.MovingSofa.KernelCertificate
-import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FixedPointResiduals
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
@@ -16,8 +16,8 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch021`.
 -/
 
--- Check closed rejections using the sparse Taylor evaluator.
-attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejectedSparse
+-- Try the fixed-point residual test before exact replay.
+attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.decidableRejected
 
 @[expose] public section
 

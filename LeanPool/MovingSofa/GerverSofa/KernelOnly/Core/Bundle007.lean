@@ -5,7 +5,7 @@ Authors: Dawid Trela
 -/
 module
 
-import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FastIntervals
+import LeanPool.MovingSofa.GerverSofa.KernelOnly.PartE.FixedPointResiduals
 
 public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 /-!
@@ -14,8 +14,8 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Semantics.Batch002`.
 -/
 
--- Use the faster exact decision procedure only within this certificate module.
-attribute [local instance 1100] GerverSofa.PartE.FastIntervals.decidableRejectedSparse
+-- Try the fixed-point residual test before exact replay.
+attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.decidableRejected
 
 @[expose] public section
 
