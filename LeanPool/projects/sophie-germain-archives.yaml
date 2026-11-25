@@ -102,9 +102,9 @@ main_results:
     Gauss's convention, are the eight (1, 0, 295), (5, 0, 59), (8, ±1, 37), (13, ±2, 23) and
     (16, ±3, 19).
 - declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.exists_mode_iff
-  informal: For each pair of end conditions of the lamina (free, supported, clamped), a nonzero
-    combination of cosh, sinh, cos and sin satisfying them exists iff the 4 × 4 determinant of
-    the conditions vanishes.
+  informal: For a nonzero frequency ω and each pair of end conditions of the lamina (free,
+    supported, clamped), a nonzero combination of cosh, sinh, cos and sin satisfying them exists
+    iff the 4 × 4 determinant of the conditions vanishes.
 - declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.first_root_free_free
   informal: The first positive root of cos ω cosh ω = 1 lies in ]3π/2, 3π/2 + 1/50[ and is its
     only root in ]0, 2π[.
@@ -113,7 +113,8 @@ main_results:
     every root ω > 0 of tan(ω/2) = tanh(ω/2), the two halves satisfy the eight conditions of the
     lamina on three supports, are not zero, and y''' jumps at the middle support.
 - declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.free_stylet_iff
-  informal: For the free lamina touched by a stylet at λ in ]0, 1[, a nonzero motion satisfying
+  informal: For a frequency ω > 0 and the free lamina touched by a stylet at λ in ]0, 1[, a nonzero
+    motion satisfying
     the eight conditions exists iff C₊(μω) P(λω) + C₊(λω) P(μω) = 0, with μ = 1 − λ, P(t) =
     cosh t sin t − sinh t cos t and C₊(t) = 1 + cosh t cos t.
 - declaration: LeanPool.SophieGermainArchives.Fr9115Elasticity.sympathetic_iff_rational

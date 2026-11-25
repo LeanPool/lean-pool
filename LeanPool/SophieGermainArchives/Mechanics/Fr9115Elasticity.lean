@@ -28,6 +28,10 @@ public import Mathlib.Topology.Algebra.Module.ModuleTopology
 /-!
 # Français 9115: the vibrating lamina, Euler's memoir of 1779 and the « Remarques »
 
+Adapted from `lean/Germain/Fr9115Elasticity.lean` of
+https://github.com/Commutator-IO/germain-project
+at commit `167c171` (CC0, same author).
+
 The modernised reading `transcripts/fr-9115/fr-9115.modern.tex` gives, from views 144–206, a
 Latin copy of Euler's *Investigatio motuum quibus laminae et virgae elasticae contremiscunt*
 (Acta Petropolitana 1779), then, from views 208–396, a critique of its §§ 47–51 in Sophie

@@ -21,6 +21,11 @@ public import Mathlib.Tactic.Zify
 /-!
 # NAF 4073, view 42: the triangular number of a square
 
+Adapted from `Germain/NumberTheory/Naf4073Note.lean` of
+https://github.com/Commutator-IO/GermainArchivesProofs
+at commit `a628a4f` (Apache-2.0, same author); the same proofs are under CC0 in
+https://github.com/Commutator-IO/germain-project.
+
 The modernised reading `transcripts/naf-4073/naf-4073.modern.tex` of germain-project
 (« La seule mathématique du volume : le triangulaire d'un carré ») reads the one line of
 mathematics of the volume, on the address leaf of the unsigned letter of 13 March 1814

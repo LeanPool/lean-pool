@@ -13,6 +13,11 @@ public import Mathlib.Tactic.Ring
 /-!
 # NAF 4073: triangular numbers of products, powers and steps
 
+Adapted from `Germain/NumberTheory/Naf4073Triangular.lean` of
+https://github.com/Commutator-IO/GermainArchivesProofs
+at commit `a628a4f` (Apache-2.0, same author); the same proofs are under CC0 in
+https://github.com/Commutator-IO/germain-project.
+
 The general statements of the second part of the short article on the note of NAF 4073
 (`docs/naf-4073/article.tex` of germain-project), which extend Germain's computation in the
 manuscript reproduced by Alexanderson (2012): expand `((n² ± n)/2)²`, then compare the difference

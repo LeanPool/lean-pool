@@ -16,6 +16,11 @@ public import Mathlib.Tactic.Zify
 /-!
 # NAF 4073: Lagrange's formula is the only one of its kind
 
+Adapted from `Germain/NumberTheory/Naf4073Gersonides.lean` of
+https://github.com/Commutator-IO/GermainArchivesProofs
+at commit `a628a4f` (Apache-2.0, same author); the same proofs are under CC0 in
+https://github.com/Commutator-IO/germain-project.
+
 If `S_p = T_n^q` for every `n`, then `(p, q) = (1, 1)` or `(3, 2)`: already `n = 2` gives
 `2^p + 1 = 3^q`, whose only solutions are those, by Levi ben Gershon's theorem (1343).
 

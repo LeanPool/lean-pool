@@ -25,6 +25,10 @@ public import Mathlib.Tactic.Ring
 /-!
 # Français 9118: the drafts to Gauss, reading notes, the lever, the centroid, Legendre's notes
 
+Adapted from `lean/Germain/Fr9118.lean` of
+https://github.com/Commutator-IO/germain-project
+at commit `167c171` (CC0, same author).
+
 The arithmetic of the drafts to Gauss, three reading notes, the lever, the centre of gravity of
 a triangle, and two notes of Legendre on Euler's lamina.
 

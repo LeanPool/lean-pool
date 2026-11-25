@@ -21,6 +21,10 @@ public import Mathlib.Tactic.Set
 /-!
 # Français 9115: the curvature of surfaces
 
+Adapted from `lean/Germain/Fr9115Curvature.lean` of
+https://github.com/Commutator-IO/germain-project
+at commit `167c171` (CC0, same author).
+
 The modernised reading `transcripts/fr-9115/fr-9115.modern.tex` reads, in views 3–41, the
 « Exposition des principes qui servent de base à la théorie des surfaces élastiques », in
 views 43–89 the « Mémoire sur la courbure des surfaces », in view 114 a computation on three

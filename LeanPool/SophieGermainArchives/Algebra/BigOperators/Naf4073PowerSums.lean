@@ -19,6 +19,11 @@ public import Mathlib.Tactic.SplitIfs
 /-!
 # NAF 4073: sums of odd powers as polynomials in `T_n`
 
+Adapted from `Germain/Algebra/BigOperators/Naf4073PowerSums.lean` of
+https://github.com/Commutator-IO/GermainArchivesProofs
+at commit `a628a4f` (Apache-2.0, same author); the same proofs are under CC0 in
+https://github.com/Commutator-IO/germain-project.
+
 Germain adds her differences `T_m² − T_{m−1}² = m³` from `1` to `n` to obtain Lagrange's formula
 `1³ + ⋯ + n³ = T_n²`. The same telescoping at exponent `k` gives a triangular linear system for
 the sums of odd powers (Faulhaber's method, as reconstructed by Knuth, 1993).

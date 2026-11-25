@@ -20,6 +20,10 @@ public import Mathlib.Tactic.Ring
 /-!
 # The Sophie Germain chapter of the exercise book
 
+Adapted from `lean/Germain/Exercises.lean` of
+https://github.com/Commutator-IO/germain-project
+at commit `167c171` (CC0, same author).
+
 The exercise book `exercises/exercices.fr.tex` of germain-project, section « Sophie Germain
 (1776--1831) ». One group of theorems per exercise, in the book's order; each docstring names
 the exercise and the question. Physics is

@@ -25,6 +25,10 @@ public import Mathlib.Tactic.Set
 /-!
 # Français 9115, views 704–730: Manuscript C and the notes on quadratic residues
 
+Adapted from `lean/Germain/Fr9115Arithmetic.lean` of
+https://github.com/Commutator-IO/germain-project
+at commit `167c171` (CC0, same author).
+
 The modernised reading `transcripts/fr-9115/fr-9115.modern.tex`, sections « Le manuscrit C
 (ff. 348r--349r, vues 708 à 710) » and « Résidus quadratiques : notes de travail » (views 704–730,
 batches 36 and 37). Findings `fr-9115-manuscript-c-case-one` and `fr-9115-fermat-primes-residues`
