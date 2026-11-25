@@ -11,8 +11,6 @@ public import Mathlib.Analysis.Normed.Operator.Banach
 public import Mathlib.Topology.Algebra.Module.FiniteDimension
 import Mathlib.Tactic.Linarith
 
-@[expose] public section
-
 /-!
 # Robust separation of periodic convex motifs
 
@@ -21,6 +19,8 @@ operator norm of its functional times the displacement of each side. The
 finite shift search must use coordinate bounds valid for the perturbed
 vertices. These two checks control independent sources of uncertainty.
 -/
+
+@[expose] public section
 
 namespace TetrahedronPacking
 
@@ -153,7 +153,7 @@ theorem disjoint_interiors_of_fractional_clearance
 /-- A separation certificate for each relative displacement also gives
 pairwise disjoint interiors for copies at arbitrary lattice indices. -/
 theorem pairwise_disjoint_of_relative_shift
-    {μ ι α : Type*} [Fintype α]
+    {μ ι α : Type*}
     (C : (α → ℝ) ≃ₗ[ℝ] (α → ℝ)) (v : μ → ι → α → ℝ)
     (separated : ∀ (i j : μ) (k : α → ℤ), i ≠ j ∨ k ≠ 0 →
       Disjoint (interior (convexHull ℝ (range (v i))))

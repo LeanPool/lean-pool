@@ -7,6 +7,7 @@ Authors: Mike Lady
 module
 
 public import LeanPool.TetrahedronPacking.IntegerProjections
+public import LeanPool.TetrahedronPacking.PeriodicClearance
 import Mathlib.Data.Fin.VecNotation
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.FinCases
@@ -15,9 +16,6 @@ import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
-public import LeanPool.TetrahedronPacking.PeriodicClearance
-
-@[expose] public section
 
 /-!
 # Integer witnesses for clearance
@@ -28,6 +26,8 @@ We can therefore check both support bounds and the perturbation margin
 using integers. The witness direction, including its sign, is part of the
 certificate.
 -/
+
+@[expose] public section
 
 namespace TetrahedronPacking
 
