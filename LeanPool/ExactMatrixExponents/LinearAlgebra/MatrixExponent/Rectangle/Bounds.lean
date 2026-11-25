@@ -3,6 +3,7 @@ Copyright (c) 2026 the original authors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: OpenAI
 -/
+/- Modified by Lean Pool contributors for this port. -/
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.CircuitCost
