@@ -140,7 +140,7 @@ branch artifacts on demand. Branch previews never deploy production Pages.
 Ordinary PR builds no longer package the large documentation build artifact.
 
 After compilation, Lean CI partitions every pool source into project units,
-including Basic, the root, nested files and unregistered modules. Declaration
+including the root, nested files and unregistered modules. Declaration
 lint, axiom audits and option-backdoor audits import all owned modules; each
 compiled declaration is checked in its owning unit. Registry declarations use
 separate per-entry receipts. Static checks (registry/card consistency,
