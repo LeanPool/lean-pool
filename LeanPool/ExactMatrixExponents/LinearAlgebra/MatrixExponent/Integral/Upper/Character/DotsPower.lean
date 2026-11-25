@@ -28,21 +28,6 @@ noncomputable section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.TensorClass.Character
 
-theorem exists_dotX_power (f : Character) :
-    ∃ p : ℝ, 0 ≤ p ∧ p ≤ 1 ∧
-      ∀ n : ℕ, 1 ≤ n → f.dotXValue n = (n : ℝ) ^ p :=
-  TensorSpectrum.TensorClass.Character.exists_dotX_power f
-
-theorem exists_dotY_power (f : Character) :
-    ∃ p : ℝ, 0 ≤ p ∧ p ≤ 1 ∧
-      ∀ n : ℕ, 1 ≤ n → f.dotYValue n = (n : ℝ) ^ p :=
-  TensorSpectrum.TensorClass.Character.exists_dotY_power f
-
-theorem exists_dotZ_power (f : Character) :
-    ∃ p : ℝ, 0 ≤ p ∧ p ≤ 1 ∧
-      ∀ n : ℕ, 1 ≤ n → f.dotZValue n = (n : ℝ) ^ p :=
-  TensorSpectrum.TensorClass.Character.exists_dotZ_power f
-
 /-- The specialization of `pX` to this coefficient ring. -/
 abbrev pX (f : Character) : ℝ :=
   TensorSpectrum.TensorClass.Character.pX f
@@ -84,15 +69,5 @@ theorem dotYValue_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
 theorem dotZValue_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
     f.dotZValue n = (n : ℝ) ^ f.pZ :=
   TensorSpectrum.TensorClass.Character.dotZValue_eq_rpow f n hn
-
-theorem square_value_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
-    (f (square n) : ℝ) = (n : ℝ) ^ (f.pX + f.pY + f.pZ) :=
-  TensorSpectrum.TensorClass.Character.square_value_eq_rpow f n hn
-
-theorem sum_exponents_nonneg (f : Character) : 0 ≤ f.pX + f.pY + f.pZ :=
-  TensorSpectrum.TensorClass.Character.sum_exponents_nonneg f
-
-theorem sum_exponents_le_three (f : Character) : f.pX + f.pY + f.pZ ≤ 3 :=
-  TensorSpectrum.TensorClass.Character.sum_exponents_le_three f
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.TensorClass.Character

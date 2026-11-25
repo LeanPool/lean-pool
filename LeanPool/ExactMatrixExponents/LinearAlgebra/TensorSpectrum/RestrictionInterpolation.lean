@@ -137,4 +137,38 @@ theorem polynomial_power_degree (P : Tensor (Polynomial R) U V W) (K j : ℕ)
       exact Polynomial.natDegree_le_of_degree_le (hdegree (u i) (v i) (w i))
     _ = K * j := by simp [Nat.mul_comm]
 
+/-- Lift coefficient extraction to tensor powers and recover the constant tensor. -/
+theorem polynomial_power_mem_restrictionOrbit
+    {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
+    (T : Tensor R X Y Z) (D : Tensor R U V W)
+    (P : Tensor (Polynomial R) U V W) (K : ℕ)
+    (hconstant : ∀ u v w, (P u v w).coeff 0 = D u v w)
+    (hdegree : ∀ u v w, (P u v w).degree ≤ K)
+    (goodNode : R → Prop)
+    (heval : ∀ t, goodNode t →
+      (fun u v w => (P u v w).eval t) ∈ LocalTensor.orbit T)
+    (j : ℕ)
+    (extract :
+      (∀ t, goodNode t → (fun u v w => (Tensor.power P j u v w).eval t) ∈
+        LocalTensor.orbit (Tensor.power T j)) →
+      (∀ u v w, (Tensor.power P j u v w).degree < Fintype.card (Fin (K * j + 1))) →
+      (fun u v w => (Tensor.power P j u v w).coeff 0) ∈ LocalTensor.orbit
+        (Tensor.directSum (fun _ : Fin (K * j + 1) => Tensor.power T j))) :
+    Tensor.power D j ∈ LocalTensor.orbit
+      (Tensor.directSum (fun _ : Fin (K * j + 1) => Tensor.power T j)) := by
+  have hevalpower (t : R) (ht : goodNode t) :
+      (fun u v w => (Tensor.power P j u v w).eval t) ∈
+        LocalTensor.orbit (Tensor.power T j) := by
+    rw [polynomial_power_eval]
+    exact power_mem_restrictionOrbit (heval t ht) j
+  have hdegreepower (u v w) : (Tensor.power P j u v w).degree <
+      Fintype.card (Fin (K * j + 1)) := by
+    simp only [Fintype.card_fin]
+    exact lt_of_le_of_lt (polynomial_power_degree P K j hdegree u v w)
+      (WithBot.coe_lt_coe.mpr (Nat.lt_succ_self (K * j)))
+  have h := extract hevalpower hdegreepower
+  rw [polynomial_power_constant, show (fun u v w => (P u v w).coeff 0) = D from
+    funext fun u => funext fun v => funext fun w => hconstant u v w] at h
+  exact h
+
 end MatrixMultiplicationAllFields.TensorSpectrum.RestrictionInterpolation

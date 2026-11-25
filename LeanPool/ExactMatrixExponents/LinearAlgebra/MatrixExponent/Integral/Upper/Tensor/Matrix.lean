@@ -65,43 +65,20 @@ namespace TensorClass
 /-- The class of the actual `n` by `n` matrix multiplication tensor. -/
 abbrev square := MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.square (K := O)
 
-theorem square_mul (n m : ℕ) : square n * square m = square (n * m) := by
-  unfold square TensorSpectrum.TensorClass.square
-  rw [ofTensor_mul, ← TensorSpectrum.CoefficientTensor.square_product_pullback]
-  exact ofTensor_pullback_equiv _ _ _ _
+theorem square_mul (n m : ℕ) : square n * square m = square (n * m) :=
+  TensorSpectrum.TensorClass.square_mul n m
 
 theorem square_mono {n m : ℕ} (h : n ≤ m) : square n ≤ square m :=
-  ofTensor_le (CoefficientTensor.square_restricts_of_le h)
+  TensorSpectrum.TensorClass.square_mono h
 
-@[simp] theorem square_one : square 1 = 1 := by
-  let e : (Fin 1 × Fin 1) ≃ PUnit :=
-    { toFun := fun _ => PUnit.unit
-      invFun := fun _ => (0, 0)
-      left_inv := fun _ => Subsingleton.elim _ _
-      right_inv := fun _ => Subsingleton.elim _ _ }
-  have heq : Tensor.pullback e e e unitTensor = Upper.matrixTensor 1 1 1 := by
-    funext x y z
-    have h₁ : x.2 = y.1 := Subsingleton.elim _ _
-    have h₂ : y.2 = z.1 := Subsingleton.elim _ _
-    have h₃ : z.2 = x.1 := Subsingleton.elim _ _
-    simp [Tensor.pullback, TensorSpectrum.TensorClass.unitTensor, Upper.matrixTensor,
-      Tensor.matrixCoefficients, h₁, h₂, h₃]
-  change ofTensor (Upper.matrixTensor 1 1 1) = ofTensor unitTensor
-  rw [← heq]
-  exact ofTensor_pullback_equiv _ e e e
+theorem square_one : square 1 = 1 :=
+  TensorSpectrum.TensorClass.square_one
 
-theorem square_pow (n j : ℕ) : square (n ^ j) = square n ^ j := by
-  induction j with
-  | zero => simp
-  | succ j ih => rw [pow_succ, ← square_mul, ih, pow_succ]
+theorem square_pow (n j : ℕ) : square (n ^ j) = square n ^ j :=
+  TensorSpectrum.TensorClass.square_pow n j
 
-/-- The rank here is the least size of an actual rank-one decomposition. -/
-theorem rank_square_le (n : ℕ) : rank (square n) ≤ n ^ 3 := by
-  rw [square, TensorSpectrum.TensorClass.square, rank_ofTensor]
-  exact (CoefficientTensor.rank_le_iff _ _).mpr
-    (CoefficientTensor.square_rankAtMost_cubic n)
-
-theorem square_rank_upper (n : ℕ) : rank (square n) ≤ n ^ 3 := rank_square_le n
+theorem rank_square_le (n : ℕ) : rank (square n) ≤ n ^ 3 :=
+  TensorSpectrum.TensorClass.rank_square_le n
 
 end TensorClass
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

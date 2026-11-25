@@ -199,66 +199,6 @@ end Dispatch
 end MatrixMultiplicationAllFields.MatrixExponent.Transcript
 end
 
-/-
-# Recovering the sum over processor records
-
-The three layout checks are the bucket order, the capacity claimed
-by each active slot, and occurrence of each processor exactly once.
-An accepted encoding can therefore be decoded without multiplicity.
--/
-
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Transcript
-
-variable {P V k : ℕ} {R : Type} {c : Fin P → R → ℕ} {y : Records P V k R}
-
-open scoped Classical in
-/-- The data for the canonical construction, including `sorted`, `fits`, `occurs`. -/
-structure Canonical (c : Fin P → R → ℕ) (y : Records P V k R) : Prop where
-  sorted : ∀ j : Fin (k + 1), Monotone (fun i => name (y ⟨j, i⟩))
-  fits : ∀ s p r, y s = some (p, r) → Nat.clog 2 (c p r) = s.1.val
-  occurs : ∀ p, ∃! s, ∃ r, y s = some (p, r)
-
-open scoped Classical in
-theorem Canonical.records (h : Canonical c y) : ∃ x, Encodes c x y := by
-  choose s hs hu using h.occurs
-  choose x hx using hs
-  have hh (i p r) (he : y i = some (p, r)) : i = s p ∧ r = x p := by
-    have eq := hu p i ⟨r, he⟩
-    rw [eq, hx] at he
-    exact ⟨eq, (Prod.mk.inj (Option.some.inj he)).2.symm⟩
-  have he (i p) (hi : name (y i) = p.castSucc) : i = s p := by
-    cases hv : y i with
-    | none => simp [hv, name, Ne.symm (Fin.castSucc_ne_last p)] at hi
-    | some z =>
-      obtain ⟨q, r⟩ := z
-      have hpq : q = p := by simpa [hv, name] using hi
-      exact hpq ▸ (hh _ _ _ hv).1
-  refine ⟨x, fun j => ⟨h.sorted j, ?_, ?_⟩, ?_⟩
-  · intro p
-    simp only [bucket, Finset.mem_filter, Finset.mem_univ, true_and]
-    rw [h.fits _ _ _ (hx p)]
-    constructor
-    · rintro ⟨i, hi⟩
-      rw [← he _ _ hi]
-    · intro eq
-      have e : (s p).1 = j := Fin.ext eq
-      subst j
-      exact ⟨(s p).2, by simp [hx, name]⟩
-  · intro i i' heq hlast
-    obtain ⟨p, hp⟩ := Fin.exists_castSucc_eq.mpr hlast
-    have hh := (he _ p hp.symm).trans (he _ p (heq.symm.trans hp.symm)).symm
-    exact eq_of_heq (Sigma.mk.inj hh).2
-  · intro i
-    cases hv : y i with
-    | none => simp [readRecord, name]
-    | some z =>
-      obtain ⟨p, r⟩ := z
-      simp [readRecord, name, (hh i p r hv).2]
-
-end MatrixMultiplicationAllFields.MatrixExponent.Transcript
-end
-
 /- # Labeled networks for a selected family of routed diagrams -/
 
 noncomputable section

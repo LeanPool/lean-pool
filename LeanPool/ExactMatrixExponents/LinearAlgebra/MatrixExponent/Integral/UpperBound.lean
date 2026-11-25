@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.RankDescent
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Spectrum.Comparison
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Nodes
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensor
@@ -142,40 +143,28 @@ private theorem in_order (h : Rank O i j k r) :
   rw [map_sum, apply_ite A.val, map_one, map_zero]
   exact h x y z
 
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation (Tensor) in
 /-- A diagonal entry of the regular representation sends one to one. -/
 private theorem descend {L : Type*} [CommRing L] [Nontrivial L]
     [Module.IsTorsionFree ℤ L] [Module.Finite ℤ L]
     (h : Rank L i j k r) : Rank ℤ i j k (r * Module.finrank ℤ L ^ 2) := by
   classical
-  obtain ⟨a, b, c, habc⟩ := h
   let d := Module.finrank ℤ L
   let B := Module.finBasis ℤ L
   let t : Fin d := ⟨0, Module.finrank_pos⟩
   let π := (B.coord t).comp (LinearMap.mulRight ℤ (B t))
   have hπ : π 1 = 1 := by simp [π]
-  have expand (u v w : L) :
-      ∑ l : Fin d, ∑ m : Fin d, B.repr u l * B.repr v m * π (B l * B m * w) =
-        π (u * v * w) := by
-    conv_rhs =>
-      rw [← B.sum_repr u, Finset.sum_mul, Finset.sum_mul, map_sum]
-    apply Finset.sum_congr rfl
-    intro l _
-    conv_rhs =>
-      rw [← B.sum_repr v, Finset.mul_sum, Finset.sum_mul, map_sum]
-    apply Finset.sum_congr rfl
-    intro m _
-    rw [smul_mul_assoc, mul_smul_comm, smul_mul_assoc, smul_mul_assoc, map_smul, map_smul,
-      smul_eq_mul, smul_eq_mul, mul_assoc]
-  rw [pow_two]
-  let e : Fin r × Fin d × Fin d ≃ Fin (r * (d * d)) :=
-    ((Equiv.refl (Fin r)).prodCongr finProdFinEquiv).trans finProdFinEquiv
-  refine ⟨fun l x => B.repr (a (e.symm l).1 x) (e.symm l).2.1,
-    fun l y => B.repr (b (e.symm l).1 y) (e.symm l).2.2,
-    fun l z => π (B (e.symm l).2.1 * B (e.symm l).2.2 * c (e.symm l).1 z), ?_⟩
-  intro x y z
-  rw [← e.sum_comp]
-  simp only [Equiv.symm_apply_apply, Fintype.sum_prod_type, expand, ← map_sum, habc]
-  split_ifs <;> simp [hπ]
+  let T : Tensor ℤ (Pos i k) (Pos k j) (Pos i j) := fun x y z =>
+    if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then 1 else 0
+  have hT : Tensor.RankAtMost (fun x y z => algebraMap ℤ L (T x y z)) r := by
+    obtain ⟨a, b, c, habc⟩ := h
+    refine ⟨a, b, c, ?_⟩
+    funext x y z
+    simp only [Tensor.rankOne]
+    dsimp only [T]
+    rw [habc, apply_ite (algebraMap ℤ L), map_zero, map_one]
+  obtain ⟨a, b, c, habc⟩ := hT.descend_algebra B π hπ
+  exact ⟨a, b, c, fun x y z => (congrFun (congrFun (congrFun habc x) y) z).symm⟩
 
 /-- Expand the two input legs only after taking powers in the fixed order. -/
 theorem Rank.integer_powers (h : Rank O i j k r) :

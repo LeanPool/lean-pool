@@ -307,7 +307,6 @@ inductive Mode where
   | joint
   | both
   | side (b : Bool)
-  deriving Fintype, DecidableEq
 
 open Classical in
 /-- In the case `.joint`, this construction gives `false`. -/

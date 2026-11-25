@@ -164,6 +164,43 @@ namespace TensorClass
 noncomputable def square (n : ℕ) : TensorClass K :=
   ofTensor (CoefficientTensor.squareMatrixTensor n)
 
+theorem square_mul (n m : ℕ) : square (K := K) n * square m = square (n * m) := by
+  unfold square
+  rw [ofTensor_mul, ← CoefficientTensor.square_product_pullback]
+  exact ofTensor_pullback_equiv _ _ _ _
+
+theorem square_mono {n m : ℕ} (h : n ≤ m) : square (K := K) n ≤ square m :=
+  ofTensor_le (CoefficientTensor.square_restricts_of_le h)
+
+@[simp] theorem square_one : square (K := K) 1 = 1 := by
+  let e : (Fin 1 × Fin 1) ≃ PUnit :=
+    { toFun := fun _ => PUnit.unit
+      invFun := fun _ => (0, 0)
+      left_inv := fun _ => Subsingleton.elim _ _
+      right_inv := fun _ => Subsingleton.elim _ _ }
+  have heq : Tensor.pullback e e e unitTensor =
+      CoefficientTensor.squareMatrixTensor (K := K) 1 := by
+    funext x y z
+    have h₁ : x.2 = y.1 := Subsingleton.elim _ _
+    have h₂ : y.2 = z.1 := Subsingleton.elim _ _
+    have h₃ : z.2 = x.1 := Subsingleton.elim _ _
+    simp [Tensor.pullback, unitTensor, CoefficientTensor.squareMatrixTensor,
+      Tensor.matrixCoefficients, h₁, h₂, h₃]
+  change ofTensor (CoefficientTensor.squareMatrixTensor (K := K) 1) = ofTensor unitTensor
+  rw [← heq]
+  exact ofTensor_pullback_equiv _ e e e
+
+theorem square_pow (n j : ℕ) : square (K := K) (n ^ j) = square n ^ j := by
+  induction j with
+  | zero => simp
+  | succ j ih => rw [pow_succ, ← square_mul, ih, pow_succ]
+
+/-- The rank here is the least size of an actual rank-one decomposition. -/
+theorem rank_square_le (n : ℕ) : rank (square (K := K) n) ≤ n ^ 3 := by
+  rw [square, rank_ofTensor]
+  exact (CoefficientTensor.rank_le_iff _ _).mpr
+    (CoefficientTensor.square_rankAtMost_cubic n)
+
 /-- Computes the dot x by the application `ofTensor (CoefficientTensor.dotXCoeff n)`. -/
 noncomputable def dotX (n : ℕ) : TensorClass K := ofTensor (CoefficientTensor.dotXCoeff n)
 /-- Computes the dot y by the application `ofTensor (CoefficientTensor.dotYCoeff n)`. -/

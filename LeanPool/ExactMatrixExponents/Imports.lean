@@ -561,6 +561,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Additiv
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.AdditiveCone.Stable
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.AdditiveCone.StableGroup
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterDegeneration
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterPower
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Growth
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.GrowthRow
@@ -579,7 +580,9 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Polynom
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialSectorFamily
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialSectors
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.RankDescent
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.RestrictionInterpolation
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationFourier
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationPolynomial
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationWeights
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagEntropy

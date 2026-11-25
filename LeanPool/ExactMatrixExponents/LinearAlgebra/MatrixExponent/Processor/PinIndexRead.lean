@@ -348,7 +348,7 @@ inductive Kind (r : ℕ) where
   | literal
   | broadcast
   | link (j : Fin (3 * r))
-  deriving DecidableEq, Fintype
+  deriving Fintype
 
 open Classical in
 theorem card_kind (r : ℕ) : Fintype.card (Kind r) = 3 * r + 3 := by

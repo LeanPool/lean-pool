@@ -70,7 +70,7 @@ theorem polynomial_coeff_mem_restrictionOrbit {n : ℕ}
 
 /-- The finite interpolation bound before applying any character. For every
 power `j`, exactly `K*j+1` copies of the power of the original source suffice.
-The infinite field supplies distinct nonzero nodes. -/
+The interpolation nodes have this same cardinality. -/
 theorem polynomial_power_mem_restrictionOrbit
     (T : Tensor O X Y Z) (D : Tensor O U V W)
     (P : Tensor (Polynomial O) U V W) (K : ℕ)
@@ -82,26 +82,12 @@ theorem polynomial_power_mem_restrictionOrbit
     Tensor.power D j ∈ LocalTensor.orbit
       (Tensor.directSum (fun _ : Fin (K * j + 1) => Tensor.power T j)) := by
   classical
+  apply TensorSpectrum.RestrictionInterpolation.polynomial_power_mem_restrictionOrbit
+    T D P K hconstant hdegree IsUnit heval j
+  intro hevalpower hdegreepower
   obtain ⟨nodes, hinj, hnonzero⟩ := unit_nodes (K * j + 1)
-  have hevalpower : ∀ t : O, IsUnit t →
-      (fun u v w => (Tensor.power P j u v w).eval t) ∈
-        LocalTensor.orbit (Tensor.power T j) := by
-    intro t ht
-    rw [polynomial_power_eval]
-    exact power_mem_restrictionOrbit (heval t ht) j
-  have hdegreepower : ∀ u v w, (Tensor.power P j u v w).degree <
-      Fintype.card (Fin (K * j + 1)) := by
-    intro u v w
-    simp only [Fintype.card_fin]
-    exact lt_of_le_of_lt (polynomial_power_degree P K j hdegree u v w)
-      (WithBot.coe_lt_coe.mpr (Nat.lt_succ_self (K * j)))
-  have h := polynomial_coeff_mem_restrictionOrbit (Tensor.power T j) (Tensor.power P j)
+  exact polynomial_coeff_mem_restrictionOrbit (Tensor.power T j) (Tensor.power P j)
     nodes hinj hnonzero hevalpower hdegreepower 0
-  have hD : (fun u v w => (P u v w).coeff 0) = D := by
-    funext u v w
-    exact hconstant u v w
-  rw [polynomial_power_constant, hD] at h
-  exact h
 
 end Interpolation
 

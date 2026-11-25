@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.LocalTensor
 
 /-!
 # Explicit polynomial families for diagonal weight degenerations
@@ -24,6 +25,7 @@ noncomputable section
 
 open scoped BigOperators NNReal
 open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
+open MatrixMultiplicationAllFields.MatrixExponent
 open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor
 
 namespace MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors
@@ -90,5 +92,25 @@ theorem weightedPolynomial_degree_le_one (T : Tensor K X Y Z)
   apply weightedPolynomial_degree_le T wx wy wz
   intro u v w hT
   rcases h u v w hT with hw | hw <;> simp [hw]
+
+theorem weightedFamily_mem_restrictionOrbit
+    [Fintype X] [Fintype Y] [Fintype Z]
+    (T : Tensor K X Y Z) (wx : X → ℤ) (wy : Y → ℤ) (wz : Z → ℤ)
+    (h : ∀ x y z, T x y z ≠ 0 → 0 ≤ wx x + wy y + wz z)
+    (t : K) (power : ℤ → K)
+    (hadd : ∀ a b, power (a + b) = power a * power b)
+    (hnat : ∀ n : ℕ, power n = t ^ n) :
+    weightedFamily T wx wy wz t ∈ LocalTensor.orbit T := by
+  classical
+  refine ⟨(fun x' x => if x = x' then power (wx x) else 0),
+    (fun y' y => if y = y' then power (wy y) else 0),
+    (fun z' z => if z = z' then power (wz z) else 0), ?_⟩
+  rw [restrict_diagonal]
+  funext x y z
+  by_cases hT : T x y z = 0
+  · simp [weightedFamily, hT]
+  · have hnonneg := h x y z hT
+    dsimp [weightedFamily]
+    rw [← hnat, Int.toNat_of_nonneg hnonneg, hadd, hadd]
 
 end MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors

@@ -13,6 +13,7 @@ public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultipl
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationPolynomial
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationFourier
 
 /-!
 # Charged finite separation by local Fourier maps
@@ -50,49 +51,8 @@ export MatrixMultiplicationAllFields.TensorSpectrum.Separation
     squareDegree_eq_zero_iff separationPolynomial_constant separationPolynomial_degree weightX
     weightY weightZ)
 
-/-- Copy a specified source coordinate with a scalar depending only on the
-target coordinate and the source's direct-sum copy number. -/
-def copyLocal {L : ℕ} {S T : Type*} [DecidableEq S]
-    (f : T → S) (a : T → Fin L → O) : T → (Fin L × S) → O :=
-  fun t s => if s.2 = f t then a t s.1 else 0
-
-section CopyCalculation
-
-variable {L : ℕ} {X' Y' Z' : Type*}
-variable [Fintype X] [Fintype Y] [Fintype Z]
-variable [DecidableEq X] [DecidableEq Y] [DecidableEq Z]
-
-/-- Summing the full source copies, rather than target coordinate labels, is
-what produces the Fourier average. All three source copy indices must agree. -/
-theorem restrict_copies (T : Tensor O X Y Z)
-    (fx : X' → X) (fy : Y' → Y) (fz : Z' → Z)
-    (a : X' → Fin L → O) (b : Y' → Fin L → O) (c : Z' → Fin L → O) :
-    Tensor.restrict (copyLocal fx a) (copyLocal fy b) (copyLocal fz c)
-      (Tensor.directSum (fun _ : Fin L => T)) =
-      fun x y z => (∑ r, a x r * b y r * c z r) * T (fx x) (fy y) (fz z) := by
-  funext x y z
-  simp [Tensor.restrict, Tensor.directSum, copyLocal, Fintype.sum_prod_type,
-    ite_and, ite_mul, mul_ite, ← Finset.sum_mul]
-
-omit [DecidableEq X] [DecidableEq Y] [DecidableEq Z] in
-/-- Scaling each target coordinate is itself a local linear operation. -/
-theorem restrict_scaled (T : Tensor O X Y Z)
-    (a : X' → X → O) (b : Y' → Y → O) (c : Z' → Z → O)
-    (u : X' → O) (v : Y' → O) (w : Z' → O) :
-    Tensor.restrict (fun x i => u x * a x i)
-      (fun y j => v y * b y j) (fun z k => w z * c z k) T =
-      fun x y z => u x * v y * w z * Tensor.restrict a b c T x y z := by
-  funext x y z
-  simp only [Tensor.restrict, Finset.mul_sum]
-  apply Finset.sum_congr rfl
-  intro i hi
-  apply Finset.sum_congr rfl
-  intro j hj
-  apply Finset.sum_congr rfl
-  intro k hk
-  ring
-
-end CopyCalculation
+export MatrixMultiplicationAllFields.TensorSpectrum.Separation
+  (copyLocal restrict_copies restrict_scaled)
 
 section Projection
 
@@ -102,25 +62,21 @@ variable [DecidableEq X] [DecidableEq Y] [DecidableEq Z]
 
 /-- The quantity computed by `copyLocal (fun x => x.2.1) (fun x r => ζ ^ ((r : ℤ) * (2 * (x.1 :
 ℤ))))`. -/
-def fourierX (ζ : O) :
+abbrev fourierX (ζ : O) :
     (Fin M × (X × Unit)) → (Fin (6 * M) × X) → O :=
-  copyLocal (fun x => x.2.1)
-    (fun x r => ζ ^ ((r : ℤ) * (2 * (x.1 : ℤ))))
+  TensorSpectrum.Separation.fourierX (M := M) (L := 6 * M) (fun e => ζ ^ e)
 
 /-- The quantity computed by `copyLocal (fun y => (y.1, y.2.1)) (fun y r => ζ ^ ((r : ℤ) *
 ((y.2.2 : ℤ) - (y.1 : ℤ))))`. -/
-def fourierY (ζ : O) :
+abbrev fourierY (ζ : O) :
     (Fin M × (Y × Fin M)) → (Fin (6 * M) × (Fin M × Y)) → O :=
-  copyLocal (fun y => (y.1, y.2.1))
-    (fun y r => ζ ^ ((r : ℤ) * ((y.2.2 : ℤ) - (y.1 : ℤ))))
+  TensorSpectrum.Separation.fourierY (M := M) (L := 6 * M) (fun e => ζ ^ e)
 
 /-- The quantity computed by `copyLocal (fun z => (z.1, z.2.1)) (fun z r => w r * ζ ^ ((r : ℤ) *
 (-(z.2.2 : ℤ) - (z.1 : ℤ))))`. -/
-def fourierZ (ζ : O) (w : Fin (6 * M) → O) :
+abbrev fourierZ (ζ : O) (w : Fin (6 * M) → O) :
     (Fin M × (Z × Fin M)) → (Fin (6 * M) × (Fin M × Z)) → O :=
-  copyLocal (fun z => (z.1, z.2.1))
-    (fun z r => w r *
-      ζ ^ ((r : ℤ) * (-(z.2.2 : ℤ) - (z.1 : ℤ))))
+  TensorSpectrum.Separation.fourierZ (M := M) (L := 6 * M) (fun e => ζ ^ e) w
 
 /-- The actual independent local maps give exactly the projected tensor. -/
 theorem fourier_restrict (A : Fin M → Tensor O X Y Z)
@@ -128,37 +84,9 @@ theorem fourier_restrict (A : Fin M → Tensor O X Y Z)
     (haverage : ∀ e : ℤ, -(3 * (M : ℤ)) < e → e < 3 * (M : ℤ) →
       (∑ r : Fin (6 * M), w r * ζ ^ ((r : ℤ) * e)) = if e = 0 then 1 else 0) :
     Tensor.restrict (fourierX ζ) (fourierY ζ) (fourierZ ζ w)
-      (Tensor.directSum (fun _ : Fin (6 * M) => shared A)) = projected A := by
-  classical
-  rw [fourierX, fourierY, fourierZ, restrict_copies]
-  funext x y z
-  by_cases hyz : y.1 = z.1
-  · have hphase : (∑ r : Fin (6 * M),
-        ζ ^ ((r : ℤ) * (2 * (x.1 : ℤ))) *
-          ζ ^ ((r : ℤ) * ((y.2.2 : ℤ) - (y.1 : ℤ))) *
-          (w r *
-            ζ ^ ((r : ℤ) * (-(z.2.2 : ℤ) - (z.1 : ℤ))))) =
-        if phase y.1 x.1 y.2.2 z.2.2 = 0 then 1 else 0 := by
-      calc
-        _ = ∑ r : Fin (6 * M), w r * ζ ^ ((r : ℤ) * phase y.1 x.1 y.2.2 z.2.2) := by
-          apply Finset.sum_congr rfl
-          intro r hr
-          rw [← hyz]
-          calc
-            _ = w r *
-                ((ζ ^ ((r : ℤ) * (2 * (x.1 : ℤ))) *
-                  ζ ^ ((r : ℤ) * ((y.2.2 : ℤ) - (y.1 : ℤ)))) *
-                  ζ ^ ((r : ℤ) * (-(z.2.2 : ℤ) - (y.1 : ℤ)))) := by ring
-            _ = _ := by
-              rw [← upow_add hζ, ← upow_add hζ]
-              congr 2
-              dsimp [phase]
-              ring
-        _ = _ := by
-          apply haverage <;> unfold phase <;> omega
-    rw [hphase]
-    simp [shared, Tensor.sharedFirst, projected, hyz, ite_mul]
-  · simp [shared, Tensor.sharedFirst, projected, hyz]
+      (Tensor.directSum (fun _ : Fin (6 * M) => shared A)) = projected A :=
+  TensorSpectrum.Separation.fourier_restrict A (fun e => ζ ^ e) w
+    (fun a b => upow_add hζ a b) haverage
 
 end Projection
 

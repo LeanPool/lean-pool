@@ -9,6 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.WeightedPolynomials
 
 /-!
 # Diagonal weight degenerations
@@ -40,18 +41,8 @@ theorem weightedFamily_mem_restrictionOrbit
     (T : Tensor Coeff X Y Z) (wx : X → ℤ) (wy : Y → ℤ) (wz : Z → ℤ)
     (h : ∀ x y z, T x y z ≠ 0 → 0 ≤ wx x + wy y + wz z)
     {t : Coeff} (ht : t ≠ 0) :
-    weightedFamily T wx wy wz t ∈ LocalTensor.orbit T := by
-  classical
-  refine ⟨(fun x' x => if x = x' then t ^ wx x else 0),
-    (fun y' y => if y = y' then t ^ wy y else 0),
-    (fun z' z => if z = z' then t ^ wz z else 0), ?_⟩
-  rw [restrict_diagonal]
-  funext x y z
-  by_cases hT : T x y z = 0
-  · simp [weightedFamily, hT]
-  · have hnonneg := h x y z hT
-    dsimp [weightedFamily]
-    rw [← zpow_natCast, Int.toNat_of_nonneg hnonneg,
-      zpow_add₀ ht, zpow_add₀ ht]
+    weightedFamily T wx wy wz t ∈ LocalTensor.orbit T :=
+  TensorSpectrum.PolynomialTensors.weightedFamily_mem_restrictionOrbit T wx wy wz h t
+    (fun n => t ^ n) (fun i j => zpow_add₀ ht i j) (fun n => zpow_natCast t n)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Upper

@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Interpolation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.WeightedPolynomials
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
 
@@ -35,18 +36,8 @@ theorem weightedFamily_mem_restrictionOrbit
     (T : Tensor O X Y Z) (wx : X → ℤ) (wy : Y → ℤ) (wz : Z → ℤ)
     (h : ∀ x y z, T x y z ≠ 0 → 0 ≤ wx x + wy y + wz z)
     {t : O} (ht : IsUnit t) :
-    weightedFamily T wx wy wz t ∈ LocalTensor.orbit T := by
-  classical
-  refine ⟨(fun x' x => if x = x' then t ^ wx x else 0),
-    (fun y' y => if y = y' then t ^ wy y else 0),
-    (fun z' z => if z = z' then t ^ wz z else 0), ?_⟩
-  rw [restrict_diagonal]
-  funext x y z
-  by_cases hT : T x y z = 0
-  · simp [weightedFamily, hT]
-  · have hnonneg := h x y z hT
-    dsimp [weightedFamily]
-    rw [← upow_nat, Int.toNat_of_nonneg hnonneg,
-      upow_add ht, upow_add ht]
+    weightedFamily T wx wy wz t ∈ LocalTensor.orbit T :=
+  TensorSpectrum.PolynomialTensors.weightedFamily_mem_restrictionOrbit T wx wy wz h t
+    (fun n => t ^ n) (fun i j => upow_add ht i j) (fun n => upow_nat t n)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

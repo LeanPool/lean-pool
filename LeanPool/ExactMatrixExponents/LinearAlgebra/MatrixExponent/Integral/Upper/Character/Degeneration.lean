@@ -15,6 +15,7 @@ public import Mathlib.Algebra.Order.Ring.Pow
 public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Linarith
 public import Mathlib.Tactic.Positivity
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterDegeneration
 
 /-!
 # Characters and polynomial degenerations
@@ -54,20 +55,9 @@ theorem Character.polynomial_constant_le (f : Character)
     (hdegree : ∀ u v w, (P u v w).degree ≤ K)
     (heval : ∀ t : O, IsUnit t →
       (fun u v w => (P u v w).eval t) ∈ LocalTensor.orbit T) :
-    f (ofTensor D) ≤ f (ofTensor T) := by
-  have hpower : ∀ j : ℕ,
-      (f (ofTensor D)) ^ j ≤ (K * j + 1 : ℝ≥0) * (f (ofTensor T)) ^ j := by
-    intro j
-    have hr := Separation.polynomial_power_mem_restrictionOrbit
-      T D P K hconstant hdegree heval j
-    have hmono := f.monotone' (ofTensor_le hr)
-    simpa only [Character.map_directSum_const, Character.map_power_tensor,
-      Nat.cast_add, Nat.cast_mul, Nat.cast_one] using hmono
-  have hreal := le_of_pow_le_linear_mul_pow
-    (f (ofTensor T) : ℝ) (f (ofTensor D) : ℝ) (K : ℝ)
-    (f (ofTensor T)).coe_nonneg
-    (fun j => by exact_mod_cast hpower j)
-  exact_mod_cast hreal
+    f (ofTensor D) ≤ f (ofTensor T) :=
+  TensorSpectrum.TensorClass.Character.polynomial_constant_le f T D K
+    (Separation.polynomial_power_mem_restrictionOrbit T D P K hconstant hdegree heval)
 
 end TensorClass
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
