@@ -221,14 +221,8 @@ omit [IsManifold (𝓘(ℂ, ComplexModel n)) ∞ M] in
 theorem locallyBounded_chartFamily {I : Type*} {u : I → M → EReal}
     (hb : SGPT.Foundations.Analysis.FirstPass.LocallyUniformlyBoundedAbove
       (Set.range u) Set.univ) (e : ComplexChart n M) :
-    LocallyUniformlyBoundedAbove (fun i ↦ chartFunction (u i) e) e.val.target := by
-  intro z hz
-  obtain ⟨O, hO, C, hC⟩ := hb (e.val.symm z) (Set.mem_univ _)
-  rw [nhdsWithin_univ] at hO
-  have hpre : e.val.symm ⁻¹' O ∈ 𝓝 z := (e.val.continuousAt_symm hz).eventually hO
-  refine ⟨e.val.symm ⁻¹' O, mem_nhdsWithin_of_mem_nhds hpre, C, ?_⟩
-  intro i y hy
-  exact hC (u i) (Set.mem_range_self i) _ ⟨hy.1, Set.mem_univ _⟩
+    LocallyUniformlyBoundedAbove (fun i ↦ chartFunction (u i) e) e.val.target :=
+  locallyUniformlyBoundedAbove_comp_of_univ hb (fun _ hz => e.val.continuousAt_symm hz)
 
 omit [IsManifold (𝓘(ℂ, ComplexModel n)) ∞ M] in
 /-- Chart representatives commute with the actual global regularized supremum. -/

@@ -282,6 +282,39 @@ theorem integrableOn_of_continuousOn_closure {U : Opens (ComplexModel n)} {W : S
     (hf : ContinuousOn f U) : IntegrableOn f W :=
   ((hf.mono hWU).integrableOn_compact hWc).mono_set subset_closure
 
+theorem IsDecApprox.integrable_mul {V : Opens (ComplexModel n)} {w : ComplexModel n → ℝ}
+    {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox V w G) {μ : Measure (ComplexModel n)}
+    (hμf : ∀ K, IsCompact K → K ⊆ V → μ K < ⊤) {ψ : ComplexModel n → ℝ} (hψ : Continuous ψ)
+    (hψc : HasCompactSupport ψ) (hψV : tsupport ψ ⊆ V) :
+    Integrable (fun z ↦ ψ z * w z) μ := by
+  obtain ⟨C, hC⟩ := hG.exists_abs_le hψc hψV
+  obtain ⟨B, hB⟩ := hψc.exists_bound_of_continuous hψ
+  have hmeas : Measurable fun z ↦ ψ z * w z := by
+    refine measurable_of_tendsto_metrizable (f := fun m z ↦ ψ z * G m z)
+      (fun m ↦ (continuous_of_continuousOn_of_eq_zero V.isOpen (isClosed_tsupport ψ) hψV
+        (hψ.continuousOn.mul (hG.1 m).1.continuousOn)
+        fun z hz ↦ by simp [image_eq_zero_of_notMem_tsupport hz]).measurable) ?_
+    rw [tendsto_pi_nhds]
+    intro z
+    by_cases hzV : z ∈ (V : Set (ComplexModel n))
+    · exact (hG.2.2.1 z hzV).const_mul _
+    · have : ψ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hψV h)
+      simp [this]
+  have hbdd : ∀ z, ‖ψ z * w z‖ ≤ B * max C 0 := by
+    intro z
+    by_cases hz : z ∈ tsupport ψ
+    · have hwC : |w z| ≤ C :=
+        le_of_tendsto' ((continuous_abs.tendsto _).comp (hG.2.2.1 z (hψV hz))) fun m ↦ hC m z hz
+      rw [Real.norm_eq_abs, abs_mul]
+      exact mul_le_mul (by simpa [Real.norm_eq_abs] using hB z) (hwC.trans (le_max_left _ _))
+        (abs_nonneg _) ((norm_nonneg _).trans (hB z))
+    · simp only [image_eq_zero_of_notMem_tsupport hz, zero_mul, norm_zero]
+      exact mul_nonneg ((norm_nonneg _).trans (hB z)) (le_max_right _ _)
+  rw [← integrableOn_iff_integrable_of_support_subset
+    ((Function.support_mul_subset_left _ _).trans (subset_tsupport ψ))]
+  exact Measure.integrableOn_of_bounded (M := B * max C 0) (hμf _ hψc hψV).ne
+    hmeas.aestronglyMeasurable (Eventually.of_forall hbdd)
+
 /-- **The collar estimate.** For a family equal to the collar potential off a
 compact set `K` inside the ball `W`, the limit weighted integral of a cutoff
 `ζ` equal to one on `K` is at most every approximating weighted integral. -/
@@ -405,32 +438,7 @@ theorem integral_cutoff_weight_le {q : ℕ} {V : Opens (ComplexModel n)}
     rw [heq k, heq l] at this
     linarith
   -- (iv) comparing the limit weight
-  obtain ⟨C, hC⟩ := hG.exists_abs_le hζc hζV
-  have hmeas : Measurable fun z ↦ ζ z * w z := by
-    refine measurable_of_tendsto_metrizable (f := fun m z ↦ ζ z * G m z)
-      (fun m ↦ (continuous_of_continuousOn_of_eq_zero V.isOpen (isClosed_tsupport ζ) hζV
-        (hζ.continuousOn.mul (hG.1 m).1.continuousOn)
-        fun z hz ↦ by simp [image_eq_zero_of_notMem_tsupport hz]).measurable) ?_
-    rw [tendsto_pi_nhds]
-    intro z
-    by_cases hzV : z ∈ (V : Set (ComplexModel n))
-    · exact (hG.2.2.1 z hzV).const_mul _
-    · have : ζ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hζV h)
-      simp [this]
-  have hbdd : ∀ z, |ζ z * w z| ≤ max C 0 := by
-    intro z
-    by_cases hz : z ∈ tsupport ζ
-    · have hwC : |w z| ≤ C := by
-        have hlimz := hG.2.2.1 z (hζV hz)
-        exact le_of_tendsto' ((continuous_abs.tendsto _).comp hlimz) fun m ↦ hC m z hz
-      rw [abs_mul, abs_of_nonneg (hζ01 z).1]
-      exact ((mul_le_of_le_one_left (abs_nonneg _) (hζ01 z).2).trans hwC).trans (le_max_left _ _)
-    · simp [image_eq_zero_of_notMem_tsupport hz]
-  have hIw : Integrable (fun z ↦ ζ z * w z) μ := by
-    rw [← integrableOn_iff_integrable_of_support_subset
-      ((Function.support_mul_subset_left _ _).trans (subset_tsupport ζ))]
-    exact Measure.integrableOn_of_bounded (M := max C 0) (hμf _ hζc hζV).ne
-      hmeas.aestronglyMeasurable (Eventually.of_forall hbdd)
+  have hIw := hG.integrable_mul hμf hζ hζc hζV
   have hIG : Integrable (fun z ↦ ζ z * G l z) μ :=
     integrable_of_tsupport_subset hμf hζG hζc.mul_right ((tsupport_mul_subset_left).trans hζV)
   refine (integral_mono hIw hIG fun z ↦ ?_).trans hle1
@@ -438,39 +446,6 @@ theorem integral_cutoff_weight_le {q : ℕ} {V : Opens (ComplexModel n)}
   · exact mul_le_mul_of_nonneg_left (hG.le_of_mem hzV l) (hζ01 z).1
   · have : ζ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hζV h)
     simp [this]
-
-theorem IsDecApprox.integrable_mul {V : Opens (ComplexModel n)} {w : ComplexModel n → ℝ}
-    {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox V w G) {μ : Measure (ComplexModel n)}
-    (hμf : ∀ K, IsCompact K → K ⊆ V → μ K < ⊤) {ψ : ComplexModel n → ℝ} (hψ : Continuous ψ)
-    (hψc : HasCompactSupport ψ) (hψV : tsupport ψ ⊆ V) :
-    Integrable (fun z ↦ ψ z * w z) μ := by
-  obtain ⟨C, hC⟩ := hG.exists_abs_le hψc hψV
-  obtain ⟨B, hB⟩ := hψc.exists_bound_of_continuous hψ
-  have hmeas : Measurable fun z ↦ ψ z * w z := by
-    refine measurable_of_tendsto_metrizable (f := fun m z ↦ ψ z * G m z)
-      (fun m ↦ (continuous_of_continuousOn_of_eq_zero V.isOpen (isClosed_tsupport ψ) hψV
-        (hψ.continuousOn.mul (hG.1 m).1.continuousOn)
-        fun z hz ↦ by simp [image_eq_zero_of_notMem_tsupport hz]).measurable) ?_
-    rw [tendsto_pi_nhds]
-    intro z
-    by_cases hzV : z ∈ (V : Set (ComplexModel n))
-    · exact (hG.2.2.1 z hzV).const_mul _
-    · have : ψ z = 0 := image_eq_zero_of_notMem_tsupport fun h ↦ hzV (hψV h)
-      simp [this]
-  have hbdd : ∀ z, ‖ψ z * w z‖ ≤ B * max C 0 := by
-    intro z
-    by_cases hz : z ∈ tsupport ψ
-    · have hwC : |w z| ≤ C :=
-        le_of_tendsto' ((continuous_abs.tendsto _).comp (hG.2.2.1 z (hψV hz))) fun m ↦ hC m z hz
-      rw [Real.norm_eq_abs, abs_mul]
-      exact mul_le_mul (by simpa [Real.norm_eq_abs] using hB z) (hwC.trans (le_max_left _ _))
-        (abs_nonneg _) ((norm_nonneg _).trans (hB z))
-    · simp only [image_eq_zero_of_notMem_tsupport hz, zero_mul, norm_zero]
-      exact mul_nonneg ((norm_nonneg _).trans (hB z)) (le_max_right _ _)
-  rw [← integrableOn_iff_integrable_of_support_subset
-    ((Function.support_mul_subset_left _ _).trans (subset_tsupport ψ))]
-  exact Measure.integrableOn_of_bounded (M := B * max C 0) (hμf _ hψc hψV).ne
-    hmeas.aestronglyMeasurable (Eventually.of_forall hbdd)
 
 /-- **Convergence for a modified family.** With the collar estimate, the upper
 bound applied to `χ` and to `ζ - χ` squeezes the weighted integrals of `χ`. -/

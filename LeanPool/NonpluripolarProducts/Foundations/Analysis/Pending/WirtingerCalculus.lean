@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CauchyGreenOperator
+public import Mathlib.Analysis.Calculus.ContDiff.Basic
+public import Mathlib.Analysis.Complex.Basic
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 
 /-!
@@ -31,39 +32,50 @@ noncomputable section
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 
+/-- A directional first-order operator `(Df(v) + c·Df(Iv))/2`; `c = -i` gives
+`∂/∂w` and `c = i` gives `∂/∂wBar` along the complex line spanned by `v`. -/
+def wirt (c : ℂ) (v : E) (f : E → ℂ) (x : E) : ℂ :=
+  (fderiv ℝ f x v + c * fderiv ℝ f x (I • v)) / 2
+
+/-- The Wirtinger derivative `∂/∂w` along the complex line spanned by `v`. -/
+abbrev dDir (v : E) (f : E → ℂ) (x : E) : ℂ := wirt (-I) v f x
+
+/-- The Wirtinger derivative `∂/∂wBar` along the complex line spanned by `v`. -/
+def dbarDir (v : E) (f : E → ℂ) (x : E) : ℂ := wirt I v f x
+
 theorem dbarDir_congr {v : E} {f g : E → ℂ} {x : E} (h : f =ᶠ[𝓝 x] g) :
     dbarDir v f x = dbarDir v g x := by
-  simp only [dbarDir, h.fderiv_eq]
+  simp only [dbarDir, wirt, h.fderiv_eq]
 
 theorem dbarDir_add {v : E} {f g : E → ℂ} {x : E} (hf : DifferentiableAt ℝ f x)
     (hg : DifferentiableAt ℝ g x) :
     dbarDir v (fun y ↦ f y + g y) x = dbarDir v f x + dbarDir v g x := by
-  simp only [dbarDir, fderiv_fun_add hf hg, add_apply]
+  simp only [dbarDir, wirt, fderiv_fun_add hf hg, add_apply]
   ring
 
 theorem dbarDir_sub {v : E} {f g : E → ℂ} {x : E} (hf : DifferentiableAt ℝ f x)
     (hg : DifferentiableAt ℝ g x) :
     dbarDir v (fun y ↦ f y - g y) x = dbarDir v f x - dbarDir v g x := by
-  simp only [dbarDir, fderiv_fun_sub hf hg, sub_apply]
+  simp only [dbarDir, wirt, fderiv_fun_sub hf hg, sub_apply]
   ring
 
 theorem dbarDir_const {v : E} (c : ℂ) (x : E) : dbarDir v (fun _ ↦ c) x = 0 := by
-  simp [dbarDir]
+  simp [dbarDir, wirt]
 
 theorem dbarDir_add_dir (u w : E) (f : E → ℂ) (x : E) :
     dbarDir (u + w) f x = dbarDir u f x + dbarDir w f x := by
-  simp only [dbarDir, smul_add, map_add]
+  simp only [dbarDir, wirt, smul_add, map_add]
   ring
 
 theorem dbarDir_real_smul_dir (c : ℝ) (v : E) (f : E → ℂ) (x : E) :
     dbarDir (c • v) f x = c * dbarDir v f x := by
   have h2 : I • c • v = c • (I • v) := smul_comm _ _ _
-  simp only [dbarDir, h2, map_smul, Complex.real_smul]
+  simp only [dbarDir, wirt, h2, map_smul, Complex.real_smul]
   ring
 
 theorem dbarDir_I_smul_dir (v : E) (f : E → ℂ) (x : E) :
     dbarDir (I • v) f x = -I * dbarDir v f x := by
-  simp only [dbarDir, smul_smul, I_mul_I, neg_one_smul, map_neg]
+  simp only [dbarDir, wirt, smul_smul, I_mul_I, neg_one_smul, map_neg]
   ring_nf
   rw [I_sq]
   ring
@@ -75,16 +87,8 @@ theorem dbarDir_ofReal_mul {v : E} {χ : E → ℝ} {a : E → ℂ} {x : E}
       dbarDir v (fun y ↦ (χ y : ℂ)) x * a x + χ x * dbarDir v a x := by
   have hχc : DifferentiableAt ℝ (fun y ↦ (χ y : ℂ)) x :=
     (Complex.ofRealCLM.differentiableAt).comp x hχ
-  simp only [dbarDir, fderiv_fun_mul hχc ha, add_apply, smul_apply, smul_eq_mul]
+  simp only [dbarDir, wirt, fderiv_fun_mul hχc ha, add_apply, smul_apply, smul_eq_mul]
   ring
-
-/-- A directional first-order operator `(Df(v) + c·Df(Iv))/2`; `c = -i` gives
-`∂/∂w` and `c = i` gives `∂/∂wBar` along the complex line spanned by `v`. -/
-def wirt (c : ℂ) (v : E) (f : E → ℂ) (x : E) : ℂ :=
-  (fderiv ℝ f x v + c * fderiv ℝ f x (I • v)) / 2
-
-/-- The Wirtinger derivative `∂/∂w` along the complex line spanned by `v`. -/
-abbrev dDir (v : E) (f : E → ℂ) (x : E) : ℂ := wirt (-I) v f x
 
 theorem dbarDir_eq_wirt (v : E) (f : E → ℂ) (x : E) : dbarDir v f x = wirt I v f x := rfl
 

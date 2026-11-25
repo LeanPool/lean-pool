@@ -11,9 +11,11 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SourceBedfordTaylorCurrentNormalization
 
 /-!
-# Normalization of the trace measure
+# Rescaling the trace measure
 
-Derives the source normalization of the trace from its behavior under scaling.
+The trace of a positive current scales by the same nonnegative factor as
+the current. For the auxiliary convention `D = 2π ddᶜ`, the trace of a
+product of `q` factors therefore scales by `(2π)^q`.
 -/
 
 @[expose] public section
@@ -55,7 +57,7 @@ theorem traceMeasure_smul {r : ℕ} {T : LocalProductCurrent n U r}
   rw [traceMeasureOn_smul hT hc, Measure.map_smul _ measurable_subtype_coe.aemeasurable]
   rfl
 
-/-- The independently constructed trace measures have the literal source normalization. -/
+/-- The trace of the product with `D = 2π ddᶜ` is scaled by `(2π)^q`. -/
 theorem sourceDProduct_traceMeasure (q r : ℕ) (u : Fin q → ComplexModel n → ℝ)
     (T : LocalProductCurrent n U (r + q)) (hT : IsPositive T)
     (hTc : IsClosedAny (r + q) T) (hu : ∀ i, IsLocallyBoundedPshOn U (u i)) :

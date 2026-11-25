@@ -146,7 +146,7 @@ theorem dbarDir_zeroOnePart_comm {S : ComplexModel n → ComplexModel n [⋀^Fin
   have h1 := h11 u v
   have h2 := h11 (I • u) v
   simp only [smul_smul, I_mul_I, neg_one_smul, hA] at h1 h2
-  simp only [dbarDir]
+  simp only [dbarDir, wirt]
   rw [fderiv_zeroOnePart hS, fderiv_zeroOnePart hS, fderiv_zeroOnePart hS,
     fderiv_zeroOnePart hS]
   simp only [zeroOnePart]
@@ -193,7 +193,7 @@ theorem exists_smooth_local_ddc_potential_of_ne_zero (hn : n ≠ 0)
     have hw' : fderiv ℝ w y = imCLM.comp (fderiv ℝ f y) :=
       (imCLM.hasFDerivAt.comp y (hfd y).hasFDerivAt).fderiv
     rw [hu', hw']
-    simp [dbarDir] at h
+    simp [dbarDir, wirt] at h
     simp
     linarith
   let ω₀ : ComplexModel n → ComplexModel n [⋀^Fin 0]→L[ℝ] ℝ := fun y ↦

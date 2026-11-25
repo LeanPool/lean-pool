@@ -61,46 +61,12 @@ theorem IsSmoothPsdOn.plurisubharmonicOn {U : Opens (ComplexModel n)}
     intro y hy v
     have hf2 : ContDiffAt ℝ 2 f y := ((hf.1 y hy).contDiffAt (U.isOpen.mem_nhds hy)).of_le
       (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-    set x : Fin n → ℂ := fun j ↦ star (v j) with hx
-    have h := complexHessian_dotProduct_mulVec_eq_leviForm hf2 x
-    have hv : (∑ j, ((x j).re • coordinateVector j -
-        (x j).im • (Complex.I • coordinateVector j)) : ComplexModel n) = v := by
-      ext i
-      simp only [hx, coordinateVector, WithLp.ofLp_sub, WithLp.ofLp_sum, WithLp.ofLp_smul,
-        Finset.sum_apply, Pi.sub_apply, Pi.smul_apply]
-      rw [Finset.sum_eq_single i (fun b _ hb ↦ by simp [Ne.symm hb])
-        (by simp)]
-      simp [Complex.re_add_im]
-    have h' : star x ⬝ᵥ ((complexHessian f y).mulVec x) =
-        ((leviForm f y (∑ j, ((x j).re • coordinateVector j -
-          (x j).im • (Complex.I • coordinateVector j))) : ℝ) : ℂ) := h
-    rw [hv] at h'
+    let x : Fin n → ℂ := fun j => star (v j)
     have hpos := (hf.2 y hy).dotProduct_mulVec_nonneg x
-    rw [h'] at hpos
+    rw [complexHessian_dotProduct_mulVec_eq_leviForm hf2 x,
+      show conjugateCoordinateCombination x = v from conjugateCoordinateCombination_star v] at hpos
     exact_mod_cast hpos
-  intro y hy
-  obtain ⟨g, hg, heq⟩ := exists_contDiff_eventuallyEq_of_contDiffOn U.isOpen hf.1 hy
-  have hmem : {x | f x = g x} ∩ U ∈ 𝓝 y := inter_mem heq (U.isOpen.mem_nhds hy)
-  obtain ⟨W, hWsub, hW, hyW⟩ := _root_.mem_nhds_iff.mp hmem
-  have hWU : W ⊆ U := fun x hx ↦ (hWsub hx).2
-  have heqW : EqOn f g W := fun x hx ↦ (hWsub hx).1
-  have hgLevi : ∀ x ∈ W, ∀ v : ComplexModel n, 0 ≤ leviForm g x v := by
-    intro x hx v
-    have hlocal : f =ᶠ[𝓝 x] g := by
-      filter_upwards [hW.mem_nhds hx] with t ht
-      exact heqW ht
-    have hsecond : fderiv ℝ (fderiv ℝ f) x = fderiv ℝ (fderiv ℝ g) x :=
-      hlocal.fderiv.fderiv_eq
-    have hl : leviForm f x v = leviForm g x v := by
-      simp only [leviForm, realHessian_eq_fderiv, hsecond]
-    rw [← hl]
-    exact hlevi x (hWU hx) v
-  have hgPsh : PlurisubharmonicOn (fun x ↦ (g x : EReal)) W :=
-    plurisubharmonicOn_of_levi_nonneg
-      (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hW hgLevi
-  apply (hgPsh y hyW).congr
-  filter_upwards [hW.mem_nhds hyW] with x hx
-  exact congrArg (fun t : ℝ ↦ (t : EReal)) (heqW hx).symm
+  exact plurisubharmonicOn_of_contDiffOn_levi_nonneg U.isOpen hf.1 hlevi
 
 theorem IsSmoothPsdOn.isLocallyBoundedPshOn {Ω : Opens (ComplexModel n)}
     {g : ComplexModel n → ℝ} (hg : IsSmoothPsdOn Ω g) : IsLocallyBoundedPshOn Ω g :=

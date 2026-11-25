@@ -190,8 +190,7 @@ theorem plurisubharmonicOn_uscRegularization_sSup
       filter_upwards [hzseq.eventually (hwusc z b hwb)] with n hn
       exact (hle n).trans_lt hn
     let approximation : MovingDiscPshApproximation w x v r :=
-      ⟨Ω, potential, centers, B, hdiscPsh, hdisc, hpotentialB, fun y hy =>
-        (hC y hy).trans (EReal.coe_le_coe_iff.mpr hCB), hcenter, hboundary⟩
+      ⟨Ω, potential, centers, B, hdiscPsh, hdisc, hpotentialB, hcenter, hboundary⟩
     have hFatou : circleDeficit w x v r B ≤
         ENNReal.ofReal (2 * Real.pi) * ((B : EReal) - w x).toENNReal :=
       approximation.circleSubmean hr

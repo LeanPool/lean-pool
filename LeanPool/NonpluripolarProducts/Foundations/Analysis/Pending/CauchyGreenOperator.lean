@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CauchyPompeiu
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WirtingerCalculus
 public import Mathlib.Analysis.Calculus.ParametricIntegral
 public import Mathlib.Analysis.Calculus.ContDiff.FiniteDimension
 public import Mathlib.Analysis.SpecialFunctions.Pow.Integral
@@ -35,10 +36,6 @@ namespace SGPT.Foundations.Analysis.Pending.CauchyGreen
 noncomputable section
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E] [FiniteDimensional ℂ E]
-
-/-- The Wirtinger derivative `∂/∂wBar` along the complex line spanned by `v`. -/
-def dbarDir (v : E) (f : E → ℂ) (x : E) : ℂ :=
-  (fderiv ℝ f x v + I * fderiv ℝ f x (I • v)) / 2
 
 /-- The Cauchy–Green operator along the complex line spanned by `v`. -/
 def cauchyGreen (v : E) (g : E → ℂ) (x : E) : ℂ :=
@@ -203,7 +200,7 @@ theorem dbarDir_cauchyGreen {g : E → ℂ} (hg : ContDiff ℝ 1 g)
     change g (x - w • v) = 0
     exact image_eq_zero_of_notMem_tsupport (hK x (mem_closedBall_self zero_le_one) w hw)
   have hdbar (w : ℂ) : dbar φ w = -dbarDir v g (x - w • v) := by
-    simp only [dbar, dbarDir, (hφderiv w).fderiv]
+    simp only [dbar, dbarDir, wirt, (hφderiv w).fderiv]
     simp
     ring
   have hP := integral_inv_mul_dbar hφ hφc
@@ -219,12 +216,12 @@ theorem dbarDir_cauchyGreen {g : E → ℂ} (hg : ContDiff ℝ 1 g)
       ← integral_div]
     congr 1
     funext w
-    simp only [dbarDir, smul_eq_mul]
+    simp only [dbarDir, wirt, smul_eq_mul]
     ring
   have key : A + I * B = 2 * (π * g x) := by
     rw [← hval, hAB]
     ring
-  simp only [dbarDir, fderiv_cauchyGreen_apply hg hc hv, cauchyGreen]
+  simp only [dbarDir, wirt, fderiv_cauchyGreen_apply hg hc hv, cauchyGreen]
   calc ((π : ℂ)⁻¹ * A + I * ((π : ℂ)⁻¹ * B)) / 2 = (π : ℂ)⁻¹ * (A + I * B) / 2 := by ring
     _ = g x := by
       rw [key]

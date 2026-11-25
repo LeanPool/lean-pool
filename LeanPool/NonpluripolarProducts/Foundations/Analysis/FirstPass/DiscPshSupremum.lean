@@ -136,18 +136,10 @@ structure MovingDiscPshApproximation (w : E → EReal) (x v : E) (r : ℝ) where
   disc_subset : ∀ n, affineClosedDisc (centers n) v r ⊆ domain
   potential_le_bound : ∀ n, ∀ y ∈ affineClosedDisc (centers n) v r,
     potential n y ≤ (bound : EReal)
-  target_le_bound : ∀ y ∈ affineClosedDisc x v r, w y ≤ (bound : EReal)
   center_tendsto : Tendsto (fun n => potential n (centers n)) atTop (𝓝 (w x))
   boundary_limsup_le : ∀ t : ℝ,
     limsup (fun n => potential n (centers n + circleMap 0 r t • v)) atTop ≤
       w (x + circleMap 0 r t • v)
-
-/-- A target admits moving disc-PSH approximations on a set when every
-positive-radius affine closed disc in the set has approximation data with a
-common finite majorant. -/
-def HasMovingDiscPshApproximations (w : E → EReal) (U : Set E) : Prop :=
-  ∀ (x v : E) (r : ℝ), 0 < r → affineClosedDisc x v r ⊆ U →
-    Nonempty (MovingDiscPshApproximation w x v r)
 
 /-- The Fatou argument for one packaged moving-disc approximation. -/
 theorem MovingDiscPshApproximation.circleSubmean
@@ -157,28 +149,6 @@ theorem MovingDiscPshApproximation.circleSubmean
       ENNReal.ofReal (2 * Real.pi) * ((A.bound : EReal) - w x).toENNReal :=
   circleSubmean_of_moving_discPsh A.discPsh x A.centers v hr A.disc_subset
     A.bound A.potential_le_bound A.center_tendsto A.boundary_limsup_le
-
-/-- A target with explicit moving common-domain disc-PSH approximations
-satisfies the full disc criterion.  Upper semicontinuity and exclusion of
-positive infinity are kept separate because the Fatou argument supplies
-exactly the submean field. -/
-theorem discPshOn_of_hasMovingDiscPshApproximations
-    {w : E → EReal} {U : Set E}
-    (hne : ∀ x ∈ U, w x ≠ ⊤) (husc : UpperSemicontinuousOn w U)
-    (happrox : HasMovingDiscPshApproximations w U) : DiscPshOn w U := by
-  refine ⟨hne, husc, ?_⟩
-  intro x v r hr hD C hC
-  let A := (happrox x v r hr hD).some
-  have hA := A.circleSubmean hr
-  rcases le_total C A.bound with hCA | hAC
-  · have ha : 0 ≤ A.bound - C := sub_nonneg.mpr hCA
-    apply (discSubmean_add_bound_iff x v hr.le C (A.bound - C) ha hC).mp
-    convert hA using 1 <;> ring_nf
-  · have ha : 0 ≤ C - A.bound := sub_nonneg.mpr hAC
-    have hraised :=
-      (discSubmean_add_bound_iff x v hr.le A.bound (C - A.bound) ha
-        A.target_le_bound).mpr hA
-    convert hraised using 1 <;> ring_nf
 
 end
 

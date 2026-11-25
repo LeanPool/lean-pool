@@ -128,6 +128,35 @@ theorem exists_contDiff_eventuallyEq_of_contDiffOn
   have hby : b y = 1 := b.one_of_mem_closedBall (Metric.ball_subset_closedBall hy)
   simp [g, hyW, hby]
 
+/-- Nonnegative Levi form on an open set implies plurisubharmonicity there. -/
+theorem plurisubharmonicOn_of_contDiffOn_levi_nonneg
+    {U : Set (ComplexModel n)} {f : ComplexModel n → ℝ} (hU : IsOpen U)
+    (hf : ContDiffOn ℝ ∞ f U) (hlevi : ∀ y ∈ U, ∀ v, 0 ≤ leviForm f y v) :
+    PlurisubharmonicOn (fun y => (f y : EReal)) U := by
+  intro y hy
+  obtain ⟨g, hg, heq⟩ := exists_contDiff_eventuallyEq_of_contDiffOn hU hf hy
+  have hmem : {x | f x = g x} ∩ U ∈ 𝓝 y := inter_mem heq (hU.mem_nhds hy)
+  obtain ⟨W, hWsub, hW, hyW⟩ := _root_.mem_nhds_iff.mp hmem
+  have hWU : W ⊆ U := fun x hx ↦ (hWsub hx).2
+  have heqW : EqOn f g W := fun x hx ↦ (hWsub hx).1
+  have hgLevi : ∀ x ∈ W, ∀ v : ComplexModel n, 0 ≤ leviForm g x v := by
+    intro x hx v
+    have hlocal : f =ᶠ[𝓝 x] g := by
+      filter_upwards [hW.mem_nhds hx] with t ht
+      exact heqW ht
+    have hsecond : fderiv ℝ (fderiv ℝ f) x = fderiv ℝ (fderiv ℝ g) x :=
+      hlocal.fderiv.fderiv_eq
+    have hl : leviForm f x v = leviForm g x v := by
+      simp only [leviForm, realHessian_eq_fderiv, hsecond]
+    rw [← hl]
+    exact hlevi x (hWU hx) v
+  have hgPsh : PlurisubharmonicOn (fun x ↦ (g x : EReal)) W :=
+    plurisubharmonicOn_of_levi_nonneg
+      (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hW hgLevi
+  apply (hgPsh y hyW).congr
+  filter_upwards [hW.mem_nhds hyW] with x hx
+  exact congrArg (fun t : ℝ ↦ (t : EReal)) (heqW hx).symm
+
 /-- The complex diagonal of the normalized `ddᶜ` is the Levi form divided by
 `π`. -/
 theorem smoothDDC_complexDiagonal_eq_leviForm {u : ComplexModel n → ℝ}
@@ -145,33 +174,13 @@ theorem plurisubharmonicOn_coe_of_smoothDDC_eq_zero
     (hW : IsOpen W) (hh : ContDiffOn ℝ ∞ h W)
     (hzero : ∀ z ∈ W, smoothDDC h z = 0) :
     PlurisubharmonicOn (fun z ↦ (h z : EReal)) W := by
-  intro x hx
-  obtain ⟨g, hg, heq⟩ := exists_contDiff_eventuallyEq_of_contDiffOn hW hh hx
-  have hmem : {y | h y = g y} ∩ W ∈ 𝓝 x := inter_mem heq (hW.mem_nhds hx)
-  obtain ⟨V, hVsub, hV, hxV⟩ := mem_nhds_iff.mp hmem
-  have hVW : V ⊆ W := fun y hy ↦ (hVsub hy).2
-  have heqV : EqOn h g V := fun y hy ↦ (hVsub hy).1
-  have hddcg : ∀ y ∈ V, smoothDDC g y = 0 := by
-    intro y hy
-    have hloc : h =ᶠ[𝓝 y] g := by
-      filter_upwards [hV.mem_nhds hy] with t ht
-      exact heqV ht
-    rw [← smoothDDC_congr hloc]
-    exact hzero y (hVW hy)
-  have hlevi : ∀ y ∈ V, ∀ v : ComplexModel n, leviForm g y v = 0 := by
-    intro y hy v
-    have hdiag := smoothDDC_complexDiagonal_eq_leviForm (z := y)
-      ((hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)).contDiffAt) v
-    rw [hddcg y hy] at hdiag
-    have hz : leviForm g y v / Real.pi = 0 := hdiag.symm
-    exact (div_eq_zero_iff.mp hz).resolve_right Real.pi_ne_zero
-  have hpshg : PlurisubharmonicOn (fun y ↦ (g y : EReal)) V :=
-    plurisubharmonicOn_of_levi_nonneg
-      (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hV
-      (fun y hy v ↦ (hlevi y hy v).ge)
-  apply (hpshg x hxV).congr
-  filter_upwards [hV.mem_nhds hxV] with y hy
-  rw [heqV hy]
+  refine plurisubharmonicOn_of_contDiffOn_levi_nonneg hW hh ?_
+  intro y hy v
+  have hh2 : ContDiffAt ℝ 2 h y := ((hh y hy).contDiffAt (hW.mem_nhds hy)).of_le
+    (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
+  have hdiag := smoothDDC_complexDiagonal_eq_leviForm hh2 v
+  rw [hzero y hy] at hdiag
+  exact ((div_eq_zero_iff.mp hdiag.symm).resolve_right Real.pi_ne_zero).ge
 
 /-- Finite corrections cancel without changing either infinity of `EReal`. -/
 theorem corrected_add_sub (a : EReal) (r s : ℝ) :

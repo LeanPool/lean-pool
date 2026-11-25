@@ -986,32 +986,7 @@ theorem plurisubharmonicOn_coe_comp_of_smooth
       FirstPass.HolomorphicDDC.leviForm_comp hU hV hF hpSmooth hFV hy v]
     exact FirstPass.leviForm_nonneg_of_contDiffOn_plurisubharmonicOn
       (U := ⟨V, hV⟩) hpSmooth hp (hFV hy) _
-  intro y hy
-  obtain ⟨g, hg, heq⟩ :=
-    FirstPass.exists_contDiff_eventuallyEq_of_contDiffOn hU hqSmooth hy
-  have hmem : {x | q x = g x} ∩ U ∈ 𝓝 y :=
-    inter_mem heq (hU.mem_nhds hy)
-  obtain ⟨W, hWsub, hW, hyW⟩ := _root_.mem_nhds_iff.mp hmem
-  have hWU : W ⊆ U := fun x hx => (hWsub hx).2
-  have heqW : EqOn q g W := fun x hx => (hWsub hx).1
-  have hgLevi : ∀ x ∈ W, ∀ v : ComplexModel k, 0 ≤ leviForm g x v := by
-    intro x hx v
-    have hlocal : q =ᶠ[𝓝 x] g := by
-      filter_upwards [hW.mem_nhds hx] with t ht
-      exact heqW ht
-    have hsecond : fderiv ℝ (fderiv ℝ q) x = fderiv ℝ (fderiv ℝ g) x :=
-      hlocal.fderiv.fderiv_eq
-    have hlevi : leviForm q x v = leviForm g x v := by
-      simp only [leviForm, realHessian_eq_fderiv, hsecond]
-    rw [← hlevi]
-    exact hqLevi x (hWU hx) v
-  have hgPsh : PlurisubharmonicOn (fun x => (g x : EReal)) W :=
-    plurisubharmonicOn_of_levi_nonneg
-      (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hW hgLevi
-  apply (hgPsh y hyW).congr
-  filter_upwards [hW.mem_nhds hyW] with x hx
-  change (g x : EReal) = (q x : EReal)
-  exact congrArg (fun t : ℝ => (t : EReal)) (heqW hx).symm
+  exact FirstPass.plurisubharmonicOn_of_contDiffOn_levi_nonneg hU hqSmooth hqLevi
 
 /-- Smooth real-valued PSH targets pull back under the same first-order
 holomorphicity hypothesis as the singular theorem.  On each tested affine

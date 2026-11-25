@@ -78,41 +78,18 @@ theorem thetaPlurisubharmonic_smooth_iff
       (hu e).mono hρ.2.1
     have hf : ContDiffOn ℝ ∞ f W := huchart.add hρ.2.2.1
     have hpshReal : PlurisubharmonicOn (fun y => (f y : EReal)) W := by
-      intro x hx
-      obtain ⟨g, hg, heq⟩ :=
-        exists_contDiff_eventuallyEq_of_contDiffOn hρ.1 hf hx
-      have hmem : {y | f y = g y} ∩ W ∈ 𝓝 x :=
-        inter_mem heq (hρ.1.mem_nhds hx)
-      obtain ⟨V, hVsub, hV, hxV⟩ := mem_nhds_iff.mp hmem
-      have hVW : V ⊆ W := fun y hy => (hVsub hy).2
-      have heqV : Set.EqOn f g V := fun y hy => (hVsub hy).1
-      have hlevig : ∀ y ∈ V, ∀ v : ComplexModel n, 0 ≤ leviForm g y v := by
-        intro y hy v
-        have hyW : y ∈ W := hVW hy
-        have hlocal : f =ᶠ[𝓝 y] g := by
-          filter_upwards [hV.mem_nhds hy] with q hq
-          exact heqV hq
-        have hddc : 0 ≤ smoothDDC f y ![v, Complex.I • v] := by
-          have hbase := hdiag e y (hρ.2.1 hyW) v
-          dsimp only [f]
-          rw [smoothDDC_add hρ.1 huchart hρ.2.2.1 hyW,
-            hρ.2.2.2 hyW]
-          simpa only [ContinuousAlternatingMap.add_apply, add_comm] using hbase
-        have hddceq : smoothDDC f y = smoothDDC g y :=
-          smoothDDC_congr hlocal
-        rw [hddceq] at hddc
-        have hg2 : ContDiffAt ℝ 2 g y :=
-          (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)).contDiffAt
-        rw [smoothDDC_complexDiagonal_eq_leviForm hg2 v] at hddc
-        have hmul : 0 ≤ (leviForm g y v / Real.pi) * Real.pi :=
-          mul_nonneg hddc Real.pi_pos.le
-        rwa [div_mul_cancel₀ _ Real.pi_ne_zero] at hmul
-      have hpshg : PlurisubharmonicOn (fun y => (g y : EReal)) V :=
-        plurisubharmonicOn_of_levi_nonneg
-          (hg.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)) hV hlevig
-      apply (hpshg x hxV).congr
-      filter_upwards [hV.mem_nhds hxV] with y hy
-      rw [heqV hy]
+      refine plurisubharmonicOn_of_contDiffOn_levi_nonneg hρ.1 hf ?_
+      intro y hy v
+      have hf2 : ContDiffAt ℝ 2 f y := ((hf y hy).contDiffAt (hρ.1.mem_nhds hy)).of_le
+        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
+      have hddc : 0 ≤ smoothDDC f y ![v, Complex.I • v] := by
+        have hbase := hdiag e y (hρ.2.1 hy) v
+        dsimp only [f]
+        rw [smoothDDC_add hρ.1 huchart hρ.2.2.1 hy, hρ.2.2.2 hy]
+        simpa only [ContinuousAlternatingMap.add_apply, add_comm] using hbase
+      rw [smoothDDC_complexDiagonal_eq_leviForm hf2 v] at hddc
+      have hmul := mul_nonneg hddc Real.pi_pos.le
+      rwa [div_mul_cancel₀ _ Real.pi_ne_zero] at hmul
     simpa only [f, chartFunction, EReal.coe_add] using hpshReal
 
 end

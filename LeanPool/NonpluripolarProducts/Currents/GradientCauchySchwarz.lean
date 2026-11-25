@@ -30,11 +30,13 @@ positive current of bidimension `(1,1)`.  In the real coordinates `x_a` of `ℂ�
 (`coeffForm`), so that `dd^c u = -(1/4π) ∑ ∂_a∂_b u P_{ab}`.
 
 * `quadForm γ ξ ζ = -∑_{a,b} ξ_a ζ_b γ ∧ P_{ab}` is a symmetric bilinear map with values in the
-  constant `(q+1,q+1)`-forms (`quadForm_comm`); for `ξ = ∂u(x)` it is `4π γ ∧ du ∧ d^c u` up to
-  the normalization, and `quadForm γ ξ ξ` is strongly positive (`quadForm_mem_posCone`:
-  `-∑ ξ_a ξ_b P_{ab}(v, iv) = ξ(v)² + ξ(iv)²`).  Hence `(ξ, ζ) ↦ L_x(quadForm γ ξ ζ)` is the
-  positive semidefinite density matrix `H(x)` of FPT for `σ_T`-almost every `x`
-  (`ae_densityForm_quadForm_nonneg`).
+  constant `(q+1,q+1)`-forms (`quadForm_comm`). The diagonal form is strongly positive
+  (`quadForm_mem_posCone`). Thus `(ξ, ζ) ↦ L_x(quadForm γ ξ ζ)` is positive semidefinite for
+  `σ_T`-almost every `x` (`ae_densityForm_quadForm_nonneg`). This is a real bilinear analogue
+  of the Hermitian gradient density in Xia. Lean uses the trace of `T`.
+  Xia normalizes the matrix with respect to the trace of the bidimension-one current
+  `Θ = γ ∧ T`.
+  [Xia's choice of reference measure](https://github.com/MingchenXia/foundations-of-pluripotential-theory/blob/5d7f16338ae82d4933193a0cb331365e737824db/chapters/inputs/q08-current-gradients.tex#L5-L19).
 * **The Cauchy–Schwarz inequality** in the arithmetic–geometric form
   `2 |L_x(Q(ξ, ζ))| ≤ t L_x(Q(ξ, ξ)) + L_x(Q(ζ, ζ)) / t` for all `t > 0`
   (`ae_two_mul_abs_densityForm_quadForm_le`), from the general
@@ -259,7 +261,7 @@ theorem two_mul_abs_le_of_nonneg {V : Type*} [AddCommGroup V] [Module ℝ V]
 
 end CauchySchwarz
 
-/-! ### The density matrix of `γ ∧ T` -/
+/-! ### The real bilinear density relative to `σ_T` -/
 
 section Density
 
@@ -271,14 +273,14 @@ theorem densityForm_quadForm (hT : IsPositive T) (x : (ComplexModel n)) (γ : fo
       ∑ a, ∑ b, (-(ξ a * ζ b)) * densityForm hT x (coeffWedge γ a b) := by
   simp only [quadForm_apply, map_sum, map_smul, smul_eq_mul]
 
-/-- **The density matrix is positive semidefinite** for `σ_T`-almost every point. -/
+/-- The real bilinear pairing is positive semidefinite for `σ_T`-almost every point. -/
 theorem ae_densityForm_quadForm_nonneg (hT : IsPositive T) {γ : formSpan n q}
     (hγ : γ ∈ posCone n q) :
     ∀ᵐ x ∂hT.traceMeasure, ∀ ξ : Fin (n * 2) → ℝ, 0 ≤ densityForm hT x (quadForm q γ ξ ξ) := by
   filter_upwards [ae_densityForm_nonneg hT] with x hx ξ
   exact hx _ (quadForm_mem_posCone hγ ξ)
 
-/-- A pointwise Cauchy–Schwarz estimate for the density matrix. For `σ_T`-almost every `x`,
+/-- A pointwise Cauchy–Schwarz estimate for the real pairing. For `σ_T`-almost every `x`,
 for all `ξ, ζ` and `t > 0`, it bounds `2 |L_x(Q(ξ, ζ))|` by
 `t L_x(Q(ξ, ξ)) + L_x(Q(ζ, ζ)) / t`. This is a pointwise ingredient related to Xia's
 integrated weighted estimate in `eq:current-gradient-cauchy-schwarz`. -/

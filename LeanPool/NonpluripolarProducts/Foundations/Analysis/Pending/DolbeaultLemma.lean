@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.WirtingerCalculus
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CauchyGreenOperator
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalTwoFormPoincare
 
 /-!
@@ -58,7 +58,7 @@ theorem dbarDir_cauchyGreen_comm {E : Type*} [NormedAddCommGroup E] [NormedSpace
     funext w
     simp only [smul_eq_mul]
     ring
-  simp only [dbarDir, fderiv_cauchyGreen_apply hg hc hv, cauchyGreen]
+  simp only [dbarDir, wirt, fderiv_cauchyGreen_apply hg hc hv, cauchyGreen]
   rw [hsum]
   ring
 
@@ -146,7 +146,7 @@ theorem dbarDir_polydiscCutoff_eq_zero {i : Fin n} {y : EuclideanSpace ℂ (Fin 
       fun k hk ↦ by simp [hu k (Finset.ne_of_mem_erase hk)]
     simp only [χ', Finset.prod_congr rfl hk]
   rw [dbarDir_congr heq]
-  simp only [dbarDir]
+  simp only [dbarDir, wirt]
   rw [hinv _ (fun k hk ↦ by simp [basisVec, hk]),
     hinv _ (fun k hk ↦ by simp [basisVec, hk])]
   simp

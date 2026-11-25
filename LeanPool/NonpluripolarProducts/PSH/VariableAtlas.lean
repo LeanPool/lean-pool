@@ -176,14 +176,8 @@ theorem psh_iff_chart_and_nondegenerate {v : X → EReal} :
 theorem locallyBounded_coordinateFamily {I : Type*} {v : I → X → EReal}
     (hb : SGPT.Foundations.Analysis.FirstPass.LocallyUniformlyBoundedAbove
       (Set.range v) Set.univ) (i : A.Index) :
-    LocallyUniformlyBoundedAbove (fun j ↦ A.coordinate (v j) i) (A.chart i).target := by
-  intro z hz
-  obtain ⟨O, hO, C, hC⟩ := hb ((A.chart i).symm z) (mem_univ _)
-  rw [nhdsWithin_univ] at hO
-  have hpre : (A.chart i).symm ⁻¹' O ∈ 𝓝 z := ((A.chart i).continuousAt_symm hz).eventually hO
-  refine ⟨(A.chart i).symm ⁻¹' O, mem_nhdsWithin_of_mem_nhds hpre, C, ?_⟩
-  intro j y hy
-  exact hC (v j) (Set.mem_range_self j) _ ⟨hy.1, mem_univ _⟩
+    LocallyUniformlyBoundedAbove (fun j ↦ A.coordinate (v j) i) (A.chart i).target :=
+  locallyUniformlyBoundedAbove_comp_of_univ hb (fun _ hz => (A.chart i).continuousAt_symm hz)
 
 /-- Coordinate covariance concerns the actual global neighborhood envelope. -/
 theorem uscSup_coordinateFamily {I : Type*} (v : I → X → EReal) (i : A.Index) :

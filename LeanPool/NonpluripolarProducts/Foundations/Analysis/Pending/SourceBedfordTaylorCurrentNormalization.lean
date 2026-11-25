@@ -11,9 +11,13 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorForms
 
 /-!
-# Normalization of Bedford–Taylor currents
+# Rescaling Bedford–Taylor currents
 
-Relates the current construction to the normalization of the analytic source.
+The operator used by `btProduct` has the normalization
+`ddᶜ = (i / (2π)) ∂∂bar`, as in Xia's manuscript. This file also
+records the conversion to the chosen operator `D = 2π ddᶜ` and
+proves that a product of `q` factors is then rescaled by `(2π)^q`.
+[Xia's normalization](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_pshfunctions.tex#L121-L124).
 -/
 
 @[expose] public section
@@ -89,14 +93,14 @@ theorem btProduct_smul_current : ∀ (q r : ℕ) (u : Fin q → ComplexModel n �
     obtain ⟨hS, hSc⟩ := isPositive_ddcMul hT hTc (hu (Fin.last q))
     exact btProduct_smul_current q r (Fin.init u) _ hS hSc (fun i => hu _) c hc
 
-/-- The source recursive product iterates the actual operator `D(uT)=2π ddᶜ(uT)`. -/
+/-- The rescaled recursive product uses the chosen operator `D(uT) = 2π ddᶜ(uT)`. -/
 def sourceDProduct : (q r : ℕ) → (Fin q → ComplexModel n → ℝ) →
     LocalProductCurrent n U (r + q) → LocalProductCurrent n U r
   | 0, _, _, T => T
   | q + 1, r, u, T => sourceDProduct q r (Fin.init u)
       ((2 * Real.pi) • ddcMul T (u (Fin.last q)))
 
-/-- Every source-normalized recursive step produces its literal positive scalar factor. -/
+/-- Each recursive step contributes a factor of `2π` to the rescaled current. -/
 theorem sourceDProduct_eq : ∀ (q r : ℕ) (u : Fin q → ComplexModel n → ℝ)
     (T : LocalProductCurrent n U (r + q)), IsPositive T → IsClosedAny (r + q) T →
     (∀ i, IsLocallyBoundedPshOn U (u i)) →
@@ -110,7 +114,7 @@ theorem sourceDProduct_eq : ∀ (q r : ℕ) (u : Fin q → ComplexModel n → �
       btProduct_smul_current q r (Fin.init u) _ hS hSc (fun i => hu _) _ hc,
       smul_smul, ← pow_succ, ← btProduct_succ]
 
-/-- Under genuine PSH hypotheses the actual source product is positive and closed. -/
+/-- The rescaled product of locally bounded PSH factors is positive and closed. -/
 theorem sourceDProduct_positive_closed (q r : ℕ) (u : Fin q → ComplexModel n → ℝ)
     (T : LocalProductCurrent n U (r + q)) (hT : IsPositive T)
     (hTc : IsClosedAny (r + q) T) (hu : ∀ i, IsLocallyBoundedPshOn U (u i)) :

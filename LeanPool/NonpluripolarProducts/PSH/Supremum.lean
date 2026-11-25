@@ -32,29 +32,36 @@ variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
 variable {I : Type*}
 
 /-- The actual source local uniform upper bound, relative to the domain. -/
-def LocallyUniformlyBoundedAbove (u : I → E → EReal) (U : Set E) : Prop :=
-  ∀ x ∈ U, ∃ V : Set E, V ∈ 𝓝[U] x ∧
-    ∃ C : ℝ, ∀ i, ∀ y ∈ V ∩ U, u i y ≤ (C : EReal)
+def LocallyUniformlyBoundedAbove {X : Type*} [TopologicalSpace X]
+    (u : I → X → EReal) (U : Set X) : Prop :=
+  SGPT.Foundations.Analysis.FirstPass.LocallyUniformlyBoundedAbove (Set.range u) U
 
 /-- The upper semicontinuous regularization of the actual indexed supremum. -/
 noncomputable def uscSup {X : Type*} [TopologicalSpace X]
     (u : I → X → EReal) : X → EReal :=
   SGPT.Foundations.Analysis.FirstPass.uscRegularization (fun x ↦ ⨆ i, u i x)
 
-omit [NormedSpace ℂ E] in
-/-- Indexed and set-family bounds agree for the actual image family. -/
-theorem locallyUniformlyBoundedAbove_range_iff {u : I → E → EReal} {U : Set E} :
+/-- Indexed and set-family bounds agree for the image family. -/
+theorem locallyUniformlyBoundedAbove_range_iff {X : Type*} [TopologicalSpace X]
+    {u : I → X → EReal} {U : Set X} :
     SGPT.Foundations.Analysis.FirstPass.LocallyUniformlyBoundedAbove (Set.range u) U ↔
-      LocallyUniformlyBoundedAbove u U := by
-  constructor
-  · intro h x hx
-    obtain ⟨V, hV, C, hC⟩ := h x hx
-    exact ⟨V, hV, C, fun i ↦ hC (u i) (Set.mem_range_self i)⟩
-  · intro h x hx
-    obtain ⟨V, hV, C, hC⟩ := h x hx
-    refine ⟨V, hV, C, ?_⟩
-    rintro f ⟨i, rfl⟩
-    exact hC i
+      LocallyUniformlyBoundedAbove u U :=
+  Iff.rfl
+
+/-- A map that is continuous at every point of a domain pulls back locally
+uniform upper bounds of a family on the whole target space. -/
+theorem locallyUniformlyBoundedAbove_comp_of_univ
+    {X Y : Type*} [TopologicalSpace X] [TopologicalSpace Y]
+    {u : I → X → EReal} (hb : LocallyUniformlyBoundedAbove u univ)
+    {f : Y → X} {U : Set Y} (hf : ∀ x ∈ U, ContinuousAt f x) :
+    LocallyUniformlyBoundedAbove (fun i y => u i (f y)) U := by
+  intro z hz
+  obtain ⟨O, hO, C, hC⟩ := hb (f z) (mem_univ _)
+  rw [nhdsWithin_univ] at hO
+  have hpre : f ⁻¹' O ∈ 𝓝 z := (hf z hz).eventually hO
+  refine ⟨f ⁻¹' O, mem_nhdsWithin_of_mem_nhds hpre, C, ?_⟩
+  rintro _ ⟨i, rfl⟩ y hy
+  exact hC (u i) (mem_range_self i) _ ⟨hy.1, mem_univ _⟩
 
 omit [NormedAddCommGroup E] [NormedSpace ℂ E] in
 /-- The ambient Pi-lattice supremum is the pointwise indexed supremum. -/
