@@ -449,10 +449,10 @@ theorem not_equiv_8_13 : ¬ Equiv (13, -4, 23) (8, -2, 37) := by
     have := sq_nonneg α; omega
   omega
 
-/-- **The reduced properly primitive forms of determinant `−295`** (Gauss's convention
+/-- Every **reduced properly primitive form of determinant `−295`** (Gauss's convention
 `(a, b, c)`, `b² − ac = −295`, `|2b| ≤ a ≤ c`, `b ≥ 0` if `|2b| = a` or `a = c`,
-`gcd(a, 2b, c) = 1`) are the eight `(1,0,295)`, `(5,0,59)`, `(8,±1,37)`, `(13,±2,23)`,
-`(16,±3,19)`. -/
+`gcd(a, 2b, c) = 1`) belongs to the edition's list
+`(1,0,295)`, `(5,0,59)`, `(8,±1,37)`, `(13,±2,23)`, `(16,±3,19)`. -/
 theorem reduced_forms_295 (a b c : ℤ) (hD : b ^ 2 - a * c = -295) (ha : 0 < a)
     (hb : |2 * b| ≤ a) (hac : a ≤ c) (hbd : |2 * b| = a ∨ a = c → 0 ≤ b)
     (hprim : Int.gcd (Int.gcd a (2 * b)) c = 1) :

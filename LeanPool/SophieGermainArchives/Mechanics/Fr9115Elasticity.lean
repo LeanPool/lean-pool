@@ -64,8 +64,9 @@ statements of those sections that can be stated in mathlib.
   `γ' = γ` satisfies the eight conditions (`first_family_sign`). Modes without force sit at
   rational positions only (`sympathetic_iff_rational`); the arithmetic of the § 5 series
   (`common_term_iff`).
-* **The free lamina touched by a stylet (§ 8, view 342).** Under the eight conditions, a
-  nonzero motion exists iff `C₊(μω) P(λω) + C₊(λω) P(μω) = 0`, `P t = cosh t sin t − sinh t
+* **The free lamina touched by a stylet (§ 8, view 342).** For positive frequency and an interior
+  stylet position, a nonzero mode in this family satisfying the eight conditions exists iff
+  `C₊(μω) P(λω) + C₊(λω) P(μω) = 0`, `P t = cosh t sin t − sinh t
   cos t`, `C₊ t = 1 + cosh t cos t` (`free_stylet_iff`); at `λ = ½` the family `C₊(ω/2) = 0`,
   which § 9 rejects, is a genuine mode (`free_stylet_half`), though not a mode of the free
   lamina (`cplus_incompatible`).

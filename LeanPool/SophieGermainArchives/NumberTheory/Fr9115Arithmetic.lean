@@ -85,7 +85,8 @@ open Finset
 
 /-! ## Manuscript C -/
 
-/-- The statement of view 708 as written fails: `x = y = z = 1`. -/
+/-- The solution `x = y = z = 1` works for every natural `n`, including the odd exponents
+`n > 1` of view 708. -/
 theorem manuscriptC_not_as_written (n : ℕ) :
     ¬ ∀ x y z : ℤ, IsCoprime x y → 2 * z ^ (2 * n) ≠ x ^ (2 * n) + y ^ (2 * n) := by
   intro h
@@ -699,7 +700,8 @@ theorem three_exception : ∀ q, q.Prime → q < 3 →
   · exact ⟨⟨1, by decide⟩, ⟨1, by decide⟩⟩
 
 /-- View 720, the false extension: `-5`, `-17`, `-21` are residues of every prime `q ≡ 3 (mod 4)`
-smaller than them (those dividing them included, `0` being a square). -/
+smaller than their respective absolute values. This includes primes dividing them, since `0` is a
+square. -/
 theorem false_extension :
     (∀ q, q.Prime → q % 4 = 3 → q < 5 → IsSquare (-(5 : ZMod q))) ∧
     (∀ q, q.Prime → q % 4 = 3 → q < 17 → IsSquare (-(17 : ZMod q))) ∧
