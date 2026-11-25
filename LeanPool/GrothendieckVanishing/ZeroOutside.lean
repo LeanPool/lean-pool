@@ -10,7 +10,8 @@ public import Mathlib.Algebra.Category.Grp.FilteredColimits
 public import Mathlib.Algebra.Category.Grp.Limits
 public import Mathlib.Algebra.Category.Grp.Zero
 public import Mathlib.Topology.Sheaves.Stalks
-import LeanPool.GrothendieckVanishing.CohomologyAPI
+import LeanPool.GrothendieckVanishing.ClosedImmersion
+import Mathlib.Topology.Sheaves.Abelian
 
 /-!
 # Extension-by-zero presheaf and sheaf machinery
@@ -445,8 +446,11 @@ theorem _root_.isZero_zeroOutsideInt_bot (X : TopCat.{u}) :
     IsZero (TopCat.Sheaf.zeroOutsideInt (⊥ : Opens X)) := by
   let F := TopCat.Sheaf.zeroOutsideInt (⊥ : Opens X)
   change IsZero F
-  exact sheaf_isZero_of_zero_stalks X F.property (fun x a ↦
-    stalk_zeroOutsideInt_zero_outside ⊥ x (Opens.mem_bot.not.mpr (fun h ↦ h.elim)) a)
+  refine (TopCat.Sheaf.isZero_iff_stalkFunctor_obj_isZero F).mpr (fun x ↦ ?_)
+  have vanishes (a : (TopCat.Presheaf.stalkFunctor AddCommGrpCat.{u} x).obj F.obj) :
+      a = 0 :=
+    stalk_zeroOutsideInt_zero_outside ⊥ x (Opens.mem_bot.not.mpr (fun h ↦ h.elim)) a
+  exact @AddCommGrpCat.isZero_of_subsingleton _ ⟨fun a b ↦ (vanishes a).trans (vanishes b).symm⟩
 
 /-- At a point inside the support open, every stalk element of `zeroOutsideInt V` is an integer
     multiple of the germ of the distinguished generator over `V`. -/
