@@ -8,6 +8,7 @@ Authors: DICTO
 
 module
 
+public import LeanPool.DehnInvariant.Dissection
 public import LeanPool.DehnInvariant.EuclideanSpace
 public import LeanPool.DehnInvariant.Simplex
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
@@ -52,7 +53,7 @@ constraints are tight (`pair_of_finrank_one`), and the angle is π minus the ang
 normals
 (`theta_pair`, from part I). For the tetrahedron the points with two tight constraints are the six
 open
-segments between the corners (`tet_openSegment_iff`); their length is Mathlib's
+segments between the corners (`IsTetraData.openSegment_iff`); their length is Mathlib's
 `MeasureTheory.hausdorffMeasure_segment`.
 No `sorry`.
 -/
@@ -209,62 +210,17 @@ theorem regularTetrahedronData :
       norm_num [Fin.sum_univ_four, inner_smul_right, inner_neg_right, tetN_inner] <;>
       linarith [tet_sum x]
 
-/-- Three distinct face normals have no common perpendicular direction. -/
+/-- The regular tetrahedron is a bounded intersection of its four half-spaces. -/
 theorem isPoly_tetra : IsPoly tetraSet := regularTetrahedronData.isPoly
-
-lemma tet_three {i j k : Fin 4} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) {v : R3}
-    (hi : ⟪tetN i, v⟫ = 0) (hj : ⟪tetN j, v⟫ = 0) (hk : ⟪tetN k, v⟫ = 0) : v = 0 :=
-  regularTetrahedronData.three hij hik hjk hi hj hk
-
-/-- Two tight faces describe the open segment joining the opposite corners. -/
-lemma tet_openSegment_iff {k l : Fin 4} (hkl : k ≠ l) (x : R3) :
-    x ∈ openSegment ℝ (-tetN k) (-tetN l) ↔
-      x ∈ tetraSet ∧ act tetN (fun _ => 1) x = ({k, l}ᶜ : Set (Fin 4)) :=
-  regularTetrahedronData.openSegment_iff hkl x
 
 /-- The angle class where two faces of the tetrahedron meet: arccos(1/3). -/
 lemma tet_theta {A : Set (Fin 4)} {i j : Fin 4} (hij : i ≠ j) (hA : A = {i, j}) :
     theta (cone tetN A) = (Submodule.Quotient.mk tetDihedral : Angle) := by
-  have hli : LinearIndependent ℝ ![tetN i, tetN j] :=
-    linIndep_pair_of_gram (by
-      rw [tetN_inner, tetN_inner, tetN_inner, ite_eq_left rfl, ite_eq_left rfl,
-          ite_eq_right hij]; norm_num)
-  rw [theta_pair tetN hA hli]
-  congr 1
-  unfold InnerProductGeometry.angle tetDihedral
-  rw [norm_eq_sqrt_real_inner, norm_eq_sqrt_real_inner, tetN_inner, tetN_inner, tetN_inner,
-      ite_eq_left rfl,
-    ite_eq_left rfl, ite_eq_right hij, Real.mul_self_sqrt (by norm_num),
-    show (-1 : ℝ) / 3 = -(1 / 3) by norm_num, Real.arccos_neg]
-  ring
-
-lemma tet_nonempty_fin4 : Nonempty (Fin 4) := ⟨0⟩
-
-/-- At a point of the tetrahedron whose tight faces have a line as common direction space, exactly
-two faces
-are tight. -/
-lemma tet_pair {x : R3} (hfin : finrank ℝ (linCone tetN (act tetN (fun _ => 1) x)) = 1) :
-    ∃ i j, i ≠ j ∧ act tetN (fun _ => 1) x = {i, j} :=
-  pair_of_finrank_one tetN hfin
-    (fun _ _ _ _ _ _ hij hik hjk _ hi hj hk => tet_three hij hik hjk hi hj hk)
-
-/-- The angle class of the tetrahedron is arccos(1/3) or 0 at every point. -/
-lemma edgeAngle_tetra_cases (x : R3) :
-    edgeAngle tetraSet x = (Submodule.Quotient.mk tetDihedral : Angle) ∨ edgeAngle tetraSet x
-        = 0 := by
-  by_cases hx : x ∈ tetraSet
-  swap
-  · exact Or.inr (edgeAngle_of_notMem hx)
-  have he : edgeAngle tetraSet x = theta (cone tetN (act tetN (fun _ => 1) x))
-      := edgeAngle_sol _ _ hx
-  rw [he]
-  by_cases hfin : finrank ℝ (linCone tetN (act tetN (fun _ => 1) x)) = 1
-  · obtain ⟨i, j, hij, hA⟩ := tet_pair hfin
-    exact Or.inl (tet_theta hij hA)
-  · right; unfold theta; rw [linSpace_cone, ite_eq_right hfin]
-
-lemma tetDihedral_class_ne_zero : (Submodule.Quotient.mk tetDihedral : Angle) ≠ 0 := by
-  rw [Ne, Submodule.Quotient.mk_eq_zero]; exact tetDihedral_not_ratPi
+  rw [theta_pair_of_gram tetN hA (X := 3) (Y := 3) (d := 1) (by norm_num)
+    (by rw [tetN_inner, ite_eq_left rfl]) (by rw [tetN_inner, ite_eq_left rfl])
+    (by rw [tetN_inner, ite_eq_right hij]) (by norm_num)]
+  unfold tetDihedral
+  rw [← sq, Real.sqrt_sq (by norm_num : (0 : ℝ) ≤ 3)]
 
 /-- **Gap 3 of study 2, closed (tetrahedron).** The Dehn invariant of the regular tetrahedron with
 corners

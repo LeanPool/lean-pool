@@ -169,7 +169,6 @@ omit [MeasurableSpace E] [BorelSpace E] in
 /-- At most one tight constraint: the common direction space has dimension at least 2. -/
 lemma finrank_linCone_ne_one_of_subsingleton (a : ι → E) {A : Set ι} {i : ι} (hA : A ⊆ {i}) :
     finrank ℝ (linCone a A) ≠ 1 := by
-  have hE : finrank ℝ E = 3 := Fact.out
   have hle : (ℝ ∙ a i)ᗮ ≤ linCone a A := by
     intro v hv
     rw [mem_linCone]
@@ -177,10 +176,7 @@ lemma finrank_linCone_ne_one_of_subsingleton (a : ι → E) {A : Set ι} {i : ι
     have hmi : m = i := hA hm
     rw [hmi]
     exact Submodule.mem_orthogonal_singleton_iff_inner_right.1 hv
-  have h1 := Submodule.finrank_add_finrank_orthogonal (ℝ ∙ a i)
-  have h2 : finrank ℝ (ℝ ∙ a i) ≤ 1 := (finrank_span_le_card ({a i} : Set E)).trans (by simp)
-  have h3 := Submodule.finrank_mono hle
-  omega
+  exact finrank_linCone_ne_one_of_perp a hle
 
 omit [MeasurableSpace E] [BorelSpace E] in
 /-- If the common direction space of the tight constraints is a line, and any three of the tight

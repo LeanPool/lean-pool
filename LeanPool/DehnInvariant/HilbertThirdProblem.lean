@@ -8,6 +8,7 @@ Authors: DICTO
 
 module
 
+public import LeanPool.DehnInvariant.Dissection
 public import LeanPool.DehnInvariant.EuclideanSpace
 public import LeanPool.DehnInvariant.RationalAngles
 public import LeanPool.DehnInvariant.Simplex
@@ -75,7 +76,8 @@ Credits: Dehn (1901); the pair and its angles: Aigner–Ziegler; Mathlib `niven`
 `PiLp.volume_preserving_ofLp`, `Metric.le_infDist`, `Metric.infDist_le_dist_of_mem`,
 `affineSpan_le`,
 `PiLp.norm_apply_le`, `Set.iUnion_option`, `Fintype.sum_option`; study 2's `dehnSum_eq_of_scissors`,
-`dehnSet_image`, `dehn_bridge_R3`; study 4's `IsTetraData.dehnSet_eq`, `IsTetraData.eq_convexHull`,
+`dehnSet_image`, `dehnSet_eq_of_scissorsCongruent`; study 4's `IsTetraData.dehnSet_eq`,
+`IsTetraData.eq_convexHull`,
 `theta_pair_of_gram`, `dehnSet_sol_eq_zero_of_rational`, `angle_mem_ratPi_of_gram`; study 9's
 `vol_half`,
 `vol_eq_of_sub_null`, `plane_null`.
@@ -575,7 +577,7 @@ theorem dehnSet_orthoTet : dehnSet orthoTet = 0 :=
 theorem cornerTet_not_scissorsCongruent_orthoTet : ¬ ScissorsCongruent cornerTet orthoTet := by
   intro h
   apply dehnSet_cornerTet_ne_zero
-  rw [dehn_bridge_R3 isPoly_cornerTet isPoly_orthoTet h, dehnSet_orthoTet]
+  rw [dehnSet_eq_of_scissorsCongruent isPoly_cornerTet isPoly_orthoTet h, dehnSet_orthoTet]
 
 /-- The two tetrahedra are not equicomplementable. -/
 theorem cornerTet_not_equiComplementable_orthoTet : ¬ EquiComplementable cornerTet orthoTet := by

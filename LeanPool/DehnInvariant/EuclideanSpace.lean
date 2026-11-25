@@ -8,7 +8,6 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.Dissection
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
 public import Mathlib.Tactic.FinCases
@@ -30,12 +29,6 @@ namespace DehnCanon.Library
 abbrev R3 := EuclideanSpace ℝ (Fin 3)
 
 instance : Fact (finrank ℝ R3 = 3) := ⟨by simp⟩
-
-/-- **Dehn's theorem, the bridge, in ℝ³.** Scissors-congruent convex polytopes have the same Dehn
-invariant. -/
-theorem dehn_bridge_R3 {P Q : Set R3} (hP : IsPoly P) (hQ : IsPoly Q) (h : ScissorsCongruent P Q) :
-    dehnSet P = dehnSet Q :=
-  dehnSet_eq_of_scissorsCongruent hP hQ h
 
 lemma inner3 (p q r : ℝ) (x : R3) : ⟪(!₂[p, q, r] : R3), x⟫ = p * x 0 + q * x 1 + r * x 2 := by
   simp [EuclideanSpace.inner_eq_star_dotProduct, Fin.sum_univ_three, dotProduct]; ring

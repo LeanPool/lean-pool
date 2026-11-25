@@ -8,6 +8,7 @@ Authors: DICTO
 
 module
 
+public import LeanPool.DehnInvariant.Dissection
 public import LeanPool.DehnInvariant.EuclideanSpace
 public import Mathlib.Analysis.SpecialFunctions.Gamma.BohrMollerup
 public import Mathlib.Analysis.Convex.Measure

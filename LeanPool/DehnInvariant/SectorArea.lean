@@ -401,25 +401,14 @@ theorem wedgeAngle_two_planes [FiniteDimensional ℝ E] [MeasurableSpace E] [Bor
     [Fact (finrank ℝ E = 3)] (a₁ a₂ : E) (h : LinearIndependent ℝ ![a₁, a₂]) :
     wedgeAngle (cone ![a₁, a₂] Set.univ) (linCone ![a₁, a₂] Set.univ) =
       Real.pi - InnerProductGeometry.angle a₁ a₂ := by
-  have hpair := LinearIndependent.pair_iff.1 h
-  have ha₁ : a₁ ≠ 0 := by
-    intro h0
-    have := hpair 1 0 (by rw [h0, smul_zero, zero_smul, add_zero])
-    exact one_ne_zero this.1
-  have ha₂ : a₂ ≠ 0 := by
-    intro h0
-    have := hpair 0 1 (by rw [h0, smul_zero, zero_smul, add_zero])
-    exact one_ne_zero this.2
+  have ha₁ : a₁ ≠ 0 := by simpa using h.ne_zero 0
+  have ha₂ : a₂ ≠ 0 := by simpa using h.ne_zero 1
   have n₁ : 0 < ‖a₁‖ := norm_pos_iff.2 ha₁
   have n₂ : 0 < ‖a₂‖ := norm_pos_iff.2 ha₂
   have c₁ : 0 < ‖a₁‖⁻¹ := inv_pos.2 n₁
   have c₂ : 0 < ‖a₂‖⁻¹ := inv_pos.2 n₂
-  have hu : LinearIndependent ℝ ![‖a₁‖⁻¹ • a₁, ‖a₂‖⁻¹ • a₂] := by
-    rw [LinearIndependent.pair_iff]
-    intro s t hst
-    rw [smul_smul, smul_smul] at hst
-    have := hpair _ _ hst
-    exact ⟨(mul_eq_zero.1 this.1).resolve_right c₁.ne', (mul_eq_zero.1 this.2).resolve_right c₂.ne'⟩
+  have hu : LinearIndependent ℝ ![‖a₁‖⁻¹ • a₁, ‖a₂‖⁻¹ • a₂] :=
+    (LinearIndependent.pair_smul_smul_iff c₁.ne'.isUnit c₂.ne'.isUnit).2 h
   have key := wedgeAngle_two_planes_unit (‖a₁‖⁻¹ • a₁) (‖a₂‖⁻¹ • a₂)
     (by rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ n₁.ne'])
     (by rw [norm_smul, norm_inv, norm_norm, inv_mul_cancel₀ n₂.ne']) hu

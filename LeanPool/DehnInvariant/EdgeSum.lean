@@ -627,6 +627,20 @@ lemma facetNormals_tightSet [Finite ι] {A : Set ι} {x u v : E} {p q : ι} (hx 
     · exact unit_mem_facetNormals hx hq hp (LinearIndependent.pair_symm_iff.1 hli)
         (by rw [hcone, Set.pair_comm]) huv hseg
 
+omit [FiniteDimensional ℝ E] [Fact (finrank ℝ E = 3)] in
+/-- A nonempty active face with a line of common directions has a closed segment as its
+closure. Its open segment is contained in the active face. -/
+lemma edge_segment_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
+    {A : Set ι} {x : E} (hx : x ∈ faceSet a b A) (hfin : finrank ℝ (linCone a A) = 1) :
+    ∃ u v : E, u ≠ v ∧ tightSet a b A = segment ℝ u v ∧ openSegment ℝ u v ⊆ faceSet a b A := by
+  obtain ⟨d, hd0, hd⟩ := finrank_eq_one_iff'.1 hfin
+  have hd0' : (d : E) ≠ 0 := fun h => hd0 (Subtype.ext h)
+  have hspan : ∀ w ∈ linCone a A, ∃ r : ℝ, w = r • (d : E) := by
+    intro w hw
+    obtain ⟨c, hc⟩ := hd ⟨w, hw⟩
+    exact ⟨c, (congrArg Subtype.val hc).symm⟩
+  exact tightSet_eq_segment hb hx hd0' d.2 hspan
+
 variable [MeasurableSpace E] [BorelSpace E]
 
 /-- All the facts about a set `A` of constraints that is the tight set of a point and whose
@@ -642,13 +656,7 @@ lemma edge_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
       facetNormals (sol a b) (tightSet a b A) = {n₁, n₂} ∧
       theta (cone a A) = (Submodule.Quotient.mk (dihedral (sol a b) (tightSet a b A)) : Angle) := by
   obtain ⟨x, hx⟩ := hne
-  obtain ⟨d, hd0, hd⟩ := finrank_eq_one_iff'.1 hfin
-  have hd0' : (d : E) ≠ 0 := fun h => hd0 (Subtype.ext h)
-  have hspan : ∀ w ∈ linCone a A, ∃ r : ℝ, w = r • (d : E) := by
-    intro w hw
-    obtain ⟨c, hc⟩ := hd ⟨w, hw⟩
-    exact ⟨c, (congrArg Subtype.val hc).symm⟩
-  obtain ⟨u, v, huv, hseg, hopen⟩ := tightSet_eq_segment hb hx hd0' d.2 hspan
+  obtain ⟨u, v, huv, hseg, hopen⟩ := edge_segment_of_tight hb hx hfin
   obtain ⟨p, hp, q, hq, hli, hcone⟩ := exists_pair_cone hint hx hfin
   have hfac := facetNormals_tightSet hx hfin hp hq hli hcone huv hseg
   have hap : a p ≠ 0 := by simpa using hli.ne_zero 0
@@ -670,11 +678,7 @@ lemma edge_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
         ENNReal.toReal_ofReal dist_nonneg]
     rw [h1]
     exact ENNReal.toReal_mono (ne_top_of_le_ne_top hfinite hle) (measure_mono hopen)
-  · rw [LinearIndependent.pair_iff] at hli ⊢
-    intro s t hst
-    rw [smul_smul, smul_smul] at hst
-    have h := hli _ _ hst
-    exact ⟨(mul_eq_zero.1 h.1).resolve_right hnp.ne', (mul_eq_zero.1 h.2).resolve_right hnq.ne'⟩
+  · exact (LinearIndependent.pair_smul_smul_iff hnp.ne'.isUnit hnq.ne'.isUnit).2 hli
   · rw [hcone, theta_pair a rfl hli, dihedral_eq_of_pair hfac,
       InnerProductGeometry.angle_smul_left_of_pos _ _ hnp,
       InnerProductGeometry.angle_smul_right_of_pos _ _ hnq]
@@ -683,12 +687,13 @@ lemma edge_of_tight [Finite ι] (hb : Bornology.IsBounded (sol a b))
 def edgeSets (a : ι → E) (b : ι → ℝ) : Set (Set ι) :=
   {A | finrank ℝ (linCone a A) = 1 ∧ (faceSet a b A).Nonempty}
 
-lemma bijOn_tightSet [Finite ι] (hb : Bornology.IsBounded (sol a b))
-    (hint : (interior (sol a b)).Nonempty) :
+omit [FiniteDimensional ℝ E] [Fact (finrank ℝ E = 3)] [MeasurableSpace E] [BorelSpace E] in
+lemma bijOn_tightSet [Finite ι] (hb : Bornology.IsBounded (sol a b)) :
     Set.BijOn (tightSet a b) (edgeSets a b) (edges (sol a b)) := by
   refine ⟨fun A hA => ?_, fun A hA B hB h => tightSet_inj hA.2 hB.2 h, fun F hF => ?_⟩
-  · obtain ⟨u, v, n₁, n₂, -, -, hedge, -⟩ := edge_of_tight hb hint hA.1 hA.2
-    exact hedge
+  · obtain ⟨x, hx⟩ := hA.2
+    obtain ⟨u, v, distinct, segment_eq, _⟩ := edge_segment_of_tight hb hx hA.1
+    exact ⟨isExposed_tightSet hx, u, v, distinct, segment_eq⟩
   · obtain ⟨A, hfin, hne, hT⟩ := exists_tight_of_edge hF
     exact ⟨A, ⟨hfin, hne⟩, hT⟩
 
@@ -721,7 +726,7 @@ theorem dehnSet_sol_eq_edge_sum [Finite ι] (hb : Bornology.IsBounded (sol a b))
     _ = ∑ᶠ A ∈ (Set.univ : Set (Set ι)), t A := (finsum_mem_univ t).symm
     _ = ∑ᶠ A ∈ edgeSets a b, t A :=
         finsum_mem_inter_support_eq t _ _ (by rw [Set.univ_inter, Set.inter_eq_right.2 hsupp])
-    _ = _ := finsum_mem_eq_of_bijOn (tightSet a b) (bijOn_tightSet hb hint) hterm
+    _ = _ := finsum_mem_eq_of_bijOn (tightSet a b) (bijOn_tightSet hb) hterm
 
 /-! ### The statements for a convex polytope, with no half-spaces in them -/
 
@@ -734,6 +739,7 @@ theorem edges_finite {P : Set E} (hP : IsPoly P) : (edges P).Finite := by
   obtain ⟨A, _, _, equality⟩ := exists_tight_of_edge hF
   exact ⟨A, equality⟩
 
+omit [MeasurableSpace E] [BorelSpace E] in
 /-- **Exactly two facets pass through every edge of a convex polytope** with interior points;
 their outward
 unit normals `n₁`, `n₂` are independent, and the interior dihedral angle at the edge is π −
@@ -746,7 +752,18 @@ theorem IsEdge.facetNormals_eq_pair {P F : Set E} (hP : IsPoly P) (hint : (inter
           ∧ dihedral P F < π := by
   obtain ⟨hb, ι, _, a, b, rfl⟩ := hP
   obtain ⟨A, hfin, hne, rfl⟩ := exists_tight_of_edge hF
-  obtain ⟨u, v, n₁, n₂, -, -, -, -, hli, hfac, -⟩ := edge_of_tight hb hint hfin hne
+  obtain ⟨x, hx⟩ := hne
+  obtain ⟨_, _, distinct, segment_eq, _⟩ := edge_segment_of_tight hb hx hfin
+  obtain ⟨p, hp, q, hq, independent, cone_eq⟩ := exists_pair_cone hint hx hfin
+  have hfac := facetNormals_tightSet hx hfin hp hq independent cone_eq distinct segment_eq
+  let n₁ := (‖a p‖⁻¹ : ℝ) • a p
+  let n₂ := (‖a q‖⁻¹ : ℝ) • a q
+  have hp0 : a p ≠ 0 := by simpa using independent.ne_zero 0
+  have hq0 : a q ≠ 0 := by simpa using independent.ne_zero 1
+  have hli : LinearIndependent ℝ ![n₁, n₂] :=
+    (LinearIndependent.pair_smul_smul_iff
+      (inv_ne_zero (norm_ne_zero_iff.mpr hp0)).isUnit
+      (inv_ne_zero (norm_ne_zero_iff.mpr hq0)).isUnit).2 independent
   have hd := dihedral_eq_of_pair hfac
   have hpair := LinearIndependent.pair_iff.1 hli
   have h0 : InnerProductGeometry.angle n₁ n₂ ≠ 0 := by

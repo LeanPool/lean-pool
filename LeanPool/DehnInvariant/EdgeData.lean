@@ -8,7 +8,7 @@ Authors: DICTO
 
 module
 
-public import LeanPool.DehnInvariant.Dissection
+public import LeanPool.DehnInvariant.PlaneCut
 public import Mathlib.MeasureTheory.Measure.Hausdorff
 public import Mathlib.Tactic.FunProp
 public import Mathlib.Tactic.Linarith

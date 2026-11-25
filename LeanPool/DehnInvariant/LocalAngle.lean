@@ -279,32 +279,26 @@ lemma wedgeAngle_mem_ratPi_of_line [Fact (finrank ℝ E = 3)] {T : Set E} {K : S
       rw [inner_neg_right] at h3'
       exact ⟨hb.1 h2, show ⟪n, v⟫ < 0 by linarith⟩
   have hSB : S ⊆ B := wedgeSet_subset_ball T K
-  have dp : S ∩ Hp = B ∩ Hp ∨ S ∩ Hp = ∅ := by
-    by_cases h : ∃ v0 : Kᗮ, (v0 : E) ∈ T ∧ 0 < ⟪n, v0⟫
-    · obtain ⟨v0, hv0, hpos⟩ := h
+  have half (sign : ℝ → Prop) (positive_div : ∀ {a b}, sign a → sign b → 0 < a / b) :
+      S ∩ {v : Kᗮ | sign ⟪n, v⟫} = B ∩ {v : Kᗮ | sign ⟪n, v⟫} ∨
+        S ∩ {v : Kᗮ | sign ⟪n, v⟫} = ∅ := by
+    by_cases nonempty : ∃ v₀ : Kᗮ, (v₀ : E) ∈ T ∧ sign ⟪n, v₀⟫
+    · obtain ⟨v₀, hv₀, signed⟩ := nonempty
       left
-      ext v; constructor
-      · rintro ⟨hs, hp⟩; exact ⟨hSB hs, hp⟩
-      · rintro ⟨hb, hp⟩
-        refine ⟨⟨claimA v0 hv0 v (div_pos hp hpos), ?_⟩, hp⟩
-        rw [hB, Metric.mem_ball, dist_zero_right] at hb; exact hb
+      ext v
+      constructor
+      · rintro ⟨hs, hv⟩
+        exact ⟨hSB hs, hv⟩
+      · rintro ⟨hb, hv⟩
+        refine ⟨⟨claimA v₀ hv₀ v (positive_div hv signed), ?_⟩, hv⟩
+        rw [hB, Metric.mem_ball, dist_zero_right] at hb
+        exact hb
     · right
       rw [Set.eq_empty_iff_forall_notMem]
-      rintro v ⟨hs, hp⟩
-      exact h ⟨v, hs.1, hp⟩
-  have dn : S ∩ Hn = B ∩ Hn ∨ S ∩ Hn = ∅ := by
-    by_cases h : ∃ v0 : Kᗮ, (v0 : E) ∈ T ∧ ⟪n, v0⟫ < 0
-    · obtain ⟨v0, hv0, hneg⟩ := h
-      left
-      ext v; constructor
-      · rintro ⟨hs, hp⟩; exact ⟨hSB hs, hp⟩
-      · rintro ⟨hb, hp⟩
-        refine ⟨⟨claimA v0 hv0 v (div_pos_of_neg_of_neg hp hneg), ?_⟩, hp⟩
-        rw [hB, Metric.mem_ball, dist_zero_right] at hb; exact hb
-    · right
-      rw [Set.eq_empty_iff_forall_notMem]
-      rintro v ⟨hs, hp⟩
-      exact h ⟨v, hs.1, hp⟩
+      rintro v ⟨hs, hv⟩
+      exact nonempty ⟨v, hs.1, hv⟩
+  have dp : S ∩ Hp = B ∩ Hp ∨ S ∩ Hp = ∅ := half (0 < ·) div_pos
+  have dn : S ∩ Hn = B ∩ Hn ∨ S ∩ Hn = ∅ := half (· < 0) div_pos_of_neg_of_neg
   have hBpos : 0 < volume B := Metric.measure_ball_pos volume _ one_pos
   have hBfin : volume B ≠ ⊤ := measure_ball_lt_top.ne
   have hBsplit := hsplit B
@@ -357,41 +351,29 @@ lemma theta_cut [Fact (finrank ℝ E = 3)] {T : Set E} {L : Submodule ℝ E}
     {c : E} (hc : c ≠ 0) (hexc : ¬ (finrank ℝ L = 1 ∧ ¬ L ≤ (ℝ ∙ c)ᗮ)) :
     theta T = theta (T ∩ {v | ⟪c, v⟫ ≤ 0}) + theta (T ∩ {v | ⟪-c, v⟫ ≤ 0}) := by
   have hLT : linSpace T = L := linSpace_eq_of hL
-  have hLp : linSpace (T ∩ {v | ⟪c, v⟫ ≤ 0}) = L ⊓ (ℝ ∙ c)ᗮ := by
+  have lineality (normal : E) : linSpace (T ∩ {v | ⟪normal, v⟫ ≤ 0}) = L ⊓ (ℝ ∙ normal)ᗮ := by
     apply linSpace_eq_of
     intro v
     rw [Submodule.mem_inf, Submodule.mem_orthogonal_singleton_iff_inner_right, ← hL v]
     constructor
     · rintro ⟨⟨h1, h2⟩, ⟨h3, h4⟩⟩
-      have h2' : ⟪c, v⟫ ≤ 0 := h2
-      have h4' : ⟪c, -v⟫ ≤ 0 := h4
+      have h2' : ⟪normal, v⟫ ≤ 0 := h2
+      have h4' : ⟪normal, -v⟫ ≤ 0 := h4
       rw [inner_neg_right] at h4'
       exact ⟨⟨h1, h3⟩, by linarith⟩
     · rintro ⟨⟨h1, h3⟩, h0⟩
       refine ⟨⟨h1, ?_⟩, ⟨h3, ?_⟩⟩
-      · change ⟪c, v⟫ ≤ 0
+      · change ⟪normal, v⟫ ≤ 0
         rw [h0]
-      · change ⟪c, -v⟫ ≤ 0
+      · change ⟪normal, -v⟫ ≤ 0
         rw [inner_neg_right, h0, neg_zero]
   have hLm : linSpace (T ∩ {v | ⟪-c, v⟫ ≤ 0}) = L ⊓ (ℝ ∙ c)ᗮ := by
-    apply linSpace_eq_of
-    intro v
-    rw [Submodule.mem_inf, Submodule.mem_orthogonal_singleton_iff_inner_right, ← hL v]
-    constructor
-    · rintro ⟨⟨h1, h2⟩, ⟨h3, h4⟩⟩
-      have h2' : ⟪-c, v⟫ ≤ 0 := h2
-      have h4' : ⟪-c, -v⟫ ≤ 0 := h4
-      rw [inner_neg_left] at h2'
-      rw [inner_neg_left, inner_neg_right, neg_neg] at h4'
-      exact ⟨⟨h1, h3⟩, by linarith⟩
-    · rintro ⟨⟨h1, h3⟩, h0⟩
-      refine ⟨⟨h1, ?_⟩, ⟨h3, ?_⟩⟩
-      · change ⟪-c, v⟫ ≤ 0
-        rw [inner_neg_left, h0, neg_zero]
-      · change ⟪-c, -v⟫ ≤ 0
-        rw [inner_neg_left, inner_neg_right, neg_neg, h0]
+    rw [lineality]
+    congr 1
+    ext v
+    simp only [Submodule.mem_orthogonal_singleton_iff_inner_right, inner_neg_left, neg_eq_zero]
   unfold theta
-  rw [hLT, hLp, hLm]
+  rw [hLT, lineality c, hLm]
   by_cases hsub : L ≤ (ℝ ∙ c)ᗮ
   · rw [inf_eq_left.2 hsub]
     by_cases h1 : finrank ℝ L = 1
