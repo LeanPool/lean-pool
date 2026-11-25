@@ -18,16 +18,14 @@ public import LeanPool.DynamicMcs.GreedySearch
 
 @[expose] public section
 
-open DynamicMcs.Greedy
-
 namespace DynamicMcs
 
 namespace ExecBridge
 
 /-- The foldl state at step `j`: the executable MCS foldl over `range j`,
-seeded with `([], range a.length)` (matching `Exec.mcsOrder`). -/
+seeded with `([], range a.length)` (matching `mcsOrder`). -/
 def stk (a : Adj n) (j : ℕ) : List ℕ × List ℕ :=
-  (List.range j).foldl (fun s _ => Exec.mcsStep a s) ([], List.range a.length)
+  (List.range j).foldl (fun s _ => mcsStep a s) ([], List.range a.length)
 
 /-- The chosen-so-far list (in reverse pick order) at step `j`. -/
 def chosenAt (a : Adj n) (j : ℕ) : List ℕ := (stk a j).1
@@ -37,7 +35,7 @@ def remainingAt (a : Adj n) (j : ℕ) : List ℕ := (stk a j).2
 
 /-- The final MCS ordering, lifted to `Fin n` (semantically `ord.map ⟨·,·⟩`). -/
 def ordFin (a : Adj n) (ha_len : a.length = n) : List (Fin n) :=
-  CardBridge.chosenFin n (Exec.mcsOrder a) (mcsOrder_mem_lt a ha_len)
+  CardBridge.chosenFin n (mcsOrder a) (mcsOrder_mem_lt a ha_len)
 
 /-- Every picked vertex is `< n` at step `j` (from the foldl invariant). -/
 lemma chosenAt_lt (a : Adj n) (ha_len : a.length = n) (j : ℕ) (hj : j ≤ a.length) :
@@ -65,17 +63,17 @@ lemma remainingAt_ne_of_lt (a : Adj n) (ha_len : a.length = n) {j : ℕ} (hj : j
   omega
 
 /-- One more foldl step unfolds to exactly one `mcsStep` application. -/
-lemma stk_succ (a : Adj n) (j : ℕ) : stk a (j + 1) = Exec.mcsStep a (stk a j) := by
+lemma stk_succ (a : Adj n) (j : ℕ) : stk a (j + 1) = mcsStep a (stk a j) := by
   unfold stk
   rw [List.range_succ, List.foldl_append]
   simp
 
 /-- After `j < a.length` steps, the chosen list is a new pick prepended. -/
 lemma stk_succ_chosen (a : Adj n) (ha_len : a.length = n) {j : ℕ} (hj : j < a.length) :
-    (stk a (j + 1)).1 = Exec.bestPick a (stk a j).1 (stk a j).2 :: (stk a j).1 := by
+    (stk a (j + 1)).1 = bestPick a (stk a j).1 (stk a j).2 :: (stk a j).1 := by
   rw [stk_succ]
-  change (Exec.mcsStep a ((stk a j).1, (stk a j).2)).1 =
-    Exec.bestPick a (stk a j).1 (stk a j).2 :: (stk a j).1
+  change (mcsStep a ((stk a j).1, (stk a j).2)).1 =
+    bestPick a (stk a j).1 (stk a j).2 :: (stk a j).1
   rw [McsInvariant.mcsStep_eq a (stk a j).1 (stk a j).2 (remainingAt_ne_of_lt a ha_len hj)]
 
 /-- Core bookkeeping: dropping `m` from the full chosen list at step `k + m`
@@ -105,17 +103,17 @@ lemma stk1_drop (a : Adj n) (ha_len : a.length = n) (k : ℕ) (hk : k ≤ a.leng
   rw [Nat.add_sub_cancel_left]
   exact stk1_drop_m a ha_len k (a.length - k) (by omega)
 
-/-- `Exec.mcsOrder a = (stk a a.length).1.reverse` (the terminal foldl state,
+/-- `mcsOrder a = (stk a a.length).1.reverse` (the terminal foldl state,
 expressed with `stk`). -/
 lemma mcsOrder_eq_stk_reverse (a : Adj n) :
-    Exec.mcsOrder a = (stk a a.length).1.reverse := by
+    mcsOrder a = (stk a a.length).1.reverse := by
   simpa [stk] using (mcsOrder_eq_reverse a)
 
 /-- The first `k` elements of the final ordering equal the chosen-so-far at
 step `k`, reversed. -/
 lemma mcsOrder_take_eq_chosen_reverse (a : Adj n) (ha_len : a.length = n) (k : ℕ)
     (hk : k ≤ a.length) :
-    (Exec.mcsOrder a).take k = (chosenAt a k).reverse := by
+    (mcsOrder a).take k = (chosenAt a k).reverse := by
   rw [mcsOrder_eq_stk_reverse a]
   unfold chosenAt
   rw [List.take_reverse]

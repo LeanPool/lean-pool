@@ -1284,7 +1284,7 @@ theorem greedySuffix_full (H : UGraph n) (order : List (Vert n))
 /-- `init` produces a valid MCS ordering of the given graph. -/
 theorem init_valid (H : UGraph n) : ValidState H (initOrder H) := by
   unfold ValidState initOrder
-  exact Greedy.UGraph.init_valid H
+  exact UGraph.init_valid H
 
 /-- A valid MCS ordering is a permutation of all vertices. -/
 lemma order_toFinset_univ (order : List (Vert n))

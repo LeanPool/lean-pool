@@ -78,7 +78,7 @@ theorem IsMCSOrdering.toAny {order : List (Vert n)} (h : IsMCSOrdering G order) 
 
 theorem init_valid (G : UGraph n) : IsMCSOrdering G (initOrder G) := by
   rw [initOrder, Transport.greedySuffix_eq, IsMCSOrdering_toDyn]
-  exact Greedy.UGraph.init_valid (Transport.toDyn G)
+  exact UGraph.init_valid (Transport.toDyn G)
 
 theorem order_toFinset_univ {order : List (Vert n)} (h : IsMCSOrdering G order) :
     order.toFinset = (Finset.univ : Finset (Vert n)) :=
@@ -103,7 +103,7 @@ theorem update_from_prefix (order : List (Vert n)) (k : ℕ)
 lemma insertUpdate_eq_dyn (H : UGraph n) (order : List (Vert n)) (u v : Vert n) :
     insertUpdate H order u v = Greedy.Update.insertUpdate (Transport.toDyn H) order u v := by
   unfold insertUpdate Greedy.Update.insertUpdate
-  rw [earlierPos_eq, laterPos_eq, firstBreakWindow_eq, greedySuffix_eq]
+  rw [laterPos_eq, firstBreakWindow_eq, greedySuffix_eq]
 
 lemma deleteUpdate_eq_dyn (H : UGraph n) (order : List (Vert n)) (u v : Vert n) :
     deleteUpdate H order u v = Greedy.Update.deleteUpdate (Transport.toDyn H) order u v := by
@@ -147,9 +147,9 @@ theorem legal_upto_earlierPos (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hvalid : IsMCSOrdering G order)
     (i : ℕ) (hi : i < order.length) (hle : i ≤ earlierPos order u v) :
     IsMCSNext G' (order.take i).toFinset (order.get ⟨i, hi⟩) :=
-  (IsMCSNext_toDyn G' _ _).2 (Greedy.UGraph.prefix_preserved order u v
+  (IsMCSNext_toDyn G' _ _).2 (UGraph.prefix_preserved order u v
     ((FlipOf_toDyn G G' u v).1 hflip) ((IsMCSOrdering_toDyn G order).1 hvalid) i
-    (by rwa [earlierPos_eq] at hle) hi)
+    hle hi)
 
 /-- Positions after the later endpoint stay legal after any flip. -/
 theorem legal_after_laterPos (u v : Vert n) (order : List (Vert n))
@@ -170,7 +170,7 @@ theorem delete_legal_between (u v : Vert n) (order : List (Vert n))
   (IsMCSNext_toDyn G' _ _).2 (Greedy.Update.legal_middle_delete (G := Transport.toDyn G)
     order u v ((FlipOf_toDyn G G' u v).1 hflip) hdel hdel'
     ((IsMCSOrdering_toDyn G order).1 hvalid) i hi
-    (by rwa [earlierPos_eq] at hgt) (by rwa [laterPos_eq] at hlt))
+    hgt (by rwa [laterPos_eq] at hlt))
 
 /-- Inside the insertion window, the old choice breaks exactly when the later
 endpoint now beats it: strictly larger cardinality, or equal cardinality and a
@@ -189,7 +189,7 @@ theorem insert_break_iff (u v : Vert n) (order : List (Vert n))
   rw [IsMCSNext_toDyn, laterVert_eq]
   exact Greedy.Update.insert_break_iff (G := Transport.toDyn G) order u v
     ((FlipOf_toDyn G G' u v).1 hflip) hins hins' ((IsMCSOrdering_toDyn G order).1 hvalid) k hk
-    (by rwa [earlierPos_eq] at hgt) (by rwa [laterPos_eq] at hle)
+    hgt (by rwa [laterPos_eq] at hle)
 
 /-! ## Insertion window: the later endpoint is never a break
 
@@ -203,7 +203,7 @@ of the later endpoint against the old choice. -/
 the project lemma). -/
 lemma mem_of_IsMCSOrdering (order : List (Vert n)) (hvalid : IsMCSOrdering G order) :
     ∀ z : Vert n, z ∈ order :=
-  Greedy.UGraph.mem_of_IsMCSOrdering order ((IsMCSOrdering_toDyn G order).1 hvalid)
+  UGraph.mem_of_IsMCSOrdering order ((IsMCSOrdering_toDyn G order).1 hvalid)
 
 /-- The vertex at position `laterPos` is exactly `laterVert`. -/
 lemma laterVert_get (order : List (Vert n)) (u v : Vert n) (_hmem : u ∈ order)
@@ -220,7 +220,7 @@ lemma laterVert_get (order : List (Vert n)) (u v : Vert n) (_hmem : u ∈ order)
 lemma earlierPos_lt_laterPos (order : List (Vert n)) (u v : Vert n)
     (huv : u ≠ v) (hnodup : order.Nodup) (hmu : u ∈ order) (hmv : v ∈ order) :
     earlierPos order u v < laterPos order u v := by
-  rw [earlierPos_eq, laterPos_eq]
+  rw [laterPos_eq]
   exact Greedy.Update.earlierPos_lt_laterPos order u v huv hnodup hmu hmv
 
 /-- Transport of the project's insertion cardinality analysis to the
@@ -317,7 +317,7 @@ theorem insert_break_iff_old (u v : Vert n) (order : List (Vert n))
     · rw [h]; exact hmu
     · rw [h]; exact hmv
   have hidx_a : List.idxOf a order = earlierPos order u v := by
-    rw [Greedy.Update.idxOf_earlierVert, Transport.earlierPos_eq]
+    rw [Greedy.Update.idxOf_earlierVert]
   have hidx_w : List.idxOf w order = laterPos order u v := by
     simp only [w]
     rw [Transport.laterVert_eq, Greedy.Update.idxOf_laterVert, Transport.laterPos_eq]

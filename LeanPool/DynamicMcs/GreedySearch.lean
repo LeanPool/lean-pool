@@ -8,11 +8,7 @@ Authors: Md Thoriqul Islam Thonmay, Gregory Morse
 
 module
 
-public import Mathlib.Data.Finset.Max
-public import Mathlib.Data.Finset.Sort
-public import Mathlib.Data.List.FinRange
-public import Mathlib.Data.List.Nodup
-public import Mathlib.Data.List.TakeDrop
+public import LeanPool.DynamicMcs.Definitions
 
 /-!
 # Dynamic MCS ordering: candidate `gen001_c01`
@@ -49,131 +45,12 @@ noncomputable section
 
 namespace DynamicMcs
 
-namespace Greedy
-
-/-- Vertices of an `n`-vertex undirected graph. -/
-abbrev Vert (n : ℕ) := Fin n
-
-/-- A finite undirected, loop-free graph on the vertices `Fin n`. -/
-structure UGraph (n : ℕ) where
-  /-- Adjacency of a pair of vertices. -/
-  adj : Vert n → Vert n → Prop
-  symm : ∀ {x y : Vert n}, adj x y → adj y x
-  loopless : ∀ (x : Vert n), ¬ adj x x
-
 namespace UGraph
 
 variable {n : ℕ} {G G' : UGraph n}
 
-/-- Cardinality of `w` measured against the already-chosen set `chosen`,
-i.e. the number of neighbors of `w` lying in `chosen`. -/
-def neigh (G : UGraph n) (chosen : Finset (Vert n)) (w : Vert n) : ℕ := by
-  classical
-  exact chosen.card - (chosen.filter (fun x => ¬ G.adj w x)).card
-
-/-- `w` is a legal MCS step given `chosen`: `w` is unchosen, its cardinality
-is maximal among the unchosen vertices, and it is the least-index vertex
-achieving that maximum (the candidate's lowest-index tie-breaking rule). -/
-def IsMCSNext (G : UGraph n) (chosen : Finset (Vert n)) (w : Vert n) : Prop :=
-  w ∈ (Finset.univ : Finset (Vert n)) \ chosen ∧
-  (∀ x : Vert n, x ∈ (Finset.univ : Finset (Vert n)) \ chosen →
-    G.neigh chosen x ≤ G.neigh chosen w) ∧
-  (∀ x : Vert n, x ∈ (Finset.univ : Finset (Vert n)) \ chosen →
-    G.neigh chosen x = G.neigh chosen w → w ≤ x)
-
-/-- `order` is a valid MCS ordering of `G`: it lists every vertex exactly
-once and, at every position `i`, the vertex `order[i]` is the legal MCS pick
-given the vertices chosen before position `i`. -/
-def IsMCSOrdering (G : UGraph n) (order : List (Vert n)) : Prop :=
-  order.Nodup ∧ order.length = n ∧
-  ∀ (i : ℕ) (hi : i < order.length),
-    IsMCSNext G (order.take i).toFinset (order.get ⟨i, hi⟩)
-
-/-- The candidate's validity predicate on a state: the maintained ordering is
-a valid MCS ordering of the current graph. -/
-def ValidMCSState (G : UGraph n) (order : List (Vert n)) : Prop :=
-  IsMCSOrdering G order
-
-/-- `G'` differs from `G` only by flipping the undirected edge `{u, v}`:
-outside the two ordered pairs `(u, v)` and `(v, u)` the adjacency is
-unchanged, and `u ≠ v`. -/
-def FlipOf (G G' : UGraph n) (u v : Vert n) : Prop :=
-  u ≠ v ∧
-  ∀ (x y : Vert n),
-    G'.adj x y = G.adj x y ∨ (x = u ∧ y = v) ∨ (x = v ∧ y = u)
-
-/-- The unchosen vertices of maximum cardinality exist whenever some vertex is
-unchosen. -/
-theorem maxUnchosen_nonempty (G : UGraph n) (chosen : Finset (Vert n))
-    (h : chosen ≠ (Finset.univ : Finset (Vert n))) :
-    (((Finset.univ : Finset (Vert n)) \ chosen).filter (fun x =>
-      G.neigh chosen x =
-          ((Finset.univ : Finset (Vert n)) \ chosen).sup (G.neigh chosen))).Nonempty := by
-  have hU : ((Finset.univ : Finset (Vert n)) \ chosen).Nonempty :=
-    Finset.sdiff_nonempty.2 (fun hs => h (Finset.univ_subset_iff.1 hs))
-  obtain ⟨w, hw, hsup⟩ := Finset.exists_mem_eq_sup _ hU (G.neigh chosen)
-  exact ⟨w, Finset.mem_filter.2 ⟨hw, hsup.symm⟩⟩
-
-/-- The canonical MCS pick: the least-index unchosen vertex of maximum
-cardinality. -/
-def mcsPick (G : UGraph n) (chosen : Finset (Vert n))
-    (h : chosen ≠ (Finset.univ : Finset (Vert n))) : Vert n :=
-  (((Finset.univ : Finset (Vert n)) \ chosen).filter (fun x =>
-    G.neigh chosen x = ((Finset.univ : Finset (Vert n)) \ chosen).sup (G.neigh chosen))).min'
-    (maxUnchosen_nonempty G chosen h)
-
-/-- The canonical pick is a legal MCS step. -/
-theorem mcsPick_isMCSNext (G : UGraph n) (chosen : Finset (Vert n))
-    (h : chosen ≠ (Finset.univ : Finset (Vert n))) :
-    IsMCSNext G chosen (mcsPick G chosen h) := by
-  have hmem := Finset.min'_mem _ (maxUnchosen_nonempty G chosen h)
-  rw [Finset.mem_filter] at hmem
-  refine ⟨hmem.1, fun x hx => hmem.2 ▸ Finset.le_sup hx, fun x hx hx' => ?_⟩
-  exact Finset.min'_le _ x (Finset.mem_filter.2 ⟨hx, hx'.trans hmem.2⟩)
-
-/-- The canonical pick, carried with its legality proof. -/
-def greedyPick (G : UGraph n) (chosen : Finset (Vert n))
-    (h : chosen ≠ (Finset.univ : Finset (Vert n))) : { w : Vert n // IsMCSNext G chosen w } :=
-  ⟨mcsPick G chosen h, mcsPick_isMCSNext G chosen h⟩
-
-/-- Repeatedly extend `chosen` with the MCS pick until every vertex is
-chosen, with one step per unit of the counter `k`.  The invariant
-`chosen.card + k = n` certifies that `k` further MCS steps suffice. -/
-noncomputable def mcsLoop (G : UGraph n) (chosen : Finset (Vert n)) (k : ℕ)
-    (hk : chosen.card + k = n) : List (Vert n) :=
-  match k with
-  | 0 => []
-  | km + 1 =>
-      have hchosen : chosen ≠ (Finset.univ : Finset (Vert n)) := by
-        intro hc
-        have hcard : chosen.card = n := by simp [hc]
-        omega
-      let p := (greedyPick G chosen hchosen).1
-      have hp : p ∉ chosen := by
-        exact (Finset.mem_sdiff.mp (greedyPick G chosen hchosen).2.1).2
-      have hins : (insert p chosen).card = chosen.card + 1 := by
-        exact Finset.card_insert_of_notMem hp
-      p :: mcsLoop G (insert p chosen) km (by omega)
-termination_by k
-decreasing_by
-  simp_wf
-
-/-- MCS continuation: greedily extend the already-chosen set `chosen` to a
-full ordering suffix. -/
-noncomputable def mcsRemainder (G : UGraph n) (chosen : Finset (Vert n)) : List (Vert n) :=
-  mcsLoop G chosen (n - chosen.card) (by
-    have hcard : chosen.card ≤ n := by
-      simpa using (Finset.card_le_univ chosen)
-    omega)
-
-/-- Greedy continuation of an MCS prefix `pref`: the fixed prefix followed by
-the deterministically recomputed suffix. -/
-noncomputable def greedySuffix (G : UGraph n) (pref : List (Vert n)) : List (Vert n) :=
-  pref ++ mcsRemainder G pref.toFinset
-
-/-- Position (in `order`) of the earlier of the endpoints `u` and `v`. -/
-def earlierPos (order : List (Vert n)) (u v : Vert n) : ℕ :=
-  min (List.idxOf u order) (List.idxOf v order)
+/-- A maintained state satisfies the canonical ordering predicate. -/
+abbrev ValidMCSState := @IsMCSOrdering
 
 /-- The candidate's dynamic update for an edge flip: keep the prefix of the
 current ordering up to and including the earlier of the two endpoints, and
@@ -385,7 +262,7 @@ lemma mcsLoop_valid (chosen : Finset (Vert n)) (k : ℕ) (hk : chosen.card + k =
       -- final equality holds by `rfl`.
       have hstep : pref ++ mcsLoop G chosen (km + 1) hk
           = (pref ++ [p]) ++ mcsLoop G (insert p chosen) km hrec := by
-        rw [mcsLoop.eq_2, ← List.singleton_append, ← List.append_assoc]
+        rw [UGraph.mcsLoop.eq_2, ← List.singleton_append, ← List.append_assoc]
       rw [hstep]
       refine ih (insert p chosen) hrec (pref ++ [p]) ?F ?N ?S
       · apply Finset.ext
@@ -476,5 +353,4 @@ theorem init_valid (G : UGraph n) : ValidMCSState G (greedySuffix G []) := by
   exact absurd hi (Nat.not_lt_zero i)
 
 end UGraph
-end Greedy
 end DynamicMcs

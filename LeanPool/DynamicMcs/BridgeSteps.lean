@@ -25,10 +25,10 @@ variable {n : ℕ}
 
 /-- R1: better never decreases cardinality w.r.t. the accumulated best. -/
 lemma better_card_ge_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
-    Exec.cardC a chosen a0 ≤ Exec.cardC a chosen (better a chosen a0 v) := by
-  by_cases h : Exec.cardC a chosen v > Exec.cardC a chosen a0 ∨
-               (Exec.cardC a chosen v = Exec.cardC a chosen a0 ∧ v < a0)
-  · have hle : Exec.cardC a chosen a0 ≤ Exec.cardC a chosen v := by
+    cardC a chosen a0 ≤ cardC a chosen (better a chosen a0 v) := by
+  by_cases h : cardC a chosen v > cardC a chosen a0 ∨
+               (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
+  · have hle : cardC a chosen a0 ≤ cardC a chosen v := by
       rcases h with hgt | heq
       · exact le_of_lt hgt
       · exact le_of_eq heq.1.symm
@@ -37,11 +37,11 @@ lemma better_card_ge_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
 
 /-- R2: better never decreases cardinality w.r.t. the new candidate. -/
 lemma better_card_ge_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
-    Exec.cardC a chosen v ≤ Exec.cardC a chosen (better a chosen a0 v) := by
-  by_cases h : Exec.cardC a chosen v > Exec.cardC a chosen a0 ∨
-               (Exec.cardC a chosen v = Exec.cardC a chosen a0 ∧ v < a0)
+    cardC a chosen v ≤ cardC a chosen (better a chosen a0 v) := by
+  by_cases h : cardC a chosen v > cardC a chosen a0 ∨
+               (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
   · simp [better, h]
-  · have hle : Exec.cardC a chosen v ≤ Exec.cardC a chosen a0 := by
+  · have hle : cardC a chosen v ≤ cardC a chosen a0 := by
       by_contra hn
       exact h (Or.inl (lt_of_not_ge hn))
     simpa [better, h] using hle
@@ -49,14 +49,14 @@ lemma better_card_ge_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
 /-- R3: if the accumulated best ties the result, the result is no larger
 (keeps the smaller id on ties). -/
 lemma better_tie_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
-    Exec.cardC a chosen a0 = Exec.cardC a chosen (better a chosen a0 v) →
+    cardC a chosen a0 = cardC a chosen (better a chosen a0 v) →
       better a chosen a0 v ≤ a0 := by
-  by_cases h : Exec.cardC a chosen v > Exec.cardC a chosen a0 ∨
-               (Exec.cardC a chosen v = Exec.cardC a chosen a0 ∧ v < a0)
+  by_cases h : cardC a chosen v > cardC a chosen a0 ∨
+               (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
   · intro hEq
-    have hcard : Exec.cardC a chosen a0 = Exec.cardC a chosen v := by
+    have hcard : cardC a chosen a0 = cardC a chosen v := by
       simpa [better, h] using hEq
-    by_cases hgt : Exec.cardC a chosen v > Exec.cardC a chosen a0
+    by_cases hgt : cardC a chosen v > cardC a chosen a0
     · exfalso
       exact (not_lt_of_ge (le_of_eq hcard.symm)) hgt
     · have hle : v ≤ a0 := by
@@ -69,14 +69,14 @@ lemma better_tie_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
 
 /-- R4: if the new candidate ties the result, the result is no larger than it. -/
 lemma better_tie_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
-    Exec.cardC a chosen v = Exec.cardC a chosen (better a chosen a0 v) →
+    cardC a chosen v = cardC a chosen (better a chosen a0 v) →
       better a chosen a0 v ≤ v := by
-  by_cases h : Exec.cardC a chosen v > Exec.cardC a chosen a0 ∨
-               (Exec.cardC a chosen v = Exec.cardC a chosen a0 ∧ v < a0)
+  by_cases h : cardC a chosen v > cardC a chosen a0 ∨
+               (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
   · intro _
     simp [better, h]
   · intro hEq
-    have hcard : Exec.cardC a chosen v = Exec.cardC a chosen a0 := by
+    have hcard : cardC a chosen v = cardC a chosen a0 := by
       simpa [better, h] using hEq
     have hnot_lt : ¬ v < a0 := by
       intro hvlt
@@ -89,8 +89,8 @@ starting from seed `acc`, the result `w` is in `acc :: l`, dominates all of
 maximum cardinality. -/
 def BetterInv (a : Adj n) (chosen : List ℕ) (acc : ℕ) (l : List ℕ) (w : ℕ) : Prop :=
   w ∈ acc :: l ∧
-  (∀ x ∈ acc :: l, Exec.cardC a chosen x ≤ Exec.cardC a chosen w) ∧
-  (∀ x ∈ acc :: l, Exec.cardC a chosen x = Exec.cardC a chosen w → w ≤ x)
+  (∀ x ∈ acc :: l, cardC a chosen x ≤ cardC a chosen w) ∧
+  (∀ x ∈ acc :: l, cardC a chosen x = cardC a chosen w → w ≤ x)
 
 /-- One `better` step preserves `BetterInv`. -/
 lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
@@ -99,8 +99,8 @@ lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
   rcases h with ⟨hmem, hcard, htie⟩
   have hb_or : better a chosen acc x = acc ∨ better a chosen acc x = x := by
     unfold better
-    by_cases c : Exec.cardC a chosen x > Exec.cardC a chosen acc ∨
-                 (Exec.cardC a chosen x = Exec.cardC a chosen acc ∧ x < acc)
+    by_cases c : cardC a chosen x > cardC a chosen acc ∨
+                 (cardC a chosen x = cardC a chosen acc ∧ x < acc)
     · simp [c]
     · simp [c]
   constructor
@@ -125,16 +125,16 @@ lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
     simp only [List.mem_cons] at hy
     rcases hy with hyacc | hyx
     · subst y
-      have hacc : Exec.cardC a chosen acc ≤ Exec.cardC a chosen (better a chosen acc x) :=
+      have hacc : cardC a chosen acc ≤ cardC a chosen (better a chosen acc x) :=
         better_card_ge_acc a chosen acc x
-      have hb : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w :=
+      have hb : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w :=
         hcard (better a chosen acc x) (by simp)
       exact le_trans hacc hb
     · rcases hyx with hyeq | hyr
       · subst y
-        have hx : Exec.cardC a chosen x ≤ Exec.cardC a chosen (better a chosen acc x) :=
+        have hx : cardC a chosen x ≤ cardC a chosen (better a chosen acc x) :=
           better_card_ge_x a chosen acc x
-        have hb : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w :=
+        have hb : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w :=
           hcard (better a chosen acc x) (by simp)
         exact le_trans hx hb
       · exact hcard y (by simpa using (Or.inr hyr : y = better a chosen acc x ∨ y ∈ l))
@@ -143,27 +143,27 @@ lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
     simp only [List.mem_cons] at hy
     rcases hy with hyacc | hyx
     · subst y
-      have hb : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w :=
+      have hb : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w :=
         hcard (better a chosen acc x) (by simp)
-      have hEqb : Exec.cardC a chosen acc = Exec.cardC a chosen (better a chosen acc x) := by
-        have h1 : Exec.cardC a chosen acc ≤ Exec.cardC a chosen (better a chosen acc x) :=
+      have hEqb : cardC a chosen acc = cardC a chosen (better a chosen acc x) := by
+        have h1 : cardC a chosen acc ≤ cardC a chosen (better a chosen acc x) :=
           better_card_ge_acc a chosen acc x
-        have h2 : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w := hb
+        have h2 : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w := hb
         exact le_antisymm h1 (le_trans h2 (le_of_eq hyEq.symm))
-      have hEqw : Exec.cardC a chosen (better a chosen acc x) = Exec.cardC a chosen w := by
+      have hEqw : cardC a chosen (better a chosen acc x) = cardC a chosen w := by
         exact hEqb.symm.trans hyEq
       have h_le_b : better a chosen acc x ≤ acc := better_tie_acc a chosen acc x hEqb
       exact le_trans (htie (better a chosen acc x) (by simp) hEqw) h_le_b
     · rcases hyx with hyeq | hyr
       · subst y
-        have hb : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w :=
+        have hb : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w :=
           hcard (better a chosen acc x) (by simp)
-        have hEqb : Exec.cardC a chosen x = Exec.cardC a chosen (better a chosen acc x) := by
-          have h1 : Exec.cardC a chosen x ≤ Exec.cardC a chosen (better a chosen acc x) :=
+        have hEqb : cardC a chosen x = cardC a chosen (better a chosen acc x) := by
+          have h1 : cardC a chosen x ≤ cardC a chosen (better a chosen acc x) :=
             better_card_ge_x a chosen acc x
-          have h2 : Exec.cardC a chosen (better a chosen acc x) ≤ Exec.cardC a chosen w := hb
+          have h2 : cardC a chosen (better a chosen acc x) ≤ cardC a chosen w := hb
           exact le_antisymm h1 (le_trans h2 (le_of_eq hyEq.symm))
-        have hEqw : Exec.cardC a chosen (better a chosen acc x) = Exec.cardC a chosen w := by
+        have hEqw : cardC a chosen (better a chosen acc x) = cardC a chosen w := by
           exact hEqb.symm.trans hyEq
         have h_le_b : better a chosen acc x ≤ x := better_tie_x a chosen acc x hEqb
         exact le_trans (htie (better a chosen acc x) (by simp) hEqw) h_le_b
@@ -189,10 +189,10 @@ lemma foldl_better_lex (a : Adj n) (chosen : List ℕ) :
 /-- `bestPick` returns a member of `rem` with maximum cardinality among
 `rem` and smallest id on ties. -/
 lemma bestPick_lex (a : Adj n) (chosen : List ℕ) (rem : List ℕ) (hrem_ne : rem ≠ []) :
-    let w := Exec.bestPick a chosen rem
+    let w := bestPick a chosen rem
     w ∈ rem ∧
-    (∀ x ∈ rem, Exec.cardC a chosen x ≤ Exec.cardC a chosen w) ∧
-    (∀ x ∈ rem, Exec.cardC a chosen x = Exec.cardC a chosen w → w ≤ x) := by
+    (∀ x ∈ rem, cardC a chosen x ≤ cardC a chosen w) ∧
+    (∀ x ∈ rem, cardC a chosen x = cardC a chosen w → w ≤ x) := by
   intro w
   have hfold := foldl_better_lex a chosen rem (rem.headD 0)
   -- foldl over rem from seed headD 0 gives BetterInv seed rem w, w ∈ seed::rem

@@ -25,9 +25,9 @@ The abstract model proves that applying `mcsUpdate` (equivalently
 `insertUpdate` / `deleteUpdate`) to a valid MCS ordering of a graph `G`,
 under a one-edge flip `FlipOf G G' u v`, yields a valid MCS ordering of `G'`.
 
-The executable model recomputes the ordering from scratch with `Exec.mcsOrder`.
+The executable model recomputes the ordering from scratch with `mcsOrder`.
 The bridge theorem `ExecBridge.mcsOrder_eq_greedySuffix` proves this
-recomputation is a valid MCS ordering of `Exec.toUGraph a hsymm hloop`.
+recomputation is a valid MCS ordering of `toUGraph a hsymm hloop`.
 
 The theorems here assemble the two:
   1. `setEdge_preserves_symm` / `setEdge_preserves_loopless`: the executable
@@ -37,7 +37,7 @@ The theorems here assemble the two:
      matrix differs from that of `a` by exactly the one edge `{u, v}` (the
      `FlipOf` hypothesis of the abstract theorems).
   3. `exec_insert_recompute_valid` / `exec_delete_recompute_valid`: after an executable flip, the
-     recomputed `Exec.mcsOrder` is a valid abstract MCS ordering of the new
+     recomputed `mcsOrder` is a valid abstract MCS ordering of the new
      graph.
 
 ## Honesty note (weaker statements than the initial request)
@@ -61,8 +61,6 @@ Namespace `ExecFlip`.  Zero `sorry`/`axiom`/`admit`/`unsafe`.
 
 @[expose] public section
 
-open DynamicMcs.Greedy
-
 namespace DynamicMcs
 
 namespace ExecFlip
@@ -76,47 +74,47 @@ writes to entries that `getAdj` actually reads. -/
 def WellShaped (n : ℕ) (a : Adj n) : Prop :=
   a.length = n ∧ ∀ x : ℕ, x < n → ∃ row : List Bool, a[x]? = some row ∧ row.length = n
 
-/-! ## Facts about `Exec.atRow` -/
+/-! ## Facts about `atRow` -/
 
 /-- `atRow` at an in-range index is the corresponding list entry. -/
 lemma atRow_get_eq (row : List Bool) (j : ℕ) (hj : j < row.length) :
-    Exec.atRow row j = row.get ⟨j, hj⟩ := by
+    atRow row j = row.get ⟨j, hj⟩ := by
   induction row generalizing j with
   | nil => exfalso; exact Nat.not_lt_zero j hj
   | cons b rest ih =>
       cases j with
       | zero => rfl
       | succ k =>
-          rw [Exec.atRow]
+          rw [atRow]
           exact ih k (Nat.succ_lt_succ_iff.mp hj)
 
 /-- `atRow` at an out-of-range index is `false`. -/
 lemma atRow_eq_of_not_lt (row : List Bool) (j : ℕ) (hj : ¬ j < row.length) :
-    Exec.atRow row j = false := by
+    atRow row j = false := by
   induction row generalizing j with
   | nil => rfl
   | cons b rest ih =>
       cases j with
       | zero => exfalso; exact hj (by simp)
       | succ k =>
-          rw [Exec.atRow]
+          rw [atRow]
           exact ih k (by intro hk; exact hj (by simp [hk]))
 
-/-! ## `Exec.getAdj` under well-shapedness -/
+/-! ## `getAdj` under well-shapedness -/
 
 /-- For an out-of-range read (`x ≥ n` or `y ≥ n`) on a well-shaped matrix, the
 adjacency reads `false`. -/
 lemma getAdj_wellShaped_of_not (hshape : WellShaped n a) (x y : ℕ)
-    (hout : ¬ (x < n ∧ y < n)) : Exec.getAdj a x y = false := by
+    (hout : ¬ (x < n ∧ y < n)) : getAdj a x y = false := by
   classical
   by_cases hxn : x < n
   · have hyn : ¬ y < n := by omega
     rcases hshape.2 x hxn with ⟨row, hrow, hrowlen⟩
-    unfold Exec.getAdj
+    unfold getAdj
     rw [hrow]
-    change Exec.atRow row y = false
+    change atRow row y = false
     rw [atRow_eq_of_not_lt row y (by intro hyrow; exact hyn (by simpa [hrowlen] using hyrow))]
-  · unfold Exec.getAdj
+  · unfold getAdj
     have hlen_ge : a.length ≤ x := by
       have hnx : n ≤ x := Nat.le_of_not_gt hxn
       rw [hshape.1]
@@ -131,14 +129,14 @@ lemma length_mapIdx_ (l : List α) (f : ℕ → α → β) : (l.mapIdx f).length
 
 /-- The flip of a well-shaped matrix stays well-shaped. -/
 lemma setEdge_wellShaped (hshape : WellShaped n a) (u v : ℕ) (present : Bool) :
-    WellShaped n (Exec.setEdge n a u v present) := by
+    WellShaped n (setEdge n a u v present) := by
   constructor
-  · unfold Exec.setEdge
+  · unfold setEdge
     rw [length_mapIdx_, hshape.1]
   · intro x hx
     rcases hshape.2 x hx with ⟨row, hrow, hrowlen⟩
     refine ⟨row.mapIdx (fun j b => if x = u ∧ j = v ∨ x = v ∧ j = u then present else b), ?_, ?_⟩
-    · unfold Exec.setEdge
+    · unfold setEdge
       rw [List.getElem?_mapIdx]
       rw [hrow]
       rfl
@@ -148,9 +146,9 @@ lemma setEdge_wellShaped (hshape : WellShaped n a) (u v : ℕ) (present : Bool) 
 original `atRow` except at the two columns `v` (if `x = u`) and `u` (if
 `x = v`). -/
 lemma row_mapIdx_flip (row : List Bool) (u v : ℕ) (present : Bool) (x y : ℕ) (hy : y < row.length) :
-    Exec.atRow (row.mapIdx (fun j b => if x = u ∧ j = v ∨ x = v ∧ j = u then present else b)) y =
-      (if x = u ∧ y = v ∨ x = v ∧ y = u then present else Exec.atRow row y) := by
-  rw [show Exec.atRow
+    atRow (row.mapIdx (fun j b => if x = u ∧ j = v ∨ x = v ∧ j = u then present else b)) y =
+      (if x = u ∧ y = v ∨ x = v ∧ y = u then present else atRow row y) := by
+  rw [show atRow
         (row.mapIdx (fun j b => if x = u ∧ j = v ∨ x = v ∧ j = u then present else b)) y =
       (row.mapIdx (fun j b => if x = u ∧ j = v ∨ x = v ∧ j = u then present else b))[y]'(by
         simp [hy]) by
@@ -165,12 +163,12 @@ lemma row_mapIdx_flip (row : List Bool) (u v : ℕ) (present : Bool) (x y : ℕ)
 unchanged elsewhere. -/
 lemma getAdj_setEdge_of_lt (hshape : WellShaped n a) (u v : ℕ) (present : Bool) (x y : ℕ)
     (hx : x < n) (hy : y < n) :
-    Exec.getAdj (Exec.setEdge n a u v present) x y =
-      (if x = u ∧ y = v ∨ x = v ∧ y = u then present else Exec.getAdj a x y) := by
+    getAdj (setEdge n a u v present) x y =
+      (if x = u ∧ y = v ∨ x = v ∧ y = u then present else getAdj a x y) := by
   classical
   rcases hshape.2 x hx with ⟨rowx, hrowx, hrowxlen⟩
   have hy' : y < rowx.length := by simpa [hrowxlen] using hy
-  unfold Exec.getAdj Exec.setEdge
+  unfold getAdj setEdge
   rw [List.getElem?_mapIdx]
   simp only [hrowx]
   simp only [Option.map]
@@ -184,10 +182,10 @@ harmlessly with the `(x, y)` ↦ `(y, x)` exchange, so the flipped matrix stays
 symmetric whenever the original matrix was. -/
 theorem setEdge_preserves_symm (n : ℕ) (a : Adj n) (u v : ℕ) (present : Bool)
     (hshape : WellShaped n a)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i) :
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i) :
     ∀ x y : ℕ,
-      Exec.getAdj (Exec.setEdge n a u v present) x y =
-        Exec.getAdj (Exec.setEdge n a u v present) y x := by
+      getAdj (setEdge n a u v present) x y =
+        getAdj (setEdge n a u v present) y x := by
   classical
   intro x y
   by_cases hxy : x < n ∧ y < n
@@ -210,8 +208,8 @@ indices are distinct.  If `u = v`, the flip would set the diagonal entry
 therefore require `u ≠ v`. -/
 theorem setEdge_preserves_loopless (n : ℕ) (a : Adj n) (u v : ℕ) (present : Bool)
     (hshape : WellShaped n a)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false) (huv : u ≠ v) :
-    ∀ x : ℕ, Exec.getAdj (Exec.setEdge n a u v present) x x = false := by
+    (hloop : ∀ i : ℕ, getAdj a i i = false) (huv : u ≠ v) :
+    ∀ x : ℕ, getAdj (setEdge n a u v present) x x = false := by
   intro x
   by_cases hxn : x < n
   · rw [getAdj_setEdge_of_lt hshape u v present x x hxn hxn]
@@ -230,32 +228,32 @@ theorem setEdge_preserves_loopless (n : ℕ) (a : Adj n) (u v : ℕ) (present : 
 /-- `insertEdge` (a flip with `present = true`) stays symmetric. -/
 lemma insertEdge_symm (a : Adj n) (u v : ℕ)
     (hshape : WellShaped n a)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i) :
-    ∀ i j : ℕ, Exec.getAdj (Exec.insertEdge n a u v) i j =
-      Exec.getAdj (Exec.insertEdge n a u v) j i := by
-  simpa [Exec.insertEdge] using (setEdge_preserves_symm n a u v true hshape hsymm)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i) :
+    ∀ i j : ℕ, getAdj (insertEdge n a u v) i j =
+      getAdj (insertEdge n a u v) j i := by
+  simpa [insertEdge] using (setEdge_preserves_symm n a u v true hshape hsymm)
 
 /-- `insertEdge` stays loop-free. -/
 lemma insertEdge_loopless (a : Adj n) (u v : ℕ)
     (hshape : WellShaped n a)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false) (huv : u ≠ v) :
-    ∀ i : ℕ, Exec.getAdj (Exec.insertEdge n a u v) i i = false := by
-  simpa [Exec.insertEdge] using (setEdge_preserves_loopless n a u v true hshape hloop huv)
+    (hloop : ∀ i : ℕ, getAdj a i i = false) (huv : u ≠ v) :
+    ∀ i : ℕ, getAdj (insertEdge n a u v) i i = false := by
+  simpa [insertEdge] using (setEdge_preserves_loopless n a u v true hshape hloop huv)
 
 /-- `deleteEdge` stays symmetric. -/
 lemma deleteEdge_symm (a : Adj n) (u v : ℕ)
     (hshape : WellShaped n a)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i) :
-    ∀ i j : ℕ, Exec.getAdj (Exec.deleteEdge n a u v) i j =
-      Exec.getAdj (Exec.deleteEdge n a u v) j i := by
-  simpa [Exec.deleteEdge] using (setEdge_preserves_symm n a u v false hshape hsymm)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i) :
+    ∀ i j : ℕ, getAdj (deleteEdge n a u v) i j =
+      getAdj (deleteEdge n a u v) j i := by
+  simpa [deleteEdge] using (setEdge_preserves_symm n a u v false hshape hsymm)
 
 /-- `deleteEdge` stays loop-free. -/
 lemma deleteEdge_loopless (a : Adj n) (u v : ℕ)
     (hshape : WellShaped n a)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false) (huv : u ≠ v) :
-    ∀ i : ℕ, Exec.getAdj (Exec.deleteEdge n a u v) i i = false := by
-  simpa [Exec.deleteEdge] using (setEdge_preserves_loopless n a u v false hshape hloop huv)
+    (hloop : ∀ i : ℕ, getAdj a i i = false) (huv : u ≠ v) :
+    ∀ i : ℕ, getAdj (deleteEdge n a u v) i i = false := by
+  simpa [deleteEdge] using (setEdge_preserves_loopless n a u v false hshape hloop huv)
 
 /-! ## FlipOf between the abstract graphs of `a` and its executable flips -/
 
@@ -263,25 +261,25 @@ lemma deleteEdge_loopless (a : Adj n) (u v : ℕ)
 abstract graph of the inserted matrix differs from that of `a` only by the
 edge `{u, v}`, with `u ≠ v`. -/
 theorem insert_is_flip (n : ℕ) (a : Adj n) (u v : Vert n)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i)
+    (hloop : ∀ i : ℕ, getAdj a i i = false)
     (hshape : WellShaped n a)
     (huv : u.val ≠ v.val) :
-    let G := Exec.toUGraph a hsymm hloop
-    let G' := Exec.toUGraph (Exec.insertEdge n a u.val v.val)
+    let G := toUGraph a hsymm hloop
+    let G' := toUGraph (insertEdge n a u.val v.val)
       (insertEdge_symm a u.val v.val hshape hsymm)
       (insertEdge_loopless a u.val v.val hshape hloop huv)
-    Greedy.UGraph.FlipOf G G' u v := by
+    UGraph.FlipOf G G' u v := by
   classical
   constructor
   · intro h
     exact huv (congrArg Fin.val h)
   · intro x y
-    dsimp [Exec.toUGraph]
-    have hflip : Exec.getAdj (Exec.insertEdge n a u.val v.val) x.val y.val =
+    dsimp [toUGraph]
+    have hflip : getAdj (insertEdge n a u.val v.val) x.val y.val =
         (if x.val = u.val ∧ y.val = v.val ∨ x.val = v.val ∧ y.val = u.val
-          then true else Exec.getAdj a x.val y.val) := by
-      unfold Exec.insertEdge
+          then true else getAdj a x.val y.val) := by
+      unfold insertEdge
       exact getAdj_setEdge_of_lt hshape u.val v.val true x.val y.val x.2 y.2
     rw [hflip]
     by_cases hc : x.val = u.val ∧ y.val = v.val ∨ x.val = v.val ∧ y.val = u.val
@@ -294,25 +292,25 @@ theorem insert_is_flip (n : ℕ) (a : Adj n) (u v : Vert n)
 
 /-- Executable `deleteEdge` realises the abstract `FlipOf` relation. -/
 theorem delete_is_flip (n : ℕ) (a : Adj n) (u v : Vert n)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i)
+    (hloop : ∀ i : ℕ, getAdj a i i = false)
     (hshape : WellShaped n a)
     (huv : u.val ≠ v.val) :
-    let G := Exec.toUGraph a hsymm hloop
-    let G' := Exec.toUGraph (Exec.deleteEdge n a u.val v.val)
+    let G := toUGraph a hsymm hloop
+    let G' := toUGraph (deleteEdge n a u.val v.val)
       (deleteEdge_symm a u.val v.val hshape hsymm)
       (deleteEdge_loopless a u.val v.val hshape hloop huv)
-    Greedy.UGraph.FlipOf G G' u v := by
+    UGraph.FlipOf G G' u v := by
   classical
   constructor
   · intro h
     exact huv (congrArg Fin.val h)
   · intro x y
-    dsimp [Exec.toUGraph]
-    have hflip : Exec.getAdj (Exec.deleteEdge n a u.val v.val) x.val y.val =
+    dsimp [toUGraph]
+    have hflip : getAdj (deleteEdge n a u.val v.val) x.val y.val =
         (if x.val = u.val ∧ y.val = v.val ∨ x.val = v.val ∧ y.val = u.val
-          then false else Exec.getAdj a x.val y.val) := by
-      unfold Exec.deleteEdge
+          then false else getAdj a x.val y.val) := by
+      unfold deleteEdge
       exact getAdj_setEdge_of_lt hshape u.val v.val false x.val y.val x.2 y.2
     rw [hflip]
     by_cases hc : x.val = u.val ∧ y.val = v.val ∨ x.val = v.val ∧ y.val = u.val
@@ -323,55 +321,55 @@ theorem delete_is_flip (n : ℕ) (a : Adj n) (u v : Vert n)
         exact ⟨Fin.eq_of_val_eq h.1, Fin.eq_of_val_eq h.2⟩
     · simp [hc]
 
-/-- After an executable edge insertion, the recomputed `Exec.mcsOrder` of the
+/-- After an executable edge insertion, the recomputed `mcsOrder` of the
 new matrix is a valid abstract MCS ordering of the new graph, and its values
-are exactly `Exec.mcsOrder` of the new matrix. -/
+are exactly `mcsOrder` of the new matrix. -/
 theorem exec_insert_recompute_valid (n : ℕ) (a : Adj n) (u v : Vert n)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i)
+    (hloop : ∀ i : ℕ, getAdj a i i = false)
     (hshape : WellShaped n a)
     (huv : u.val ≠ v.val) :
-    let a' := Exec.insertEdge n a u.val v.val
-    let G' := Exec.toUGraph a'
+    let a' := insertEdge n a u.val v.val
+    let G' := toUGraph a'
       (setEdge_preserves_symm n a u.val v.val true hshape hsymm)
       (setEdge_preserves_loopless n a u.val v.val true hshape hloop huv)
     ∃ (ord : List (Vert n)),
-      Greedy.UGraph.IsMCSOrdering G' ord ∧
-        ord.map (fun w => w.val) = Exec.mcsOrder a' := by
-  let a' := Exec.insertEdge n a u.val v.val
+      UGraph.IsMCSOrdering G' ord ∧
+        ord.map (fun w => w.val) = mcsOrder a' := by
+  let a' := insertEdge n a u.val v.val
   change ∃ (ord : List (Vert n)),
-    Greedy.UGraph.IsMCSOrdering
-      (Exec.toUGraph a'
+    UGraph.IsMCSOrdering
+      (toUGraph a'
         (insertEdge_symm a u.val v.val hshape hsymm)
         (insertEdge_loopless a u.val v.val hshape hloop huv)) ord ∧
-      ord.map (fun w => w.val) = Exec.mcsOrder a'
+      ord.map (fun w => w.val) = mcsOrder a'
   exact ExecBridge.mcsOrder_eq_greedySuffix a'
     (insertEdge_symm a u.val v.val hshape hsymm)
     (insertEdge_loopless a u.val v.val hshape hloop huv)
     (setEdge_wellShaped hshape u.val v.val true).1
 
-/-- After an executable edge deletion, the recomputed `Exec.mcsOrder` of the
+/-- After an executable edge deletion, the recomputed `mcsOrder` of the
 new matrix is a valid abstract MCS ordering of the new graph.  (The executable
 recomputation needs no assumption that the edge was present.) -/
 theorem exec_delete_recompute_valid (n : ℕ) (a : Adj n) (u v : Vert n)
-    (hsymm : ∀ i j : ℕ, Exec.getAdj a i j = Exec.getAdj a j i)
-    (hloop : ∀ i : ℕ, Exec.getAdj a i i = false)
+    (hsymm : ∀ i j : ℕ, getAdj a i j = getAdj a j i)
+    (hloop : ∀ i : ℕ, getAdj a i i = false)
     (hshape : WellShaped n a)
     (huv : u.val ≠ v.val) :
-    let a' := Exec.deleteEdge n a u.val v.val
-    let G' := Exec.toUGraph a'
+    let a' := deleteEdge n a u.val v.val
+    let G' := toUGraph a'
       (deleteEdge_symm a u.val v.val hshape hsymm)
       (deleteEdge_loopless a u.val v.val hshape hloop huv)
     ∃ (ord : List (Vert n)),
-      Greedy.UGraph.IsMCSOrdering G' ord ∧
-        ord.map (fun w => w.val) = Exec.mcsOrder a' := by
-  let a' := Exec.deleteEdge n a u.val v.val
+      UGraph.IsMCSOrdering G' ord ∧
+        ord.map (fun w => w.val) = mcsOrder a' := by
+  let a' := deleteEdge n a u.val v.val
   change ∃ (ord : List (Vert n)),
-    Greedy.UGraph.IsMCSOrdering
-      (Exec.toUGraph a'
+    UGraph.IsMCSOrdering
+      (toUGraph a'
         (deleteEdge_symm a u.val v.val hshape hsymm)
         (deleteEdge_loopless a u.val v.val hshape hloop huv)) ord ∧
-      ord.map (fun w => w.val) = Exec.mcsOrder a'
+      ord.map (fun w => w.val) = mcsOrder a'
   exact ExecBridge.mcsOrder_eq_greedySuffix a'
     (deleteEdge_symm a u.val v.val hshape hsymm)
     (deleteEdge_loopless a u.val v.val hshape hloop huv)

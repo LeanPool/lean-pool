@@ -161,11 +161,6 @@ include hsymm hloop ha in
 theorem pickAt_spec (P : List (Fin n)) (hP : P.Nodup) (hlt : P.length < n) :
     ∃ w : Fin n, pickAt a (P.map Fin.val) = w.val ∧
       IsMCSNext (toUGraph a hsymm hloop) P.toFinset w := by
-  have hsymmE : ∀ u v : ℕ, Exec.getAdj a u v = Exec.getAdj a v u := fun u v => by
-    rw [← getAdj_eq n, ← getAdj_eq n, hsymm]
-  have hloopE : ∀ u : ℕ, Exec.getAdj a u u = false := fun u => by
-    rw [← getAdj_eq n]
-    exact hloop u
   have hinv := listInv_remOf P hP
   obtain ⟨x, hx⟩ := exists_not_mem P hP hlt
   have hrem : remOf n (P.map Fin.val) ≠ [] := by
@@ -176,17 +171,17 @@ theorem pickAt_spec (P : List (Fin n)) (hP : P.Nodup) (hlt : P.length < n) :
       rwa [← Fin.ext hyx]
     rw [h] at hxm
     simp at hxm
-  have hbest := McsInvariant.bestPick_IsMCSNext n a hsymmE hloopE _ _ hinv hrem
+  have hbest := McsInvariant.bestPick_IsMCSNext n a hsymm hloop _ _ hinv hrem
   rw [chosenFin_map_val] at hbest
   obtain ⟨hmem, _, _⟩ :=
     BridgeSteps.bestPick_lex a (P.map Fin.val) (remOf n (P.map Fin.val)) hrem
-  have hlt' : Exec.bestPick a (P.map Fin.val) (remOf n (P.map Fin.val)) < n :=
+  have hlt' : bestPick a (P.map Fin.val) (remOf n (P.map Fin.val)) < n :=
     hinv.2.2.2.1 _ hmem
-  refine ⟨@Fin.mk n (Exec.bestPick a (P.map Fin.val) (remOf n (P.map Fin.val))) hlt', ?_, ?_⟩
-  · change bestPick a (P.map Fin.val) (remOf a.length (P.map Fin.val)) = _
-    rw [ha, bestPick_eq]
-  · rw [IsMCSNext_toDyn, toUGraph_toDyn]
-    exact hbest
+  refine ⟨@Fin.mk n (bestPick a (P.map Fin.val) (remOf n (P.map Fin.val))) hlt', ?_, ?_⟩
+  · change bestPick a (P.map Fin.val) (remOf a.length (P.map Fin.val)) =
+      bestPick a (P.map Fin.val) (remOf n (P.map Fin.val))
+    rw [ha]
+  · exact hbest
 
 include hsymm hloop ha in
 theorem pickAt_eq_iff (P : List (Fin n)) (hP : P.Nodup) (hlt : P.length < n) (x : Fin n) :
@@ -287,7 +282,7 @@ theorem greedySuffix_valid (G : UGraph n) (pref : List (Fin n)) (hnd : pref.Nodu
     (hsteps : ∀ i (hi : i < pref.length), IsMCSNext G (pref.take i).toFinset (pref.get ⟨i, hi⟩)) :
     IsMCSOrdering G (greedySuffix G pref) := by
   rw [greedySuffix_eq, IsMCSOrdering_toDyn]
-  exact Greedy.UGraph.greedySuffix_valid _ pref hnd
+  exact UGraph.greedySuffix_valid _ pref hnd
     (fun i hi => (IsMCSNext_toDyn G _ _).1 (hsteps i hi))
 
 include hsymm hloop ha in
