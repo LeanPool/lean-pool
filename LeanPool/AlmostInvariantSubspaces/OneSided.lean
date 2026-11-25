@@ -8,6 +8,7 @@ Authors: Jack Ryan
 
 module
 
+public import LeanPool.AlmostInvariantSubspaces.Action
 public import Mathlib.Order.ModularLattice
 public import Mathlib.Order.Hom.Basic
 public import Mathlib.Order.Hom.Lattice
@@ -22,15 +23,14 @@ public import Mathlib.Tactic.Ring
 /-!
 # Almost invariant subspaces for finite groups
 
-D. Kazhdan and A. Polishchuk (Almost invariant subspaces and operators, arXiv 2107.08085, Pure
-Appl. Math. Q. 19 (2023))
-proved: if `dim A / (A ∩ gA) ≤ r` for all `g` then there is an invariant subspace `W` with `dim W
-/ (W ∩ A) ≤ r` and
-`dim A / (W ∩ A) ≤ r (r+1)^(r+1)`, and conjectured that the last bound can be replaced by a
-polynomial, possibly linear,
-function of `r`, at least for finite groups.
+Theorem A of Kazhdan and Polishchuk, *Almost invariant subspaces and operators*
+(arXiv:2107.08085), applies to a setwise invariant family of subspaces. Its invariant witness is
+a finite sum of finite intersections of family members. The authors conjectured a polynomial,
+possibly linear, replacement for their bound `r (r + 1)^(r + 1)` on the error from a family member
+to that witness, at least for finite groups.
 
-Here, for finite `G`, every field and every subspace:
+The results below take a single orbit as the family. For finite `G` and a finite-dimensional
+representation over a division ring:
 * `almost_invariant_subspace`: there is an invariant `W` with `dim W / (W ∩ A) + dim A / (W ∩ A) ≤
   2r` (`< 2r` if `r > 0`);
 * `almost_invariant_subspace_one_sided`: there is an invariant `W` with `dim W / (W ∩ A) ≤ r` and
@@ -210,9 +210,9 @@ theorem lattice_bound {L G : Type*} [Lattice L] [Group G] [Finite G]
 open Module
 
 /-- The weighted bound for subspaces. `G` is a finite group, `V` a finite-dimensional
-representation of `G` over a field `K`,
+representation of `G` over a division ring `K`,
 `A` a subspace with `dim A ≤ dim (gA ∩ A) + r` for all `g`. -/
-theorem weighted {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
+theorem weighted {K V G : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Group G] [Finite G] (ρ : G →* (V ≃ₗ[K] V)) (A : Submodule K V) (r : ℕ)
     (hr : ∀ g, finrank K A ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V) + r)
     (α β : ℤ) (hα : 1 ≤ α) (hβ : 0 ≤ β) :
@@ -224,16 +224,7 @@ theorem weighted {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
   classical
   have := Fintype.ofFinite G
   obtain ⟨W, h1, h2, h3⟩ := lattice_bound (L := Submodule K V) (G := G)
-    (fun g => Submodule.orderIsoMapComap (ρ g))
-    (by
-      intro g h a
-      ext x
-      simp only [Submodule.orderIsoMapComap_apply, Submodule.mem_map, map_mul]
-      constructor
-      · rintro ⟨y, hy, rfl⟩
-        exact ⟨ρ h y, ⟨y, hy, rfl⟩, rfl⟩
-      · rintro ⟨_, ⟨y, hy, rfl⟩, rfl⟩
-        exact ⟨y, hy, rfl⟩)
+    (AlmostInvariant.linearAct ρ) (AlmostInvariant.linearAct_mul_apply ρ)
     (fun S => (finrank K S : ℤ))
     (fun S T hST => by
       have h := Submodule.finrank_lt_finrank_of_lt hST
@@ -253,7 +244,7 @@ theorem weighted {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
       have h' : (finrank K A : ℤ) ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V)
           + r := by
         exact_mod_cast hr g
-      have h'' : (Submodule.orderIsoMapComap (ρ g)) A = A.map (ρ g : V →ₗ[K] V) := rfl
+      have h'' : AlmostInvariant.linearAct ρ g A = A.map (ρ g : V →ₗ[K] V) := rfl
       rw [h'']
       linarith)
     α β hα hβ
@@ -261,7 +252,7 @@ theorem weighted {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
 
 /-- **Linear bound for the total error.** There is an invariant subspace `W` with
 `dim W / (W ∩ A) + dim A / (W ∩ A) ≤ 2r`, strictly less if `r > 0`. -/
-theorem almost_invariant_subspace {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
+theorem almost_invariant_subspace {K V G : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
     [FiniteDimensional K V] [Group G] [Finite G] (ρ : G →* (V ≃ₗ[K] V)) (A : Submodule K V) (r : ℕ)
     (hr : ∀ g, finrank K A ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V) + r) :
     ∃ W : Submodule K V, (∀ g, W.map (ρ g : V →ₗ[K] V) = W) ∧
@@ -277,11 +268,12 @@ theorem almost_invariant_subspace {K V G : Type*} [Field K] [AddCommGroup V] [Mo
       linarith
     exact_mod_cast this
 
-/-- **The one-sided form of Kazhdan and Polishchuk with a quadratic bound.** There is an invariant
-subspace `W` with
+/-- **Single-orbit one-sided result with a quadratic bound.** There is an invariant subspace
+`W` with
 `dim W / (W ∩ A) ≤ r` and `dim A / (W ∩ A) ≤ r (r + 1)`. -/
-theorem almost_invariant_subspace_one_sided {K V G : Type*} [Field K] [AddCommGroup V] [Module K V]
-    [FiniteDimensional K V] [Group G] [Finite G] (ρ : G →* (V ≃ₗ[K] V)) (A : Submodule K V) (r : ℕ)
+theorem almost_invariant_subspace_one_sided {K V G : Type*} [DivisionRing K] [AddCommGroup V]
+    [Module K V] [FiniteDimensional K V] [Group G] [Finite G] (ρ : G →* (V ≃ₗ[K] V))
+    (A : Submodule K V) (r : ℕ)
     (hr : ∀ g, finrank K A ≤ finrank K (A.map (ρ g : V →ₗ[K] V) ⊓ A : Submodule K V) + r) :
     ∃ W : Submodule K V, (∀ g, W.map (ρ g : V →ₗ[K] V) = W) ∧
       finrank K W ≤ finrank K (W ⊓ A : Submodule K V) + r ∧

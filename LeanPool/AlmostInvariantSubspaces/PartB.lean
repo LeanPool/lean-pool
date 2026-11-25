@@ -22,9 +22,9 @@ public import Mathlib.Tactic.NormNum
 public import Mathlib.Tactic.Positivity
 
 /-!
-# Kazhdan–Polishchuk Theorem A in its original form, part B
+# Finite sums of finite intersections for the Kazhdan–Polishchuk argument
 
-Source: `PROOF.md`, Section 3 ("Finite sums of finite intersections").
+Source: the upstream `PROOF.md`, Section 3 ("Finite sums of finite intersections").
 
 Setting. `A : ι → Submodule R M` is a family of submodules (any ring, any module; for a vector
 space `d` below is the
@@ -558,11 +558,30 @@ theorem sumInter_fixed_of_lattice_group {G : Type*} [Group G] (ρ : G →* (Subm
   calc sumInter A W = ρ g (ρ g⁻¹ (sumInter A W)) := e.symm
     _ ≤ ρ g (sumInter A W) := (ρ g).monotone (h1 g⁻¹)
 
+/-- Assemble the finite sum and its bounds from the data exported by the near-minimizer proof. -/
+theorem finite_form_of_export [Nonempty ι] (A : ι → Submodule R M) (W : Submodule R M) (r : ℕ)
+    (hr : ∀ x y, d (A x) (A y) ≤ r)
+    (hWb : ∀ x, d W (A x) ≤ r ∧ d (A x) W ≤ ((r * (r + 1) : ℕ) : ℕ∞))
+    (s : Finset ι) (wt : ι → ℝ) (t τ : ℝ) (hwt0 : ∀ y ∈ s, 0 ≤ wt y) (hwt1 : ∑ y ∈ s, wt y = 1)
+    (ht : (r : ℝ) / (r + 1) ≤ t) (htτ : (t - r / (r + 1)) * (r * (r + 1)) + τ < 1 / (r + 1))
+    (h1 : ∀ E, W ≤ E → d E W ≠ ⊤ →
+      ∑ y ∈ s, wt y * ((d ((A y ⊔ W) ⊓ E) W).toNat : ℝ) ≤ t * ((d E W).toNat : ℝ) + τ) :
+    ∃ F : Finset (Finset ι), F.Nonempty ∧ (∀ T ∈ F, T.Nonempty) ∧
+      sumInter A W = (⨆ T ∈ F, ⨅ y ∈ T, A y) ∧
+      ∀ x, d (sumInter A W) (A x) ≤ r ∧ d (A x) (sumInter A W) ≤
+        ((r * ∑ j ∈ Finset.Icc 1 r, ⌈((r : ℚ) + 1) / (j : ℚ)⌉₊ : ℕ) : ℕ∞) := by
+  have descent := descent_of_export s wt hwt0 hwt1 t τ ht htτ h1
+  obtain ⟨⟨F, nonempty, members, sum_eq⟩, first, second⟩ :=
+    partB A W r hr (fun x => (hWb x).1) (fun x => (hWb x).2) descent
+  refine ⟨F, nonempty inferInstance, fun T hT => (members T hT).1, sum_eq, fun x => ⟨first x, ?_⟩⟩
+  rw [← Kr_eq_ceil]
+  exact second x
+
 end Family
 
 section VectorSpace
 
-/-- **KP Theorem A in its original form, from an invariant `W` with the descent property** (vector
+/-- **Finite-sum conclusion from an invariant `W` with the descent property** (vector
 spaces of any
 dimension over a division ring, any group acting linearly, any family of members permuted by the
 group).
@@ -642,16 +661,12 @@ theorem kp_family_finite_form_sharp_of_W {K V G X : Type*} [DivisionRing K] [Add
       ∀ x : X, Module.rank K (W ⧸ (A x).submoduleOf W) ≤ r ∧
         Module.rank K (A x ⧸ W.submoduleOf (A x)) ≤
           (r * ∑ j ∈ Finset.Icc 1 r, ⌈((r : ℚ) + 1) / (j : ℚ)⌉₊ : ℕ) := by
-  classical
   have hfam : ∀ g x, ∃ y, (A x).map (ρ g : V →ₗ[K] V) = A y := fun g x => ⟨g • x, (hA g x).symm⟩
   have hA' : ∀ x y, d (A x) (A y) ≤ r := fun x y => (d_le_iff_rank _ _ r).mpr (hr x y)
-  have hdesc := descent_of_export s wt hwt0 hwt1 t τ ht htτ h1
-  obtain ⟨⟨F, hFne, hF, hD⟩, hb1, hb2⟩ :=
-    partB A W r hA' (fun x => (hWb x).1) (fun x => (hWb x).2) hdesc
-  refine ⟨F, sumInter A W, hFne inferInstance, fun T hT => (hF T hT).1, hD,
-    sumInter_map_eq_of_group ρ A W hfam hWinv, fun x => ⟨(d_le_iff_rank _ _ r).mp (hb1 x), ?_⟩⟩
-  rw [← Kr_eq_ceil]
-  exact (d_le_iff_rank _ _ _).mp (hb2 x)
+  obtain ⟨F, nonempty, members, sum_eq, bounds⟩ :=
+    finite_form_of_export A W r hA' hWb s wt t τ hwt0 hwt1 ht htτ h1
+  exact ⟨F, sumInter A W, nonempty, members, sum_eq, sumInter_map_eq_of_group ρ A W hfam hWinv,
+    fun x => ⟨(d_le_iff_rank _ _ _).mp (bounds x).1, (d_le_iff_rank _ _ _).mp (bounds x).2⟩⟩
 
 /-- **The conclusion of S4 (`KPFull.kp_family_canonical`, canonical form) from a `W` that is fixed
 by every lattice
@@ -677,18 +692,14 @@ theorem kp_family_canonical_of_W {K V X : Type*} [DivisionRing K] [AddCommGroup 
       ∀ x : X, Module.rank K (W ⧸ (A x).submoduleOf W) ≤ r ∧
         Module.rank K (A x ⧸ W.submoduleOf (A x)) ≤
           (r * ∑ j ∈ Finset.Icc 1 r, ⌈((r : ℚ) + 1) / (j : ℚ)⌉₊ : ℕ) := by
-  classical
   have hA' : ∀ x y, d (A x) (A y) ≤ r := fun x y => (d_le_iff_rank _ _ r).mpr (hr x y)
-  have hdesc := descent_of_export s wt hwt0 hwt1 t τ ht htτ h1
-  obtain ⟨⟨F, hFne, hF, hD⟩, hb1, hb2⟩ :=
-    partB A W r hA' (fun x => (hWb x).1) (fun x => (hWb x).2) hdesc
-  refine ⟨F, sumInter A W, hFne inferInstance, fun T hT => (hF T hT).1, hD, fun φ hφ1 hφ2 => ?_,
-    fun x => ⟨(d_le_iff_rank _ _ r).mp (hb1 x), ?_⟩⟩
-  · refine sumInter_map_eq A W φ hφ1 (fun x => ?_) (hWinv φ hφ1 hφ2)
-    obtain ⟨x', hx'⟩ := hφ2 x
-    exact ⟨x', φ.symm_apply_eq.mpr hx'.symm⟩
-  · rw [← Kr_eq_ceil]
-    exact (d_le_iff_rank _ _ _).mp (hb2 x)
+  obtain ⟨F, nonempty, members, sum_eq, bounds⟩ :=
+    finite_form_of_export A W r hA' hWb s wt t τ hwt0 hwt1 ht htτ h1
+  refine ⟨F, sumInter A W, nonempty, members, sum_eq, fun φ hφ1 hφ2 => ?_,
+    fun x => ⟨(d_le_iff_rank _ _ _).mp (bounds x).1, (d_le_iff_rank _ _ _).mp (bounds x).2⟩⟩
+  refine sumInter_map_eq A W φ hφ1 (fun x => ?_) (hWinv φ hφ1 hφ2)
+  obtain ⟨x', hx'⟩ := hφ2 x
+  exact ⟨x', φ.symm_apply_eq.mpr hx'.symm⟩
 
 end VectorSpace
 

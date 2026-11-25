@@ -26,8 +26,8 @@ open Module
 
 namespace KPFullFinal
 
-/-- **(S2')** Theorem A in its original form with the bound `r K_r`, `K_r = ∑_{j=1}^{r}
-⌈(r+1)/j⌉`. -/
+/-- **(S2')** Sharpened Theorem A for a nonempty family over a division ring. The reverse bound is
+`r K_r`, where `K_r = ∑_{j=1}^{r} ⌈(r+1)/j⌉`. -/
 theorem kp_family_finite_form_sharp {K V G X : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
     [Group G] [MulAction G X] [Nonempty X] (ρ : G →* (V ≃ₗ[K] V)) (A : X → Submodule K V)
     (hA : ∀ (g : G) (x : X), A (g • x) = (A x).map (ρ g : V →ₗ[K] V)) (r : ℕ)
@@ -44,7 +44,8 @@ theorem kp_family_finite_form_sharp {K V G X : Type*} [DivisionRing K] [AddCommG
     KPFamilies.kp_family_export_linear ρ A (fun g x => ⟨g • x, (hA g x).symm⟩) r hr'
   exact KPFull.PartB.kp_family_finite_form_sharp_of_W ρ A hA r hr W hW hb s wt t τ hw0 hw1 ht htτ h1
 
-/-- **(S2)** Theorem A exactly as printed, with `r² (r + 1)` in place of `r (r + 1)^(r + 1)`. -/
+/-- **(S2)** The cubic strengthening of Theorem A for a nonempty family over a division ring.
+It includes `r = 0` and uses `r² (r + 1)` in place of the paper's `r (r + 1)^(r + 1)`. -/
 theorem kp_family_finite_form {K V G X : Type*} [DivisionRing K] [AddCommGroup V] [Module K V]
     [Group G] [MulAction G X] [Nonempty X] (ρ : G →* (V ≃ₗ[K] V)) (A : X → Submodule K V)
     (hA : ∀ (g : G) (x : X), A (g • x) = (A x).map (ρ g : V →ₗ[K] V)) (r : ℕ)
@@ -128,15 +129,11 @@ theorem kp_family_finite_form_lattice {R M G X : Type*} [Ring R] [AddCommGroup M
       ∀ x, Module.length R (W ⧸ (A x).submoduleOf W) ≤ r ∧
         Module.length R (A x ⧸ W.submoduleOf (A x)) ≤
           ((r * ∑ j ∈ Finset.Icc 1 r, ⌈((r : ℚ) + 1) / (j : ℚ)⌉₊ : ℕ) : ℕ∞) := by
-  classical
-  obtain ⟨W, hW, hb, s, wt, t, τ, hw0, hw1, -, ht, htτ, h1⟩ := KPFamilies.kp_family_export ρ A hA
-      r hr
-  have hdesc := KPFull.PartB.descent_of_export s wt hw0 hw1 t τ ht htτ h1
-  obtain ⟨⟨F, hFne, hF, hD⟩, hb1, hb2⟩ :=
-    KPFull.PartB.partB A W r hr (fun x => (hb x).1) (fun x => (hb x).2) hdesc
-  refine ⟨F, KPFull.PartB.sumInter A W, hFne inferInstance, fun T hT => (hF T hT).1, hD,
-    KPFull.PartB.sumInter_fixed_of_lattice_group ρ A W hA hW, fun x => ⟨hb1 x, ?_⟩⟩
-  rw [← KPFull.PartB.Kr_eq_ceil]
-  exact hb2 x
+  obtain ⟨W, hW, hb, s, wt, t, τ, hw0, hw1, -, ht, htτ, h1⟩ :=
+    KPFamilies.kp_family_export ρ A hA r hr
+  obtain ⟨F, nonempty, members, sum_eq, bounds⟩ :=
+    KPFull.PartB.finite_form_of_export A W r hr hb s wt t τ hw0 hw1 ht htτ h1
+  exact ⟨F, KPFull.PartB.sumInter A W, nonempty, members, sum_eq,
+    KPFull.PartB.sumInter_fixed_of_lattice_group ρ A W hA hW, bounds⟩
 
 end KPFullFinal

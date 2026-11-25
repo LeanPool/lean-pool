@@ -1,7 +1,7 @@
 slug: almost-invariant-subspaces
 title: Almost invariant subspaces and quantitative Kazhdan–Polishchuk bounds
 summary: A family of subspaces with uniformly bounded pairwise quotient dimensions
-  admits an invariant subspace formed from finitely many sums and intersections.
+  admits an invariant subspace formed as a finite sum of finite intersections.
   The development sharpens the quantitative bounds and extends the construction
   to submodule lattices using module length.
 branch: linear algebra

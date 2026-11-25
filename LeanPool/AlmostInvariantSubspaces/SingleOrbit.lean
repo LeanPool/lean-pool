@@ -63,24 +63,11 @@ theorem kp_single_orbit {K V G : Type*} [DivisionRing K] [AddCommGroup V] [Modul
       Module.rank K (W ⧸ A.submoduleOf W) ≤ r ∧
       Module.rank K (A ⧸ W.submoduleOf A) ≤ (r * (r + 1) : ℕ) := by
   have hmul : ∀ g h : G, A.map (ρ (g * h) : V →ₗ[K] V) =
-      (A.map (ρ h : V →ₗ[K] V)).map (ρ g : V →ₗ[K] V) := by
-    intro g h
-    ext v
-    simp only [Submodule.mem_map]
-    constructor
-    · rintro ⟨w, hw, rfl⟩
-      exact ⟨ρ h w, ⟨w, hw, rfl⟩, by rw [map_mul]; rfl⟩
-    · rintro ⟨_, ⟨w, hw, rfl⟩, rfl⟩
-      exact ⟨w, hw, by rw [map_mul]; rfl⟩
+      (A.map (ρ h : V →ₗ[K] V)).map (ρ g : V →ₗ[K] V) :=
+    fun g h => AlmostInvariant.linearAct_mul_apply ρ g h A
   have hone : A.map (ρ 1 : V →ₗ[K] V) = A := by
     rw [map_one]
-    ext v
-    constructor
-    · intro hv
-      obtain ⟨w, hw, rfl⟩ := Submodule.mem_map.mp hv
-      exact hw
-    · intro hv
-      exact Submodule.mem_map.mpr ⟨v, hv, rfl⟩
+    exact Submodule.map_id A
   obtain ⟨W, hW, h⟩ := kp_family_one_sided (X := G) ρ (fun g => A.map (ρ g : V →ₗ[K] V))
     (fun g x => hmul g x) r (by
       intro x y

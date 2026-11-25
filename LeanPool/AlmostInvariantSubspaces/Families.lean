@@ -8,8 +8,10 @@ Authors: Jack Ryan
 
 module
 
+public import LeanPool.AlmostInvariantSubspaces.Action
 public import LeanPool.AlmostInvariantSubspaces.Average
 public import LeanPool.AlmostInvariantSubspaces.Length
+public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Algebra.Order.Group.End
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Order.CompletePartialOrder
@@ -18,12 +20,11 @@ public import Mathlib.Tactic.Positivity
 public import Mathlib.Tactic.GCongr
 
 /-!
-# Kazhdan-Polishchuk Theorem A for families: one-sided bounds `r` and `r (r + 1)`, every group,
-any dimension
+# Invariant approximations to families of submodules
 
 Source of the problem: D. Kazhdan and A. Polishchuk, *Almost invariant subspaces and operators*,
-arXiv 2107.08085,
-Pure Appl. Math. Q. 19 (2023), Theorem A (the setting of a family).
+arXiv:2107.08085, Theorem A. The finite-sum conclusion of the paper is handled in
+`FinalS2`. This module constructs the intermediate invariant approximation and its estimates.
 
 A group `G` acts on a module `M` over a ring (by automorphisms of the lattice of submodules:
 linear or semilinear actions),
@@ -33,7 +34,7 @@ y`. Then there is a
 Here `ℓ` is the length;
 for vector spaces it is the dimension. No finiteness of `G`, `X` or of the dimension is assumed.
 
-Proof (`PROOF.md`, sections 1-2), in Lean:
+Proof outline (sections 1–2 of the upstream `PROOF.md`):
 * `KPFamLat`: a lattice with a strictly monotone modular integer rank, a group of rank-preserving
   automorphisms, and one
   element `u`. The levels argument of the single-orbit proof (a measure on the orbit of `u` for
@@ -54,7 +55,8 @@ Proof (`PROOF.md`, sections 1-2), in Lean:
 
 namespace KPFamLat
 
-open AlmostInvariant (avg avg_add avg_sub avg_mul avg_const avg_mono avg_sum avg_double)
+open AlmostInvariant (avg_eq_sum_div_card avg_comm avg avg_add avg_sub avg_mul avg_const avg_mono
+  avg_sum avg_double)
 
 variable {L G : Type*} [Lattice L] [Group G]
 
@@ -140,11 +142,10 @@ theorem f_translate (t : ℝ) (g : G) (s : L) :
   unfold f
   rw [hinv]
   congr 1
-  unfold avg
+  simp only [avg_eq_sum_div_card]
   congr 1
   refine Finset.sum_congr rfl fun i _ => ?_
   have : act (g * σ i) u ⊓ act g s = act g (act (σ i) u ⊓ s) := by rw [hmul, (act g).map_inf]
-  dsimp only
   rw [this, hinv]
 
 theorem f_double (t : ℝ) (g : G) (s : L) :
@@ -392,8 +393,7 @@ theorem psi_nonneg (x y z : L) : 0 ≤ rk (x ⊓ z) - rk (x ⊓ y ⊓ z) := by
 
 include hstrict hmod in
 /-- Telescoping along the chain `P (m) ≤ Q (m) ≤ P (m - 1) ≤ ...`. -/
-theorem telescope (x y : L) (P Q : ℕ → L) (_hPQ : ∀ j, P j ≤ Q j) (hQP : ∀ j, Q (j + 1) ≤ P j)
-    (m : ℕ) :
+theorem telescope (x y : L) (P Q : ℕ → L) (m : ℕ) (hQP : ∀ j < m, Q (j + 1) ≤ P j) :
     ∑ j ∈ Finset.range (m + 1), ((rk (x ⊓ Q j) - rk (x ⊓ y ⊓ Q j)) - (rk (x ⊓ P j)
         - rk (x ⊓ y ⊓ P j))) ≤
       (rk (x ⊓ Q 0) - rk (x ⊓ y ⊓ Q 0)) - (rk (x ⊓ P m) - rk (x ⊓ y ⊓ P m)) := by
@@ -401,7 +401,8 @@ theorem telescope (x y : L) (P Q : ℕ → L) (_hPQ : ∀ j, P j ≤ Q j) (hQP :
   | zero => simp
   | succ m ih =>
     rw [Finset.sum_range_succ]
-    have := psi_mono rk hstrict hmod x y (Q (m + 1)) (P m) (hQP m)
+    have step := psi_mono rk hstrict hmod x y (Q (m + 1)) (P m) (hQP m (Nat.lt_succ_self m))
+    have earlier := ih fun j hj => hQP j (Nat.lt_succ_of_lt hj)
     linarith
 
 include hmul hstrict hmod hinv in
@@ -473,21 +474,6 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
   have hQP : ∀ j, j + 1 < n → Q (j + 1) ≤ P j := fun j hj =>
     chain act rk hstrict hmod u σ hε.le (hsep j (j + 1) (Nat.lt_succ_self j) hj) (P j) (Q (j + 1))
       (hPQ j (by omega)).2.1 (hPQ (j + 1) hj).2.2 (aleq j) (aleq (j + 1))
-  -- extend the chain beyond n by constants, to telescope
-  set P' : ℕ → L := fun j => if j < n then P j else P (n - 1)
-  set Q' : ℕ → L := fun j => if j < n then Q j else P (n - 1)
-  have hPQ' : ∀ j, P' j ≤ Q' j := by
-    intro j; simp only [P', Q']; split_ifs with h
-    · exact hle j h
-    · exact le_rfl
-  have hQP' : ∀ j, Q' (j + 1) ≤ P' j := by
-    intro j; simp only [P', Q']
-    split_ifs with h1 h2 h2
-    · exact hQP j h1
-    · omega
-    · have : j = n - 1 := by omega
-      subst this; exact le_rfl
-    · exact le_rfl
   -- numbers
   set d : ℕ → ι → ℝ := fun j i => (rk (act (σ i) u ⊓ Q j) : ℝ) - rk (act (σ i) u ⊓ P j)
   set c : ℕ → ι → ι → ℝ := fun j i k =>
@@ -495,18 +481,16 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
   -- (1) for all i k the sum over the levels is at most r
   have hsum : ∀ i k, ∑ j ∈ Finset.range n, (d j i - c j i k) ≤ r := by
     intro i k
-    have tel := telescope rk hstrict hmod (act (σ i) u) (act (σ k) u) P' Q' hPQ' hQP' (n - 1)
+    have tel := telescope rk hstrict hmod (act (σ i) u) (act (σ k) u) P Q (n - 1)
+      (fun j hj => hQP j (by omega))
     rw [Nat.sub_add_cancel hn] at tel
-    have hpr := psi_le_r act hmul rk hstrict hmod hinv u r hr (σ i) (σ k) (Q' 0)
-    have hpn := psi_nonneg rk hstrict (act (σ i) u) (act (σ k) u) (P' (n - 1))
+    have hpr := psi_le_r act hmul rk hstrict hmod hinv u r hr (σ i) (σ k) (Q 0)
+    have hpn := psi_nonneg rk hstrict (act (σ i) u) (act (σ k) u) (P (n - 1))
     have hterm : ∀ j ∈ Finset.range n, d j i - c j i k ≤
-        (((rk (act (σ i) u ⊓ Q' j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ Q' j)) -
-          (rk (act (σ i) u ⊓ P' j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ P' j)) : ℤ) : ℝ) := by
+        (((rk (act (σ i) u ⊓ Q j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ Q j)) -
+          (rk (act (σ i) u ⊓ P j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ P j)) : ℤ) : ℝ) := by
       intro j hj
       have hj' : j < n := Finset.mem_range.mp hj
-      have e1 : P' j = P j := by simp [P', hj']
-      have e2 : Q' j = Q j := by simp [Q', hj']
-      rw [e1, e2]
       have := psi_step rk hstrict hmod (act (σ i) u) (act (σ k) u) (P j) (Q j) (hle j hj')
       simp only [d, c]
       push_cast
@@ -518,9 +502,9 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
       push_cast at this
       linarith
     have h1 := Finset.sum_le_sum hterm
-    have h2 : (∑ j ∈ Finset.range n, (((rk (act (σ i) u ⊓ Q' j) - rk (act (σ i) u ⊓ act (σ k)
-        u ⊓ Q' j)) -
-          (rk (act (σ i) u ⊓ P' j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ P' j)) : ℤ) : ℝ)) ≤ r := by
+    have h2 : (∑ j ∈ Finset.range n, (((rk (act (σ i) u ⊓ Q j) - rk (act (σ i) u ⊓ act (σ k)
+        u ⊓ Q j)) -
+          (rk (act (σ i) u ⊓ P j) - rk (act (σ i) u ⊓ act (σ k) u ⊓ P j)) : ℤ) : ℝ)) ≤ r := by
       rw [← Int.cast_sum]
       exact_mod_cast tel.trans (by linarith)
     linarith
@@ -571,11 +555,7 @@ theorem exists_fixed_of_levels (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) 
       rw [hRP] at eR
       linarith
     have hcc : avg (fun i => avg (fun k => c j i k)) ≤ tt * avg (d j) + 8 * ε := by
-      have swap : avg (fun i => avg (fun k => c j i k)) = avg (fun k => avg (fun i => c j i k))
-          := by
-        simp only [avg]
-        rw [← Finset.sum_div, ← Finset.sum_div, Finset.sum_comm]
-      rw [swap]
+      rw [avg_comm (c j)]
       have := avg_mono hc
       rw [avg_add, avg_mul, avg_const] at this
       exact this
@@ -623,19 +603,13 @@ variable (act : G → L ≃o L) (hmul : ∀ g h x, act (g * h) x = act g (act h 
   (hinv : ∀ g x, rk (act g x) = rk x) (u : L)
 
 include hmul hstrict hmod hinv in
-/-- **Levels and first-order bounds, for all groups.** For every interval `[lo, hi] ⊂ (0,1)` and
-`θ > 0` there are a level
-`t ∈ [lo, hi]` and a fixed element `w` such that every `B` within `r` of all translates of `u`, in
-both directions, has
-`(1 - t) rk(B / B ⊓ w) ≤ r + θ` and `t rk(w / w ⊓ B) ≤ r + θ`. -/
-theorem exists_fixed_first_order (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) ≤ r)
+/-- A level in the given interval and a finite averaging measure with an invariant
+near-minimizer. -/
+theorem exists_fixed_near_minimizer (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) ≤ r)
     {lo hi θ : ℝ} (hlo : 0 < lo) (hlohi : lo < hi) (hhi : hi < 1) (hθ : 0 < θ) :
     ∃ t, lo ≤ t ∧ t ≤ hi ∧ ∃ w, (∀ g, act g w = w) ∧
-      (∀ B, (∀ g, rk B - rk (B ⊓ act g u) ≤ r) → (∀ g, rk (act g u) - rk (act g u ⊓ B) ≤ r) →
-        (1 - t) * ((rk B : ℝ) - rk (B ⊓ w)) ≤ r + θ ∧ t * ((rk w : ℝ) - rk (w ⊓ B)) ≤ r + θ) ∧
       ∃ (ι : Type) (_ : Fintype ι) (_ : Nonempty ι) (σ : ι → G),
-        ∀ E, avg (fun i => (rk (act (σ i) u ⊓ E) : ℝ) - rk (act (σ i) u ⊓ w)) ≤ t * ((rk E : ℝ)
-            - rk w) + θ := by
+        f act rk u σ t w ≤ a act rk u σ t + θ := by
   classical
   have hr0 : (0 : ℝ) ≤ r := by
     have := hr 1
@@ -705,12 +679,29 @@ theorem exists_fixed_first_order (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u
   obtain ⟨j, hj, w, hw, hval⟩ := exists_fixed_of_levels act hmul rk hstrict hmod hinv u σ r hr hn0
       t ht0 ht1 hε
     hsep hκt hbig hsup
-  have hnear : ∀ s, f act rk u σ (t j) w ≤ f act rk u σ (t j) s + 4 * ε := fun s => by
-    have := a_le act rk hstrict hinv u σ (ht0 j) (ht1 j) s
-    linarith
-  refine ⟨t j, htlo j, hthi j, w, hw, fun B hB1 hB2 => ?_, ι, hF, hN, σ, fun E => ?_⟩
-  · obtain ⟨h1, h2⟩ := first_order act rk hstrict hmod u σ r w B hnear hB1 hB2
-    exact ⟨by linarith, by linarith⟩
+  exact ⟨t j, htlo j, hthi j, w, hw, ι, hF, hN, σ, by linarith⟩
+
+include hmul hstrict hmod hinv in
+/-- **Levels and first-order bounds, for all groups.** For every interval `[lo, hi] ⊂ (0,1)` and
+`θ > 0` there are a level
+`t ∈ [lo, hi]` and a fixed element `w` such that every `B` within `r` of all translates of `u`, in
+both directions, has
+`(1 - t) rk(B / B ⊓ w) ≤ r + θ` and `t rk(w / w ⊓ B) ≤ r + θ`. -/
+theorem exists_fixed_first_order (r : ℤ) (hr : ∀ g, rk u - rk (act g u ⊓ u) ≤ r)
+    {lo hi θ : ℝ} (hlo : 0 < lo) (hlohi : lo < hi) (hhi : hi < 1) (hθ : 0 < θ) :
+    ∃ t, lo ≤ t ∧ t ≤ hi ∧ ∃ w, (∀ g, act g w = w) ∧
+      (∀ B, (∀ g, rk B - rk (B ⊓ act g u) ≤ r) → (∀ g, rk (act g u) - rk (act g u ⊓ B) ≤ r) →
+        (1 - t) * ((rk B : ℝ) - rk (B ⊓ w)) ≤ r + θ ∧ t * ((rk w : ℝ) - rk (w ⊓ B)) ≤ r + θ) ∧
+      ∃ (ι : Type) (_ : Fintype ι) (_ : Nonempty ι) (σ : ι → G),
+        ∀ E, avg (fun i => (rk (act (σ i) u ⊓ E) : ℝ) - rk (act (σ i) u ⊓ w)) ≤ t * ((rk E : ℝ)
+            - rk w) + θ := by
+  obtain ⟨t, htl, hth, w, hw, ι, hF, hN, σ, hval⟩ :=
+    exists_fixed_near_minimizer act hmul rk hstrict hmod hinv u r hr hlo hlohi hhi hθ
+  have hnear : ∀ s, f act rk u σ t w ≤ f act rk u σ t s + θ := fun s =>
+    hval.trans (add_le_add_left (a_le act rk hstrict hinv u σ (hlo.le.trans htl)
+      (hth.trans hhi.le) s) θ)
+  refine ⟨t, htl, hth, w, hw, fun B hB1 hB2 => ?_, ι, hF, hN, σ, fun E => ?_⟩
+  · exact first_order act rk hstrict hmod u σ r w B hnear hB1 hB2
   · -- the enlargement inequality (1) of section 2 of `PROOF.md`, for every competitor `E`
     have h1 := hnear E
     have e6 : avg (fun i => (rk (act (σ i) u ⊓ E) : ℝ) - rk (act (σ i) u ⊓ w)) =
@@ -877,7 +868,7 @@ theorem idx_add {X Y Z : Submodule R M} (hXY : PF X Y) (hYZ : PF Y Z) (hXZ : PF 
   ring
 
 /-- Commensurable with `A`. -/
-def IsComm (A S : Submodule R M) : Prop := d S A ≠ ⊤ ∧ d A S ≠ ⊤
+abbrev IsComm (A S : Submodule R M) : Prop := PF S A
 
 theorem comm_inf {A S T : Submodule R M} (hS : IsComm A S) (hT : IsComm A T) : IsComm A (S ⊓ T)
     := by
@@ -904,7 +895,7 @@ theorem pf_of_comm {A S T : Submodule R M} (hS : IsComm A S) (hT : IsComm A T) :
   ⟨ne_top_of_le_ne_top (by simp [hS.1, hT.2]) (d_triangle S A T),
    ne_top_of_le_ne_top (by simp [hT.1, hS.2]) (d_triangle T A S)⟩
 
-theorem pf_A {A S : Submodule R M} (hS : IsComm A S) : PF S A := ⟨hS.1, hS.2⟩
+theorem pf_A {A S : Submodule R M} (hS : IsComm A S) : PF S A := hS
 
 theorem comm_self (A : Submodule R M) : IsComm A A := by
   have : d A A = 0 := d_eq_zero.mpr le_rfl
@@ -925,7 +916,7 @@ theorem rkA_strict : StrictMono (rkA A) := by
   intro S T hST
   have hle : S.1 ≤ T.1 := hST.le
   have hne : ¬ T.1 ≤ S.1 := fun h => (ne_of_lt hST) (Subtype.ext (le_antisymm hle h))
-  have e := idx_add (pf_of_comm T.2 S.2) (pf_A S.2) (pf_A T.2)
+  have e := idx_add (pf_of_comm T.2 S.2) S.2 T.2
   have h0 : d S.1 T.1 = 0 := d_eq_zero.mpr hle
   have h1 : d T.1 S.1 ≠ 0 := fun h => hne (d_eq_zero.mp h)
   have h2 : d T.1 S.1 ≠ ⊤ := (pf_of_comm T.2 S.2).1
@@ -942,8 +933,8 @@ theorem rkA_strict : StrictMono (rkA A) := by
 theorem rkA_mod (S T : CL A) : rkA A (S ⊔ T) + rkA A (S ⊓ T) = rkA A S + rkA A T := by
   have cs : IsComm A (S.1 ⊔ T.1) := comm_sup S.2 T.2
   have ci : IsComm A (S.1 ⊓ T.1) := comm_inf S.2 T.2
-  have e1 := idx_add (pf_of_comm cs S.2) (pf_A S.2) (pf_A cs)
-  have e2 := idx_add (pf_of_comm ci T.2) (pf_A T.2) (pf_A ci)
+  have e1 := idx_add (pf_of_comm cs S.2) S.2 cs
+  have e2 := idx_add (pf_of_comm ci T.2) T.2 ci
   have k1 : idx (S.1 ⊔ T.1) S.1 = (d T.1 S.1).toNat := by
     rw [idx, sup_comm, d_sup, d_eq_zero.mpr (le_sup_right : S.1 ≤ T.1 ⊔ S.1)]
     simp
@@ -1005,7 +996,7 @@ theorem chi_zero (g : G) : idx (ρ g A) A = 0 := by
     have cgh : IsComm A (ρ g (ρ h A)) := by
       have := cA (g * h)
       rwa [ρmul] at this
-    rw [ρmul, idx_add (pf_of_comm cgh (cA g)) (pf_A (cA g)) (pf_A cgh)]
+    rw [ρmul, idx_add (pf_of_comm cgh (cA g)) (cA g) cgh]
     have : idx (ρ g (ρ h A)) (ρ g A) = idx (ρ h A) A := by simp only [idx, d_map]
     rw [this]; ring
   have bnd : ∀ k : G, |idx (ρ k A) A| ≤ r := by
@@ -1037,7 +1028,7 @@ theorem rkA_inv (g : G) (S : CL A) : rkA A (actCL A ρ r hr g S) = rkA A S := by
   have cg : IsComm A (ρ g A) := comm_act A ρ r hr g (comm_self A)
   have cS : IsComm A (ρ g S.1) := comm_act A ρ r hr g S.2
   change idx (ρ g S.1) A = idx S.1 A
-  rw [idx_add (pf_of_comm cS cg) (pf_A cg) (pf_A cS), chi_zero A ρ r hr g]
+  rw [idx_add (pf_of_comm cS cg) cg cS, chi_zero A ρ r hr g]
   simp only [idx, d_map, add_zero]
 
 end Commensurable
@@ -1051,7 +1042,7 @@ variable {R M : Type*} [Ring R] [AddCommGroup M] [Module R M]
 theorem rkA_sub_inf (A : Submodule R M) (S T : CL A) : rkA A S - rkA A (S ⊓ T)
     = ((d S.1 T.1).toNat : ℤ) := by
   have cST : IsComm A (S.1 ⊓ T.1) := comm_inf S.2 T.2
-  have e := idx_add (pf_of_comm S.2 cST) (pf_A cST) (pf_A S.2)
+  have e := idx_add (pf_of_comm S.2 cST) cST S.2
   have k : idx S.1 (S.1 ⊓ T.1) = (d S.1 T.1).toNat := by
     rw [idx, d_inf, d_eq_zero.mpr (inf_le_left : S.1 ⊓ T.1 ≤ S.1)]
     simp
@@ -1059,8 +1050,7 @@ theorem rkA_sub_inf (A : Submodule R M) (S T : CL A) : rkA A S - rkA A (S ⊓ T)
   rw [e, k]
   ring
 
-/-- **Kazhdan-Polishchuk Theorem A for families, one-sided form, with the data of the
-near-minimizer.** Every group,
+/-- **Invariant approximation with the near-minimizer data.** Every group,
 every ring, every module; the group acts by automorphisms of the lattice of submodules (linear or
 semilinear actions).
 If the family `A : X → Submodule R M` is invariant (each `g` maps each member to a member) and
@@ -1143,7 +1133,7 @@ theorem kp_family_export {G X : Type*} [Group G] [Nonempty X] (ρ : G →* (Subm
     have hsum : ∀ F : X → ℝ,
         ∑ y ∈ Finset.univ.image yf, wt y * F y = AlmostInvariant.avg (fun i => F (yf i)) := by
       intro F
-      simp only [AlmostInvariant.avg, wt]
+      simp only [AlmostInvariant.avg_eq_sum_div_card, wt]
       rw [Finset.sum_comp F yf, Finset.sum_div]
       refine Finset.sum_congr rfl fun y _ => ?_
       rw [nsmul_eq_mul]
@@ -1194,8 +1184,7 @@ theorem kp_family_export {G X : Type*} [Group G] [Nonempty X] (ρ : G →* (Subm
             exact key i
         _ ≤ t * ((d E w.1).toNat : ℝ) + τ := h
 
-/-- **Kazhdan-Polishchuk Theorem A for families, one-sided form, every group, every ring, every
-module.** The group acts by
+/-- **One-sided bounds for an invariant approximation over an arbitrary ring.** The group acts by
 automorphisms of the lattice of submodules (for example by linear or semilinear automorphisms of
 `M`). If the family
 `A : X → Submodule R M` is invariant (each `g` maps each member to a member) and `ℓ(A x / (A x ∩ A
@@ -1213,20 +1202,9 @@ theorem kp_family_lattice {G X : Type*} [Group G] (ρ : G →* (Submodule R M �
     exact ⟨W, hW, h⟩
 
 /-- A linear action gives an action on the lattice of submodules. -/
-def linearAct {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R] M)) : G →* (Submodule R M ≃o Submodule R M)
-    where
-  toFun g := Submodule.orderIsoMapComap (ρ g)
-  map_one' := by
-    ext S x
-    simp
-  map_mul' g h := by
-    ext S x
-    simp only [map_mul, Submodule.orderIsoMapComap_apply, RelIso.mul_apply, Submodule.mem_map]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact ⟨ρ h y, ⟨y, hy, rfl⟩, rfl⟩
-    · rintro ⟨_, ⟨y, hy, rfl⟩, rfl⟩
-      exact ⟨y, hy, rfl⟩
+abbrev linearAct {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R] M)) :
+    G →* (Submodule R M ≃o Submodule R M) :=
+  AlmostInvariant.linearAct ρ
 
 theorem linearAct_apply {G : Type*} [Group G] (ρ : G →* (M ≃ₗ[R] M)) (g : G) (S : Submodule R M) :
     linearAct ρ g S = S.map (ρ g : M →ₗ[R] M) := rfl
@@ -1270,8 +1248,8 @@ theorem kp_family_one_sided_module {G X : Type*} [Group G] (ρ : G →* (M ≃�
 end Families
 
 open Module in
-/-- **(S1) Theorem A, one-sided form, families, with a polynomial bound** (the statement of
-`Challenge/StatementFull.lean`, verbatim). Any group `G`, any `G`-set `X`, any equivariant family
+/-- **(S1) One-sided bounds for an invariant approximation.** This is S1 of the upstream
+`Challenge/StatementFull.lean`. Any group `G`, any `G`-set `X`, any equivariant family
 `A_x`, any dimension,
 any division ring. If `dim A_x / (A_x ∩ A_y) ≤ r` for all `x, y`, there is a `G`-invariant `W` with
 `dim W / (W ∩ A_x) ≤ r` and `dim A_x / (W ∩ A_x) ≤ r (r + 1)` for every `x`. -/

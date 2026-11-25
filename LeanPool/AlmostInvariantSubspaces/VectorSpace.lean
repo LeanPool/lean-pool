@@ -9,13 +9,14 @@ Authors: Jack Ryan
 module
 
 public import LeanPool.AlmostInvariantSubspaces.Finite
+public import LeanPool.AlmostInvariantSubspaces.Action
 
 /-!
-# Vector spaces: the conjecture of Kazhdan and Polishchuk for finite groups
+# Single-orbit bounds for finite groups
 
-D. Kazhdan, A. Polishchuk, Almost invariant subspaces and operators, arXiv 2107.08085: end of the
-introduction.
-The bound `r (r+1)^(r+1)` is replaced by a total of less than `2 r`.
+For the orbit of one submodule, the total of the two directed errors is at most `2 * r`,
+and it is strictly smaller if `r > 0`. This is a finite-group result motivated by
+Kazhdan and Polishchuk, *Almost invariant subspaces and operators*, arXiv:2107.08085.
 -/
 
 @[expose] public section
@@ -23,23 +24,6 @@ The bound `r (r+1)^(r+1)` is replaced by a total of less than `2 r`.
 open Submodule
 
 namespace AlmostInvariant
-
-/-- A linear automorphism acts on the lattice of submodules. -/
-def linearAct {R M G : Type*} [Ring R] [AddCommGroup M] [Module R M] [Group G] (ρ : G →* (M ≃ₗ[R]
-    M)) :
-    G →* (Submodule R M ≃o Submodule R M) where
-  toFun g := Submodule.orderIsoMapComap (ρ g)
-  map_one' := by
-    ext S x
-    simp
-  map_mul' g h := by
-    ext S x
-    simp only [map_mul, Submodule.orderIsoMapComap_apply, RelIso.mul_apply, Submodule.mem_map]
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      exact ⟨ρ h y, ⟨y, hy, rfl⟩, rfl⟩
-    · rintro ⟨_, ⟨y, hy, rfl⟩, rfl⟩
-      exact ⟨y, hy, rfl⟩
 
 theorem linearAct_apply {R M G : Type*} [Ring R] [AddCommGroup M] [Module R M] [Group G] (ρ : G →*
     (M ≃ₗ[R] M)) (g : G)
@@ -59,7 +43,7 @@ theorem almost_invariant_module {R M G : Type*} [Ring R] [AddCommGroup M] [Modul
   rw [Nat.card_eq_fintype_card]
   exact ⟨W, hW, h⟩
 
-/-- **The conjecture of Kazhdan and Polishchuk for finite groups**, with a linear bound. -/
+/-- Single-orbit total-error bound for a linear action of a finite group. -/
 theorem almost_invariant {K V G : Type*} [DivisionRing K] [AddCommGroup V] [Module K V] [Group G]
     [Finite G]
     (ρ : G →* (V ≃ₗ[K] V)) (A : Submodule K V) (r : ℕ)
