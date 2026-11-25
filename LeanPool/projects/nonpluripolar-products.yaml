@@ -1,0 +1,46 @@
+slug: nonpluripolar-products
+title: Nonpluripolar products of positive currents
+summary: Constructs nonpluripolar products from compatible local potentials on
+  complex manifolds and proves independence of the local presentation. The
+  development also establishes compatibility with locally bounded
+  Bedford–Taylor factors. It reuses results from Mingchen Xia's earlier
+  envelope-property formalization, including finiteness of the mixed measure
+  on compact Kähler manifolds.
+branch: complex analysis
+entry_module: LeanPool.NonpluripolarProducts
+authors:
+- Mingchen Xia
+- Jian Wang
+- Siqi He
+- Zayn Blore
+source:
+  url: https://github.com/MingchenXia/SGPT-lean/tree/76cbff42fbefc4c953a0ea0ba5b6948ac20c69b3
+  github_repo: MingchenXia/SGPT-lean
+  commit: 76cbff42fbefc4c953a0ea0ba5b6948ac20c69b3
+  arxiv: "0812.3674"
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- SGPT.NPP.currentProduct_restrict
+- SGPT.NPP.NonPluripolarCurrent.nonPluripolarProduct_append_bounded
+- SGPT.Foundations.Analysis.Pending.GlobalNonPluripolar.globalMixedMeasure_isFiniteMeasure
+main_results:
+- declaration: SGPT.NPP.currentProduct_restrict
+  informal: The nonpluripolar product of a well-defined family of positive currents
+    restricts to the product computed from any local potentials for those currents.
+- declaration: SGPT.NPP.NonPluripolarCurrent.nonPluripolarProduct_append_bounded
+  informal: Adding locally bounded plurisubharmonic factors to a well-defined
+    local nonpluripolar product agrees with the iterated Bedford–Taylor product.
+- declaration: SGPT.Foundations.Analysis.Pending.GlobalNonPluripolar.globalMixedMeasure_isFiniteMeasure
+  informal: The mixed nonpluripolar measure of theta-plurisubharmonic potentials
+    for smooth closed real backgrounds is finite on a compact Kähler manifold.
+tags:
+- pluripotential-theory
+- complex-analysis
+- measure-theory
+- monge-ampere
+msc:
+- 32U05
+- 32W20
+- 32J27
