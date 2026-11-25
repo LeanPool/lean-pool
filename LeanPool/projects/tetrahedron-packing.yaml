@@ -5,7 +5,7 @@ summary: >-
   of the periodic Chen–Engel–Glotzer construction. The covered fraction of
   expanding coordinate cubes tends to 4000/4671. The development gives a
   periodic density theorem in positive-dimensional real coordinate spaces and
-  a finite integer separation criterion.
+  finite integer separation and clearance criteria for periodic convex motifs.
 branch: discrete geometry
 entry_module: LeanPool.TetrahedronPacking
 authors:
@@ -28,6 +28,7 @@ provenance_evidence: >-
 main_declarations:
 - PackingCertificate.packing_density
 - TetrahedronPacking.periodic_convex_density
+- TetrahedronPacking.disjoint_interiors_of_checkClearancePair
 main_results:
 - declaration: PackingCertificate.packing_density
   informal: >-
@@ -42,6 +43,14 @@ main_results:
     convex motif and a full lattice give pairwise interior-disjoint translates.
     The expanding-cube density equals the total motif volume divided by the
     lattice covolume.
+- declaration: TetrahedronPacking.disjoint_interiors_of_checkClearancePair
+  informal: >-
+    An integer projection certificate with a sufficient margin checks
+    interior disjointness of tetrahedron hulls at every relative periodic shift
+    under a bounded perturbation of their fractional vertex coordinates.
+  source_ref: >-
+    Clearance extension at michaellady/tetrahedron-packing-lean revision
+    acead5a7dfe61c0037f807d42836f2c58b2a5318.
 tags:
 - discrete-geometry
 - lattice-packing
