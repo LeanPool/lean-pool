@@ -9,6 +9,7 @@ Authors: DICTO
 module
 
 public import LeanPool.DehnInvariant.SectorArea
+public import LeanPool.DehnInvariant.TetrahedronData
 public import Mathlib.Algebra.Order.Archimedean.Real.Hom
 public import Mathlib.Analysis.LocallyConvex.AbsConvexOpen
 public import Mathlib.Analysis.Normed.Lp.MeasurableSpace
@@ -278,9 +279,6 @@ lemma tet_inj {v : R3} (h : ∀ m, ⟪tetN m, v⟫ = 0) : v = 0 := by
   · change v 1 = 0; linarith
   · change v 2 = 0; linarith
 
-lemma fin4_cover : ∀ i j k : Fin 4, i ≠ j → i ≠ k → j ≠ k →
-    ∀ m, m = i ∨ m = j ∨ m = k ∨ ∀ n, n = i ∨ n = j ∨ n = k ∨ n = m := by decide
-
 lemma fin4_pair_compl : ∀ i j : Fin 4, i ≠ j →
     ∃ k l, k < l ∧ ∀ m, (m = i ∨ m = j) ↔ (m ≠ k ∧ m ≠ l) := by decide
 
@@ -290,91 +288,35 @@ lemma fin4_compl_pair : ∀ k l : Fin 4, k ≠ l →
 lemma fin4_pair_unique : ∀ k l k' l' : Fin 4, k < l → k' < l' →
     (∀ m, (m ≠ k ∧ m ≠ l) ↔ (m ≠ k' ∧ m ≠ l')) → k = k' ∧ l = l' := by decide
 
-/-- Three of the four normals have no common perpendicular direction. -/
-lemma tet_three {i j k : Fin 4} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) {v : R3}
-    (hi : ⟪tetN i, v⟫ = 0) (hj : ⟪tetN j, v⟫ = 0) (hk : ⟪tetN k, v⟫ = 0) : v = 0 := by
-  apply tet_inj
-  intro m
-  rcases fin4_cover i j k hij hik hjk m with rfl | rfl | rfl | hc
-  · exact hi
-  · exact hj
-  · exact hk
-  · have hsum : ∑ n, ⟪tetN n, v⟫ = ⟪tetN m, v⟫ :=
-      Finset.sum_eq_single m (fun n _ hnm => by
-        rcases hc n with rfl | rfl | rfl | rfl
-        · exact hi
-        · exact hj
-        · exact hk
-        · exact absurd rfl hnm) (fun h => absurd (Finset.mem_univ m) h)
-    rw [Fin.sum_univ_four] at hsum
-    have := tet_sum v
-    linarith
-
-/-- The value of a face functional at a point of the line through two corners (corner `m` is
-`-tetN m`). -/
-lemma tet_inner_comb (m k l : Fin 4) (a b : ℝ) :
-    ⟪tetN m, a • (-tetN k) + b • (-tetN l)⟫ =
-      a * (if m = k then -3 else 1) + b * (if m = l then -3 else 1) := by
-  rw [inner_add_right, inner_smul_right, inner_smul_right, inner_neg_right, inner_neg_right,
-    tetN_inner, tetN_inner]
-  split_ifs <;> ring
-
-/-- **The edges of the tetrahedron**: the points of the solid where exactly the two faces other
-than `k`, `l`
-are tight are the points of the open segment between the corners `k` and `l`. -/
-lemma tet_openSegment_iff {k l : Fin 4} (hkl : k ≠ l) (x : R3) :
-    x ∈ openSegment ℝ (-tetN k) (-tetN l) ↔
-      x ∈ tetraSet ∧ act tetN (fun _ => 1) x = ({k, l}ᶜ : Set (Fin 4)) := by
-  constructor
-  · rintro ⟨a, b, ha, hb, hab, rfl⟩
-    refine ⟨fun m => ?_, ?_⟩
-    · change ⟪tetN m, a • (-tetN k) + b • (-tetN l)⟫ ≤ 1
-      rw [tet_inner_comb]
-      split_ifs <;> linarith
-    · ext m
-      change ⟪tetN m, a • (-tetN k) + b • (-tetN l)⟫ = 1 ↔ m ∈ ({k, l}ᶜ : Set (Fin 4))
-      rw [tet_inner_comb, mem_compl_iff, mem_insert_iff, mem_singleton_iff, not_or]
-      by_cases hmk : m = k
-      · rw [ite_eq_left hmk, ite_eq_right (fun h => hkl (hmk.symm.trans h))]
-        constructor
-        · intro h; exfalso; linarith
-        · intro h; exact absurd hmk h.1
-      · by_cases hml : m = l
-        · rw [ite_eq_right hmk, ite_eq_left hml]
-          constructor
-          · intro h; exfalso; linarith
-          · intro h; exact absurd hml h.2
-        · rw [ite_eq_right hmk, ite_eq_right hml]
-          constructor
-          · intro _; exact ⟨hmk, hml⟩
-          · intro _; linarith
-  · rintro ⟨hx, hA⟩
-    have hmem : ∀ m, ⟪tetN m, x⟫ = 1 ↔ (m ≠ k ∧ m ≠ l) := by
-      intro m
-      have h1 : m ∈ act tetN (fun _ => 1) x ↔ m ∈ ({k, l}ᶜ : Set (Fin 4)) := by rw [hA]
-      rw [mem_compl_iff, mem_insert_iff, mem_singleton_iff, not_or] at h1
-      exact h1
-    have hk1 : ⟪tetN k, x⟫ < 1 :=
-      lt_of_le_of_ne (hx k) (fun h => ((hmem k).1 h).1 rfl)
-    have hl1 : ⟪tetN l, x⟫ < 1 :=
-      lt_of_le_of_ne (hx l) (fun h => ((hmem l).1 h).2 rfl)
-    have hsum : ⟪tetN k, x⟫ + ⟪tetN l, x⟫ = -2 := by
-      have h2 : ∑ n, (⟪tetN n, x⟫ - 1) = (⟪tetN k, x⟫ - 1) + (⟪tetN l, x⟫ - 1) :=
-        Fintype.sum_eq_add k l hkl (fun n hn => by rw [(hmem n).2 hn, sub_self])
-      rw [Fin.sum_univ_four] at h2
-      have := tet_sum x
-      linarith
-    refine ⟨(1 - ⟪tetN k, x⟫) / 4, (1 - ⟪tetN l, x⟫) / 4, by linarith, by linarith, by linarith, ?_⟩
-    symm
-    rw [← sub_eq_zero]
+/-- The face functionals of the regular tetrahedron give its barycentric coordinates. -/
+theorem regularTetrahedronData :
+    IsTetraData tetN (fun m => -tetN m) (fun _ => 1) (fun _ => 1 / 4) where
+  w_pos _ := by norm_num
+  delta m k := by
+    rw [inner_neg_right, tetN_inner]
+    split_ifs <;> norm_num
+  sum_one x := by
+    simp only [Fin.sum_univ_four]
+    linarith [tet_sum x]
+  rebuild x := by
+    apply sub_eq_zero.mp
     apply tet_inj
     intro m
-    rw [inner_sub_right, tet_inner_comb]
-    by_cases hmk : m = k
-    · rw [ite_eq_left hmk, ite_eq_right (fun h => hkl (hmk.symm.trans h)), hmk]; linarith
-    · by_cases hml : m = l
-      · rw [ite_eq_right hmk, ite_eq_left hml, hml]; linarith
-      · rw [ite_eq_right hmk, ite_eq_right hml, (hmem m).2 ⟨hmk, hml⟩]; linarith
+    rw [inner_sub_right, inner_sum]
+    fin_cases m <;>
+      norm_num [Fin.sum_univ_four, inner_smul_right, inner_neg_right, tetN_inner] <;>
+      linarith [tet_sum x]
+
+/-- Three distinct face normals have no common perpendicular direction. -/
+lemma tet_three {i j k : Fin 4} (hij : i ≠ j) (hik : i ≠ k) (hjk : j ≠ k) {v : R3}
+    (hi : ⟪tetN i, v⟫ = 0) (hj : ⟪tetN j, v⟫ = 0) (hk : ⟪tetN k, v⟫ = 0) : v = 0 :=
+  regularTetrahedronData.three hij hik hjk hi hj hk
+
+/-- Two tight faces describe the open segment joining the opposite corners. -/
+lemma tet_openSegment_iff {k l : Fin 4} (hkl : k ≠ l) (x : R3) :
+    x ∈ openSegment ℝ (-tetN k) (-tetN l) ↔
+      x ∈ tetraSet ∧ act tetN (fun _ => 1) x = ({k, l}ᶜ : Set (Fin 4)) :=
+  regularTetrahedronData.openSegment_iff hkl x
 
 /-- The angle class where two faces of the tetrahedron meet: arccos(1/3). -/
 lemma tet_theta {A : Set (Fin 4)} {i j : Fin 4} (hij : i ≠ j) (hA : A = {i, j}) :
@@ -470,18 +412,6 @@ lemma tetra_edge_set :
       edgeAngle_sol _ _ hxs
     rw [he]
     exact tet_theta hij hA'
-
-lemma openSegment_eq_diff {x y : R3} (hxy : x ≠ y) :
-    openSegment ℝ x y = segment ℝ x y \ {x, y} := by
-  ext z; constructor
-  · intro hz
-    refine ⟨openSegment_subset_segment ℝ x y hz, ?_⟩
-    rintro (rfl | rfl)
-    · exact hxy (left_mem_openSegment_iff.1 hz)
-    · exact hxy (right_mem_openSegment_iff.1 hz)
-  · rintro ⟨hz, hne⟩
-    exact mem_openSegment_of_ne_left_right (fun h => hne (Or.inl h.symm))
-      (fun h => hne (Or.inr h.symm)) hz
 
 lemma hausdorff_pair_null (x y : R3) : μH[1] ({x, y} : Set R3) = 0 := by
   have := nullSingletonClass_hausdorff R3 (d := 1) one_pos

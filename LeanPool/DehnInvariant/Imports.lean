@@ -18,9 +18,11 @@ public import LeanPool.DehnInvariant.Isometry
 public import LeanPool.DehnInvariant.LocalAngle
 public import LeanPool.DehnInvariant.PlaneCut
 public import LeanPool.DehnInvariant.Polytope
+public import LeanPool.DehnInvariant.PolytopeConversion
 public import LeanPool.DehnInvariant.RationalAngles
 public import LeanPool.DehnInvariant.SectorArea
 public import LeanPool.DehnInvariant.Similarity
 public import LeanPool.DehnInvariant.Simplex
 public import LeanPool.DehnInvariant.TensorInvariant
+public import LeanPool.DehnInvariant.TetrahedronData
 public import LeanPool.DehnInvariant.Volume
