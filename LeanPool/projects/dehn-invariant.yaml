@@ -4,7 +4,7 @@ summary: The Dehn invariant of a solid is defined from its local cones and
   Hausdorff lengths. It agrees with the classical edge sum on full-dimensional
   convex polytopes and is preserved by dissections. This distinguishes a
   regular tetrahedron from a cube and gives Hilbert's counterexample with
-  equal bases and altitudes.
+  a common base, equal altitudes, and equal volumes.
 branch: convex geometry
 entry_module: LeanPool.DehnInvariant
 authors:
@@ -34,8 +34,9 @@ main_results:
 - declaration: DehnCanon.Library.dehnSet_eq_of_scissorsCongruent
   informal: Scissors-congruent convex polytopes have the same Dehn invariant.
 - declaration: DehnCanon.Library.dehnSum_eq_of_scissors
-  informal: The sum of the Dehn invariants of the pieces is preserved under
-    scissors congruence of finite unions of convex polytopes.
+  informal: For two scissors-congruent polyhedral sets, the sums of Dehn
+    invariants over finite convex dissections agree when the pieces within
+    each dissection have pairwise disjoint interiors.
 - declaration: DehnCanon.Library.similarTetra_not_scissorsCongruent_similarCube
   informal: No similar copy of a regular tetrahedron is scissors congruent to
     a similar copy of a cube.
