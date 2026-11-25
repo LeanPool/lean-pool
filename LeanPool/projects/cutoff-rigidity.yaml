@@ -12,6 +12,9 @@ summary: >-
   of the Gaussian projection give a lower bound on the quadratic transport
   cost to equilibrium. A separate Hilbert-space development constructs the
   Friedrichs resolvent and its strongly continuous contraction semigroup.
+  The closed energy inherits energy-decreasing maps from the operator core.
+  A variational comparison criterion gives fixed points of these maps on
+  resolvent vectors.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -40,6 +43,8 @@ main_declarations:
 - CutoffRigidity.Riemann.Diff.FormData.eq_resolvent_of_weak
 - CutoffRigidity.Riemann.Diff.FormData.tendsto_euler
 - CutoffRigidity.Riemann.Diff.FormData.semigroup_integral_D
+- CutoffRigidity.Riemann.Diff.FormData.contraction_energy
+- CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -92,6 +97,15 @@ main_results:
   informal: >-
     For initial data in the original dense operator domain, the semigroup
     satisfies the integrated evolution equation with the original operator.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.contraction_energy
+  informal: >-
+    A continuous map preserving the dense operator core and decreasing energy
+    there preserves the completed Friedrichs form domain and decreases its energy.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison
+  informal: >-
+    If such a map does not increase the norm of a Friedrichs resolvent vector
+    and the forcing term has nonnegative pairing with its displacement, the
+    map fixes that vector.
 tags:
 - curvature
 - spectral-gap
