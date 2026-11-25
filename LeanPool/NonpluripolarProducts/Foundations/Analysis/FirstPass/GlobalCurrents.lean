@@ -141,6 +141,17 @@ theorem complexModel_real_finrank (n : ℕ) : Module.finrank ℝ (ComplexModel n
 def chartTarget (e : ComplexChart n M) : Opens (ComplexModel n) :=
   ⟨e.val.target, e.val.open_target⟩
 
+/-- The coordinate domain `e(e.source ∩ U)` of an open `U ⊆ M` in the chart `e`. -/
+def _root_.SGPT.NPP.chartDomain (e : ComplexChart n M) (U : Opens M) : Opens (ComplexModel n) :=
+  ⟨e.val.target ∩ e.val.symm ⁻¹' U, e.val.isOpen_inter_preimage_symm U.isOpen⟩
+
+theorem _root_.SGPT.NPP.chartDomain_le (e : ComplexChart n M) (U : Opens M) :
+    SGPT.NPP.chartDomain e U ≤ chartTarget e :=
+  fun _ hz => hz.1
+
+theorem _root_.SGPT.NPP.mem_chartDomain {e : ComplexChart n M} {U : Opens M} {z : ComplexModel n} :
+    z ∈ SGPT.NPP.chartDomain e U ↔ z ∈ e.val.target ∧ e.val.symm z ∈ U := Iff.rfl
+
 /-- Overlap in the first chart's coordinates. -/
 def overlapSource (e f : ComplexChart n M) : Opens (ComplexModel n) :=
   ⟨(chartTransition e f).source, (chartTransition e f).open_source⟩

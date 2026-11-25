@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrent2Opens
+public import LeanPool.NonpluripolarProducts.NPP.BedfordTaylorManifold
 public import LeanPool.NonpluripolarProducts.PSH.LocalManifold
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentL1Ddc
 
@@ -29,7 +29,7 @@ S17's chart families `SGPT.NPP.PositiveCurrent`.
   (bidegree `(1,1)`) on `M` whose expression in a chart `e` is TN's `ddcL1` of `φ ∘ e⁻¹`
   (`dd^c(φ [1])` in the sense of distributions); the chart expressions are compatible by the
   naturality `LocalCurrentL1Ddc.pullback_ddcL1`; `isClosed_ddcCurrent`.
-* `chartDomain e O` (S24, `SGPT.NPP.NonPluripolarCurrent2Opens`) — the coordinate expression
+* `chartDomain e O` — the coordinate expression
   `e(e.source ∩ O)` of an open set `O ⊆ M`; `chartDomain_mono`.
 * `IsDdcOn T φ O` — `T|_O = dd^c φ` on the open set `O` (in every chart `e`, the restriction of
   the chart expression of `T` to `chartDomain e O` is `dd^c (φ ∘ e⁻¹)`); psh functions on `O`
@@ -65,7 +65,7 @@ section ChartDomain
 
 variable {n : ℕ} {X : Type*} [TopologicalSpace X] [ChartedSpace (ComplexModel n) X]
 
-/-- The coordinate expression `e(e.source ∩ O)` (S24's `chartDomain`) is monotone in `O`. -/
+/-- The coordinate expression `e(e.source ∩ O)` is monotone in `O`. -/
 theorem chartDomain_mono (e : ComplexChart n X) {O O' : Opens X} (h : O ≤ O') :
     chartDomain e O ≤ chartDomain e O' :=
   fun _ hz => ⟨hz.1, h hz.2⟩
@@ -144,7 +144,7 @@ def ddcCurrent (φ : M → EReal) (hφ : SGPT.PSH.ManifoldPSH (n := m + 1) φ) :
     have hB : IsL1PshOn (overlapTarget e f) fun z => φ (f.val.symm z) :=
       hfL.mono (overlapTarget_le e f)
     have e1 := restrict_ddcL1 (overlapTarget_le e f) hfL.locallyIntegrableOn
-    rw [SGPT.NPP.NonPluripolarCurrent.pullback_congr_current hh _ hB.isPositive_ddcL1 e1,
+    rw [pullback_congr hh _ hB.isPositive_ddcL1 e1,
       pullback_ddcL1 hh hB,
       restrict_ddcL1 (overlapSource_le e f) (isL1PshOn_chart hφ e).locallyIntegrableOn]
     exact ddcL1_congr (((isL1PshOn_chart hφ e).mono (overlapSource_le e f)).locallyIntegrableOn)
@@ -179,7 +179,7 @@ theorem IsDdcOn.mono {T : PositiveCurrent (m + 1) M m} {φ : M → EReal} {O O' 
     IsDdcOn T φ O' := fun e => by
   have e1 := h e
   have e2 := congrArg (restrict (chartDomain_mono e hO)) e1
-  rw [SGPT.NPP.NonPluripolarCurrent.restrict_restrict,
+  rw [LocalBedfordTaylorLocality.restrict_restrict,
     restrict_ddcL1 (chartDomain_mono e hO) (isL1PshOn_chartDomain hφ e).locallyIntegrableOn] at e2
   exact e2
 

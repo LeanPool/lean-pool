@@ -8,17 +8,19 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import Mathlib.MeasureTheory.Integral.IntegrableOn
+public import Mathlib.Analysis.Normed.Group.Bounded
 public import Mathlib.MeasureTheory.Measure.Basic
 public import Mathlib.Topology.MetricSpace.Pseudo.Defs
 
 /-!
-# Almost-everywhere locality on metric balls
+# Locality for measures and integrals
 -/
 
 @[expose] public section
 
 open Set Filter MeasureTheory Metric
-open scoped Topology
+open scoped ENNReal Topology
 
 namespace SGPT.Foundations.Analysis.MeasureLocality
 
@@ -41,5 +43,16 @@ theorem ae_of_forall_ball {E : Type*} [PseudoMetricSpace E] [SecondCountableTopo
   rw [← hSU] at hx'
   obtain ⟨z, hz, hxz⟩ := mem_iUnion₂.mp hx'
   exact hx z hz hxz
+
+/-- A continuous compactly supported function with support in a set on whose
+compact subsets the measure is finite is integrable. -/
+theorem integrable_of_tsupport_subset {X : Type*} [TopologicalSpace X]
+    [MeasurableSpace X] [OpensMeasurableSpace X] {Ω : Set X} {μ : Measure X}
+    (hμ : ∀ K, IsCompact K → K ⊆ Ω → μ K < ⊤) {φ : X → ℝ} (hφ : Continuous φ)
+    (hφc : HasCompactSupport φ) (hφΩ : tsupport φ ⊆ Ω) : Integrable φ μ := by
+  obtain ⟨M, hM⟩ := hφc.exists_bound_of_continuous hφ
+  rw [← integrableOn_iff_integrable_of_support_subset (subset_tsupport φ)]
+  exact Measure.integrableOn_of_bounded (M := M) (hμ _ hφc hφΩ).ne
+    hφ.aestronglyMeasurable (Eventually.of_forall hM)
 
 end SGPT.Foundations.Analysis.MeasureLocality

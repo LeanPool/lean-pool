@@ -275,15 +275,6 @@ theorem nonPluripolarProduct_comp_perm (hφ : ∀ i, PlurisubharmonicOn (φ i) U
 
 /-! #### Restriction to open subsets -/
 
-theorem restrict_restrict {V W : Opens (ComplexModel n)} (hWV : W ≤ V) (hVU : V ≤ U)
-    (T : LocalProductCurrent n U q) :
-    restrict hWV (restrict hVU T) = restrict (hWV.trans hVU) T := by
-  ext γ ψ
-  simp only [LocalBedfordTaylorLocality.restrict_apply]
-  congr 1
-  ext x
-  simp
-
 theorem truncatedBT_restrict (hφ : ∀ i, PlurisubharmonicOn (φ i) U) {V : Opens (ComplexModel n)}
     (hVU : V ≤ U)
     (k : ℕ) : truncatedBT hqp V φ k = restrict hVU (truncatedBT hqp U φ k) := by

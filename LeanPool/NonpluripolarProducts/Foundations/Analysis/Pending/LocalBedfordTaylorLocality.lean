@@ -104,6 +104,16 @@ def restrict (hVU : V ≤ U) (T : LocalProductCurrent n U q) : LocalProductCurre
 @[simp] theorem restrict_apply (hVU : V ≤ U) (T : LocalProductCurrent n U q) (γ : formSpan n q)
     (φ : 𝓓(V, ℝ)) : restrict hVU T γ φ = T γ (extTest hVU φ) := rfl
 
+/-- Restricting in two steps agrees with restricting directly. -/
+theorem restrict_restrict {V W : Opens (ComplexModel n)} (hWV : W ≤ V) (hVU : V ≤ U)
+    (T : LocalProductCurrent n U q) :
+    restrict hWV (restrict hVU T) = restrict (hWV.trans hVU) T := by
+  ext γ ψ
+  simp only [LocalBedfordTaylorLocality.restrict_apply]
+  congr 1
+  ext x
+  simp
+
 theorem isPositive_restrict {T : LocalProductCurrent n U q} (hT : IsPositive T) (hVU : V ≤ U) :
     IsPositive (restrict hVU T) := by
   intro ι _ γ φ hγ

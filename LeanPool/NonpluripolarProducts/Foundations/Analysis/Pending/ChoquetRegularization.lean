@@ -17,9 +17,10 @@ public import Mathlib.Topology.Instances.EReal.Lemmas
 
 On a second-countable space, every nonempty family of extended-real functions
 has a countable subfamily whose upper-semicontinuous regularized supremum is
-the regularized supremum of the whole family (Choquet's lemma; Xia,
-Proposition 1.2.3, used in the proof of Proposition 3.2.6,
-`xia-sgpt:page-0141`).
+the regularized supremum of the whole family. This is a topological generalization of
+[Xia, Proposition 1.2.3](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_pshfunctions.tex#L258-L265).
+Xia considers a locally uniformly upper-bounded family of plurisubharmonic
+functions on a complex manifold with countably many connected components.
 
 For each set `b` of a countable basis, a sequence of members realizes the
 supremum over `b` of the family's pointwise supremum; the union of these

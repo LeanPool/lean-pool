@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.PSH.PlurifineCompactness
+public import LeanPool.NonpluripolarProducts.PSH.PlurifineCompatibility
+public import LeanPool.NonpluripolarProducts.PSH.VariableAtlas
 
 /-! Actual local fine topology on genuine varying-dimensional complex charts. -/
 

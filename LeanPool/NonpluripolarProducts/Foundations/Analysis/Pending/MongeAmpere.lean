@@ -45,43 +45,6 @@ open FirstPass FirstPass.MongeAmpere
 
 variable {n : ℕ}
 
-/-- Link the coordinate Hessian to the existing actual exterior derivative.
-C² at the evaluation point suffices; `J` is multiplication by `i`. -/
-theorem smoothDDC_apply_eq_realHessian {u : ComplexModel n → ℝ}
-    {z : ComplexModel n} (hu : ContDiffAt ℝ 2 u z) (v w : ComplexModel n) :
-    smoothDDC u z ![v, w] =
-      (realHessian u z w (Complex.I • v) -
-        realHessian u z v (Complex.I • w)) / (4 * Real.pi) := by
-  exact FirstPass.smoothDDC_apply_eq_realHessian hu v w
-
-/-- The redundant coordinate positivity certificate can be recovered from
-genuine smooth PSH, rather than supplied by downstream callers. -/
-theorem isSmoothPshOn_of_psh {U : Opens (ComplexModel n)} {u : ComplexModel n → ℝ}
-    (hs : ContDiffOn ℝ ∞ u U)
-    (hp : PlurisubharmonicOn (fun z => (u z : EReal)) U) :
-    IsSmoothPshOn U u := by
-  exact FirstPass.MongeAmpere.isSmoothPshOn_of_psh hs hp
-
-/-- Finiteness is only asserted on compact sets inside the domain. -/
-theorem smoothMeasure_finiteOnCompacts {U : Opens (ComplexModel n)}
-    {u : ComplexModel n → ℝ} (hu : IsSmoothPshOn U u)
-    {K : Set (ComplexModel n)} (hK : IsCompact K) (hKU : K ⊆ U) :
-    smoothMeasure U u hu K < ⊤ := by
-  exact FirstPass.MongeAmpere.smoothMeasure_finiteOnCompacts hu hK hKU
-
-/-- Compact continuous tests integrate against the actual nonnegative density.
-This also rules out using the nonintegrable Bochner-integral fallback. -/
-theorem smoothMeasure_test_integral {U : Opens (ComplexModel n)}
-    {u : ComplexModel n → ℝ} (hu : IsSmoothPshOn U u)
-    (φ : ComplexModel n → ℝ) (hφ : Continuous φ) (hK : HasCompactSupport φ)
-    (hU : tsupport φ ⊆ U) :
-    Integrable φ (smoothMeasure U u hu) ∧
-      Integrable (fun z => φ z * smoothDensity u z)
-        (volume.restrict (U : Set (ComplexModel n))) ∧
-      (∫ z, φ z ∂(smoothMeasure U u hu)) =
-        ∫ z in U, φ z * smoothDensity u z := by
-  exact FirstPass.MongeAmpere.smoothMeasure_test_integral hu φ hφ hK hU
-
 /-- Pointwise decreasing regularization on a relatively compact subdomain.
 There is no assumption of global PSH extension or smooth boundary. -/
 theorem exists_decreasingApproximation {Ω U : Opens (ComplexModel n)}

@@ -8,6 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlots
 public import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 
@@ -30,6 +31,8 @@ open Set Filter MeasureTheory TopologicalSpace
 open scoped Topology ContDiff ComplexOrder
 
 namespace SGPT.Foundations.Analysis.Pending.BedfordTaylor
+
+open MeasureLocality (integrable_of_tsupport_subset)
 
 open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
 
@@ -208,14 +211,6 @@ theorem exists_contDiff_approx {φ : ComplexModel n → ℝ} (hφ : Continuous �
     rw [← Real.dist_eq, dist_comm]; exact (hgφ x).le
   calc χ x * |φ x - g x| ≤ 1 * η := mul_le_mul (hχ01 x).2 h1 (abs_nonneg _) zero_le_one
     _ = η := one_mul η
-
-theorem integrable_of_tsupport_subset {U : Opens (ComplexModel n)} {μ : Measure (ComplexModel n)}
-    (hμf : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤) {f : ComplexModel n → ℝ} (hf : Continuous f)
-    (hc : HasCompactSupport f) (hU : tsupport f ⊆ U) : Integrable f μ := by
-  obtain ⟨M, hM⟩ := hc.exists_bound_of_continuous hf
-  rw [← integrableOn_iff_integrable_of_support_subset (subset_tsupport f)]
-  exact Measure.integrableOn_of_bounded (M := M) (hμf _ hc hU).ne
-    hf.aestronglyMeasurable (Eventually.of_forall hM)
 
 theorem integrable_mul_of_continuousOn {U : Opens (ComplexModel n)} {D : ComplexModel n → ℝ}
     (hD : ContinuousOn D U) {f : ComplexModel n → ℝ} (hf : Continuous f)

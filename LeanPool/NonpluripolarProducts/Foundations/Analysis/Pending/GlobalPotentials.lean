@@ -16,12 +16,9 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Holomo
 /-!
 # Chart and local-potential compatibility
 
-This namespace retains compatibility declarations used by Pending modules.
-Chart independence, local-potential independence, and the smooth theta-PSH
-criterion are now proved through the checked core.
-The complex manifold structure appears explicitly in every signature. The
-model space is the concrete finite-dimensional `ℂⁿ` with its standard compatible
-real scalar action. No measure or distribution is used by these statements.
+The quasi-plurisubharmonic germ condition is invariant under a holomorphic chart change.
+The complex manifold structure is explicit, with the model space `ℂⁿ` carrying its usual real
+scalar action.
 -/
 
 @[expose] public section
@@ -61,32 +58,5 @@ theorem quasiPlurisubharmonicAt_chart_iff
     change u (a.val.symm (a.val (b.val.symm y))) = u (b.val.symm y)
     exact congrArg u (a.val.left_inv hy.2)
   exact ⟨transport e f he hf, transport f e hf he⟩
-
-/-- Two smooth potentials for the same form differ by a
-pluriharmonic function on their common open domain. Thus the PSH correction
-criterion is independent of the chosen potential, also at poles of `u`. -/
-theorem smoothLocalPotential_psh_iff
-    {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
-    [IsComplexManifold n M] (θ : SmoothRealForm n M 2) (e : ComplexChart n M)
-    (W : Set (ComplexModel n)) (ρ σ : ComplexModel n → ℝ)
-    (hρ : IsSmoothLocalPotential θ e W ρ) (hσ : IsSmoothLocalPotential θ e W σ)
-    (u : ComplexModel n → EReal) :
-    PlurisubharmonicOn (fun z => u z + (ρ z : EReal)) W ↔
-      PlurisubharmonicOn (fun z => u z + (σ z : EReal)) W := by
-  exact FirstPass.smoothLocalPotential_psh_iff θ e W ρ σ hρ hσ u
-
-/-- For a form with local potentials and a smooth real function,
-the local PSH definition is precisely semipositivity of `θ + ddᶜu` on complex
-lines. The local-potential hypothesis is essential and explicit: this does not
-assert that arbitrary smooth two-forms have local potentials. -/
-theorem thetaPlurisubharmonic_smooth_iff
-    {n : ℕ} {M : Type*} [TopologicalSpace M] [ChartedSpace (ComplexModel n) M]
-    [IsComplexManifold n M] (θ : SmoothRealForm n M 2)
-    (hθ : HasSmoothLocalPotentials θ) (u : M → ℝ) (hu : ChartSmooth (n := n) u) :
-    ThetaPlurisubharmonic θ (fun x => (u x : EReal)) ↔
-      ∀ (e : ComplexChart n M) z, z ∈ e.val.target → ∀ v : ComplexModel n,
-        0 ≤ θ.coeff e z ![v, Complex.I • v] +
-          smoothDDC (fun y => u (e.val.symm y)) z ![v, Complex.I • v] := by
-  exact FirstPass.thetaPlurisubharmonic_smooth_iff θ hθ u hu
 
 end SGPT.Foundations.Analysis.Pending

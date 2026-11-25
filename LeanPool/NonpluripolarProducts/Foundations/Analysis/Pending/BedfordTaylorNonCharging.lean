@@ -38,6 +38,8 @@ open scoped Topology ContDiff ENNReal
 
 namespace SGPT.Foundations.Analysis.Pending.BedfordTaylor
 
+open MeasureLocality (integrable_of_tsupport_subset)
+
 open FirstPass FirstPass.MongeAmpere FirstPass.MixedMongeAmpere
 
 variable {n : ℕ}

@@ -91,7 +91,7 @@ theorem thetaPlurisubharmonic_smooth_iff (a : ClosedRealOneOneForm n M)
       ∀ (e : ComplexChart n M) z, z ∈ e.val.target → ∀ v : ComplexModel n,
         0 ≤ a.val.coeff e z ![v, Complex.I • v] +
           smoothDDC (fun y => u (e.val.symm y)) z ![v, Complex.I • v] :=
-  SGPT.Foundations.Analysis.Pending.thetaPlurisubharmonic_smooth_iff a.val
+  FirstPass.thetaPlurisubharmonic_smooth_iff a.val
     (closedRealOneOne_hasLocalPotentials a) u hu
 
 theorem thetaPlurisubharmonic_zero_iff (a : ClosedRealOneOneForm n M) :

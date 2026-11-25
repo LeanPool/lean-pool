@@ -15,27 +15,17 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Adapte
 public import Mathlib.Geometry.Manifold.PartitionOfUnity
 
 /-!
-# UNPROVED local decreasing regularization of arbitrary distributions
+# Kernels for local decreasing plurisubharmonic regularization
 
-This first-pass interface deliberately leaves its existence proof unfinished.
-It belongs only to the Pending layer, outside the verified umbrella.
-A successful typecheck of this file does not prove regularization.
+This module constructs smooth families of translated radial test functions for distributional
+convolution. The kernels are normalized for an auxiliary Hermitian norm. On a smaller neighborhood,
+a fixed smooth cutoff allows a local smooth function to extend globally without changing it there.
 
-Source: Demailly, Complex Analytic and Differential Geometry,
-I.4.18--4.20 and I.5.8.
-
-The missing construction must pair arbitrary distributions with smooth families
-of translated test functions and prove the smoothness and Levi positivity of
-those pairings. It must use normalized kernels radial for an auxiliary Hermitian
-norm, prove monotonicity as their radii decrease, and prove weak convergence
-against every test function. After shrinking to a relatively compact inner
-domain, a fixed smooth cutoff can give globally smooth extensions without
-changing their values there; that extension step is also part of the obligation.
-
-The checked almost-everywhere mollification theorem for locally integrable
-densities does not supply these missing facts. In particular, no locally
-integrable density is presupposed here, and monotonicity of a general smooth
-bump family must not be assumed.
+The completed regularization theorem, `exists_local_decreasing_psh_regularization`, is in
+`DistributionRegularizationFinal`. Its nonnegative distributional Levi hypothesis gives the
+plurisubharmonic approximations and their monotonicity as the kernel radii decrease.
+See Demailly, [*Complex Analytic and Differential Geometry*](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf),
+I.4.18–4.20 for convolution and I.5.8 for the Levi criterion and regularization.
 -/
 
 @[expose] public section

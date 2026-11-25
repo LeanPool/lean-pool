@@ -77,7 +77,7 @@ open FirstPass FirstPass.MongeAmpere StronglyPositiveForms TopDegreeDensity Loca
     LocalCurrentLebesgue
   LocalBedfordTaylorLocality LocalBedfordTaylorProducts LocalBedfordTaylorSmooth
     LocalBedfordTaylorCollar
-  LocalCurrentDeterminant LocalCurrentDensityMatrix LocalCurrentPullback BedfordTaylor
+  LocalCurrentPullback BedfordTaylor
   ConstantFormProducts
     LocalBedfordTaylorContinuity
 
@@ -152,13 +152,13 @@ theorem ddcMul_oneCurrent_apply {U : Opens (ComplexModel (m + 1))} {g : ComplexM
         (φ x * hessFun a b g x)) := by
     intro x
     by_cases hx : x ∈ U
-    · rw [formDensity_apply, ← LocalCurrentDensityMatrix.wedgeDensity_apply,
+    · rw [formDensity_apply, ← wedgeDensity_apply,
       smoothDDC_eq_sum_hessFun hg hx,
         map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun a _ => ?_
       rw [map_sum, Finset.mul_sum]
       refine Finset.sum_congr rfl fun b _ => ?_
-      rw [map_smul, smul_eq_mul, LocalCurrentDensityMatrix.wedgeDensity_apply]
+      rw [map_smul, smul_eq_mul, wedgeDensity_apply]
       ring
     · simp [testFunction_eq_zero_of_notMem φ hx]
   simp_rw [hpt]

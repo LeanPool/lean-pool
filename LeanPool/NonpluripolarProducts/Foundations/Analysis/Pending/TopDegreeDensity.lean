@@ -98,6 +98,15 @@ def topDensityLM : RealForm n (2 * n) →ₗ[ℝ] ℝ where
 @[simp] theorem topDensityLM_apply (A : RealForm n (2 * n)) : topDensityLM n A = topDensity A :=
   rfl
 
+/-- The wedge pairing `α ↦ ⟨γ ∧ α⟩` with a fixed form `γ` of degree `2m`, as a linear map on the
+    real two-forms. -/
+def wedgeDensity {m : ℕ} (γ : RealForm (m + 1) (2 * m)) : RealForm (m + 1) 2 →ₗ[ℝ] ℝ :=
+  (topDensityLM (m + 1)).comp (wedgeBilin (m + 1) (2 * m) γ)
+
+theorem wedgeDensity_apply {m : ℕ} (γ : RealForm (m + 1) (2 * m)) (α : RealForm (m + 1) 2) :
+    wedgeDensity γ α = topDensity (n := m + 1) (coordinateWedge γ α) :=
+  rfl
+
 /-- The density is continuous (top-degree forms form a finite-dimensional space). -/
 theorem continuous_topDensity : Continuous (topDensity (n := n)) :=
   (ContinuousAlternatingMap.apply ℝ (ComplexModel n) ℝ (topBasis n)).continuous

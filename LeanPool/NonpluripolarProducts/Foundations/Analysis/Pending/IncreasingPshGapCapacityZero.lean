@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.NegligibleSetNotCharged
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorCapacity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorIncreasing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorExistence
 
 /-!
@@ -30,7 +31,6 @@ namespace SGPT.Foundations.Analysis.Pending.IncreasingPshGapCapacityZero
 
 open FirstPass FirstPass.MongeAmpere
 open SGPT.Foundations.Analysis.Pending.BedfordTaylor
-open SGPT.Foundations.Analysis.Pending.NegligibleSetNotCharged
 
 variable {n : ℕ}
 

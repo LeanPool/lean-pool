@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentDensityMatrix
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorHolomorphic
 
 /-!
@@ -46,21 +46,6 @@ density form `L_y` (`LocalCurrentLebesgue`).
   `pbMeasure_eq`.
 * **`ae_acDensity_pullback`** (`(τ^* T)_ac = τ^*(T_ac)`): for almost every `x ∈ A` and every `γ`,
   `acWeight'(x) L'_x(γ) = |det_ℝ Dτ(x)| acWeight(τ x) L_{τ x}(Dσ(τ x)^* γ)`.
-* For `(1,1)`-currents (`n = m + 1`, `q = m`): **`ae_acForm_pullback`** (the density form
-    transforms as a `(1,1)`-form,
-  `α'_x = Dτ(x)^* α_{τ x}`, with no Jacobian factor), `ae_acMatrix_pullback` (`A_{τ^* T}(x)
-    = Jᵀ A_T(τ x) JBar`),
-  `ae_det_acMatrix_pullback` (`det A_{τ^* T}(x) = |det J|² det A_T(τ x)`) and
-    **`ae_det_acMatrix_div_eq`**: for forms with
-  `ω_A = τ^* ω_B`, `det A_{τ^* T}(x)/det H_{ω_A(x)} = det A_T(τ x)/det H_{ω_B(τ x)}` almost
-    everywhere — the ratio
-  `det_ω(T_ac)` does not depend on the chart.
-
-Not here: the identification of `τ^*(dd^c w)` with `dd^c(w ∘ τ)` for a psh `w` (naturality of
-    `dd^c`), and the global
-function `det_ω(T_ac)` on a manifold.
-
-Sorry-free.
 -/
 
 @[expose] public section
@@ -798,103 +783,6 @@ theorem compContinuousLinearMap_restrictScalars_eq (S : ComplexModel n →L[ℂ]
   rfl
 
 end Derivatives
-
-/-! ### The density matrix under a biholomorphic change of coordinates -/
-
-section DensityMatrix
-
-open BedfordTaylor LocalCurrentDeterminant LocalCurrentDensityMatrix
-open scoped Matrix
-
-variable {m : ℕ} {A B : Opens (ComplexModel (m + 1))} {τ σ : ComplexModel (m + 1)
-    → ComplexModel (m + 1)}
-  {T : LocalProductCurrent (m + 1) B m}
-
-/-- `⟨γ ∧ L^* α⟩ = det L ⟨M^* γ ∧ α⟩` when `M ∘ L = id`. -/
-theorem topDensity_coordinateWedge_comp (L M : ComplexModel (m + 1) →L[ℝ] ComplexModel (m + 1))
-    (hML : M.comp L = ContinuousLinearMap.id ℝ _) (γ : RealForm (m + 1) (2 * m))
-      (α : RealForm (m + 1) 2) :
-    topDensity (n := m + 1) (coordinateWedge γ (α.compContinuousLinearMap L)) =
-      L.det * topDensity (n := m + 1) (coordinateWedge (γ.compContinuousLinearMap M) α) := by
-  have hγ : γ = (γ.compContinuousLinearMap M).compContinuousLinearMap L := by
-    ext v
-    simp only [ContinuousAlternatingMap.compContinuousLinearMap_apply]
-    congr 1
-    funext i
-    simp only [Function.comp_apply]
-    rw [← ContinuousLinearMap.comp_apply, hML, ContinuousLinearMap.id_apply]
-  conv_lhs => rw [hγ]
-  rw [← coordinateWedge_compContinuousLinearMap]
-  exact topDensity_compContinuousLinearMap _ L
-
-/-- **The density form of `(τ^* T)_ac` is the pull-back of that of `T_ac`**:
-    `α'_x = Dτ(x)^* α_{τ x}` for almost every
-`x ∈ A`. -/
-theorem ae_acForm_pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) :
-    ∀ᵐ x ∂(volume : Measure (ComplexModel (m + 1))), x ∈ A →
-      acForm (isPositive_pullback h hT) x =
-        (acForm hT (τ x)).compContinuousLinearMap ((fderiv ℂ τ x).restrictScalars ℝ) := by
-  filter_upwards [ae_acDensity_pullback h hT] with x hx hxA
-  refine acForm_eq_of_forall _ x (isOneOne_comp_restrictScalars _ (isOneOne_acForm hT (τ x)))
-    fun γ => ?_
-  have hML : ((fderiv ℂ σ (τ x)).restrictScalars ℝ).comp ((fderiv ℂ τ x).restrictScalars ℝ) =
-      ContinuousLinearMap.id ℝ _ := by
-    refine ContinuousLinearMap.ext fun v => ?_
-    exact DFunLike.congr_fun (fderiv_inv_comp h hxA) v
-  rw [hx hxA γ, acWeight_mul_densityForm_eq hT (τ x), coe_pullSpan,
-    topDensity_coordinateWedge_comp _ _ hML, fderiv_real_eq h hxA, det_restrictScalars_eq_normSq,
-    abs_of_nonneg (Complex.normSq_nonneg _)]
-
-/-- `det (Jᵀ H JBar) = |det J|² det H`. -/
-theorem det_transpose_mul_mul_conj {k : ℕ} (J H : Matrix (Fin k) (Fin k) ℂ) :
-    (Jᵀ * H * J.map (starRingEnd ℂ)).det = (Complex.normSq J.det : ℂ) * H.det := by
-  rw [Matrix.det_mul, Matrix.det_mul, Matrix.det_transpose, ← RingHom.mapMatrix_apply,
-    ← RingHom.map_det,
-    ← Complex.mul_conj]
-  ring
-
-/-- **The density matrix transforms like a `(1,1)`-form**: `A_{τ^* T}(x) = Jᵀ A_T(τ x) JBar` with
-    `J` the complex Jacobian
-matrix of `τ` at `x`, for almost every `x ∈ A`. -/
-theorem ae_acMatrix_pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) :
-    ∀ᵐ x ∂(volume : Measure (ComplexModel (m + 1))), x ∈ A →
-      acMatrix (isPositive_pullback h hT) x =
-        (standardMatrix (fderiv ℂ τ x : ComplexModel (m + 1) →ₗ[ℂ] ComplexModel (m + 1)))ᵀ *
-          acMatrix hT (τ x) *
-          (standardMatrix (fderiv ℂ τ x : ComplexModel (m + 1) →ₗ[ℂ] ComplexModel (m + 1))).map
-            (starRingEnd ℂ) := by
-  filter_upwards [ae_acForm_pullback h hT] with x hx hxA
-  rw [acMatrix, hx hxA, compContinuousLinearMap_restrictScalars_eq,
-    normalizedHermitianMatrix_compLinearMap (isOneOne_acForm hT (τ x)), acMatrix]
-
-/-- **`det A_{τ^* T}(x) = |det_ℂ Dτ(x)|² det A_T(τ x)`** for almost every `x ∈ A`. -/
-theorem ae_det_acMatrix_pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T) :
-    ∀ᵐ x ∂(volume : Measure (ComplexModel (m + 1))), x ∈ A →
-      (acMatrix (isPositive_pullback h hT) x).det = (Complex.normSq (fderiv ℂ τ x).det : ℂ)
-        * (acMatrix hT (τ x)).det := by
-  filter_upwards [ae_acMatrix_pullback h hT] with x hx hxA
-  rw [hx hxA, det_transpose_mul_mul_conj, det_standardMatrix]
-
-/-- **Chart invariance of `det(A_T)/det(H_ω)`**: if `ω_A = τ^* ω_B` pointwise (`ω_A(x)
-    = Dτ(x)^* ω_B(τ x)`), then for almost
-every `x ∈ A`, `det A_{τ^* T}(x) / det H_{ω_A(x)} = det A_T(τ x) / det H_{ω_B(τ x)}`. -/
-theorem ae_det_acMatrix_div_eq (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T)
-    {ωA ωB : ComplexModel (m + 1) → RealForm (m + 1) 2} (hωB : ∀ y ∈ B, IsOneOne (ωB y))
-    (hω : ∀ x ∈ A, ωA x = (ωB (τ x)).compContinuousLinearMap ((fderiv ℂ τ x).restrictScalars ℝ)) :
-    ∀ᵐ x ∂(volume : Measure (ComplexModel (m + 1))), x ∈ A →
-      (acMatrix (isPositive_pullback h hT) x).det / (normalizedHermitianMatrix (ωA x)).det =
-        (acMatrix hT (τ x)).det / (normalizedHermitianMatrix (ωB (τ x))).det := by
-  filter_upwards [ae_det_acMatrix_pullback h hT] with x hx hxA
-  have hωx : (normalizedHermitianMatrix (ωA x)).det =
-      (Complex.normSq (fderiv ℂ τ x).det : ℂ) * (normalizedHermitianMatrix (ωB (τ x))).det := by
-    rw [hω x hxA, compContinuousLinearMap_restrictScalars_eq,
-      normalizedHermitianMatrix_compLinearMap (hωB _ (h.mapsTo hxA)), det_transpose_mul_mul_conj,
-        det_standardMatrix]
-  have hne : (Complex.normSq (fderiv ℂ τ x).det : ℂ) ≠ 0 := by
-    exact_mod_cast (Complex.normSq_pos.mpr (det_fderiv_ne_zero h hxA)).ne'
-  rw [hx hxA, hωx, mul_div_mul_left _ _ hne]
-
-end DensityMatrix
 
 end SGPT.Foundations.Analysis.Pending.LocalCurrentPullback
 

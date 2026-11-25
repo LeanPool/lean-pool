@@ -12,7 +12,7 @@ public import LeanPool.NonpluripolarProducts.PSH.HolomorphicPullback
 public import LeanPool.NonpluripolarProducts.PSH.Supremum
 public import LeanPool.NonpluripolarProducts.PSH.LocalL1
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HolomorphicMaps
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SubgeodesicChord
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularizationContinuous
 public import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
 

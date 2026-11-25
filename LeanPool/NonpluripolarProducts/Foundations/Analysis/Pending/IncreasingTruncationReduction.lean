@@ -57,6 +57,8 @@ open scoped ENNReal Topology
 
 namespace SGPT.Foundations.Analysis.Pending.IncreasingTruncationLimit
 
+open MeasureLocality (integrable_of_tsupport_subset)
+
 open FirstPass FirstPass.MongeAmpere MongeAmpere VaguePortmanteau
 
 /-- The zero extension of a real function whose extended-real coercion is upper

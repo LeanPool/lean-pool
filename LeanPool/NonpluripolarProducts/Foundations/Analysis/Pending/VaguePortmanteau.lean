@@ -8,6 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 public import Mathlib.Topology.UrysohnsLemma
 public import Mathlib.Topology.MetricSpace.ProperSpace
@@ -51,18 +52,9 @@ open scoped ENNReal Topology
 
 namespace SGPT.Foundations.Analysis.Pending.VaguePortmanteau
 
-variable {X : Type*} [PseudoMetricSpace X] [ProperSpace X] [MeasurableSpace X] [BorelSpace X]
+open MeasureLocality (integrable_of_tsupport_subset)
 
-omit [ProperSpace X] in
-/-- A continuous compactly supported function with support in a set on whose
-compact subsets the measure is finite is integrable. -/
-theorem integrable_of_tsupport_subset {Ω : Set X} {μ : Measure X}
-    (hμ : ∀ K, IsCompact K → K ⊆ Ω → μ K < ⊤) {φ : X → ℝ} (hφ : Continuous φ)
-    (hφc : HasCompactSupport φ) (hφΩ : tsupport φ ⊆ Ω) : Integrable φ μ := by
-  obtain ⟨M, hM⟩ := hφc.exists_bound_of_continuous hφ
-  rw [← integrableOn_iff_integrable_of_support_subset (subset_tsupport φ)]
-  exact Measure.integrableOn_of_bounded (M := M) (hμ _ hφc hφΩ).ne
-    hφ.aestronglyMeasurable (Eventually.of_forall hM)
+variable {X : Type*} [PseudoMetricSpace X] [ProperSpace X] [MeasurableSpace X] [BorelSpace X]
 
 omit [MeasurableSpace X] [BorelSpace X] in
 /-- An open set of a proper metric space is the union of an increasing sequence of

@@ -53,6 +53,28 @@ which never takes the value `⊤`, this is density of the finite locus. -/
 def LocallyNondegenerate (u : M → EReal) : Prop :=
   ∀ x : M, ∀ U : Set M, IsOpen U → x ∈ U → ∃ y ∈ U, u y ≠ ⊥
 
+/-- Local nondegeneracy on the manifold produces a non-pole point in every
+nonempty open subset of a chart target. -/
+theorem LocallyNondegenerate.exists_chart_ne_bot
+    {n : ℕ} {M : Type*} [TopologicalSpace M]
+    [ChartedSpace (ComplexModel n) M]
+    {u : M → EReal} (hu : LocallyNondegenerate u)
+    (e : ComplexChart n M) {O : Set (ComplexModel n)}
+    (hO : IsOpen O) (hOe : O ⊆ e.val.target) {z : ComplexModel n}
+    (hz : z ∈ O) :
+    ∃ y ∈ O, chartFunction u e y ≠ ⊥ := by
+  let V : Set M := e.val.source ∩ e.val ⁻¹' O
+  have hV : IsOpen V := e.val.isOpen_inter_preimage hO
+  have hz_target : z ∈ e.val.target := hOe hz
+  have hzV : e.val.symm z ∈ V := by
+    refine ⟨e.val.symm.map_source hz_target, ?_⟩
+    change e.val (e.val.symm z) ∈ O
+    rw [e.val.right_inv hz_target]
+    exact hz
+  obtain ⟨y, hyV, hy⟩ := hu (e.val.symm z) V hV hzV
+  refine ⟨e.val y, hyV.2, ?_⟩
+  simpa [chartFunction, e.val.left_inv hyV.1] using hy
+
 /-- A global quasi-PSH potential has explicit local nondegeneracy. -/
 def IsGlobalQuasiPshPotential (u : M → EReal) : Prop :=
   ManifoldQuasiPlurisubharmonic (n := n) u ∧ LocallyNondegenerate u
