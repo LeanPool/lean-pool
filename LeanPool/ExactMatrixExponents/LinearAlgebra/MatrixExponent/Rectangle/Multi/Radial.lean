@@ -609,7 +609,7 @@ private theorem absorb_log {A B C D : ℝ} (hC : 0 ≤ C) (hD : 0 ≤ D)
     (h : ∀ n : ℕ, 0 < n → n * A ≤ n * B + C * Real.log (1 + n * D)) : A ≤ B := by
   apply Real.exp_le_exp.mp
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ ((1 + D) ^ C) C
-    (by positivity) (by positivity) (by positivity) hC
+    (by positivity) (by positivity)
   intro n hn
   rw [← Real.mul_rpow (by positivity) (by positivity), Real.rpow_def_of_pos (by positivity),
     ← Real.exp_nat_mul, ← Real.exp_nat_mul, ← Real.exp_add, Real.exp_le_exp]

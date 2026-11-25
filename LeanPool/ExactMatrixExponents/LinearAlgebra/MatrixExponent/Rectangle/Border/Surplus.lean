@@ -63,7 +63,7 @@ theorem BorderRankLE.asymptotic (h : BorderRankLE w r) (hi : 0 < i) (hj : 0 < j)
   have hw : 0 < Rectangle.density w := by unfold Rectangle.density; positivity
   have hp : 0 < asymptoticRank w := lt_of_lt_of_le (by positivity) (asymptotic_density hi hj hk hw)
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ 1 (Fintype.card (Coordinates i j k))
-    (by positivity) hp.le (by norm_num) (by positivity)
+    (by positivity) (by norm_num)
   intro n hn
   have hr := rankW_spec (WPower (extend (AlgebraicClosure F) w) n)
   rw [one_mul, Real.rpow_natCast]
@@ -95,7 +95,7 @@ theorem ZClosure.cells (h : ZClosure (rankSet F i j k r) (coefficients w)) {u : 
   obtain ⟨ha, hb⟩ := short_bounds hi hj hu.card_pos
   have hc : 0 ≤ Real.log k := Real.log_nonneg (by exact_mod_cast hk)
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ 1 (Fintype.card (Coordinates i j k))
-    (by positivity) (by positivity) (by norm_num) (by positivity)
+    (by positivity) (by norm_num)
   intro n _
   obtain ⟨s, hs, hs'⟩ := power_cells hw hk n
   have hs₀ : s.Nonempty := Finset.card_pos.mp (hs.symm ▸ pow_pos hu.card_pos n)

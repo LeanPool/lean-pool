@@ -652,7 +652,7 @@ theorem extension_lower (h : WeightedRankLE (WPower (extend K w) n) r)
   let D := Module.finrank F L ^ 2
   have hp : 0 < asymptoticRank w := lt_of_lt_of_le (by positivity) (asymptotic_density hi hj hk hw)
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ (D + 1) 0
-    (by positivity) (by positivity) (by positivity) le_rfl
+    (by positivity) (by positivity)
   intro m hm
   let t := rankW (WPower (extend L w) (n * m))
   have ht : t ≤ r ^ m := (rankW_mul (extend L w) n m hm).trans (Nat.pow_le_pow_left (rankW_le hL) _)

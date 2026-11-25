@@ -83,6 +83,59 @@ theorem exp_clog (h : Poly s f) : Poly s (fun i => 2 ^ Nat.clog 2 (f i)) := by
     exact Nat.mul_le_mul_right 2 (by omega)
 
 end Poly
+
+/-- A common-degree polynomial budget with a host term and a smaller block term. -/
+def MixedCost {I : Type*} (long short height j f : I → ℕ) : Prop :=
+  ∃ k : ℕ, ∀ i, f i ≤ 2 ^ (j i) * long i ^ k + 2 ^ (j i + height i) * short i ^ k
+
+namespace MixedCost
+
+variable {I : Type*} {large small height j f g : I → ℕ}
+
+theorem mono (h : MixedCost large small height j f) (hg : ∀ i, g i ≤ f i) :
+    MixedCost large small height j g :=
+  let ⟨k, hk⟩ := h
+  ⟨k, fun i => (hg i).trans (hk i)⟩
+
+theorem add (h : MixedCost large small height j f) (h' : MixedCost large small height j g)
+    (largeTwo : ∀ i, 2 ≤ large i) (smallTwo : ∀ i, 2 ≤ small i) :
+    MixedCost large small height j (fun i => f i + g i) := by
+  obtain ⟨l, hl⟩ := h
+  obtain ⟨k, hk⟩ := h'
+  refine ⟨max l k + 1, fun i => (Nat.add_le_add (hl i) (hk i)).trans ?_⟩
+  rw [add_add_add_comm, ← mul_add, ← mul_add]
+  exact Nat.add_le_add (Nat.mul_le_mul_left _ (Poly.pow_sum (largeTwo i) ..))
+    (Nat.mul_le_mul_left _ (Poly.pow_sum (smallTwo i) ..))
+
+theorem mul (h : MixedCost large small height j f) (h' : Poly small g)
+    (smallLeLarge : ∀ i, small i ≤ large i) :
+    MixedCost large small height j (fun i => f i * g i) := by
+  obtain ⟨l, hl⟩ := h
+  obtain ⟨k, hk⟩ := h'.bound
+  refine ⟨l + k, fun i => (Nat.mul_le_mul (hl i) (hk i)).trans ?_⟩
+  simp only [add_mul, mul_assoc, pow_add]
+  gcongr
+  exact smallLeLarge i
+
+theorem long (j : I → ℕ) (h : Poly large f) :
+    MixedCost large small height j (fun i => 2 ^ (j i) * f i) :=
+  let ⟨k, hk⟩ := h.bound
+  ⟨k, fun i => (Nat.mul_le_mul_left _ (hk i)).trans (Nat.le_add_right ..)⟩
+
+theorem short (j : I → ℕ) (h : Poly small f) :
+    MixedCost large small height j (fun i => 2 ^ (j i + height i) * f i) :=
+  let ⟨k, hk⟩ := h.bound
+  ⟨k, fun i => (Nat.mul_le_mul_left _ (hk i)).trans (Nat.le_add_left ..)⟩
+
+theorem hosts (m : I → ℕ) (h : MixedCost large small height (fun _ => 0) f) :
+    MixedCost large small height m (fun i => 2 ^ m i * f i) := by
+  obtain ⟨k, hk⟩ := h
+  refine ⟨k, fun i => ?_⟩
+  simpa only [pow_zero, one_mul, zero_add, mul_add, ← mul_assoc, ← pow_add]
+    using Nat.mul_le_mul_left (2 ^ m i) (hk i)
+
+end MixedCost
+
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Phase
 end
 

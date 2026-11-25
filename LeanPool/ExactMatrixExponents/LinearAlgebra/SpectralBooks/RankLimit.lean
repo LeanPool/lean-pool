@@ -82,7 +82,7 @@ theorem tendsto_root_of_submultiplicative (r : ℕ → ℕ)
         hsub.lim_le_div hu (Nat.succ_ne_zero n)
     rwa [hinf]
 
-variable {F X Y Z : Type*} [Field F] [Fintype X] [Fintype Y]
+variable {F X Y Z : Type*} [CommSemiring F] [Finite X] [Finite Y]
 
 private def splitPowerWord {A : Type*} (m n : ℕ) (x : Fin (m + n) → A) :
     (Fin m → A) × (Fin n → A) :=

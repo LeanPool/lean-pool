@@ -31,37 +31,11 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Upper.CoefficientTensor
 export MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor
   (blockSum blockMatrix blockSum_inl blockSum_inr restrict_blockSum pullback_blockSum)
 
-section Restriction
+namespace Restricts
 
-variable {X Y Z U V W X' Y' Z' U' V' W' : Type*}
-variable [Fintype X] [Fintype Y] [Fintype Z]
-variable [Fintype U] [Fintype V] [Fintype W]
+export MatrixMultiplicationAllFields.TensorSpectrum.CoefficientTensor.Restricts
+  (blockSum product)
 
-/-- Restriction is compatible with heterogeneous tensor direct sums. -/
-theorem Restricts.blockSum
-    {T : Tensor Coeff X Y Z} {T' : Tensor Coeff X' Y' Z'}
-    {S : Tensor Coeff U V W} {S' : Tensor Coeff U' V' W'}
-    (hT : Restricts T T') (hS : Restricts S S') :
-    Restricts (blockSum T S) (blockSum T' S') := by
-  rcases hT with ⟨A, B, C, rfl⟩
-  rcases hS with ⟨D, E, F, rfl⟩
-  exact ⟨blockMatrix A D, blockMatrix B E, blockMatrix C F,
-    (restrict_blockSum A B C D E F T S).symm⟩
-
-/-- Restriction is compatible with tensor products through the actual products
-of the three local coefficient matrices. -/
-theorem Restricts.product
-    {T : Tensor Coeff X Y Z} {T' : Tensor Coeff X' Y' Z'}
-    {S : Tensor Coeff U V W} {S' : Tensor Coeff U' V' W'}
-    (hT : Restricts T T') (hS : Restricts S S') :
-    Restricts (Tensor.product T S) (Tensor.product T' S') := by
-  rcases hT with ⟨A, B, C, rfl⟩
-  rcases hS with ⟨D, E, F, rfl⟩
-  exact ⟨fun x u => A x.1 u.1 * D x.2 u.2,
-    fun y v => B y.1 v.1 * E y.2 v.2,
-    fun z w => C z.1 w.1 * F z.2 w.2,
-    (Tensor.restrict_product A B C D E F T S).symm⟩
-
-end Restriction
+end Restricts
 
 end MatrixMultiplicationAllFields.MatrixExponent.Upper.CoefficientTensor

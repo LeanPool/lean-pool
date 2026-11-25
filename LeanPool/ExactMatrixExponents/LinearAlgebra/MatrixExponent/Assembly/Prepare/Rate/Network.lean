@@ -627,8 +627,8 @@ abbrev Long := Poly Case.long
 
 /-- The condition `∃ k : ℕ, ∀ i, f i ≤ 2 ^ (j i) * i.long ^ k + 2 ^ (j i + i.h) * i.short ^ k`
 on the specified data. -/
-def Mixed (j f : Case → ℕ) : Prop :=
-  ∃ k : ℕ, ∀ i, f i ≤ 2 ^ (j i) * i.long ^ k + 2 ^ (j i + i.h) * i.short ^ k
+abbrev Mixed (j f : Case → ℕ) : Prop :=
+  MixedCost (fun i => i.long) (fun i => i.short) (fun i => i.h) j f
 
 /-- Computes the cost by the application `Mixed Case.m`. -/
 abbrev Cost := Mixed Case.m
@@ -642,25 +642,15 @@ theorem short_const (k : ℕ) : Short (fun _ => k) := Poly.const Case.short_two 
 theorem long_const (k : ℕ) : Long (fun _ => k) := Poly.const Case.long_two k
 
 namespace Mixed
+
 theorem mono (h : Mixed j f) (hg : ∀ i, g i ≤ f i) : Mixed j g :=
-  let ⟨k, hk⟩ := h
-  ⟨k, fun i => (hg i).trans (hk i)⟩
+  MixedCost.mono h hg
 
-theorem add (h : Mixed j f) (h' : Mixed j g) : Mixed j (fun i => f i + g i) := by
-  obtain ⟨l, hl⟩ := h
-  obtain ⟨k, hk⟩ := h'
-  refine ⟨max l k + 1, fun i => (Nat.add_le_add (hl i) (hk i)).trans ?_⟩
-  rw [add_add_add_comm, ← mul_add, ← mul_add]
-  exact Nat.add_le_add (Nat.mul_le_mul_left _ (Poly.pow_sum i.long_two ..))
-    (Nat.mul_le_mul_left _ (Poly.pow_sum i.short_two ..))
+theorem add (h : Mixed j f) (h' : Mixed j g) : Mixed j (fun i => f i + g i) :=
+  MixedCost.add h h' (fun i => i.long_two) (fun i => i.short_two)
 
-theorem mul (h : Mixed j f) (h' : Short g) : Mixed j (fun i => f i * g i) := by
-  obtain ⟨l, hl⟩ := h
-  obtain ⟨k, hk⟩ := h'.bound
-  refine ⟨l + k, fun i => (Nat.mul_le_mul (hl i) (hk i)).trans ?_⟩
-  simp only [add_mul, mul_assoc, pow_add]
-  gcongr
-  exact i.short_long
+theorem mul (h : Mixed j f) (h' : Short g) : Mixed j (fun i => f i * g i) :=
+  MixedCost.mul h h' (fun i => i.short_long)
 
 theorem left (h : Mixed j f) (h' : Short g) : Mixed j (fun i => g i * f i) :=
   (h.mul h').mono fun _ => le_of_eq (mul_comm ..)
@@ -668,12 +658,11 @@ theorem left (h : Mixed j f) (h' : Short g) : Mixed j (fun i => g i * f i) :=
 theorem scale (h : Mixed j f) (k : ℕ) : Mixed j (fun i => k * f i) := h.left (short_const k)
 
 theorem long (j : Case → ℕ) (h : Long f) : Mixed j (fun i => 2 ^ (j i) * f i) :=
-  let ⟨k, hk⟩ := h.bound
-  ⟨k, fun i => (Nat.mul_le_mul_left _ (hk i)).trans (Nat.le_add_right ..)⟩
+  MixedCost.long j h
 
 theorem short (j : Case → ℕ) (h : Short f) : Mixed j (fun i => 2 ^ (j i + i.h) * f i) :=
-  let ⟨k, hk⟩ := h.bound
-  ⟨k, fun i => (Nat.mul_le_mul_left _ (hk i)).trans (Nat.le_add_left ..)⟩
+  MixedCost.short j h
+
 end Mixed
 
 theorem Long.row (h : Long f) : Row f := by
@@ -685,11 +674,8 @@ theorem Short.blocks (h : Short f) : Row (fun i => 2 ^ i.h * f i) := by
 theorem Short.groups (h : Short f) : Row (fun i => 2 ^ i.a * f i) :=
   h.blocks.mono (fun i => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) i.b.ha.le))
 
-theorem Row.hosts (h : Row f) : Cost (fun i => 2 ^ i.m * f i) := by
-  obtain ⟨k, hk⟩ := h
-  refine ⟨k, fun i => ?_⟩
-  simpa only [pow_zero, one_mul, zero_add, mul_add, ← mul_assoc, ← pow_add]
-    using Nat.mul_le_mul_left (2 ^ i.m) (hk i)
+theorem Row.hosts (h : Row f) : Cost (fun i => 2 ^ i.m * f i) :=
+  MixedCost.hosts (fun i => i.m) h
 
 theorem Row.expand (h : Row f) (h' : Short (fun i => 2 ^ n i)) :
     Cost (fun i => 2 ^ (i.m + n i) * f i) := by

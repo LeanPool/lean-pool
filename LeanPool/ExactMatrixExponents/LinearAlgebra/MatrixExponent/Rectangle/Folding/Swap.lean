@@ -37,11 +37,6 @@ instance treeFinite : (j : ℕ) → (X : Type) → [Fintype X] → Fintype (Tree
   | 0, _, h => h
   | j + 1, X, _ => treeFinite j (Block X)
 
-open scoped Classical in
-instance treeNonempty : (j : ℕ) → (X : Type) → [Nonempty X] → Nonempty (Tree j X)
-  | 0, _, h => h
-  | j + 1, X, _ => treeNonempty j (Block X)
-
 variable {X Y F : Type} [Field F]
 
 open scoped Classical in

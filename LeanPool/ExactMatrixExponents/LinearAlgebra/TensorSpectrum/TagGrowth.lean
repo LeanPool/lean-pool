@@ -30,8 +30,7 @@ open Filter Asymptotics
 /-- Remove a fixed real polynomial overhead from an inequality valid for every
 positive tensor power. This statement includes zero exponential bases. -/
 theorem le_of_pow_le_polynomial_mul_pow
-    (A B C q : ℝ) (hA : 0 ≤ A) (_hB : 0 ≤ B)
-    (hC : 0 < C) (_hq : 0 ≤ q)
+    (A B C q : ℝ) (hA : 0 ≤ A) (hC : 0 < C)
     (h : ∀ N : ℕ, 1 ≤ N →
       B ^ N ≤ C * ((N : ℝ) + 1) ^ q * A ^ N) : B ≤ A := by
   by_contra hnot
@@ -70,5 +69,17 @@ theorem le_of_pow_le_polynomial_mul_pow
       abs_of_nonneg (pow_nonneg hBpos.le N)] using hsmallN
   have hBN : 0 < B ^ N := pow_pos hBpos N
   linarith
+
+/-- Linear overhead in all powers does not increase the exponential rate. -/
+theorem le_of_pow_le_linear_mul_pow (a b K : ℝ) (ha : 0 ≤ a)
+    (h : ∀ n : ℕ, b ^ n ≤ (K * (n : ℝ) + 1) * a ^ n) : b ≤ a := by
+  refine le_of_pow_le_polynomial_mul_pow a b (max K 1) 1 ha
+    (zero_lt_one.trans_le (le_max_right _ _)) ?_
+  intro n _
+  apply (h n).trans
+  rw [Real.rpow_one, mul_add, mul_one]
+  exact mul_le_mul_of_nonneg_right
+    (add_le_add (mul_le_mul_of_nonneg_right (le_max_left _ _) (Nat.cast_nonneg n))
+      (le_max_right _ _)) (pow_nonneg ha n)
 
 end MatrixMultiplicationAllFields.TensorSpectrum

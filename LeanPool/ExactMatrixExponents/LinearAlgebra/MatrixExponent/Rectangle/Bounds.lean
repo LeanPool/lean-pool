@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Nodes
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.CircuitCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Bilinearize
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Sparse.Law
@@ -34,6 +35,25 @@ theorem side_le {n : ℕ} (hn : 0 < n) (ha : 0 ≤ a) :
     (side n a : ℝ) ≤ 2 * (n : ℝ) ^ a := by
   have h : 1 ≤ (n : ℝ) ^ a := Real.one_le_rpow (by exact_mod_cast hn) ha
   exact (Nat.ceil_lt_add_one (by positivity)).le.trans (by linarith)
+
+/-- Raise a rounded side length to a power between zero and one. -/
+theorem rounded_dot {n : ℕ} (hn : 0 < n) {a p : ℝ} (ha : 0 ≤ a)
+    (hp : 0 ≤ p) (hp' : p ≤ 1) :
+    (side n a : ℝ) ^ p ≤ 2 * (n : ℝ) ^ (a * p) := by
+  calc
+    _ ≤ (2 * (n : ℝ) ^ a) ^ p :=
+      Real.rpow_le_rpow (by positivity) (side_le hn ha) hp
+    _ = (2 : ℝ) ^ p * (n : ℝ) ^ (a * p) := by
+      rw [Real.mul_rpow (by norm_num) (by positivity), ← Real.rpow_mul (by positivity)]
+    _ ≤ _ := by
+      apply mul_le_mul_of_nonneg_right _ (by positivity)
+      simpa using Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2) hp'
+
+/-- Taking a positive real root preserves a power inequality. -/
+theorem root_le {a b p : ℝ} (hp : 0 < p) (ha : 0 ≤ a) (h : a ^ p ≤ b) :
+    a ≤ b ^ (1 / p) := by
+  simpa only [one_div] using
+    (Real.le_rpow_inv_iff_of_pos ha ((Real.rpow_nonneg ha p).trans h) hp).2 h
 
 private theorem naive (F : Type*) [Field F] (i j k : ℕ) :
     ∃ m : ℕ, Computes F i j k m ∧ m ≤ i * j * (k * 2) := by

@@ -33,11 +33,6 @@ def poly (f : Character) (m n : ℕ) : ℝ :=
 private theorem poly_pos (f : Character) (m n : ℕ) : 0 < poly f m n :=
   f.polynomial_value_pos _ _ (by omega) (by omega)
 
-private theorem root_le {a b p : ℝ} (hp : 0 < p) (ha : 0 ≤ a) (h : a ^ p ≤ b) :
-    a ≤ b ^ (1 / p) := by
-  have ht := Real.rpow_le_rpow (Real.rpow_nonneg ha p) h (by positivity : 0 ≤ 1 / p)
-  rwa [← Real.rpow_mul ha, mul_one_div_cancel hp.ne', Real.rpow_one] at ht
-
 private theorem concave (f : Character) (hp : 0 < f.pX) (m n : ℕ) :
     poly f m (n + 2) ^ (1 / f.pX) + poly f m n ^ (1 / f.pX) ≤
       2 * poly f m (n + 1) ^ (1 / f.pX) := by

@@ -6,6 +6,8 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.Tensor
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorBatching
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Blocks
 
@@ -32,7 +34,7 @@ namespace CoefficientTensor
 
 /-- The diagonal tensor with `n` independent scalar products. -/
 def natTensor (n : ℕ) : Tensor Coeff (Fin n) (Fin n) (Fin n) :=
-  fun x y z => if x = y ∧ x = z then 1 else 0
+  Tensor.diagonal (K := Coeff) (Fin n)
 
 theorem restrict_natTensor {X Y Z : Type*} (n : ℕ)
     (a : X → Fin n → Coeff) (b : Y → Fin n → Coeff) (c : Z → Fin n → Coeff) :
@@ -40,16 +42,10 @@ theorem restrict_natTensor {X Y Z : Type*} (n : ℕ)
       fun x y z => ∑ i, a x i * b y i * c z i := by
   classical
   funext x y z
-  simp [Tensor.restrict, natTensor, mul_ite, ite_and]
+  simp [Tensor.restrict, natTensor, Tensor.diagonal, mul_ite, ite_and]
 
 theorem rankAtMost_natTensor (n : ℕ) : Tensor.RankAtMost (natTensor n) n := by
-  classical
-  refine ⟨fun i x => if i = x then 1 else 0,
-    fun i y => if i = y then 1 else 0,
-    fun i z => if i = z then 1 else 0, ?_⟩
-  funext x y z
-  by_cases hxy : x = y <;> by_cases hxz : x = z <;>
-    simp_all [natTensor, Tensor.rankOne, mul_ite, eq_comm]
+  simpa only [natTensor, Fintype.card_fin] using Tensor.diagonal_rankAtMost (K := Coeff) (Fin n)
 
 /-- This equivalence exposes all three local matrices of the restriction. -/
 theorem rankAtMost_iff_natTensor_restricts {X Y Z : Type*}
@@ -69,9 +65,9 @@ theorem natTensor_add_pullback (r s : ℕ) :
       finSumFinEquiv finSumFinEquiv (natTensor (r + s)) =
       blockSum (natTensor r) (natTensor s) := by
   funext x y z
-  simp only [Tensor.pullback, natTensor, Equiv.apply_eq_iff_eq]
+  simp only [Tensor.pullback, natTensor, Tensor.diagonal, Equiv.apply_eq_iff_eq]
   rcases x with x | x <;> rcases y with y | y <;> rcases z with z | z <;>
-    simp [blockSum, natTensor]
+    simp [blockSum, Tensor.diagonal]
 
 theorem natTensor_add_restricts (r s : ℕ) :
     Restricts (natTensor (r + s)) (blockSum (natTensor r) (natTensor s)) := by
@@ -89,6 +85,9 @@ theorem rankAtMost_blockSum {X Y Z U V W : Type*}
       ((rankAtMost_iff_natTensor_restricts S s).mp hS))
 
 variable {X Y Z U V W : Type*}
+
+section Coordinates
+
 variable [Fintype X] [Fintype Y] [Fintype Z]
 
 /-- Expand each actual coefficient into a separate rank-one tensor. -/
@@ -121,7 +120,7 @@ theorem natTensor_restricts_of_le {r s : ℕ} (h : r ≤ s) :
   have heq : Tensor.pullback (Fin.castLE h) (Fin.castLE h) (Fin.castLE h)
       (natTensor s) = natTensor r := by
     funext x y z
-    simp [Tensor.pullback, natTensor, Fin.ext_iff]
+    simp [Tensor.pullback, natTensor, Tensor.diagonal, Fin.ext_iff]
   rwa [heq] at hp
 
 omit [Fintype X] [Fintype Y] [Fintype Z] in
@@ -150,40 +149,42 @@ theorem nonzero_restricts_natTensor_one {T : Tensor Coeff X Y Z} (hT : T ≠ 0) 
   have hik : i = k := Subsingleton.elim _ _
   subst j
   subst k
-  simp [Tensor.restrict, natTensor, ite_mul, mul_ite, hxyz]
+  simp [Tensor.restrict, natTensor, Tensor.diagonal, ite_mul, mul_ite, hxyz]
+
+end Coordinates
+
+section Rank
+
+variable [Finite X] [Finite Y]
 
 /-- The least size of an actual rank-one decomposition. -/
-noncomputable def rank (T : Tensor Coeff X Y Z) : ℕ := by
-  classical
-  exact Nat.find (rankAtMost_finite T)
+noncomputable def rank (T : Tensor Coeff X Y Z) : ℕ := SpectralBooks.tensorRank T
 
-theorem rank_spec (T : Tensor Coeff X Y Z) : Tensor.RankAtMost T (rank T) := by
-  classical
-  exact Nat.find_spec (rankAtMost_finite T)
+theorem rank_spec (T : Tensor Coeff X Y Z) : Tensor.RankAtMost T (rank T) :=
+  SpectralBooks.rankAtMost_tensorRank T
 
 theorem rank_le_iff (T : Tensor Coeff X Y Z) (n : ℕ) :
-    rank T ≤ n ↔ Tensor.RankAtMost T n := by
-  classical
-  constructor
-  · exact rankAtMost_mono (rank_spec T)
-  · exact Nat.find_min' (rankAtMost_finite T)
+    rank T ≤ n ↔ Tensor.RankAtMost T n :=
+  ⟨rankAtMost_mono (rank_spec T), SpectralBooks.tensorRank_le_of_rankAtMost⟩
 
-theorem rank_mono [Fintype U] [Fintype V] [Fintype W]
+end Rank
+
+theorem rank_mono [Fintype X] [Fintype Y] [Fintype Z] [Finite U] [Finite V]
     {T : Tensor Coeff X Y Z} {S : Tensor Coeff U V W} (h : Restricts T S) :
     rank S ≤ rank T :=
   (rank_le_iff S _).mpr (h.rankAtMost (rank_spec T))
 
-theorem rank_product_le [Fintype U] [Fintype V] [Fintype W]
+theorem rank_product_le [Finite X] [Finite Y] [Finite U] [Finite V]
     (T : Tensor Coeff X Y Z) (S : Tensor Coeff U V W) :
     rank (Tensor.product T S) ≤ rank T * rank S :=
   (rank_le_iff _ _).mpr ((rank_spec T).product (rank_spec S))
 
-theorem rank_blockSum_le [Fintype U] [Fintype V] [Fintype W]
+theorem rank_blockSum_le [Finite X] [Finite Y] [Finite U] [Finite V]
     (T : Tensor Coeff X Y Z) (S : Tensor Coeff U V W) :
     rank (blockSum T S) ≤ rank T + rank S :=
   (rank_le_iff _ _).mpr (rankAtMost_blockSum (rank_spec T) (rank_spec S))
 
-theorem rank_eq_zero_iff (T : Tensor Coeff X Y Z) : rank T = 0 ↔ T = 0 := by
+theorem rank_eq_zero_iff [Finite X] [Finite Y] (T : Tensor Coeff X Y Z) : rank T = 0 ↔ T = 0 := by
   constructor
   · intro h
     have hr := rank_spec T
@@ -206,7 +207,7 @@ theorem Restricts.rank_le {A B : TensorRep} (h : Restricts A B) : rank B ≤ ran
   CoefficientTensor.rank_mono h
 
 theorem Equivalent.rank_eq {A B : TensorRep} (h : Equivalent A B) : rank A = rank B :=
-  Nat.le_antisymm h.2.rank_le h.1.rank_le
+  Nat.le_antisymm (Restricts.rank_le h.2) (Restricts.rank_le h.1)
 
 end TensorRep
 
@@ -233,7 +234,7 @@ theorem ofTensor_natTensor_one :
     have hxz : x = z := Subsingleton.elim _ _
     subst y
     subst z
-    simp [Tensor.pullback, CoefficientTensor.natTensor]
+    simp [Tensor.pullback, CoefficientTensor.natTensor, Tensor.diagonal]
   rw [heq] at h
   exact h.symm
 
@@ -250,7 +251,7 @@ theorem ofTensor_natTensor_zero :
 
 /-- Exact rank is invariant under mutual local restriction. -/
 noncomputable def rank : TensorClass → ℕ :=
-  Quotient.lift TensorRep.rank (fun _ _ h => h.rank_eq)
+  Quotient.lift TensorRep.rank (fun _ _ h => TensorRep.Equivalent.rank_eq h)
 
 @[simp] theorem rank_ofRep (T : TensorRep) : rank (ofRep T) = T.rank := rfl
 

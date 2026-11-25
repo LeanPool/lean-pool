@@ -33,7 +33,8 @@ theorem binaryDotTensor_class : ofTensor binaryDotTensor = dotX 2 := by
   have heq : Tensor.pullback (Equiv.refl Unit) finTwoEquiv finTwoEquiv
       binaryDotTensor = CoefficientTensor.dotXCoeff 2 := by
     funext x y z
-    simp [Tensor.pullback, binaryDotTensor, CoefficientTensor.dotXCoeff]
+    simp [Tensor.pullback, TensorSpectrum.PolynomialTensors.binaryDotTensor,
+      CoefficientTensor.dotXCoeff]
   change ofTensor binaryDotTensor = ofTensor (CoefficientTensor.dotXCoeff 2)
   rw [← heq]
   exact (ofTensor_pullback_equiv _ _ _ _).symm

@@ -69,7 +69,7 @@ theorem rankAtMost_of_extension_to_algClosed {X Y Z : Type*}
 
 /-- A scalar extension of any transcendence degree preserves the asymptotic
 rank of every finite three-tensor. -/
-theorem asymptoticRank_map_eq {X Y Z : Type*} [Fintype X] [Fintype Y] [Finite Z]
+theorem asymptoticRank_map_eq {X Y Z : Type*} [Finite X] [Finite Y] [Finite Z]
     (T : Tensor F X Y Z) :
     asymptoticRank (fun x y z ↦ algebraMap F E (T x y z)) = asymptoticRank T := by
   apply le_antisymm (asymptoticRank_map_le T)

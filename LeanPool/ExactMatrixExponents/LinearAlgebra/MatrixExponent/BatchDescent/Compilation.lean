@@ -565,7 +565,7 @@ variable {F : Type} [Field F] {x y : Wire} {G : Diagram F x y} {D : Dimensions}
   {M C c e R J w : ℕ}
 
 theorem Transfer.funded (b : Transfer G D M C c e R J w) (Q V B : ℕ)
-    (hj : 1 ≤ J) (_hq : c + 2 ≤ Q) (hr : Q + 2 * c + 10 ≤ R) (hv : R + c + 5 ≤ V)
+    (hj : 1 ≤ J) (hr : Q + 2 * c + 10 ≤ R) (hv : R + c + 5 ≤ V)
     (hb : 100 * (1 + V + e) ≤ B) (hrsv : R * J ≤ D.h) (hsize : 2 ^ w ≤ M)
     (hwidth : 2 ^ (B * J) ≤ w) (hn : 16 * (D.q * D.b) * D.z ≤ w) (hu : w ≤ 32 * (D.q * D.b) * D.z)
     (fq : D.q = 2 ^ (Q * J)) (fv : 2 * D.v = 2 ^ (V * J)) (fd : D.d ≤ 2 ^ (c * J))
@@ -875,7 +875,7 @@ theorem compilation_of_encoded (h : Encoded F) : Compilation F := by
   have hsmall : 8 * D.shortWidth a.scheme (Fintype.card a.Z) ≤ w :=
     a.short hJ hQR (le_rfl : R + c + 5 ≤ V) (le_rfl : 100 * (1 + P.b + V + e) ≤ B) shallow rfl rfl
       (Nat.sub_le ..) hl
-  obtain ⟨budget, short, long, room⟩ := a.funded Q V B hJ le_rfl le_rfl le_rfl
+  obtain ⟨budget, short, long, room⟩ := a.funded Q V B hJ le_rfl le_rfl
     (by unfold B; omega) hr low hl (by rw [hZ]; exact hlo) (by rw [hZ]; exact hhi) rfl
     (P.dimensions_rows ..) (Nat.pow_le_pow_right (by decide) (Nat.mul_le_mul_right _ hd))
     T hT rfl top

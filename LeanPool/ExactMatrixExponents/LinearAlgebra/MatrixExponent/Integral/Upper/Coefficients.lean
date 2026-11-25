@@ -6,7 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Interpolation
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Nodes
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Additive.RankAnalysis
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.LocalTensor
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor

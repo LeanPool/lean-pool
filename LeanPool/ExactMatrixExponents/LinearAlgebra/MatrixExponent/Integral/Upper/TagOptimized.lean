@@ -33,7 +33,7 @@ theorem tag_optimized_of_fiber_bounds
     exact (ha i₀).trans_le
       (Finset.single_le_sum (fun i _ => (ha i).le) (Finset.mem_univ i₀))
   apply le_of_pow_le_polynomial_mul_pow x ((∑ i, a i) ^ p) 6 ((s : ℝ) * p)
-    hx (Real.rpow_nonneg hasum.le _) (by norm_num) (by positivity)
+    hx (by norm_num)
   intro N hN
   obtain ⟨v, hv, havg⟩ :=
     TagWords.exists_nonempty_fiberMass_ge_average (N := N) a hasum

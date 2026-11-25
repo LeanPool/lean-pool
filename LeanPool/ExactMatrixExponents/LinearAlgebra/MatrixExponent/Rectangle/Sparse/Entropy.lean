@@ -88,7 +88,7 @@ theorem mass_bound (n : ℕ) :
   have hnon : 0 ≤ ∑ b, weight (support w) e (omega F / 3 - 1) b :=
     Finset.sum_nonneg fun _ _ => (Real.exp_pos _).le
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ (432 * ((n : ℝ) + 1) ^ (support w).card)
-    (support w).card (by positivity) (by positivity) (by positivity) (by positivity)
+    (support w).card (by positivity) (by positivity)
   intro m hm
   rw [← pow_mul, Real.rpow_natCast]
   refine (counted w e (n * m)).trans ?_

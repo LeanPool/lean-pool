@@ -585,7 +585,7 @@ theorem ZClosure.price (h : ZClosure A T) (f : Tensor K S →+* ℝ≥0) (hf : M
     (f (Tensor.ofRaw (Raw.ofTable X T)) : ℝ) ≤ B := by
   classical
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ 1 (Fintype.card (∀ s, X s))
-    hB (by positivity) (by norm_num) (by positivity)
+    hB (by norm_num)
   intro n _
   obtain ⟨d, hd, y, c, hy, he⟩ := h.power n
   have hs := hf (Tensor.span_le (fun s => Fin n → X s) (copyTable T n)

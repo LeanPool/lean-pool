@@ -72,7 +72,7 @@ theorem upow_nat (x : O) (i : ℕ) : x ^ (i : ℤ) = x ^ i := by
 open scoped Classical in
 /-- Shift signed exponents into a range of length six times the
 branch count. Interpolation extracts the central coefficient. -/
-theorem phases {M : ℕ} (_hM : 0 < M) :
+theorem phases {M : ℕ} :
     ∃ (ζ : O) (w : Fin (6 * M) → O), IsUnit ζ ∧
       ∀ e : ℤ, -(3 * (M : ℤ)) < e → e < 3 * (M : ℤ) →
         (∑ r : Fin (6 * M), w r * ζ ^ ((r : ℤ) * e)) = if e = 0 then 1 else 0 := by

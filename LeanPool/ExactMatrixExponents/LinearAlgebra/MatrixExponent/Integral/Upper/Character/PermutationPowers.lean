@@ -48,13 +48,6 @@ theorem polynomialTensor_one_left_class (n : ℕ) :
 
 namespace Character
 
-private theorem rpow_two_injective {p q : ℝ}
-    (h : (2 : ℝ) ^ p = (2 : ℝ) ^ q) : p = q := by
-  have hlog := congrArg Real.log h
-  rw [Real.log_rpow (by norm_num), Real.log_rpow (by norm_num)] at hlog
-  have hpos : 0 < Real.log (2 : ℝ) := Real.log_pos (by norm_num)
-  nlinarith
-
 theorem permuted_dotXValue (f : Character) (i : Fin 6) (n : ℕ) :
     (f.permuted i).dotXValue n =
       ![f.dotXValue n, f.dotYValue n, f.dotXValue n,
@@ -67,7 +60,7 @@ theorem permuted_dotXValue (f : Character) (i : Fin 6) (n : ℕ) :
 multiplicities. Uniqueness is forced by the value at dimension two. -/
 theorem permuted_pX (f : Character) (i : Fin 6) :
     (f.permuted i).pX = ![f.pX, f.pY, f.pX, f.pY, f.pZ, f.pZ] i := by
-  apply rpow_two_injective
+  apply (Real.rpow_right_inj (by norm_num : (0 : ℝ) < 2) (by norm_num)).mp
   have hvalue := (f.permuted i).dotXValue_eq_rpow 2 (by norm_num)
   simp only [Nat.cast_ofNat] at hvalue
   rw [← hvalue, permuted_dotXValue]
@@ -107,7 +100,7 @@ preserves the square matrix multiplication tensor at every dimension. -/
 theorem sum_exponents_permuted (f : Character) (i : Fin 6) :
     (f.permuted i).pX + (f.permuted i).pY + (f.permuted i).pZ =
       f.pX + f.pY + f.pZ := by
-  apply rpow_two_injective
+  apply (Real.rpow_right_inj (by norm_num : (0 : ℝ) < 2) (by norm_num)).mp
   have hleft := (f.permuted i).square_value_eq_rpow 2 (by norm_num)
   have hright := f.square_value_eq_rpow 2 (by norm_num)
   simp only [Nat.cast_ofNat] at hleft hright

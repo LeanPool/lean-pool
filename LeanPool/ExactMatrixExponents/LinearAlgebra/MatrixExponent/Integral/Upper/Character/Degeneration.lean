@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagGrowth
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Powers
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.SeparationInterpolation
@@ -36,42 +37,7 @@ open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
 
-/-- A fixed linear overhead cannot mask a strictly larger exponential rate.
-The proof uses Bernoulli's inequality twice, rather than a limit theorem. -/
-theorem le_of_pow_le_linear_mul_pow (a b K : ℝ)
-    (ha : 0 ≤ a) (_hb : 0 ≤ b) (_hK : 0 ≤ K)
-    (h : ∀ n : ℕ, b ^ n ≤ (K * (n : ℝ) + 1) * a ^ n) : b ≤ a := by
-  by_contra hba
-  have hab : a < b := lt_of_not_ge hba
-  have ha' : 0 < a := by
-    by_contra hapos
-    have haz : a = 0 := le_antisymm (le_of_not_gt hapos) ha
-    have hh := h 1
-    simp only [pow_one, Nat.cast_one, mul_one, haz, mul_zero] at hh
-    linarith
-  let r := b / a
-  have hr : 1 < r := (lt_div_iff₀ ha').mpr (by simpa using hab)
-  have hrpow : ∀ n : ℕ, r ^ n ≤ K * (n : ℝ) + 1 := by
-    intro n
-    dsimp [r]
-    rw [div_pow]
-    exact (div_le_iff₀ (pow_pos ha' n)).mpr (h n)
-  have hdelta : 0 < (r - 1) ^ 2 := sq_pos_of_pos (sub_pos.mpr hr)
-  obtain ⟨n, hn⟩ := exists_nat_gt (max 1 ((2 * K + 1) / (r - 1) ^ 2))
-  have hn1 : (1 : ℝ) < n := lt_of_le_of_lt (le_max_left _ _) hn
-  have hn0 : (0 : ℝ) < n := by linarith
-  have hngap : 2 * K + 1 < (n : ℝ) * (r - 1) ^ 2 :=
-    (div_lt_iff₀ hdelta).mp (lt_of_le_of_lt (le_max_right _ _) hn)
-  have hbern := one_add_mul_sub_le_pow (by linarith : (-1 : ℝ) ≤ r) n
-  have hsmall : 0 ≤ (n : ℝ) * (r - 1) := mul_nonneg hn0.le (sub_pos.mpr hr).le
-  have hsq : ((n : ℝ) * (r - 1)) ^ 2 ≤ (r ^ n) ^ 2 := by
-    have hrn : 0 ≤ r ^ n := pow_nonneg (by linarith) n
-    nlinarith
-  have hupper := hrpow (n * 2)
-  rw [pow_mul] at hupper
-  push_cast at hupper
-  have hstrict := mul_lt_mul_of_pos_left hngap hn0
-  nlinarith
+export MatrixMultiplicationAllFields.TensorSpectrum (le_of_pow_le_linear_mul_pow)
 
 namespace TensorClass
 
@@ -99,7 +65,7 @@ theorem Character.polynomial_constant_le (f : Character)
       Nat.cast_add, Nat.cast_mul, Nat.cast_one] using hmono
   have hreal := le_of_pow_le_linear_mul_pow
     (f (ofTensor T) : ℝ) (f (ofTensor D) : ℝ) (K : ℝ)
-    (f (ofTensor T)).coe_nonneg (f (ofTensor D)).coe_nonneg (Nat.cast_nonneg K)
+    (f (ofTensor T)).coe_nonneg
     (fun j => by exact_mod_cast hpower j)
   exact_mod_cast hreal
 

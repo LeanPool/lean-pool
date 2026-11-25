@@ -393,7 +393,7 @@ theorem length_seg (u : Fraction) (a b : Term S) :
   exact h
 
 theorem length_ordinary (B : Type) [Fintype B] [DecidableEq B]
-    (z : B → Term S) (D : ℝ) (_hD : 0 < D) (h : ∀ i j, length hf (z i) (z j) ≤ D) :
+    (z : B → Term S) (D : ℝ) (h : ∀ i j, length hf (z i) (z j) ≤ D) :
     ∃ P : Tensor K B → ℝ, (P = 0 ∨ P ∈ Tensor.ordinary K B (D * Fintype.card B)) ∧
       ∀ i j, P (Tensor.wire K i j 2) = length hf (z i) (z j) := by
   classical

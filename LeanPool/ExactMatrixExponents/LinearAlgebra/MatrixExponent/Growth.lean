@@ -115,7 +115,7 @@ end MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 namespace MatrixMultiplicationAllFields.MatrixExponent
 
 theorem admissible_of_rank {F : Type*} [Field F] {n r : ℕ} {s : ℝ}
-    (hn : 2 ≤ n) (hr : RankLE F n r) (_hs : 2 ≤ s) (hrs : (r : ℝ) ≤ (n : ℝ) ^ s) :
+    (hn : 2 ≤ n) (hr : RankLE F n r) (hrs : (r : ℝ) ≤ (n : ℝ) ^ s) :
     Admissible F s := by
   have h := Rectangle.admissible_of_rank hn zero_le_one zero_le_one zero_le_one
     (Rectangle.side_one n).le (Rectangle.side_one n).le (Rectangle.side_one n).le hr hrs
@@ -123,6 +123,6 @@ theorem admissible_of_rank {F : Type*} [Field F] {n r : ℕ} {s : ℝ}
   exact h
 
 theorem admissible_three (F : Type*) [Field F] : Admissible F 3 :=
-  admissible_of_rank (by decide) (Rectangle.rank_volume F 2 2 2) (by norm_num) (by norm_num)
+  admissible_of_rank (by decide) (Rectangle.rank_volume F 2 2 2) (by norm_num)
 
 end MatrixMultiplicationAllFields.MatrixExponent

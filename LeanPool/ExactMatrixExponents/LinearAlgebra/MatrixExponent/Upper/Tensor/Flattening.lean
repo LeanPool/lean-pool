@@ -108,7 +108,7 @@ theorem card_le_flatteningRank_of_identity [Fintype X]
   · have h := card_le_flatteningRank_of_identity (natTensor n)
       (fun i : Fin n => (i, i)) id (by
         intro i j
-        simp [natTensor, eq_comm])
+        simp [natTensor, Tensor.diagonal, eq_comm])
     simpa only [Fintype.card_fin] using h
 
 /-- Flattening rank is bounded by every actual rank-one decomposition. -/
@@ -120,7 +120,7 @@ theorem flatteningRank_le_of_rankAtMost [Fintype X] [Finite Y] [Finite Z]
   have h' := flatteningRank_mono ((rankAtMost_iff_natTensor_restricts T r).mp h)
   simpa only [flatteningRank_natTensor] using h'
 
-theorem flatteningRank_le_rank [Fintype X] [Fintype Y] [Fintype Z]
+theorem flatteningRank_le_rank [Fintype X] [Finite Y] [Finite Z]
     (T : Tensor Coeff X Y Z) : flatteningRank T ≤ rank T :=
   flatteningRank_le_of_rankAtMost (rank_spec T)
 
@@ -280,7 +280,7 @@ theorem Restricts.flatteningRank_le {A B : TensorRep} (h : Restricts A B) :
 
 theorem Equivalent.flatteningRank_eq {A B : TensorRep} (h : Equivalent A B) :
     flatteningRank A = flatteningRank B :=
-  Nat.le_antisymm h.2.flatteningRank_le h.1.flatteningRank_le
+  Nat.le_antisymm (Restricts.flatteningRank_le h.2) (Restricts.flatteningRank_le h.1)
 
 end TensorRep
 
@@ -288,7 +288,7 @@ namespace TensorClass
 
 /-- Actual first-leg matrix rank, invariant under mutual tensor restriction. -/
 def flatteningRank : TensorClass → ℕ :=
-  Quotient.lift TensorRep.flatteningRank (fun _ _ h => h.flatteningRank_eq)
+  Quotient.lift TensorRep.flatteningRank (fun _ _ h => TensorRep.Equivalent.flatteningRank_eq h)
 
 @[simp] theorem flatteningRank_ofRep (T : TensorRep) :
     flatteningRank (ofRep T) = T.flatteningRank := rfl

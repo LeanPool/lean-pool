@@ -209,7 +209,8 @@ theorem dotZ_mul (m n : ℕ) : dotZ m * dotZ n = dotZ (m * n) := by
   let e : Fin 1 ≃ PUnit := Equiv.ofUnique _ _
   have heq : Tensor.pullback u e e unitTensor = CoefficientTensor.dotXCoeff 1 := by
     funext x y z
-    simp [Tensor.pullback, unitTensor, CoefficientTensor.dotXCoeff, Subsingleton.elim y z]
+    simp [Tensor.pullback, TensorSpectrum.TensorClass.unitTensor,
+      CoefficientTensor.dotXCoeff, Subsingleton.elim y z]
   change ofTensor (CoefficientTensor.dotXCoeff 1) = ofTensor unitTensor
   rw [← heq]
   exact ofTensor_pullback_equiv _ u e e
@@ -219,7 +220,8 @@ theorem dotZ_mul (m n : ℕ) : dotZ m * dotZ n = dotZ (m * n) := by
   let e : Fin 1 ≃ PUnit := Equiv.ofUnique _ _
   have heq : Tensor.pullback e u e unitTensor = CoefficientTensor.dotYCoeff 1 := by
     funext x y z
-    simp [Tensor.pullback, unitTensor, CoefficientTensor.dotYCoeff, Subsingleton.elim x z]
+    simp [Tensor.pullback, TensorSpectrum.TensorClass.unitTensor,
+      CoefficientTensor.dotYCoeff, Subsingleton.elim x z]
   change ofTensor (CoefficientTensor.dotYCoeff 1) = ofTensor unitTensor
   rw [← heq]
   exact ofTensor_pullback_equiv _ e u e
@@ -229,7 +231,8 @@ theorem dotZ_mul (m n : ℕ) : dotZ m * dotZ n = dotZ (m * n) := by
   let e : Fin 1 ≃ PUnit := Equiv.ofUnique _ _
   have heq : Tensor.pullback e e u unitTensor = CoefficientTensor.dotZCoeff 1 := by
     funext x y z
-    simp [Tensor.pullback, unitTensor, CoefficientTensor.dotZCoeff, Subsingleton.elim x y]
+    simp [Tensor.pullback, TensorSpectrum.TensorClass.unitTensor,
+      CoefficientTensor.dotZCoeff, Subsingleton.elim x y]
   change ofTensor (CoefficientTensor.dotZCoeff 1) = ofTensor unitTensor
   rw [← heq]
   exact ofTensor_pullback_equiv _ e e u

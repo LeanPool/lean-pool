@@ -6,6 +6,8 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Interpolation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
 public import Lean.Elab.Tactic.Omega
@@ -29,37 +31,13 @@ open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
 
-/-- Multiplication of polynomials with `a` and `b` coefficients, with every
-output coefficient retained. -/
-def polynomialTensor (a b : ℕ) :
-    Tensor O (Fin a) (Fin b) (Fin (a + b - 1)) :=
-  fun i j k => if i.val + j.val = k.val then 1 else 0
+export MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors
+  (polynomialTensor_apply polynomialTensor_eq_coeff polynomialTensor_swap
+    polynomialTensor_one_left)
 
-@[simp] theorem polynomialTensor_apply (a b : ℕ)
-    (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    polynomialTensor a b i j k = if i.val + j.val = k.val then 1 else 0 := rfl
-
-/-- The tensor coefficient is the coefficient of the product of the two input
-monomials. -/
-theorem polynomialTensor_eq_coeff (a b : ℕ)
-    (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    polynomialTensor a b i j k =
-      ((Polynomial.X : Polynomial O) ^ (i.val + j.val)).coeff k.val := by
-  simp [polynomialTensor, Polynomial.coeff_X_pow, eq_comm]
-
-/-- Commuting the input factors only reindexes the equal-sized output space. -/
-theorem polynomialTensor_swap (a b : ℕ)
-    (i : Fin a) (j : Fin b) (k : Fin (a + b - 1)) :
-    polynomialTensor a b i j k =
-      polynomialTensor b a j i (Fin.cast (by omega) k) := by
-  simp [polynomialTensor, Nat.add_comm]
-
-/-- With a scalar as the first input, multiplication is the identity pairing
-between the second input and output coefficient coordinates. -/
-theorem polynomialTensor_one_left (b : ℕ)
-    (i : Fin 1) (j : Fin b) (k : Fin (1 + b - 1)) :
-    polynomialTensor 1 b i j k = if j.val = k.val then 1 else 0 := by
-  simp [polynomialTensor]
+/-- The shared polynomialTensor construction over the coefficient ring. -/
+abbrev polynomialTensor :=
+  MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors.polynomialTensor (K := O)
 
 /-- Ordinary polynomial multiplication has an actual decomposition into
 `a + b - 1` rank-one tensors. The degenerate empty-input cases are included. -/
@@ -81,7 +59,7 @@ theorem polynomialTensor_rankAtMost (a b : ℕ) :
     exact WithBot.coe_lt_coe.mpr hsum
   have hcoeff := Integral.interpolate nodes hnodes
     ((Polynomial.X : Polynomial O) ^ (i.val + j.val)) k.val hdegree
-  rw [polynomialTensor_eq_coeff]
+  refine (polynomialTensor_eq_coeff (K := O) a b i j k).trans ?_
   simpa only [Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_mul,
     Tensor.rankOne, pow_add]
     using hcoeff

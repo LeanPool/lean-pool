@@ -82,7 +82,7 @@ theorem rpow_rankExponent_le_rank {R : ℕ → ℕ} (hR : ∀ d, d ^ 2 ≤ R d)
   exact (le_div_iff₀ (Real.log_pos hd1)).mp (rankExponent_le_logRank hR hd)
 
 /-- Positive slack supplies a finite block; the infimum need not be attained. -/
-theorem exists_rank_lt_rpow {R : ℕ → ℕ} (_hR : ∀ d, d ^ 2 ≤ R d)
+theorem exists_rank_lt_rpow {R : ℕ → ℕ}
     {δ : ℝ} (hδ : 0 < δ) :
     ∃ u : ℕ, 2 ≤ u ∧ (R u : ℝ) < (u : ℝ) ^ (rankExponent R + δ) := by
   obtain ⟨q, hq, hlt⟩ := exists_lt_of_csInf_lt (rankExponentSet_nonempty R)

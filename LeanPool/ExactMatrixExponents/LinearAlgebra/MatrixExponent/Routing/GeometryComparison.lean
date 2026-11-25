@@ -717,7 +717,7 @@ theorem spectralComparison (K : Type) [Field K] : SpectralComparison K := by
   have h : WireModels K (Term S) := by
     intro B _ _ _ x D hD hx
     simp only [hd] at hx ⊢
-    exact TermModel.length_ordinary hf B x D hD hx
+    exact TermModel.length_ordinary hf B x D hx
   have hs : Segments (Term S) := by
     intro t x y
     refine ⟨.seg t x y, ?_⟩

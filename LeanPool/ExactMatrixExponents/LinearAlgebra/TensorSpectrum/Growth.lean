@@ -112,7 +112,6 @@ theorem diagonal_lower_bounds
 theorem diagonalCubicGrowth
     (D g : ℕ → ℝ)
     (hD : D 1 = 1) (hg : g 1 = 1)
-    (_hgnonneg : ∀ a : ℕ, 1 ≤ a → 0 ≤ g a)
     (hupper : ∀ a : ℕ, 1 ≤ a →
       D a ≤ ((3 * (a : ℝ) - 1) / 2) * g a)
     (hstep : ∀ a : ℕ, 1 ≤ a →

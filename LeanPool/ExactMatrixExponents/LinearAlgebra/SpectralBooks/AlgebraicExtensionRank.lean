@@ -30,7 +30,7 @@ section
 
 variable {F K X Y Z : Type*} [Field F] [Field K] [Algebra F K]
 
-variable [Fintype X] [Fintype Y]
+variable [Finite X] [Finite Y]
 
 /-- Exact rank does not increase under extension, hence neither does
 asymptotic rank. -/

@@ -48,18 +48,6 @@ private theorem rank_of_dots {i j k r : ℕ} (h : dots i j k ≤ (r : TensorClas
   simp [Tensor.product, dotXCoeff, dotYCoeff, dotZCoeff, ite_and]
   grind
 
-private theorem rounded_dot {n : ℕ} (hn : 0 < n) {a p : ℝ} (ha : 0 ≤ a)
-    (hp : 0 ≤ p) (hp' : p ≤ 1) :
-    (side n a : ℝ) ^ p ≤ 2 * (n : ℝ) ^ (a * p) := by
-  calc
-    _ ≤ (2 * (n : ℝ) ^ a) ^ p :=
-      Real.rpow_le_rpow (by positivity) (side_le hn ha) hp
-    _ = (2 : ℝ) ^ p * (n : ℝ) ^ (a * p) := by
-      rw [Real.mul_rpow (by norm_num) (by positivity), ← Real.rpow_mul (by positivity)]
-    _ ≤ _ := by
-      apply mul_le_mul_of_nonneg_right _ (by positivity)
-      simpa using Real.rpow_le_rpow_of_exponent_le (by norm_num : (1 : ℝ) ≤ 2) hp'
-
 private theorem price_dots (f : Character) {n : ℕ} (hn : 0 < n) {a b c : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     (f (dots (side n a) (side n b) (side n c)) : ℝ) ≤

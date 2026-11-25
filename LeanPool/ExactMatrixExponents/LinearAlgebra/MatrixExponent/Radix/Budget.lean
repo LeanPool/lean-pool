@@ -316,7 +316,7 @@ private theorem ordered_groups (xs : List α) (ks : List (Val (word s)))
 /-- Local stable sorting with P delimiters per digit isolates all digits in
 the output packs. Only packs overlapping the real-key prefix can be live. -/
 theorem packing (xs : List (Bool × α)) (junk : α) (keys : List (Val (word s)))
-    (hn : keys.Nodup) (ha : ∀ k, k ∈ keys) (P e : ℕ) (_hp : 0 < P)
+    (hn : keys.Nodup) (ha : ∀ k, k ∈ keys) (P e : ℕ)
     (ys : List (Val (word (s + 1)) × (Bool × α)))
     (hs : Stable (s := s + 1) Prod.fst (xs.map (decorate d) ++ filler junk keys P e) ys)
     (bs : List (List (Bool × α))) (hl : ∀ b ∈ bs, b.length = P) (hf : bs.flatten
@@ -730,7 +730,7 @@ private theorem blocked_of_packing (xs : List (Val (slot a))) (junk : Val a)
     intro b hb
     obtain ⟨z, _, rfl⟩ := List.mem_map.mp hb
     exact Tagged.length_flatten q z
-  obtain ⟨hh, hb, ho⟩ := packing d xs junk keys hn ha (2 ^ q) e (by positivity) ys hs
+  obtain ⟨hh, hb, ho⟩ := packing d xs junk keys hn ha (2 ^ q) e ys hs
     (bs.map (flatten (a := slot a) q)) hl hf
   rw [packs_content] at ho
   refine ⟨fun z hz => hh _ (List.mem_map.mpr ⟨z, hz, rfl⟩), ?_, ho.1, ho.2.2⟩
@@ -859,7 +859,7 @@ private theorem finish_net {F : Type} [Field F] {a : Wire} {q b k s V y : ℕ}
       (by rw [Tagged.length_flatten]; exact capacity hb hn)
 
 theorem one_pass (F : Type) [Field F] (w s q b k U V x y : ℕ)
-    (_hs : 1 ≤ s) (hb : s + 2 ≤ b) (he : q + (b + k) = w + 2)
+    (hb : s + 2 ≤ b) (he : q + (b + k) = w + 2)
     (hU : 10 * (w + 2) ≤ U) (hV : 10 * (w + 2) * 2 ^ q ≤ V)
     (h1 : Tag F (q + b + 1) U x) (h2 : Tag F (b + k + 1) V y)
     (a : Wire) (ha : wd a ≤ 2 * w + 1) (d : Val a → Val (word s))
@@ -892,7 +892,7 @@ theorem budget_net (F : Type) [Field F] (w s q b k U V x y : ℕ)
     (hU : 10 * (w + 2) ≤ U) (hV : 10 * (w + 2) * 2 ^ q ≤ V)
     (h1 : Tag F (q + b + 1) U x) (h2 : Tag F (b + k + 1) V y) :
     ∃ v ≤ budget w s q b k U V x y, Tag F w w v := by
-  have one := one_pass F w s q b k U V x y hs hb he hU hV h1 h2
+  have one := one_pass F w s q b k U V x y hb he hU hV h1 h2
   let a := word (2 * w + 1)
   have ha : wd a = 2 * w + 1 := wd_word _
   obtain ⟨f, hf, hsort⟩ := radix F a (w + 2) s _ hs (one a ha.le)

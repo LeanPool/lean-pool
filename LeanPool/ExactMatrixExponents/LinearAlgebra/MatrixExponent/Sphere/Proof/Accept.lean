@@ -639,49 +639,5 @@ theorem admissible_binary (c₀ : h.Book) :
     U.passes_binary S world (g := g) (σ := ℓ) A.coord (h.printing sc c₀) (T / u)
   exact ⟨test, small, fun c a => (h.admissible_eq sc c c₀ a).trans (works _ _ _ h.vacantHeld a)⟩
 
-open scoped Classical in
-/-- Indexes the requests by the coordinates of `Σ v, h.checkPins sc v`. -/
-abbrev requests := Σ v, h.checkPins sc v
-
-open scoped Classical in
-private theorem requests_card {V : Type} [Fintype V] (Q : V → Type) [∀ v, Fintype (Q v)]
-    (n : ℕ) (hn : ∀ v, Nat.card (Q v) ≤ n) :
-    Fintype.card (Σ v, Q v) ≤ Fintype.card V * n := by
-  simp only [Nat.card_eq_fintype_card] at hn
-  rw [Fintype.card_sigma]
-  exact (Finset.sum_le_sum fun v (_ : v ∈ Finset.univ) => hn v).trans_eq (by simp)
-
-open scoped Classical in
-theorem requests_bound :
-    Fintype.card (h.requests sc) ≤ Fintype.card P.Occupied * U.checkWidth S g ℓ Cfg := by
-  refine requests_card (h.checkPins sc) _ fun v => ?_
-  have hh := U.check_size S world g ℓ v
-  rw [← Nat.card_eq_fintype_card] at hh
-  exact hh
-
-open scoped Classical in
-/-- For a fixed panel, only the tag bits vary. Every such bit is either
-a padding constant or a copy from the same block within the wave radius. -/
-def checkPlan (c₀ : h.Book) {Ω : Type*} {src : Copy.Source Ω S.m S.h}
-    (a : Ω → P.Occupied → h.Guess)
-    (ha : ∀ v i, (fun s => U.tagCode S g ℓ (Cfg).waves (a s v) i) ∈ src (A.coord v)) :
-    Copy.Plan src A.graph ((Cfg).U + 1) (fun i : h.requests sc => A.coord i.1)
-      (fun i s => h.checkInputs sc c₀ (a s) i.1 i.2) := by
-  apply Copy.plan A.sym
-  rintro ⟨v, i|i|⟨r', i⟩⟩
-  · exact .inl ⟨_, rfl⟩
-  · exact .inl ⟨_, rfl⟩
-  change Copy.Visible src A.graph ((Cfg).U + 1) (A.coord v)
-    (fun s => U.tagCode S g ℓ (Cfg).waves
-      ((U.query S world A.coord (h.printing sc c₀) v r').elim (U.blankTag S g ℓ (Cfg).waves) (a s))
-        i)
-  cases he : U.query S world A.coord (h.printing sc c₀) v r' with
-  | none => exact .inl ⟨U.tagCode S g ℓ (Cfg).waves (U.blankTag S g ℓ (Cfg).waves) i, rfl⟩
-  | some u' =>
-    obtain ⟨hb, hr⟩ := h.query_near sc c₀ v u' r' he
-    refine .inr ⟨(A.coord u').1, hr, ?_⟩
-    rw [hb]
-    exact ha u' i
-
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input.ReadyPanel
 end

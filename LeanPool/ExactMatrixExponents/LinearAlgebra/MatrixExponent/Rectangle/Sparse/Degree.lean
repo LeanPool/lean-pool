@@ -319,7 +319,7 @@ theorem diagonal_price (f : Character) (w : Table Coeff i j k) (S : Finset (Cell
   have he : (fun x y z => (w (a x) (b x) (c x))⁻¹ * 1 * 1 *
       coeff w (a x, c x) (c y, b y) (a z, b z)) = CoefficientTensor.natTensor S.card := by
     funext x y z
-    simp only [coeff, CoefficientTensor.natTensor, mul_one]
+    simp only [coeff, CoefficientTensor.natTensor, Tensor.diagonal, mul_one]
     by_cases h : x = y ∧ x = z
     · obtain ⟨rfl, rfl⟩ := h
       simp [show w (a x) (b x) (c x) ≠ 0 from hs _ (T x).property]

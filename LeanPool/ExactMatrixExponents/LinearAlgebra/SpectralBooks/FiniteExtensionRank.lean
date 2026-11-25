@@ -73,7 +73,7 @@ theorem rankAtMost_of_finiteExtension [FiniteDimensional F K] {T : Tensor F X Y 
   simpa only [Fintype.card_prod, Fintype.card_fin, sq, d] using
     Tensor.rankAtMost_sum_rankOne a a' c
 
-variable [Fintype X] [Fintype Y]
+variable [Finite X] [Finite Y]
 
 /-- A constant factor in a tensor-power rank bound disappears under roots. -/
 theorem asymptoticRank_le_of_power_bound (T : Tensor F X Y Z) {C r : ℕ}

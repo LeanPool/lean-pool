@@ -34,11 +34,11 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.TensorClas
 
 theorem Character.charged_separation (f : Character)
     {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
-    {M : ℕ} (hM : 0 < M) (A : Fin M → Tensor O X Y Z) :
+    {M : ℕ} (A : Fin M → Tensor O X Y Z) :
     (∑ h, f (ofTensor (A h))) *
         f (ofTensor (Separation.dotPairingX (Fin M))) ≤
       (6 * M : ℝ≥0) * f (ofTensor (Separation.shared A)) := by
-  obtain ⟨P, hconstant, hdegree, heval⟩ := Separation.finite_charged_separation hM A
+  obtain ⟨P, hconstant, hdegree, heval⟩ := Separation.finite_charged_separation A
   have h := f.polynomial_constant_le
     (Tensor.directSum (fun _ : Fin (6 * M) => Separation.shared A))
     (Separation.separated A) P ((M - 1) ^ 2) hconstant hdegree heval
@@ -60,7 +60,7 @@ theorem Character.charged_separation_equal (f : Character)
     (c : ℝ≥0) (hvalue : ∀ h, f (ofTensor (A h)) = c) :
     c * f (ofTensor (Separation.dotPairingX (Fin M))) ≤
       6 * f (ofTensor (Separation.shared A)) := by
-  have h := f.charged_separation hM A
+  have h := f.charged_separation A
   simp only [hvalue, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
     nsmul_eq_mul] at h
   have hM' : (0 : ℝ≥0) < M := by exact_mod_cast hM

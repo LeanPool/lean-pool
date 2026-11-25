@@ -121,11 +121,13 @@ namespace TensorClass
 
 /-- Applies the operation on representatives under the induced quotient relation. -/
 def swapXY : TensorClass → TensorClass :=
-  Quotient.map TensorRep.swapXY (fun _ _ h => ⟨h.1.swapXY, h.2.swapXY⟩)
+  Quotient.map TensorRep.swapXY (fun _ _ h =>
+    ⟨TensorRep.Restricts.swapXY h.1, TensorRep.Restricts.swapXY h.2⟩)
 
 /-- Applies the operation on representatives under the induced quotient relation. -/
 def swapYZ : TensorClass → TensorClass :=
-  Quotient.map TensorRep.swapYZ (fun _ _ h => ⟨h.1.swapYZ, h.2.swapYZ⟩)
+  Quotient.map TensorRep.swapYZ (fun _ _ h =>
+    ⟨TensorRep.Restricts.swapYZ h.1, TensorRep.Restricts.swapYZ h.2⟩)
 
 @[simp] theorem swapXY_ofTensor {X Y Z : Type*}
     [Fintype X] [Fintype Y] [Fintype Z] (T : Tensor O X Y Z) :

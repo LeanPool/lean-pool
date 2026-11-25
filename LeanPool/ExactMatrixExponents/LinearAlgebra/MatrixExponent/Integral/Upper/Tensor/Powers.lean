@@ -49,7 +49,7 @@ theorem ofTensor_power {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
         (Equiv.ofUnique (Fin 0 → Y) PUnit) (Equiv.ofUnique (Fin 0 → Z) PUnit)
         unitTensor = Tensor.power T 0 := by
       funext x y z
-      simp [Tensor.pullback, Tensor.power, unitTensor]
+      simp [Tensor.pullback, Tensor.power, TensorSpectrum.TensorClass.unitTensor]
     rw [← heq]
     exact ofTensor_pullback_equiv _ _ _ _
   | succ n ih =>
@@ -71,7 +71,7 @@ theorem ofTensor_directSum_const {X Y Z : Type*}
   rw [natCast_eq_ofTensor_natTensor, ofTensor_mul]
   congr 1
   funext x y z
-  simp only [Tensor.directSum, Tensor.product, CoefficientTensor.natTensor]
+  simp only [Tensor.directSum, Tensor.product, CoefficientTensor.natTensor, Tensor.diagonal]
   split_ifs <;> simp
 
 theorem Character.map_power_tensor (f : Character) {X Y Z : Type*}

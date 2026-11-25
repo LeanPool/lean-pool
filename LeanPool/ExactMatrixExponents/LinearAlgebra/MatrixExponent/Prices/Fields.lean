@@ -33,9 +33,9 @@ theorem ordinary_mono {D E : ℝ} (h : D ≤ E) : ordinary K S D ⊆ ordinary K 
   rintro P ⟨d, ⟨hd, hd'⟩, f, hf, rfl⟩
   exact ⟨d, ⟨hd, hd'.trans h⟩, f, hf, rfl⟩
 
-private theorem linear_loss {a b : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
+private theorem linear_loss {a b : ℝ} (hb : 0 ≤ b)
     (h : ∀ n : ℕ, a ^ n ≤ (n + 1 : ℝ) * b ^ n) : a ≤ b :=
-  TensorSpectrum.le_of_pow_le_polynomial_mul_pow b a 1 1 hb ha zero_lt_one zero_le_one
+  TensorSpectrum.le_of_pow_le_polynomial_mul_pow b a 1 1 hb zero_lt_one
     (fun n _ => by simpa only [Real.rpow_one, one_mul] using h n)
 
 theorem normalize_hom {R : Type*} [CommSemiring R] [PartialOrder R]
@@ -71,7 +71,7 @@ theorem normalize_hom {R : Type*} [CommSemiring R] [PartialOrder R]
     have hs := add_nonneg (j0 x) (j0 y)
     apply le_antisymm
     · apply (Real.rpow_inv_le_iff_of_pos (h0 _) hs hp).mpr
-      apply linear_loss (h0 _) (Real.rpow_nonneg hs _)
+      apply linear_loss (Real.rpow_nonneg hs _)
       intro n
       rw [← map_pow, e, Real.rpow_pow_comm hs]
       refine (sum_le _ _).trans ?_
@@ -81,7 +81,7 @@ theorem normalize_hom {R : Type*} [CommSemiring R] [PartialOrder R]
         rw [e']
         exact Finset.single_le_sum (fun i _ => j0 (A n i)) hi
       simpa [U, nsmul_eq_mul] using Finset.sum_le_card_nsmul (U n) _ _ hl
-    · apply linear_loss hs (j0 _)
+    · apply linear_loss (j0 _)
       intro n
       rw [e', ← map_pow, e]
       have hl (i : ℕ) (hi : i ∈ U n) : j (A n i) ≤ j (∑ t ∈ U n, A n t) := by

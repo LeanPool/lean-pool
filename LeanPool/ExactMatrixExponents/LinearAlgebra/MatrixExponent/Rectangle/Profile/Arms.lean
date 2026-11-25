@@ -73,7 +73,7 @@ theorem opposite_pos (hv : Positive v) : Positive (opposite v) := by
 
 theorem critical_pair (D : Vec → ℝ) (hv : Positive v) (hij : i ≠ j) :
     D v⁻¹ = opposite v i * criticalWidth v j + opposite v j * criticalWidth v i + defect D v := by
-  obtain ⟨k, hik, hjk⟩ := other hij
+  obtain ⟨k, hik, hjk⟩ := other (i := i) (j := j)
   have hi := hv i
   have hj := hv j
   have hk := hv k

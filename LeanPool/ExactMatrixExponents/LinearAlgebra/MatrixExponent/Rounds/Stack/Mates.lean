@@ -462,7 +462,7 @@ end Butterfly
 
 open scoped Classical in
 /-- Replace one stacked table, preserving the copy order on every port. -/
-theorem device (T : Table F) (t : ℕ) (_ht : 0 < t) (bound : wd T.1 + wd T.2.1 ≤ 2 ^ t) :
+theorem device (T : Table F) (t : ℕ) (bound : wd T.1 + wd T.2.1 ≤ 2 ^ t) :
     Nonempty (Device T t) :=
   ⟨Butterfly.make (fun _ => Nat.clog_le_of_le_pow bound)⟩
 
@@ -783,7 +783,7 @@ structure Codec (G : Diagram F a b) (f : ∀ v, Device (G.table v) t) (ℓ : ℕ
 open scoped Classical in
 /-- Equal tables use the same device. A label names only a table, a
 vertex within that device and a guide. Reserve one extra blank label. -/
-theorem codec (G : Diagram F a b) (ht : 0 < t) (bound : ∀ v, G.arity v ≤ 2 ^ t)
+theorem codec (G : Diagram F a b) (bound : ∀ v, G.arity v ≤ 2 ^ t)
     {M : ℕ} (hc : (univ.image G.table).card ≤ M) :
     ∃ f : ∀ v, Device (G.table v) t,
       Nonempty (Codec G f (Nat.clog 2 (1 + M * 4 * (1 + 2 ^ t) * (t + 1) * Nat.card Device.Guide)))
@@ -793,7 +793,7 @@ theorem codec (G : Diagram F a b) (ht : 0 < t) (bound : ∀ v, G.arity v ≤ 2 ^
     obtain ⟨v, _, hv⟩ := mem_image.mp T.property
     rw [← hv]
     exact bound v
-  let D (T : L) := Classical.choice (device T.val t ht (hwidth T))
+  let D (T : L) := Classical.choice (device T.val t (hwidth T))
   let ofV (v : G.V) : L := ⟨G.table v, mem_image_of_mem _ (mem_univ v)⟩
   let f := fun v => D (ofV v)
   let K := Option (Σ T : L, (D T).diagram.V × Device.Guide)

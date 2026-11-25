@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Interpolation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationWeights
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
@@ -276,12 +277,12 @@ variable [Fintype X] [Fintype Y] [Fintype Z]
 
 /-- Every nonzero specialization comes from exactly the charged number of
 source copies by three actual local linear maps. -/
-theorem separationPolynomial_specializes (hM : 0 < M)
+theorem separationPolynomial_specializes
     (A : Fin M → Tensor O X Y Z) (t : O) (ht : IsUnit t) :
     (fun x y z => (separationPolynomial A x y z).eval t) ∈
       LocalTensor.orbit (Tensor.directSum (fun _ : Fin (6 * M) => shared A)) := by
   classical
-  obtain ⟨ζ, w, hζ, haverage⟩ := phases hM
+  obtain ⟨ζ, w, hζ, haverage⟩ := phases (M := M)
   refine ⟨(fun x i => t ^ weightX x * fourierX ζ x i),
     (fun y j => t ^ weightY y * fourierY ζ y j),
     (fun z k => t ^ weightZ z * fourierZ ζ w z k), ?_⟩
@@ -291,7 +292,7 @@ theorem separationPolynomial_specializes (hM : 0 < M)
 /-- The complete finite construction, without a rank or character premise.
 The nonzero-evaluation witnesses are restrictions of the full source direct
 sum; the constant tensor is itself a full direct sum of products. -/
-theorem finite_charged_separation (hM : 0 < M)
+theorem finite_charged_separation
     (A : Fin M → Tensor O X Y Z) :
     ∃ P : Tensor (Polynomial O) (Fin M × (X × Unit))
         (Fin M × (Y × Fin M)) (Fin M × (Z × Fin M)),
@@ -300,7 +301,7 @@ theorem finite_charged_separation (hM : 0 < M)
       (∀ t : O, IsUnit t → (fun x y z => (P x y z).eval t) ∈
         LocalTensor.orbit (Tensor.directSum (fun _ : Fin (6 * M) => shared A))) := by
   refine ⟨separationPolynomial A, ?_, separationPolynomial_degree A,
-    separationPolynomial_specializes hM A⟩
+    separationPolynomial_specializes A⟩
   intro x y z
   exact congrFun (congrFun (congrFun (separationPolynomial_constant A) x) y) z
 

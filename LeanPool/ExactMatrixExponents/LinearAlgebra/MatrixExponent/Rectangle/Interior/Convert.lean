@@ -502,7 +502,7 @@ private theorem majorize {A B : Fin n → Three F} (hn : 0 < n) (h : ∀ i, Domi
     ∑ i, (f (B i) : ℝ) ≤ asymptotic (∑ i, A i) := by
   let b i := (f (B i) : ℝ)
   apply TensorSpectrum.le_of_pow_le_polynomial_mul_pow _ _ 1 n (asymptotic_pos hA).le
-    (by positivity) zero_lt_one (by positivity)
+    zero_lt_one
   intro N _
   obtain ⟨t, ht⟩ := exists_fiberMass_ge_average (N := N) b
   obtain ⟨g, hg, hv⟩ := (products hn h fun i => (t i).val).price hf

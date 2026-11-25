@@ -593,7 +593,7 @@ theorem Family.rate_pos (h : Family P d u D) (hu : Positive u) (i : Fin 3) :
   common_pos (hu i) (h.curve i (i + 1) (i + 2) (by omega) (by omega) (by omega))
     (h.curve i (i + 2) (i + 1) (by omega) (by omega) (by omega))
 
-theorem other (_hij : i ≠ j) : ∃ k, i ≠ k ∧ j ≠ k := by
+theorem other : ∃ k, i ≠ k ∧ j ≠ k := by
   by_cases he : i + 1 = j
   · exact ⟨i + 2, by omega, by omega⟩
   · exact ⟨i + 1, by omega, Ne.symm he⟩
@@ -601,7 +601,7 @@ theorem other (_hij : i ≠ j) : ∃ k, i ≠ k ∧ j ≠ k := by
 theorem Family.step (h : Family P d u D) (hu : Positive u) (hij : i ≠ j)
     {x y : ℝ} (hx : 0 < x) (hy : x ≤ y) :
     rate P d u i * (y - x) ≤ row P d u i j y - row P d u i j x := by
-  obtain ⟨k, hik, hjk⟩ := other hij
+  obtain ⟨k, hik, hjk⟩ := other (i := i) (j := j)
   rw [rate_eq hij hik hjk]
   exact common_step (hu i) (h.curve i j k hij hik hjk) (h.curve i k j hik hij hjk.symm) hx hy
 
@@ -680,7 +680,7 @@ theorem Family.ratio_eq (i j) (y : ℝ) :
 include h hu in
 theorem Family.ratio_bounds (hij : i ≠ j) {y : ℝ} (hy : 0 < y) :
     y ≤ ratio P d u i j y ∧ ratio P d u i j y ≤ y + u i := by
-  obtain ⟨k, hik, hjk⟩ := other hij
+  obtain ⟨k, hik, hjk⟩ := other (i := i) (j := j)
   unfold ratio
   rw [le_div_iff₀ (h.rate_pos hu i), div_le_iff₀ (h.rate_pos hu i), rate_eq hij hik hjk]
   have h₁ := h.curve i j k hij hik hjk
@@ -743,7 +743,7 @@ theorem Family.ratio_contact {E : ℝ} (hE : 0 ≤ E)
     (hij : i ≠ j) {y : ℝ} (hy : 0 < y) :
     ratio P d u i j y ≤ y + 1 - u j + E / d i ∧
       (u j ≤ y → Real.exp (-E / d i) * (y + 1 - u j) ≤ ratio P d u i j y) := by
-  obtain ⟨k, hik, hjk⟩ := other hij
+  obtain ⟨k, hik, hjk⟩ := other (i := i) (j := j)
   have hlo {j : Fin 3} (hij : i ≠ j) : Real.exp (-E / d i) ≤ ratio P d u i j (u j) := by
     rw [h.ratio_eq hu hd]
     exact Real.exp_le_exp.mpr (div_le_div_of_nonneg_right (herr i j hij) (hd i).le)

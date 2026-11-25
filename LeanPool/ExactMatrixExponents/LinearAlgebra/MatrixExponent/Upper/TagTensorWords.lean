@@ -196,7 +196,7 @@ theorem ofTensor_tensorWord {N : ℕ} (B : Fin N → Tensor Coeff X Y Z) :
         (Equiv.ofUnique (Fin 0 → Y) PUnit) (Equiv.ofUnique (Fin 0 → Z) PUnit)
         TensorClass.unitTensor = tensorWord B := by
       funext x y z
-      simp [Tensor.pullback, tensorWord, TensorClass.unitTensor]
+      simp [Tensor.pullback, tensorWord, TensorSpectrum.TensorClass.unitTensor]
     rw [← heq]
     exact TensorClass.ofTensor_pullback_equiv _ _ _ _
   | succ N ih =>

@@ -29,7 +29,7 @@ open scoped Topology
 
 section
 
-variable {F X Y Z : Type*} [Field F] [Fintype X] [Fintype Y]
+variable {F X Y Z : Type*} [Field F] [Finite X] [Finite Y]
 
 private def flattenWord {A : Type*} (k n : ℕ) :
     (Fin k → Fin n → A) ≃ (Fin (k * n) → A) where

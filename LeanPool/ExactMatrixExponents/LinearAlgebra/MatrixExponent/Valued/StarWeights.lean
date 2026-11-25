@@ -186,8 +186,8 @@ theorem Family.bound_scalar (h : Family A d) (f : ITensor O S →+* ℝ) (hf : M
     {r : ℝ} (hr : ∀ j, f (A (v j)) ≤ r) (x : K) (hx : x ∈ V) : f (A x) ≤ r := by
   have hz (B : ITensor O S) : 0 ≤ f B := by simpa using hf (zero_le B)
   have hr0 := (hz _).trans (hr (Classical.arbitrary J))
-  refine TensorSpectrum.le_of_pow_le_polynomial_mul_pow r (f (A x)) (d + 1) 1 hr0 (hz _)
-    (by positivity) zero_le_one fun n _ => ?_
+  refine TensorSpectrum.le_of_pow_le_polynomial_mul_pow r (f (A x)) (d + 1) 1 hr0
+    (by positivity) fun n _ => ?_
   let w : Fin (n * d + 1) ↪ J := Fin.valEmbedding.trans (Infinite.natEmbedding J)
   have he := (h.pow n).interpolate f hf hV (Nat.lt_succ_self (n * d)) (v ∘ w)
     (hv.comp w.injective) (fun i => hi (w i)) (fun i j => hu (w i) (w j)) x hx
@@ -669,7 +669,7 @@ theorem test_with_loss (A : T) {r C : ℝ} (hr : 0 ≤ r) (hc : 0 < C)
       exact (H.mul _ _ _ hs).trans (by rw [mul_comm]; exact H.mul _ _ _ ih)
   refine TensorSpectrum.le_of_pow_le_polynomial_mul_pow (r ^ n) (f s) (C * (n
     + 1)) 1 (pow_nonneg hr _)
-    hg (by positivity) zero_le_one fun m hm => ?_
+    (by positivity) fun m hm => ?_
   have e := h (n * m) (Nat.mul_pos (by omega) hm) _ (by rw [pow_mul]; exact he m)
   rw [map_pow, pow_mul, Nat.cast_mul] at e
   rw [Real.rpow_one, mul_assoc C]

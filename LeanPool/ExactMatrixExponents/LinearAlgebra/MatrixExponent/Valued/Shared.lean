@@ -201,8 +201,8 @@ theorem Family.bound_disk {A : K0 E → ITensor O S} {d : ℕ} (h : Family A d)
     exact (le_div_iff₀ pos).mpr he
   have hz (A : ITensor O S) : 0 ≤ f A := by simpa using hf (zero_le A)
   have hr0 := (hz _).trans (hr 0 (by simp))
-  refine TensorSpectrum.le_of_pow_le_polynomial_mul_pow r (f (A x)) (H * (d + 1)) 1 hr0 (hz _)
-    (by positivity) zero_le_one fun n _ => ?_
+  refine TensorSpectrum.le_of_pow_le_polynomial_mul_pow r (f (A x)) (H * (d + 1)) 1 hr0
+    (by positivity) fun n _ => ?_
   obtain ⟨v, hi, hv, hw⟩ := small_nodes (n * d) x hx
   have he := hf ((h.pow n).weighted (by simp) v hi x)
   rw [map_sum, map_pow] at he

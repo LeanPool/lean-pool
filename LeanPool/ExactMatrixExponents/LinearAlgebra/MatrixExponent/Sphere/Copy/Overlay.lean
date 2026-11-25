@@ -875,13 +875,6 @@ def printed (a : Ω) := U.advance (Input.lastPage S sc (x a) loc (c a)) (status 
 
 local notation "out" => printed S U sc x loc c status pad
 
-open scoped Classical in
-/-- Computes the raw delivery by the application `deliver _ _ _ sym (local_advance S sc x loc
-hnav U c status pad)`. -/
-def rawDelivery : Delivery loc (Code.final S U)
-    (fun a i => ((out a).1 i).2) src nav R :=
-  deliver _ _ _ sym (local_advance S sc x loc hnav U c status pad)
-
 variable {g' σ w : ℕ} (tag : Ω → V → U.Tag S g' σ w)
 
 open scoped Classical in
@@ -917,13 +910,6 @@ theorem local_overlay (i : B (S.m + U.childBits)) (j : B S.h) (z : (Code.overlay
     => Set.subset_union_left)
   · exact (outline_visible S U loc tag ((U.split i).1, j) ((U.split i).2, z)).weaken
       (fun _ => Set.subset_union_right)
-
-open scoped Classical in
-/-- Computes the overlay delivery by the application `deliver _ _ _ sym (local_overlay S U sc x
-loc c status pad hnav tag)`. -/
-def overlayDelivery : Delivery loc (Code.overlay S U)
-    (fun a i => ((target a).1 i).2) pool nav R :=
-  deliver _ _ _ sym (local_overlay S U sc x loc c status pad hnav tag)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Copy
 end

@@ -11,7 +11,7 @@ public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
-# Rectangular matrix multiplication over a field
+# Rectangular matrix multiplication tensors
 
 We use the finite coefficient tensors and Kronecker powers from the matrix
 multiplication library. The dimensions are the shared wire sizes, in the
@@ -35,12 +35,11 @@ section
 
 section Rank
 
-variable {F X Y Z : Type*} [Field F] [Fintype X] [Fintype Y]
+variable {F X Y Z : Type*} [CommSemiring F] [Finite X] [Finite Y]
 
-omit [Fintype X] [Fintype Y] in
 /-- Expanding in the coordinate bases of the first two sites gives a finite
 decomposition into simple tensors. -/
-theorem exists_rankAtMost [Finite X] [Finite Y] (T : Tensor F X Y Z) :
+theorem exists_rankAtMost (T : Tensor F X Y Z) :
     ∃ r, Tensor.RankAtMost T r := by
   classical
   let : Fintype X := Fintype.ofFinite X
@@ -55,7 +54,7 @@ theorem exists_rankAtMost [Finite X] [Finite Y] (T : Tensor F X Y Z) :
   rw [h]
   exact Tensor.rankAtMost_sum_rankOne a b c
 
-/-- The least number of simple tensors in a decomposition over the ground field. -/
+/-- The least number of simple tensors in a decomposition over the coefficient semiring. -/
 def tensorRank (T : Tensor F X Y Z) : ℕ := by
   classical
   exact Nat.find (exists_rankAtMost T)
@@ -88,7 +87,7 @@ theorem asymptoticRank_le_tensorRank (T : Tensor F X Y Z) :
 end Rank
 
 /-- The coefficient of the cyclic pattern `e_{ki} ⊗ e_{ij} ⊗ e_{jk}` is one. -/
-abbrev matrixTensor (F : Type*) [Field F] (n12 n23 n31 : ℕ) :=
+abbrev matrixTensor (F : Type*) [CommSemiring F] (n12 n23 n31 : ℕ) :=
   Tensor.matrixCoefficients (K := F) (Fin n31) (Fin n12) (Fin n23)
 
 end

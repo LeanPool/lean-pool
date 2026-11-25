@@ -791,10 +791,12 @@ attribute [local instance] Expansion.memberOrder
 
 open Classical in
 /-- The non-strict comparison associated with the packet membership order. -/
-scoped instance memberLE : LE (A.Members hn R c) := (A.memberOrder hn R c).toLE
+private abbrev memberLE : LE (A.Members hn R c) := (A.memberOrder hn R c).toLE
 open Classical in
 /-- The strict comparison associated with the packet membership order. -/
-scoped instance memberLT : LT (A.Members hn R c) := (A.memberOrder hn R c).toLT
+private abbrev memberLT : LT (A.Members hn R c) := (A.memberOrder hn R c).toLT
+
+attribute [local instance] memberLE memberLT
 
 open Classical in
 /-- The value specified by `@OrderIso (Fin p) (A.Members hn R c) _ (A.memberOrder hn R c).toLE`. -/
@@ -871,7 +873,7 @@ open Finset Diagonal Diagonal.Expansion PackCode
 variable {F : Type} [Field F] {n h p w t r N d : ℕ} (A : Expansion F n h)
   {hn : 2 ≤ n} {R : A.Report r d} {c : Class r}
 
-attribute [local instance] memberOrder
+attribute [local instance] memberOrder memberLE memberLT
 
 private theorem fixed_rank {P : Type} [LinearOrder P] [Fintype P] (e : Fin p ≃o P)
     (D : ℕ) (j : Fin p) (k : Fin D) :

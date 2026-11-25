@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Nodes
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BlockProducts
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.CircuitCost
 public import Mathlib.Algebra.BigOperators.Fin

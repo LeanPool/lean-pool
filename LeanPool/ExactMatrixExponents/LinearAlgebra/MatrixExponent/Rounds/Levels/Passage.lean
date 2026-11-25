@@ -367,7 +367,7 @@ theorem start (G : Diagram F a b) {M u D t h : ℕ} {L : Finset (Table F)} {θ :
   obtain ⟨he, hs, ha, _, hl⟩ := G.canonical_normalized admits
   have hwidth (v : H.V) : H.arity v ≤ 2 ^ t :=
     (ha v).trans (max_le (Nat.le_self_pow ht.ne' 2) hu)
-  obtain ⟨f, ⟨codec⟩⟩ := codec H ht hwidth hl
+  obtain ⟨f, ⟨codec⟩⟩ := codec H hwidth hl
   have hcard : Fintype.card (Location H f) ≤ 16 * M * (t + 1) := by
     refine (Device.location_bound H f).trans (Nat.mul_le_mul_right _ ?_)
     change 4 * G.normalized.canonical.cost ≤ _

@@ -59,10 +59,8 @@ theorem omega_le_of_admissible (h : Admissible F a) : omega F ≤ a :=
   csInf_le ⟨2, fun _ h' => two_le_admissible h'⟩ h
 
 theorem omega_le_of_rank {s : ℝ} (hn : 2 ≤ n) (hr : RankLE F n r)
-    (hrs : (r : ℝ) ≤ (n : ℝ) ^ s) : omega F ≤ s := by
-  have hn1 : 1 < (n : ℝ) := by exact_mod_cast hn
-  exact omega_le_of_admissible (admissible_of_rank hn hr
-    ((Real.rpow_le_rpow_left_iff hn1).mp ((rank_area hr).trans hrs)) hrs)
+    (hrs : (r : ℝ) ≤ (n : ℝ) ^ s) : omega F ≤ s :=
+  omega_le_of_admissible (admissible_of_rank hn hr hrs)
 
 theorem omega_lt_of_rank (hn : 2 ≤ n) (hr : RankLE F n r)
     (hrs : (r : ℝ) < (n : ℝ) ^ b) : omega F < b := by
