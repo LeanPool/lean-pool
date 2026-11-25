@@ -1,0 +1,41 @@
+slug: exact-matrix-exponents
+title: Exact square, dual and rectangular matrix multiplication exponents
+summary: Determines the arithmetic exponent of square matrix multiplication as 9/4
+  over every field and the dual exponent as 1/2. It also gives a symmetric formula
+  for the rectangular exponent, using formal polynomial identities in division-free
+  arithmetic programs.
+branch: algebraic complexity theory
+entry_module: LeanPool.ExactMatrixExponents
+authors:
+- OpenAI
+source:
+  url: https://github.com/openai/math/tree/3344da59991ed94f9ba711217b29c1d760badfa6/lean
+  github_repo: openai/math
+  commit: 3344da59991ed94f9ba711217b29c1d760badfa6
+  paper_url: https://github.com/openai/math/blob/3344da59991ed94f9ba711217b29c1d760badfa6/preprints/The-matrix-multiplication-exponent-is-nine-fourths-November-24-2026/paper.pdf
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- MatrixMultiplicationAllFields.SpectralBooks.square_exponent
+- MatrixMultiplicationAllFields.SpectralBooks.dual_exponent
+- MatrixMultiplicationAllFields.SpectralBooks.rectangular_exponent
+main_results:
+- declaration: MatrixMultiplicationAllFields.SpectralBooks.square_exponent
+  informal: Over every field, the exponent of division-free square matrix multiplication
+    in the formal polynomial model is 9/4.
+- declaration: MatrixMultiplicationAllFields.SpectralBooks.dual_exponent
+  informal: The dual exponent for multiplying rectangular matrices is 1/2 over
+    every field.
+- declaration: MatrixMultiplicationAllFields.SpectralBooks.rectangular_exponent
+  informal: Over every field, the exact rectangular exponent is a symmetric function
+    of the three nonnegative parts of its dimension weights.
+tags:
+- matrix-multiplication
+- arithmetic-complexity
+- tensor-rank
+- rectangular-exponents
+msc:
+- 68Q17
+- 15A69
+- 68Q25
