@@ -25,43 +25,29 @@ namespace SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 
 variable {n : ℕ}
 
-private theorem continuousOn_realHessian {U : Opens (ComplexModel n)}
-    {u : ComplexModel n → ℝ} (hu : ContDiffOn ℝ ∞ u U)
-    (a b : ComplexModel n) :
-    ContinuousOn (fun z ↦ realHessian u z a b) U := by
-  have h2 : ContinuousOn (iteratedFDeriv ℝ 2 u) U :=
-    ContinuousOn.continuousOn_iteratedFDeriv hu U.isOpen
-      (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  change ContinuousOn (fun z ↦ iteratedFDeriv ℝ 2 u z ![a, b]) U
-  exact (continuous_eval_const ![a, b]).comp_continuousOn h2
+theorem continuousOn_complexHessian {U : Opens (ComplexModel n)}
+    {f : ComplexModel n → ℝ} (hf : ContDiffOn ℝ ∞ f U) (j k : Fin n) :
+    ContinuousOn (fun z ↦ complexHessian f z j k) U := by
+  have hR (a b : ComplexModel n) : ContinuousOn (fun z ↦ realHessian f z a b) U := by
+    have h2 : ContinuousOn (iteratedFDeriv ℝ 2 f) U :=
+      ContinuousOn.continuousOn_iteratedFDeriv hf U.isOpen
+        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
+    change ContinuousOn (fun z ↦ iteratedFDeriv ℝ 2 f z ![a, b]) U
+    exact (continuous_eval_const ![a, b]).comp_continuousOn h2
+  unfold complexHessian
+  have ha := Complex.continuous_ofReal.comp_continuousOn
+    ((hR (coordinateVector j) (coordinateVector k)).add
+      (hR (Complex.I • coordinateVector j) (Complex.I • coordinateVector k)))
+  have hb := Complex.continuous_ofReal.comp_continuousOn
+    ((hR (coordinateVector j) (Complex.I • coordinateVector k)).sub
+      (hR (Complex.I • coordinateVector j) (coordinateVector k)))
+  exact (ha.div_const 4).add ((continuousOn_const.mul hb).div_const 4)
 
 private theorem continuousOn_smoothDensity {U : Opens (ComplexModel n)}
     {u : ComplexModel n → ℝ} (hu : ContDiffOn ℝ ∞ u U) :
     ContinuousOn (smoothDensity u) U := by
-  have hH (j k : Fin n) : ContinuousOn (fun z ↦ complexHessian u z j k) U := by
-    have h00 := continuousOn_realHessian hu (coordinateVector j) (coordinateVector k)
-    have hII := continuousOn_realHessian hu
-      (Complex.I • coordinateVector j) (Complex.I • coordinateVector k)
-    have h0I := continuousOn_realHessian hu
-      (coordinateVector j) (Complex.I • coordinateVector k)
-    have hI0 := continuousOn_realHessian hu
-      (Complex.I • coordinateVector j) (coordinateVector k)
-    have ha : ContinuousOn (fun z ↦
-        ((realHessian u z (coordinateVector j) (coordinateVector k) +
-          realHessian u z (Complex.I • coordinateVector j)
-            (Complex.I • coordinateVector k) : ℝ) : ℂ)) U :=
-      Complex.continuous_ofReal.comp_continuousOn (h00.add hII)
-    have hb : ContinuousOn (fun z ↦
-        ((realHessian u z (coordinateVector j) (Complex.I • coordinateVector k) -
-          realHessian u z (Complex.I • coordinateVector j)
-            (coordinateVector k) : ℝ) : ℂ)) U :=
-      Complex.continuous_ofReal.comp_continuousOn (h0I.sub hI0)
-    unfold complexHessian
-    exact (ha.div_const 4).add
-      (((continuousOn_const : ContinuousOn (fun _ : ComplexModel n ↦ Complex.I) U).mul
-        hb).div_const 4)
   have hmat : ContinuousOn (complexHessian u) U :=
-    continuousOn_pi.2 fun j ↦ continuousOn_pi.2 fun k ↦ hH j k
+    continuousOn_pi.2 fun j ↦ continuousOn_pi.2 fun k ↦ continuousOn_complexHessian hu j k
   have hdet : ContinuousOn (fun z ↦ (complexHessian u z).det) U :=
     continuous_id.matrix_det.comp_continuousOn hmat
   have hre : ContinuousOn (fun z ↦ (complexHessian u z).det.re) U :=

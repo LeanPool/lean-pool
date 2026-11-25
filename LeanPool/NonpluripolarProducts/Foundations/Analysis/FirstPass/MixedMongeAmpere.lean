@@ -98,11 +98,16 @@ theorem IsSmoothMixedPshOn.mono {U V : Opens (ComplexModel n)}
   exact ⟨(hu.component i).1.mono hVU, (hu.component i).2.1.mono hVU,
     fun z hz => (hu.component i).2.2 z (hVU hz)⟩
 
-/-- Standard Lebesgue measure with the certified mixed density, zero off U. -/
-def smoothMixedMeasure (U : Opens (ComplexModel n)) (u : Fin n → ComplexModel n → ℝ)
-    (_hu : IsSmoothMixedPshOn U u) : Measure (ComplexModel n) :=
+/-- Lebesgue measure weighted by the nonnegative part of the mixed density on `U`. -/
+def smoothMixedDensityMeasure (U : Opens (ComplexModel n)) (u : Fin n → ComplexModel n → ℝ) :
+    Measure (ComplexModel n) :=
   (volume.restrict (U : Set (ComplexModel n))).withDensity
     (fun z => ENNReal.ofReal (mixedDensity u z))
+
+/-- The mixed density measure of a certified smooth plurisubharmonic tuple. -/
+def smoothMixedMeasure (U : Opens (ComplexModel n)) (u : Fin n → ComplexModel n → ℝ)
+    (_hu : IsSmoothMixedPshOn U u) : Measure (ComplexModel n) :=
+  smoothMixedDensityMeasure U u
 
 theorem smoothMixedMeasure_proof_independent {U : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} (hu hv : IsSmoothMixedPshOn U u) :
@@ -118,20 +123,20 @@ theorem smoothMixedMeasure_weight_toReal {U : Opens (ComplexModel n)}
     (u : ComplexModel n → ℝ) (hu : IsSmoothPshOn U u)
     (hm : IsSmoothMixedPshOn U (fun _ => u)) :
     smoothMixedMeasure U (fun _ => u) hm = smoothMeasure U u hu := by
-  simp only [smoothMixedMeasure, smoothMeasure, mixedDensity_diagonal]
+  simp only [smoothMixedMeasure, smoothMixedDensityMeasure, smoothMeasure, mixedDensity_diagonal]
 
 theorem smoothMixedMeasure_perm (U : Opens (ComplexModel n))
     (u : Fin n → ComplexModel n → ℝ) (hu : IsSmoothMixedPshOn U u)
     (τ : Equiv.Perm (Fin n)) (hv : IsSmoothMixedPshOn U (fun i => u (τ i))) :
     smoothMixedMeasure U (fun i => u (τ i)) hv = smoothMixedMeasure U u hu := by
-  simp only [smoothMixedMeasure, mixedDensity_perm]
+  simp only [smoothMixedMeasure, smoothMixedDensityMeasure, mixedDensity_perm]
 
 theorem smoothMixedMeasure_restrict {U V : Opens (ComplexModel n)} (hVU : V ≤ U)
     (u : Fin n → ComplexModel n → ℝ) (hu : IsSmoothMixedPshOn U u)
     (hv : IsSmoothMixedPshOn V u) :
     (smoothMixedMeasure U u hu).restrict (V : Set (ComplexModel n)) =
       smoothMixedMeasure V u hv := by
-  rw [smoothMixedMeasure, restrict_withDensity V.isOpen.measurableSet,
+  rw [smoothMixedMeasure, smoothMixedDensityMeasure, restrict_withDensity V.isOpen.measurableSet,
     Measure.restrict_restrict_of_subset hVU]
   rfl
 

@@ -14,12 +14,11 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Bedfor
 /-!
 # Integration by parts against a regularized slot defect
 
-`exists_integral_sub_eq_ibp_slot` compares two tuples differing in one slot
-through measures carrying `φ + C‖z‖²` and `‖z‖²` in that slot, on a relatively
-compact subdomain. For a global argument the regularizer must be allowed to be
-an arbitrary smooth plurisubharmonic function `p` — on a manifold, the local
-potential of a Kähler form — and the comparison measures must be the
-Bedford–Taylor limits on the whole domain. This module provides that form:
+The local slot comparison uses measures carrying `φ + C‖z‖²` and
+`‖z‖²` in the differentiated slot on a relatively compact subdomain.
+For the global application the regularizer can be a smooth
+plurisubharmonic function `p`, such as a local Kähler potential.
+The comparison measures are then Bedford–Taylor limits on the whole domain:
 
   `∫ φ dμ_a - ∫ φ dμ_b = ∫ χ (a - b) dμ(φ + p) - ∫ χ (a - b) dμ(p)`,
 

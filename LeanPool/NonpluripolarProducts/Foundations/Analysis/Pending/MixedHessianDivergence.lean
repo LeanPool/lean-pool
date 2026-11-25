@@ -140,16 +140,60 @@ theorem sum_sign_row_symm_eq_zero (K : Fin m → Matrix (Fin (m + 1)) (Fin (m + 
   have h2 : (2 : ℂ) * S = 0 := by linear_combination h
   simpa using h2
 
-/-- Column antisymmetry of the cofactor against a tensor symmetric in its first
-and third indices. -/
-theorem sum_sign_col_symm_eq_zero (K : Fin m → Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+/-- The product-rule variation of a mixed cofactor when each matrix `K i`
+varies with derivative `D i`. -/
+def cofactorVariation (K D : Fin m → Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+    (j k : Fin (m + 1)) : ℂ :=
+  ∑ π : Equiv.Perm (Fin (m + 1)), ∑ ρ : Equiv.Perm (Fin (m + 1)),
+    if π 0 = j ∧ ρ 0 = k then
+      ((Equiv.Perm.sign π : ℂ) * Equiv.Perm.sign ρ) *
+        ∑ l, D l (π l.succ) (ρ l.succ) * ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)
+    else 0
+
+theorem cofactorVariation_transpose (K D : Fin m → Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
+    (j k : Fin (m + 1)) :
+    cofactorVariation (fun l => (K l).transpose) (fun l => (D l).transpose) k j =
+      cofactorVariation K D j k := by
+  unfold cofactorVariation
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun π _ => Finset.sum_congr rfl fun ρ _ => ?_
+  have hs : (ρ 0 = k ∧ π 0 = j) ↔ (π 0 = j ∧ ρ 0 = k) := and_comm
+  simp only [Matrix.transpose_apply, hs,
+    mul_comm (Equiv.Perm.sign ρ : ℂ) (Equiv.Perm.sign π : ℂ)]
+
+private theorem sum_cofactorVariation_row_eq_zero
+    (K : Fin m → Matrix (Fin (m + 1)) (Fin (m + 1)) ℂ)
     (T : Fin m → Fin (m + 1) → Fin (m + 1) → Fin (m + 1) → ℂ)
-    (hT : ∀ l a b c, T l a b c = T l c b a) (π : Equiv.Perm (Fin (m + 1))) (l : Fin m) :
-    ∑ ρ : Equiv.Perm (Fin (m + 1)), (Equiv.Perm.sign ρ : ℂ) *
-      (T l (ρ 0) (π l.succ) (ρ l.succ) *
-        ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)) = 0 :=
-  sum_sign_row_symm_eq_zero (fun i ↦ (K i).transpose) (fun l a b c ↦ T l a c b)
-    (fun l a b c ↦ hT l a c b) π l
+    (hT : ∀ l a b c, T l a b c = T l b a c) (k : Fin (m + 1)) :
+    ∑ j, cofactorVariation K (fun l => Matrix.of fun b c => T l j b c) j k = 0 := by
+  simp_rw [cofactorVariation, Matrix.of_apply, ite_and]
+  rw [Finset.sum_comm]
+  have hstep (π : Equiv.Perm (Fin (m + 1))) :=
+    Finset.sum_comm (s := (Finset.univ : Finset (Fin (m + 1))))
+    (t := (Finset.univ : Finset (Equiv.Perm (Fin (m + 1)))))
+    (f := fun j ρ ↦ if π 0 = j then (if ρ 0 = k then
+          ((Equiv.Perm.sign π : ℂ) * Equiv.Perm.sign ρ) *
+            ∑ l, T l j (π l.succ) (ρ l.succ) *
+              ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ)
+        else 0) else 0)
+  simp only [hstep, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
+  rw [Finset.sum_comm]
+  refine Finset.sum_eq_zero fun ρ _ ↦ ?_
+  split_ifs
+  · have hrow (l : Fin m) :=
+      sum_sign_row_symm_eq_zero K T hT ρ l
+    calc _ = ∑ π : Equiv.Perm (Fin (m + 1)), ∑ l, (Equiv.Perm.sign ρ : ℂ) *
+          ((Equiv.Perm.sign π : ℂ) * (T l (π 0) (π l.succ) (ρ l.succ) *
+            ∏ i ∈ Finset.univ.erase l, K i (π i.succ) (ρ i.succ))) := by
+          refine Finset.sum_congr rfl fun π _ ↦ ?_
+          rw [Finset.mul_sum]
+          refine Finset.sum_congr rfl fun l _ ↦ ?_
+          ring
+      _ = 0 := by
+          rw [Finset.sum_comm]
+          refine Finset.sum_eq_zero fun l _ ↦ ?_
+          rw [← Finset.mul_sum, hrow l, mul_zero]
+  · simp
 
 end Cofactor
 
@@ -346,19 +390,16 @@ variable {g}
 theorem wirt_cofactorField (hg : ∀ i, ContDiff ℝ ∞ (g i)) (c : ℂ) (v : ComplexModel (m + 1))
     (j k : Fin (m + 1)) (z : ComplexModel (m + 1)) :
     wirt c v (cofactorField g j k) z =
-      ∑ π : Equiv.Perm (Fin (m + 1)), ∑ ρ : Equiv.Perm (Fin (m + 1)),
-        if π 0 = j ∧ ρ 0 = k then
-          ((Equiv.Perm.sign π : ℂ) * Equiv.Perm.sign ρ) *
-            ∑ l, wirt c v (fun y ↦ complexHessian (g l) y (π l.succ) (ρ l.succ)) z *
-              ∏ i ∈ Finset.univ.erase l, complexHessian (g i) z (π i.succ) (ρ i.succ)
-        else 0 := by
+      cofactorVariation (fun i => complexHessian (g i) z)
+        (fun l => Matrix.of fun b d => wirt c v (fun y => complexHessian (g l) y b d) z) j k := by
   have hH (i : Fin m) (a b : Fin (m + 1)) :
       Differentiable ℝ (fun y ↦ complexHessian (g i) y a b) :=
     (contDiff_complexHessian_apply (hg i) a b).differentiable (by simp)
   have hprod (π ρ : Equiv.Perm (Fin (m + 1))) :
       Differentiable ℝ (fun y ↦ ∏ i, complexHessian (g i) y (π i.succ) (ρ i.succ)) :=
     fun y ↦ (HasFDerivAt.finsetProd fun i _ ↦ (hH i _ _ y).hasFDerivAt).differentiableAt
-  unfold cofactorField cofactor
+  unfold cofactorField cofactor cofactorVariation
+  simp only [Matrix.of_apply]
   rw [wirt_sum _ fun π _ ↦ ?_]
   · refine Finset.sum_congr rfl fun π _ ↦ ?_
     rw [wirt_sum _ fun ρ _ ↦ ?_]
@@ -399,36 +440,8 @@ theorem sum_dDir_cofactorField (hg : ∀ i, ContDiff ℝ ∞ (g i)) (k : Fin (m 
       contDiff_wirt (ofRealCLM.contDiff.comp (hg l))
     simp only [hTdef, hessianEntry_eq_wirt hg]
     exact wirt_wirt_comm (hG.contDiffAt.of_le (WithTop.coe_le_coe.mpr le_top))
-  simp_rw [wirt_cofactorField hg, ite_and]
-  rw [Finset.sum_comm]
-  have hstep (π : Equiv.Perm (Fin (m + 1))) :=
-    Finset.sum_comm (s := (Finset.univ : Finset (Fin (m + 1))))
-    (t := (Finset.univ : Finset (Equiv.Perm (Fin (m + 1)))))
-    (f := fun j ρ ↦ if π 0 = j then (if ρ 0 = k then
-          ((Equiv.Perm.sign π : ℂ) * Equiv.Perm.sign ρ) *
-            ∑ l, wirt (-I) (coordinateVector j)
-              (fun y ↦ complexHessian (g l) y (π l.succ) (ρ l.succ)) z *
-              ∏ i ∈ Finset.univ.erase l, complexHessian (g i) z (π i.succ) (ρ i.succ)
-        else 0) else 0)
-  simp only [hstep, Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-  rw [Finset.sum_comm]
-  refine Finset.sum_eq_zero fun ρ _ ↦ ?_
-  split_ifs
-  · have hrow (l : Fin m) :=
-      sum_sign_row_symm_eq_zero (fun i ↦ complexHessian (g i) z) T hT ρ l
-    calc _ = ∑ π : Equiv.Perm (Fin (m + 1)), ∑ l, (Equiv.Perm.sign ρ : ℂ) *
-          ((Equiv.Perm.sign π : ℂ) * (T l (π 0) (π l.succ) (ρ l.succ) *
-            ∏ i ∈ Finset.univ.erase l, complexHessian (g i) z (π i.succ) (ρ i.succ))) := by
-          refine Finset.sum_congr rfl fun π _ ↦ ?_
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl fun l _ ↦ ?_
-          simp only [hTdef]
-          ring
-      _ = 0 := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_eq_zero fun l _ ↦ ?_
-          rw [← Finset.mul_sum, hrow l, mul_zero]
-  · simp
+  simp_rw [wirt_cofactorField hg]
+  exact sum_cofactorVariation_row_eq_zero (fun l => complexHessian (g l) z) T hT k
 
 /-- The cofactor field is `∂bar`-divergence free in its column index. -/
 theorem sum_dbarDir_cofactorField (hg : ∀ i, ContDiff ℝ ∞ (g i)) (j : Fin (m + 1))
@@ -442,28 +455,11 @@ theorem sum_dbarDir_cofactorField (hg : ∀ i, ContDiff ℝ ∞ (g i)) (j : Fin 
       contDiff_wirt (ofRealCLM.contDiff.comp (hg l))
     simp only [hTdef, hessianEntry_eq_wirt' hg]
     exact wirt_wirt_comm (hG.contDiffAt.of_le (WithTop.coe_le_coe.mpr le_top))
-  simp_rw [wirt_cofactorField hg, ite_and]
-  rw [Finset.sum_comm]
-  refine Finset.sum_eq_zero fun π _ ↦ ?_
-  by_cases hπ : π 0 = j
-  · simp only [hπ, ite_true]
-    rw [Finset.sum_comm]
-    simp only [Finset.sum_ite_eq, Finset.mem_univ, ite_true]
-    have hcol (l : Fin m) :=
-      sum_sign_col_symm_eq_zero (fun i ↦ complexHessian (g i) z) T hT π l
-    calc _ = ∑ ρ : Equiv.Perm (Fin (m + 1)), ∑ l, (Equiv.Perm.sign π : ℂ) *
-          ((Equiv.Perm.sign ρ : ℂ) * (T l (ρ 0) (π l.succ) (ρ l.succ) *
-            ∏ i ∈ Finset.univ.erase l, complexHessian (g i) z (π i.succ) (ρ i.succ))) := by
-          refine Finset.sum_congr rfl fun ρ _ ↦ ?_
-          rw [Finset.mul_sum]
-          refine Finset.sum_congr rfl fun l _ ↦ ?_
-          simp only [hTdef]
-          ring
-      _ = 0 := by
-          rw [Finset.sum_comm]
-          refine Finset.sum_eq_zero fun l _ ↦ ?_
-          rw [← Finset.mul_sum, hcol l, mul_zero]
-  · simp [hπ]
+  simp_rw [wirt_cofactorField hg]
+  refine (Finset.sum_congr rfl fun k _ => (cofactorVariation_transpose
+    (fun l => complexHessian (g l) z) (fun l => Matrix.of fun b c => T l k b c) j k).symm).trans ?_
+  exact sum_cofactorVariation_row_eq_zero (fun l => (complexHessian (g l) z).transpose)
+    (fun l a b c => T l a c b) (fun l a b c => hT l a c b) j
 
 theorem contDiff_cofactorField (hg : ∀ i, ContDiff ℝ ∞ (g i)) (j k : Fin (m + 1)) :
     ContDiff ℝ ∞ (cofactorField g j k) := by

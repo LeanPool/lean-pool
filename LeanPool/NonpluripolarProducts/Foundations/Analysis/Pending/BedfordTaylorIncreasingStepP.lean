@@ -186,7 +186,7 @@ theorem incWClaim_zero : IncWClaim n 0 := by
   simp only [hF.eq_of_isBTLimit_zero hμs hμ]
   have hu : ∀ i, IsSmoothPsdOn Ω (u i) := fun i ↦ (hF.2.2 i (Nat.zero_le _)).1
   have hac : μ ≪ volume := by
-    rw [hμ.eq_densityMeasure hu, densityMeasure]
+    rw [hμ.eq_densityMeasure hu, densityMeasure, smoothMixedDensityMeasure]
     exact (withDensity_absolutelyContinuous _ _).trans
       (Measure.absolutelyContinuous_of_le Measure.restrict_le_self)
   have hI : ∀ {c : ComplexModel n → ℝ}, IsLocallyBoundedPshOn Ω c →

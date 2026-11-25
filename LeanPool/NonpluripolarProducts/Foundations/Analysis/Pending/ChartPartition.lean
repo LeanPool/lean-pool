@@ -10,7 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.HolomorphicMaps
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothTestCutoff
 
 /-!
 # Chart-supported smooth functions and partitions of unity on a complex manifold

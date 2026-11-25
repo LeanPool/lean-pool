@@ -179,9 +179,7 @@ theorem IsLocalMixedBedfordTaylorMeasure.perm {Ω : Opens (ComplexModel n)}
     have hdens : ∀ j, smoothMixedMeasure U (f j) (hf.1 j) =
         smoothMixedMeasure U (fun i => f j (τ.symm i)) (hg.1 j) := by
       intro j
-      simp only [smoothMixedMeasure]
-      refine congrArg _ (funext fun z => congrArg ENNReal.ofReal ?_)
-      simp
+      exact (smoothMixedMeasure_perm U _ (hf.1 j) τ.symm (hg.1 j)).symm
     simpa only [hdens] using hgm φ hφ hφc hφU
 
 /-- Permuting the slots does not change the canonical bounded mixed

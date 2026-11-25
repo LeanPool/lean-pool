@@ -108,7 +108,7 @@ theorem continuousOn_mixedC {m : ℕ} {U : Opens (ComplexModel (m + 1))}
   have hmat (f : ComplexModel (m + 1) → ℝ) (hf : ContDiffOn ℝ ∞ f U) :
       ContinuousOn (complexHessian f) U :=
     continuousOn_pi.2 fun j ↦ continuousOn_pi.2 fun k ↦
-      IsSmoothPsdOn.continuousOn_complexHessian hf j k
+      MongeAmpere.continuousOn_complexHessian hf j k
   unfold MixedHessian.mixedC mixedCoefficient
   refine continuousOn_finsetSum _ fun σ _ ↦ ?_
   have : ContinuousOn (fun z ↦ (Matrix.of fun j k ↦

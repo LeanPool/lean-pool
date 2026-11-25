@@ -51,11 +51,8 @@ theorem mixedDensity_update_eq_zero_of_notMem_tsupport {f : Fin n → ComplexMod
 
 theorem update_apply_seq {F : Fin n → ℕ → ComplexModel n → ℝ} (i₀ : Fin n)
     (c : ComplexModel n → ℝ) (k : ℕ) :
-    (fun i ↦ Function.update F i₀ (fun _ ↦ c) i k) = Function.update (fun i ↦ F i k) i₀ c := by
-  funext i
-  by_cases h : i = i₀
-  · subst h; simp
-  · simp [Function.update_of_ne h]
+    (fun i ↦ Function.update F i₀ (fun _ ↦ c) i k) = Function.update (fun i ↦ F i k) i₀ c :=
+  Function.comp_update (fun f : ℕ → ComplexModel n → ℝ => f k) F i₀ (fun _ => c)
 
 theorem isSmoothPsdOn_norm_sq (U : Opens (ComplexModel n)) :
     IsSmoothPsdOn U (fun z : ComplexModel n ↦ ‖z‖ ^ 2) :=

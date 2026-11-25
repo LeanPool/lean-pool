@@ -12,7 +12,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Kahler
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerDomination
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BoundedGlobalTruncation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlotMonotoneMeasure
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionRegularization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothTestCutoff
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ChartPartition
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalNonPluripolar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.SmoothCutoff

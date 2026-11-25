@@ -50,36 +50,18 @@ def IsDecApprox (U : Opens (ComplexModel n)) (u : ComplexModel n → ℝ)
     (∀ z ∈ U, Tendsto (fun k ↦ F k z) atTop (𝓝 (u z))) ∧
     ∀ K : Set (ComplexModel n), IsCompact K → K ⊆ U → BddBelow (u '' K)
 
-theorem IsSmoothPsdOn.continuousOn_complexHessian {U : Opens (ComplexModel n)}
-    {f : ComplexModel n → ℝ} (hf : ContDiffOn ℝ ∞ f U) (j k : Fin n) :
-    ContinuousOn (fun z ↦ complexHessian f z j k) U := by
-  have hR (a b : ComplexModel n) : ContinuousOn (fun z ↦ realHessian f z a b) U := by
-    have h2 : ContinuousOn (iteratedFDeriv ℝ 2 f) U :=
-      ContinuousOn.continuousOn_iteratedFDeriv hf U.isOpen
-        (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-    change ContinuousOn (fun z ↦ iteratedFDeriv ℝ 2 f z ![a, b]) U
-    exact (continuous_eval_const ![a, b]).comp_continuousOn h2
-  unfold complexHessian
-  have ha := Complex.continuous_ofReal.comp_continuousOn
-    ((hR (coordinateVector j) (coordinateVector k)).add
-      (hR (Complex.I • coordinateVector j) (Complex.I • coordinateVector k)))
-  have hb := Complex.continuous_ofReal.comp_continuousOn
-    ((hR (coordinateVector j) (Complex.I • coordinateVector k)).sub
-      (hR (Complex.I • coordinateVector j) (coordinateVector k)))
-  exact (ha.div_const 4).add ((continuousOn_const.mul hb).div_const 4)
-
 theorem continuousOn_mixedDensity {U : Opens (ComplexModel n)}
     {f : Fin n → ComplexModel n → ℝ} (hf : ∀ i, ContDiffOn ℝ ∞ (f i) U) :
     ContinuousOn (mixedDensity f) U := by
   have hmat (i : Fin n) : ContinuousOn (complexHessian (f i)) U :=
     continuousOn_pi.2 fun j ↦ continuousOn_pi.2 fun k ↦
-      IsSmoothPsdOn.continuousOn_complexHessian (hf i) j k
+      MongeAmpere.continuousOn_complexHessian (hf i) j k
   have hC : ContinuousOn (fun z ↦ mixedCoefficient fun i ↦ complexHessian (f i) z) U := by
     unfold mixedCoefficient
     refine continuousOn_finsetSum _ fun σ _ ↦ ?_
     have : ContinuousOn (fun z ↦ (Matrix.of fun j k ↦ complexHessian (f (σ j)) z j k)) U :=
       continuousOn_pi.2 fun j ↦ continuousOn_pi.2 fun k ↦
-        IsSmoothPsdOn.continuousOn_complexHessian (hf (σ j)) j k
+        MongeAmpere.continuousOn_complexHessian (hf (σ j)) j k
     exact continuous_id.matrix_det.comp_continuousOn this
   unfold mixedDensity
   exact (Complex.continuous_re.comp_continuousOn hC).div_const _
@@ -93,14 +75,13 @@ theorem mixedDensity_congr {f g : Fin n → ComplexModel n → ℝ} {z : Complex
   simp only [mixedDensity, fun i ↦ MixedHessian.complexHessian_congr (h i)]
 
 /-- The smooth mixed density measure on `U`, extended by zero. -/
-def densityMeasure (U : Opens (ComplexModel n)) (f : Fin n → ComplexModel n → ℝ) :
+abbrev densityMeasure (U : Opens (ComplexModel n)) (f : Fin n → ComplexModel n → ℝ) :
     Measure (ComplexModel n) :=
-  (volume.restrict (U : Set (ComplexModel n))).withDensity
-    fun z ↦ ENNReal.ofReal (mixedDensity f z)
+  smoothMixedDensityMeasure U f
 
 theorem densityMeasure_compl (U : Opens (ComplexModel n)) (f : Fin n → ComplexModel n → ℝ) :
     densityMeasure U f (U : Set (ComplexModel n))ᶜ = 0 := by
-  rw [densityMeasure, withDensity_apply _ U.isOpen.measurableSet.compl,
+  rw [densityMeasure, smoothMixedDensityMeasure, withDensity_apply _ U.isOpen.measurableSet.compl,
     Measure.restrict_restrict U.isOpen.measurableSet.compl]
   simp
 

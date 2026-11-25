@@ -44,19 +44,8 @@ domain: the density is continuous there, hence bounded on a compact set. -/
 theorem smoothMixedMeasure_finiteOnCompacts {U : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} (hu : IsSmoothMixedPshOn U u)
     {K : Set (ComplexModel n)} (hK : IsCompact K) (hKU : K ⊆ (U : Set (ComplexModel n))) :
-    smoothMixedMeasure U u hu K < ⊤ := by
-  obtain ⟨C, hC⟩ := hK.exists_bound_of_continuousOn
-    ((continuousOn_mixedDensity fun i => (hu.component i).1).mono hKU)
-  have hbound : ∀ z ∈ K, ENNReal.ofReal (mixedDensity u z) ≤ ENNReal.ofReal C := fun z hz =>
-    ENNReal.ofReal_le_ofReal ((le_abs_self _).trans (by simpa [Real.norm_eq_abs] using hC z hz))
-  rw [smoothMixedMeasure, withDensity_apply _ hK.measurableSet]
-  calc ∫⁻ z in K, ENNReal.ofReal (mixedDensity u z)
-        ∂(volume.restrict (U : Set (ComplexModel n)))
-      ≤ ∫⁻ _ in K, ENNReal.ofReal C ∂(volume.restrict (U : Set (ComplexModel n))) :=
-        setLIntegral_mono' hK.measurableSet hbound
-    _ = ENNReal.ofReal C * (volume.restrict (U : Set (ComplexModel n))) K := setLIntegral_const _ _
-    _ < ⊤ := ENNReal.mul_lt_top ENNReal.ofReal_lt_top
-        (lt_of_le_of_lt (Measure.restrict_apply_le _ _) hK.measure_lt_top)
+    smoothMixedMeasure U u hu K < ⊤ :=
+  densityMeasure_lt_top (fun i => (hu.component i).1) hK hKU
 
 /-- **The canonical bounded mixed Bedford–Taylor measure of a smooth tuple.**
 On a relatively compact open set where the tuple is smooth, the canonical

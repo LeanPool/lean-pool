@@ -191,11 +191,8 @@ theorem integral_sub_mul_mixedDensity_update_sub_symm {U : Opens (ComplexModel n
 
 theorem update_apply_seq_update {F : Fin n → ℕ → ComplexModel n → ℝ} (i₀ : Fin n)
     (c : ℕ → ComplexModel n → ℝ) (k : ℕ) :
-    (fun i ↦ Function.update F i₀ c i k) = Function.update (fun i ↦ F i k) i₀ (c k) := by
-  funext i
-  by_cases h : i = i₀
-  · subst h; simp
-  · simp [Function.update_of_ne h]
+    (fun i ↦ Function.update F i₀ c i k) = Function.update (fun i ↦ F i k) i₀ (c k) :=
+  Function.comp_update (fun f : ℕ → ComplexModel n → ℝ => f k) F i₀ c
 
 /-- **Symmetric integration by parts for compactly supported differences.**
 If `u₀`, `u₁` agree with the smooth PSD function `g` off a compact subset of `Ω`, then
