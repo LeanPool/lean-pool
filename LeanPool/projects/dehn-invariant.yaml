@@ -1,0 +1,51 @@
+slug: dehn-invariant
+title: The Dehn invariant and Hilbert's third problem
+summary: The Dehn invariant of a solid is defined from its local cones and
+  Hausdorff lengths. It agrees with the classical edge sum on full-dimensional
+  convex polytopes and is preserved by dissections. This distinguishes a
+  regular tetrahedron from a cube and gives Hilbert's counterexample with
+  equal bases and altitudes.
+branch: convex geometry
+entry_module: LeanPool.DehnInvariant
+authors:
+- DICTO
+source:
+  title: "The Dehn Canon: Hilbert's Third Problem, Machine-Checked"
+  url: https://github.com/DICTOR-Master/dehn-canon-lean/tree/a744cce870f47a9433148b01e8cc3c927ff7fceb
+  github_repo: DICTOR-Master/dehn-canon-lean
+  commit: a744cce870f47a9433148b01e8cc3c927ff7fceb
+  doi: 10.5281/zenodo.24383552
+  completion_url: https://palomar-registry.org/entry.html?id=PALOMAR-2026-11-20-000003
+  completion_date: '2026-11-20'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- DehnCanon.Library.dehnSet_eq_edge_sum
+- DehnCanon.Library.dehnSet_eq_of_scissorsCongruent
+- DehnCanon.Library.dehnSum_eq_of_scissors
+- DehnCanon.Library.similarTetra_not_scissorsCongruent_similarCube
+- DehnCanon.Library.hilbert_third_problem
+main_results:
+- declaration: DehnCanon.Library.dehnSet_eq_edge_sum
+  informal: For a convex polytope with nonempty interior in a real
+    three-dimensional inner product space, the set-defined invariant equals
+    the edge-length tensor dihedral-angle sum.
+- declaration: DehnCanon.Library.dehnSet_eq_of_scissorsCongruent
+  informal: Scissors-congruent convex polytopes have the same Dehn invariant.
+- declaration: DehnCanon.Library.dehnSum_eq_of_scissors
+  informal: The sum of the Dehn invariants of the pieces is preserved under
+    scissors congruence of finite unions of convex polytopes.
+- declaration: DehnCanon.Library.similarTetra_not_scissorsCongruent_similarCube
+  informal: No similar copy of a regular tetrahedron is scissors congruent to
+    a similar copy of a cube.
+- declaration: DehnCanon.Library.hilbert_third_problem
+  informal: Two tetrahedra on the same base with altitude one and volume one
+    sixth can fail both scissors congruence and equicomplementability.
+tags:
+- scissors-congruence
+- polytopes
+- Dehn-invariant
+msc:
+- 52B45
+- 51M20
