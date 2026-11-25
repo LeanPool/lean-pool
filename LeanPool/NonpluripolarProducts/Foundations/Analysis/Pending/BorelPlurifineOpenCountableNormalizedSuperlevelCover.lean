@@ -14,6 +14,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Plurif
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifineEuclideanComparison
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.RegularizedIncreasingPshGapCapacityZero
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorFixedWeight
+public import Mathlib.Order.PartialSups
 
 /-!
 # A countable normalized superlevel cover of a Borel plurifine open set
@@ -49,14 +50,14 @@ private theorem exists_increasing_sequence {X : Type*} [TopologicalSpace X]
     (fun h : X → ℝ ↦ fun x ↦ (h x : EReal)))
   have hrep : ∀ k, ∃ a ∈ H, (fun x ↦ (a x : EReal)) = s k := hs
   choose a ha he using hrep
-  let g : ℕ → X → ℝ := fun k x ↦ (runningMax s k x).toReal
-  have hh : ∀ k, g k ∈ H ∧ (fun x ↦ (g k x : EReal)) = runningMax s k := by
+  let g : ℕ → X → ℝ := fun k x ↦ (partialSups s k x).toReal
+  have hh : ∀ k, g k ∈ H ∧ (fun x ↦ (g k x : EReal)) = partialSups s k := by
     intro k
     induction k with
     | zero =>
       have h0 : g 0 = a 0 := by
         funext x
-        simp only [g, runningMax, ← he 0, EReal.toReal_coe]
+        simp only [g, partialSups_zero, ← he 0, EReal.toReal_coe]
       constructor
       · rw [h0]
         exact ha 0
@@ -64,10 +65,13 @@ private theorem exists_increasing_sequence {X : Type*} [TopologicalSpace X]
         exact he 0
     | succ k ih =>
       have hm : (fun x ↦ ((max (g k x) (a (k + 1) x) : ℝ) : EReal)) =
-          runningMax s (k + 1) := by
+          partialSups s (k + 1) := by
+        have hsucc : partialSups s (k + 1) = partialSups s k ⊔ s (k + 1) :=
+          partialSups_succ s k
+        rw [hsucc]
         funext x
         change ((max (g k x) (a (k + 1) x) : ℝ) : EReal) =
-          max (runningMax s k x) (s (k + 1) x)
+          max (partialSups s k x) (s (k + 1) x)
         rw [← congrFun ih.2 x, ← congrFun (he (k + 1)) x]
         exact EReal.coe_strictMono.monotone.map_max
       have hstep : g (k + 1) = fun x ↦ max (g k x) (a (k + 1) x) := by
@@ -83,14 +87,14 @@ private theorem exists_increasing_sequence {X : Type*} [TopologicalSpace X]
   · intro x k l hkl
     apply EReal.coe_le_coe_iff.mp
     rw [congrFun (hh k).2 x, congrFun (hh l).2 x]
-    exact runningMax_monotone s hkl x
+    exact partialSups_monotone s hkl x
   · have hsup : (fun x ↦ ⨆ k, (g k x : EReal)) = ⨆ k, s k := by
       ext x
       rw [iSup_apply]
       calc
-        (⨆ k, (g k x : EReal)) = ⨆ k, runningMax s k x :=
+        (⨆ k, (g k x : EReal)) = ⨆ k, partialSups s k x :=
           iSup_congr fun k ↦ congrFun (hh k).2 x
-        _ = _ := iSup_runningMax s x
+        _ = _ := by simpa only [iSup_apply] using congrFun (iSup_partialSups_eq s) x
     rw [hsup]
     exact hseq
 

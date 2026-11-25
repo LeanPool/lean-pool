@@ -16,6 +16,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Smoo
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveDistributionMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorExistence
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 
 /-!
 # Pending local Monge–Ampère foundation
@@ -123,32 +124,15 @@ theorem localBedfordTaylorMeasure_restrict {Ω U : Opens (ComplexModel n)}
     {u : ComplexModel n → ℝ} {μ : Measure (ComplexModel n)}
     (hμ : IsLocalBedfordTaylorMeasure Ω u μ) (hU : U ≤ Ω) :
     IsLocalBedfordTaylorMeasure U u (μ.restrict (U : Set (ComplexModel n))) := by
-  refine ⟨?_, ?_, ?_, ?_⟩
-  · refine ⟨hμ.1.1.mono hU, ?_⟩
-    intro z hz
-    obtain ⟨V, hzV, hVΩ, C, hC⟩ := hμ.1.2 z (hU hz)
-    exact ⟨V ⊓ U, ⟨hzV, hz⟩, inf_le_right,
-      C, fun w hw ↦ hC w hw.1⟩
+  refine ⟨hμ.1.mono hU, ?_, MeasureLocality.finiteOnCompacts_restrict hμ.2.2.1 hU, ?_⟩
   · rw [Measure.restrict_apply U.isOpen.measurableSet.compl]
     simp
-  · intro K hK hKU
-    exact lt_of_le_of_lt (Measure.restrict_le_self K)
-      (hμ.2.2.1 K hK (hKU.trans hU))
   · intro V hV
     have hVΩ : RelativelyCompactIn V Ω := ⟨hV.1, hV.2.trans hU⟩
     obtain ⟨⟨f, hf⟩, hconv⟩ := hμ.2.2.2 V hVΩ
     refine ⟨⟨f, hf⟩, fun g hg φ hφ hφc hφV ↦ ?_⟩
-    have hφU : tsupport φ ⊆ (U : Set (ComplexModel n)) :=
-      hφV.trans (subset_closure.trans hV.2)
-    have hindicator : (U : Set (ComplexModel n)).indicator φ = φ := by
-      funext z
-      by_cases hz : z ∈ U
-      · simp [hz]
-      · have hzt : z ∉ tsupport φ := fun h ↦ hz (hφU h)
-        simp [hz, image_eq_zero_of_notMem_tsupport hzt]
-    have hintegral :
-        (∫ z, φ z ∂(μ.restrict (U : Set (ComplexModel n)))) = ∫ z, φ z ∂μ := by
-      rw [← integral_indicator U.isOpen.measurableSet, hindicator]
-    simpa only [hintegral] using hconv g hg φ hφ hφc hφV
+    rw [MeasureLocality.integral_restrict_eq_of_tsupport_subset
+      (hφV.trans (subset_closure.trans hV.2))]
+    exact hconv g hg φ hφ hφc hφV
 
 end SGPT.Foundations.Analysis.Pending.MongeAmpere

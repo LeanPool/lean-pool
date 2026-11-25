@@ -8,6 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import Mathlib.MeasureTheory.Integral.Bochner.Set
 public import Mathlib.MeasureTheory.Integral.IntegrableOn
 public import Mathlib.Analysis.Normed.Group.Bounded
 public import Mathlib.MeasureTheory.Measure.Basic
@@ -72,5 +73,21 @@ theorem integrable_mul_of_ae_bounded_on_tsupport {X : Type*} [TopologicalSpace X
   filter_upwards [hC] with x hx
   rw [norm_mul, Real.norm_eq_abs]
   exact mul_le_mul (hM x) hx (abs_nonneg _) ((norm_nonneg _).trans (hM x))
+
+/-- A test supported in a set has the same integral against the restricted measure. -/
+theorem integral_restrict_eq_of_tsupport_subset {X : Type*} [TopologicalSpace X]
+    [MeasurableSpace X] {μ : Measure X} {s : Set X} {f : X → ℝ}
+    (hs : tsupport f ⊆ s) :
+    (∫ x, f x ∂(μ.restrict s)) = ∫ x, f x ∂μ :=
+  setIntegral_eq_integral_of_forall_compl_eq_zero fun _ hx =>
+    image_eq_zero_of_notMem_tsupport fun h => hx (hs h)
+
+/-- Finiteness on compact subsets of a domain passes to the restricted measure
+on any smaller domain. -/
+theorem finiteOnCompacts_restrict {X : Type*} [TopologicalSpace X] [MeasurableSpace X]
+    {μ : Measure X} {U V : Set X} (hμ : ∀ K, IsCompact K → K ⊆ U → μ K < ⊤)
+    (hVU : V ⊆ U) (K : Set X) (hK : IsCompact K) (hKV : K ⊆ V) :
+    μ.restrict V K < ⊤ :=
+  (Measure.restrict_le_self K).trans_lt (hμ K hK (hKV.trans hVU))
 
 end SGPT.Foundations.Analysis.MeasureLocality

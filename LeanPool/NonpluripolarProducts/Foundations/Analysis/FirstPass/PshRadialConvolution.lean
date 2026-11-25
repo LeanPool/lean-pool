@@ -42,29 +42,6 @@ namespace SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 
 variable {n : ℕ}
 
-/-- Raw radial approximate-identity data on one compact localization.  The
-regularized functions are the actual translation pairings against `kernel`;
-the structural fields prevent this interface from hiding arbitrary smooth PSH
-approximants. -/
-structure RadialConvolutionSystem (V : Opens (ComplexModel n))
-    (K : Set (ComplexModel n)) (u : ComplexModel n → ℝ) (R : ℝ) where
-  /-- The sequence of radial convolution kernels. -/
-  kernel : ℕ → ComplexModel n → ℝ
-  kernel_contDiff : ∀ j, ContDiff ℝ (⊤ : ℕ∞) (kernel j)
-  kernel_hasCompactSupport : ∀ j, HasCompactSupport (kernel j)
-  kernel_nonneg : ∀ j x, 0 ≤ kernel j x
-  kernel_integral_one : ∀ j, ∫ x, kernel j x = 1
-  kernel_radial : ∀ j (a : ℂ), ‖a‖ = 1 → ∀ x, kernel j (a • x) = kernel j x
-  kernel_tsupport : ∀ j,
-    tsupport (kernel j) ⊆ closedBall 0 (R / ((j : ℝ) + 1))
-  translated_tsupport : ∀ j z, z ∈ V →
-    tsupport (fun x ↦ kernel j (x - z)) ⊆ K
-  antitone_pairing : ∀ z ∈ V,
-    Antitone (fun j ↦ translationPairing volume (K.indicator u) (kernel j) z)
-  ae_tendsto_pairing : ∀ᵐ z ∂volume.restrict V,
-    Tendsto (fun j ↦ translationPairing volume (K.indicator u) (kernel j) z)
-      atTop (𝓝 (u z))
-
 /-- Almost-everywhere convergence of a decreasing real-valued PSH sequence
 upgrades to pointwise `EReal` convergence to the given PSH representative.
 The representative may have genuine `⊥` poles.  This is the

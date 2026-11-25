@@ -231,8 +231,8 @@ theorem uscSup_chartFamily {I : Type*} (u : I → M → EReal)
     EqOn (uscSup (fun i ↦ chartFunction (u i) e)) (chartFunction (uscSup u) e)
       e.val.target := by
   intro z hz
-  exact SGPT.Foundations.Analysis.FirstPass.uscRegularization_chartFunction_apply
-    (fun x ↦ ⨆ i, u i x) e hz
+  exact SGPT.Foundations.Analysis.FirstPass.uscRegularization_comp_openPartialHomeomorph_apply
+    (fun x ↦ ⨆ i, u i x) e.val.symm hz
 
 /-- The source's regularized-supremum clause on fixed-dimensional complex
 manifolds, with actual local PSH witnesses and no global countability assumption. -/

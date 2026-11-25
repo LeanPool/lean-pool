@@ -8,7 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularization
+public import Mathlib.Analysis.SpecificLimits.Basic
 
 /-!
 # Recovering finite values of a regularized supremum

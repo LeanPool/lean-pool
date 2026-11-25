@@ -53,6 +53,13 @@ which never takes the value `⊤`, this is density of the finite locus. -/
 def LocallyNondegenerate (u : M → EReal) : Prop :=
   ∀ x : M, ∀ U : Set M, IsOpen U → x ∈ U → ∃ y ∈ U, u y ≠ ⊥
 
+/-- A larger function retains local nondegeneracy, including at pole values. -/
+theorem LocallyNondegenerate.mono {u v : M → EReal} (hu : LocallyNondegenerate u)
+    (huv : u ≤ v) : LocallyNondegenerate v := by
+  intro x U hU hx
+  obtain ⟨y, hy, hfin⟩ := hu x U hU hx
+  exact ⟨y, hy, ne_bot_of_le_ne_bot hfin (huv y)⟩
+
 /-- Local nondegeneracy on the manifold produces a non-pole point in every
 nonempty open subset of a chart target. -/
 theorem LocallyNondegenerate.exists_chart_ne_bot

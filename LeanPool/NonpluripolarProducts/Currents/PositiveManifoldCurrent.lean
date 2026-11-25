@@ -11,6 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ChartDomains
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullback
 public import Mathlib.Geometry.Manifold.ContMDiff.NormedSpace
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 
 /-!
 # Positive currents on a complex manifold

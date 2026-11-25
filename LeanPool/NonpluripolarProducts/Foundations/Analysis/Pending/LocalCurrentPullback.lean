@@ -10,6 +10,7 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BiholomorphicPair
+public import Mathlib.MeasureTheory.Function.Jacobian
 
 /-!
 # Pull-back of positive currents along biholomorphisms, and `(τ^* T)_ac = τ^*(T_ac)`

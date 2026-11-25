@@ -205,6 +205,13 @@ def IsLocallyBoundedPshOn (Ω : Opens (ComplexModel n))
     ∀ z ∈ Ω, ∃ V : Opens (ComplexModel n), z ∈ V ∧ V ≤ Ω ∧
       ∃ C : ℝ, ∀ w ∈ V, |u w| ≤ C
 
+/-- Restricting to a smaller open domain preserves PSH and local boundedness. -/
+theorem IsLocallyBoundedPshOn.mono {U V : Opens (ComplexModel n)} {u : ComplexModel n → ℝ}
+    (hu : IsLocallyBoundedPshOn U u) (hVU : V ≤ U) : IsLocallyBoundedPshOn V u := by
+  refine ⟨hu.1.mono hVU, fun z hz ↦ ?_⟩
+  obtain ⟨W, hzW, -, C, hC⟩ := hu.2 z (hVU hz)
+  exact ⟨W ⊓ V, ⟨hzW, hz⟩, inf_le_right, C, fun w hw ↦ hC w hw.1⟩
+
 open Metric in
 theorem isLocallyBoundedPshOn_of_continuousOn {U : Opens (ComplexModel n)} {g : ComplexModel n → ℝ}
     (hp : PlurisubharmonicOn (fun z => (g z : EReal)) U) (hc : ContinuousOn g U) :

@@ -36,7 +36,6 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Cont
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateWedgePullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.DiscPshSupremum
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ExteriorDerivative
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FiniteMeasureGluing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.FormPullback
@@ -77,6 +76,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Stan
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ThetaPshCompactBounds
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.TopPowerDensityPositivity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscLipschitzMajorants
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularizationContinuous
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscSupremumRecovery
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscWeightWeakLimits
@@ -193,6 +193,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalC
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentRestriction
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalDDbar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPositiveCurrentGluing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPotentials

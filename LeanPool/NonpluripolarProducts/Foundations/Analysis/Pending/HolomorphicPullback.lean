@@ -857,50 +857,25 @@ theorem antitone_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
         translationPairing_explicitRadialKernel_scale
           (K.indicator p) R hR a a z
 
-/-- The explicit inner-product kernels, with all structure fields assembled.
-The construction uses the preceding monotonicity atom and the proved Lebesgue
-differentiation theorem. -/
-theorem exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
+/-- The explicit radial pairings converge almost everywhere on the open
+domain covered by the compact localization. -/
+theorem ae_tendsto_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
     {Ω : Opens (ComplexModel n)} {p : ComplexModel n → ℝ}
     (hp : IsLocallyBoundedPshOn Ω p) {R : ℝ} (hR : 0 < R)
     {N K : Set (ComplexModel n)} (hN : IsOpen N)
     (hK : IsCompact K) (hKΩ : K ⊆ Ω)
     (hball : ∀ x ∈ N, closedBall x R ⊆ K) :
-    ∃ S : RadialConvolutionSystem ⟨N, hN⟩ K p R,
-      ∀ j x, S.kernel j x = explicitRadialKernel R hR j x := by
-  have hNK : N ⊆ K := by
-    intro z hz
-    exact hball z hz (mem_closedBall_self hR.le)
+    ∀ᵐ z ∂volume.restrict N, Tendsto (fun j ↦ translationPairing volume (K.indicator p)
+      (explicitRadialKernel R hR j) z) atTop (𝓝 (p z)) := by
   let hpL : LocallyIntegrableOn p Ω volume :=
     locallyIntegrableOn_of_plurisubharmonicOn_real hp.1
   have hg : LocallyIntegrable (K.indicator p) volume :=
     (integrable_indicator_of_locallyIntegrableOn_isCompact hpL hK hKΩ).locallyIntegrable
-  have hae : ∀ᵐ z ∂volume.restrict N,
-      Tendsto (fun j ↦ translationPairing volume (K.indicator p)
-        (explicitRadialKernel R hR j) z) atTop (𝓝 (p z)) := by
-    filter_upwards [ae_restrict_of_ae
-      (ae_tendsto_translationPairing_explicitRadialKernel hg R hR),
-      ae_restrict_mem hN.measurableSet] with z hzlim hzN
-    simpa only [indicator_of_mem (hNK hzN)] using hzlim
-  let S : RadialConvolutionSystem ⟨N, hN⟩ K p R :=
-    { kernel := fun j ↦ explicitRadialKernel R hR j
-      kernel_contDiff := fun j ↦ explicitRadialKernel_contDiff R hR j
-      kernel_hasCompactSupport := fun j ↦ explicitRadialKernel_hasCompactSupport R hR j
-      kernel_nonneg := fun j x ↦ explicitRadialKernel_nonneg R hR j x
-      kernel_integral_one := fun j ↦ explicitRadialKernel_integral_one R hR j
-      kernel_radial := fun j a ha x ↦ explicitRadialKernel_unitary R hR j a ha x
-      kernel_tsupport := fun j ↦ by
-        rw [explicitRadialKernel_tsupport R hR j]
-      translated_tsupport := fun j z hz ↦ by
-        exact (tsupport_explicitRadialKernel_translate_subset R hR j z).trans
-          ((closedBall_subset_closedBall
-            (shrinkingBump_rOut_le (E := ComplexModel n) R hR j)).trans
-              (hball z hz))
-      antitone_pairing :=
-        antitone_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
-          hp hR hKΩ hball
-      ae_tendsto_pairing := hae }
-  exact ⟨S, fun _ _ ↦ rfl⟩
+  filter_upwards [ae_restrict_of_ae
+    (ae_tendsto_translationPairing_explicitRadialKernel hg R hR),
+    ae_restrict_mem hN.measurableSet] with z hzlim hzN
+  have hzK : z ∈ K := hball z hzN (mem_closedBall_self hR.le)
+  simpa only [indicator_of_mem hzK] using hzlim
 
 /-- An explicit radial convolution on a fixed compact neighborhood gives a decreasing
 smooth approximation on the inner domain. -/
@@ -917,39 +892,37 @@ theorem isDecreasingApproximation_explicitRadialKernel
   have hpLevi : HasNonnegativeDistributionalLevi
       (regularDistribution volume p hpL) :=
     hasNonnegativeDistributionalLevi_of_plurisubharmonicOn_real hp.1
-  obtain ⟨S, hSkernel⟩ :=
-    exists_explicitRadialConvolutionSystem_of_locallyBoundedPsh
-      hp hR hN hK hKΩ hball
   let f : ℕ → ComplexModel n → ℝ := fun j ↦
-    translationPairing volume (K.indicator p) (S.kernel j)
+    translationPairing volume (K.indicator p) (explicitRadialKernel R hR j)
   have hg : LocallyIntegrable (K.indicator p) volume :=
     (integrable_indicator_of_locallyIntegrableOn_isCompact hpL hK hKΩ).locallyIntegrable
   have hfDisc (j : ℕ) : DiscPshOn (fun x ↦ (f j x : EReal)) N :=
     discPshOn_translationPairing_indicator hpL hpLevi
-      (S.kernel_hasCompactSupport j) (S.kernel_contDiff j)
-      (S.kernel_nonneg j) hK hKΩ (S.translated_tsupport j)
+      (explicitRadialKernel_hasCompactSupport R hR j) (explicitRadialKernel_contDiff R hR j)
+      (explicitRadialKernel_nonneg R hR j) hK hKΩ (fun z hz ↦
+        (tsupport_explicitRadialKernel_translate_subset R hR j z).trans
+          ((closedBall_subset_closedBall (shrinkingBump_rOut_le (E := ComplexModel n) R hR j)).trans
+            (hball z hz)))
   have hfPsh (j : ℕ) : PlurisubharmonicOn (fun x ↦ (f j x : EReal)) A :=
     ((hfDisc j).plurisubharmonicOn hN).mono hAN
   have hfSmooth (j : ℕ) : IsSmoothPshOn A (f j) :=
     isSmoothPshOn_of_psh
-      (contDiff_translationPairing hg (S.kernel_hasCompactSupport j)
-        (S.kernel_contDiff j)).contDiffOn (hfPsh j)
-  have hantiN : ∀ x ∈ N, Antitone (fun j ↦ f j x) := by
-    intro x hx
-    exact S.antitone_pairing x hx
+      (contDiff_translationPairing hg (explicitRadialKernel_hasCompactSupport R hR j)
+        (explicitRadialKernel_contDiff R hR j)).contDiffOn (hfPsh j)
+  have hantiN : ∀ x ∈ N, Antitone (fun j ↦ f j x) :=
+    antitone_translationPairing_explicitRadialKernel_of_locallyBoundedPsh hp hR hKΩ hball
   have hanti : ∀ x ∈ A, Antitone (fun j ↦ f j x) :=
     fun x hx ↦ hantiN x (hAN hx)
   have hae : ∀ᵐ x ∂volume.restrict (A : Set (ComplexModel n)),
       Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) := by
-    have haeN := S.ae_tendsto_pairing
+    have haeN := ae_tendsto_translationPairing_explicitRadialKernel_of_locallyBoundedPsh
+      hp hR hN hK hKΩ hball
     change ∀ᵐ x ∂volume.restrict N,
       Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) at haeN
     exact ae_mono (Measure.restrict_mono hAN le_rfl) haeN
   have hpoint : ∀ x ∈ A, Tendsto (fun j ↦ f j x) atTop (𝓝 (p x)) :=
     tendsto_everywhere_of_ae_of_antitone_psh (hp.1.mono hAΩ) hfPsh hanti hae
-  have hker : S.kernel = fun j ↦ explicitRadialKernel R hR j :=
-    funext fun j ↦ funext (hSkernel j)
-  simpa only [f, hker] using (show IsDecreasingApproximation A p f from ⟨hfSmooth, hanti, hpoint⟩)
+  exact ⟨hfSmooth, hanti, hpoint⟩
 
 /-- The radial monotonicity atom, together with the already checked smoothness,
 PSH preservation, almost-everywhere convergence, and representative uniqueness,

@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorMaxLocality
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 
 /-!
 # Bedford–Taylor limit measures under pluriharmonic gauge changes
@@ -192,14 +193,13 @@ theorem IsBTLimit.restrict_opens {Ω V : Opens (ComplexModel n)} {u : Fin n → 
     {μ : Measure (ComplexModel n)} (hμ : IsBTLimit Ω u μ) (hVΩ : V ≤ Ω) :
     IsBTLimit V u (μ.restrict V) := by
   refine ⟨by rw [Measure.restrict_apply' V.isOpen.measurableSet]; simp,
-    fun K hK hKV ↦ (Measure.restrict_apply_le _ _).trans_lt (hμ.2.1 K hK (hKV.trans hVΩ)),
+    MeasureLocality.finiteOnCompacts_restrict hμ.2.1 hVΩ,
     fun U hU ↦ ?_⟩
   have hUΩ : RelativelyCompactIn U Ω := ⟨hU.1, hU.2.trans hVΩ⟩
   obtain ⟨F, hF, hFT⟩ := hμ.2.2 U hUΩ
   refine ⟨F, hF, fun φ hφ hφc hφU ↦ ?_⟩
-  have hUV : (U : Set (ComplexModel n)) ⊆ V := subset_closure.trans hU.2
-  rw [setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦
-    image_eq_zero_of_notMem_tsupport fun h ↦ hz (hUV (hφU h))]
+  rw [MeasureLocality.integral_restrict_eq_of_tsupport_subset
+    (hφU.trans (subset_closure.trans hU.2))]
   exact hFT φ hφ hφc hφU
 
 end SGPT.Foundations.Analysis.Pending.BedfordTaylor

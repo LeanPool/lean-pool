@@ -266,27 +266,4 @@ theorem normalizedTopPowerDensity_smoothDDC {u : ComplexModel n → ℝ}
   rw [normalizedTopPowerDensity, normalizedHermitianMatrix_smoothDDC hu]
   exact (smoothDensity_eq_re_topCoefficient u z).symm
 
-/-- The smooth measure obtained from the determinant coefficient. -/
-def coefficientSmoothMeasure (U : Opens (ComplexModel n))
-    (u : ComplexModel n → ℝ) (_hu : IsSmoothPshOn U u) : Measure (ComplexModel n) :=
-  (volume.restrict (U : Set (ComplexModel n))).withDensity
-    (fun z => ENNReal.ofReal (normalizedTopPowerDensity (smoothDDC u z)))
-
-/-- The coefficient measure is exactly the Hessian-density measure already used
-in the Bedford--Taylor interface. -/
-theorem coefficientSmoothMeasure_eq_smoothMeasure (U : Opens (ComplexModel n))
-    (u : ComplexModel n → ℝ) (hu : IsSmoothPshOn U u) :
-    coefficientSmoothMeasure U u hu = smoothMeasure U u hu := by
-  unfold coefficientSmoothMeasure smoothMeasure
-  apply withDensity_congr_ae
-  apply ae_restrict_of_forall_mem U.isOpen.measurableSet
-  intro z hz
-  have hinf : ContDiffAt ℝ ∞ u z :=
-    (hu.1 z hz).contDiffAt (U.isOpen.mem_nhds hz)
-  have h2 : ContDiffAt ℝ 2 u z :=
-    hinf.of_le (ENat.natCast_le_of_coe_top_le_withTop le_rfl 2)
-  change ENNReal.ofReal (normalizedTopPowerDensity (smoothDDC u z)) =
-    ENNReal.ofReal (smoothDensity u z)
-  rw [normalizedTopPowerDensity_smoothDDC h2]
-
 end SGPT.Foundations.Analysis.FirstPass.MongeAmpere

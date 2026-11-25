@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularization
 public import Mathlib.Topology.OpenPartialHomeomorph.Continuity
 
 /-!
@@ -111,20 +111,6 @@ theorem uscRegularization_comp_isOpenEmbedding_apply
   let e : OpenPartialHomeomorph X Y := hj.toOpenPartialHomeomorph j
   have hx : x ∈ e.source := by simp [e]
   simpa [e] using uscRegularization_comp_openPartialHomeomorph_apply f e hx
-
-/-- In a manifold chart target, regularizing after taking the coordinate
-representative is the same as taking the coordinate representative of the
-regularized global function. -/
-theorem uscRegularization_chartFunction_apply
-    {n : ℕ} {M : Type*} [TopologicalSpace M]
-    [ChartedSpace (ComplexModel n) M]
-    (u : M → EReal) (e : ComplexChart n M) {z : ComplexModel n}
-    (hz : z ∈ e.val.target) :
-    uscRegularization (chartFunction u e) z =
-      chartFunction (uscRegularization u) e z := by
-  change uscRegularization (u ∘ e.val.symm) z =
-    uscRegularization u (e.val.symm z)
-  exact uscRegularization_comp_openPartialHomeomorph_apply u e.val.symm hz
 
 end Topological
 

@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorLocality
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentRestriction
 
 /-!
 # The pointwise density form and the Lebesgue decomposition of a positive current

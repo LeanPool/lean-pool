@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Envelopes
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.UscRegularization
 public import Mathlib.Topology.Order.MonotoneConvergence
 public import Mathlib.Topology.Instances.EReal.Lemmas
 
@@ -37,47 +37,6 @@ namespace SGPT.Foundations.Analysis.Pending
 noncomputable section
 
 open FirstPass
-
-section RunningMax
-
-variable {Y : Type*}
-
-/-- The running maxima of a sequence of extended-real functions.  Choquet's
-lemma produces a countable subfamily; replacing it by its running maxima turns
-it into an *increasing* sequence with the same pointwise supremum, which is
-how every consumer of the lemma uses it. -/
-def runningMax (s : ℕ → Y → EReal) : ℕ → Y → EReal
-  | 0 => s 0
-  | k + 1 => fun x => max (runningMax s k x) (s (k + 1) x)
-
-theorem runningMax_monotone (s : ℕ → Y → EReal) : Monotone (runningMax s) := by
-  refine monotone_nat_of_le_succ fun k x => ?_
-  exact le_max_left _ _
-
-theorem le_runningMax (s : ℕ → Y → EReal) (k : ℕ) (x : Y) :
-    s k x ≤ runningMax s k x := by
-  cases k with
-  | zero => exact le_rfl
-  | succ m => exact le_max_right _ _
-
-/-- A pointwise bound for every member bounds every running maximum. -/
-theorem runningMax_apply_le {s : ℕ → Y → EReal} {c : EReal} {x : Y}
-    (hs : ∀ k, s k x ≤ c) (k : ℕ) : runningMax s k x ≤ c := by
-  induction k with
-  | zero => exact hs 0
-  | succ m ih => exact max_le ih (hs (m + 1))
-
-theorem runningMax_le {s : ℕ → Y → EReal} {g : Y → EReal}
-    (hs : ∀ k, s k ≤ g) (k : ℕ) (x : Y) : runningMax s k x ≤ g x :=
-  runningMax_apply_le (fun j => hs j x) k
-
-theorem iSup_runningMax (s : ℕ → Y → EReal) (x : Y) :
-    (⨆ k, runningMax s k x) = ⨆ k, s k x :=
-  le_antisymm
-    (iSup_le fun k => runningMax_apply_le (fun j => le_iSup (fun i => s i x) j) k)
-    (iSup_mono fun k => le_runningMax s k x)
-
-end RunningMax
 
 variable {X : Type*} [TopologicalSpace X]
 

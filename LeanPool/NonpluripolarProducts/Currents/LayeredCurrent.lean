@@ -33,7 +33,6 @@ open SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 open SGPT.Foundations.Analysis.Pending
 open SGPT.Foundations.Analysis.Pending.StronglyPositiveForms
 open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
-open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 open SGPT.Foundations.Analysis.Pending.LocalCurrentLebesgue
 
 attribute [local instance] addCommGroupFormSpan
@@ -185,7 +184,6 @@ open SGPT.NPP.NonPluripolarCurrent
 open SGPT.Foundations.Analysis
 open SGPT.Foundations.Analysis.FirstPass
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorLocality
-open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 open SGPT.Foundations.Analysis.Pending.LocalCurrentLebesgue
 open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
 

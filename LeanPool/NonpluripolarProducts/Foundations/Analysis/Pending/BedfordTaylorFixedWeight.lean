@@ -69,10 +69,8 @@ theorem tendsto_of_forall_abs_sub_le {a : ℕ → ℝ} {a₀ : ℝ}
   constructor <;> linarith
 
 theorem IsLocallyBoundedPshOn.mono_opens {Ω U : Opens (ComplexModel n)} {u : ComplexModel n → ℝ}
-    (hu : IsLocallyBoundedPshOn Ω u) (hUΩ : U ≤ Ω) : IsLocallyBoundedPshOn U u := by
-  refine ⟨hu.1.mono hUΩ, fun z hz ↦ ?_⟩
-  obtain ⟨V, hzV, -, C, hC⟩ := hu.2 z (hUΩ hz)
-  exact ⟨V ⊓ U, ⟨hzV, hz⟩, inf_le_right, C, fun w hw ↦ hC w hw.1⟩
+    (hu : IsLocallyBoundedPshOn Ω u) (hUΩ : U ≤ Ω) : IsLocallyBoundedPshOn U u :=
+  hu.mono hUΩ
 
 /-- Strict sublevel sets of a plurisubharmonic function, intersected with its domain,
 are open (upper semicontinuity). -/

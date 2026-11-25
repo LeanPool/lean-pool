@@ -11,6 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.MixedNonPluripolar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedMongeAmpere
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.NonPluripolarLimit
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
 
 /-!
 # Actual mixed truncation measures and their increasing limit
@@ -62,20 +63,16 @@ theorem localMixedBedfordTaylorMeasure_restrict {Ω U : Opens (ComplexModel n)}
     {u : Fin n → ComplexModel n → ℝ} {μ : Measure (ComplexModel n)}
     (hμ : IsLocalMixedBedfordTaylorMeasure Ω u μ) (hU : U ≤ Ω) :
     IsLocalMixedBedfordTaylorMeasure U u (μ.restrict (U : Set (ComplexModel n))) := by
-  refine ⟨fun i ↦ ⟨(hμ.1 i).1.mono hU, fun z hz ↦ ?_⟩, ?_, fun K hK hKU ↦ ?_, fun V hV ↦ ?_⟩
-  · obtain ⟨V, hzV, -, C, hC⟩ := (hμ.1 i).2 z (hU hz)
-    exact ⟨V ⊓ U, ⟨hzV, hz⟩, inf_le_right, C, fun w hw ↦ hC w hw.1⟩
+  refine ⟨fun i => (hμ.1 i).mono hU, ?_,
+    MeasureLocality.finiteOnCompacts_restrict hμ.2.2.1 hU, fun V hV ↦ ?_⟩
   · rw [Measure.restrict_apply U.isOpen.measurableSet.compl]
     simp
-  · exact lt_of_le_of_lt (Measure.restrict_le_self K) (hμ.2.2.1 K hK (hKU.trans hU))
   · have hVΩ : RelativelyCompactIn V Ω := ⟨hV.1, hV.2.trans hU⟩
     obtain ⟨hex, hconv⟩ := hμ.2.2.2 V hVΩ
     refine ⟨hex, fun f hf φ hφ hφc hφV ↦ ?_⟩
-    have hφU : tsupport φ ⊆ (U : Set (ComplexModel n)) := hφV.trans (subset_closure.trans hV.2)
-    have hint : (∫ z, φ z ∂(μ.restrict (U : Set (ComplexModel n)))) = ∫ z, φ z ∂μ :=
-      setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦
-        image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)
-    simpa only [hint] using hconv f hf φ hφ hφc hφV
+    rw [MeasureLocality.integral_restrict_eq_of_tsupport_subset
+      (hφV.trans (subset_closure.trans hV.2))]
+    exact hconv f hf φ hφ hφc hφV
 
 /-- The mixed BT relation on an open set only depends on the potentials there. -/
 theorem IsLocalMixedBedfordTaylorMeasure.congr {U : Opens (ComplexModel n)}
