@@ -8,6 +8,8 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import Mathlib.Geometry.Manifold.PartitionOfUnity
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRestriction
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 
 /-!
@@ -30,7 +32,7 @@ coefficient densities and with multiplication by locally bounded Borel functions
 noncomputable section
 
 open Set Filter MeasureTheory TopologicalSpace
-open scoped Topology Distributions ContDiff
+open scoped Manifold Topology Distributions ContDiff
 
 namespace SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorLocality
 
@@ -91,7 +93,7 @@ def extTest (_hVU : V ≤ U) : 𝓓(V, ℝ) →L[ℝ] 𝓓(U, ℝ) := TestFuncti
 
 /-- Restriction of distributions to `V ≤ U`. -/
 def restrictDist (hVU : V ≤ U) : 𝓓'(U, ℝ) →ₗ[ℝ] 𝓓'(V, ℝ) where
-  toFun T := T.comp (extTest hVU)
+  toFun T := SGPT.Foundations.Analysis.restrictDistribution T hVU
   map_add' _ _ := ContinuousLinearMap.add_comp _ _ _
   map_smul' _ _ := ContinuousLinearMap.smul_comp _ _ _
 
@@ -107,20 +109,16 @@ def restrict (hVU : V ≤ U) (T : LocalProductCurrent n U q) : LocalProductCurre
 /-- Restriction to the whole domain fixes a current. -/
 theorem restrict_self (hUU : U ≤ U) (T : LocalProductCurrent n U q) : restrict hUU T = T := by
   ext γ φ
-  rw [restrict_apply]
-  congr 1
-  ext x
-  exact extTest_apply hUU φ x
+  exact DFunLike.congr_fun
+    (SGPT.Foundations.Analysis.restrictDistribution_self (T γ)) φ
 
 /-- Restricting in two steps agrees with restricting directly. -/
 theorem restrict_restrict {V W : Opens (ComplexModel n)} (hWV : W ≤ V) (hVU : V ≤ U)
     (T : LocalProductCurrent n U q) :
     restrict hWV (restrict hVU T) = restrict (hWV.trans hVU) T := by
-  ext γ ψ
-  simp only [LocalBedfordTaylorLocality.restrict_apply]
-  congr 1
-  ext x
-  simp
+  ext γ φ
+  exact DFunLike.congr_fun
+    (SGPT.Foundations.Analysis.restrictDistribution_trans (T γ) hWV hVU) φ
 
 theorem isPositive_restrict {T : LocalProductCurrent n U q} (hT : IsPositive T) (hVU : V ≤ U) :
     IsPositive (restrict hVU T) := by
@@ -133,6 +131,74 @@ theorem dTest_extTest (hVU : V ≤ U) (v : E) (φ : 𝓓(V, ℝ)) :
   ext x
   have hf : (extTest hVU φ : E → ℝ) = (φ : E → ℝ) := funext (extTest_apply hVU φ)
   rw [dTest_apply, extTest_apply, dTest_apply, hf]
+
+/-- Test functions supported in a compact set share a finite nonnegative partition
+subordinate to any open cover of that set. -/
+theorem exists_weighted_test_partition {ι α : Type*}
+    (V : ι → Opens E) (hVU : ∀ i, V i ≤ U) {K : Set E} (hK : IsCompact K)
+    (hcover : K ⊆ ⋃ i, (V i : Set E)) (φ : α → 𝓓(U, ℝ))
+    (hφK : ∀ j, tsupport (φ j) ⊆ K) :
+    ∃ (s : Finset ι) (ρ : ι → E → ℝ) (ψ : ∀ i, α → 𝓓(V i, ℝ)),
+      (∀ i x, 0 ≤ ρ i x) ∧ (∀ i j x, ψ i j x = ρ i x * φ j x) ∧
+      ∀ j, φ j = ∑ i ∈ s, extTest (hVU i) (ψ i j) := by
+  classical
+  obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate
+    (I := 𝓘(ℝ, E)) hK.isClosed (fun i ↦ (V i : Set E)) (fun i ↦ (V i).isOpen) hcover
+  let active : Set ι := {i | (Function.support (ρ i) ∩ K).Nonempty}
+  have hactive : active.Finite := ρ.locallyFinite.finite_nonempty_inter_compact hK
+  let ψ (i : ι) (j : α) : 𝓓(V i, ℝ) :=
+    ⟨fun x ↦ ρ i x * φ j x, (ρ i).contMDiff.contDiff.mul (φ j).contDiff,
+      (φ j).hasCompactSupport.mul_left, tsupport_mul_subset_left.trans (hρ i)⟩
+  refine ⟨hactive.toFinset, fun i x ↦ ρ i x, ψ, ρ.nonneg, fun _ _ _ ↦ rfl, fun j ↦ ?_⟩
+  apply TestFunction.ext
+  intro x
+  have hsum_apply : ∀ s : Finset ι,
+      (∑ i ∈ s, extTest (hVU i) (ψ i j)) x = ∑ i ∈ s, ρ i x * φ j x := by
+    intro s
+    induction s using Finset.induction_on with
+    | empty => rfl
+    | @insert i s hi hs =>
+        rw [Finset.sum_insert hi, Finset.sum_insert hi]
+        change (extTest (hVU i) (ψ i j)) x + (∑ a ∈ s, extTest (hVU a) (ψ a j)) x =
+          ρ i x * φ j x + ∑ a ∈ s, ρ a x * φ j x
+        rw [hs, extTest_apply]
+        rfl
+  rw [hsum_apply]
+  by_cases hx : x ∈ K
+  · have hsupp : Function.support (fun i ↦ ρ i x) ⊆ active := fun i hi => ⟨x, hi, hx⟩
+    rw [← Finset.sum_mul, ← finsum_eq_finsetSum_of_support_subset (fun i ↦ ρ i x)
+      (by simpa only [Set.Finite.coe_toFinset] using hsupp), ρ.sum_eq_one hx, one_mul]
+  · rw [image_eq_zero_of_notMem_tsupport (fun h ↦ hx (hφK j h))]
+    simp
+
+/-- Full variable-test positivity is local. -/
+theorem isPositive_of_local_restrict {q : ℕ} {S : LocalProductCurrent n U q}
+    (hloc : ∀ x ∈ U, ∃ (V : Opens (ComplexModel n)) (hVU : V ≤ U),
+      x ∈ V ∧ IsPositive (restrict hVU S)) : IsPositive S := by
+  classical
+  intro ι _ γ φ hγ
+  let K : Set E := ⋃ i : ι, tsupport (φ i)
+  have hK : IsCompact K := isCompact_iUnion fun i => (φ i).hasCompactSupport
+  have hKU : K ⊆ U := iUnion_subset fun i => (φ i).tsupport_subset
+  choose W hWU hxW hpos using fun x : U => hloc x x.property
+  have hcover : K ⊆ ⋃ a : U, (W a : Set E) := fun x hx =>
+    mem_iUnion.mpr ⟨⟨x, hKU hx⟩, hxW ⟨x, hKU hx⟩⟩
+  obtain ⟨s, ρ, ψ, hρ, hψ, hsum⟩ := exists_weighted_test_partition W hWU hK hcover φ
+    (fun i => subset_iUnion (fun j => tsupport (φ j)) i)
+  have hnonneg (a : U) : 0 ≤ ∑ i, S (γ i) (extTest (hWU a) (ψ a i)) := by
+    apply hpos a ι γ (ψ a)
+    intro x
+    simp_rw [hψ]
+    have heq : (∑ i, (ρ a x * φ i x) • (γ i : RealForm n (2 * q))) =
+        ρ a x • (∑ i, φ i x • (γ i : RealForm n (2 * q))) := by
+      simp only [Finset.smul_sum, smul_smul]
+    rw [heq]
+    exact smul_mem_spCone (hγ x) (hρ a x)
+  have heq : (∑ i, S (γ i) (φ i)) = ∑ a ∈ s, ∑ i, S (γ i) (extTest (hWU a) (ψ a i)) := by
+    simp only [hsum, map_sum]
+    exact Finset.sum_comm
+  rw [heq]
+  exact Finset.sum_nonneg fun a _ => hnonneg a
 
 theorem ddc_restrict (hVU : V ≤ U) (S : LocalProductCurrent n U (q + 1)) :
     ddc (restrict hVU S) = restrict hVU (ddc S) := by

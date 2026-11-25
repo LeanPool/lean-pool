@@ -10,7 +10,6 @@ module
 
 public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrent4CLN
 public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarClosedLocal
-public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrent2Multilinear
 public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrentPlurifine
 
 /-!
@@ -321,16 +320,6 @@ theorem neg_lt_truncationReal_iff {u : (ComplexModel n) → EReal} (hu : Plurisu
   simp only [strictTruncationLocus, mem_ofPred_eq, eq_iff_iff] at h
   exact ⟨fun h' => (h.mpr ⟨hz, h'⟩).2, fun h' => (h.mp ⟨hz, h'⟩).2⟩
 
-theorem truncationReal_eq_of_lt {u : (ComplexModel n) → EReal} (hu : PlurisubharmonicOn u U)
-    {k l : ℕ}
-    (hkl : k ≤ l) {z : (ComplexModel n)} (hz : z ∈ (U : Set (ComplexModel n))) (h : ((-(k : ℝ)
-      : ℝ) : EReal) < u z) :
-    truncationReal u l z = truncationReal u k z := by
-  rw [← truncationReal_nested hu hkl hz, max_eq_left]
-  have hl : ((-(k : ℝ) : ℝ) : EReal) < truncation u l z := lt_of_lt_of_le h (le_max_left _ _)
-  rw [← coe_truncationReal hu l hz] at hl
-  exact (EReal.coe_lt_coe_iff.mp hl).le
-
 /-- A positive current multiplied by the indicator of a null set of its trace measure is `0`. -/
 theorem mulBorel_indicator_eq_zero_of_null {q : ℕ} {T : LocalProductCurrent n U q}
     (hT : IsPositive T) {A : Set (ComplexModel n)} (hA : MeasurableSet A) (h0 : hT.traceMeasure A
@@ -364,7 +353,10 @@ variable {r p' : ℕ}
 /-- **FPT `prop:nonpluripolar-bounded-factor-compatibility`, one bounded factor**: for psh
 `φ₁, …, φ_{p'}` on `U` with `S = ⟨dd^c φ₁ ∧ ⋯ ∧ dd^c φ_{p'}⟩` well defined and a locally bounded
 psh `v`, the non-pluripolar product `⟨dd^c v ∧ dd^c φ₁ ∧ ⋯ ∧ dd^c φ_{p'}⟩` is well defined and
-equals the relative Bedford–Taylor product `dd^c v ∧ S = dd^c (v S)`. -/
+equals the relative Bedford–Taylor product `dd^c v ∧ S = dd^c (v S)`.
+
+The tail uses the local convention of `nonPluripolarProduct`, which permits an
+identically `-∞` factor. In that case the product and the relative product both vanish. -/
 theorem nonPluripolarProduct_cons_bounded (hqp' : r + 1 + p' = n) (hqp : r + (p' + 1) = n)
     {φ : Fin p' → (ComplexModel n) → EReal} (hφ : ∀ i, PlurisubharmonicOn (φ i) U)
     (hW : IsWellDefinedOn hqp' U φ) {v : (ComplexModel n) → ℝ} (hv : IsLocallyBoundedPshOn U v) :
@@ -404,7 +396,7 @@ theorem nonPluripolarProduct_cons_bounded (hqp' : r + 1 + p' = n) (hqp : r + (p'
     · exact Fin.cases hv (fun j => truncationReal_isLocallyBoundedPshOn (hφ j) m₀) i
     · refine Fin.cases (fun z _ => rfl) (fun j z hz => ?_) i
       simp only [Fin.cons_succ]
-      exact truncationReal_eq_of_lt (hφ j) hk hz.1 (hz.2 j)
+      exact truncationReal_mono_level hk (hz.2 j)
   -- `1_{O_m} dd^c v ∧ S = 1_{O_m} dd^c v ∧ Θ_m`, through the psh cutoffs of the strict loci
   have hL : ∀ m₀, mulBorel (ddcMul S v) ((O m₀).indicator fun _ => (1 : ℝ)) =
       mulBorel (ddcMul (Θ m₀) v) ((O m₀).indicator fun _ => (1 : ℝ)) := by
@@ -555,7 +547,11 @@ on an open `U ⊆ ℂⁿ`: let `v₁, …, v_q` be locally bounded psh and `φ_{
 with `T = ⟨dd^c φ_{q+1} ∧ ⋯ ∧ dd^c φ_p⟩` well defined.  Then the non-pluripolar product
 `⟨dd^c v₁ ∧ ⋯ ∧ dd^c v_q ∧ dd^c φ_{q+1} ∧ ⋯ ∧ dd^c φ_p⟩` of the concatenated tuple is well defined
 and equals the relative Bedford–Taylor product `dd^c v₁ ∧ ⋯ ∧ dd^c v_q ∧ T` (`btProduct q r v T`,
-the recursion `dd^c(v₁ dd^c(v₂ ⋯ dd^c(v_q T)))` with base `T`). -/
+the recursion `dd^c(v₁ dd^c(v₂ ⋯ dd^c(v_q T)))` with base `T`).
+
+The local Lean variant permits a tail factor identically `-∞`, as documented at
+`nonPluripolarProduct`. Its strict loci are empty, the mass condition holds,
+and both currents are zero. -/
 theorem nonPluripolarProduct_append_bounded : ∀ (q : ℕ) {r p' : ℕ} (hqp' : r + q + p' = n)
     (hqp : r + (q + p') = n) {v : Fin q → (ComplexModel n) → ℝ} (_hv : ∀ i, IsLocallyBoundedPshOn
       U (v i))

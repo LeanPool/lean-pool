@@ -9,8 +9,6 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Currents.LayeredCurrent
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalPositiveCurrentGluing
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCalculus
 
 /-!
@@ -60,7 +58,6 @@ open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorLocality
 open SGPT.Foundations.Analysis.Pending.LocalCurrentLebesgue
-open SGPT.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
 open SGPT.NPP.NonPluripolarCurrent
 
 variable {n q : ℕ}
@@ -340,7 +337,7 @@ theorem exists_glue (hF : IsCompatibleFamily W T) (hWU : ∀ i, W i ≤ U)
       restrict_ofMeasureDensity hμ (hWU (f k)) (hF.isPositive (f k)) (glueMeasure_restrict hG k)
         (ae_glueDensity hG k)
     have hpos : IsPositive S := by
-      apply LocalPositiveCurrentGluing.isPositive_of_local_restrict
+      apply isPositive_of_local_restrict
       intro x hx
       obtain ⟨k, hk⟩ := hcov' x hx
       exact ⟨W (f k), hWU (f k), hk, by rw [hres k]; exact hF.isPositive (f k)⟩

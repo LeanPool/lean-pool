@@ -390,6 +390,29 @@ theorem acPart_eq_self_of_absolutelyContinuous (hT : IsPositive T)
 
 /-! ### Compatibility with restriction to open subsets -/
 
+/-- If two families of linear functionals on `Λ_q` agree almost everywhere on each
+    strongly positive form, they
+agree almost everywhere on all of `Λ_q` (every form is a difference of two strongly positive ones;
+    use a basis). -/
+theorem ae_forall_eq_of_posCone {μ : Measure (ComplexModel n)} {P : ComplexModel n → Prop}
+    (L₁ L₂ : ComplexModel n → formSpan n q →ₗ[ℝ] ℝ)
+    (h : ∀ γ ∈ posCone n q, ∀ᵐ x ∂μ, P x → L₁ x γ = L₂ x γ) :
+    ∀ᵐ x ∂μ, P x → ∀ γ, L₁ x γ = L₂ x γ := by
+  have hω : kahlerPower n q ∈ posCone n q := formPower_mem_spCone isSemipositiveOneOne_kahlerForm q
+  have key : ∀ i, ∃ c₁ c₂ : formSpan n q, c₁ ∈ posCone n q ∧ c₂ ∈ posCone n q ∧ formBasis n q i =
+    c₁ - c₂ := by
+    intro i
+    obtain ⟨C, hC, -, h2⟩ := exists_orderUnit (formBasis n q i).2
+    exact ⟨C • kahlerPower n q + formBasis n q i, C • kahlerPower n q, h2, smul_mem_spCone hω hC,
+      (add_sub_cancel_left _ _).symm⟩
+  choose c₁ c₂ hc₁ hc₂ hc using key
+  have hall := ae_all_iff.mpr fun i => (h _ (hc₁ i)).and (h _ (hc₂ i))
+  filter_upwards [hall] with x hx hPx γ
+  have hL : L₁ x = L₂ x := by
+    refine (formBasis n q).ext fun i => ?_
+    rw [hc i, map_sub, map_sub, (hx i).1 hPx, (hx i).2 hPx]
+  rw [hL]
+
 section Restrict
 
 open LocalBedfordTaylorLocality
@@ -407,6 +430,15 @@ theorem densityForm_restrict_ae (hT : IsPositive T) (hVU : V ≤ U) (γ : formSp
   filter_upwards [densityForm_ae (isPositive_restrict hT hVU) γ, density_restrict_ae hT hVU γ,
     hle.ae_le (densityForm_ae hT γ)] with x h1 h2 h3
   rw [h1, h2, h3]
+
+/-- Almost everywhere for the trace measure of `T|_V`, the density forms of `T|_V` and `T` agree
+    on all of `Λ_q`. -/
+theorem ae_densityForm_restrict_eq (hT : IsPositive T) (hVU : V ≤ U) :
+    ∀ᵐ y ∂(isPositive_restrict hT hVU).traceMeasure,
+      densityForm (isPositive_restrict hT hVU) y = densityForm hT y := by
+  have hall := ae_all_iff.mpr fun i => densityForm_restrict_ae hT hVU (formBasis n q i)
+  filter_upwards [hall] with y hy
+  exact (formBasis n q).ext fun i => hy i
 
 theorem ofMeasure_congr (hT : IsPositive T) {ν ν' : Measure E} (hν : ν ≤ hT.traceMeasure)
     (hν' : ν' ≤ hT.traceMeasure) (h : ν = ν') : ofMeasure hT ν hν = ofMeasure hT ν' hν' := by

@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentPullbackDdc
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrentLebesgue
 
 /-!
 # Currents defined by layered density forms
@@ -35,7 +35,6 @@ open SGPT.Foundations.Analysis.Pending.StronglyPositiveForms
 open SGPT.Foundations.Analysis.Pending.LocalProductCurrents
 open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorProducts
 open SGPT.Foundations.Analysis.Pending.LocalCurrentLebesgue
-open SGPT.Foundations.Analysis.Pending.LocalBedfordTaylorForms
 
 attribute [local instance] addCommGroupFormSpan
 

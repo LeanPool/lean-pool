@@ -211,4 +211,17 @@ theorem iUnion_strictTruncationLocus (Ω : Opens (ComplexModel n))
     refine mem_iUnion.mpr ⟨k, hz, ?_⟩
     exact (EReal.coe_lt_coe_iff.mpr (show -(k : ℝ) < r by linarith)).trans hr
 
+theorem truncationReal_of_lt {u : (ComplexModel n) → EReal} {k : ℕ} {x : (ComplexModel n)}
+    (h : ((-(k : ℝ) : ℝ) : EReal) < u x) : truncationReal u k x = (u x).toReal := by
+  rw [truncationReal, truncation, max_eq_left h.le]
+
+theorem neg_lt_of_le {v : EReal} {k m : ℕ} (hkm : k ≤ m)
+    (h : ((-(k : ℝ) : ℝ) : EReal) < v) : ((-(m : ℝ) : ℝ) : EReal) < v :=
+  lt_of_le_of_lt (EReal.coe_le_coe_iff.mpr (neg_le_neg (Nat.cast_le.mpr hkm))) h
+
+theorem truncationReal_mono_level {u : (ComplexModel n) → EReal} {k m : ℕ} (hkm : k ≤ m)
+    {x : (ComplexModel n)}
+    (hu : ((-(k : ℝ) : ℝ) : EReal) < u x) : truncationReal u m x = truncationReal u k x := by
+  rw [truncationReal_of_lt (neg_lt_of_le hkm hu), truncationReal_of_lt hu]
+
 end SGPT.Foundations.Analysis.FirstPass.MongeAmpere

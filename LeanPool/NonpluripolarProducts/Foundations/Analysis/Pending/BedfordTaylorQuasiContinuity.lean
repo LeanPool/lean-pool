@@ -54,11 +54,6 @@ variable {n : ℕ}
 
 /-! ## Auxiliary facts -/
 
-theorem IsDecApprox.abs_limit_le {V : Opens (ComplexModel n)} {w : ComplexModel n → ℝ}
-    {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox V w G) {K : Set (ComplexModel n)}
-    (hKV : K ⊆ V) {C : ℝ} (hC : ∀ k, ∀ z ∈ K, |G k z| ≤ C) : ∀ z ∈ K, |w z| ≤ C := fun z hz ↦
-  le_of_tendsto' ((continuous_abs.tendsto _).comp (hG.2.2.1 z (hKV hz))) fun k ↦ hC k z hz
-
 theorem IsDecApprox.aestronglyMeasurable_restrict {V : Opens (ComplexModel n)}
     {w : ComplexModel n → ℝ} {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox V w G)
     {K : Set (ComplexModel n)} (hK : IsCompact K) (hKV : K ⊆ V) (ρ : Measure (ComplexModel n))
@@ -74,7 +69,7 @@ theorem IsDecApprox.integrableOn_pow_sub {V : Opens (ComplexModel n)} {w : Compl
     (hK : IsCompact K) (hKV : K ⊆ V) {ρ : Measure (ComplexModel n)} (hρK : ρ K < ⊤) (j p : ℕ) :
     IntegrableOn (fun z ↦ (G j z - w z) ^ p) K ρ := by
   obtain ⟨C, hC⟩ := hG.exists_abs_le hK hKV
-  have hw := hG.abs_limit_le hKV hC
+  have hw := fun z hz => hG.abs_le_of_mem hKV hC (z := z) hz
   have : IsFiniteMeasure (ρ.restrict K) := isFiniteMeasure_restrict.2 hρK.ne
   refine (integrable_const ((2 * C) ^ p)).mono' (hG.aestronglyMeasurable_restrict hK hKV ρ j p) ?_
   filter_upwards [ae_restrict_mem hK.measurableSet] with z hz
@@ -86,7 +81,7 @@ theorem IsDecApprox.tendsto_setIntegral_sub {V : Opens (ComplexModel n)} {w : Co
     (hK : IsCompact K) (hKV : K ⊆ V) {ρ : Measure (ComplexModel n)} (hρK : ρ K < ⊤) :
     Tendsto (fun j ↦ ∫ z in K, (G j z - w z) ∂ρ) atTop (𝓝 0) := by
   obtain ⟨C, hC⟩ := hG.exists_abs_le hK hKV
-  have hw := hG.abs_limit_le hKV hC
+  have hw := fun z hz => hG.abs_le_of_mem hKV hC (z := z) hz
   have : IsFiniteMeasure (ρ.restrict K) := isFiniteMeasure_restrict.2 hρK.ne
   have h := tendsto_integral_of_dominated_convergence (μ := ρ.restrict K)
     (F := fun j z ↦ (G j z - w z) ^ 1) (f := fun _ ↦ 0) (fun _ ↦ 2 * C)

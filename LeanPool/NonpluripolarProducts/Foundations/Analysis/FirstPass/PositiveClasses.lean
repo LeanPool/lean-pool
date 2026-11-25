@@ -104,6 +104,40 @@ theorem sub_coe_add_coe (a : EReal) (r s : ℝ) :
   congr 2
   ring
 
+/-- Adding the global smooth correction gives an actual local potential of
+the changed representative, on the same coordinate neighborhood. -/
+theorem isSmoothLocalPotential_add_chartSmooth {θ η : SmoothRealForm n M 2}
+    {f : M → ℝ} (hf : ChartSmooth (n := n) f)
+    (hθη : ∀ (e : ComplexChart n M) (z : ComplexModel n), z ∈ e.val.target →
+      η.coeff e z = θ.coeff e z + smoothDDC (fun y => f (e.val.symm y)) z)
+    {e : ComplexChart n M} {W : Set (ComplexModel n)} {ρ : ComplexModel n → ℝ}
+    (hρ : IsSmoothLocalPotential θ e W ρ) :
+    IsSmoothLocalPotential η e W (fun y => ρ y + f (e.val.symm y)) := by
+  refine ⟨hρ.1, hρ.2.1, hρ.2.2.1.add ((hf e).mono hρ.2.1), ?_⟩
+  intro y hy
+  rw [smoothDDC_add hρ.1 hρ.2.2.1 ((hf e).mono hρ.2.1) hy,
+    hρ.2.2.2 hy, hθη e y (hρ.2.1 hy)]
+
+/-- The raw theta-PSH predicate transforms without requiring a non-pole point
+in every neighborhood. Finite real corrections cancel also at `-∞`. -/
+theorem thetaPlurisubharmonic_sub_smooth {θ η : SmoothRealForm n M 2}
+    {f : M → ℝ} (hf : ChartSmooth (n := n) f)
+    (hθη : ∀ (e : ComplexChart n M) (z : ComplexModel n), z ∈ e.val.target →
+      η.coeff e z = θ.coeff e z + smoothDDC (fun y => f (e.val.symm y)) z)
+    {u : M → EReal} (hu : ThetaPlurisubharmonic θ u) :
+    ThetaPlurisubharmonic η (fun x => u x - (f x : EReal)) := by
+  intro e z hz
+  obtain ⟨W, ρ, hzW, hρ, hp⟩ := hu e z hz
+  refine ⟨W, fun y => ρ y + f (e.val.symm y), hzW,
+    isSmoothLocalPotential_add_chartSmooth hf hθη hρ, ?_⟩
+  have heq : (fun y => chartFunction (fun x => u x - (f x : EReal)) e y +
+      ((ρ y + f (e.val.symm y) : ℝ) : EReal)) =
+      (fun y => chartFunction u e y + (ρ y : EReal)) := by
+    funext y
+    exact sub_coe_add_coe _ _ _
+  rw [heq]
+  exact hp
+
 /-- Under a smooth change of representative, subtract the same function from
 the potential and add it to each local smooth potential. The corrected PSH
 function is exactly unchanged, not merely equal away from poles. -/
@@ -114,20 +148,7 @@ theorem thetaPshPotential_sub_smooth {θ η : SmoothRealForm n M 2}
     {u : M → EReal} (hu : IsThetaPshPotential θ u) :
     IsThetaPshPotential η (fun x => u x - (f x : EReal)) := by
   constructor
-  · intro e z hz
-    obtain ⟨W, ρ, hzW, hρ, hp⟩ := hu.1 e z hz
-    refine ⟨W, fun y => ρ y + f (e.val.symm y), hzW, ?_, ?_⟩
-    · refine ⟨hρ.1, hρ.2.1, hρ.2.2.1.add ((hf e).mono hρ.2.1), ?_⟩
-      intro y hy
-      rw [smoothDDC_add hρ.1 hρ.2.2.1 ((hf e).mono hρ.2.1) hy,
-        hρ.2.2.2 hy, hθη e y (hρ.2.1 hy)]
-    · have heq : (fun y => chartFunction (fun x => u x - (f x : EReal)) e y +
-          ((ρ y + f (e.val.symm y) : ℝ) : EReal)) =
-          (fun y => chartFunction u e y + (ρ y : EReal)) := by
-        funext y
-        exact sub_coe_add_coe _ _ _
-      rw [heq]
-      exact hp
+  · exact thetaPlurisubharmonic_sub_smooth hf hθη hu.1
   · intro x U hU hx
     obtain ⟨y, hy, hfin⟩ := hu.2 x U hU hx
     refine ⟨y, hy, ?_⟩

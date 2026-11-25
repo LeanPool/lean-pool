@@ -29,6 +29,9 @@ and the pull-back of positive currents `LocalCurrentPullback.pullback`
 * `pullback_truncatedProduct` — `τ^* S_k(φ) = S_k(φ ∘ τ)` for the truncated products;
 * `pullback_nonPluripolarProduct` — if the product of `φ₁, …, φ_p` on `B` is well defined, so is
   that of `φ₁ ∘ τ, …, φ_p ∘ τ` on `A`, and `τ^* ⟨⋀ dd^c φⱼ⟩ = ⟨⋀ dd^c (φⱼ ∘ τ)⟩`.
+
+The local statements use the convention at `NonPluripolarCurrent.nonPluripolarProduct`.
+A factor may be identically `-∞` on an open component, where the product vanishes.
 -/
 
 @[expose] public section

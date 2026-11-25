@@ -9,7 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalDDbar
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalPotentials
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothThetaCriterion
 
 /-!
 # The local dd-bar lemma and its smooth positivity consequences

@@ -83,37 +83,6 @@ open FirstPass FirstPass.MongeAmpere StronglyPositiveForms TopDegreeDensity Loca
 
 attribute [local instance] addCommGroupFormSpan
 
-/-! ### Linear functionals that agree on the strongly positive cone -/
-
-section PosCone
-
-variable {n q : ℕ}
-
-/-- If two measurable families of linear functionals on `Λ_q` agree almost everywhere on each
-    strongly positive form, they
-agree almost everywhere on all of `Λ_q` (every form is a difference of two strongly positive ones;
-    use a basis). -/
-theorem ae_forall_eq_of_posCone {μ : Measure (ComplexModel n)} {P : ComplexModel n → Prop}
-    (L₁ L₂ : ComplexModel n → formSpan n q →ₗ[ℝ] ℝ)
-    (h : ∀ γ ∈ posCone n q, ∀ᵐ x ∂μ, P x → L₁ x γ = L₂ x γ) :
-    ∀ᵐ x ∂μ, P x → ∀ γ, L₁ x γ = L₂ x γ := by
-  have hω : kahlerPower n q ∈ posCone n q := formPower_mem_spCone isSemipositiveOneOne_kahlerForm q
-  have key : ∀ i, ∃ c₁ c₂ : formSpan n q, c₁ ∈ posCone n q ∧ c₂ ∈ posCone n q ∧ formBasis n q i =
-    c₁ - c₂ := by
-    intro i
-    obtain ⟨C, hC, -, h2⟩ := exists_orderUnit (formBasis n q i).2
-    exact ⟨C • kahlerPower n q + formBasis n q i, C • kahlerPower n q, h2, smul_mem_spCone hω hC,
-      (add_sub_cancel_left _ _).symm⟩
-  choose c₁ c₂ hc₁ hc₂ hc using key
-  have hall := ae_all_iff.mpr fun i => (h _ (hc₁ i)).and (h _ (hc₂ i))
-  filter_upwards [hall] with x hx hPx γ
-  have hL : L₁ x = L₂ x := by
-    refine (formBasis n q).ext fun i => ?_
-    rw [hc i, map_sub, map_sub, (hx i).1 hPx, (hx i).2 hPx]
-  rw [hL]
-
-end PosCone
-
 /-! ### Currents given by a continuous `(1,1)`-form, and `dd^c` of a smooth function -/
 
 section FormCurrents
@@ -466,15 +435,6 @@ theorem isBiholomorphicPair_preOpen (h : IsBiholomorphicPair A B τ σ) {V : Ope
   right_inv := fun y hy => h.right_inv y (hVB hy)
 
 variable {T : LocalProductCurrent n B q}
-
-/-- Almost everywhere for the trace measure of `T|_V`, the density forms of `T|_V` and `T` agree
-    on all of `Λ_q`. -/
-theorem ae_densityForm_restrict_eq (hT : IsPositive T) {V : Opens (ComplexModel n)} (hVB : V ≤ B) :
-    ∀ᵐ y ∂(isPositive_restrict hT hVB).traceMeasure,
-      densityForm (isPositive_restrict hT hVB) y = densityForm hT y := by
-  have hall := ae_all_iff.mpr fun i => densityForm_restrict_ae hT hVB (formBasis n q i)
-  filter_upwards [hall] with y hy
-  exact (formBasis n q).ext fun i => hy i
 
 /-- **The pull-back commutes with restriction**: `τ'^*(T|_V) = (τ^* T)|_{A ∩ τ⁻¹(V)}`. -/
 theorem pullback_restrict (h : IsBiholomorphicPair A B τ σ) (hT : IsPositive T)

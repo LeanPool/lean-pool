@@ -101,6 +101,44 @@ theorem isLocallyBoundedOn_indicator_one (A : Set (ComplexModel n)) :
     IsLocallyBoundedOn (A.indicator fun _ => (1 : ℝ)) U :=
   fun _ _ _ => ⟨1, fun x _ => by by_cases hx : x ∈ A <;> simp [hx]⟩
 
+theorem indicator_one_nonneg (A : Set (ComplexModel n)) (x : (ComplexModel n)) : 0 ≤ A.indicator
+    (fun _ => (1 : ℝ)) x := by
+  by_cases hx : x ∈ A <;> simp [hx]
+
+theorem isPositive_mulBorel_indicator {T : LocalProductCurrent n U q} (hT : IsPositive T)
+    {A : Set (ComplexModel n)} (hA : MeasurableSet A) :
+    IsPositive (mulBorel T (A.indicator fun _ => (1 : ℝ))) :=
+  BedfordTaylorTopDegree.isPositive_mulBorel_of_nonneg hT (measurable_const.indicator hA)
+    (isLocallyBoundedOn_indicator_one A) (indicator_one_nonneg A)
+
+/-- **The trace measure of `1_A T` is `σ_T|_A`.** -/
+theorem traceMeasure_mulBorel_indicator {T : LocalProductCurrent n U q} (hT : IsPositive T)
+    {A : Set (ComplexModel n)} (hA : MeasurableSet A) :
+    (isPositive_mulBorel_indicator hT hA).traceMeasure = hT.traceMeasure.restrict A := by
+  have hS := isPositive_mulBorel_indicator hT hA
+  refine LocalBedfordTaylorLocality.eq_of_forall_testFunction_integral_eq (U := U)
+    hS.traceMeasure_compl
+    (le_antisymm ((Measure.le_iff'.mp Measure.restrict_le_self _).trans
+      hT.traceMeasure_compl.le) zero_le)
+    (fun K hK hKU => hS.traceMeasure_lt_top hK hKU)
+    (fun K hK hKU => ((Measure.le_iff'.mp Measure.restrict_le_self _).trans_lt
+      (hT.traceMeasure_lt_top hK hKU))) fun φ => ?_
+  rw [hS.integral_traceMeasure, mulBorel_apply hT (measurable_const.indicator hA)
+    (isLocallyBoundedOn_indicator_one A), ← integral_indicator hA]
+  refine integral_congr_ae ?_
+  filter_upwards [density_kahlerPower_ae hT] with x hx
+  rw [hx]
+  by_cases hxA : x ∈ A <;> simp [hxA]
+
+/-- `σ_{1_A T}(s) = σ_T(s ∩ A)`. -/
+theorem traceMeasure_mulBorel_indicator_apply {T : LocalProductCurrent n U q}
+    (hT : IsPositive T) {A : Set (ComplexModel n)} (hA : MeasurableSet A) (hS : IsPositive
+      (mulBorel T (A.indicator fun _ => (1 : ℝ)))) {s : Set (ComplexModel n)} (hs : MeasurableSet
+        s) :
+    hS.traceMeasure s = hT.traceMeasure (s ∩ A) := by
+  rw [show hS.traceMeasure = (isPositive_mulBorel_indicator hT hA).traceMeasure from rfl,
+    traceMeasure_mulBorel_indicator hT hA, Measure.restrict_apply hs]
+
 variable (B O) in
 /-- The level-`k` truncated current `1_{O_k} B_k`. -/
 def truncAt (k : ℕ) : LocalProductCurrent n U q :=
@@ -650,9 +688,12 @@ theorem truncAt_eq_truncatedProduct (k : ℕ) :
       BedfordTaylorTopDegree.truncatedProduct hqp U φ k := rfl
 
 variable (U φ) in
-/-- **The source well-definedness condition** `eq:welldefinepluri` on `U`: for every connected
-open `V ⊆ U`, every smooth semipositive `(1,1)`-form `α` on `V` and every compact `K ⊆ V`,
-`sup_k ∫_{K ∩ O_k} (⋀ⱼ dd^c (φⱼ ∨ (-k)))|_V ∧ α^{n-p} < ∞`. -/
+/-- **Well-definedness by bounded truncation mass**, following `eq:welldefinepluri` on `U`.
+For every connected open `V ⊆ U`, every smooth semipositive `(1,1)`-form `α` on `V`,
+and every compact `K ⊆ V`,
+`sup_k ∫_{K ∩ O_k} (⋀ⱼ dd^c (φⱼ ∨ (-k)))|_V ∧ α^{n-p} < ∞`.
+Xia tests with positive forms. The semipositive tests here are controlled by a multiple of the
+Euclidean form on each compact set, as used in `isWellDefinedOn_iff`. -/
 def IsWellDefinedOn : Prop :=
   ∀ (V : Opens (ComplexModel n)) (hVU : V ≤ U), IsConnected (V : Set (ComplexModel n)) →
     ∀ α : (ComplexModel n) → RealForm n 2, ContDiffOn ℝ ∞ α V → (∀ x ∈ V, IsSemipositiveOneOne (α
@@ -733,8 +774,14 @@ a current of bidimension `(q,q)`, `q + p = n`: the glued current of the truncati
 `1_{O_k} ⋀ⱼ dd^c (φⱼ ∨ (-k))` (`IsTruncationFamily.glue`), characterized by
 `1_{O_k} ⟨⋯⟩ = 1_{O_k} ⋀ⱼ dd^c (φⱼ ∨ (-k))` and vanishing off `⋃ₖ O_k`
 (`mulBorel_nonPluripolarProduct_strictLocus`, `mulBorel_nonPluripolarProduct_compl`,
-`eq_nonPluripolarProduct_of_mulBorel`).  It is `0` when the `φⱼ` are not psh or the product is not
-well defined. -/
+`eq_nonPluripolarProduct_of_mulBorel`). It is `0` when the factors fail the Lean psh predicate or
+the mass condition fails.
+
+The local Lean psh predicate also allows a factor to be identically `-∞` on an open component.
+[Xia's psh definition](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_pshfunctions.tex#L65-L78) excludes that case. The strict loci miss any such component,
+so the restrictions of the truncations and of the glued current to that component are zero.
+If a factor is identically `-∞` throughout `U`, each strict locus is empty, the mass condition
+holds, and the product is zero. The other local product statements use this same convention. -/
 def nonPluripolarProduct : LocalProductCurrent n U q :=
   if hφ : ∀ i, PlurisubharmonicOn (φ i) U then (isTruncationFamily hqp hφ).glue else 0
 

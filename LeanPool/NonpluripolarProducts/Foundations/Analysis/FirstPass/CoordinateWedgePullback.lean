@@ -119,23 +119,30 @@ def coordinateRealBasis : Module.Basis (Fin (n * 2)) ℝ (ComplexModel n) :=
   · simp [coordinateVector]
   · simp [coordinateVector]
 
+/-- Evaluating a top form on the image of a basis multiplies its basis value by the determinant. -/
+theorem topForm_apply_comp_basis {E ι : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    [Finite ι] (A : E [⋀^ι]→L[ℝ] ℝ)
+    (b : Module.Basis ι ℝ E) (L : E →L[ℝ] E) :
+    A (L ∘ b) = LinearMap.det (L : E →ₗ[ℝ] E) * A b := by
+  classical
+  let := Fintype.ofFinite ι
+  have hΦ := A.toAlternatingMap.eq_smul_basis_det b
+  change A.toAlternatingMap (L ∘ b) = _ * A.toAlternatingMap b
+  rw [hΦ]
+  simp only [_root_.smul_apply, smul_eq_mul, Module.Basis.det_self, mul_one]
+  rw [show (⇑L ∘ ⇑b) = ⇑(L : E →ₗ[ℝ] E) ∘ ⇑b from rfl,
+    Module.Basis.det_comp, Module.Basis.det_self, mul_one]
+  ring
+
 /-- Pullback of the genuine top power under a real-linear endomorphism multiplies
 its standard-frame density by the real determinant. -/
 theorem actualTopPowerDensity_compContinuousLinearMap (A : CoordinateRealTwoForm n)
     (L : ComplexModel n →L[ℝ] ComplexModel n) :
     actualTopPowerDensity (A.compContinuousLinearMap L) =
       LinearMap.det (L : ComplexModel n →ₗ[ℝ] ComplexModel n) * actualTopPowerDensity A := by
-  set b := coordinateRealBasis n
-  have hΦ := (coordinateWedgePower A n).toAlternatingMap.eq_smul_basis_det b
   unfold actualTopPowerDensity
   rw [coordinateWedgePower_compContinuousLinearMap,
     ContinuousAlternatingMap.compContinuousLinearMap_apply, ← coe_coordinateRealBasis]
-  change (coordinateWedgePower A n).toAlternatingMap (L ∘ b) =
-    _ * (coordinateWedgePower A n).toAlternatingMap b
-  rw [hΦ]
-  simp only [_root_.smul_apply, smul_eq_mul, Module.Basis.det_self, mul_one]
-  rw [show (⇑L ∘ ⇑b) = ⇑(L : ComplexModel n →ₗ[ℝ] ComplexModel n) ∘ ⇑b from rfl,
-    Module.Basis.det_comp, Module.Basis.det_self, mul_one]
-  ring
+  exact topForm_apply_comp_basis _ _ L
 
 end SGPT.Foundations.Analysis.FirstPass.MongeAmpere

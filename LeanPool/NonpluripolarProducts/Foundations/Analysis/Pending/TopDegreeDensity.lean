@@ -117,16 +117,9 @@ theorem topDensity_compContinuousLinearMap (A : RealForm n (2 * n))
     (L : ComplexModel n →L[ℝ] ComplexModel n) :
     topDensity (A.compContinuousLinearMap L) =
       LinearMap.det (L : ComplexModel n →ₗ[ℝ] ComplexModel n) * topDensity A := by
-  set b := topBasis n
-  have hΦ := A.toAlternatingMap.eq_smul_basis_det b
   unfold topDensity
   rw [ContinuousAlternatingMap.compContinuousLinearMap_apply]
-  change A.toAlternatingMap (L ∘ b) = _ * A.toAlternatingMap b
-  rw [hΦ]
-  simp only [_root_.smul_apply, smul_eq_mul, Module.Basis.det_self, mul_one]
-  rw [show (⇑L ∘ ⇑b) = ⇑(L : ComplexModel n →ₗ[ℝ] ComplexModel n) ∘ ⇑b from rfl,
-    Module.Basis.det_comp, Module.Basis.det_self, mul_one]
-  ring
+  exact topForm_apply_comp_basis A _ L
 
 /-! ### The unit of the exterior product -/
 

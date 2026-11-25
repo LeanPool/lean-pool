@@ -8,6 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PlurifinePshTopology
 public import LeanPool.NonpluripolarProducts.NPP.NonPluripolarCurrentNonCharging
 public import LeanPool.NonpluripolarProducts.PSH.DomainPlurifine
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BorelPlurifineCanonicalMixedLocality
@@ -30,6 +31,9 @@ continuous).
 * `mulBorel_nonPluripolarProduct_eq_of_eqOn_plurifineOpen` — **`eq:ppp1` for Borel plurifine
   open sets**: if `φⱼ = ψⱼ` on a Borel plurifine open `O ⊆ U` and both products are well defined,
   then `1_O ⟨⋀ dd^c φⱼ⟩ = 1_O ⟨⋀ dd^c ψⱼ⟩`.
+
+The local statements use the convention at `NonPluripolarCurrent.nonPluripolarProduct`.
+A factor may be identically `-∞` on an open component, where the product vanishes.
 -/
 
 @[expose] public section
@@ -136,6 +140,19 @@ theorem ae_mem_iUnion_strictLocus {φ : Fin p → (ComplexModel n) → EReal}
   rw [IsPositive.traceMeasure_congr _ ((isTruncationFamily hqp hφ).isPositive_glue hm)
     (nonPluripolarProduct_eq hqp hφ), (isTruncationFamily hqp hφ).traceMeasure_glue hm]
   exact (isTruncationFamily hqp hφ).ae_glueMeasure_mem
+
+/-- The strict loci `O_k` are plurifine open (`def:pftopologydomain`). -/
+theorem isOpen_plurifine_strictLocus {φ : Fin p → (ComplexModel n) → EReal}
+    (hφ : ∀ i, PlurisubharmonicOn (φ i) U) (k : ℕ) :
+    IsOpen[SGPT.PSH.domainPlurifineTopology U]
+      (Subtype.val ⁻¹' BedfordTaylorTopDegree.strictLocus U φ k) := by
+  have e : (Subtype.val ⁻¹' BedfordTaylorTopDegree.strictLocus U φ k : Set U) =
+      ⋂ i, {z : U | (((-(k : ℝ)) : ℝ) : EReal) < φ i z.val} := by
+    ext z
+    simp [BedfordTaylorTopDegree.strictLocus]
+  rw [e]
+  exact @isOpen_iInter_of_finite _ _ (SGPT.PSH.domainPlurifineTopology U) _ _
+    fun i => PlurifinePshTopology.isOpen_psh_superlevel (hφ i) _
 
 /-- `1_{O_k ∩ O} ⟨⋯⟩ → 1_O ⟨⋯⟩` weakly. -/
 theorem tendsto_mulBorel_strictLocus_inter {φ : Fin p → (ComplexModel n) → EReal}

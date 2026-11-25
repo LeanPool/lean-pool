@@ -8,7 +8,11 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionTranslationJets
+public import Mathlib.Tactic.NormNum
+public import Mathlib.Topology.Sets.Compacts
+public import Mathlib.Analysis.Normed.Module.FiniteDimension
+public import Mathlib.Analysis.Calculus.ContDiff.Comp
+public import Mathlib.Analysis.Calculus.MeanValue
 
 /-!
 # Uniform Taylor remainders for translated kernels
@@ -25,7 +29,7 @@ test-function seminorm of a translated kernel.
 noncomputable section
 
 open Set TopologicalSpace Filter Asymptotics
-open scoped ContDiff Distributions Topology Pointwise
+open scoped ContDiff Topology Pointwise
 
 namespace SGPT.Foundations.Analysis.Pending
 

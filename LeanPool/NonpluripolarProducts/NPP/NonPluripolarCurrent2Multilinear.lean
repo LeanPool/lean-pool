@@ -72,44 +72,6 @@ section General
 
 variable {U : Opens (ComplexModel n)} {q : ℕ}
 
-theorem indicator_one_nonneg (A : Set (ComplexModel n)) (x : (ComplexModel n)) : 0 ≤ A.indicator
-    (fun _ => (1 : ℝ)) x := by
-  by_cases hx : x ∈ A <;> simp [hx]
-
-theorem isPositive_mulBorel_indicator {T : LocalProductCurrent n U q} (hT : IsPositive T)
-    {A : Set (ComplexModel n)} (hA : MeasurableSet A) :
-    IsPositive (mulBorel T (A.indicator fun _ => (1 : ℝ))) :=
-  BedfordTaylorTopDegree.isPositive_mulBorel_of_nonneg hT (measurable_const.indicator hA)
-    (isLocallyBoundedOn_indicator_one A) (indicator_one_nonneg A)
-
-/-- **The trace measure of `1_A T` is `σ_T|_A`.** -/
-theorem traceMeasure_mulBorel_indicator {T : LocalProductCurrent n U q} (hT : IsPositive T)
-    {A : Set (ComplexModel n)} (hA : MeasurableSet A) :
-    (isPositive_mulBorel_indicator hT hA).traceMeasure = hT.traceMeasure.restrict A := by
-  have hS := isPositive_mulBorel_indicator hT hA
-  refine LocalBedfordTaylorLocality.eq_of_forall_testFunction_integral_eq (U := U)
-    hS.traceMeasure_compl
-    (le_antisymm ((Measure.le_iff'.mp Measure.restrict_le_self _).trans
-      hT.traceMeasure_compl.le) zero_le)
-    (fun K hK hKU => hS.traceMeasure_lt_top hK hKU)
-    (fun K hK hKU => ((Measure.le_iff'.mp Measure.restrict_le_self _).trans_lt
-      (hT.traceMeasure_lt_top hK hKU))) fun φ => ?_
-  rw [hS.integral_traceMeasure, mulBorel_apply hT (measurable_const.indicator hA)
-    (isLocallyBoundedOn_indicator_one A), ← integral_indicator hA]
-  refine integral_congr_ae ?_
-  filter_upwards [density_kahlerPower_ae hT] with x hx
-  rw [hx]
-  by_cases hxA : x ∈ A <;> simp [hxA]
-
-/-- `σ_{1_A T}(s) = σ_T(s ∩ A)`. -/
-theorem traceMeasure_mulBorel_indicator_apply {T : LocalProductCurrent n U q}
-    (hT : IsPositive T) {A : Set (ComplexModel n)} (hA : MeasurableSet A) (hS : IsPositive
-      (mulBorel T (A.indicator fun _ => (1 : ℝ)))) {s : Set (ComplexModel n)} (hs : MeasurableSet
-        s) :
-    hS.traceMeasure s = hT.traceMeasure (s ∩ A) := by
-  rw [show hS.traceMeasure = (isPositive_mulBorel_indicator hT hA).traceMeasure from rfl,
-    traceMeasure_mulBorel_indicator hT hA, Measure.restrict_apply hs]
-
 /-- **Positive currents carried by `⋃ₖ E_k` and agreeing on every `E_k` are equal**: if
 `1_{E_k} S = 1_{E_k} S'` for an increasing sequence of Borel sets and the trace measures of `S`
 and `S'` are carried by `⋃ₖ E_k`, then `S = S'`. -/
@@ -256,14 +218,6 @@ theorem ne_top_of_plurisubharmonicOn {u : (ComplexModel n) → EReal} {U : Set (
   obtain ⟨V, -, hxV, hd⟩ := hu x hx
   exact hd.ne_top x hxV
 
-theorem truncationReal_of_lt {u : (ComplexModel n) → EReal} {k : ℕ} {x : (ComplexModel n)}
-    (h : ((-(k : ℝ) : ℝ) : EReal) < u x) : truncationReal u k x = (u x).toReal := by
-  rw [truncationReal, truncation, max_eq_left h.le]
-
-theorem neg_lt_of_le {v : EReal} {k m : ℕ} (hkm : k ≤ m)
-    (h : ((-(k : ℝ) : ℝ) : EReal) < v) : ((-(m : ℝ) : ℝ) : EReal) < v :=
-  lt_of_le_of_lt (EReal.coe_le_coe_iff.mpr (neg_le_neg (Nat.cast_le.mpr hkm))) h
-
 theorem exists_nat_neg_lt {v : EReal} (hv : v ≠ ⊥) : ∃ k : ℕ, ((-(k : ℝ) : ℝ) : EReal) < v := by
   induction v using EReal.rec with
   | bot => exact absurd rfl hv
@@ -271,11 +225,6 @@ theorem exists_nat_neg_lt {v : EReal} (hv : v ≠ ⊥) : ∃ k : ℕ, ((-(k : �
     obtain ⟨k, hk⟩ := exists_nat_gt (-r)
     exact ⟨k, EReal.coe_lt_coe_iff.mpr (by linarith)⟩
   | top => exact ⟨0, EReal.coe_lt_top _⟩
-
-theorem truncationReal_mono_level {u : (ComplexModel n) → EReal} {k m : ℕ} (hkm : k ≤ m)
-    {x : (ComplexModel n)}
-    (hu : ((-(k : ℝ) : ℝ) : EReal) < u x) : truncationReal u m x = truncationReal u k x := by
-  rw [truncationReal_of_lt (neg_lt_of_le hkm hu), truncationReal_of_lt hu]
 
 /-- The integer level `N = ⌈a + b⌉₊ + 1` (so `N ≥ a + b` and `N ≥ 1`). -/
 def comboLevel (a b : ℝ) : ℕ := ⌈a + b⌉₊ + 1
@@ -384,19 +333,6 @@ theorem measurableSet_commonLocus (hφ : ∀ i, PlurisubharmonicOn (φ i) U)
     (hψ : PlurisubharmonicOn ψ U) (k : ℕ) : MeasurableSet (commonLocus U φ j ψ k) :=
   (BedfordTaylorTopDegree.measurableSet_strictLocus hφ k).inter
     (BedfordTaylorTopDegree.measurableSet_strictLocus (plurisubharmonicOn_update hφ hψ) k)
-
-/-- The strict loci `O_k` are plurifine open (`def:pftopologydomain`). -/
-theorem isOpen_plurifine_strictLocus {φ : Fin p → (ComplexModel n) → EReal}
-    (hφ : ∀ i, PlurisubharmonicOn (φ i) U) (k : ℕ) :
-    IsOpen[SGPT.PSH.domainPlurifineTopology U]
-      (Subtype.val ⁻¹' BedfordTaylorTopDegree.strictLocus U φ k) := by
-  have e : (Subtype.val ⁻¹' BedfordTaylorTopDegree.strictLocus U φ k : Set U) =
-      ⋂ i, {z : U | (((-(k : ℝ)) : ℝ) : EReal) < φ i z.val} := by
-    ext z
-    simp [BedfordTaylorTopDegree.strictLocus]
-  rw [e]
-  exact @isOpen_iInter_of_finite _ _ (SGPT.PSH.domainPlurifineTopology U) _ _
-    fun i => PlurifinePshTopology.isOpen_psh_superlevel (hφ i) _
 
 theorem isOpen_plurifine_commonLocus (hφ : ∀ i, PlurisubharmonicOn (φ i) U)
     (hψ : PlurisubharmonicOn ψ U) (k : ℕ) :

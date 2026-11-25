@@ -24,6 +24,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitConvolu
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitIntegrability
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitLocalization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRegularization
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRestriction
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BTTruncations
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ChartDomains
@@ -167,10 +168,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Distri
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DistributionTranslationSeminormRemainder
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.DolbeaultLemma
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.FiniteJetBanach
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalMeasureInvariance
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalNonPluripolar
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalNonPluripolarKahler
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalSlotStokes
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicMixedDensity
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicPullback
@@ -181,6 +180,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointD
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.JointDecreasingSmoothMax
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerBoundedTruncation
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerDomination
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.KahlerSmoothPotentials
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorBiholomorphicProducts
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCalculus
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorCanonicalTraceMeasure

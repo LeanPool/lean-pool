@@ -9,7 +9,6 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorCollarSymmetry
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorQuasiContinuity
 
 /-!
 # Claims for the Bedford–Taylor convergence theorem along increasing sequences

@@ -179,30 +179,47 @@ theorem IsDecApprox.abs_le_of_mem {U : Opens (ComplexModel n)} {w : ComplexModel
     |w z| ≤ C :=
   le_of_tendsto' ((continuous_abs.tendsto _).comp (hG.2.2.1 z (hKU hz))) fun k ↦ hC k z hz
 
+/-- Weighted decreasing approximations share an integrable limit and a dominated integral limit. -/
+theorem IsDecApprox.weighted_sub_mul_limits {U : Opens (ComplexModel n)}
+    {w : ComplexModel n → ℝ} {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox U w G)
+    {B : Set (ComplexModel n)} (hBm : MeasurableSet B) (hBc : IsCompact (closure B))
+    (hBU : closure B ⊆ U) {D : ComplexModel n → ℝ} (hD : ContinuousOn D U) (S : ℝ) :
+    IntegrableOn (fun z ↦ (S - w z) * D z) B ∧
+      Tendsto (fun l ↦ ∫ z in B, (S - G l z) * D z) atTop
+        (𝓝 (∫ z in B, (S - w z) * D z)) := by
+  have hBU' : B ⊆ U := subset_closure.trans hBU
+  obtain ⟨C, hC⟩ := hG.exists_abs_le hBc hBU
+  obtain ⟨CD, hCD⟩ := (hBc.image_of_continuousOn (hD.mono hBU)).isBounded.exists_norm_le
+  have : IsFiniteMeasure (volume.restrict B) := isFiniteMeasure_restrict.mpr
+    ((measure_mono subset_closure).trans_lt hBc.measure_lt_top).ne
+  have hmeas (l : ℕ) :
+      AEStronglyMeasurable (fun z ↦ (S - G l z) * D z) (volume.restrict B) :=
+    (((continuousOn_const.sub (hG.1 l).1.continuousOn).mul hD).mono
+      hBU').aestronglyMeasurable hBm
+  have hlim : ∀ᵐ z ∂volume.restrict B,
+      Tendsto (fun l ↦ (S - G l z) * D z) atTop (𝓝 ((S - w z) * D z)) := by
+    filter_upwards [ae_restrict_mem hBm] with z hz
+    exact ((tendsto_const_nhds.sub (hG.2.2.1 z (hBU' hz))).mul_const _)
+  have hbound (l : ℕ) : ∀ᵐ z ∂volume.restrict B, ‖(S - G l z) * D z‖ ≤ (|S| + C) * CD := by
+    filter_upwards [ae_restrict_mem hBm] with z hz
+    rw [norm_mul]
+    refine mul_le_mul ?_ (hCD _ ⟨z, subset_closure hz, rfl⟩) (norm_nonneg _) (by
+      linarith [abs_nonneg S, (abs_nonneg _).trans (hC 0 z (subset_closure hz))])
+    exact (norm_sub_le _ _).trans (by
+      simp only [Real.norm_eq_abs]; linarith [hC l z (subset_closure hz)])
+  refine ⟨Integrable.of_bound (aestronglyMeasurable_of_tendsto_ae atTop hmeas hlim)
+    ((|S| + C) * CD) ?_, ?_⟩
+  · filter_upwards [hlim, ae_all_iff.mpr hbound] with z hz hzb
+    exact le_of_tendsto' (continuous_norm.continuousAt.tendsto.comp hz) hzb
+  · exact tendsto_integral_of_dominated_convergence _ hmeas (integrable_const _) hbound hlim
+
 /-- Dominated convergence for the weighted integrals over a relatively compact set. -/
 theorem IsDecApprox.tendsto_setIntegral_sub_mul {U : Opens (ComplexModel n)}
     {w : ComplexModel n → ℝ} {G : ℕ → ComplexModel n → ℝ} (hG : IsDecApprox U w G)
     {B : Set (ComplexModel n)} (hBm : MeasurableSet B) (hBc : IsCompact (closure B))
     (hBU : closure B ⊆ U) {D : ComplexModel n → ℝ} (hD : ContinuousOn D U) (S : ℝ) :
     Tendsto (fun l ↦ ∫ z in B, (S - G l z) * D z) atTop (𝓝 (∫ z in B, (S - w z) * D z)) := by
-  have hBU' : B ⊆ U := subset_closure.trans hBU
-  obtain ⟨C, hC⟩ := hG.exists_abs_le hBc hBU
-  obtain ⟨CD, hCD⟩ := (hBc.image_of_continuousOn (hD.mono hBU)).isBounded.exists_norm_le
-  have : IsFiniteMeasure (volume.restrict B) := isFiniteMeasure_restrict.mpr
-    ((measure_mono subset_closure).trans_lt hBc.measure_lt_top).ne
-  refine tendsto_integral_of_dominated_convergence (fun _ ↦ (|S| + C) * CD) (fun l ↦ ?_)
-    (integrable_const _) (fun l ↦ ?_) ?_
-  · exact (((continuousOn_const.sub (hG.1 l).1.continuousOn).mul hD).mono
-    hBU').aestronglyMeasurable
-      hBm
-  · filter_upwards [ae_restrict_mem hBm] with z hz
-    rw [norm_mul]
-    refine mul_le_mul ?_ (hCD _ ⟨z, subset_closure hz, rfl⟩) (norm_nonneg _) (by
-      linarith [abs_nonneg S, (abs_nonneg _).trans (hC 0 z (subset_closure hz))])
-    exact (norm_sub_le _ _).trans (by
-      simp only [Real.norm_eq_abs]; linarith [hC l z (subset_closure hz)])
-  · filter_upwards [ae_restrict_mem hBm] with z hz
-    exact ((tendsto_const_nhds.sub (hG.2.2.1 z (hBU' hz))).mul_const _)
+  exact (hG.weighted_sub_mul_limits hBm hBc hBU hD S).2
 
 /-- A decreasing continuous approximation of a function strictly below `S` on
 a compact set is eventually at most `S` there (Dini-type argument). -/

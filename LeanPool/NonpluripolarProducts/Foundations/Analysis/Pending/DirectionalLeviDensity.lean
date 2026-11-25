@@ -16,13 +16,13 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Smoo
 /-!
 # The directional Levi form as the density of `ddᶜ f ∧ (ddᶜ q_a)^{n-1}`
 
-Source: Demailly, CADG III.1 (positivity of `(1,1)`-currents is tested on `i dz₁ ∧ dzBar₁ ∧ …` in
-unitary coordinates; III.1.8 and its proof).  TN.4 plan, step B6, finding F6 route (i), the
-positivity-to-Levi link: a positive `(1,1)`-current
-`R = θ + ddᶜ V` is tested on `χ · β_a^{n-1}` where `β_a = ddᶜ q_a` and
-`q_a(z) = ‖z‖² - |⟨a, z⟩|²` (`perpQuadratic`), whose complex Hessian is the orthogonal projection
-onto `a^⊥`.  In a chart, the top density of `ddᶜ f ∧ β_a^{n-1}` is `((n-1)!/πⁿ) · L_f(a)`, the Levi
-form of `f` in the direction `a` (`topDensity_smoothDDC_perpQuadratic`).
+Demailly's [definition of positive currents and proof of order zero](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=132)
+(III.1.13 and III.1.14) use strongly positive test forms, including complementary wedges of
+coordinate forms. Here the unit direction `a` determines the complementary form
+`β_a = ddᶜ q_a`, where `q_a(z) = ‖z‖² - |⟨a, z⟩|²` has complex Hessian the orthogonal
+projection onto `a^⊥`. The normalized coefficient identity is the coordinate calculation
+in `topDensity_smoothDDC_perpQuadratic`. It yields the factor `(n - 1)! / πⁿ` multiplying
+the directional Levi form of a smooth function.
 
 * `mixedCoefficient_cons_perpDiag`: `C(K, D, …, D) = m! K₀₀` for `D = diag(0, 1, …, 1)`.
 * `exists_unitary_col_zero`: a unitary matrix with a prescribed unit first column.

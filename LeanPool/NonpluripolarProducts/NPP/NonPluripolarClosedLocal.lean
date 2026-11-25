@@ -32,6 +32,9 @@ set `K`, with constants `cⱼ ≥ 0` bounding `φⱼ` above on a neighbourhood `
 FPT's normalization `uⱼ ≤ 0` after shrinking `U`), are locally bounded psh on `V`, take values
 in `[0, 1]`, vanish off `O_k = {φ₁ > -k, …, φ_p > -k}` and tend to `1` on `⋃ O_k`; the abstract
 theorem `IsTruncationFamily.isClosedCurrent_glue` applies.
+
+The local statements use the convention at `NonPluripolarCurrent.nonPluripolarProduct`.
+A factor may be identically `-∞` on an open component, where the product vanishes.
 -/
 
 @[expose] public section

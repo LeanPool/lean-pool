@@ -30,6 +30,9 @@ Source: `chapter_npp.tex`, `prop:npp1` (4); Xia, *Foundations of pluripotential 
   `doesNotChargePluripolarOn_nonPluripolarProduct_inChart` (on a manifold, in every chart): the
   trace measure of the non-pluripolar product, which dominates all its coefficient measures, gives
   zero (outer) mass to every locally pluripolar set.
+
+The local statements use the convention at `NonPluripolarCurrent.nonPluripolarProduct`.
+A factor may be identically `-∞` on an open component, where the product vanishes.
 -/
 
 @[expose] public section

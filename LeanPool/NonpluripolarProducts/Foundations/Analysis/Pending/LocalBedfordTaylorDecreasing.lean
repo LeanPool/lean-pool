@@ -259,41 +259,14 @@ variable {q : ℕ}
 theorem exists_sum_extTest {ι : Type*} (V : ι → Opens (ComplexModel n)) (hVU : ∀ i, V i ≤ U)
     (hcover : ∀ x ∈ (U : Set E), ∃ i, x ∈ V i) (φ : 𝓓(U, ℝ)) :
     ∃ (s : Finset ι) (ψ : ∀ i, 𝓓(V i, ℝ)), φ = ∑ i ∈ s, extTest (hVU i) (ψ i) := by
-  classical
-  obtain ⟨ρ, hρ⟩ := SmoothPartitionOfUnity.exists_isSubordinate
-    (I := 𝓘(ℝ, E)) (isClosed_tsupport (φ : E → ℝ)) (fun i ↦ (V i : Set E))
-    (fun i ↦ (V i).isOpen) (by
-      intro x hx
-      obtain ⟨i, hi⟩ := hcover x (φ.tsupport_subset hx)
-      exact mem_iUnion.mpr ⟨i, hi⟩)
-  let active : Set ι := {i | (Function.support (ρ i) ∩ tsupport φ).Nonempty}
-  have hactive : active.Finite := by
-    simpa only [active] using ρ.locallyFinite.finite_nonempty_inter_compact φ.hasCompactSupport
-  let ψ (i : ι) : 𝓓(V i, ℝ) :=
-    ⟨fun x ↦ ρ i x * φ x, (ρ i).contMDiff.contDiff.mul φ.contDiff,
-      φ.hasCompactSupport.mul_left,
-      (tsupport_mul_subset_left (f := fun x ↦ ρ i x) (g := fun x ↦ φ x)).trans (hρ i)⟩
-  refine ⟨hactive.toFinset, ψ, ?_⟩
-  apply TestFunction.ext
-  intro x
-  have hsum_apply : ∀ s : Finset ι,
-      (∑ i ∈ s, extTest (hVU i) (ψ i)) x = ∑ i ∈ s, ρ i x * φ x := by
-    intro s
-    induction s using Finset.induction_on with
-    | empty => rfl
-    | @insert i s hi hs =>
-        rw [Finset.sum_insert hi, Finset.sum_insert hi]
-        change (extTest (hVU i) (ψ i)) x + (∑ j ∈ s, extTest (hVU j) (ψ j)) x =
-          ρ i x * φ x + ∑ j ∈ s, ρ j x * φ x
-        rw [hs, extTest_apply]
-        rfl
-  rw [hsum_apply]
-  by_cases hx : x ∈ tsupport φ
-  · have hsupp : Function.support (fun i ↦ ρ i x) ⊆ active := fun i hi => ⟨x, hi, hx⟩
-    rw [← Finset.sum_mul, ← finsum_eq_finsetSum_of_support_subset (fun i ↦ ρ i x)
-      (by simpa only [Set.Finite.coe_toFinset] using hsupp), ρ.sum_eq_one hx, one_mul]
-  · rw [image_eq_zero_of_notMem_tsupport hx]
-    simp
+  have hcover_support : tsupport φ ⊆ ⋃ i, (V i : Set E) := by
+    intro x hx
+    obtain ⟨i, hi⟩ := hcover x (φ.tsupport_subset hx)
+    exact mem_iUnion.mpr ⟨i, hi⟩
+  obtain ⟨s, _, ψ, _, _, hsum⟩ :=
+    exists_weighted_test_partition V hVU φ.hasCompactSupport hcover_support
+      (fun _ : Unit ↦ φ) (fun _ ↦ subset_rfl)
+  exact ⟨s, fun i ↦ ψ i (), hsum ()⟩
 
 /-- **Weak convergence is local**: if every point of `U` has an open neighbourhood `V ≤ U` on
 whose test functions `R_k → R`, then `R_k → R` weakly on `U`. -/

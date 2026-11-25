@@ -10,7 +10,6 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlotStokes
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UniformBoundedGlobalMass
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.GlobalMeasureInvariance
 
 /-!
 # Compact integration by parts for bounded global mixed measures

@@ -33,6 +33,9 @@ For the local non-pluripolar product `NonPluripolarCurrent.nonPluripolarProduct`
 * `isWellDefinedOn_of_isLocallyBoundedPshOn`, `nonPluripolarProduct_of_isLocallyBoundedPshOn` —
   for locally bounded potentials the product is well defined and equals the Bedford–Taylor
   product (`prop:npp1` (3), first sentence).
+
+The local statements use the convention at `NonPluripolarCurrent.nonPluripolarProduct`.
+A factor may be identically `-∞` on an open component, where the product vanishes.
 -/
 
 @[expose] public section

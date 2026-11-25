@@ -683,36 +683,18 @@ theorem ae_acDensity_pullback (h : IsBiholomorphicPair A B τ σ) (hT : IsPositi
       acWeight (isPositive_pullback h hT) x * densityForm (isPositive_pullback h hT) x γ =
         |(fderiv ℝ τ x).det| * (acWeight hT (τ x) * densityForm hT (τ x) (pullSpan q (fderiv ℂ σ
           (τ x)) γ)) := by
-  have hω : kahlerPower n q ∈ posCone n q := formPower_mem_spCone isSemipositiveOneOne_kahlerForm q
-  have key : ∀ i, ∃ c₁ c₂ : formSpan n q, c₁ ∈ posCone n q ∧ c₂ ∈ posCone n q ∧ formBasis n q i =
-    c₁ - c₂ := by
-    intro i
-    obtain ⟨C, hC, -, h2⟩ := exists_orderUnit (formBasis n q i).2
-    refine ⟨C • kahlerPower n q + formBasis n q i, C • kahlerPower n q, ?_, smul_mem_spCone hω hC,
-      (add_sub_cancel_left _ _).symm⟩
-    exact h2
-  choose c₁ c₂ hc₁ hc₂ hc using key
-  have hall := ae_all_iff.mpr fun i =>
-    (ae_acDensity_pullback_of_mem_posCone h hT (hc₁ i)).and (ae_acDensity_pullback_of_mem_posCone
-      h hT (hc₂ i))
-  filter_upwards [hall] with x hx hxA γ
-  set L₁ : formSpan n q →ₗ[ℝ] ℝ := acWeight (isPositive_pullback h hT) x • densityForm
-    (isPositive_pullback h hT) x
-    with hL₁
-  set L₂ : formSpan n q →ₗ[ℝ] ℝ := (|(fderiv ℝ τ x).det| * acWeight hT (τ x)) •
-    (densityForm hT (τ x)).comp (pullSpan q (fderiv ℂ σ (τ x))) with hL₂
-  have hL : L₁ = L₂ := by
-    refine (formBasis n q).ext fun i => ?_
-    rw [hc i, map_sub, map_sub]
-    have e1 := (hx i).1 hxA
-    have e2 := (hx i).2 hxA
-    simp only [hL₁, hL₂, LinearMap.smul_apply, LinearMap.comp_apply, smul_eq_mul]
-    rw [e1, e2]
-    ring
-  have := LinearMap.congr_fun hL γ
-  simp only [hL₁, hL₂, LinearMap.smul_apply, LinearMap.comp_apply, smul_eq_mul] at this
-  rw [this]
-  ring
+  let left (x : ComplexModel n) : formSpan n q →ₗ[ℝ] ℝ :=
+    acWeight (isPositive_pullback h hT) x • densityForm (isPositive_pullback h hT) x
+  let right (x : ComplexModel n) : formSpan n q →ₗ[ℝ] ℝ :=
+    (|(fderiv ℝ τ x).det| * acWeight hT (τ x)) •
+      (densityForm hT (τ x)).comp (pullSpan q (fderiv ℂ σ (τ x)))
+  have agree := ae_forall_eq_of_posCone left right (P := fun x => x ∈ A) (fun γ hγ => by
+    filter_upwards [ae_acDensity_pullback_of_mem_posCone h hT hγ] with x hx hxA
+    simpa only [left, right, LinearMap.smul_apply, LinearMap.comp_apply, smul_eq_mul, mul_assoc]
+      using hx hxA)
+  filter_upwards [agree] with x hx hxA γ
+  simpa only [left, right, LinearMap.smul_apply, LinearMap.comp_apply, smul_eq_mul, mul_assoc]
+    using hx hxA γ
 
 end AbsolutelyContinuous
 
