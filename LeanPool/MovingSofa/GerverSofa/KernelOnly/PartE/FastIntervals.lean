@@ -350,4 +350,14 @@ theorem cosineSparse_eq (interval : IntervalRat) :
         funext fun left => funext fun right => mulFast_eq_mul left right
       simp only [cosineSparse_eq, sineSparse_eq, multiplication, rejectWith_eq])
 
+/-- The sign-based Taylor product agrees with ordinary interval multiplication. -/
+theorem multiplyForTaylor_eq_mul (partialSum interval : IntervalRat) :
+    multiplyForTaylor partialSum interval = partialSum.mul interval := by
+  exact multiplyForTaylor_eq partialSum interval
+
+/-- The faster Horner evaluator computes the original interval Taylor series. -/
+theorem evalTaylor_eq_evalTaylorSeries (coefficients : List ℚ) (interval : IntervalRat) :
+    evalTaylor coefficients interval = evalTaylorSeries coefficients interval := by
+  exact evalTaylor_eq coefficients interval
+
 end GerverSofa.PartE.FastIntervals

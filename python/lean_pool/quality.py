@@ -1076,12 +1076,7 @@ def _top_level_project_modules(root: Path) -> set[str]:
     lean_pool = root / "LeanPool"
     if not lean_pool.is_dir():
         return set()
-    excluded = {"Basic.lean"}
-    return {
-        f"LeanPool.{path.stem}"
-        for path in lean_pool.glob("*.lean")
-        if path.name not in excluded
-    }
+    return {f"LeanPool.{path.stem}" for path in lean_pool.glob("*.lean")}
 
 
 def _check_project(

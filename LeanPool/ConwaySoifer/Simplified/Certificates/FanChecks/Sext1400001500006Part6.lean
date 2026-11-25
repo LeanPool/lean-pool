@@ -46,6 +46,34 @@ namespace ConwaySoifer.Simplified.Certificates
 open ConwaySoifer.Certificates
 namespace Sext140000150000
 
+private theorem checkedWitnessForExcluded53_3Left :
+    ExclusionHint.check
+      (model53.B 3 ++ [step53.q])
+      9000000000000
+      (model53.caps 3)
+      (model53.ord 3)
+      12
+      (.witnessedFan (.next ([3360000000000],
+      [15000000000]) (some (8, 0, 6)) (some (9, 0, 6)) (.next ([3990000000000], [60000000000]) (some
+      (9, 0, 6)) (some (9, 0, 6)) (.next ([2790000000000], [45000000000]) (some (9, 0, 6)) (some (9,
+      0, 6)) fan53Owner3Part3))))
+      (0) (8) (1300) = true := by
+  certify_fan
+
+private theorem checkedWitnessForExcluded53_3Right :
+    ExclusionHint.check
+      (model53.B 3 ++ [step53.q])
+      9000000000000
+      (model53.caps 3)
+      (model53.ord 3)
+      12
+      (.witnessedFan (.next ([3360000000000], [15000000000]) (some (8,
+      0, 6)) (some (9, 0, 6)) (.next ([3990000000000], [60000000000]) (some (9, 0, 6)) (some (9, 0,
+      6)) (.next ([2790000000000], [45000000000]) (some (9, 0, 6)) (some (9, 0, 6))
+      fan53Owner3Part7))))
+      (8) (13) (1300) = true := by
+  certify_fan
+
 theorem checkedWitnessForExcluded53_3 :
     ExclusionHint.check
       (model53.B 3 ++ [step53.q])
@@ -63,7 +91,9 @@ theorem checkedWitnessForExcluded53_3 :
       0
       1
       100 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    exact split_check_of_checks (by decide) (by decide) (by decide)
+      checkedWitnessForExcluded53_3Left checkedWitnessForExcluded53_3Right
 
 theorem checkedWitnessForExcluded53_4 :
     ExclusionHint.check

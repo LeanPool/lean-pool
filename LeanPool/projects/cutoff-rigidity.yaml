@@ -10,7 +10,8 @@ summary: >-
   it constructs a Gaussian product isometry and identifies the smooth
   first eigenfunctions in the Gaussian coordinates. The first two moments
   of the Gaussian projection give a lower bound on the quadratic transport
-  cost to equilibrium.
+  cost to equilibrium. A separate Hilbert-space development constructs the
+  Friedrichs resolvent and its strongly continuous contraction semigroup.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -35,6 +36,10 @@ main_declarations:
 - CutoffRigidity.Paper.riemannian_gaussian_splitting
 - CutoffRigidity.Riemann.lower_of_gaussian_projection_moments
 - CutoffRigidity.Paper.riemannian_transport_lower_of_moments
+- CutoffRigidity.Riemann.Diff.FormData.E_resolvent
+- CutoffRigidity.Riemann.Diff.FormData.eq_resolvent_of_weak
+- CutoffRigidity.Riemann.Diff.FormData.tendsto_euler
+- CutoffRigidity.Riemann.Diff.FormData.semigroup_integral_D
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -71,6 +76,22 @@ main_results:
     At Riemannian curvature equality, the splitting supplies a one-Lipschitz
     Gaussian projection. The quadratic transport lower bound applies to any
     probability law with the Ornstein–Uhlenbeck moments in this projection.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.E_resolvent
+  informal: >-
+    The Friedrichs resolvent of a densely defined symmetric nonnegative
+    operator on a real Hilbert space solves the weak equation in its
+    completed energy form for every positive resolvent parameter.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.eq_resolvent_of_weak
+  informal: >-
+    The weak resolvent equation has at most one solution in the form domain.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.tendsto_euler
+  informal: >-
+    The implicit Euler approximations built from the resolvent converge
+    in operator norm to the functional-calculus semigroup at positive time.
+- declaration: CutoffRigidity.Riemann.Diff.FormData.semigroup_integral_D
+  informal: >-
+    For initial data in the original dense operator domain, the semigroup
+    satisfies the integrated evolution equation with the original operator.
 tags:
 - curvature
 - spectral-gap

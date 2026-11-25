@@ -68,6 +68,23 @@ def ExcludedOn (Ps : List IPoint) (den : Int) (caps : List Cap) (ord : Option (F
   ∀ (U : EquilateralTriangle) (x : ℝ), 0 < x → (a : ℝ) / d ≤ x → x ≤ (b : ℝ) / d →
     Ctx U (den : ℝ) x Ps caps ord → False
 
+/-- A checked exclusion hint rules out any context on its full checkpoint interval. -/
+theorem exclude_checkpoint (hint : ExclusionHint) {Ps : List IPoint} {den : Int}
+    {caps : List Cap} {ord : Option (Fin 6)} {fuel : Nat} (hden : 0 < den)
+    (a b d : Int) (hd : 0 < d) (h : hint.check Ps den caps ord fuel a b d = true) :
+    ExcludedOn Ps den caps ord a b d :=
+  hint.sound hden a b d hd h
+
+/-- Verify a split using the checked results on its two subintervals. -/
+theorem split_check_of_checks {Ps : List IPoint} {den : Int} {caps : List Cap}
+    {ord : Option (Fin 6)} {fuel : Nat} {a b d aa mid bb dd : Int}
+    {left right : ExclusionHint} (hden : 0 < dd) (hlo : a * dd = aa * d)
+    (hhi : b * dd = bb * d) (hleft : left.check Ps den caps ord fuel aa mid dd = true)
+    (hright : right.check Ps den caps ord fuel mid bb dd = true) :
+    (ExclusionHint.split aa mid bb dd left right).check Ps den caps ord fuel a b d = true := by
+  simp only [ExclusionHint.check, decide_eq_true hden, decide_eq_true hlo, decide_eq_true hhi,
+    hleft, hright, Bool.and_self]
+
 /-- A forced-point step preserves the semantic model throughout the interval. -/
 def StepValid (M : Model) (den : Int) (st : Step) (a b d : Int) : Prop :=
   ∀ (T : Configuration) (x : ℝ), 0 < x → (a : ℝ) / d ≤ x → x ≤ (b : ℝ) / d →

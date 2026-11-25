@@ -1,0 +1,53 @@
+slug: tetrahedron-packing
+title: Chen–Engel–Glotzer periodic tetrahedron packing
+summary: >-
+  Verifies the four congruent regular tetrahedra and pairwise disjoint interiors
+  of the periodic Chen–Engel–Glotzer construction. The covered fraction of
+  expanding coordinate cubes tends to 4000/4671. The development gives a
+  periodic density theorem in positive-dimensional real coordinate spaces and
+  a finite integer separation criterion.
+branch: discrete geometry
+entry_module: LeanPool.TetrahedronPacking
+authors:
+- Mike Lady
+source:
+  title: Dense crystalline dimer packings of regular tetrahedra
+  arxiv: 1001.0586v3
+  doi: 10.1007/s00454-010-9273-0
+  url: https://github.com/michaellady/tetrahedron-packing-lean/tree/2049dec1e3eba85d9621f04a5fa76131946549c5
+  github_repo: michaellady/tetrahedron-packing-lean
+  commit: 2049dec1e3eba85d9621f04a5fa76131946549c5
+  announcement_url: https://github.com/LeanPool/lean-pool/issues/995
+  announcement_date: '2026-11-23'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The author proposal and upstream formalization metadata document agent-written
+  Lean implementation under human direction and automated review.
+main_declarations:
+- PackingCertificate.packing_density
+- TetrahedronPacking.periodic_convex_density
+main_results:
+- declaration: PackingCertificate.packing_density
+  informal: >-
+    The published four-tetrahedron motif has positive common edge length.
+    All integer translates by the three given periods have pairwise disjoint
+    interiors. The fraction of covered volume tends to 4000/4671 in expanding
+    origin-centered coordinate cubes.
+  source_ref: Definition 2 and the packing and density claims of Theorem 1, equations (15)–(16).
+- declaration: TetrahedronPacking.periodic_convex_density
+  informal: >-
+    In a positive-dimensional real coordinate space, suppose a finite bounded
+    convex motif and a full lattice give pairwise interior-disjoint translates.
+    The expanding-cube density equals the total motif volume divided by the
+    lattice covolume.
+tags:
+- discrete-geometry
+- lattice-packing
+- convex-geometry
+- exact-certificates
+msc:
+- '52C17'
+- '52C07'
+- '68V15'

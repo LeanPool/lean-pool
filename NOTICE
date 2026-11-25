@@ -95,6 +95,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/CryptidsGoldbach          https://github.com/google-deepmind/cryptids
   LeanPool/Cutfast                   https://github.com/djalilchafai/cutoff-fastdiff
   LeanPool/CutoffRigidity            https://github.com/djalilchafai/cutoff-rigidity-diffusions
+  LeanPool/DFT                       https://github.com/hyllios/lean_dft
   LeanPool/DavisKahan                https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
   LeanPool/DeciSigma1                https://github.com/noti0na1/deci-sigma1
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
@@ -314,6 +315,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/QuantumQuery              https://github.com/troyjlee/quantum-query-complexity
   LeanPool/QuillenSuslin             https://github.com/mycaule/lean-pool
   LeanPool/Rado                      https://github.com/rkirov/jordan_pick
+  LeanPool/RadoNumbersLastException  https://github.com/mathdiscoveries/rado-numbers-last-exception
   LeanPool/RamanujanNagell           https://github.com/BarinderBanwait/ramanujan_nagell
   LeanPool/RamseyReservoir           https://github.com/Egly443/lean-ramsey-reservoir
   LeanPool/RareSubtreePatterns       https://github.com/igor-kortchemski/rare-subtree-patterns
@@ -325,6 +327,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/RiemannMappingTheorem     https://github.com/vbeffara/RMT4
   LeanPool/RiemannRochFunctionFields https://github.com/vaca22/riemann-roch-function-fields
   LeanPool/RootSystem                https://github.com/Antoine-dSG/root_system
+  LeanPool/RowlandPrimes             https://github.com/Feynman724/rowland-primes-lean
   LeanPool/RoyStrongSix              https://github.com/telaviv/strong-six-exponentials
   LeanPool/RungeKuttaOrderConditions https://github.com/karlesmarin/runge-kutta-order-conditions-lean
   LeanPool/RunsOfMultiples           https://github.com/jas-ho/runs-of-multiples-lean
@@ -343,6 +346,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SeveralComplexVariables   https://github.com/bjbraams/lean-scv
   LeanPool/SharpSymmetryBounds       https://github.com/carlok/sharp-symmetry-bounds-lean
   LeanPool/ShelahHalesJewett         https://github.com/gdahia/ShelahHalesJewett
+  LeanPool/ShellsortMean             https://github.com/EternalYMZ/Optimal-mean-comparisons-in-Shellsort
   LeanPool/Siegel                    https://github.com/jtraverso/siegel-theorem
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SixExponentials           https://github.com/carlok/six-exponentials-lean
@@ -362,7 +366,9 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Sundogcert                https://github.com/humiliati/sundogcert
   LeanPool/Superdiffusion            https://github.com/scottnarmstrong/Superdiffusion
   LeanPool/Superorthogonality        https://github.com/roos-j/lean-superorthogonality
+  LeanPool/SuzukiCancellation        https://github.com/BryceT233/Foresight-Quantum-Formalization-Projects
   LeanPool/SyntheticEuclid4          https://github.com/ah1112/synthetic_euclid_4
+  LeanPool/TetrahedronPacking        https://github.com/michaellady/tetrahedron-packing-lean
   LeanPool/ThreeGap                  https://github.com/ElVec1o/five-distance-sharp
   LeanPool/ToposTheoreticBridges     https://github.com/mycaule/lean-pool
   LeanPool/Triangular                https://github.com/roos-j/lean-triangular

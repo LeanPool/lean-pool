@@ -138,7 +138,7 @@ Current checks:
 - every registered project `entry_module` is imported by its project’s public `Imports.lean`
 - every project has a top-level entry file `LeanPool/<Project>.lean`, including projects with nested registered entry modules
 - every nested registered entry module is reachable through its top-level entry file's imports
-- every top-level project module `LeanPool/Foo.lean`, except `LeanPool/Basic.lean`, belongs to the namespace of a registered `entry_module`
+- every top-level module `LeanPool/Foo.lean` belongs to the namespace of a registered `entry_module`; no module is exempt
 - project entry modules and listed main declarations resolve in Lean
 - generated entry-point project cards match `LeanPool/projects/*.yaml`
 - public declarations depend only on the allowed axiom set: `Classical.choice`, `propext`, and `Quot.sound`
@@ -223,7 +223,7 @@ Scheduled update checks are future work.
 preflight checks for PRs and merge groups. It does not generate documentation.
 
 [`docs-publish.yml`](workflows/docs-publish.yml) publishes documentation daily
-at 06:23 UTC or on manual dispatch, independently of merges. It documents only
+(scheduled for 20:23 UTC) or on manual dispatch, independently of merges. It documents only
 LeanPool modules and links dependencies to their hosted documentation. Bounded
 analysis jobs save consistent incremental checkpoints; a separate rendering job
 and exposition build must both finish and validate before Pages is replaced.

@@ -1,0 +1,44 @@
+slug: shellsort-mean-comparisons
+title: Optimal mean comparison count for ordinary Shellsort
+summary: An input-independent gap table attains the minimum mean key comparison
+  count of ordinary Shellsort on uniform permutations of distinct keys. The
+  minimum has order n log n, and a witnessing upper-bound table uses at most
+  the base-two logarithm of n passes rounded down.
+branch: computer science
+entry_module: LeanPool.ShellsortMean
+authors:
+- Miaozhen Yu
+source:
+  title: Optimal mean comparisons in ordinary Shellsort
+  authors:
+  - Miaozhen Yu
+  url: https://github.com/EternalYMZ/Optimal-mean-comparisons-in-Shellsort/tree/b173885b5e49fb74afd4eed879729a35ada4a053
+  github_repo: EternalYMZ/Optimal-mean-comparisons-in-Shellsort
+  commit: b173885b5e49fb74afd4eed879729a35ada4a053
+license: Apache-2.0
+status: verified
+provenance: human
+main_declarations:
+- Shellsort.HarvestFullSchedule.exists_size_indexed_family
+- Shellsort.PredeterminedOptimum.exists_optimal_executed_family
+- Shellsort.PhysicalKeyOptimum.exists_uniform_family_for_physical_keys
+main_results:
+- declaration: Shellsort.HarvestFullSchedule.exists_size_indexed_family
+  informal: For each input size n at least two, one strictly decreasing positive gap
+    table ending in one sorts every rank permutation. It uses at most the base-two
+    logarithm of n passes rounded down and averages at most (1 + 2^165) n log_2 n
+    comparisons under the uniform distribution.
+- declaration: Shellsort.PredeterminedOptimum.exists_optimal_executed_family
+  informal: A size-indexed family of legal gap tables minimizes the mean number
+    of executed key comparisons. For n at least two the minimum lies between
+    log_2(n!) and (1 + 2^165) n log_2 n.
+- declaration: Shellsort.PhysicalKeyOptimum.exists_uniform_family_for_physical_keys
+  informal: The same tables sort and attain the same optimal mean comparison
+    count for every ordered key set of size n under uniform bijective input.
+tags:
+- sorting
+- algorithm-analysis
+- comparison-complexity
+msc:
+- 68P10
+- 68Q25
