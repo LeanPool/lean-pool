@@ -415,6 +415,18 @@ theorem preOpen_le (h : IsBiholomorphicPair A B τ σ) (V : Opens (ComplexModel 
     : preOpen h V ≤ A :=
   fun _ hx => hx.1
 
+/-- Regard a test function as supported on the part of `A` mapped into `V`. -/
+def testInPreOpen (h : IsBiholomorphicPair A B τ σ) {V : Opens (ComplexModel n)}
+    (φ : 𝓓(A, ℝ)) (hφ : τ '' tsupport φ ⊆ V) : 𝓓(preOpen h V, ℝ) :=
+  ⟨φ, φ.contDiff, φ.hasCompactSupport, fun x hx => ⟨φ.tsupport_subset hx, hφ ⟨x, hx, rfl⟩⟩⟩
+
+theorem extTest_testInPreOpen (h : IsBiholomorphicPair A B τ σ)
+    {V : Opens (ComplexModel n)} (φ : 𝓓(A, ℝ)) (hφ : τ '' tsupport φ ⊆ V) :
+    extTest (preOpen_le h V) (testInPreOpen h φ hφ) = φ := by
+  ext x
+  rw [extTest_apply]
+  rfl
+
 theorem mem_preOpen (h : IsBiholomorphicPair A B τ σ) {V : Opens (ComplexModel n)} {x :
     ComplexModel n} :
     x ∈ preOpen h V ↔ x ∈ A ∧ τ x ∈ V :=
@@ -513,6 +525,55 @@ theorem isLocallyBoundedOn_pbCoeffFun (h : IsBiholomorphicPair A B τ σ) (γ : 
 
 variable {T : LocalProductCurrent n B q}
 
+theorem isLocallyBoundedOn_mul {U : Set (ComplexModel n)} {u v : (ComplexModel n)
+    → ℝ} (hu : IsLocallyBoundedOn u U)
+    (hv : IsLocallyBoundedOn v U) : IsLocallyBoundedOn (fun x => u x * v x) U := by
+  intro K hK hKU
+  obtain ⟨M, hM⟩ := hu K hK hKU
+  obtain ⟨N, hN⟩ := hv K hK hKU
+  exact ⟨M * N, fun x hx => by
+    rw [abs_mul]
+    exact mul_le_mul (hM x hx) (hN x hx) (abs_nonneg _) ((abs_nonneg _).trans (hM x hx))⟩
+
+theorem sum_mulBorel_pbCoeffFun_eq_integral (h : IsBiholomorphicPair A B τ σ)
+    (hT : IsPositive T) {u : ComplexModel n → ℝ} (hu : Measurable u)
+    (hub : IsLocallyBoundedOn u B) (γ : formSpan n q) (φ : 𝓓(A, ℝ)) {χ : 𝓓(B, ℝ)}
+    (hχ : ∀ x ∈ τ '' tsupport φ, χ x = 1) :
+    ∑ i, mulBorel T (fun x => u x * pbCoeffFun B σ γ φ i x) (formBasis n q i) χ =
+      ∫ y in B, φ (σ y) * (u y * densityForm hT y (pullSpan q (fderiv ℂ σ y) γ))
+        ∂hT.traceMeasure := by
+  simp only [mulBorel_apply hT (u := fun x => u x * pbCoeffFun B σ γ φ _
+    x)
+    (hu.mul (measurable_pbCoeffFun h γ φ _))
+    (isLocallyBoundedOn_mul hub (isLocallyBoundedOn_pbCoeffFun h γ φ _))]
+  rw [← integral_finsetSum _ fun i _ => hT.integrable_mul_density
+    (u := fun x => u x * pbCoeffFun B σ γ φ i x) (hu.mul
+      (measurable_pbCoeffFun h γ φ i))
+    (isLocallyBoundedOn_mul hub (isLocallyBoundedOn_pbCoeffFun h γ φ i))
+    _ χ, ← integral_indicator B.isOpen.measurableSet]
+  refine integral_congr_ae ?_
+  have hall := ae_all_iff.mpr fun i => densityForm_ae hT (formBasis n q i)
+  filter_upwards [hall] with y hy
+  by_cases hyB : y ∈ (B : Set (ComplexModel n))
+  · rw [Set.indicator_of_mem hyB]
+    simp only [pbCoeffFun, Set.indicator_of_mem hyB]
+    have hsum : densityForm hT y (pullSpan q (fderiv ℂ σ y) γ) =
+        ∑ i, (formBasis n q).repr (pullSpan q (fderiv ℂ σ y) γ) i *
+          hT.density (formBasis n q i) y := by
+      conv_lhs => rw [← (formBasis n q).sum_repr (pullSpan q (fderiv ℂ σ y) γ)]
+      rw [map_sum]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      rw [map_smul, smul_eq_mul, hy i]
+    rw [hsum, Finset.mul_sum, Finset.mul_sum]
+    by_cases hφ : φ (σ y) = 0
+    · simp [hφ]
+    · have hmem : y ∈ τ '' tsupport φ := ⟨σ y, subset_tsupport φ hφ, h.right_inv y hyB⟩
+      rw [hχ y hmem]
+      refine Finset.sum_congr rfl fun i _ => ?_
+      ring
+  · rw [Set.indicator_of_notMem hyB]
+    simp [pbCoeffFun, Set.indicator_of_notMem hyB]
+
 /-- **The pull-back as a finite sum of values of `T`**: with a test function `χ` on `B` equal to
     `1` on `τ(supp φ)`,
 `⟨τ^* T, φ γ⟩ = ∑ᵢ (a_i T)(b_i)(χ)`, `a_i(y) = φ(σ y) (Dσ(y)^* γ)_i`, `(b_i)` the basis of `Λ_q`.
@@ -521,34 +582,11 @@ theorem pullback_apply_eq_sum_mulBorel (h : IsBiholomorphicPair A B τ σ) (hT :
     (γ : formSpan n q)
     (φ : 𝓓(A, ℝ)) {χ : 𝓓(B, ℝ)} (hχ : ∀ x ∈ τ '' tsupport φ, χ x = 1) :
     pullback h hT γ φ = ∑ i, mulBorel T (pbCoeffFun B σ γ φ i) (formBasis n q i) χ := by
-  simp only [mulBorel_apply hT (measurable_pbCoeffFun h γ φ _) (isLocallyBoundedOn_pbCoeffFun h γ
-    φ _)]
-  rw [← integral_finsetSum _ fun i _ =>
-    hT.integrable_mul_density (measurable_pbCoeffFun h γ φ i) (isLocallyBoundedOn_pbCoeffFun h γ φ
-      i) _ χ,
-    pullback_apply h hT, ← integral_indicator B.isOpen.measurableSet]
-  refine integral_congr_ae ?_
-  have hall := ae_all_iff.mpr fun i => densityForm_ae hT (formBasis n q i)
-  filter_upwards [hall] with y hy
-  by_cases hyB : y ∈ (B : Set (ComplexModel n))
-  · rw [indicator_of_mem hyB]
-    simp only [pbCoeffFun, indicator_of_mem hyB]
-    have hsum : densityForm hT y (pullSpan q (fderiv ℂ σ y) γ) =
-        ∑ i, (formBasis n q).repr (pullSpan q (fderiv ℂ σ y) γ) i * hT.density (formBasis n q i)
-          y := by
-      conv_lhs => rw [← (formBasis n q).sum_repr (pullSpan q (fderiv ℂ σ y) γ)]
-      rw [map_sum]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      rw [map_smul, smul_eq_mul, hy i]
-    rw [hsum, Finset.mul_sum]
-    by_cases hφ : φ (σ y) = 0
-    · simp [hφ]
-    · have hmem : y ∈ τ '' tsupport φ := ⟨σ y, subset_tsupport φ hφ, h.right_inv y hyB⟩
-      rw [hχ y hmem]
-      refine Finset.sum_congr rfl fun i _ => ?_
-      ring
-  · rw [indicator_of_notMem hyB]
-    simp [pbCoeffFun, indicator_of_notMem hyB]
+  rw [pullback_apply h hT]
+  have hub : IsLocallyBoundedOn (fun _ : ComplexModel n => (1 : ℝ)) B :=
+    fun _ _ _ => ⟨1, fun _ _ => by simp⟩
+  simpa only [one_mul] using
+    (sum_mulBorel_pbCoeffFun_eq_integral h hT measurable_const hub γ φ hχ).symm
 
 theorem tendstoLocallyUniformlyOn_const_seq {f : ComplexModel n → ℝ} {s : Set (ComplexModel n)} :
     TendstoLocallyUniformlyOn (fun (_ : ℕ) => f) f atTop s :=
@@ -664,12 +702,8 @@ theorem pullback_ddcMul (h : IsBiholomorphicPair A B τ σ) {w : ComplexModel (m
   have hVrc : RelativelyCompactIn V B := ⟨hVc, hVcl⟩
   obtain ⟨f, hfs, hfa, hfl⟩ := HolomorphicPullback.exists_decreasingMollifierApproximation hw hVrc
   have h' := isBiholomorphicPair_preOpen h hVB
-  have hφA' : tsupport φ ⊆ preOpen h V := fun x hx => ⟨φ.tsupport_subset hx, hKV ⟨x, hx, rfl⟩⟩
-  let φ' : 𝓓(preOpen h V, ℝ) := ⟨φ, φ.contDiff, φ.hasCompactSupport, hφA'⟩
-  have hext : extTest (preOpen_le h V) φ' = φ := by
-    ext x
-    rw [extTest_apply]
-    rfl
+  let φ' := testInPreOpen h (V := V) φ hKV
+  have hext : extTest (preOpen_le h V) φ' = φ := extTest_testInPreOpen h φ hKV
   have hwV : IsLocallyBoundedPshOn V w := isLocallyBoundedPshOn_mono hw hVB
   have hS : ∀ j, IsLocallyBoundedPshOn V (f j) := fun j => isLocallyBoundedPshOn_of_isSmoothPshOn
     (hfs j)

@@ -224,4 +224,11 @@ theorem truncationReal_mono_level {u : (ComplexModel n) → EReal} {k m : ℕ} (
     (hu : ((-(k : ℝ) : ℝ) : EReal) < u x) : truncationReal u m x = truncationReal u k x := by
   rw [truncationReal_of_lt (neg_lt_of_le hkm hu), truncationReal_of_lt hu]
 
+theorem truncationReal_coe (v : (ComplexModel n) → ℝ) (k : ℕ) (z : (ComplexModel n)) :
+    truncationReal (fun z => (v z : EReal)) k z = max (v z) (-(k : ℝ)) := by
+  simp only [truncationReal, truncation]
+  rcases le_total (v z) (-(k : ℝ)) with h | h
+  · rw [max_eq_right (EReal.coe_le_coe_iff.mpr h), max_eq_right h, EReal.toReal_coe]
+  · rw [max_eq_left (EReal.coe_le_coe_iff.mpr h), max_eq_left h, EReal.toReal_coe]
+
 end SGPT.Foundations.Analysis.FirstPass.MongeAmpere

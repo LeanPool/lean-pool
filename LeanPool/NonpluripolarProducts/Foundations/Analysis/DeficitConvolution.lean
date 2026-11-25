@@ -83,6 +83,39 @@ theorem circleAverage_le_of_lintegral_ofReal_le {h : ℂ → ℝ}
 
 variable [NormedSpace ℂ E] [IsScalarTower ℝ ℂ E]
 
+/-- A measurable nonnegative kernel satisfying pointwise angular bounds on the
+support of the test function gives a supermean inequality for its scalar
+pairing. There is no plurisubharmonicity hypothesis. -/
+theorem circleAverage_pairing_le_of_pointwise_circle_lintegral
+    {D : E → ℝ≥0∞} {f φ : E → ℝ}
+    (hDm : Measurable D) (hDf : D =ᵐ[μ] fun x => ENNReal.ofReal (f x))
+    (hf : LocallyIntegrable f μ) (hfn : ∀ x, 0 ≤ f x)
+    (hφs : HasCompactSupport φ) (hφ : ContDiff ℝ 2 φ) (hφn : ∀ x, 0 ≤ φ x)
+    (v : E) (r : ℝ)
+    (hpoint : ∀ x ∈ Function.support φ,
+      (∫⁻ t in Ioc 0 (2 * Real.pi), D (x + circleMap 0 r t • v)) ≤
+        ENNReal.ofReal (2 * Real.pi) * D x) :
+    Real.circleAverage (fun z : ℂ => translationPairing μ f φ (z • v)) 0 r ≤
+      translationPairing μ f φ 0 := by
+  have hm := weighted_circle_lintegral_le_of_pointwise μ hDm
+    hφ.continuous.measurable.ennreal_ofReal v r (κ := ENNReal.ofReal (2 * Real.pi)) (by
+      intro x hx
+      apply hpoint x
+      intro hx0
+      exact hx (by simp [hx0]))
+  have hinner (a : E) := lintegral_deficit_translate_eq_ofReal_pairing
+    hDf hf hfn hφs hφ.continuous hφn a
+  have hzero : (∫⁻ x, ENNReal.ofReal (φ x) * D x ∂μ) =
+      ENNReal.ofReal (translationPairing μ f φ 0) := by
+    simpa only [add_zero] using hinner 0
+  simp_rw [hinner] at hm
+  rw [hzero] at hm
+  have hn (z : ℂ) : 0 ≤ translationPairing μ f φ (z • v) :=
+    integral_nonneg (fun x => mul_nonneg (hfn x) (hφn (x - z • v)))
+  simpa only [zero_smul] using circleAverage_le_of_lintegral_ofReal_le
+    (contDiff_translationPairing_complexLine hf hφs hφ v).continuous hn r
+      (by simpa only [zero_smul] using hm)
+
 /-- The smooth pairing with a real representative of a singular deficit
 satisfies the supermean inequality whenever the weighted discs are admissible.
 Only the disc submean inequality and measurability of the localized deficit
@@ -99,25 +132,8 @@ theorem HasDiscSubmeanOn.circleAverage_deficit_pairing_le {u : E → EReal} {U K
     (hdisc : ∀ x ∈ Function.support φ, affineClosedDisc x v r ⊆ K) :
     Real.circleAverage (fun z : ℂ => translationPairing μ f φ (z • v)) 0 r ≤
       translationPairing μ f φ 0 := by
-  have hm := hu.weighted_circle_deficit_le μ hKU C hC hDm
-    (hφ.continuous.measurable.ennreal_ofReal) v hr (by
-      intro x hx
-      apply hdisc x
-      intro hx0
-      exact hx (by simp [hx0]))
-  have hinner (a : E) := lintegral_deficit_translate_eq_ofReal_pairing
-    hD hf hfn hφs hφ.continuous hφn a
-  have hzero : (∫⁻ x, ENNReal.ofReal (φ x) *
-      K.indicator (fun y => ((C : EReal) - u y).toENNReal) x ∂μ) =
-        ENNReal.ofReal (translationPairing μ f φ 0) := by
-    simpa only [add_zero] using hinner 0
-  simp_rw [hinner] at hm
-  rw [hzero] at hm
-  have hn (z : ℂ) : 0 ≤ translationPairing μ f φ (z • v) :=
-    integral_nonneg (fun x => mul_nonneg (hfn x) (hφn (x - z • v)))
-  simpa only [zero_smul] using circleAverage_le_of_lintegral_ofReal_le
-    (contDiff_translationPairing_complexLine hf hφs hφ v).continuous hn r
-      (by simpa only [zero_smul] using hm)
+  exact circleAverage_pairing_le_of_pointwise_circle_lintegral hDm hD hf hfn hφs hφ hφn v r
+    (fun x hx => hu.circle_deficit_le_on_admissible_disc hKU C hC x v hr (hdisc x hx))
 
 /-- A circle supermean bound for the translated pairing implies a nonpositive Levi pairing. -/
 theorem integral_mul_leviForm_nonpos_of_circleAverage_le

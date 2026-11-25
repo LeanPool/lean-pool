@@ -8,19 +8,14 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ClosedRealOneOneForms
 
 /-!
-# Positivity predicates on real Bott–Chern classes
+# Kähler backgrounds and smooth potential changes
 
-Nefness is the smooth epsilon-test on actual complex tangent lines, relative to
-an explicitly supplied Kähler form. Pseudoeffectivity and bigness here are named
-`ViaPotentials`: they use the existing, locally nondegenerate theta-PSH predicate.
-Their identification with the full cones of positive currents is not asserted.
-
-All comparisons take place on chart targets, with `ddC = i/(2π) ∂∂bar`.
-There is no order on off-target coefficient extensions and no implicit existence
-of a Kähler background or of local potentials for arbitrary closed forms.
+The background is a smooth closed real `(1,1)`-form that is positive on every complex tangent
+line. Adding a smooth potential to the background and subtracting it from a theta-PSH
+function preserves the corrected local expressions, including at poles.
 -/
 
 @[expose] public section
@@ -69,25 +64,6 @@ theorem KahlerBackground.isSemipositive (omega : KahlerBackground n M) :
   · subst v
     rw [(omega.form.val.coeff e z).map_coord_zero (0 : Fin 2) rfl]
   · exact (omega.isKahler.1 e z hz).2 v hv |>.le
-
-/-- Every positive error admits a globally smooth correction whose actual
-two-form is nonnegative on all complex lines in all chart targets. -/
-def NefWithRespectTo (omega : KahlerBackground n M) (θ : ClosedRealOneOneForm n M) : Prop :=
-  ∀ ε : ℝ, 0 < ε → ∃ h : M → ℝ, ChartSmooth (n := n) h ∧
-    ∀ (e : ComplexChart n M) (z : ComplexModel n), z ∈ e.val.target →
-      CoefficientSemipositive
-        (θ.val.coeff e z + smoothDDC (fun y => h (e.val.symm y)) z + ε • omega.form.val.coeff e z)
-
-/-- Potential-based pseudoeffectivity. Comparison with all positive currents
-in the class remains a separate theorem. -/
-def PseudoeffectiveViaPotentials (θ : ClosedRealOneOneForm n M) : Prop :=
-  ∃ u : M → EReal, IsThetaPshPotential θ.val u
-
-/-- Potential-based bigness relative to a supplied Kähler background.
-No equivalence with the full Kähler-current cone is asserted here. -/
-def BigWithRespectToViaPotentials (omega : KahlerBackground n M)
-    (θ : ClosedRealOneOneForm n M) : Prop :=
-  ∃ ε : ℝ, 0 < ε ∧ ∃ u : M → EReal, IsThetaPshPotential (θ - ε • omega.form).val u
 
 /-- Subtraction linearity holds on the open set of smoothness. -/
 theorem smoothDDC_sub {h f : ComplexModel n → ℝ} {U : Set (ComplexModel n)}
@@ -155,157 +131,6 @@ theorem thetaPshPotential_sub_smooth {θ η : SmoothRealForm n M 2}
     change u y - (f y : EReal) ≠ ⊥
     rw [sub_eq_add_neg, ← EReal.coe_neg]
     exact EReal.add_ne_bot_iff.mpr ⟨hfin, EReal.coe_ne_bot _⟩
-
-/-- A smooth test for `θ` becomes the test `h-f` for `η = θ + ddC f`. -/
-theorem nefWithRespectTo_of_bottChernRel {θ η : ClosedRealOneOneForm n M}
-    (omega : KahlerBackground n M) (hθη : BottChernRel θ η)
-    (hθ : NefWithRespectTo omega θ) : NefWithRespectTo omega η := by
-  obtain ⟨f, hf, heq⟩ := hθη
-  intro ε hε
-  obtain ⟨h, hh, hpos⟩ := hθ ε hε
-  refine ⟨fun x => h x - f x, fun e => (hh e).sub (hf e), ?_⟩
-  intro e z hz
-  rw [heq e z hz, smoothDDC_sub e.val.open_target (hh e) (hf e) hz]
-  convert hpos e z hz using 1
-  congr 1
-  abel
-
-theorem nefWithRespectTo_bottChernRel_iff {θ η : ClosedRealOneOneForm n M}
-    (omega : KahlerBackground n M) (hθη : BottChernRel θ η) :
-    NefWithRespectTo omega θ ↔ NefWithRespectTo omega η :=
-  ⟨nefWithRespectTo_of_bottChernRel omega hθη,
-    nefWithRespectTo_of_bottChernRel omega hθη.symm⟩
-
-theorem pseudoeffectiveViaPotentials_of_bottChernRel {θ η : ClosedRealOneOneForm n M}
-    (hθη : BottChernRel θ η) (hθ : PseudoeffectiveViaPotentials θ) :
-    PseudoeffectiveViaPotentials η := by
-  obtain ⟨f, hf, heq⟩ := hθη
-  obtain ⟨u, hu⟩ := hθ
-  exact ⟨fun x => u x - (f x : EReal), thetaPshPotential_sub_smooth hf heq hu⟩
-
-theorem pseudoeffectiveViaPotentials_bottChernRel_iff {θ η : ClosedRealOneOneForm n M}
-    (hθη : BottChernRel θ η) :
-    PseudoeffectiveViaPotentials θ ↔ PseudoeffectiveViaPotentials η :=
-  ⟨pseudoeffectiveViaPotentials_of_bottChernRel hθη,
-    pseudoeffectiveViaPotentials_of_bottChernRel hθη.symm⟩
-
-theorem bigWithRespectToViaPotentials_of_bottChernRel {θ η : ClosedRealOneOneForm n M}
-    (omega : KahlerBackground n M) (hθη : BottChernRel θ η)
-    (hθ : BigWithRespectToViaPotentials omega θ) : BigWithRespectToViaPotentials omega η := by
-  obtain ⟨ε, hε, hu⟩ := hθ
-  have hrel : BottChernRel (θ - ε • omega.form) (η - ε • omega.form) := by
-    simpa only [sub_eq_add_neg] using hθη.add (BottChernRel.refl (-(ε • omega.form)))
-  exact ⟨ε, hε, pseudoeffectiveViaPotentials_of_bottChernRel hrel hu⟩
-
-theorem bigWithRespectToViaPotentials_bottChernRel_iff {θ η : ClosedRealOneOneForm n M}
-    (omega : KahlerBackground n M) (hθη : BottChernRel θ η) :
-    BigWithRespectToViaPotentials omega θ ↔ BigWithRespectToViaPotentials omega η :=
-  ⟨bigWithRespectToViaPotentials_of_bottChernRel omega hθη,
-    bigWithRespectToViaPotentials_of_bottChernRel omega hθη.symm⟩
-
-/-- Nefness descends to the actual real Bott–Chern quotient. -/
-def ClassNefWithRespectTo (omega : KahlerBackground n M) (α : RealBottChern n M) : Prop :=
-  Quotient.lift (s := bottChernSetoid) (NefWithRespectTo omega)
-    (fun _ _ h => propext (nefWithRespectTo_bottChernRel_iff omega h)) α
-
-/-- Potential-based pseudoeffectivity on the actual quotient. -/
-def ClassPseudoeffectiveViaPotentials (α : RealBottChern n M) : Prop :=
-  Quotient.lift (s := bottChernSetoid) PseudoeffectiveViaPotentials
-    (fun _ _ h => propext (pseudoeffectiveViaPotentials_bottChernRel_iff h)) α
-
-/-- Potential-based bigness on the actual quotient, with the same background. -/
-def ClassBigWithRespectToViaPotentials (omega : KahlerBackground n M)
-    (α : RealBottChern n M) : Prop :=
-  Quotient.lift (s := bottChernSetoid) (BigWithRespectToViaPotentials omega)
-    (fun _ _ h => propext (bigWithRespectToViaPotentials_bottChernRel_iff omega h)) α
-
-@[simp] theorem classNefWithRespectTo_ofRepresentative (omega : KahlerBackground n M)
-    (θ : ClosedRealOneOneForm n M) :
-    ClassNefWithRespectTo omega (RealBottChern.ofRepresentative θ) ↔ NefWithRespectTo omega θ :=
-      Iff.rfl
-
-@[simp] theorem classPseudoeffectiveViaPotentials_ofRepresentative
-    (θ : ClosedRealOneOneForm n M) :
-    ClassPseudoeffectiveViaPotentials (RealBottChern.ofRepresentative θ) ↔
-      PseudoeffectiveViaPotentials θ := Iff.rfl
-
-@[simp] theorem classBigWithRespectToViaPotentials_ofRepresentative (omega : KahlerBackground n M)
-    (θ : ClosedRealOneOneForm n M) :
-    ClassBigWithRespectToViaPotentials omega (RealBottChern.ofRepresentative θ) ↔
-      BigWithRespectToViaPotentials omega θ := Iff.rfl
-
-/-- The zero correction proves nefness for a semipositive representative. -/
-theorem nefWithRespectTo_of_semipositive (omega : KahlerBackground n M)
-    {θ : ClosedRealOneOneForm n M} (hθ : θ.val.IsSemipositive) :
-    NefWithRespectTo omega θ := by
-  intro ε hε
-  refine ⟨fun _ => 0, fun _ => contDiffOn_const, ?_⟩
-  intro e z hz
-  rw [smoothDDC_zero, add_zero]
-  exact coefficientSemipositive_add (hθ e z hz)
-    (coefficientSemipositive_smul hε.le (omega.isSemipositive e z hz))
-
-theorem nefWithRespectTo_zero (omega : KahlerBackground n M) :
-    NefWithRespectTo omega 0 :=
-  nefWithRespectTo_of_semipositive omega (fun _ _ _ => coefficientSemipositive_zero)
-
-/-- Split the error evenly between the two smooth tests. -/
-theorem nefWithRespectTo_add (omega : KahlerBackground n M)
-    {θ η : ClosedRealOneOneForm n M}
-    (hθ : NefWithRespectTo omega θ) (hη : NefWithRespectTo omega η) :
-    NefWithRespectTo omega (θ + η) := by
-  intro ε hε
-  obtain ⟨h, hh, hpos⟩ := hθ (ε / 2) (half_pos hε)
-  obtain ⟨k, hk, kpos⟩ := hη (ε / 2) (half_pos hε)
-  refine ⟨fun x => h x + k x, fun e => (hh e).add (hk e), ?_⟩
-  intro e z hz v
-  rw [coeff_add, smoothDDC_add e.val.open_target (hh e) (hk e) hz]
-  have hsum := add_nonneg (hpos e z hz v) (kpos e z hz v)
-  simp only [ContinuousAlternatingMap.add_apply, ContinuousAlternatingMap.smul_apply,
-    smul_eq_mul] at hsum ⊢
-  linarith
-
-/-- For a positive scalar use error `ε/c`; zero is handled separately. -/
-theorem nefWithRespectTo_smul (omega : KahlerBackground n M)
-    {θ : ClosedRealOneOneForm n M} {c : ℝ}
-    (hc : 0 ≤ c) (hθ : NefWithRespectTo omega θ) :
-    NefWithRespectTo omega (c • θ) := by
-  rcases eq_or_lt_of_le hc with hc0 | hcpos
-  · rw [← hc0, zero_smul]
-    exact nefWithRespectTo_zero omega
-  · intro ε hε
-    obtain ⟨h, hh, hpos⟩ := hθ (ε / c) (div_pos hε hcpos)
-    refine ⟨fun x => c • h x, fun e => (hh e).const_smul c, ?_⟩
-    intro e z hz
-    rw [coeff_smul, smoothDDC_smul e.val.open_target (hh e) c hz]
-    have heps : c * (ε / c) = ε := by field_simp
-    have hscaled := coefficientSemipositive_smul hc (hpos e z hz)
-    simpa only [smul_add, smul_smul, heps] using hscaled
-
-theorem classNefWithRespectTo_of_semipositive (omega : KahlerBackground n M)
-    {θ : ClosedRealOneOneForm n M} (hθ : θ.val.IsSemipositive) :
-    ClassNefWithRespectTo omega (RealBottChern.ofRepresentative θ) :=
-  nefWithRespectTo_of_semipositive omega hθ
-
-theorem classNefWithRespectTo_zero (omega : KahlerBackground n M) :
-    ClassNefWithRespectTo omega (0 : RealBottChern n M) := nefWithRespectTo_zero omega
-
-theorem classNefWithRespectTo_add (omega : KahlerBackground n M)
-    {α β : RealBottChern n M}
-    (hα : ClassNefWithRespectTo omega α) (hβ : ClassNefWithRespectTo omega β) :
-    ClassNefWithRespectTo omega (α + β) := by
-  revert hα hβ
-  refine Quotient.inductionOn₂ α β ?_
-  intro θ η hθ hη
-  exact nefWithRespectTo_add omega hθ hη
-
-theorem classNefWithRespectTo_smul (omega : KahlerBackground n M)
-    {α : RealBottChern n M} {c : ℝ} (hc : 0 ≤ c)
-    (hα : ClassNefWithRespectTo omega α) : ClassNefWithRespectTo omega (c • α) := by
-  revert hα
-  refine Quotient.inductionOn α ?_
-  intro θ hθ
-  exact nefWithRespectTo_smul omega hc hθ
 
 end
 

@@ -456,10 +456,7 @@ theorem truncatedProduct_of_isLocallyBoundedPshOn {u : Fin p → (ComplexModel n
   rw [hL, BedfordTaylorTopDegree.truncatedProduct, hL]
   refine BedfordTaylorTopDegree.mulBorel_btProduct_max_const hqp hu
     (fun i => truncationReal_isLocallyBoundedPshOn (hu i).1 k) (-(k : ℝ)) fun i z _ => ?_
-  simp only [truncationReal, truncation]
-  rcases le_total (u i z) (-(k : ℝ)) with h | h
-  · rw [max_eq_right (EReal.coe_le_coe_iff.mpr h), max_eq_right h, EReal.toReal_coe]
-  · rw [max_eq_left (EReal.coe_le_coe_iff.mpr h), max_eq_left h, EReal.toReal_coe]
+  exact truncationReal_coe (u i) k z
 
 /-- **Locally bounded potentials** (`prop:npp1` (3), first sentence): the non-pluripolar product
 of locally bounded psh functions is well defined. -/

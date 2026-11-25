@@ -14,11 +14,8 @@ public import Mathlib.MeasureTheory.Integral.DominatedConvergence
 /-!
 # Upper semicontinuous weights and weak measure limits
 
-This file proves both the compact-space and the compactly supported local
-forms of the elementary Bedford--Taylor upper-semicontinuous-weight argument.
-The local form does not assume that the ambient space or the measures are
-finite: it only uses finiteness of the measures on compact sets and a common
-compact set containing the support of the test function.
+The local Bedford–Taylor argument uses finite mass on each compact set and
+a common compact set containing the support of the nonnegative test function.
 -/
 
 @[expose] public section
@@ -31,16 +28,6 @@ open scoped Topology
 namespace SGPT.Foundations.Analysis.FirstPass
 
 variable {X : Type*} [MeasurableSpace X]
-
-private theorem integrable_mul_of_uniform_bounds {μ : Measure X} [IsFiniteMeasure μ]
-    {a b : X → ℝ} {A B : ℝ} (ha : AEStronglyMeasurable a μ)
-    (hb : AEStronglyMeasurable b μ) (hA : 0 ≤ A)
-    (habound : ∀ x, |a x| ≤ A) (hbbound : ∀ x, |b x| ≤ B) :
-    Integrable (fun x => a x * b x) μ := by
-  refine Integrable.of_bound (ha.mul hb) (A * B) ?_
-  filter_upwards with x
-  rw [Real.norm_eq_abs, abs_mul]
-  exact mul_le_mul (habound x) (hbbound x) (abs_nonneg _) hA
 
 private theorem integrable_mul_of_compact_bounds
     [TopologicalSpace X] [OpensMeasurableSpace X] [T2Space X]
@@ -57,123 +44,6 @@ private theorem integrable_mul_of_compact_bounds
   filter_upwards [ae_restrict_mem hK.measurableSet] with x hxK
   rw [Real.norm_eq_abs, abs_mul]
   exact mul_le_mul (habound x) (hbbound x hxK) (abs_nonneg _) hA
-
-variable [PseudoMetricSpace X] [CompactSpace X] [Nonempty X] [BorelSpace X]
-
-/-- If positive measures converge weakly, decreasing uniformly bounded USC
-weights converge pointwise, and the corresponding weighted measures have a
-weak limit, then the latter is dominated by the expected weighted measure.
-
-The conclusion is stated on a nonnegative continuous test function.  This is
-exactly the order test for the limiting signed Radon measures. -/
-theorem uscWeight_weakLimit_integral_le
-    (μs : ℕ → Measure X) (μ : Measure X)
-    [∀ k, IsFiniteMeasure (μs k)] [IsFiniteMeasure μ]
-    (f : ℕ → X → ℝ) (fLim φ : X → ℝ) (Lφ C : ℝ)
-    (hfusc : ∀ k, UpperSemicontinuous (f k))
-    (hfanti : ∀ x, Antitone (fun k => f k x))
-    (hflim : ∀ x, Tendsto (fun k => f k x) atTop (𝓝 (fLim x)))
-    (hfbound : ∀ k x, |f k x| ≤ C)
-    (hφcont : Continuous φ) (hφnonneg : ∀ x, 0 ≤ φ x)
-    (hμweak : ∀ g : X → ℝ, Continuous g →
-      Tendsto (fun k => ∫ x, g x ∂(μs k)) atTop (𝓝 (∫ x, g x ∂μ)))
-    (hweighted : Tendsto (fun k => ∫ x, φ x * f k x ∂(μs k))
-      atTop (𝓝 Lφ)) :
-    Lφ ≤ ∫ x, φ x * fLim x ∂μ := by
-  obtain ⟨A, hAupper⟩ : ∃ A : ℝ, ∀ x, |φ x| ≤ A := by
-    obtain ⟨A, hA⟩ :=
-      (isCompact_univ.image hφcont.abs).bddAbove
-    exact ⟨A, fun x => hA ⟨x, mem_univ x, rfl⟩⟩
-  have hA : 0 ≤ A := le_trans (abs_nonneg (φ (Classical.choice inferInstance)))
-    (hAupper _)
-  have hφmeas : AEStronglyMeasurable φ μ := hφcont.measurable.aestronglyMeasurable
-  have hφmeas_s (k : ℕ) : AEStronglyMeasurable φ (μs k) :=
-    hφcont.measurable.aestronglyMeasurable
-  have hbound_integrable : Integrable (fun _ : X => A * C) μ := integrable_const _
-  have hmain (k₀ : ℕ) : Lφ ≤ ∫ x, φ x * f k₀ x ∂μ := by
-    have hmajorant_le_C (m : ℕ) (x : X) :
-        uscLipschitzMajorant (univ : Set X) (f k₀) (m : ℝ) x ≤ C := by
-      calc
-        uscLipschitzMajorant univ (f k₀) (m : ℝ) x
-            ≤ uscLipschitzMajorant univ (f k₀) 0 x :=
-          uscLipschitzMajorant_antitone isCompact_univ univ_nonempty
-            ((hfusc k₀).upperSemicontinuousOn univ) (by norm_num) (Nat.cast_nonneg _) x
-        _ ≤ C := by
-          unfold uscLipschitzMajorant
-          apply csSup_le (univ_nonempty.image _)
-          rintro _ ⟨y, _, rfl⟩
-          simpa using (le_trans (le_abs_self (f k₀ y)) (hfbound k₀ y))
-    have hmajorant_ge_neg_C (m : ℕ) (x : X) :
-        -C ≤ uscLipschitzMajorant (univ : Set X) (f k₀) (m : ℝ) x := by
-      exact (neg_le_of_abs_le (hfbound k₀ x)).trans
-        (le_uscLipschitzMajorant isCompact_univ
-          ((hfusc k₀).upperSemicontinuousOn univ) (Nat.cast_nonneg _) (mem_univ x))
-    have hmajorant_abs (m : ℕ) (x : X) :
-        |uscLipschitzMajorant (univ : Set X) (f k₀) (m : ℝ) x| ≤ C :=
-      abs_le.2 ⟨hmajorant_ge_neg_C m x, hmajorant_le_C m x⟩
-    have hL_le_majorant (m : ℕ) :
-        Lφ ≤ ∫ x, φ x * uscLipschitzMajorant univ (f k₀) (m : ℝ) x ∂μ := by
-      have hright := hμweak
-        (fun x => φ x * uscLipschitzMajorant univ (f k₀) (m : ℝ) x)
-        (hφcont.mul (continuous_uscLipschitzMajorant isCompact_univ univ_nonempty
-          ((hfusc k₀).upperSemicontinuousOn univ) (Nat.cast_nonneg _)))
-      exact tendsto_le_of_eventuallyLE hweighted hright
-        (eventually_atTop.2 ⟨k₀, fun k hk => by
-          have hleftInt : Integrable (fun x => φ x * f k x) (μs k) :=
-            integrable_mul_of_uniform_bounds (hφmeas_s k)
-              ((hfusc k).measurable.aestronglyMeasurable) hA hAupper (hfbound k)
-          have hrightInt : Integrable
-              (fun x => φ x * uscLipschitzMajorant univ (f k₀) (m : ℝ) x) (μs k) :=
-            integrable_mul_of_uniform_bounds (hφmeas_s k)
-              ((continuous_uscLipschitzMajorant isCompact_univ univ_nonempty
-                ((hfusc k₀).upperSemicontinuousOn univ) (Nat.cast_nonneg
-                  _)).measurable.aestronglyMeasurable)
-              hA hAupper (hmajorant_abs m)
-          apply integral_mono hleftInt hrightInt
-          intro x
-          exact mul_le_mul_of_nonneg_left
-            ((hfanti x hk).trans
-              (le_uscLipschitzMajorant isCompact_univ
-                ((hfusc k₀).upperSemicontinuousOn univ) (Nat.cast_nonneg _) (mem_univ x)))
-            (hφnonneg x)⟩)
-    have hmajorant_integrals : Tendsto
-        (fun m : ℕ => ∫ x, φ x *
-          uscLipschitzMajorant univ (f k₀) (m : ℝ) x ∂μ)
-        atTop (𝓝 (∫ x, φ x * f k₀ x ∂μ)) := by
-      apply tendsto_integral_of_dominated_convergence (fun _ : X => A * C)
-      · intro m
-        exact (hφcont.mul (continuous_uscLipschitzMajorant isCompact_univ univ_nonempty
-          ((hfusc k₀).upperSemicontinuousOn univ) (Nat.cast_nonneg
-            _))).measurable.aestronglyMeasurable
-      · exact hbound_integrable
-      · intro m
-        filter_upwards with x
-        rw [Real.norm_eq_abs, abs_mul]
-        exact mul_le_mul (hAupper x) (hmajorant_abs m x) (abs_nonneg _) hA
-      · filter_upwards with x
-        exact (tendsto_const_nhds.mul
-          (tendsto_uscLipschitzMajorant_nat isCompact_univ univ_nonempty
-            ((hfusc k₀).upperSemicontinuousOn univ) (mem_univ x)))
-    exact ge_of_tendsto' hmajorant_integrals hL_le_majorant
-  have hfinal : Tendsto (fun k => ∫ x, φ x * f k x ∂μ)
-      atTop (𝓝 (∫ x, φ x * fLim x ∂μ)) := by
-    apply tendsto_integral_of_dominated_convergence (fun _ : X => A * C)
-    · intro k
-      exact (hφcont.measurable.mul (hfusc k).measurable).aestronglyMeasurable
-    · exact hbound_integrable
-    · intro k
-      filter_upwards with x
-      rw [Real.norm_eq_abs, abs_mul]
-      exact mul_le_mul (hAupper x) (hfbound k x) (abs_nonneg _) hA
-    · filter_upwards with x
-      exact tendsto_const_nhds.mul (hflim x)
-  exact ge_of_tendsto' hfinal hmain
-
-end SGPT.Foundations.Analysis.FirstPass
-
-namespace SGPT.Foundations.Analysis.FirstPass
-
-variable {X : Type*} [MeasurableSpace X]
 
 /-- Compactly supported local form of upper-semicontinuous-weight domination.
 

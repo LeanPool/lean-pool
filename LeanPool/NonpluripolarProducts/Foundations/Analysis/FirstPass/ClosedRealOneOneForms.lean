@@ -11,16 +11,11 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.GlobalPotentials
 
 /-!
-# Real Bott–Chern classes of smooth closed `(1,1)`-forms
+# Smooth closed real `(1,1)`-forms
 
-The representatives are genuine compatible smooth forms. The equivalence relation
-uses a globally chart-smooth real function and the actual normalized `smoothDDC`
-on open chart targets. No closedness or overlap theorem for an arbitrary `ddC`
-is imposed as extra data. Equality ignores all off-target coefficient extensions.
-
-Representative operations descend to a real module. Bundled global smooth `ddC`,
-existence of local potentials, and comparison with current classes remain separate
-problems; no finite-dimensionality or positivity comparison is asserted here.
+The representatives are compatible smooth forms with closedness and type `(1,1)`.
+The real module operations use the coefficient functions in each chart. The file also proves
+linearity of the normalized `dᶜ` and `ddᶜ` on the open domain of smoothness.
 -/
 
 @[expose] public section
@@ -219,151 +214,7 @@ instance instModule : Module ℝ (ClosedRealOneOneForm n M) where
   add_smul c d _ := ext fun _ _ => add_smul c d _
   zero_smul _ := ext fun _ _ => zero_smul ℝ _
 
-/-- The difference is the actual `ddᶜ` of a globally smooth real function,
-tested only on open chart targets. No bundled global `ddᶜ` is assumed. -/
-def BottChernRel (a b : ClosedRealOneOneForm n M) : Prop :=
-  ∃ h : M → ℝ, ChartSmooth (n := n) h ∧
-    ∀ (e : ComplexChart n M) (z : ComplexModel n), z ∈ e.val.target →
-      b.val.coeff e z = a.val.coeff e z + smoothDDC (fun y => h (e.val.symm y)) z
-
-theorem BottChernRel.refl (a : ClosedRealOneOneForm n M) : BottChernRel a a := by
-  refine ⟨fun _ => 0, fun _ => contDiffOn_const, ?_⟩
-  intro e z hz
-  rw [smoothDDC_zero, add_zero]
-
-theorem BottChernRel.symm {a b : ClosedRealOneOneForm n M}
-    (hab : BottChernRel a b) : BottChernRel b a := by
-  obtain ⟨h, hh, heq⟩ := hab
-  refine ⟨fun x => -h x, fun e => (hh e).neg, ?_⟩
-  intro e z hz
-  rw [smoothDDC_neg e.val.open_target (hh e) hz, heq e z hz, add_neg_cancel_right]
-
-theorem BottChernRel.trans {a b c : ClosedRealOneOneForm n M}
-    (hab : BottChernRel a b) (hbc : BottChernRel b c) : BottChernRel a c := by
-  obtain ⟨h, hh, heq⟩ := hab
-  obtain ⟨g, hg, geq⟩ := hbc
-  refine ⟨fun x => h x + g x, fun e => (hh e).add (hg e), ?_⟩
-  intro e z hz
-  rw [smoothDDC_add e.val.open_target (hh e) (hg e) hz, geq e z hz, heq e z hz,
-    add_assoc]
-
-/-- Geometric equality is included, using the zero potential. -/
-theorem bottChernRel_of_geometricallyEq {a b : ClosedRealOneOneForm n M}
-    (hab : a.val.GeometricallyEq b.val) : BottChernRel a b := by
-  refine ⟨fun _ => 0, fun _ => contDiffOn_const, ?_⟩
-  intro e z hz
-  rw [smoothDDC_zero, add_zero]
-  exact (hab e hz).symm
-
-theorem bottChernRel_geometricallyEq_iff {a a' b b' : ClosedRealOneOneForm n M}
-    (haa : a.val.GeometricallyEq a'.val) (hbb : b.val.GeometricallyEq b'.val) :
-    BottChernRel a b ↔ BottChernRel a' b' := by
-  have ha := bottChernRel_of_geometricallyEq haa
-  have hb := bottChernRel_of_geometricallyEq hbb
-  exact ⟨fun h => ha.symm.trans (h.trans hb), fun h => ha.trans (h.trans hb.symm)⟩
-
-theorem BottChernRel.add {a b c d : ClosedRealOneOneForm n M}
-    (hab : BottChernRel a b) (hcd : BottChernRel c d) : BottChernRel (a + c) (b + d) := by
-  obtain ⟨h, hh, heq⟩ := hab
-  obtain ⟨g, hg, geq⟩ := hcd
-  refine ⟨fun x => h x + g x, fun e => (hh e).add (hg e), ?_⟩
-  intro e z hz
-  rw [coeff_add, coeff_add, smoothDDC_add e.val.open_target (hh e) (hg e) hz,
-    heq e z hz, geq e z hz]
-  abel
-
-theorem BottChernRel.smul {a b : ClosedRealOneOneForm n M}
-    (hab : BottChernRel a b) (c : ℝ) : BottChernRel (c • a) (c • b) := by
-  obtain ⟨h, hh, heq⟩ := hab
-  refine ⟨fun x => c • h x, fun e => (hh e).const_smul c, ?_⟩
-  intro e z hz
-  rw [coeff_smul, coeff_smul, smoothDDC_smul e.val.open_target (hh e) c hz,
-    heq e z hz, smul_add]
-
-theorem BottChernRel.neg {a b : ClosedRealOneOneForm n M}
-    (hab : BottChernRel a b) : BottChernRel (-a) (-b) := hab.smul (-1)
-
-/-- The explicit equivalence relation on closed smooth real `(1,1)`-forms. -/
-def bottChernSetoid : Setoid (ClosedRealOneOneForm n M) where
-  r := BottChernRel
-  iseqv := ⟨BottChernRel.refl, BottChernRel.symm, BottChernRel.trans⟩
-
 end ClosedRealOneOneForm
-
-/-- Real Bott–Chern `(1,1)` classes, without a finite-dimensionality assertion. -/
-def RealBottChern (n : ℕ) (M : Type*) [TopologicalSpace M]
-    [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] :=
-  Quotient (ClosedRealOneOneForm.bottChernSetoid (n := n) (M := M))
-
-namespace RealBottChern
-
-/-- The Bott–Chern class of a closed real `(1,1)`-form. -/
-def ofRepresentative (a : ClosedRealOneOneForm n M) : RealBottChern n M :=
-  Quotient.mk _ a
-
-/-- Class equality is exactly existence of a globally chart-smooth `ddᶜ` difference. -/
-theorem ofRepresentative_eq_iff (a b : ClosedRealOneOneForm n M) :
-    ofRepresentative a = ofRepresentative b ↔ ClosedRealOneOneForm.BottChernRel a b :=
-  Quotient.eq
-
-theorem ofRepresentative_eq_of_geometricallyEq {a b : ClosedRealOneOneForm n M}
-    (hab : a.val.GeometricallyEq b.val) : ofRepresentative a = ofRepresentative b :=
-  (ofRepresentative_eq_iff a b).mpr
-    (ClosedRealOneOneForm.bottChernRel_of_geometricallyEq hab)
-
-instance instZero : Zero (RealBottChern n M) := ⟨ofRepresentative 0⟩
-
-instance instAdd : Add (RealBottChern n M) where
-  add a b := Quotient.liftOn₂' a b (fun a b => ofRepresentative (a + b))
-    (fun _ _ _ _ hab hcd => Quotient.sound (ClosedRealOneOneForm.BottChernRel.add hab hcd))
-
-instance instSMul : SMul ℝ (RealBottChern n M) where
-  smul c a := Quotient.liftOn a (fun a => ofRepresentative (c • a))
-    (fun _ _ hab => Quotient.sound (ClosedRealOneOneForm.BottChernRel.smul hab c))
-
-instance instNeg : Neg (RealBottChern n M) where
-  neg a := Quotient.liftOn a (fun a => ofRepresentative (-a))
-    (fun _ _ hab => Quotient.sound (ClosedRealOneOneForm.BottChernRel.neg hab))
-
-@[simp] theorem ofRepresentative_zero :
-    ofRepresentative (0 : ClosedRealOneOneForm n M) = 0 := rfl
-
-@[simp] theorem ofRepresentative_add (a b : ClosedRealOneOneForm n M) :
-    ofRepresentative (a + b) = ofRepresentative a + ofRepresentative b := rfl
-
-@[simp] theorem ofRepresentative_smul (c : ℝ) (a : ClosedRealOneOneForm n M) :
-    ofRepresentative (c • a) = c • ofRepresentative a := rfl
-
-@[simp] theorem ofRepresentative_neg (a : ClosedRealOneOneForm n M) :
-    ofRepresentative (-a) = -ofRepresentative a := rfl
-
-instance instAddCommGroup : AddCommGroup (RealBottChern n M) where
-  add_assoc a b c := Quotient.inductionOn₃ a b c fun a b c =>
-    congrArg ofRepresentative (add_assoc a b c)
-  zero_add a := Quotient.inductionOn a fun a => congrArg ofRepresentative (zero_add a)
-  add_zero a := Quotient.inductionOn a fun a => congrArg ofRepresentative (add_zero a)
-  add_comm a b := Quotient.inductionOn₂ a b fun a b => congrArg ofRepresentative (add_comm a b)
-  neg_add_cancel a := Quotient.inductionOn a fun a =>
-    congrArg ofRepresentative (neg_add_cancel a)
-  nsmul := nsmulRec
-  zsmul := zsmulRec
-
-instance instModule : Module ℝ (RealBottChern n M) where
-  one_smul a := Quotient.inductionOn a fun a => congrArg ofRepresentative (one_smul ℝ a)
-  mul_smul c d a := Quotient.inductionOn a fun a => congrArg ofRepresentative (mul_smul c d a)
-  smul_zero c := congrArg ofRepresentative (smul_zero c)
-  smul_add c a b := Quotient.inductionOn₂ a b fun a b =>
-    congrArg ofRepresentative (smul_add c a b)
-  add_smul c d a := Quotient.inductionOn a fun a => congrArg ofRepresentative (add_smul c d a)
-  zero_smul a := Quotient.inductionOn a fun a => congrArg ofRepresentative (zero_smul ℝ a)
-
-/-- The class map is linear for the actual representative and quotient operations. -/
-def ofRepresentativeLinearMap : ClosedRealOneOneForm n M →ₗ[ℝ] RealBottChern n M where
-  toFun := ofRepresentative
-  map_add' := ofRepresentative_add
-  map_smul' := ofRepresentative_smul
-
-end RealBottChern
 
 end
 

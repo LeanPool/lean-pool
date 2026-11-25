@@ -8,7 +8,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 
 module
 
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ClosedRealOneOneForms
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Topology.Compactness.Compact
 

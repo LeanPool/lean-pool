@@ -101,37 +101,30 @@ theorem sum_perm_sum_alternatization_right (K : (ι → E) → ℝ) (L : (κ →
           ∑ π : Perm κ, ((Perm.sign π : ℤ) : ℝ) * L (w ∘ σ ∘ Sum.inr ∘ π)) =
       (Fintype.card (Perm κ) : ℝ) * ∑ σ : Perm (ι ⊕ κ), ((Perm.sign σ : ℤ) : ℝ) *
         (K (w ∘ σ ∘ Sum.inl) * L (w ∘ σ ∘ Sum.inr)) := by
-  set g : Perm (ι ⊕ κ) → ℝ := fun σ => ((Perm.sign σ : ℤ) : ℝ) *
-    (K (w ∘ σ ∘ Sum.inl) * L (w ∘ σ ∘ Sum.inr))
-  have hterm : ∀ (σ : Perm (ι ⊕ κ)) (π : Perm κ),
-      ((Perm.sign σ : ℤ) : ℝ) * (K (w ∘ σ ∘ Sum.inl) *
-        (((Perm.sign π : ℤ) : ℝ) * L (w ∘ σ ∘ Sum.inr ∘ π))) =
-        g (σ * Perm.sumCongr 1 π) := by
-    intro σ π
-    simp only [g, Perm.sign_mul, Perm.sign_sumCongr, Perm.sign_one, one_mul, Units.val_mul,
-      Int.cast_mul]
-    have h1 : w ∘ ⇑(σ * Perm.sumCongr (1 : Perm ι) π : Perm (ι ⊕ κ)) ∘ Sum.inl = w ∘ σ ∘ Sum.inl
-      := by
-      funext i
-      simp
-    have h2 : w ∘ ⇑(σ * Perm.sumCongr (1 : Perm ι) π : Perm (ι ⊕ κ)) ∘ Sum.inr = w ∘ σ ∘ Sum.inr ∘
-      π := by
-      funext i
-      simp
-    rw [h1, h2]
-    ring
-  calc _ = ∑ σ : Perm (ι ⊕ κ), ∑ π : Perm κ, ((Perm.sign σ : ℤ) : ℝ) *
-        (K (w ∘ σ ∘ Sum.inl) * (((Perm.sign π : ℤ) : ℝ) * L (w ∘ σ ∘ Sum.inr ∘ π))) := by
-        refine Finset.sum_congr rfl fun σ _ => ?_
-        rw [Finset.mul_sum, Finset.mul_sum]
-    _ = ∑ π : Perm κ, ∑ σ : Perm (ι ⊕ κ), g (σ * Perm.sumCongr 1 π) := by
-        rw [Finset.sum_comm]
-        exact Finset.sum_congr rfl fun π _ => Finset.sum_congr rfl fun σ _ => hterm σ π
-    _ = ∑ _π : Perm κ, ∑ σ : Perm (ι ⊕ κ), g σ := by
-        refine Finset.sum_congr rfl fun π _ => ?_
-        exact Fintype.sum_equiv (Equiv.mulRight (Perm.sumCongr 1 π)) _ _ (fun _ => rfl)
-    _ = _ := by
-        rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul]
+  let swap := Equiv.sumComm κ ι
+  have hleft (σ : Perm (κ ⊕ ι)) :
+      (w ∘ swap) ∘ σ ∘ Sum.inl = w ∘ swap.permCongr σ ∘ Sum.inr := by
+    funext x
+    rfl
+  have hright (σ : Perm (κ ⊕ ι)) :
+      (w ∘ swap) ∘ σ ∘ Sum.inr = w ∘ swap.permCongr σ ∘ Sum.inl := by
+    funext x
+    rfl
+  have hleft_perm (σ : Perm (κ ⊕ ι)) (π : Perm κ) :
+      (w ∘ swap) ∘ σ ∘ Sum.inl ∘ π = w ∘ swap.permCongr σ ∘ Sum.inr ∘ π :=
+    congrArg (· ∘ π) (hleft σ)
+  have hl := sum_perm_sum_alternatization_left L K (w ∘ swap)
+  simp only [hleft_perm, hleft, hright] at hl
+  rw [Fintype.sum_equiv swap.permCongr _ (fun σ => ((Perm.sign σ : ℤ) : ℝ) *
+        (K (w ∘ σ ∘ Sum.inl) *
+          ∑ π : Perm κ, ((Perm.sign π : ℤ) : ℝ) * L (w ∘ σ ∘ Sum.inr ∘ π))) (by
+        intro σ
+        rw [Perm.sign_permCongr, mul_comm (K (w ∘ _ ∘ Sum.inl))]),
+      Fintype.sum_equiv swap.permCongr _ (fun σ => ((Perm.sign σ : ℤ) : ℝ) *
+        (K (w ∘ σ ∘ Sum.inl) * L (w ∘ σ ∘ Sum.inr))) (by
+        intro σ
+        rw [Perm.sign_permCongr, mul_comm (K (w ∘ _ ∘ Sum.inl))])] at hl
+  exact hl
 
 end Absorb
 

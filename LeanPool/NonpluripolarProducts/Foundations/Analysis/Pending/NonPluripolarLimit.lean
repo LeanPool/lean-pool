@@ -200,13 +200,7 @@ theorem truncationLimitMeasure_eq_canonical {v : ComplexModel n → ℝ}
     have hmax : EqOn (truncationReal (fun z => (v z : EReal)) k)
         (fun z => max (v z) (-(k : ℝ))) Ω := by
       intro z _
-      change (max (v z : EReal) ((-(k : ℝ) : ℝ) : EReal)).toReal =
-        max (v z) (-(k : ℝ))
-      rcases le_total (v z) (-(k : ℝ)) with hz | hz
-      · rw [max_eq_right (EReal.coe_le_coe_iff.mpr hz), max_eq_right hz,
-          EReal.toReal_coe]
-      · rw [max_eq_left (EReal.coe_le_coe_iff.mpr hz), max_eq_left hz,
-          EReal.toReal_coe]
+      exact truncationReal_coe v k z
     have hset : strictTruncationLocus Ω (fun z => (v z : EReal)) k =
         {z | z ∈ Ω ∧ -(k : ℝ) < v z} := by
       ext z

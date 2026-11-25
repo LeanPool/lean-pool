@@ -56,13 +56,8 @@ theorem pullback_btProduct (hdegree : r + q = n)
     (hu i) hVrc
   choose f hf using hex
   let h' := isBiholomorphicPair_preOpen h hVB
-  have hφA' : tsupport φ ⊆ preOpen h V :=
-    fun x hx => ⟨φ.tsupport_subset hx, hKV ⟨x, hx, rfl⟩⟩
-  let φ' : 𝓓(preOpen h V, ℝ) := ⟨φ, φ.contDiff, φ.hasCompactSupport, hφA'⟩
-  have hext : extTest (preOpen_le h V) φ' = φ := by
-    ext x
-    rw [extTest_apply]
-    rfl
+  let φ' := testInPreOpen h (V := V) φ hKV
+  have hext : extTest (preOpen_le h V) φ' = φ := extTest_testInPreOpen h φ hKV
   have huV : ∀ i, IsLocallyBoundedPshOn V (u i) :=
     fun i => isLocallyBoundedPshOn_mono (hu i) hVB
   have hS : ∀ j i, IsLocallyBoundedPshOn V (f i j) :=

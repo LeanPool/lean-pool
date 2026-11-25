@@ -26,9 +26,9 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DeficitLocaliz
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRegularization
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionRestriction
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BTTruncations
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ChartDomains
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CircleDeficitMajorants
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ClosedRealOneOneForms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ComplexManifold
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ContinuousUscMajorants
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry

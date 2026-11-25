@@ -305,13 +305,6 @@ theorem btProduct_cons_eq_ddcMul {r p' : ℕ} (hqp : r + (p' + 1) = n) (hqp' : r
   rw [btProduct_succ_eq_ddcMul p' r _ _ _ (heq_oneCurrentOf hqp hqp'), Fin.tail_cons,
     Fin.cons_zero]
 
-theorem truncationReal_coe (v : (ComplexModel n) → ℝ) (k : ℕ) (z : (ComplexModel n)) :
-    truncationReal (fun z => (v z : EReal)) k z = max (v z) (-(k : ℝ)) := by
-  simp only [truncationReal, truncation]
-  rcases le_total (v z) (-(k : ℝ)) with h | h
-  · rw [max_eq_right (EReal.coe_le_coe_iff.mpr h), max_eq_right h, EReal.toReal_coe]
-  · rw [max_eq_left (EReal.coe_le_coe_iff.mpr h), max_eq_left h, EReal.toReal_coe]
-
 theorem neg_lt_truncationReal_iff {u : (ComplexModel n) → EReal} (hu : PlurisubharmonicOn u U)
     (k : ℕ) {z : (ComplexModel n)}
     (hz : z ∈ (U : Set (ComplexModel n))) :

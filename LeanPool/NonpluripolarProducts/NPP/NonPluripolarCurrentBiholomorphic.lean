@@ -88,16 +88,6 @@ theorem isLocallyBoundedOn_indicator_comp (h : IsBiholomorphicPair A B τ σ) {u
     rw [Set.indicator_of_mem (hKA hx)]
     exact hM _ (mem_image_of_mem τ hx)⟩
 
-theorem isLocallyBoundedOn_mul {U : Set (ComplexModel n)} {u v : (ComplexModel n)
-    → ℝ} (hu : IsLocallyBoundedOn u U)
-    (hv : IsLocallyBoundedOn v U) : IsLocallyBoundedOn (fun x => u x * v x) U := by
-  intro K hK hKU
-  obtain ⟨M, hM⟩ := hu K hK hKU
-  obtain ⟨N, hN⟩ := hv K hK hKU
-  exact ⟨M * N, fun x hx => by
-    rw [abs_mul]
-    exact mul_le_mul (hM x hx) (hN x hx) (abs_nonneg _) ((abs_nonneg _).trans (hM x hx))⟩
-
 /-- **`τ^*(u T) = (u ∘ τ) τ^* T`** for a positive current `T` on `B` and a nonnegative Borel
 function `u` bounded on the compact subsets of `B`. -/
 theorem pullback_mulBorel (h : IsBiholomorphicPair A B τ σ) {T : LocalProductCurrent n B q}
@@ -120,37 +110,7 @@ theorem pullback_mulBorel (h : IsBiholomorphicPair A B τ σ) {T : LocalProductC
     simp_rw [mulBorel_mulBorel hT hu hub hu0 (LocalCurrentPullbackDdc.measurable_pbCoeffFun h γ φ
       _)
       (LocalCurrentPullbackDdc.isLocallyBoundedOn_pbCoeffFun h γ φ _)]
-    simp only [mulBorel_apply hT (u := fun x => u x * LocalCurrentPullbackDdc.pbCoeffFun B σ γ φ _
-      x)
-      (hu.mul (LocalCurrentPullbackDdc.measurable_pbCoeffFun h γ φ _))
-      (isLocallyBoundedOn_mul hub (LocalCurrentPullbackDdc.isLocallyBoundedOn_pbCoeffFun h γ φ _))]
-    rw [← integral_finsetSum _ fun i _ => hT.integrable_mul_density
-      (u := fun x => u x * LocalCurrentPullbackDdc.pbCoeffFun B σ γ φ i x) (hu.mul
-        (LocalCurrentPullbackDdc.measurable_pbCoeffFun h γ φ i))
-      (isLocallyBoundedOn_mul hub (LocalCurrentPullbackDdc.isLocallyBoundedOn_pbCoeffFun h γ φ i))
-      _ χ, ← integral_indicator B.isOpen.measurableSet]
-    refine integral_congr_ae ?_
-    have hall := ae_all_iff.mpr fun i => densityForm_ae hT (formBasis n q i)
-    filter_upwards [hall] with y hy
-    by_cases hyB : y ∈ (B : Set (ComplexModel n))
-    · rw [Set.indicator_of_mem hyB]
-      simp only [LocalCurrentPullbackDdc.pbCoeffFun, Set.indicator_of_mem hyB]
-      have hsum : densityForm hT y (pullSpan q (fderiv ℂ σ y) γ) =
-          ∑ i, (formBasis n q).repr (pullSpan q (fderiv ℂ σ y) γ) i *
-            hT.density (formBasis n q i) y := by
-        conv_lhs => rw [← (formBasis n q).sum_repr (pullSpan q (fderiv ℂ σ y) γ)]
-        rw [map_sum]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        rw [map_smul, smul_eq_mul, hy i]
-      rw [hsum, Finset.mul_sum, Finset.mul_sum]
-      by_cases hφ : φ (σ y) = 0
-      · simp [hφ]
-      · have hmem : y ∈ τ '' tsupport φ := ⟨σ y, subset_tsupport φ hφ, h.right_inv y hyB⟩
-        rw [hχ y hmem]
-        refine Finset.sum_congr rfl fun i _ => ?_
-        ring
-    · rw [Set.indicator_of_notMem hyB]
-      simp [LocalCurrentPullbackDdc.pbCoeffFun, Set.indicator_of_notMem hyB]
+    exact LocalCurrentPullbackDdc.sum_mulBorel_pbCoeffFun_eq_integral h hT hu hub γ φ hχ
   have hR : mulBorel (pullback h hT) ((A : Set (ComplexModel n)).indicator fun x => u (τ x)) γ φ =
       ∫ y in B, φ (σ y) * (u y * densityForm hT y (pullSpan q (fderiv ℂ σ y) γ))
         ∂hT.traceMeasure := by

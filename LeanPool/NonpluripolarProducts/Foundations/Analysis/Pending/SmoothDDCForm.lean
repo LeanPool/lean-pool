@@ -15,13 +15,7 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Holo
 /-!
 # `ddᶜ` of a chart-smooth function, as a genuine global smooth two-form
 
-`FirstPass.BottChern` compares two closed real `(1,1)`-forms through the
-*relation* `BottChernRel`, which only asserts that the coefficient families
-differ by `smoothDDC` of a chart-smooth function in every chart. It never
-produces `ddᶜψ` itself as a form, because that needs the overlap law for
-`smoothDDC`.
-
-That overlap law is available: `FirstPass.HolomorphicDDC.smoothDc_comp` is the
+`FirstPass.HolomorphicDDC.smoothDc_comp` supplies the
 naturality of the normalized `dᶜ` under a holomorphic map, and chart changes of
 a complex manifold are holomorphic. So the chartwise family `dᶜψ` really is a
 global smooth one-form, and its exterior derivative — computed chartwise by the

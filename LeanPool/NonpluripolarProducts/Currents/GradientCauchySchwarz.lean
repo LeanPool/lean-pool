@@ -14,10 +14,11 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalC
 /-!
 # The gradient pairing of a positive current and its Cauchy–Schwarz inequality
 
-Source: Xia, *Foundations of pluripotential theory*, `sec:bt-current-gradients`
-(`eq:current-gradient-density`, `eq:current-gradient-pairing`, the positive semidefinite density
-matrix `H` of a positive current and the Cauchy–Schwarz inequality
-`eq:current-gradient-cauchy-schwarz`).
+Xia's gradient density and pairing formulas describe a positive semidefinite density
+matrix for a positive current. The Lean lemma below gives a pointwise, real bilinear estimate
+with a parameter `t > 0`. It is related to the pointwise pairing used in
+[Xia's proof of the integrated Cauchy–Schwarz estimate](https://github.com/MingchenXia/foundations-of-pluripotential-theory/blob/5d7f16338ae82d4933193a0cb331365e737824db/chapters/inputs/q08-current-gradients.tex#L92-L99),
+which combines the pointwise pairing with integral Cauchy–Schwarz for the weighted test.
 
 Let `T` be a positive current of bidimension `(q+1,q+1)` on an open set `U ⊆ ℂⁿ`
 (`SGPT.Foundations.Analysis.Pending.LocalProductCurrents`: `T(β)(φ) = ⟨T, φ β⟩` for constant real
@@ -277,9 +278,10 @@ theorem ae_densityForm_quadForm_nonneg (hT : IsPositive T) {γ : formSpan n q}
   filter_upwards [ae_densityForm_nonneg hT] with x hx ξ
   exact hx _ (quadForm_mem_posCone hγ ξ)
 
-/-- **The Cauchy–Schwarz inequality for the density matrix** (FPT
-`eq:current-gradient-cauchy-schwarz`, pointwise): for `σ_T`-almost every `x`, all `ξ, ζ` and
-`t > 0`, `2 |L_x(Q(ξ, ζ))| ≤ t L_x(Q(ξ, ξ)) + L_x(Q(ζ, ζ)) / t`. -/
+/-- A pointwise Cauchy–Schwarz estimate for the density matrix. For `σ_T`-almost every `x`,
+for all `ξ, ζ` and `t > 0`, it bounds `2 |L_x(Q(ξ, ζ))|` by
+`t L_x(Q(ξ, ξ)) + L_x(Q(ζ, ζ)) / t`. This is a pointwise ingredient related to Xia's
+integrated weighted estimate in `eq:current-gradient-cauchy-schwarz`. -/
 theorem ae_two_mul_abs_densityForm_quadForm_le (hT : IsPositive T) {γ : formSpan n q}
     (hγ : γ ∈ posCone n q) :
     ∀ᵐ x ∂hT.traceMeasure, ∀ (ξ ζ : Fin (n * 2) → ℝ) (t : ℝ), 0 < t →

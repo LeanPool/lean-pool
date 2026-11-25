@@ -398,11 +398,7 @@ theorem mixedTruncationLimitMeasure_eq_canonical {v : Fin n → ComplexModel n �
     have hmax : ∀ i, EqOn (mixedTruncationReal (fun i z => (v i z : EReal)) k i)
         (fun z => max (v i z) (-(k : ℝ))) Ω := by
       intro i z _
-      change (max (v i z : EReal) ((-(k : ℝ) : ℝ) : EReal)).toReal =
-        max (v i z) (-(k : ℝ))
-      rcases le_total (v i z) (-(k : ℝ)) with hz | hz
-      · rw [max_eq_right (EReal.coe_le_coe_iff.mpr hz), max_eq_right hz, EReal.toReal_coe]
-      · rw [max_eq_left (EReal.coe_le_coe_iff.mpr hz), max_eq_left hz, EReal.toReal_coe]
+      exact truncationReal_coe (v i) k z
     have hset : commonStrictLocus Ω (fun i z => (v i z : EReal)) k =
         {z | z ∈ Ω ∧ ∀ i, -(k : ℝ) < v i z} := by
       ext z

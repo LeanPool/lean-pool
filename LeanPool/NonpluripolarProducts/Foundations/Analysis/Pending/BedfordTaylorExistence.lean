@@ -318,6 +318,33 @@ theorem exists_isLocalMixedBedfordTaylorMeasure {Ω : Opens (ComplexModel n)}
     ⟨((hf.1 j).component i).1, ((hf.1 j).component i).2.2⟩
   exact (integral_densityMeasure hpsd hφV).symm
 
+theorem IsLocalBedfordTaylorMeasure.exists_isAdmissible_tendstoMixed
+    {Ω U : Opens (ComplexModel n)} {v : ComplexModel n → ℝ} {μ : Measure (ComplexModel n)}
+    (hμ : IsLocalBedfordTaylorMeasure Ω v μ) (hU : RelativelyCompactIn U Ω) :
+    ∃ F, IsAdmissible n U (fun _ ↦ v) F ∧ TendstoMixed U F μ := by
+  obtain ⟨f, hf⟩ := hμ.approximations_exist hU
+  refine ⟨fun _ ↦ f, isAdmissible_diagonal hμ.1 (subset_closure.trans hU.2) hf,
+    fun φ hφ hφc hφU ↦ ?_⟩
+  refine ((hμ.2.2.2 U hU).2 f hf φ hφ hφc hφU).congr fun j ↦ ?_
+  rw [(smoothMeasure_test_integral (hf.1 j) φ hφ hφc hφU).2.2,
+    setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦ by
+      simp [image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)]]
+  simp only [mixedDensity_diagonal]
+
+theorem IsLocalMixedBedfordTaylorMeasure.exists_isAdmissible_tendstoMixed
+    {Ω U : Opens (ComplexModel n)} {v : Fin n → ComplexModel n → ℝ}
+    {μ : Measure (ComplexModel n)} (hμ : IsLocalMixedBedfordTaylorMeasure Ω v μ)
+    (hU : RelativelyCompactIn U Ω) :
+    ∃ F, IsAdmissible n U v F ∧ TendstoMixed U F μ := by
+  obtain ⟨f, hf⟩ := hμ.approximations_exist hU
+  have hUΩ : U ≤ Ω := subset_closure.trans hU.2
+  refine ⟨fun i k ↦ f k i, ⟨fun i ↦ isDecApprox_of_isDecreasingApproximation (hμ.1 i) hUΩ
+    (hf.component i), fun i hi ↦ absurd i.isLt (not_lt.mpr hi)⟩, fun φ hφ hφc hφU ↦ ?_⟩
+  refine ((hμ.2.2.2 U hU).2 f hf φ hφ hφc hφU).congr fun j ↦ ?_
+  have hpsd : ∀ i, IsSmoothPsdOn U (f j i) := fun i ↦
+    ⟨((hf.1 j).component i).1, ((hf.1 j).component i).2.2⟩
+  exact integral_densityMeasure hpsd hφU
+
 end SGPT.Foundations.Analysis.Pending.BedfordTaylor
 
 end

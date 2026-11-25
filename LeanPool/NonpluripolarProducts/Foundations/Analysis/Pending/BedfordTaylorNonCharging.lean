@@ -304,14 +304,8 @@ theorem IsLocalMixedBedfordTaylorMeasure.doesNotChargePluripolarOn
   refine doesNotChargePluripolarOn_of_forall_tendstoMixed fun x hx ↦ ?_
   obtain ⟨U, hxU, hU⟩ := exists_relativelyCompact_ball hx
   have hUΩ : U ≤ Ω := subset_closure.trans hU.2
-  obtain ⟨f, hf⟩ := hμ.approximations_exist hU
-  refine ⟨U, hxU, v, fun i k ↦ f k i,
-    fun i ↦ isDecApprox_of_isDecreasingApproximation (hμ.1 i) hUΩ (hf.component i),
-    fun K hK hKU ↦ hμ.2.2.1 K hK (hKU.trans hUΩ), fun φ hφ hφc hφU ↦ ?_⟩
-  refine ((hμ.2.2.2 U hU).2 f hf φ hφ hφc hφU).congr fun j ↦ ?_
-  have hpsd : ∀ i, IsSmoothPsdOn U (f j i) := fun i ↦
-    ⟨((hf.1 j).component i).1, ((hf.1 j).component i).2.2⟩
-  exact integral_densityMeasure hpsd hφU
+  obtain ⟨F, hF, hlim⟩ := IsLocalMixedBedfordTaylorMeasure.exists_isAdmissible_tendstoMixed hμ hU
+  exact ⟨U, hxU, v, F, hF.1, (fun K hK hKU ↦ hμ.2.2.1 K hK (hKU.trans hUΩ)), hlim⟩
 
 /-- **Bounded Bedford–Taylor measures do not charge pluripolar sets.** -/
 theorem IsLocalBedfordTaylorMeasure.doesNotChargePluripolarOn
@@ -321,14 +315,7 @@ theorem IsLocalBedfordTaylorMeasure.doesNotChargePluripolarOn
   refine doesNotChargePluripolarOn_of_forall_tendstoMixed fun x hx ↦ ?_
   obtain ⟨U, hxU, hU⟩ := exists_relativelyCompact_ball hx
   have hUΩ : U ≤ Ω := subset_closure.trans hU.2
-  obtain ⟨f, hf⟩ := hμ.approximations_exist hU
-  refine ⟨U, hxU, fun _ ↦ v, fun _ ↦ f,
-    fun _ ↦ isDecApprox_of_isDecreasingApproximation hμ.1 hUΩ hf,
-    fun K hK hKU ↦ hμ.2.2.1 K hK (hKU.trans hUΩ), fun φ hφ hφc hφU ↦ ?_⟩
-  refine ((hμ.2.2.2 U hU).2 f hf φ hφ hφc hφU).congr fun j ↦ ?_
-  rw [(smoothMeasure_test_integral (hf.1 j) φ hφ hφc hφU).2.2,
-    setIntegral_eq_integral_of_forall_compl_eq_zero fun z hz ↦ by
-      simp [image_eq_zero_of_notMem_tsupport fun h ↦ hz (hφU h)]]
-  simp only [mixedDensity_diagonal]
+  obtain ⟨F, hF, hlim⟩ := IsLocalBedfordTaylorMeasure.exists_isAdmissible_tendstoMixed hμ hU
+  exact ⟨U, hxU, fun _ ↦ v, F, hF.1, (fun K hK hKU ↦ hμ.2.2.1 K hK (hKU.trans hUΩ)), hlim⟩
 
 end SGPT.Foundations.Analysis.Pending.BedfordTaylor

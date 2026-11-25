@@ -12,7 +12,7 @@ public import Mathlib.Topology.MetricSpace.ProperSpace.Lemmas
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalBedfordTaylorForms
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ScaledSmoothMax
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothDDCHessianPositivity
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.BottChern
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.ClosedRealOneOneForms
 
 /-!
 # The common collar comparison for recursive Bedford--Taylor products
