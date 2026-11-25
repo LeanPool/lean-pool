@@ -26,7 +26,10 @@ functions increasing to the indicator of that open set transfers the bound to
 `μ`. Letting `k → ∞` shows that `μ` does not charge the pole set near the point,
 and a countable cover gives the global statement.
 
-Source: Demailly, *Complex analytic and differential geometry*, III.3.11.
+The proof uses a smooth approximation of the weighted estimate in
+[Demailly, Proposition III.3.11](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=149).
+The noncharging conclusion follows by applying the bound to the truncated
+pole weight.
 -/
 
 @[expose] public section

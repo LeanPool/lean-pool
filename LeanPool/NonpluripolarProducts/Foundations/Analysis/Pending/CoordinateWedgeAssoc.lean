@@ -432,10 +432,13 @@ theorem coordinateWedge_assoc_two_one_one (A : RealForm n 2) (c d : RealForm n 1
 
 /-- Associativity for three one-forms, as an equality of three-forms. -/
 theorem coordinateWedge_assoc_one_one_one (a b c : RealForm n 1) :
-    (coordinateWedge (coordinateWedge a b) c : RealForm n 3) =
-      coordinateWedge a (coordinateWedge b c) := by
-  apply ContinuousAlternatingMap.ext
-  intro v
+    @coordinateWedge n 2 1 (@coordinateWedge n 1 1 a b) c =
+      @coordinateWedge n 1 2 a (@coordinateWedge n 1 1 b c) := by
+  refine ContinuousAlternatingMap.ext fun v => ?_
+  have hcast : (v ∘ Fin.cast (Nat.add_assoc 1 1 1).symm) = v := by
+    funext i
+    rfl
+  conv_rhs => rw [← hcast]
   exact coordinateWedge_assoc_apply (p := 1) (q := 1) (r := 1) a b c v
 
 /-- The left-nested product `((a ∧ b) ∧ c) ∧ d` of four one-forms. -/

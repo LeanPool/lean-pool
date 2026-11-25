@@ -13,68 +13,16 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Polydi
 /-!
 # The Perron--Bremermann envelope as a function of its boundary data
 
-`Pending.PolydiskPerronSemiconcave` discharges Blocki's `C^{1,1}` estimate on
-the `C²` stratum, and its module docstring names the two ingredients that the
-passage from `C²` data to bounded upper semicontinuous data for the local balayage used in
-[Xia's balayage lemma](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_npp.tex#L662-L688) requires:
+Perron–Bremermann competitors are compared using the full polydisk boundary
+`closedUnitPolydisk n \ unitPolydisk n`. Monotonicity of the competitor class
+gives monotonicity of the envelope. Constant shifts then give the sup-norm
+estimate and uniform stability with respect to the boundary data.
 
-1. monotonicity of `perronEnvelope` in the data, and the identification of the
-   decreasing limit of the envelopes;
-2. stability of `Pending.BedfordTaylor.IsBTLimit` along a decreasing sequence
-   of locally bounded plurisubharmonic functions.
-
-**This module proves the monotonicity half of ingredient 1, and the sup-norm
-stability it yields:**
-
-* `IsPerronCompetitor.mono_boundary` -- the competitor class only sees the
-  boundary values, and grows with them;
-* `IsPerronData.perronEnvelope_mono` -- hence the envelope is monotone in the
-  data;
-* `IsPerronData.perronEnvelope_add_const` -- the envelope commutes with a
-  constant shift of the data;
-* `IsPerronData.abs_perronEnvelope_sub_le` -- therefore the envelope is
-  `1`-Lipschitz for the sup norm on the boundary, and
-  `forall_abs_perronEnvelope_sub_le_of_uniform` -- uniformly convergent data
-  have uniformly convergent envelopes.
-
-**What is not proved here, and must not be read into the above.**  The other
-half of ingredient 1 is the *identification of the decreasing limit* of the
-envelopes; it is not in this module, for the reason spelled out next.  Dini's
-theorem
-(`Pending.ThetaCapacityDecreasingConvergence.exists_forall_lt_add_of_antitone_of_continuousOn`)
-does make a decreasing sequence of data converge uniformly on the compact
-`PBar`, and then the last theorem below makes the envelopes converge uniformly
--- but Dini needs the *limit* to be continuous too, and the limit of a
-decreasing sequence of continuous functions is in general only upper
-semicontinuous.  A merely usc limit cannot even be stated here: `IsPerronData`
-requires `ContinuousOn v`, so the competitor class for usc data, which is what
-Blocki's mollification argument identifies the limit envelope against, is not
-expressible in this file.  What the statements below do cover is a decreasing
-sequence of data whose pointwise limit is again continuous.
-
-Ingredient 2 -- the Bedford--Taylor convergence theorem for a decreasing
-sequence of locally bounded plurisubharmonic functions -- is no longer
-untouched: it is proved in `Pending.BedfordTaylorDecreasingLimit`
-(`tendsto_integral_of_antitone_isBTLimit`, `eq_zero_of_antitone_of_isBTLimit`),
-and `Pending.PolydiskBalayageDecreasingData` performs the passage to decreasing
-data on the measure side.  The identification of the limit envelope with the
-envelope of the limiting data — the statement about `perronEnvelope` that this
-module could not express — is
-`Pending.PolydiskPerronDecreasingLimit.perronEnvelope_iInf_eq_of_antitone`: it
-works with the competitor class of the usc datum directly, so no `IsPerronData`
-hypothesis on the limit is needed.  Both ingredients of Błocki's passage are
-therefore in place. The remaining step is to approximate bounded upper semicontinuous
-data on the distinguished boundary by decreasing `C²` Perron data.
-
-One general fact is proved on the way and stated in the root namespace, since
-it is missing from `SGPT.Foundations.Analysis.Plurisubharmonic`: a
-plurisubharmonic function stays plurisubharmonic after adding a real constant.
-The `On`-form of "a constant is plurisubharmonic" is recorded next to it, but
-it is only a wrapper: the content is
-`SGPT.Foundations.Analysis.plurisubharmonicAt_const`.
-
-Source: Z. Blocki, *The complex Monge--Ampere operator in pluripotential
-theory*, lecture notes, Section 2.3; Bedford--Taylor, Invent. Math. 37 (1976).
+Błocki uses decreasing `C^{1,1}` data on the full boundary in the
+[proof of Theorem 2.3.1](https://gamma.im.uj.edu.pl/~blocki/publ/ln/wykl.pdf#page=52).
+The Lean comparison applies to continuous data, including the smooth data
+that occur in such an approximation. It gives uniform envelope convergence
+when the boundary data converge uniformly.
 -/
 
 @[expose] public section

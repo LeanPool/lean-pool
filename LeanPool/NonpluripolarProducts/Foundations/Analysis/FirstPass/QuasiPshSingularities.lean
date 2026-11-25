@@ -14,13 +14,15 @@ public import Mathlib.Analysis.Calculus.ContDiff.Basic
 /-!
 # Local quasi-PSH potentials and additive singularity comparison
 
-Source: `transcendental-nakamaye-revised-20260831:sec:qpsh`.
+[Xia's quasi-PSH definitions and singularity order](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_pshfunctions.tex#L1247-L1264)
+use a smooth closed background on the manifold and a global additive order
+on a compact manifold. Here the decomposition and comparison are local.
 The local decomposition uses the existing extended-real PSH germs and a real
 smooth summand. The raw criterion permits the identically negative-infinite
 function, like `PlurisubharmonicAt`; `LocalQuasiPshPotentialOn` separately
 excludes it on every open neighborhood. No current or global geometry is assumed.
 
-`MoreSingularOn u v U` means `u ≤ v + C`, in the manuscript's direction.
+`MoreSingularOn u v U` means `u ≤ v + C`, in Xia's direction.
 Constants are always real, so these comparisons also make sense at poles.
 -/
 

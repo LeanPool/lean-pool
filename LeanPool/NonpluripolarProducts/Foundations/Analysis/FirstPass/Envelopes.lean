@@ -14,16 +14,14 @@ public import Mathlib.Topology.Semicontinuity.Basic
 /-!
 # Actual extended-real upper envelopes
 
-Source: `transcendental-nakamaye-revised-20260831:sec:npp`.
-`thetaPshSupremum` is the pointwise supremum V_theta, without silently
-regularizing it. `singularityEnvelope` is the upper semicontinuous
-regularization of the supremum of actual normalized theta-PSH potentials
-more singular than the reference function, with one global real constant.
-
-The complete lattice `EReal` retains both infinities. Empty competitor sets
-give the constant bottom function. All results here are proved; theta-PSH
-closure and canonical minimal singularities are separate Pending statements.
-There is no quasi-everywhere rooftop operator or mass assertion in this file.
+The Lean constructions use the supremum and upper regularization in
+[Xia's definition of the prescribed-singularity envelope](https://github.com/MingchenXia/SGPT/blob/4390e77497d699ac3a4f878b97c34fc867513add/author/chapter_envelopes.tex#L91-L99).
+`thetaPshSupremum` is the pointwise supremum of normalized theta-PSH
+potentials. `singularityEnvelope` takes the upper semicontinuous
+regularization of the supremum over those more singular than the reference
+function. A single real additive constant compares each competitor with
+the reference function. An empty competitor set gives the constant bottom
+function.
 -/
 
 @[expose] public section

@@ -14,10 +14,9 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.Herm
 # Geometric equality of chartwise differential forms
 
 Only coefficients on the open chart targets represent a differential form.
-`GeometricallyEq` forgets arbitrary extensions outside those targets. Its
-quotient is optional: the representative API and all the properties below
-already respect this relation. No coordinate naturality of exterior
-differentiation is needed to prove locality under this equality.
+`GeometricallyEq` forgets arbitrary extensions outside those targets. Exterior
+differentiation and the representative positivity predicates respect this
+equivalence through locality on the chart targets.
 -/
 
 @[expose] public section
@@ -116,53 +115,7 @@ theorem GeometricallyEq.isKahler_iff {a b : SmoothRealForm n M 2}
     (h : a.GeometricallyEq b) : a.IsKahler ↔ b.IsKahler :=
   and_congr h.isHermitian_iff h.isClosed_iff
 
-/-- An explicit setoid, without changing Lean's equality of representatives. -/
-def geometricSetoid : Setoid (SmoothRealForm n M k) where
-  r := GeometricallyEq
-  iseqv := geometricallyEq_equivalence
-
 end SmoothRealForm
-
-/-- Geometric forms with off-target coefficient extensions identified. -/
-def GeometricRealForm (n : ℕ) (M : Type*) [TopologicalSpace M]
-    [ChartedSpace (ComplexModel n) M] [IsComplexManifold n M] (k : ℕ) :=
-  Quotient (SmoothRealForm.geometricSetoid (n := n) (M := M) (k := k))
-
-namespace GeometricRealForm
-
-/-- The geometric form represented by smooth chart data. -/
-def ofRepresentative (a : SmoothRealForm n M k) : GeometricRealForm n M k :=
-  Quotient.mk _ a
-
-theorem ofRepresentative_eq_iff (a b : SmoothRealForm n M k) :
-    ofRepresentative a = ofRepresentative b ↔ a.GeometricallyEq b :=
-  Quotient.eq
-
-/-- Closedness descends to geometric forms. -/
-def IsClosed (a : GeometricRealForm n M k) : Prop :=
-  Quotient.lift (s := SmoothRealForm.geometricSetoid) SmoothRealForm.IsClosed
-    (fun _ _ h => propext h.isClosed_iff) a
-
-/-- Hermitian positivity descends to geometric forms. -/
-def IsHermitian (a : GeometricRealForm n M 2) : Prop :=
-  Quotient.lift (s := SmoothRealForm.geometricSetoid) SmoothRealForm.IsHermitian
-    (fun _ _ h => propext h.isHermitian_iff) a
-
-/-- Kählerness descends without asserting the existence of any Kähler form. -/
-def IsKahler (a : GeometricRealForm n M 2) : Prop :=
-  Quotient.lift (s := SmoothRealForm.geometricSetoid) SmoothRealForm.IsKahler
-    (fun _ _ h => propext h.isKahler_iff) a
-
-@[simp] theorem isClosed_ofRepresentative (a : SmoothRealForm n M k) :
-    (ofRepresentative a).IsClosed ↔ a.IsClosed := Iff.rfl
-
-@[simp] theorem isHermitian_ofRepresentative (a : SmoothRealForm n M 2) :
-    (ofRepresentative a).IsHermitian ↔ a.IsHermitian := Iff.rfl
-
-@[simp] theorem isKahler_ofRepresentative (a : SmoothRealForm n M 2) :
-    (ofRepresentative a).IsKahler ↔ a.IsKahler := Iff.rfl
-
-end GeometricRealForm
 
 end
 

@@ -15,10 +15,11 @@ public import Mathlib.Tactic.Linarith
 /-!
 # The topological part of the gluing argument
 
-Source: `transcendental-nakamaye:prop:gluing`.
-These lemmas prove collar agreement and the selection of a finite continuous
-branch near a pole of an upper semicontinuous function. They do not assert the
-positivity or closedness of currents; those analytic obligations remain open.
+The upstream source credits a gluing argument from a draft of the
+transcendental Nakamaye manuscript. The lemmas concern collar agreement and
+the selection of a finite continuous branch near a pole of an upper
+semicontinuous function.
+[Upstream Lean source](https://github.com/MingchenXia/SGPT-lean/blob/76cbff42fbefc4c953a0ea0ba5b6948ac20c69b3/SGPT/Foundations/Analysis/GluingTopology.lean).
 -/
 
 @[expose] public section

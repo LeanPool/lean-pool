@@ -11,7 +11,7 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalProductCurrents
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.CoordinateWedgeAssoc
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.ClosedProductCurrents
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.LocalCurrents
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.DistributionDerivatives
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.HolomorphicPullback
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.LocalPotentialIndependence
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.CoordinateDensityGeometry
@@ -221,7 +221,7 @@ theorem dDist_apply (v : E) (T : 𝓓'(U, ℝ)) (φ : 𝓓(U, ℝ)) : dDist v T 
   Distribution.lineDerivCLM_apply
 
 theorem dDist_comm (v w : E) (T : 𝓓'(U, ℝ)) : dDist v (dDist w T) = dDist w (dDist v T) :=
-  LocalCurrents.distribution_derivatives_commute U T v w
+  distribution_derivatives_commute U T v w
 
 /-- The derivative `x ↦ Dg(x) v` of a smooth function. -/
 def dFun (v : E) (g : E → ℝ) : E → ℝ := fun x => fderiv ℝ g x v

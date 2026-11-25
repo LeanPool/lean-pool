@@ -94,8 +94,8 @@ theorem eq_vec_two (w : Fin 2 → ComplexModel n) : w = ![w 0, w 1] := by
   fin_cases i <;> rfl
 
 theorem neg_neg_apply (A : RealForm n 2) (u v : ComplexModel n) : A ![-u, -v] = A ![u, v] := by
-  have h1 := coordinateFrame_twoForm_smul_left A (-1) u (-v)
-  have h2 := coordinateFrame_twoForm_smul_right A (-1) u v
+  have h1 := twoForm_smul_left A (-1) u (-v)
+  have h2 := twoForm_smul_right A (-1) u v
   simp only [neg_smul, one_smul] at h1 h2
   rw [h1, h2]
   ring

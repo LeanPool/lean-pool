@@ -31,62 +31,14 @@ noncomputable section
 
 namespace SGPT.Foundations.Analysis.FirstPass.MongeAmpere
 
-/-- Antisymmetry of a real two-form in its two slots. -/
-theorem coordinateFrame_twoForm_swap {n : ℕ} (A : CoordinateRealTwoForm n)
-    (u v : ComplexModel n) :
-    A ![v, u] = -A ![u, v] := by
-  simpa using A.map_swap ![u, v] (i := 0) (j := 1) (by decide)
-
-/-- A real two-form is `ℝ`-homogeneous in its first slot. -/
-theorem coordinateFrame_twoForm_smul_left {n : ℕ} (A : CoordinateRealTwoForm n)
-    (r : ℝ) (u v : ComplexModel n) :
-    A ![r • u, v] = r * A ![u, v] :=
-  A.toMultilinearMap.cons_smul ![v] r u
-
-/-- A real two-form is additive in its first slot. -/
-theorem coordinateFrame_twoForm_add_left {n : ℕ} (A : CoordinateRealTwoForm n)
-    (u u' v : ComplexModel n) :
-    A ![u + u', v] = A ![u, v] + A ![u', v] :=
-  A.toMultilinearMap.cons_add ![v] u u'
-
-/-- A real two-form is additive in its second slot. -/
-theorem coordinateFrame_twoForm_add_right {n : ℕ} (A : CoordinateRealTwoForm n)
-    (u v v' : ComplexModel n) :
-    A ![u, v + v'] = A ![u, v] + A ![u, v'] := by
-  rw [coordinateFrame_twoForm_swap A (v + v') u, coordinateFrame_twoForm_add_left,
-    coordinateFrame_twoForm_swap A u v, coordinateFrame_twoForm_swap A u v']
-  ring
-
-/-- A real two-form is `ℝ`-homogeneous in its second slot. -/
-theorem coordinateFrame_twoForm_smul_right {n : ℕ} (A : CoordinateRealTwoForm n)
-    (r : ℝ) (u v : ComplexModel n) :
-    A ![u, r • v] = r * A ![u, v] := by
-  rw [coordinateFrame_twoForm_swap A (r • v) u,
-    coordinateFrame_twoForm_smul_left, coordinateFrame_twoForm_swap A u v]
-  ring
-
-/-- A real two-form negates when its second slot is negated. -/
-theorem coordinateFrame_twoForm_neg_right {n : ℕ} (A : CoordinateRealTwoForm n)
-    (u v : ComplexModel n) :
-    A ![u, -v] = -A ![u, v] := by
-  simpa using coordinateFrame_twoForm_smul_right A (-1) u v
-
-/-- A real `(1,1)`-form moves multiplication by `i` between its slots with a sign. -/
-theorem coordinateFrame_twoForm_I_smul_left_of_isOneOne {n : ℕ}
-    {A : CoordinateRealTwoForm n} (hA : IsOneOne A) (u v : ComplexModel n) :
-    A ![Complex.I • u, v] = -A ![u, Complex.I • v] := by
-  rw [← hA u (Complex.I • v), smul_smul, Complex.I_mul_I, neg_one_smul,
-    coordinateFrame_twoForm_neg_right]
-  ring
-
 /-- The mixed coefficient `A(e_j, i e_k)` of a real `(1,1)`-form is symmetric. -/
 theorem coordinateFrame_mixed_coefficient_symm {n : ℕ}
     (A : CoordinateRealTwoForm n) (hA : IsOneOne A) (j k : Fin n) :
     A ![coordinateVector k, Complex.I • coordinateVector j] =
       A ![coordinateVector j, Complex.I • coordinateVector k] := by
-  rw [coordinateFrame_twoForm_swap A (Complex.I • coordinateVector j)
+  rw [twoForm_swap A (Complex.I • coordinateVector j)
       (coordinateVector k),
-    coordinateFrame_twoForm_I_smul_left_of_isOneOne hA]
+    twoForm_I_smul_left_of_isOneOne hA]
   ring
 
 /-- The complex coefficient matrix extracted from a real `(1,1)` form is
@@ -99,7 +51,7 @@ theorem normalizedHermitianMatrix_isHermitian {n : ℕ}
   change star (normalizedHermitianMatrix A k j) = normalizedHermitianMatrix A j k
   rw [normalizedHermitianMatrix, normalizedHermitianMatrix,
     coordinateFrame_mixed_coefficient_symm A hA,
-    coordinateFrame_twoForm_swap A (coordinateVector j) (coordinateVector k)]
+    twoForm_swap A (coordinateVector j) (coordinateVector k)]
   rw [Complex.star_def]
   apply Complex.ext <;>
     simp [Complex.mul_re, Complex.mul_im, Complex.add_re, Complex.add_im,
@@ -134,7 +86,7 @@ theorem coordinateTwoForm_apply_realFrame_block {n : ℕ}
   · simp
   · simp
   · simp only [Fin.isValue]
-    exact coordinateFrame_twoForm_I_smul_left_of_isOneOne hA _ _
+    exact twoForm_I_smul_left_of_isOneOne hA _ _
   · simp only [Fin.isValue]
     exact hA _ _
 

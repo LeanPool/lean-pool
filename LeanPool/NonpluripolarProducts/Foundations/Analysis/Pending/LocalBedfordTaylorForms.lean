@@ -86,11 +86,11 @@ theorem sum_apply_eq_zero_of_forall {m : ℕ} (R : LocalProductCurrent n U m) {�
       ext1
       rw [Submodule.coe_sum, Submodule.coe_zero]
       simpa only [Submodule.coe_smul] using h x
-    have := congrArg (fun γ => b.repr γ k) h0
-    simp only [map_sum, map_smul, Finsupp.coe_finsetSum, Finsupp.coe_smul, Finset.sum_apply,
-      Pi.smul_apply, smul_eq_mul, map_zero, Finsupp.coe_zero, Pi.zero_apply] at this
-    rw [← this]
-    exact Finset.sum_congr rfl fun j _ => mul_comm _ _
+    let coefficient : formSpan n m →ₗ[ℝ] ℝ := (Finsupp.lapply k).comp b.repr.toLinearMap
+    have evaluated := congrArg coefficient h0
+    simp only [map_sum, map_smul, smul_eq_mul, map_zero] at evaluated
+    simpa only [coefficient, LinearMap.comp_apply, Finsupp.lapply_apply,
+      LinearEquiv.coe_coe, mul_comm] using evaluated
   rw [hz, map_zero]
 
 /-- **A current applied to a variable test form depends only on the pointwise form** on `U`. -/
@@ -580,29 +580,13 @@ theorem ddc_wedgeForm (h : r + 1 + k = m + 1) (h' : r + k = m) (R : LocalProduct
   have hE2 : ∑ a, ∑ b', ∑ i, R (X a b' i)
       (mulSmoothOnCLM (contDiffOn_dFun (hc i) (realBasis n a)) (dTest (realBasis n b') φ))
         = 0 := by
-    have key := sum_apply_eq_zero_of_forall R (fun j : Fin (n * 2) × Fin (n * 2)
-      × Fin (Module.finrank ℝ (formSpan n k)) =>
-        X j.2.1 j.1 j.2.2)
-      (fun j => mulSmoothOnCLM (contDiffOn_dFun (hc j.2.2) (realBasis n j.2.1))
-        (dTest (realBasis n j.1) φ)) (fun x => by
-        by_cases hx : x ∈ U
-        · rw [Fintype.sum_prod_type]
-          simp only [Fintype.sum_prod_type, mulSmoothOnCLM_apply, X]
-          rw [Finset.sum_eq_zero fun b' _ => ?_]
-          rw [Finset.sum_congr rfl fun a _ => sum_smul_wedgeSpan_wedgeLM h
-            (isOneOne_coeffForm a b') γ (dTest (realBasis n b') φ x)
-            (fun i => dFun (realBasis n a) (formCoeff α i) x) h2, ← Finset.smul_sum]
-          have e : ∀ a, coordinateWedge (γ : RealForm n (2 * r)) (coeffForm a b') =
-              (coordinateWedge (γ : RealForm n (2 * r)) (testForm a (coordJ n b')) :
-                RealForm n (2 * r + 2)) := fun a => rfl
-          simp only [e]
-          rw [sum_wedgeTo_coordinateWedge_testForm_eq_zero _
-            (fun _ => coeff_sum_mem_formSpan _) (sum_oneWedge_dFun_eq_zero hα hαS hαc hx)
-            (coordJ n b') _ h2, smul_zero]
-        · simp only [testFunction_eq_zero_of_notMem _ hx, zero_smul, Finset.sum_const_zero])
-    simp only [Fintype.sum_prod_type] at key
     rw [Finset.sum_comm]
-    exact key
+    refine (Finset.sum_congr rfl fun a _ => Finset.sum_congr rfl fun b' _ =>
+      Finset.sum_congr rfl fun i _ => ?_).trans hE1
+    have hX : X b' a i = X a b' i := by
+      dsimp only [X]
+      rw [wedgeLM_congr _ _ (coeffForm_comm b' a) γ]
+    rw [hX]
   have hE3 : ∑ a, ∑ b', ∑ i, R (X a b' i)
       (mulSmoothOnCLM (contDiffOn_dFun (contDiffOn_dFun (hc i) (realBasis n a)) (realBasis n b'))
         φ) = 0 := by

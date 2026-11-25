@@ -62,56 +62,29 @@ theorem normalizedHermitianMatrix_apply' (A : CoordinateRealTwoForm n) (j k : Fi
       (Real.pi : ℂ) * hermitianEntry A (coordinateVector j) (coordinateVector k) :=
   rfl
 
-/-- A complex scalar acts through its real and imaginary parts. -/
-private theorem complex_smul_eq' (c : ℂ) (w : ComplexModel n) :
-    c • w = c.re • w + c.im • (Complex.I • w) := by
-  conv_lhs => rw [← Complex.re_add_im c]
-  rw [add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
+theorem hermitianEntry_eq_conj (A : CoordinateRealTwoForm n) (v w : ComplexModel n) :
+    hermitianEntry A v w = starRingEnd ℂ (hermitianOfTwoForm A v w) := by
+  simp only [hermitianEntry, hermitianOfTwoForm, map_add, map_mul, Complex.conj_ofReal,
+    Complex.conj_I]
+  ring
 
 variable {A : CoordinateRealTwoForm n}
 
 theorem hermitianEntry_add_left (v v' w : ComplexModel n) :
     hermitianEntry A (v + v') w = hermitianEntry A v w + hermitianEntry A v' w := by
-  simp only [hermitianEntry, coordinateFrame_twoForm_add_left]
-  push_cast
-  ring
+  simp only [hermitianEntry_eq_conj, hermitianOfTwoForm_add_left, map_add]
 
 theorem hermitianEntry_add_right (v w w' : ComplexModel n) :
     hermitianEntry A v (w + w') = hermitianEntry A v w + hermitianEntry A v w' := by
-  simp only [hermitianEntry, smul_add, coordinateFrame_twoForm_add_right]
-  push_cast
-  ring
+  simp only [hermitianEntry_eq_conj, hermitianOfTwoForm_add_right, map_add]
 
 theorem hermitianEntry_smul_left (hA : IsOneOne A) (c : ℂ) (v w : ComplexModel n) :
     hermitianEntry A (c • v) w = c * hermitianEntry A v w := by
-  rw [complex_smul_eq' c v]
-  simp only [hermitianEntry, coordinateFrame_twoForm_add_left, coordinateFrame_twoForm_smul_left,
-    coordinateFrame_twoForm_I_smul_left_of_isOneOne hA,
-    smul_smul, Complex.I_mul_I, neg_one_smul]
-  have hneg : ∀ u : ComplexModel n, A ![u, -w] = -A ![u, w] := by
-    intro u
-    have := coordinateFrame_twoForm_smul_right A (-1) u w
-    simpa using this
-  rw [hneg]
-  conv_rhs => rw [← Complex.re_add_im c]
-  push_cast
-  linear_combination ((c.im : ℂ) * (A ![v, w] : ℝ)) * Complex.I_mul_I
+  simp [hermitianEntry_eq_conj, hermitianOfTwoForm_smul_left hA, map_mul]
 
 theorem hermitianEntry_smul_right (c : ℂ) (v w : ComplexModel n) :
     hermitianEntry A v (c • w) = (starRingEnd ℂ) c * hermitianEntry A v w := by
-  rw [complex_smul_eq' c w]
-  simp only [hermitianEntry, smul_add, coordinateFrame_twoForm_add_right, smul_comm Complex.I (_ :
-    ℝ),
-    coordinateFrame_twoForm_smul_right, smul_smul, Complex.I_mul_I, neg_one_smul]
-  have hneg : ∀ u : ComplexModel n, A ![v, -u] = -A ![v, u] := by
-    intro u
-    have := coordinateFrame_twoForm_smul_right A (-1) v u
-    simpa using this
-  rw [hneg]
-  conv_rhs => rw [← Complex.re_add_im c]
-  simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
-  push_cast
-  linear_combination (-(c.im : ℂ) * (A ![v, w] : ℝ)) * Complex.I_mul_I
+  simp only [hermitianEntry_eq_conj, hermitianOfTwoForm_smul_right, map_mul]
 
 end HermitianEntry
 
@@ -121,16 +94,16 @@ variable {A : CoordinateRealTwoForm n}
 
 theorem hermitianEntry_zero_left (w : ComplexModel n) : hermitianEntry A 0 w = 0 := by
   have h1 : A ![(0 : ComplexModel n), Complex.I • w] = 0 := by
-    have := coordinateFrame_twoForm_smul_left A 0 (0 : ComplexModel n) (Complex.I • w)
+    have := twoForm_smul_left A 0 (0 : ComplexModel n) (Complex.I • w)
     simpa using this
   have h2 : A ![(0 : ComplexModel n), w] = 0 := by
-    have := coordinateFrame_twoForm_smul_left A 0 (0 : ComplexModel n) w
+    have := twoForm_smul_left A 0 (0 : ComplexModel n) w
     simpa using this
   simp [hermitianEntry, h1, h2]
 
 theorem hermitianEntry_zero_right (v : ComplexModel n) : hermitianEntry A v 0 = 0 := by
   have h2 : A ![v, (0 : ComplexModel n)] = 0 := by
-    have := coordinateFrame_twoForm_smul_right A 0 v (0 : ComplexModel n)
+    have := twoForm_smul_right A 0 v (0 : ComplexModel n)
     simpa using this
   simp [hermitianEntry, h2]
 

@@ -51,6 +51,107 @@ theorem isOneOne_smul {a : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ} (c : ℝ)
   intro u v
   simp only [ContinuousAlternatingMap.smul_apply, ha u v]
 
+/-- Antisymmetry of a real two-form in its two slots. -/
+theorem twoForm_swap {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (u v : ComplexModel n) :
+    A ![v, u] = -A ![u, v] := by
+  simpa using A.map_swap ![u, v] (i := 0) (j := 1) (by decide)
+
+/-- A real two-form is `ℝ`-homogeneous in its first slot. -/
+theorem twoForm_smul_left {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (r : ℝ) (u v : ComplexModel n) :
+    A ![r • u, v] = r * A ![u, v] :=
+  A.toMultilinearMap.cons_smul ![v] r u
+
+/-- A real two-form is additive in its first slot. -/
+theorem twoForm_add_left {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (u u' v : ComplexModel n) :
+    A ![u + u', v] = A ![u, v] + A ![u', v] :=
+  A.toMultilinearMap.cons_add ![v] u u'
+
+/-- A real two-form is additive in its second slot. -/
+theorem twoForm_add_right {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (u v v' : ComplexModel n) :
+    A ![u, v + v'] = A ![u, v] + A ![u, v'] := by
+  rw [twoForm_swap A (v + v') u, twoForm_add_left,
+    twoForm_swap A u v, twoForm_swap A u v']
+  ring
+
+/-- A real two-form is `ℝ`-homogeneous in its second slot. -/
+theorem twoForm_smul_right {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (r : ℝ) (u v : ComplexModel n) :
+    A ![u, r • v] = r * A ![u, v] := by
+  rw [twoForm_swap A (r • v) u,
+    twoForm_smul_left, twoForm_swap A u v]
+  ring
+
+/-- A real two-form negates when its second slot is negated. -/
+theorem twoForm_neg_right {n : ℕ} (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (u v : ComplexModel n) :
+    A ![u, -v] = -A ![u, v] := by
+  simpa using twoForm_smul_right A (-1) u v
+
+/-- A real `(1,1)`-form moves multiplication by `i` between its slots with a sign. -/
+theorem twoForm_I_smul_left_of_isOneOne {n : ℕ}
+    {A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ} (hA : IsOneOne A) (u v : ComplexModel n) :
+    A ![Complex.I • u, v] = -A ![u, Complex.I • v] := by
+  rw [← hA u (Complex.I • v), smul_smul, Complex.I_mul_I, neg_one_smul,
+    twoForm_neg_right]
+  ring
+
+/-- An alternating two-form vanishes on a repeated vector. -/
+theorem twoForm_self (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ) (u : ComplexModel n) :
+    A ![u, u] = 0 := by
+  have := twoForm_swap A u u
+  linarith
+
+/-- A complex scalar acts through its real and imaginary parts. -/
+theorem complex_smul_eq (c : ℂ) (w : ComplexModel n) :
+    c • w = c.re • w + c.im • (Complex.I • w) := by
+  conv_lhs => rw [← Complex.re_add_im c]
+  rw [add_smul, mul_smul, Complex.coe_smul, Complex.coe_smul]
+
+/-- The Hermitian form `h(v, w) = A(v, i w) + i A(v, w)` attached to a real `(1,1)`-form. -/
+def hermitianOfTwoForm (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (v w : ComplexModel n) : ℂ :=
+  (A ![v, Complex.I • w] : ℂ) + Complex.I * (A ![v, w] : ℂ)
+
+theorem hermitianOfTwoForm_add_left (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (v v' w : ComplexModel n) :
+    hermitianOfTwoForm A (v + v') w = hermitianOfTwoForm A v w + hermitianOfTwoForm A v' w := by
+  simp only [hermitianOfTwoForm, twoForm_add_left]
+  push_cast
+  ring
+
+theorem hermitianOfTwoForm_add_right (A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ)
+    (v w w' : ComplexModel n) :
+    hermitianOfTwoForm A v (w + w') = hermitianOfTwoForm A v w + hermitianOfTwoForm A v w' := by
+  simp only [hermitianOfTwoForm, smul_add, twoForm_add_right]
+  push_cast
+  ring
+
+theorem hermitianOfTwoForm_smul_right {A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ}
+    (c : ℂ) (v w : ComplexModel n) :
+    hermitianOfTwoForm A v (c • w) = c * hermitianOfTwoForm A v w := by
+  rw [complex_smul_eq c w]
+  simp only [hermitianOfTwoForm, smul_add, twoForm_add_right, smul_comm Complex.I (_ : ℝ),
+    twoForm_smul_right, smul_smul, Complex.I_mul_I, neg_one_smul, twoForm_neg_right]
+  conv_rhs => rw [← Complex.re_add_im c]
+  push_cast
+  linear_combination (-(c.im : ℂ) * ↑(A ![v, w])) * Complex.I_mul_I
+
+theorem hermitianOfTwoForm_smul_left {A : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ}
+    (hA : IsOneOne A) (c : ℂ) (v w : ComplexModel n) :
+    hermitianOfTwoForm A (c • v) w = starRingEnd ℂ c * hermitianOfTwoForm A v w := by
+  rw [complex_smul_eq c v]
+  simp only [hermitianOfTwoForm, twoForm_add_left, twoForm_smul_left,
+    twoForm_I_smul_left_of_isOneOne hA,
+    smul_smul, Complex.I_mul_I, neg_one_smul, twoForm_neg_right]
+  conv_rhs => rw [← Complex.re_add_im c]
+  simp only [map_add, map_mul, Complex.conj_ofReal, Complex.conj_I]
+  push_cast
+  linear_combination ((c.im : ℂ) * ↑(A ![v, w])) * Complex.I_mul_I
+
 /-- Strict positivity of a real two-form in complex directions. -/
 def IsStrictlyPositive (a : (ComplexModel n) [⋀^Fin 2]→L[ℝ] ℝ) : Prop :=
   ∀ u : ComplexModel n, u ≠ 0 → 0 < a ![u, Complex.I • u]

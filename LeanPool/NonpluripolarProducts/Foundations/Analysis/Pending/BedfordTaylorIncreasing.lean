@@ -11,7 +11,6 @@ module
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorIncreasingStepP
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorIncreasingStepW
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorIncreasingCollar
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.IncreasingTruncationReduction
 
 /-!
 # Bedford–Taylor convergence along increasing sequences
@@ -27,9 +26,6 @@ The proof is Cegrell's, which avoids the Dirichlet problem: an induction on the 
 varying slots, whose steps are `incPClaim_succ` (integration by parts against smooth
 tests), `incWClaim_of_collar` (localization to collared data on balls) and
 `incWCollarClaim_succ` (quasi-continuity and the symmetric integration by parts).
-
-The diagonal case is the input `BoundedIncreasingConvergence` of the semicontinuity
-theorem for non-pluripolar measures in `Pending.IncreasingTruncationReduction`.
 -/
 
 @[expose] public section
@@ -137,28 +133,5 @@ theorem measure_inter_gap_eq_zero {D : TopologicalSpace.Opens (ComplexModel n)}
   exact (ENNReal.toReal_eq_zero_iff _).mp htoReal |>.resolve_right hfin
 
 end SGPT.Foundations.Analysis.Pending.BedfordTaylor
-
-namespace SGPT.Foundations.Analysis.Pending.IncreasingTruncationLimit
-
-open FirstPass FirstPass.MongeAmpere MongeAmpere BedfordTaylor
-
-variable {n : ℕ}
-
-/-- The diagonal Monge–Ampère measures `(ddᶜwⱼ)ⁿ` and `wⱼ (ddᶜwⱼ)ⁿ` of an increasing
-sequence of locally bounded plurisubharmonic functions converge vaguely to those of the
-almost-everywhere limit. -/
-theorem boundedIncreasingConvergence (Ω : Opens (ComplexModel n)) :
-    BoundedIncreasingConvergence Ω := by
-  intro w W hw hW hmono hae χ hχ hχc hχΩ
-  have hG : IsIncApprox Ω W w := isIncApprox_of_monotone_ae hW hw hmono hae
-  have hadm : IsIncAdmissible n Ω (fun _ => W) (fun _ => w) :=
-    ⟨fun _ => hW, fun _ => hG, fun i hi => absurd i.isLt (not_lt.mpr hi)⟩
-  have hμs : ∀ j, IsBTLimit Ω (fun _ => w j) (canonicalBedfordTaylorMeasure Ω (w j) (hw j)) :=
-    fun j => isBTLimit_canonicalBedfordTaylorMeasure (hw j)
-  have hμ := isBTLimit_canonicalBedfordTaylorMeasure hW
-  exact ⟨incPClaim_all Ω _ _ _ _ hadm hμs hμ χ hχ hχc hχΩ,
-    incWClaim_all Ω _ _ _ _ hadm hμs hμ W w hW hG χ hχ hχc hχΩ⟩
-
-end SGPT.Foundations.Analysis.Pending.IncreasingTruncationLimit
 
 end

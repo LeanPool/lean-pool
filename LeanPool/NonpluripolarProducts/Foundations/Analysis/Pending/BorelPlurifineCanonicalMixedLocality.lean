@@ -44,8 +44,8 @@ theorem canonicalMixed_restrict_eq_on_borel_plurifine_open
     (MixedMongeAmpere.canonicalMixedBedfordTaylorMeasure Ω a ha).restrict F =
     (MixedMongeAmpere.canonicalMixedBedfordTaylorMeasure Ω b hb).restrict F := by
   classical
-  obtain ⟨B, g, hBΩ, hg, -, hbounds, hG, -, -, hnull⟩ :=
-    BorelPlurifineCoverMixedNullRemainder.exists_countable_normalized_cover_mixed_null
+  obtain ⟨B, g, hBΩ, hg, -, hbounds, hG, -, hcap⟩ :=
+    BorelPlurifineOpenCountableNormalizedSuperlevelCover.exists_countable_normalized_cover
       hFΩ hFBorel hFine
   let G (j k : ℕ) := {x | x ∈ B j ∧ 0 < g j k x}
   let P := ⋃ j, ⋃ k, G j k
@@ -59,8 +59,12 @@ theorem canonicalMixed_restrict_eq_on_borel_plurifine_open
   have hP : μa.restrict P = μb.restrict P :=
     Measure.restrict_iUnion_congr.mpr fun j ↦
       Measure.restrict_iUnion_congr.mpr fun k ↦ hlocal j k
-  have hEa : μa.restrict E = 0 := Measure.restrict_eq_zero.mpr (hnull a ha)
-  have hEb : μb.restrict E = 0 := Measure.restrict_eq_zero.mpr (hnull b hb)
+  have hnull {u : Fin n → ComplexModel n → ℝ} (hu : IsLocallyBoundedMixedPshOn Ω u) :
+      MixedMongeAmpere.canonicalMixedBedfordTaylorMeasure Ω u hu E = 0 :=
+    BorelPlurifineCoverMixedNullRemainder.canonicalMixed_eq_zero_of_all_subdomain_capacity
+      (sdiff_subset.trans hFΩ) hcap hu
+  have hEa : μa.restrict E = 0 := Measure.restrict_eq_zero.mpr (hnull ha)
+  have hEb : μb.restrict E = 0 := Measure.restrict_eq_zero.mpr (hnull hb)
   have hPF : P ⊆ F := iUnion_subset fun j ↦ iUnion_subset fun k ↦ (hG j k).1
   have hFE : F = P ∪ E := by
     ext x

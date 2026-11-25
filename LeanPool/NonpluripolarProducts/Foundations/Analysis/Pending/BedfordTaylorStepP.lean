@@ -9,6 +9,7 @@ Authors: Mingchen Xia, Jian Wang, Siqi He
 module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.MeasureLocality
+public import LeanPool.NonpluripolarProducts.Foundations.Analysis.PositiveDistributionMeasure
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.BedfordTaylorSlots
 public import Mathlib.Analysis.Calculus.BumpFunction.SmoothApprox
 
@@ -360,7 +361,7 @@ theorem pClaim_succ {q : ℕ} (hP : PClaim n q) (hW : WClaim n q) : PClaim n (q 
     by_cases hz : z ∈ U
     · exact mul_nonneg (hφ z) (hD0 F₀ hF₀ k z hz)
     · simp [image_eq_zero_of_notMem_tsupport fun h ↦ hz (φ.tsupport_subset h)]
-  obtain ⟨ν, -, hνlf, hν⟩ := exists_regular_measure_of_testFunctional T hTpos
+  obtain ⟨ν, -, hνlf, hν⟩ := exists_regular_measure_of_nonneg_testFunctional T hTpos
   have hval : MeasurableEmbedding (Subtype.val : U → ComplexModel n) :=
     MeasurableEmbedding.subtype_coe U.isOpen.measurableSet
   refine ⟨ν.map Subtype.val, ?_, fun K hK hKU ↦ ?_, fun F hF φ hφ hφc hφU ↦ ?_⟩

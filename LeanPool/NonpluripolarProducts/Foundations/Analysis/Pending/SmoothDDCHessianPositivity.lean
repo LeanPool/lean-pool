@@ -16,13 +16,10 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.Strong
 # Semipositivity of `ddᶜ` gives a semidefinite complex Hessian
 
 `FirstPass.MongeAmpere.isSmoothPshOn_of_psh` turns plurisubharmonicity into
-semidefiniteness of the coordinate complex Hessian.  The Stokes telescope of
-`Pending.PatchDensityLocalPotential` arrives with a different certificate: its
-local potentials are produced from forms that are already known to be
-`CoefficientSemipositive`, not from a plurisubharmonicity statement.  Going
-through plurisubharmonicity would be a detour, since
-`FirstPass.smoothDDC_complexDiagonal_eq_leviForm` already identifies the
-complex diagonal of `ddᶜφ` with the Levi form of `φ` up to the factor `π`.
+semidefiniteness of the coordinate complex Hessian. Local potentials for
+semipositive closed forms instead supply `CoefficientSemipositive`.
+`FirstPass.smoothDDC_complexDiagonal_eq_leviForm` identifies the complex
+diagonal of `ddᶜφ` with the Levi form of `φ` up to the factor `π`.
 
 This module records the direct route.  It assumes only `C²` regularity at the
 point, which is what a `ContDiffOn ℝ ∞` local potential supplies on an open

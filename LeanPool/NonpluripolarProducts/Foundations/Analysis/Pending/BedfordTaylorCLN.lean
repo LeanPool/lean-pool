@@ -23,7 +23,10 @@ The proof raises every slot to a common collar potential near the sphere
 (regularized maximum), then integrates by parts slot by slot: raising a slot
 compactly raises the weighted integral against a plurisubharmonic weight.
 
-Source: Demailly, *Complex analytic and differential geometry*, III.3.11.
+This is the local smooth top-degree version of the weighted estimate in
+[Demailly, Proposition III.3.11](https://www-fourier.univ-grenoble-alpes.fr/~demailly/source_files/analgeom/agbook.pdf#page=149),
+which allows locally bounded plurisubharmonic slots and an unbounded
+plurisubharmonic weight.
 -/
 
 @[expose] public section

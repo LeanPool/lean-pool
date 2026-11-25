@@ -14,10 +14,8 @@ public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedM
 /-!
 # A countable plurifine cover with a universally mixed-null remainder
 
-The original Borel fine-open set chooses a single normalized cover before
-the original locally bounded mixed tuple is specified. Compact exhaustion
-and capacity domination prove that every such tuple gives its remainder
-zero measure on the original domain.
+A compact exhaustion and capacity domination turn capacity-zero remainders
+into null sets for locally bounded mixed Bedford–Taylor measures.
 -/
 
 @[expose] public section
@@ -34,7 +32,8 @@ open SGPT.Foundations.Analysis.Pending.BedfordTaylor
 
 variable {n : ℕ}
 
-private theorem canonicalMixed_eq_zero_of_all_subdomain_capacity
+/-- Capacity zero on every subdomain forces a mixed Bedford–Taylor measure to vanish. -/
+theorem canonicalMixed_eq_zero_of_all_subdomain_capacity
     {Ω : Opens (ComplexModel n)} {E : Set (ComplexModel n)}
     (hEΩ : E ⊆ (Ω : Set (ComplexModel n)))
     (hcap : ∀ D : Opens (ComplexModel n), D ≤ Ω →
@@ -75,34 +74,5 @@ private theorem canonicalMixed_eq_zero_of_all_subdomain_capacity
   have hzero : μ (⋃ m, E ∩ (U m : Set (ComplexModel n))) = 0 :=
     measure_iUnion_null hnull
   exact le_antisymm ((measure_mono hcover).trans_eq hzero) bot_le
-
-/-- The original set chooses a single cover whose remainder is null for
-every original locally bounded mixed PSH tuple. -/
-theorem exists_countable_normalized_cover_mixed_null
-    {Ω : Opens (ComplexModel n)} {F : Set (ComplexModel n)}
-    (hFΩ : F ⊆ (Ω : Set (ComplexModel n))) (hFBorel : MeasurableSet F)
-    (hFine : IsOpen[PlurifinePshTopology.topology Ω] (Subtype.val ⁻¹' F)) :
-    ∃ (B : ℕ → Opens (ComplexModel n)) (g : ℕ → ℕ → ComplexModel n → ℝ),
-      (∀ j, B j ≤ Ω) ∧
-      (∀ j k, PlurisubharmonicOn (fun x ↦ (g j k x : EReal)) Ω) ∧
-      (∀ j, ∀ x ∈ Ω, Monotone (fun k ↦ g j k x)) ∧
-      (∀ j k x, x ∈ B j → -1 ≤ g j k x ∧ g j k x ≤ 1) ∧
-      (∀ j k, {x | x ∈ B j ∧ 0 < g j k x} ⊆ F ∧
-        MeasurableSet {x | x ∈ B j ∧ 0 < g j k x} ∧
-        IsOpen[PlurifinePshTopology.topology Ω]
-          (Subtype.val ⁻¹' {x | x ∈ B j ∧ 0 < g j k x})) ∧
-      MeasurableSet (F \ ⋃ j, ⋃ k, {x | x ∈ B j ∧ 0 < g j k x}) ∧
-      (∀ (D : Opens (ComplexModel n)), D ≤ Ω →
-        relCapacity D ((F \ ⋃ j, ⋃ k, {x | x ∈ B j ∧ 0 < g j k x}) ∩
-          (D : Set (ComplexModel n))) = 0) ∧
-      ∀ (u : Fin n → ComplexModel n → ℝ) (hu : IsLocallyBoundedMixedPshOn Ω u),
-        MixedMongeAmpere.canonicalMixedBedfordTaylorMeasure Ω u hu
-          (F \ ⋃ j, ⋃ k, {x | x ∈ B j ∧ 0 < g j k x}) = 0 := by
-  obtain ⟨B, g, hBΩ, hg, hmono, hbounds, hG, hE, hcap⟩ :=
-    BorelPlurifineOpenCountableNormalizedSuperlevelCover.exists_countable_normalized_cover
-      hFΩ hFBorel hFine
-  refine ⟨B, g, hBΩ, hg, hmono, hbounds, hG, hE, hcap, ?_⟩
-  intro u hu
-  exact canonicalMixed_eq_zero_of_all_subdomain_capacity (sdiff_subset.trans hFΩ) hcap hu
 
 end SGPT.Foundations.Analysis.Pending.BorelPlurifineCoverMixedNullRemainder

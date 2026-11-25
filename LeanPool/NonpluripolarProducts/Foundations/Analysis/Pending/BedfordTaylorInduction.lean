@@ -10,7 +10,6 @@ module
 
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.MixedHessianLocal
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.SmoothMax
-public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.PositiveTestFunctional
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.Pending.UscWeightEventually
 public import LeanPool.NonpluripolarProducts.Foundations.Analysis.FirstPass.SmoothMeasureTests
 
