@@ -198,7 +198,7 @@ variable {S Shat Y : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Sh
 omit [T2Space S] in
 /-- If the boundary of a closed disc `D` lies in `S`, then a pasted disc is in `D` or misses the
 inside of `D`. -/
-theorem IsCappedSurface.side (hS : IsSurface S) (cap : IsCappedSurface S Shat) {D : Set Shat}
+theorem IsCappedSurface.side (cap : IsCappedSurface S Shat) {D : Set Shat}
   (hD : IsClosedDisc D)
     (h : discBd D ⊆ range cap.emb) {Θ : Set S} (hΘ : Θ ∈ cuffs S) :
     closure (cap.cuffDisc Θ) ⊆ D ∨ Disjoint (closure (cap.cuffDisc Θ)) (discInt D) := by
@@ -206,7 +206,7 @@ theorem IsCappedSurface.side (hS : IsSurface S) (cap : IsCappedSurface S Shat) {
   have hman : ∀ x : Shat, IsManifoldPoint x := fun x ↦ (hT.2.2 x).isManifoldPoint
   have hE := cap.cuffDisc_closedDisc Θ hΘ
   have hC : IsPreconnected (cap.cuffDisc Θ) := by
-    rw [cap.cuffDisc_eq_discInt hS hΘ]
+    rw [cap.cuffDisc_eq_discInt hΘ]
     exact hE.isPreconnected_discInt
   have hbd : Disjoint (cap.cuffDisc Θ) (discBd D) := disjoint_left.2 fun x hx hb ↦ cap.notMem_range
     hΘ hx (h hb)
@@ -256,7 +256,7 @@ theorem exists_inner_fragment (hS : IsSurface S) (cap : IsCappedSurface S Shat) 
   have hsub : cap.discs ∪ cap.emb '' K.U ⊆ X := by
     rintro x (hx | hx) ⟨hi, hn⟩
     · obtain ⟨Θ, hΘ, hxΘ⟩ := mem_iUnion₂.1 hx
-      rcases cap.side hS hD hrange hΘ with h | h
+      rcases cap.side hD hrange hΘ with h | h
       · exact hn ⟨_, ⟨Θ, ⟨hΘ, h⟩, rfl⟩, hxΘ⟩
       · exact disjoint_left.1 h hxΘ hi
     · exact hi.2 (hK hx)
@@ -290,7 +290,7 @@ theorem exists_inner_fragment (hS : IsSurface S) (cap : IsCappedSurface S Shat) 
       refine ⟨hxG, ?_⟩
       rintro ⟨_, ⟨Θ, hΘ, rfl⟩, hxΘ⟩
       have hn : cap.emb x ∈ cap.discsᶜ := by
-        rw [show cap.discsᶜ = _ from cap.compl_eq_image hS]
+        rw [show cap.discsᶜ = _ from cap.compl_eq_image]
         exact mem_image_of_mem _ hxb
       exact hn (mem_biUnion hΘ.1 hxΘ)
     have hGcl : closure G ⊆ closure A :=
@@ -315,7 +315,7 @@ theorem exists_inner_fragment (hS : IsSurface S) (cap : IsCappedSurface S Shat) 
         have hn' : w ∈ (range cap.emb)ᶜ := hn
         rw [cap.compl_eq] at hn'
         obtain ⟨Θ, hΘ, hwΘ⟩ := mem_iUnion₂.1 hn'
-        rcases cap.side hS hD hrange hΘ with h | h
+        rcases cap.side hD hrange hΘ with h | h
         · exact hw.2 (mem_biUnion (show Θ ∈ 𝓣 from ⟨hΘ, h⟩) (subset_closure hwΘ))
         · exact disjoint_left.1 h (subset_closure hwΘ) hwi
       obtain ⟨x', rfl⟩ := hwr

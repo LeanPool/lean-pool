@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM14.Defs
+public import LeanPool.GraphMinor.GM10.Defs
 
 /-!
 # Definitions of Graph Minors XII
@@ -154,8 +155,7 @@ def ClosedAnnulus : Set EuclideanPlane :=
   {p | 1 ≤ p 0 ^ 2 + p 1 ^ 2 ∧ p 0 ^ 2 + p 1 ^ 2 ≤ 2}
 
 /-- The Möbius band: the square `[0, 1] × [0, 1]` with `(0, y)` glued to `(1, 1 - y)`. -/
-def mobiusSetoid : Setoid (unitInterval × unitInterval) :=
-  Relation.EqvGen.setoid fun p q => p.1 = 0 ∧ q.1 = 1 ∧ q.2 = unitInterval.symm p.2
+abbrev mobiusSetoid : Setoid (unitInterval × unitInterval) := Surface.mobiusSetoid
 
 /-- The data of (5.3) (Graph Minors XII, Section 5, pages 254–255):
 "Let $\Sigma$ be a connected surface, and let $C_1, \dots, C_t$ be mutually disjoint $O$-arcs in
@@ -240,9 +240,9 @@ end Main
 /-- The tangle in `G` *induced* by a tangle `𝒯'` in a subgraph `G'` (Graph Minors XII, Section 4,
 page 248): "Let $\mathscr{T}$ be the set of all separations $(A, B)$ of $G$ of order $< \theta$ such
 that $(A \cap G', B \cap G') \in \mathscr{T}'$." -/
-def inducedBySubgraph {α β : Type*} (G G' : Hypergraph α β) (θ : ℕ)
+abbrev inducedBySubgraph {α β : Type*} (G G' : Hypergraph α β) (θ : ℕ)
     (𝒯' : Set (Hypergraph α β × Hypergraph α β)) : Set (Hypergraph α β × Hypergraph α β) :=
-  {p | G.IsSeparation p.1 p.2 ∧ separationOrder p.1 p.2 < θ ∧ (p.1 ∩ G', p.2 ∩ G') ∈ 𝒯'}
+  GM10.inducedTangleFromSubgraph G G' θ 𝒯'
 
 /-- A subhypergraph is *connected*: any two of its vertices are joined in its skeleton. -/
 def IsConnectedSub {α β : Type*} (H : Hypergraph α β) : Prop :=

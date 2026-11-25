@@ -93,7 +93,7 @@ theorem disc_split (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
   have hman : ∀ x : Shat, IsManifoldPoint x := (Surface.IsClosedSurface.isSurface hT).2.2
   obtain ⟨D, G₃, hD, hrad, hmax, hsub, hhat⟩ :=
     rad.exists_full hS (h3.hatRegions_isOpenDisc hS cap) h3.1
-  have hDE := hD.E_nonempty hS h3.1
+  have hDE := hD.E_nonempty h3.1
   have hFG₃ : F.IsSubdrawing G₃ := hF.1.trans hsub
   have hin := isSide_int hT hΔ hbd
   have hout := isSide_out hT hΔ hbd
@@ -108,7 +108,7 @@ theorem disc_split (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
   have hside : ∀ {c}, c ∈ Γ.E → cap.emb '' c ⊆ discInt Δ ∨ cap.emb '' c ⊆ Δᶜ := fun hc ↦
     disc_edge_side rad hF.1 hman hΔ hbd hc
   have hcol : s ∈ colourSet cap Γ G₃ t := by
-    obtain ⟨f, c, hfc, hfs⟩ := exists_colour hS hD hrad hmax hDE hs
+    obtain ⟨f, c, hfc, hfs⟩ := exists_colour hD hrad hmax hDE hs
     refine ⟨hs, f, c, hfc, hfs, ?_⟩
     obtain ⟨x, hx⟩ := hfc.mem.1
     rcases hside hfc.1 with h | h

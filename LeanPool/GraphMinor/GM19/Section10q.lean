@@ -289,7 +289,7 @@ theorem outer_of_two [Nonempty S] {n : ℕ} (_hn₁ : 1 ≤ n) (hn : n < D.rep) 
     refine or_congr Iff.rfl ⟨?_, mem_image_of_mem _⟩
     rintro ⟨y, hy, hxy⟩
     exact cap.isEmbedding.injective hxy ▸ hy
-  obtain ⟨Θ₁, hΘ₁, Θ₂, hΘ₂, hΘne, hrd₁, hrd₂⟩ := D.pole_cuffs_ne hS hr₁ hr₂ hne
+  obtain ⟨Θ₁, hΘ₁, Θ₂, hΘ₂, hΘne, hrd₁, hrd₂⟩ := D.pole_cuffs_ne hr₁ hr₂ hne
   have hring₁ : ∀ {x w : S}, cap.emb x ∈ C₁.U → x ≠ w → ∃ E ⊆ K.U \ {w}, x ∈ E ∧ IsPreconnected E ∧
     (E ∩ D.P.Γ.V).Nonempty := fun {x w} hx hne ↦ by
     obtain ⟨E, hE, hxE, hconn, hm⟩ := ring_part hO₁ ha₁ hb₁ hab₁ hx hne

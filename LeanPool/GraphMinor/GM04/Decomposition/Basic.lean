@@ -31,29 +31,35 @@ namespace Hypergraph
 @[simp]
 theorem mem_ends_iff (G : Hypergraph α β) (e : β) (v : α) : v ∈ G.ends e ↔ G.Inc e v := Iff.rfl
 
-@[simp]
 theorem union_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet := rfl
+    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet :=
+  GraphMinor.Hypergraph.union_vertexSet_eq G₁ G₂
 
-@[simp]
 theorem union_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet := rfl
+    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet :=
+  GraphMinor.Hypergraph.union_edgeSet_eq G₁ G₂
 
 @[simp]
 theorem union_inc (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
-    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v := Iff.rfl
+    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v :=
+  GraphMinor.Hypergraph.union_inc_iff G₁ G₂ e v
 
-@[simp]
 theorem inter_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet := rfl
+    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet :=
+  GraphMinor.Hypergraph.inter_vertexSet_eq G₁ G₂
 
-@[simp]
 theorem inter_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet := rfl
+    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet :=
+  GraphMinor.Hypergraph.inter_edgeSet_eq G₁ G₂
 
 @[simp]
 theorem inter_inc (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
-    (G₁ ∩ G₂).Inc e v ↔ G₁.Inc e v ∧ G₂.Inc e v := Iff.rfl
+    (G₁ ∩ G₂).Inc e v ↔ G₁.Inc e v ∧ G₂.Inc e v :=
+  GraphMinor.Hypergraph.inter_inc_iff G₁ G₂ e v
+
+attribute [simp] GraphMinor.Hypergraph.union_vertexSet_eq
+  GraphMinor.Hypergraph.union_edgeSet_eq GraphMinor.Hypergraph.inter_vertexSet_eq
+  GraphMinor.Hypergraph.inter_edgeSet_eq
 
 @[simp]
 theorem biUnion_vertexSet (s : Finset ι) (G : ι → Hypergraph α β) :

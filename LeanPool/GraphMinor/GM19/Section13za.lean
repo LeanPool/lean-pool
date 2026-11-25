@@ -48,7 +48,7 @@ theorem IsSkPart.exists_walk (h : D.IsSkPart Δ Sk G) {R : Set Δ} (hR : R ∈ G
   obtain ⟨b, hb, rfl⟩ := (h.mem_V _).mp hz₂
   have hca := hcl c₁
   have hcb := hcl c₂
-  rcases h.sk.region_cases hS hq with hq' | ⟨c, hc, h3, hsub⟩
+  rcases h.sk.region_cases hq with hq' | ⟨c, hc, h3, hsub⟩
   · exact D.exists_walk_of_hatRegion hq' ha hb hca hcb
   have hc' : IsClosed (cap.emb '' closure c) := hΓ.isClosedMap _ isClosed_closure
   have hin : ∀ {a : S}, a ∈ D.P.Γ.V → cap.emb a ∈ closure q → a ∈ tilde c := fun ha hcq ↦ by
@@ -75,7 +75,7 @@ theorem IsSkPart.region_eq (h : D.IsSkPart Δ Sk G) {R : Set Δ} (hR : R ∈ G.R
   refine ⟨q, hq, hRq, ?_⟩
   have hxq := hRq (mem_image_of_mem _ hx)
   have hxU : x.1 ∉ D.P.Γ.hatU cap := connectedComponentIn_subset _ _ hxw
-  rcases h.sk.region_cases hS hq with ⟨y, hy, rfl⟩ | ⟨c, hc, h3, hsub⟩
+  rcases h.sk.region_cases hq with ⟨y, hy, rfl⟩ | ⟨c, hc, h3, hsub⟩
   · exact (connectedComponentIn_eq hxq).trans (connectedComponentIn_eq hxw).symm
   · obtain ⟨p, hp, hpe⟩ := hsub hxq
     exact absurd ⟨p, D.P.Γ.closure_subset_U hc hp, hpe⟩ hxU

@@ -338,7 +338,7 @@ theorem exists_cap_chart [Nonempty W] (hW : IsSurface W) (cap : IsCappedSurface 
   obtain ⟨c, P, q, hc, -, rfl, hqi⟩ := exists_collapse hT (hfc.image _)
     (by rintro _ ⟨Θ, hΘ, rfl⟩; exact cap.cuffDisc_closedDisc Θ hΘ) hpd
   have hU : (⋃₀ 𝓐)ᶜ = cap.emb '' (bd W)ᶜ := by
-    rw [← cap.compl_eq_image hW, sUnion_image]
+    rw [← cap.compl_eq_image, sUnion_image]
   have hUo : IsOpen (⋃₀ 𝓐)ᶜ := by
     refine (Set.Finite.isClosed_sUnion (hfc.image _) ?_).isOpen_compl
     rintro _ ⟨Θ, -, rfl⟩

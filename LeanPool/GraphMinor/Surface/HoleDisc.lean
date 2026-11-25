@@ -26,7 +26,8 @@ an `O`-arc with points outside the closure of `Λ` arbitrarily near each of its 
 By `side_manifold`, the closure of `Λ` is a surface with the frontier as its boundary, so by the
 classification it has a model with one hole. To see that this model is a disc, we paste a disc on
 the hole. The result is the union of a closed disc around the pasted disc and a closed disc in `Λ`,
-which exists by Epstein's theorem. So the result is a sphere, and the classification says that the
+which exists by the relative disc-bounding result in Graph Minors XI (7.2). The result is a sphere,
+so the classification says that the
 model is a disc (`model_genus_zero`).
 -/
 

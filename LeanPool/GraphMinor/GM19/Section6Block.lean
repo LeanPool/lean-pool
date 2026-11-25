@@ -231,7 +231,7 @@ omit [T2Space S] [T2Space Shat] in
 /-- The inside of the disc of an edge `c` of size 3 holds a region `r` of `sk(Γ)`, with `sk(Γ)` in
 the
 disc only on its boundary. -/
-theorem cell_facts (_hS : IsSurface S) (hD : IsSkHat cap Γ D) {r c : Set Shat} {c₀ : Set S}
+theorem cell_facts (hD : IsSkHat cap Γ D) {r c : Set Shat} {c₀ : Set S}
     (hr : r ∈ D.R) (hc₀ : c₀ ∈ Γ.E) (h3 : (tilde c₀).ncard = 3) (hc : c = cap.emb '' closure c₀)
     (hrs : r ⊆ c) : IsClosedDisc c ∧ r ⊆ discInt c ∧ c ∩ D.U ⊆ discBd c := by
   subst hc
@@ -276,11 +276,11 @@ theorem sk_spoke_once (hS : IsSurface S) (hD : IsSkHat cap Γ D)
   intro e₁ he₁ e₂ he₂ h₁r h₂r v hv c hc hcV h₁ h₂
   have hT := cap.isClosedSurface
   refine spoke_once hT hrad he₁ he₂ hr h₁r h₂r hv hc hcV h₁ h₂ fun F hF hvF hcl hsub ↦ ?_
-  rcases hD.region_cases hS hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
+  rcases hD.region_cases hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
   · rw [hD.hV] at hv
     obtain ⟨v₀, hv₀, rfl⟩ := hv
     exact pinch hS hD h3 hh hv₀ hF hvF hcl hsub
-  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hS hD hr hc₀ h3c rfl hrs
+  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hD hr hc₀ h3c rfl hrs
     have hrΔ : closure r ⊆ cap.emb '' closure c₀ := closure_minimal hrs hΔ.isClosed
     refine pinch_of_cell hT hΔ hF (fun x hx ↦ ?_) (fun x hx ↦ hint (hsub hx)) hU
     by_cases hxv : x = v
@@ -299,7 +299,7 @@ theorem sk_region_part [ConnectedSpace Shat] (hS : IsSurface S) (hD : IsSkHat ca
     (hxr : x ∈ closure r) {y : Shat} (hy : y ∈ D.V \ X) (hyr : y ∈ closure r) : y ∈ Y := by
   have hT := cap.isClosedSurface
   obtain ⟨κ, _, next, A, hA, -, hrange, hedge, hreach⟩ := exists_perimeter hT hrad hmax
-    (hD.E_nonempty hS h3.1) (hD.no_loops hS) hr (sk_spoke_once hS hD h3 hrad hr)
+    (hD.E_nonempty h3.1) (hD.no_loops hS) hr (sk_spoke_once hS hD h3 hrad hr)
   have hAV : ∀ k, A k ∈ D.V := fun k ↦ (hrange.subset ⟨k, rfl⟩).1
   obtain ⟨k, rfl⟩ : x ∈ range A := by
     rw [hrange]
@@ -347,7 +347,7 @@ theorem sk_isBlock [ConnectedSpace Shat] (hS : IsSurface S) (hD : IsSkHat cap Γ
   have hconn : ∀ {X : Set Shat}, X.Subsingleton → ConnIn D (D.V \ X) := fun hX ↦
     conn_of_regions hT D hl hX fun r hr Y hY hc x hx hxr y hy hyr ↦
       sk_region_part hS hD h3 hrad hmax hX hr hY hc hx hxr hy hyr
-  obtain ⟨e, he⟩ := hD.E_nonempty hS h3.1
+  obtain ⟨e, he⟩ := hD.E_nonempty h3.1
   obtain ⟨a, b, -, -, -, hset⟩ := exists_end D hl he
   refine ⟨⟨a, (show a ∈ closure e ∩ D.V by rw [hset]; exact Or.inl rfl).2⟩, ?_, fun v _ ↦ ?_⟩
   · have := hconn (X := ∅) subsingleton_empty

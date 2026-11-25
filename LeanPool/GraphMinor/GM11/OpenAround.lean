@@ -366,8 +366,8 @@ theorem exists_open_flat (hS : IsClosedSurface S) {W X : Set S} (hW : IsOpen W)
 
 /-- **(11.9)** of Graph Minors VII (page 253), in a closed surface and inside an open set `W`, with
 the conclusion
-that (11.10) draws from it. Epstein's theorem says that an `O`-arc null-homotopic in `W` bounds a
-disc in `W`. -/
+that (11.10) draws from it. Graph Minors XI (7.2) gives a disc in `W` bounded by an `O`-arc
+null-homotopic in `W`. -/
 theorem exists_open_around [ConnectedSpace S] (hS : IsClosedSurface S) {W X : Set S}
     (hW : IsOpen W) (hXW : X ⊆ W) (hXc : IsClosed X) (hXl : IsLocallyArcConnected X)
       (hXp : IsPathConnected X)

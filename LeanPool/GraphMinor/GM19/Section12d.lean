@@ -266,9 +266,9 @@ theorem exists_spoke_at (D : TangleDatum cap χ) {v : S} (hv : v ∈ D.P.Γ.V) :
   obtain ⟨f, hf, hvf⟩ := D.P.Γ.exists_sk_at hc ⟨hvc, fun h ↦ D.P.Γ.disjoint_V hc h hv⟩
   have hfr : ∃ r ∈ D.P.Γ.hatRegions cap, cap.emb '' f ⊆ closure r := by
     rcases D.P.Γ.size_cases hc with h2 | h3'
-    · have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+    · have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
       obtain ⟨r, hr, hsub⟩ := exists_region_incident hTs hfE
-      rcases hSk.region_cases hS hr with hhat | ⟨c', hc', h3c, hsubr⟩
+      rcases hSk.region_cases hr with hhat | ⟨c', hc', h3c, hsubr⟩
       · exact ⟨r, hhat, hsub⟩
       · exfalso
         have hfc : f = c := by

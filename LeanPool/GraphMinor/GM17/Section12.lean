@@ -906,61 +906,8 @@ it the *tangle induced by* $\mathscr{T}'$." -/
 theorem isTangle_inducedSubhypergraphTangle {α : Type u} {β : Type v}
     {G G' : Hypergraph α β} {𝒯' : Set (Hypergraph α β × Hypergraph α β)} {θ : ℕ}
     (hle : G' ≤ G) (h𝒯' : IsTangle G' θ 𝒯') :
-    IsTangle G θ (inducedSubhypergraphTangle G G' 𝒯' θ) where
-  one_le := h𝒯'.one_le
-  isSeparation _ _ h := h.1
-  order_lt _ _ h := h.2.1
-  axiom1 A B hsep hord := by
-    have hsep' : G'.IsSeparation (A ∩ G') (B ∩ G') := by
-      have hA' : A ∩ G' ≤ G' := inter_le_right hsep.left_le hle
-      have hB' : B ∩ G' ≤ G' := inter_le_right hsep.right_le hle
-      rw [isSeparation_iff_of_le hA' hB']
-      refine ⟨?_, ?_, ?_⟩
-      · change (A.vertexSet ∩ G'.vertexSet) ∪ (B.vertexSet ∩ G'.vertexSet) = G'.vertexSet
-        rw [← union_inter_distrib_right, hsep.vertexSet_union,
-          inter_eq_self_of_subset_right hle.vertexSet_subset]
-      · change (A.edgeSet ∩ G'.edgeSet) ∪ (B.edgeSet ∩ G'.edgeSet) = G'.edgeSet
-        rw [← union_inter_distrib_right, hsep.edgeSet_union,
-          inter_eq_self_of_subset_right hle.edgeSet_subset]
-      · ext e
-        change (e ∈ A.edgeSet ∧ e ∈ G'.edgeSet) ∧ (e ∈ B.edgeSet ∧ e ∈ G'.edgeSet) ↔ False
-        have hdisj : e ∉ (A ∩ B).edgeSet := hsep.edgeSet_inter_eq ▸ notMem_empty e
-        change ¬ (e ∈ A.edgeSet ∧ e ∈ B.edgeSet) at hdisj
-        tauto
-    have hord' : separationOrder (A ∩ G') (B ∩ G') < θ := by
-      have hsub : ((A ∩ G') ∩ (B ∩ G')).vertexSet ⊆ (A ∩ B).vertexSet :=
-        fun _ ⟨⟨hA, _⟩, ⟨hB, _⟩⟩ => ⟨hA, hB⟩
-      exact (ncard_le_ncard hsub (A ∩ B).vertexSet_finite).trans_lt hord
-    rcases h𝒯'.axiom1 hsep' hord' with h1 | h2
-    · exact Or.inl ⟨hsep, hord, h1⟩
-    · exact Or.inr ⟨hsep.symm, by rwa [separationOrder_comm], h2⟩
-  axiom2 := by
-    intro A₁ B₁ A₂ B₂ A₃ B₃ h1 h2 h3 hU
-    have hV : ((A₁ ∩ G') ∪ (A₂ ∩ G') ∪ (A₃ ∩ G')).vertexSet = G'.vertexSet := by
-      change (A₁.vertexSet ∩ G'.vertexSet) ∪ (A₂.vertexSet ∩ G'.vertexSet) ∪
-        (A₃.vertexSet ∩ G'.vertexSet) = G'.vertexSet
-      rw [ Set.union_assoc, ← union_inter_distrib_right, ← union_inter_distrib_right,
-        ← Set.union_assoc,
-        show (A₁.vertexSet ∪ A₂.vertexSet ∪ A₃.vertexSet : Set α) = G.vertexSet from
-          congrArg Hypergraph.vertexSet hU,
-        inter_eq_self_of_subset_right hle.vertexSet_subset ]
-    have hE : ((A₁ ∩ G') ∪ (A₂ ∩ G') ∪ (A₃ ∩ G')).edgeSet = G'.edgeSet := by
-      change (A₁.edgeSet ∩ G'.edgeSet) ∪ (A₂.edgeSet ∩ G'.edgeSet) ∪
-        (A₃.edgeSet ∩ G'.edgeSet) = G'.edgeSet
-      rw [ Set.union_assoc, ← union_inter_distrib_right, ← union_inter_distrib_right,
-        ← Set.union_assoc,
-        show (A₁.edgeSet ∪ A₂.edgeSet ∪ A₃.edgeSet : Set β) = G.edgeSet from
-          congrArg Hypergraph.edgeSet hU,
-        inter_eq_self_of_subset_right hle.edgeSet_subset ]
-    have hle' := union_le
-      (union_le (h𝒯'.isSeparation h1.2.2).left_le (h𝒯'.isSeparation h2.2.2).left_le)
-      (h𝒯'.isSeparation h3.2.2).left_le
-    exact h𝒯'.axiom2 h1.2.2 h2.2.2 h3.2.2
-      (eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle' le_rfl hV hE)
-  axiom3 A B hAB hVA := by
-    apply h𝒯'.axiom3 hAB.2.2
-    change A.vertexSet ∩ G'.vertexSet = G'.vertexSet
-    rw [hVA, inter_eq_self_of_subset_right hle.vertexSet_subset]
+    IsTangle G θ (inducedSubhypergraphTangle G G' 𝒯' θ) :=
+  GM10.isTangle_inducedTangleFromSubgraph hle h𝒯'
 
 /-- Given a subhypergraph $H \le G$ and an edge $e \in E(G)$ with $\operatorname{ends}_G(e)
 \subseteq V(H)$,

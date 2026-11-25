@@ -160,9 +160,9 @@ theorem IsSideSetting.borderEdgeDist_le_of_common_end {side Θ : Set S} {r : Sha
   have hrep : 4 ≤ D.rep := by
     have := X.rep_gt
     omega
-  obtain ⟨G₁, hG₁, h₆₁, hs₁⟩ := exists_bite_of_edge hS (by omega) hrep X.free X.long X.side_cuff
+  obtain ⟨G₁, hG₁, h₆₁, hs₁⟩ := exists_bite_of_edge (by omega) hrep X.free X.long X.side_cuff
     X.cuff X.pole X.reg h₁ h₁Θ
-  obtain ⟨G₂, hG₂, h₆₂, hs₂⟩ := exists_bite_of_edge hS (by omega) hrep X.free X.long X.side_cuff
+  obtain ⟨G₂, hG₂, h₆₂, hs₂⟩ := exists_bite_of_edge (by omega) hrep X.free X.long X.side_cuff
     X.cuff X.pole X.reg h₂ h₂Θ
   have key : ∀ {G : Drawing Shat} {t : Set S}, D.IsBiteAt r G → cap.emb '' t ⊆ D.ins G
     → z ∈ closure t → cap.emb z ∈ D.ins G := fun {G t} hG hs hz => by
@@ -196,8 +196,8 @@ theorem IsMatchSetting.no_common_end_long (hS : IsSurface S) {e : Set S}
   obtain ⟨x, hx⟩ : e.Nonempty := he.1
   have hcE : c = Θ := cuffs_eq_of_mem hM'.cuff hΘ (hM'.side_cuff (hes hx)) (hsΘ (hes hx))
   rw [hcE] at hM'
-  obtain ⟨r, hr, -, hreg⟩ := D.rad.exists_pole hS hΘ
-  have hrE : r' = r := pole_eq_of_mem_cuffDisc hS hr hΘ hreg hM'.pole hM'.pole_disc
+  obtain ⟨r, hr, -, hreg⟩ := D.rad.exists_pole hΘ
+  have hrE : r' = r := pole_eq_of_mem_cuffDisc hr hΘ hreg hM'.pole hM'.pole_disc
   rw [hrE] at hM'
   have X := hM.setting hs hsΘ hΘ hr hreg
   have hn := hM.large
@@ -242,7 +242,7 @@ theorem IsMatchSetting.not_mem_cuff_of_internal (hS : IsSurface S) {e : Set S} (
   (hi : Painting.IsInternal e) {y : S} (hy : y ∈ tilde (b e)) {Θ : Set S}
     (hΘ : Θ ∈ cuffs S) : y ∉ Θ := by
   intro hyΘ
-  obtain ⟨r, hr, -, hreg⟩ := D.rad.exists_pole hS hΘ
+  obtain ⟨r, hr, -, hreg⟩ := D.rad.exists_pole hΘ
   have hrep : 4 ≤ D.rep := by
     have := hM.rep_gt
     have := hM.large

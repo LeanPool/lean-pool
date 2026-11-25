@@ -61,27 +61,33 @@ theorem isNonNull_iff_ne_bot (G : Hypergraph α β) : IsNonNull G ↔ G ≠ ⊥ 
     have he : e ∈ (∅ : Set β) := hc.2 ▸ G.edge_mem_of_inc hinc
     exact he
 
-@[simp]
 theorem union_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet := rfl
+    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet :=
+  GraphMinor.Hypergraph.union_vertexSet_eq G₁ G₂
 
-@[simp]
 theorem union_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet := rfl
+    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet :=
+  GraphMinor.Hypergraph.union_edgeSet_eq G₁ G₂
 
 theorem union_inc (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
-    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v := Iff.rfl
+    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v :=
+  GraphMinor.Hypergraph.union_inc_iff G₁ G₂ e v
 
-@[simp]
 theorem inter_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet := rfl
+    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet :=
+  GraphMinor.Hypergraph.inter_vertexSet_eq G₁ G₂
 
-@[simp]
 theorem inter_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet := rfl
+    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet :=
+  GraphMinor.Hypergraph.inter_edgeSet_eq G₁ G₂
 
 theorem inter_inc (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
-    (G₁ ∩ G₂).Inc e v ↔ G₁.Inc e v ∧ G₂.Inc e v := Iff.rfl
+    (G₁ ∩ G₂).Inc e v ↔ G₁.Inc e v ∧ G₂.Inc e v :=
+  GraphMinor.Hypergraph.inter_inc_iff G₁ G₂ e v
+
+attribute [simp] GraphMinor.Hypergraph.union_vertexSet_eq
+  GraphMinor.Hypergraph.union_edgeSet_eq GraphMinor.Hypergraph.inter_vertexSet_eq
+  GraphMinor.Hypergraph.inter_edgeSet_eq
 
 theorem union_comm (G₁ G₂ : Hypergraph α β) : G₁ ∪ G₂ = G₂ ∪ G₁ := by
   ext <;> simp [union_inc, Set.union_comm, or_comm]
@@ -180,8 +186,8 @@ theorem _root_.GraphMinor.Hypergraph.IsSeparation.symm {G A B : Hypergraph α β
   edgeSet_inter_eq := by rw [inter_comm, h.edgeSet_inter_eq]
 
 theorem separationOrder_comm (A B : Hypergraph α β) :
-    separationOrder A B = separationOrder B A := by
-  simp [separationOrder, Set.inter_comm]
+    separationOrder A B = separationOrder B A :=
+  congrArg (fun G : Hypergraph α β ↦ G.vertexSet.ncard) (inter_comm A B)
 
 theorem _root_.GraphMinor.Hypergraph.IsSeparation.vertexSet_union {G A B : Hypergraph α β}
     (h : G.IsSeparation A B) : A.vertexSet ∪ B.vertexSet = G.vertexSet :=
@@ -640,10 +646,10 @@ theorem theorem_2_7_proof {G : Hypergraph α β} {θ : ℕ} (hθ : 1 ≤ θ)
         · exact hne rfl
     have hVA' : (A ∪ Ke).vertexSet = G.vertexSet := by
       have hVK : Ke.vertexSet ⊆ G.vertexSet := (edgeHypergraph_le heG).vertexSet_subset
-      simp [union_vertexSet, hVA, Set.union_eq_left.2 hVK]
+      simp [hVA, Set.union_eq_left.2 hVK]
     have hord' : separationOrder (A ∪ Ke) (B.deleteEdges {e}) < θ := by
       have : ((A ∪ Ke) ∩ B.deleteEdges {e}).vertexSet = (A ∩ B).vertexSet := by
-        simp [inter_vertexSet, deleteEdges, hVA', hVA]
+        simp [deleteEdges, hVA', hVA]
       rw [separationOrder, this]
       exact hord hAB
     have hnot_mem : (A ∪ Ke, B.deleteEdges {e}) ∉ 𝒯 := by
@@ -725,7 +731,7 @@ theorem theorem_2_8_order {G : Hypergraph α β} {θ : ℕ}
     refine ⟨?_, ?_, ?_⟩
     · change (A.vertexSet ∪ {v}) ∪ B.vertexSet = G.vertexSet
       rw [Set.union_assoc, Set.singleton_union, Set.insert_eq_of_mem hvB, hsep.vertexSet_union]
-    · simp [union_edgeSet, Kv, vertexHypergraph, hsep.edgeSet_union]
+    · simp [Kv, vertexHypergraph, hsep.edgeSet_union]
     · simpa [union_edgeSet, Kv, vertexHypergraph] using hsep.edgeSet_inter_eq
   have hAK_not : (A ∪ Kv, B) ∉ 𝒯 := by
     intro hm
@@ -1057,10 +1063,69 @@ theorem theorem_2_9_proof {G : Hypergraph α β} {θ : ℕ}
       apply h𝒯.axiom3 hext.1
       rw [← hsepAB.vertexSet_union, hVB_eq, Set.union_eq_left.2 (Set.singleton_subset_iff.2 hvA)]
     have hAB_empty : (A ∩ B).vertexSet = ∅ := by
-      simp [inter_vertexSet, hVB_eq, hv_notA]
+      simp [hVB_eq, hv_notA]
     have hord0 : separationOrder A B = 0 := by
       simp [separationOrder, hAB_empty]
     have hord_eq := theorem_2_8_order h𝒯 hext
     omega
+
+section
+
+variable {G H A B : Hypergraph α β}
+
+/-- Intersecting both sides of a separation with a subgraph gives a separation
+of that subgraph, as used in Graph Minors XII, Section 4, page 248. -/
+theorem restrictSeparationToSubgraph (hs : G.IsSeparation A B) (hH : H ≤ G) :
+    H.IsSeparation (A ∩ H) (B ∩ H) := by
+  refine (isSeparation_iff_of_le (inter_le_right hs.left_le hH)
+    (inter_le_right hs.right_le hH)).mpr ⟨?_, ?_, ?_⟩
+  · rw [inter_vertexSet, inter_vertexSet, ← Set.union_inter_distrib_right,
+      hs.vertexSet_union, Set.inter_eq_right.mpr hH.vertexSet_subset]
+  · rw [inter_edgeSet, inter_edgeSet, ← Set.union_inter_distrib_right,
+      hs.edgeSet_union, Set.inter_eq_right.mpr hH.edgeSet_subset]
+  · apply Set.eq_empty_iff_forall_notMem.mpr
+    intro e he
+    exact hs.notMem_edgeSet_right he.1.1 he.2.1
+
+/-- Restriction does not increase the order of a separation. -/
+theorem separationOrder_restrict_subgraph_le (A B H : Hypergraph α β) :
+    separationOrder (A ∩ H) (B ∩ H) ≤ separationOrder A B := by
+  exact Set.ncard_le_ncard (fun _ hx => ⟨hx.1.1, hx.2.1⟩)
+    (A ∩ B).vertexSet_finite
+
+/-- Graph Minors XII, Section 4, page 248: the tangle induced by a tangle in a
+subgraph is a tangle of the same order. Each axiom follows by intersection with
+that subgraph. -/
+theorem isTangle_inducedTangleFromSubgraph {θ : ℕ}
+    {T : Set (Hypergraph α β × Hypergraph α β)}
+    (hH : H ≤ G) (hT : IsTangle H θ T) :
+    IsTangle G θ (inducedTangleFromSubgraph G H θ T) := by
+  refine ⟨hT.one_le, fun _ _ h => h.1, fun _ _ h => h.2.1, ?_, ?_, ?_⟩
+  · intro A B hs ho
+    have hsH := restrictSeparationToSubgraph hs hH
+    have hoH := lt_of_le_of_lt (separationOrder_restrict_subgraph_le A B H) ho
+    rcases hT.axiom1 hsH hoH with h | h
+    · exact Or.inl ⟨hs, ho, h⟩
+    · exact Or.inr ⟨hs.symm, by rwa [separationOrder_comm], h⟩
+  · intro A₁ B₁ A₂ B₂ A₃ B₃ h₁ h₂ h₃ heq
+    apply hT.axiom2 h₁.2.2 h₂.2.2 h₃.2.2
+    have hle := union_le (union_le
+      (inter_le_right h₁.1.left_le hH) (inter_le_right h₂.1.left_le hH))
+      (inter_le_right h₃.1.left_le hH)
+    refine eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle le_rfl ?_ ?_
+    · simp only [union_vertexSet, inter_vertexSet]
+      rw [← Set.union_inter_distrib_right, ← Set.union_inter_distrib_right]
+      change (A₁ ∪ A₂ ∪ A₃).vertexSet ∩ H.vertexSet = H.vertexSet
+      rw [heq, Set.inter_eq_right.mpr hH.vertexSet_subset]
+    · simp only [union_edgeSet, inter_edgeSet]
+      rw [← Set.union_inter_distrib_right, ← Set.union_inter_distrib_right]
+      change (A₁ ∪ A₂ ∪ A₃).edgeSet ∩ H.edgeSet = H.edgeSet
+      rw [heq, Set.inter_eq_right.mpr hH.edgeSet_subset]
+  · intro A B h heq
+    apply hT.axiom3 h.2.2
+    change A.vertexSet ∩ H.vertexSet = H.vertexSet
+    rw [heq, Set.inter_eq_right.mpr hH.vertexSet_subset]
+
+end
 
 end GraphMinor.GM10

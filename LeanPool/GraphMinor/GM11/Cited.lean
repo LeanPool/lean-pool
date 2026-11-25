@@ -21,9 +21,10 @@ definitions, and the theorems of the paper take them as hypotheses.
 Two classical facts on the plane, which the paper uses silently when it says that a drawing without
 circuits has only one region, are proved in `GraphMinor/GM11/PlaneFacts.lean`.
 
-Graph Minors X, (2.7), which the paper also cites, is `GM10.theorem_2_7`, already proved. Epstein's
-theorem, which is (7.1) and (7.2) of the paper, is `Surface.EpsteinStatement`, and the other
-topological facts are the `Prop`s of `GraphMinor/Surface/TopologyStatements.lean`.
+Graph Minors X, (2.7), which the paper also cites, is `GM10.theorem_2_7`, already proved. XI (7.1)
+quotes Epstein's Theorem 1.7 for disc bounding in the ambient manifold. Robertson and Seymour's
+XI (7.2) keeps the disc inside the subset of the null-homotopy. `Surface.EpsteinStatement` supplies
+that relative conclusion; the other topological statements are in `Surface/TopologyStatements.lean`.
 -/
 
 @[expose] public section

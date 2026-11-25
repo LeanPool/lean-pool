@@ -157,7 +157,7 @@ theorem IsMatchSetting.isFreeSet_discEnds (hM : D.IsMatchSetting P₀ n b)
   by_contra hord
   rw [not_le] at hord
   rcases i with Θ | e
-  · obtain ⟨p, hp, hpΘ, hreg⟩ := D.rad.exists_pole hS Θ.2
+  · obtain ⟨p, hp, hpΘ, hreg⟩ := D.rad.exists_pole Θ.2
     have hrh : D.rad.regionOf p ∈ D.P.Γ.hatRegions cap := (D.rad.regionOf_mem hp.1).1
     have hpr : p ∈ D.rad.regionOf p := (D.rad.regionOf_mem hp.1).2
     have hXr : discEnds cap b P₀ (.inl Θ) ⊆ closure (D.rad.regionOf p) := by
@@ -166,7 +166,7 @@ theorem IsMatchSetting.isFreeSet_discEnds (hM : D.IsMatchSetting P₀ n b)
       have hyΘ := (hM.cuffEnds_subset hS Θ.2 hy).1
       exact Surface.discBd_subset _ (cap.cuffDisc_bd Θ.1 Θ.2 ▸ mem_image_of_mem _ hyΘ)
     obtain ⟨F, hF, hl, hlt, hw⟩ := hd.exists_circuit_of_not_free hmr hm h3m hins
-      (hd.sk.hatRegion_mem_R hS hrh) hpr (hd.sub.1 hp.1.1) hA.sub_V hXr hcard hmem hXA hord
+      (hd.sk.hatRegion_mem_R hrh) hpr (hd.sub.1 hp.1.1) hA.sub_V hXr hcard hmem hXA hord
     exact no_circuit_holds_cuffEnds hS hM.edge (by omega) hnr hM.free hM.far hp Θ.2 hreg hF
       (by omega) hw hlt
   · obtain ⟨r, hr, hrm⟩ := hA.exists_region

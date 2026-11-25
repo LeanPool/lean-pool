@@ -247,37 +247,41 @@ variable (hS : IsSurface S) (rad : RadialDrawing cap Γ)
 include hS
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 theorem cuffLabel_emb {v : S} {Θ : Set S} (hΘ : Θ ∈ cuffs S) (hv : v ∈ Θ) : cuffLabel cap
   (cap.emb v) = some Θ :=
   cuffLabel_eq hΘ (by
-    rw [cap.closure_cuffDisc hS hΘ]
+    rw [cap.closure_cuffDisc hΘ]
     exact Or.inr (mem_image_of_mem _ hv))
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 theorem cuffLabel_emb_bd {v : S} (hv : v ∈ bd S) : ∃ Θ ∈ cuffs S, v ∈ Θ ∧ cuffLabel cap (cap.emb v)
   = some Θ := by
   obtain ⟨Θ, hΘ, hvΘ⟩ := sUnion_cuffs (S := S) ▸ hv
-  exact ⟨Θ, hΘ, hvΘ, cuffLabel_emb hS hΘ hvΘ⟩
+  exact ⟨Θ, hΘ, hvΘ, cuffLabel_emb hΘ hvΘ⟩
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A point of a closed pasted disc that lies in `Σ` lies on the cuff. -/
 theorem mem_cuff_of_label {v : S} {Θ : Set S} (h : cuffLabel cap (cap.emb v)
   = some Θ) : Θ ∈ cuffs S ∧ v ∈ Θ := by
   obtain ⟨hΘ, hx⟩ := cuffLabel_some h
-  rw [cap.closure_cuffDisc hS hΘ] at hx
+  rw [cap.closure_cuffDisc hΘ] at hx
   rcases hx with hx | ⟨y, hy, hyv⟩
   · exact absurd ⟨v, rfl⟩ (cap.notMem_range hΘ hx)
   · exact ⟨hΘ, cap.isEmbedding.injective hyv ▸ hy⟩
 
 include rad in
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A vertex of `R*` with a label is a pole. -/
 theorem pole_of_label {w : Shat} {Θ : Set S} (hw : w ∈ rad.Rstar) (h : cuffLabel cap w = some Θ) :
     w ∈ rad.poles ∧ Θ ∈ cuffs S ∧ rad.regionOf w = cap.cuffDisc Θ := by
   obtain ⟨hΘ, hx⟩ := cuffLabel_some h
   have hG : w ∈ rad.G.U := rad.G.V_subset_U hw.1
   have hwc : w ∈ cap.cuffDisc Θ := by
-    rw [cap.closure_cuffDisc hS hΘ] at hx
+    rw [cap.closure_cuffDisc hΘ] at hx
     rcases hx with hx | ⟨y, hy, rfl⟩
     · exact hx
     · have hU : cap.emb y ∈ Γ.hatU cap ∩ rad.G.U :=
@@ -285,7 +289,7 @@ theorem pole_of_label {w : Shat} {Θ : Set S} (hw : w ∈ rad.Rstar) (h : cuffLa
       rw [rad.isPreRadial.1] at hU
       exact absurd hU hw.2
   have hp : w ∈ rad.poles := ⟨hw, fun hsub ↦ cap.notMem_range hΘ hwc (hsub (rad.regionOf_mem hw).2)⟩
-  obtain ⟨Θ', hΘ', hreg, hw'⟩ := rad.pole_cases hS hp
+  obtain ⟨Θ', hΘ', hreg, hw'⟩ := rad.pole_cases hp
   have : Θ' = Θ := by
     by_contra hne
     exact disjoint_left.mp (cap.cuffDisc_disjoint _ hΘ' _ hΘ hne) (subset_closure hw')
@@ -295,27 +299,30 @@ theorem pole_of_label {w : Shat} {Θ : Set S} (hw : w ∈ rad.Rstar) (h : cuffLa
 
 include rad in
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A vertex joined to a labelled vertex of `R*` has the same label. -/
 theorem label_step {e : Set Shat} {v : S} {w : Shat} {Θ : Set S} (he : e ∈ rad.G.E)
   (hw : w ∈ rad.Rstar)
     (hset : closure e ∩ rad.G.V = {cap.emb v, w}) (h : cuffLabel cap w = some Θ) : cuffLabel cap
       (cap.emb v) = some Θ := by
-  obtain ⟨hp, hΘ, hreg⟩ := pole_of_label hS rad hw h
-  exact cuffLabel_emb hS hΘ (rad.pole_edge hS he hp hΘ hreg hset).2
+  obtain ⟨hp, hΘ, hreg⟩ := pole_of_label rad hw h
+  exact cuffLabel_emb hΘ (rad.pole_edge he hp hΘ hreg hset).2
 
 include rad in
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- Two vertices joined by an edge of `Γ*`, both with labels, have the same label. -/
 theorem label_link {e : Set Shat} {x y : Shat} {a b : Set S} (hl : rad.G.toGraph.IsLink e x y)
     (hx : cuffLabel cap x = some a) (hy : cuffLabel cap y = some b) : a = b := by
   obtain ⟨v, hv, w, hw, hset⟩ := rad.edge_ends hl.1
   have hpair : ({x, y} : Set Shat) = {cap.emb v, w} := hl.2.2.2.symm.trans hset
   rcases (Set.pair_eq_pair_iff.mp hpair) with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-  · exact Option.some.inj (hx.symm.trans (label_step hS rad hl.1 hw hset hy))
-  · exact Option.some.inj ((label_step hS rad hl.1 hw hset hx).symm.trans hy)
+  · exact Option.some.inj (hx.symm.trans (label_step rad hl.1 hw hset hy))
+  · exact Option.some.inj ((label_step rad hl.1 hw hset hx).symm.trans hy)
 
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- The two ends of a path of `Γ*`. -/
 theorem cuff_of_end {x y : Shat} (M : Surface.GraphWalk rad.G.toGraph x y) {c d : Set S}
     (hx : cuffLabel cap x = some c) (hy : cuffLabel cap y = some d) (hcd : c ≠ d)
@@ -339,7 +346,7 @@ theorem cuff_of_end {x y : Shat} (M : Surface.GraphWalk rad.G.toGraph x y) {c d 
         exact hw.2 ⟨v, hv, h₁⟩
       obtain ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩ := Set.pair_eq_pair_iff.mp hpair
       · exact absurd ⟨v, hv, rfl⟩ hw.2
-      · have hl := label_step hS rad h.1 hw (by rw [hset, pair_comm]) hx
+      · have hl := label_step rad h.1 hw (by rw [hset, pair_comm]) hx
         by_cases hwy : cap.emb v = y
         · exact hcd (Option.some.inj (hl.symm.trans (hwy ▸ hy)))
         · rw [hz _ (by simp [r.start_mem_support]) hne.symm hwy] at hl
@@ -347,7 +354,7 @@ theorem cuff_of_end {x y : Shat} (M : Surface.GraphWalk rad.G.toGraph x y) {c d 
   obtain ⟨s, hs, rfl⟩ : x ∈ Γ.hatV cap := by
     by_contra hn
     exact hxh ⟨hxV, hn⟩
-  obtain ⟨hΘ, hsc⟩ := mem_cuff_of_label hS hx
+  obtain ⟨hΘ, hsc⟩ := mem_cuff_of_label hx
   exact ⟨s, hsc, rfl, hΘ⟩
 
 omit [T2Space S] hS in
@@ -432,8 +439,8 @@ theorem exists_crossLine [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : �
   classical
   have hcS : CompactSpace S := hS.1
   obtain ⟨p₁, p₂, W, hp₁, hp₂, hpne, hW, hlen⟩ := exists_walk_of_dist rad hd
-  obtain ⟨Θ₁, hΘ₁, hreg₁, hmem₁⟩ := rad.pole_cases hS hp₁
-  obtain ⟨Θ₂, hΘ₂, hreg₂, hmem₂⟩ := rad.pole_cases hS hp₂
+  obtain ⟨Θ₁, hΘ₁, hreg₁, hmem₁⟩ := rad.pole_cases hp₁
+  obtain ⟨Θ₂, hΘ₂, hreg₂, hmem₂⟩ := rad.pole_cases hp₂
   have hne₁₂ : Θ₁ ≠ Θ₂ := by
     rintro rfl
     obtain ⟨-, -, hG3, -⟩ := id rad.isPreRadial
@@ -448,8 +455,8 @@ theorem exists_crossLine [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : �
     exact (GraphWalk.IsSimple.of_append (GraphWalk.IsSimple.of_append hW).2).1
   have hxG : x ∈ rad.G.V := M.mem_vertexSet_of_mem_support M.start_mem_support
   have hyG : y ∈ rad.G.V := M.mem_vertexSet_of_mem_support M.end_mem_support
-  obtain ⟨s, hsc, rfl, hc⟩ := cuff_of_end hS rad M hx hy hcd hz hxG
-  obtain ⟨t, htc, rfl, hd'⟩ := cuff_of_end hS rad M.reverse hy hx hcd.symm
+  obtain ⟨s, hsc, rfl, hc⟩ := cuff_of_end rad M hx hy hcd hz hxG
+  obtain ⟨t, htc, rfl, hd'⟩ := cuff_of_end rad M.reverse hy hx hcd.symm
     (fun z hz' h₁ h₂ ↦ by
       rw [Surface.GraphWalk.support_reverse, List.mem_reverse] at hz'
       exact hz z hz' h₂ h₁) hyG
@@ -464,7 +471,7 @@ theorem exists_crossLine [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : �
     cap.isEmbedding.injective
   have hnp : ∀ z ∈ M.support, z ∉ rad.poles := by
     intro z hz' hp
-    obtain ⟨Θ, hΘ, -, hmem⟩ := rad.pole_cases hS hp
+    obtain ⟨Θ, hΘ, -, hmem⟩ := rad.pole_cases hp
     have hnr := cap.notMem_range hΘ hmem
     by_cases h₁ : z = cap.emb s
     · exact hnr ⟨s, h₁.symm⟩
@@ -514,7 +521,7 @@ theorem exists_crossLine [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : �
     apply subset_antisymm
     · rintro x ⟨hxK, hxb⟩
       have hxV := (hinter ⟨Γ.bd_subset hxb, hxK⟩).2
-      obtain ⟨Θ, hΘ, -, hl⟩ := cuffLabel_emb_bd (cap := cap) hS hxb
+      obtain ⟨Θ, hΘ, -, hl⟩ := cuffLabel_emb_bd (cap := cap) hxb
       by_contra hn
       have h₁ : cap.emb x ≠ cap.emb s := fun h ↦ hn (Or.inl (cap.isEmbedding.injective h))
       have h₂ : cap.emb x ≠ cap.emb t := fun h ↦ hn (Or.inr (cap.isEmbedding.injective h))

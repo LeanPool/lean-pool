@@ -109,14 +109,14 @@ theorem exists_walk_to_pole {x p : Shat} {c : Set S} (hx : x ∈ rad.G.V) (hl : 
   obtain ⟨hc, hxc⟩ := cuffLabel_some hl
   by_cases hV : x ∈ Γ.hatV cap
   · obtain ⟨v, hv, rfl⟩ := hV
-    obtain ⟨-, hvc⟩ := mem_cuff_of_label hS hl
+    obtain ⟨-, hvc⟩ := mem_cuff_of_label hl
     obtain ⟨e, he, hs⟩ := rad.exists_pole_edge hS h3 hp hc hreg hv hvc
     exact ⟨.cons (⟨he, hp.1.1, hx, by rw [Set.pair_comm]; exact hs⟩ : rad.G.toGraph.IsLink e p
       (cap.emb v)) (.nil hx),
       by simp [Surface.GraphWalk.length, Surface.GraphWalk.edges]⟩
   · have hw : x ∈ rad.Rstar := ⟨hx, hV⟩
     have hxd : x ∈ cap.cuffDisc c := by
-      rw [cap.closure_cuffDisc hS hc] at hxc
+      rw [cap.closure_cuffDisc hc] at hxc
       rcases hxc with h | ⟨y, hy, rfl⟩
       · exact h
       · exfalso
@@ -141,8 +141,8 @@ theorem label_eq {n : ℕ} (hd : ((n + 1 : ℕ) : ℕ∞) < Painting.dist rad) {
     exact hcd (Option.some.inj (hlx.symm.trans hly))
   obtain ⟨hc, -⟩ := cuffLabel_some hlx
   obtain ⟨hd', -⟩ := cuffLabel_some hly
-  obtain ⟨p₁, hp₁, hm₁, hr₁⟩ := rad.exists_pole hS hc
-  obtain ⟨p₂, hp₂, hm₂, hr₂⟩ := rad.exists_pole hS hd'
+  obtain ⟨p₁, hp₁, hm₁, hr₁⟩ := rad.exists_pole hc
+  obtain ⟨p₂, hp₂, hm₂, hr₂⟩ := rad.exists_pole hd'
   have hpne : p₁ ≠ p₂ := by
     rintro rfl
     exact disjoint_left.1 (cap.cuffDisc_disjoint _ hc _ hd' hcd) (subset_closure hm₁)
@@ -342,7 +342,7 @@ theorem chord_of_circuit [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {F : Dr
   classical
   have hj := cap.isClosedEmbedding hS
   have hiso := circuit_iso hFc
-  obtain ⟨Θ, hΘ, hreg, hpd⟩ := rad.pole_cases hS hp
+  obtain ⟨Θ, hΘ, hreg, hpd⟩ := rad.pole_cases hp
   have hpm : p ∉ range cap.emb := cap.notMem_range hΘ hpd
   obtain ⟨e₀, he₀, hpe₀⟩ := hiso p hpF
   have he₀G := hFG.2 he₀
@@ -445,8 +445,8 @@ theorem chord_of_circuit [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {F : Dr
   obtain ⟨hinter, hfeat, hlines, hcV, hcE⟩ := comap_facts rad hfit hsubT hU hj hisoT
   set K : Drawing S := GM19.Drawing.comap T hj hU with hKdef
   have hKU : cap.emb '' K.U = T.U := image_preimage_eq_of_subset hU
-  have hv₁Θ : v₁ ∈ Θ := (rad.pole_edge hS he₂G hp hΘ hreg hset₁').2
-  have hv₀Θ : v₀ ∈ Θ := (rad.pole_edge hS he₀G hp hΘ hreg hset₀).2
+  have hv₁Θ : v₁ ∈ Θ := (rad.pole_edge he₂G hp hΘ hreg hset₁').2
+  have hv₀Θ : v₀ ∈ Θ := (rad.pole_edge he₀G hp hΘ hreg hset₀).2
   have hs : v₁ ∈ K.V := (hTV _).2 M.start_mem_support
   have ht : v₀ ∈ K.V := (hTV _).2 M.end_mem_support
   have hbdK : K.U ∩ bd S = {v₁, v₀} := by
@@ -551,17 +551,17 @@ theorem exists_shape [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : ℕ} (
       F.U, IsCircuit.isOArc_U hFc, hnn, h₁.form⟩
   by_cases hpole : ∃ p ∈ rad.poles, p ∈ F.V
   · obtain ⟨p, hp, hpF⟩ := hpole
-    obtain ⟨Θ, hΘ, hreg, hpd⟩ := rad.pole_cases hS hp
+    obtain ⟨Θ, hΘ, hreg, hpd⟩ := rad.pole_cases hp
     have hlabel : cuffLabel cap p = some Θ := cuffLabel_eq hΘ (subset_closure hpd)
     obtain ⟨K, h₁, h₂⟩ := chord_of_circuit hS rad h3 hfit hFG hFc hp hpF (fun z hz hzp ↦ by
-      obtain ⟨Θ', hΘ', hreg', hzd⟩ := rad.pole_cases hS hzp
+      obtain ⟨Θ', hΘ', hreg', hzd⟩ := rad.pole_cases hzp
       obtain rfl := label_eq hS rad hd hF h3 hz hpF (cuffLabel_eq hΘ' (subset_closure hzd)) hlabel
       obtain ⟨-, -, hG3, -⟩ := id rad.isPreRadial
       exact (hG3 _ (rad.regionOf_mem hp.1).1).unique
         ⟨hreg.trans hreg'.symm ▸ (rad.regionOf_mem hzp.1).2, hzp.1.1⟩ ⟨(rad.regionOf_mem hp.1).2,
           hp.1.1⟩)
       (fun {x} hxb hxV hxF ↦ by
-        obtain ⟨Θ', hΘ', hxΘ, hl₁⟩ := cuffLabel_emb_bd (cap := cap) hS hxb
+        obtain ⟨Θ', hΘ', hxΘ, hl₁⟩ := cuffLabel_emb_bd (cap := cap) hxb
         obtain rfl := label_eq hS rad hd hF h3 hxF hpF hl₁ hlabel
         by_contra hno
         push Not at hno
@@ -584,10 +584,10 @@ theorem exists_shape [Nonempty S] {Φ : Frame S} (hfit : Γ.Fits Φ) {n : ℕ} (
         exact ⟨hv, IsSubdrawing.mem_V hFG hxF (rad.isPreRadial.2.1 ⟨_, hv, rfl⟩)⟩
       obtain ⟨hxV, hxK'⟩ := hmemV hxb hxF
       obtain ⟨hyV, hyK'⟩ := hmemV hyb hyF
-      obtain ⟨Θ, hΘ, hxΘ, hl₁⟩ := cuffLabel_emb_bd (cap := cap) hS hxb
-      obtain ⟨Θ', hΘ', hyΘ, hl₂⟩ := cuffLabel_emb_bd (cap := cap) hS hyb
+      obtain ⟨Θ, hΘ, hxΘ, hl₁⟩ := cuffLabel_emb_bd (cap := cap) hxb
+      obtain ⟨Θ', hΘ', hyΘ, hl₂⟩ := cuffLabel_emb_bd (cap := cap) hyb
       obtain rfl := label_eq hS rad hd hF h3 hxK' hyK' hl₁ hl₂
-      obtain ⟨p, hp, -, hr⟩ := rad.exists_pole hS hΘ
+      obtain ⟨p, hp, -, hr⟩ := rad.exists_pole hΘ
       exact hsmall (exists_smaller_of_two hS rad h3 hF hp (hpole p hp) hΘ hr hxV hyV hxΘ hyΘ hne
         hxK' hyK'))
     refine ⟨K, hpack h₁ ?_⟩

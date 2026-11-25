@@ -130,8 +130,8 @@ theorem labels_eq {n : ℕ} (hd : ((n + 2 : ℕ) : ℕ∞) < 2 * Painting.dist D
   by_contra hcd
   obtain ⟨hc, -⟩ := cuffLabel_some hlx
   obtain ⟨hd', -⟩ := cuffLabel_some hly
-  obtain ⟨p₁, hp₁, hm₁, hr₁⟩ := D.rad.exists_pole hS hc
-  obtain ⟨p₂, hp₂, hm₂, hr₂⟩ := D.rad.exists_pole hS hd'
+  obtain ⟨p₁, hp₁, hm₁, hr₁⟩ := D.rad.exists_pole hc
+  obtain ⟨p₂, hp₂, hm₂, hr₂⟩ := D.rad.exists_pole hd'
   have hpne : p₁ ≠ p₂ := by
     rintro rfl
     exact disjoint_left.1 (cap.cuffDisc_disjoint _ hc _ hd' hcd) (subset_closure hm₁)
@@ -148,14 +148,15 @@ theorem labels_eq {n : ℕ} (hd : ((n + 2 : ℕ) : ℕ∞) < 2 * Painting.dist D
 
 omit h3 in
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A closed walk with a label on it holds a point of that cuff. -/
 theorem exists_touch {u : Shat} (Z : GraphWalk D.rad.G.toGraph u u) (hpos : 0 < Z.length)
     {y : Shat} (hy : y ∈ Z.support) {Θ : Set S}
     (hl : cuffLabel cap y = some Θ) : ∃ v ∈ D.P.Γ.V, v ∈ Θ ∧ cap.emb v ∈ Z.support := by
   by_cases hV : y ∈ D.P.Γ.hatV cap
   · obtain ⟨v, hv, rfl⟩ := hV
-    exact ⟨v, hv, (mem_cuff_of_label hS hl).2, hy⟩
-  · obtain ⟨hp, hΘ, hreg⟩ := pole_of_label hS D.rad ⟨mem_V_of_mem_support Z hy, hV⟩ hl
+    exact ⟨v, hv, (mem_cuff_of_label hl).2, hy⟩
+  · obtain ⟨hp, hΘ, hreg⟩ := pole_of_label D.rad ⟨mem_V_of_mem_support Z hy, hV⟩ hl
     obtain ⟨W, -, hW, -⟩ := exists_half_walk Z hy hy
     obtain ⟨A, B, rfl⟩ := Z.exists_append_of_mem hy
     have hsupp : ∀ z, z ∈ (B.append A).support → z ∈ (A.append B).support := fun z hz ↦ by
@@ -169,7 +170,7 @@ theorem exists_touch {u : Shat} (Z : GraphWalk D.rad.G.toGraph u u) (hpos : 0 < 
     | nil h' => simp [GraphWalk.length, GraphWalk.edges] at hl'
     | @cons _ x _ e h' r =>
       obtain ⟨v, hv, rfl, hset⟩ := D.rad.link_cases h' hp.1
-      refine ⟨v, hv, (D.rad.pole_edge hS h'.1 hp hΘ hreg hset).2, hsupp _ ?_⟩
+      refine ⟨v, hv, (D.rad.pole_edge h'.1 hp hΘ hreg hset).2, hsupp _ ?_⟩
       simp only [GraphWalk.support_cons]
       exact List.mem_cons_of_mem _ r.start_mem_support
 

@@ -119,7 +119,7 @@ theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : 
 variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat]
 
 theorem IsSkHat.E_nonempty {cap : IsCappedSurface S Shat} {Γ : Painting S} {D : Drawing Shat}
-    (hS : IsSurface S) (hD : IsSkHat cap Γ D) (hE : Γ.E.Nonempty) : D.E.Nonempty := by
+ (hD : IsSkHat cap Γ D) (hE : Γ.E.Nonempty) : D.E.Nonempty := by
   obtain ⟨c, hc⟩ := hE
   have hy : ∃ y, y ∈ Γ.skU \ Γ.V := by
     rcases Γ.size_cases hc with h2 | h3
@@ -146,7 +146,7 @@ theorem IsSkHat.E_nonempty {cap : IsCappedSurface S Shat} {Γ : Painting S} {D :
   obtain ⟨y, hy⟩ := hy
   obtain ⟨e, he, -⟩ := exists_arcComp_superset (isPathConnected_singleton y)
     (singleton_subset_iff.2 hy)
-  exact ⟨_, (hD.edge_iff hS).mpr ⟨e, he, rfl⟩⟩
+  exact ⟨_, hD.edge_iff.mpr ⟨e, he, rfl⟩⟩
 
 theorem closure_edge_subset {T : Type} [TopologicalSpace T] [T2Space T] {G : Drawing T} {e : Set T}
     (he : e ∈ G.E) : closure e ⊆ e ∪ G.V := by
@@ -189,7 +189,7 @@ theorem RadialDrawing.exists_spoke {cap : IsCappedSurface S Shat} {Γ : Painting
   set r := rad.regionOf w with hrdef
   have hrhat : r ∈ Γ.hatRegions cap := ⟨w, hwU, rfl⟩
   have hwr : w ∈ r := mem_connectedComponentIn hwU
-  have hrD := hD.hatRegion_mem_R hS hrhat
+  have hrD := hD.hatRegion_mem_R hrhat
   have hvhat : cap.emb v ∈ Γ.hatV cap := mem_image_of_mem _ hv
   have hvD : cap.emb v ∈ D.V := by
     rw [hDV]
@@ -219,7 +219,7 @@ theorem RadialDrawing.exists_spoke {cap : IsCappedSurface S Shat} {Γ : Painting
       exact (eq_of_subset_of_ncard_le hs.2 hle G₄.finite_edges).ge
   have hsub : rad.G.IsSubdrawing G₃ := ⟨hGsub.1.trans hsub₃.1, hGsub.2.trans hsub₃.2⟩
   have hw₃ : w ∈ G₃.V := hsub.1 hw.1
-  obtain ⟨h, hh, hcap⟩ := GM11.exists_spoke_at hrad hmax hT (hD.E_nonempty hS hE) hrD hwr hw₃ hvD
+  obtain ⟨h, hh, hcap⟩ := GM11.exists_spoke_at hrad hmax hT (hD.E_nonempty hE) hrD hwr hw₃ hvD
     hcl
   have hwv : w ≠ cap.emb v := fun he ↦ hw.2 (he ▸ hvhat)
   have hvG : cap.emb v ∈ rad.G.V := hG2 hvhat

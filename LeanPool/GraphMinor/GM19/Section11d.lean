@@ -69,9 +69,9 @@ include X
 
 omit [T2Space S] in
 /-- The frontier of the region of `r` is the cuff. -/
-theorem frontier_region (hS : IsSurface S) : closure (D.rad.regionOf r) \ D.rad.regionOf r
+theorem frontier_region : closure (D.rad.regionOf r) \ D.rad.regionOf r
   = cap.emb '' Θ := by
-  rw [X.reg, cap.closure_cuffDisc hS X.cuff]
+  rw [X.reg, cap.closure_cuffDisc X.cuff]
   ext x
   constructor
   · rintro ⟨hx | hx, hn⟩
@@ -106,9 +106,9 @@ theorem isDisjointFeast_of_min (hS : IsSurface S) {ω : List β} {ℱ : Set (Dra
   refine ⟨hfe, fun F hF ↦ ?_, fun F hF F' hF' hne ↦ ?_⟩
   · have hb := hfe.all_bites F hF
     obtain ⟨v₁, v₂, Β, L, A, A', Di, Do, hsh⟩ := X.shape hS hb (hsN hF)
-    rw [X.frontier_region hS]
-    refine Subset.antisymm (hsh.biteArc_subset hS) fun x hx ↦ ?_
-    rcases hsh.mem_biteArc_or hS hx.2 hx.1 with h' | ⟨hxV, hxA⟩
+    rw [X.frontier_region]
+    refine Subset.antisymm (hsh.biteArc_subset) fun x hx ↦ ?_
+    rcases hsh.mem_biteArc_or hx.2 hx.1 with h' | ⟨hxV, hxA⟩
     · exact h'
     exfalso
     obtain ⟨F', hF', hlt, hsub, hrF⟩ := X.exists_shorter hS hsh hxV hxA
@@ -209,7 +209,7 @@ theorem linked_of_min (hS : IsSurface S) {ω : List β} {ℱ : Set (Drawing Shat
   have hb := hfe.all_bites F hF
   obtain ⟨F', hF', hle, heq, hsub, hlink⟩ := exists_linked hS X.h3 hb.is_circuit hb.card_lt
   have hc' : F'.E.ncard ≤ 2 * N := by omega
-  have hb' : D.IsBiteAt r F' := X.bite_of_ins hS hF' hc' (hsub (D.U_subset_ins hb.is_circuit
+  have hb' : D.IsBiteAt r F' := X.bite_of_ins hF' hc' (hsub (D.U_subset_ins hb.is_circuit
     hb.card_lt (F.V_subset_U hb.rstar_mem)))
   have hfA : (ℱ \ {F}).Finite := hf.subset sdiff_subset
   have e₁ := feastOrder_diff_singleton hf hF

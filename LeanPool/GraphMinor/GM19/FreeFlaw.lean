@@ -368,7 +368,7 @@ theorem touch_subsingleton {n : ℕ} (hn : n < D.rep) {F : Drawing Shat} (hF : D
   have hemb : ∀ {x}, x ∈ closure (cap.cuffDisc Θ) ∩ D.ins F → ∃ v ∈ Θ, cap.emb v = x := by
     intro x hx
     have h₁ := hx.1
-    rw [cap.closure_cuffDisc hS hΘ] at h₁
+    rw [cap.closure_cuffDisc hΘ] at h₁
     rcases h₁ with h₁ | h₁
     · exact absurd (hEF hx) (disjoint_left.1 hdis h₁)
     · exact h₁

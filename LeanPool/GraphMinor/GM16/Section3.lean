@@ -771,7 +771,7 @@ theorem exists_isLinearDecomposition_of_isRhoVortex {S : Society α β} {ρ n : 
       refine ⟨⊥, G_H, ⟨isSeparation_bot_self G_H, ?_, ?_⟩, ?_⟩
       · rintro _ ⟨i, hi, rfl⟩; omega
       · rintro _ ⟨i, _, rfl⟩; exact S.bar_subset (ht_range ▸ mem_range_self i)
-      · simp [separationOrder, GM10.inter_vertexSet, GM10.bot_vertexSet]
+      · simp [separationOrder, GM10.bot_vertexSet]
     · by_cases hjn : j < n
       · obtain ⟨Y₀, Z₀, hsep₀, hA₀, hB₀, hord₀⟩ :=
           exists_separation_le_rho_of_isRhoVortex hn hvortex ht_inj ht_range ht_cw
@@ -780,7 +780,7 @@ theorem exists_isLinearDecomposition_of_isRhoVortex {S : Society α β} {ρ n : 
       · refine ⟨G_H, ⊥, ⟨(isSeparation_bot_self G_H).symm, ?_, ?_⟩, ?_⟩
         · rintro _ ⟨i, _, rfl⟩; exact S.bar_subset (ht_range ▸ mem_range_self i)
         · rintro _ ⟨i, hi, rfl⟩; exact absurd i.2 (not_lt_of_ge (le_trans (by omega) hi))
-        · simp [separationOrder, GM10.inter_vertexSet, GM10.bot_vertexSet]
+        · simp [separationOrder, GM10.bot_vertexSet]
   choose Y_min Z_min k_min hval_min hk_eq hk_le hk_min hsize_min using (fun j
     => exists_minimum_separation (hex_valid_sep j))
   let Y (j : ℕ) : Hypergraph α β :=
@@ -807,7 +807,7 @@ theorem exists_isLinearDecomposition_of_isRhoVortex {S : Society α β} {ρ n : 
       refine ⟨⟨isSeparation_bot_self G_H, ?_, ?_⟩, ?_⟩
       · rintro _ ⟨i, hi, rfl⟩; omega
       · rintro _ ⟨i, _, rfl⟩; exact S.bar_subset (ht_range ▸ mem_range_self i)
-      · simp [separationOrder, GM10.inter_vertexSet, GM10.bot_vertexSet]
+      · simp [separationOrder, GM10.bot_vertexSet]
     · by_cases hlt : j < n
       · obtain ⟨hY_eq, hZ_eq⟩ := hYZ_mid (by omega) hlt
         rw [hY_eq, hZ_eq]
@@ -818,7 +818,7 @@ theorem exists_isLinearDecomposition_of_isRhoVortex {S : Society α β} {ρ n : 
         refine ⟨⟨(isSeparation_bot_self G_H).symm, ?_, ?_⟩, ?_⟩
         · rintro _ ⟨i, _, rfl⟩; exact S.bar_subset (ht_range ▸ mem_range_self i)
         · rintro _ ⟨i, hi, rfl⟩; exact absurd i.2 (not_lt_of_ge hi)
-        · simp [separationOrder, GM10.inter_vertexSet, GM10.bot_vertexSet]
+        · simp [separationOrder, GM10.bot_vertexSet]
   have hChain : ∀ {i j : ℕ}, i ≤ j → j ≤ n → Y i ≤ Y j ∧ Z j ≤ Z i := by
     intro i j hij hjn
     by_cases hi0 : i = 0

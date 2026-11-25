@@ -133,7 +133,7 @@ theorem sk_adj_of (hS : IsSurface S) (hD : IsSkHat cap Γ D) {a b : S} (h : Γ.s
     · obtain ⟨f, hf, -, -, ht⟩ := exists_sk_boundary Γ hc h3 hac hbc hne
       exact ⟨f, hf, ht ▸ .inl rfl, ht ▸ .inr rfl⟩
   obtain ⟨f, hf, haf, hbf⟩ := hend
-  refine ⟨cap.emb '' f, (hD.edge_iff hS).mpr ⟨f, hf, rfl⟩, ?_, ?_⟩
+  refine ⟨cap.emb '' f, hD.edge_iff.mpr ⟨f, hf, rfl⟩, ?_, ?_⟩
   · rw [tilde_emb hS]
     exact mem_image_of_mem _ haf
   · rw [tilde_emb hS]
@@ -143,7 +143,7 @@ omit [T2Space Shat] in
 theorem adj_sk_of (hS : IsSurface S) (hD : IsSkHat cap Γ D) {a b : S}
     (h : D.adj.Adj (cap.emb a) (cap.emb b)) : Γ.skAdj.Adj a b := by
   obtain ⟨hne, ha, hb, e, he, hae, hbe⟩ := h
-  obtain ⟨f, hf, rfl⟩ := (hD.edge_iff hS).mp he
+  obtain ⟨f, hf, rfl⟩ := hD.edge_iff.mp he
   rw [tilde_emb hS] at hae hbe
   have ha' : a ∈ tilde f := by
     obtain ⟨x, hx, h⟩ := hae
@@ -282,12 +282,12 @@ theorem exists_enlargement (hS : IsSurface S) {D₁ D₂ : Drawing Shat} (hD₁ 
     exact htV
   refine ⟨fun x => indDrawing D₂ (σh x), τe, ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩, ?_, ?_⟩
   · intro e he
-    obtain ⟨e₀, he₀, rfl⟩ := (hD₁.edge_iff hS).mp he
+    obtain ⟨e₀, he₀, rfl⟩ := hD₁.edge_iff.mp he
     rw [hτe]
-    exact (hD₂.edge_iff hS).mpr ⟨_, (hτ e₀ he₀).1, rfl⟩
+    exact hD₂.edge_iff.mpr ⟨_, (hτ e₀ he₀).1, rfl⟩
   · intro e₁ he₁ e₂ he₂ heq
-    obtain ⟨c₁, hc₁, rfl⟩ := (hD₁.edge_iff hS).mp he₁
-    obtain ⟨c₂, hc₂, rfl⟩ := (hD₁.edge_iff hS).mp he₂
+    obtain ⟨c₁, hc₁, rfl⟩ := hD₁.edge_iff.mp he₁
+    obtain ⟨c₂, hc₂, rfl⟩ := hD₁.edge_iff.mp he₂
     change τe _ = τe _ at heq
     rw [hτe, hτe] at heq
     have heq' := hinj.image_injective heq
@@ -316,7 +316,7 @@ theorem exists_enlargement (hS : IsSurface S) {D₁ D₂ : Drawing Shat} (hD₁ 
     exact (disjoint_image_iff hinj).mpr
       (h.vertex_disjoint v₁ hv₁ v₂ hv₂ fun h' => hne (congrArg _ h'))
   · intro e he x hx
-    obtain ⟨e₀, he₀, rfl⟩ := (hD₁.edge_iff hS).mp he
+    obtain ⟨e₀, he₀, rfl⟩ := hD₁.edge_iff.mp he
     obtain ⟨v, hv, rfl⟩ := hVemb hx
     rw [indDrawing_V D₂ (hsub v hv), hτe, hσh, tilde_emb hS, tilde_emb hS, ← image_inter hinj,
       image_nonempty, hinj.mem_set_image]

@@ -77,13 +77,13 @@ theorem closure_inter_closure (Γ : Painting S) {e e' : Set S} (he : e ∈ Γ.E)
 
 omit [T2Space Shat] in
 omit [T2Space S] in
-theorem padBase_inter (hS : IsSurface S) {i j : DiscIndex S P₀} (hne : i ≠ j) : padBase cap P₀ i ∩
+theorem padBase_inter {i j : DiscIndex S P₀} (hne : i ≠ j) : padBase cap P₀ i ∩
   padBase cap P₀ j ⊆ cap.emb '' P₀.Γ.V := by
   have key : ∀ (Θ : {Θ : Set S // Θ ∈ cuffs S}) (e : {e : Set S // e ∈ P₀.Γ.E
       ∧ Painting.IsInternal e}),
       closure (cap.cuffDisc Θ.1) ∩ cap.emb '' closure e.1 ⊆ cap.emb '' P₀.Γ.V := by
     rintro Θ e x ⟨hx, z, hz, rfl⟩
-    rw [cap.closure_cuffDisc hS Θ.2] at hx
+    rw [cap.closure_cuffDisc Θ.2] at hx
     rcases hx with h | ⟨y, hy, hyz⟩
     · exact absurd (mem_range_self z) (cap.notMem_range Θ.2 h)
     · obtain rfl := cap.isEmbedding.injective hyz
@@ -150,7 +150,7 @@ theorem exists_pads (hS : IsSurface S) (P₀ : ColouredPainting χ) (cap : IsCap
     · exact ⟨cap.emb (Classical.arbitrary _), cap.emb (Classical.arbitrary _), fun h => absurd h hi⟩
   choose u w hl using hline
   obtain ⟨C, -, h2, h3, h4⟩ := exists_thin_family hT (isClosed_padBase hS) hVc (fun i j h
-    => padBase_inter hS h) (L := L) (fun i hi => (hl i hi).1) fun i hi => (hl i hi).2
+    => padBase_inter h) (L := L) (fun i hi => (hl i hi).1) fun i hi => (hl i hi).2
   have hinl : ∀ Θ, (Sum.inl Θ : DiscIndex S P₀) ∉ L := fun Θ ⟨e, he, _⟩ => by cases he
   have hthree : ∀ e : {e : Set S // e ∈ P₀.Γ.E ∧ Painting.IsInternal e}, (tilde e.1).ncard = 3 →
     (Sum.inr e : DiscIndex S P₀) ∉ L := fun e h3' ⟨e', he, h2'⟩ => by
@@ -177,7 +177,7 @@ theorem exists_pads (hS : IsSurface S) (P₀ : ColouredPainting χ) (cap : IsCap
   · rintro (Θ | e)
     · rw [hC₀]
       rintro x ⟨⟨v, hv, rfl⟩, hx⟩
-      rw [cap.closure_cuffDisc hS Θ.2] at hx
+      rw [cap.closure_cuffDisc Θ.2] at hx
       rcases hx with h | h
       · exact absurd (mem_range_self v) (cap.notMem_range Θ.2 h)
       · rw [cap.cuffDisc_bd Θ.1 Θ.2]
@@ -603,7 +603,7 @@ theorem IsMatchSetting.finish_feasibility [Nonempty S] (hM : D.IsMatchSetting P�
       rw [endMap_emb, hC₀ Θ]
       refine ⟨mem_image_of_mem _ (P₀.Γ.tilde_subset_V he hm), ?_⟩
       have hΘc : IsClosed Θ.1 := (IsOArc.isCompact ((cuff_statement S hS).2.2 Θ.1 Θ.2)).isClosed
-      rw [cap.closure_cuffDisc hS Θ.2]
+      rw [cap.closure_cuffDisc Θ.2]
       exact Or.inr (mem_image_of_mem _ (closure_minimal heΘ hΘc hm.1))
     · rintro _ ⟨x, hx, rfl⟩
       have hm := hM.endVertex_mem hS e.2.1 hx

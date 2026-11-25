@@ -124,7 +124,7 @@ theorem IsMatchSetting.disjoint_discHull (hS : IsSurface S) (i j : DiscIndex S P
       := fun Θ e => by
     refine disjoint_left.mpr ?_
     rintro x hx ⟨z, hz, rfl⟩
-    rw [cap.closure_cuffDisc hS Θ.2] at hx
+    rw [cap.closure_cuffDisc Θ.2] at hx
     rcases hx with h | ⟨y, hy, hyz⟩
     · exact cap.notMem_range Θ.2 h (mem_range_self z)
     · obtain rfl := hinj hyz
@@ -195,7 +195,7 @@ theorem IsMatchSetting.exists_discFamily (hS : IsSurface S) {H : Drawing Shat}
           rw [(χ.Φ.side_shape _ hs.1.1).1]
           omega)
         exact ⟨y, σ Θ.1, hs₀, hs.2, by rw [hM.edge.short _ hs.1]; exact hy⟩
-      obtain ⟨Δ, h₁, h₂⟩ := exists_cuff_disc hS hH Θ.2 (hM.cuffEnds_subset hS Θ.2)
+      obtain ⟨Δ, h₁, h₂⟩ := exists_cuff_disc hH Θ.2 (hM.cuffEnds_subset hS Θ.2)
         (hM.finite_cuffEnds Θ.1) hne (D.P.fits.short_sides hs.1) hs.2
       exact ⟨Δ, h₁.trans (hKU (.inl Θ)), fun Θ' h => (Sum.inl_injective h : Θ = Θ') ▸ h₁,
         fun _ h => (by cases h), h₂⟩
@@ -225,7 +225,7 @@ theorem IsMatchSetting.lt_dist_discAnchor (hS : IsSurface S) {σ : Set S → Set
   have hpole : ∀ Θ : {Θ : Set S // Θ ∈ cuffs S}, ∃ p ∈ D.rad.poles, D.rad.regionOf p
     = cap.cuffDisc Θ.1 ∧ p ∈ cap.cuffDisc Θ.1 ∧ D.dist (cap.emb '' σ Θ.1) (D.rad.atomOf p) ≤ 4
       := fun Θ => by
-    obtain ⟨p, hp, hpΘ, hreg⟩ := D.rad.exists_pole hS Θ.2
+    obtain ⟨p, hp, hpΘ, hreg⟩ := D.rad.exists_pole Θ.2
     have hs := hσ Θ.1 Θ.2
     have hE := D.P.fits.short_sides hs.1
     obtain ⟨y, hy⟩ : (tilde (σ Θ.1)).Nonempty := nonempty_of_ncard_ne_zero (by

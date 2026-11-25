@@ -170,7 +170,7 @@ theorem IsSkHat.exists_hatRegion_side {Γ : Painting S} {Sk : Drawing Shat} (hSk
   have hT := cap.isClosedSurface
   have : ConnectedSpace Shat := cap.connected
   have hc := hf.1
-  have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+  have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
   obtain ⟨p, hp⟩ := hf.mem.1
   have hpb : p ∈ discBd (closure c) := by
     rcases hf.2 with ⟨h2, -⟩ | ⟨-, h⟩
@@ -188,7 +188,7 @@ theorem IsSkHat.exists_hatRegion_side {Γ : Painting S} {Sk : Drawing Shat} (hSk
   obtain ⟨r, hr, hpr, y, hyr, hyO⟩ := exists_region_near hT Sk hC.isClosed.isOpen_compl hfr
   have hinc : cap.emb '' f ⊆ closure r :=
     edge_subset_closure_of_incident hT hfE hr ⟨_, mem_image_of_mem _ hp, hpr⟩
-  rcases hSk.region_cases hS hr with hhat | ⟨c', hc', -, hsub⟩
+  rcases hSk.region_cases hr with hhat | ⟨c', hc', -, hsub⟩
   · exact ⟨r, hhat, hinc⟩
   · exfalso
     have hcl : IsClosed (cap.emb '' closure c') := (cap.isClosedEmbedding hS).isClosedMap _
@@ -265,7 +265,7 @@ theorem isOpen_regionOf (D : TangleDatum cap χ) {w : Shat} (hw : w ∈ D.rad.Rs
   have hT := cap.isClosedSurface
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   obtain ⟨Sk, hSk⟩ := exists_isSkHat χ.isSurface cap D.P.Γ
-  exact region_isOpen (hSk.hatRegion_mem_R χ.isSurface (D.rad.regionOf_mem hw).1)
+  exact region_isOpen (hSk.hatRegion_mem_R (D.rad.regionOf_mem hw).1)
 
 omit [T2Space Shat] in
 /-- An edge of `Γ*` at `w ∈ R*` lies in the region of `w`. -/
@@ -274,7 +274,7 @@ theorem edge_subset_regionOf (D : TangleDatum cap χ) {w : Shat} (hw : w ∈ D.r
     (hg : g ∈ D.rad.G.E) (hwg : w ∈ closure g) : g ⊆ D.rad.regionOf w := by
   have hT := cap.isClosedSurface
   obtain ⟨Sk, hSk⟩ := exists_isSkHat χ.isSurface cap D.P.Γ
-  have hR := hSk.hatRegion_mem_R χ.isSurface (D.rad.regionOf_mem hw).1
+  have hR := hSk.hatRegion_mem_R (D.rad.regionOf_mem hw).1
   obtain ⟨y, hyr, hyg⟩ := mem_closure_iff.mp hwg _ (isOpen_regionOf D hw) (D.rad.regionOf_mem hw).2
   have hdis : Disjoint g Sk.U := by
     rw [disjoint_left]
@@ -412,7 +412,7 @@ theorem vertex_mem_of_side (D : TangleDatum cap χ) {e f : Set S} {r : Set Shat}
   obtain ⟨p, hp⟩ := hf.mem.1
   have hpe := hf.subset hp
   have hpr : cap.emb p ∈ closure r := hfr (mem_image_of_mem _ hp)
-  rcases hatRegion_cases hS cap D.P.Γ hr with hsub | ⟨Θ, hΘ, rfl⟩
+  rcases hatRegion_cases cap D.P.Γ hr with hsub | ⟨Θ, hΘ, rfl⟩
   · obtain ⟨r₀, hr₀, rfl⟩ := Painting.exists_region_of_hat hr hsub
     have hcl : ∀ {z : S}, cap.emb z ∈ closure (cap.emb '' r₀) → z ∈ closure r₀ := fun {z} hz ↦ by
       rw [hc.closure_image_eq] at hz
@@ -443,7 +443,7 @@ theorem vertex_mem_of_side (D : TangleDatum cap χ) {e f : Set S} {r : Set Shat}
     rw [hoff] at hemp
     exact hemp.elim
   · exfalso
-    have hpΘ : p ∈ Θ := cap.mem_of_emb_mem hS hΘ hpr
+    have hpΘ : p ∈ Θ := cap.mem_of_emb_mem hΘ hpr
     have : p ∈ closure e ∩ bd S := ⟨subset_closure hpe, cuff_subset_bd ⟨Θ, hΘ⟩ hpΘ⟩
     rw [hoff] at this
     exact this.elim
@@ -466,7 +466,7 @@ theorem exists_side_of_meet (D : TangleDatum cap χ) {q : Set Shat} {e : Set S} 
   obtain ⟨hf₁, hf₂, hf₃⟩ := D.rad.region_facts hS h3t
   set ρ := D.rad.regionOf w with hρdef
   have hρ : ρ ∈ D.P.Γ.hatRegions cap := (D.rad.regionOf_mem hw).1
-  have hρR := hSk.hatRegion_mem_R hS hρ
+  have hρR := hSk.hatRegion_mem_R hρ
   have hρU : Disjoint ρ (D.P.Γ.hatU cap) := by
     rw [disjoint_left]
     exact fun x hx ↦ connectedComponentIn_subset _ _ hx
@@ -539,7 +539,7 @@ theorem exists_side_of_meet (D : TangleDatum cap χ) {q : Set Shat} {e : Set S} 
   have hzf' : z ∈ f := hzf rfl
   obtain ⟨c', hf⟩ := D.P.Γ.exists_isSkEdgeIn hfm
   obtain rfl : c' = c := arcComp_eq_of_mem hf.1 hc (hf.subset hzf') hzc'
-  have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hfm, rfl⟩
+  have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hfm, rfl⟩
   exact ⟨f, hf, edge_subset_closure_of_incident hT hfE hρR ⟨_, mem_image_of_mem _ hzf', hpcl⟩⟩
 
 /-- **The corner lemma.** Let `q` be a region of `Γ*` with edge `e` of `Γ`, and let `q` meet the
@@ -568,7 +568,7 @@ theorem IsNear.of_corner (hnear : D.IsNear H (k + 2) x) (hH : H.IsSubdrawing D.r
     exact hnear.of_closure_region hx hvV (hemb hv.1)
   -- the two ends of the side
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap D.P.Γ
-  have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+  have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
   have hc3 := D.P.Γ.isDisc_of_three he h3
   obtain ⟨hC, hCbd⟩ := isClosedDisc_image hc3.1 cap.isEmbedding
   have hcl : IsClosedEmbedding cap.emb := cap.isClosedEmbedding hS

@@ -88,74 +88,8 @@ an edge of `sk(Γ)` in the boundary. -/
 theorem exists_sk_boundary {c₀ : Set S} (hc₀ : c₀ ∈ Γ.E) (h3c : (tilde c₀).ncard = 3) {u₀ v₀ : S}
     (hut : u₀ ∈ tilde c₀) (hvt : v₀ ∈ tilde c₀) (huv₀ : u₀ ≠ v₀) :
     ∃ f ∈ arcComponentsIn (Γ.skU \ Γ.V), f ⊆ discBd (closure c₀) ∧ f ⊆ c₀ ∧ tilde f = {u₀, v₀} := by
-  classical
-  obtain ⟨hdisc, hT', -⟩ := Γ.isDisc_of_three hc₀ h3c
-  have htil : ∀ {x₀ : S}, x₀ ∈ closure c₀ → x₀ ∈ Γ.V → x₀ ∈ tilde c₀ := fun hx hxV =>
-    ⟨hx, fun h => Γ.disjoint_V hc₀ h hxV⟩
-  have hu₀ : u₀ ∈ Γ.V := Γ.tilde_subset_V hc₀ hut
-  have hv₀ : v₀ ∈ Γ.V := Γ.tilde_subset_V hc₀ hvt
-  obtain ⟨w₀, hw₀, hwu, hwv⟩ : ∃ w₀ ∈ tilde c₀, w₀ ≠ u₀ ∧ w₀ ≠ v₀ := by
-    by_contra hn
-    push Not at hn
-    have hsub : tilde c₀ ⊆ {u₀, v₀} := fun x hx => by
-      by_cases hxu : x = u₀
-      · exact .inl hxu
-      · exact .inr (hn x hx hxu)
-    have := ncard_le_ncard hsub (toFinite _)
-    have h2 := ncard_pair huv₀
-    omega
-  have htri : tilde c₀ = {u₀, v₀, w₀} := by
-    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀, w₀}) ?_ ?_ (Γ.isDisc_of_three hc₀ h3c).2.2).symm
-    · rintro x (rfl | rfl | rfl)
-      · exact hut
-      · exact hvt
-      · exact hw₀
-    · rw [h3c, ncard_eq_toFinset_card', Set.toFinset_insert, Set.toFinset_insert]
-      simp [Finset.card_insert_of_notMem, huv₀, hwu.symm, hwv.symm]
-  obtain ⟨A₁, A₂, hA₁, hA₂, hAU, hAI⟩ := hdisc.isOArc_discBd.lines (hT' hut) (hT' hvt) huv₀
-  obtain ⟨A₀, hA₀, hAw, hAB⟩ : ∃ A₀, IsLineWithEnds A₀ u₀ v₀ ∧ w₀ ∉ A₀ ∧ A₀ ⊆ discBd (closure c₀)
-    := by
-    by_cases hw₁ : w₀ ∈ A₁
-    · refine ⟨A₂, hA₂, fun hw₂ => ?_, hAU ▸ subset_union_right⟩
-      have : w₀ ∈ A₁ ∩ A₂ := ⟨hw₁, hw₂⟩
-      rw [hAI] at this
-      rcases this with h | h
-      · exact hwu h
-      · exact hwv h
-    · exact ⟨A₁, hA₁, hw₁, hAU ▸ subset_union_left⟩
-  have hint₀ : ∀ {x}, x ∈ A₀ \ {u₀, v₀} → x ∈ c₀ ∧ x ∈ Γ.skU \ Γ.V := by
-    intro x hx
-    have hxB := hAB hx.1
-    have hxcl : x ∈ closure c₀ := Surface.discBd_subset _ hxB
-    have hxV : x ∉ Γ.V := fun h => by
-      have h₁ := htil hxcl h
-      rw [htri] at h₁
-      rcases h₁ with h₁ | h₁ | h₁
-      · exact hx.2 (.inl h₁)
-      · exact hx.2 (.inr h₁)
-      · exact hAw (h₁ ▸ hx.1)
-    refine ⟨by_contra fun h => hxV (Γ.tilde_subset_V hc₀ ⟨hxcl, h⟩), ?_, hxV⟩
-    exact Or.inr (mem_iUnion₂.2 ⟨c₀, ⟨hc₀, h3c⟩, hxB⟩)
-  have hpc := isPathConnected_sdiff_pair hA₀
-  obtain ⟨f, hf, hsubf⟩ := exists_arcComp_superset hpc fun x hx => (hint₀ hx).2
-  obtain ⟨x₀, hx₀⟩ := hpc.nonempty
-  have hx₀f := hsubf hx₀
-  obtain ⟨p, q, hpq, ht, htV, hline⟩ := Γ.sk_line hf
-  have hclf : A₀ ⊆ closure f := hA₀.subset_closure_diff.trans (closure_mono hsubf)
-  have htf : ∀ {y}, y ∈ A₀ → y ∈ Γ.V → y ∈ tilde f := fun hy hyV =>
-    ⟨hclf hy, fun h => (hf.2.1 h).2 hyV⟩
-  have ht' : tilde f = {u₀, v₀} := by
-    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀}) ?_ ?_ (by rw [ht]; exact toFinite _)).symm
-    · rintro y (rfl | rfl)
-      · exact htf hA₀.left_mem hu₀
-      · exact htf hA₀.right_mem hv₀
-    · rw [ht, ncard_pair hpq, ncard_pair huv₀]
-  rcases Γ.sk_cases hf with ⟨hfE, h2⟩ | ⟨c, hc, -, hfc, hfB⟩
-  · have := arcComp_eq_of_mem hfE hc₀ hx₀f (hint₀ hx₀).1
-    rw [this, h3c] at h2
-    omega
-  · obtain rfl := arcComp_eq_of_mem hc hc₀ (hfc hx₀f) (hint₀ hx₀).1
-    exact ⟨f, hf, hfB, hfc, ht'⟩
+  obtain ⟨f, hf, hB, hc, ht, -⟩ := exists_sk_boundary_with_point Γ hc₀ h3c hut hvt huv₀
+  exact ⟨f, hf, hB, hc, ht⟩
 
 /-- Two edges of `sk(Γ)` in the boundary of the disc of an edge of size 3, with the same ends, are
 equal,

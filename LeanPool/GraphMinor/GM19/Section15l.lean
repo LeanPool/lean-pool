@@ -62,7 +62,7 @@ theorem Painting.subset_skU_of_mem_bd (Γ : Painting S) {y : S} (hy : y ∈ bd S
 
 omit [T2Space S] in
 /-- **The disc of a cuff.** -/
-theorem exists_cuff_disc (hS : IsSurface S) (hH : IsSkHat cap Γ H) {Θ : Set S}
+theorem exists_cuff_disc (hH : IsSkHat cap Γ H) {Θ : Set S}
   (hΘ : Θ ∈ cuffs S) {N₀ : Set S} (hN : N₀ ⊆ Θ ∩ Γ.V) (hfin : N₀.Finite)
     (hne : N₀.Nonempty) {a : Set S} (ha : a ∈ Γ.E)
     (haΘ : a ⊆ Θ) : ∃ Δ, Δ ⊆ closure (cap.cuffDisc Θ) ∧ IsAnchoredDisc cap Γ H Δ (cap.emb '' N₀) a
@@ -78,7 +78,7 @@ theorem exists_cuff_disc (hS : IsSurface S) (hH : IsSkHat cap Γ H) {Θ : Set S}
   obtain ⟨Δ, hΔ, hsub, hcap, hbd⟩ := GM19.IsClosedDisc.exists_touching hd hNb (hfin.image _)
     (hne.image _)
   have hUc : ∀ x ∈ H.U, x ∈ closure (cap.cuffDisc Θ) → x ∈ cap.emb '' Θ := fun x hx hxc => by
-    rw [cap.closure_cuffDisc hS hΘ] at hxc
+    rw [cap.closure_cuffDisc hΘ] at hxc
     rcases hxc with h | h
     · rw [hH.hU] at hx
       obtain ⟨y, -, rfl⟩ := hx
@@ -93,7 +93,7 @@ theorem exists_cuff_disc (hS : IsSurface S) (hH : IsSkHat cap Γ H) {Θ : Set S}
     obtain ⟨y, -, rfl⟩ := this
     exact cap.notMem_range hΘ hx (mem_range_self y)
   have hconn : IsPreconnected (cap.cuffDisc Θ) := by
-    rw [cap.cuffDisc_eq_discInt hS hΘ]
+    rw [cap.cuffDisc_eq_discInt hΘ]
     exact hd.isPreconnected_discInt
   have hinter : H.U ∩ Δ = cap.emb '' N₀ := by
     ext x
@@ -111,7 +111,7 @@ theorem exists_cuff_disc (hS : IsSurface S) (hH : IsSkHat cap Γ H) {Θ : Set S}
     have hzU : z ∉ H.U := region_subset hr hzr
     have hzc : z ∈ cap.cuffDisc Θ := by
       have := hsub hzΔ
-      rw [cap.closure_cuffDisc hS hΘ] at this
+      rw [cap.closure_cuffDisc hΘ] at this
       exact this.resolve_right fun h => hzU (hΘU h)
     have hsubr : cap.cuffDisc Θ ⊆ r := subset_region hr hconn hdint hzc hzr
     have hcl : closure (cap.cuffDisc Θ) ⊆ closure r := closure_mono hsubr
@@ -310,7 +310,7 @@ theorem exists_two_disc (hS : IsSurface S) (hH : IsSkHat cap Γ H) {c : Set S} (
   have hinj := cap.isEmbedding.injective
   have hsk := Γ.two_mem_sk hc h2
   obtain ⟨u, v, huv, ht, htV, hL⟩ := Γ.sk_line hsk
-  have hE : cap.emb '' c ∈ H.E := (hH.edge_iff hS).2 ⟨c, hsk, rfl⟩
+  have hE : cap.emb '' c ∈ H.E := hH.edge_iff.2 ⟨c, hsk, rfl⟩
   have hcl : closure (cap.emb '' c) = cap.emb '' closure c := (cap.isClosedEmbedding
     hS).closure_image_eq c
   have hne : cap.emb u ≠ cap.emb v := fun h => huv (hinj h)

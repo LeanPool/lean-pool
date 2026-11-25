@@ -80,7 +80,7 @@ theorem bite_shape_of_far (hS : IsSurface S) (h3 : D.P.Γ.IsInternallyThreeConne
   omega
 
 /-- **Each edge on a cuff lies in a short bite**, when no circuit is a flaw in freedom. -/
-theorem exists_bite_of_edge (hS : IsSurface S) {N : ℕ} (hN : 3 ≤ N) (hrep : 4 ≤ D.rep)
+theorem exists_bite_of_edge {N : ℕ} (hN : 3 ≤ N) (hrep : 4 ≤ D.rep)
   (hfree : ∀ C, ¬ D.IsFreeCircuit N C) {side : Set S} (hside : side ∈ χ.Φ.longSides) {Θ : Set S}
     (hsΘ : side ⊆ Θ) (hΘ : Θ ∈ cuffs S) {r : Shat} (hr : r ∈ D.rad.poles) (hreg : D.rad.regionOf r
       = cap.cuffDisc Θ) {c : Set S} (hc : c ∈ D.P.Γ.E) (hcΘ : c ⊆ Θ) :
@@ -112,9 +112,9 @@ theorem exists_bite_of_edge (hS : IsSurface S) {N : ℕ} (hN : 3 ≤ N) (hrep : 
       (discInt_subset _)) hi.2.2.1.isClosed
     refine hfree F ⟨hF, by omega, Or.inl ⟨side, hside, ?_⟩⟩
     rintro _ ⟨y, hy, rfl⟩
-    exact hcl (cap.mem_closure_emb hS hΘ (hsΘ hy))
+    exact hcl (cap.mem_closure_emb hΘ (hsΘ hy))
   · have hm : cap.emb x ∈ F.U := D.cuff_inter_ins_of_disjoint hF hlt hr hri hreg hdis
-      (cap.mem_closure_emb hS hΘ (hcΘ hx)) (hins (mem_image_of_mem _ hx))
+      (cap.mem_closure_emb hΘ (hcΘ hx)) (hins (mem_image_of_mem _ hx))
     exact disjoint_left.1 (disc_edge_disjoint D.rad hF.1 hc) (mem_image_of_mem _ hx) hm
 
 omit [T2Space S] [T2Space Shat] in
@@ -150,7 +150,6 @@ private theorem exists_feast_of_chain_cover
     {β : Type w}
     {χ : ColourScheme S β}
     {D : TangleDatum cap χ}
-    (hS : IsSurface S)
     {side : Set S}
     {n : ℕ}
     {ω : List β} :
@@ -265,7 +264,7 @@ private theorem exists_feast_of_chain_cover
     obtain ⟨hb, hcard, hl⟩ := hG i h
     obtain ⟨v₁, v₂, Β, L, A, A', Di, Do, hsh⟩ := hshape hb hcard
     have hlk : l ≤ k + 1 := h₂.trans (hhile i h)
-    have hsub := hsh.edge_subset hS (hE.mem l hlk) (hedgeΘ hlk) (hl l h₁ h₂)
+    have hsub := hsh.edge_subset (hE.mem l hlk) (hedgeΘ hlk) (hl l h₁ h₂)
     intro x hx
     exact mem_iUnion₂.2 ⟨G i, hmemF i h, hsub hx⟩
   refine ⟨ℱ, ⟨hfinF, fun F hF ↦ (hbite F hF).1, ?_, fun s hs hne ↦ ?_, fun X hX ↦ ?_⟩, ?_,
@@ -357,7 +356,7 @@ theorem theorem_11_2_proof {side : Set S} (hside : side ∈ χ.Φ.longSides) {n 
     exact hnd ⟨hrepN, hdist, r₁, h₁, r₂, h₂, hne, not_lt.1 hle⟩
   have hfree : ∀ C, ¬ D.IsFreeCircuit N C := fun C hC ↦ hnf ⟨hrepN, hd, C, hC⟩
   obtain ⟨Θ, hΘ, f, a, b, k, t, e, hsΘ, hE⟩ := exists_sideEdges hS χ D.P.fits hside
-  obtain ⟨r, hr, hrd, hreg⟩ := D.rad.exists_pole hS hΘ
+  obtain ⟨r, hr, hrd, hreg⟩ := D.rad.exists_pole hΘ
   refine ⟨r, Θ, hΘ, hsΘ, hr, hreg, ?_⟩
   have hshape : ∀ {F}, D.IsBiteAt r F → F.E.ncard ≤ 2 * n → ∃ v₁ v₂ Β L A A' Di Do, D.IsBiteShape r
     Θ F v₁ v₂ Β L A A' Di Do := fun hb hc ↦
@@ -385,7 +384,7 @@ theorem theorem_11_2_proof {side : Set S} (hside : side ∈ χ.Φ.longSides) {n 
         exact cuffAngle_mem f u
       · exact hsΘ (hE.subset_side hl₀ (by omega) hz)
   have hself : ∀ i ≤ k + 1, Nr i i := fun i hi ↦ by
-    obtain ⟨F, hb, h6, hsub⟩ := exists_bite_of_edge hS (by nlinarith)
+    obtain ⟨F, hb, h6, hsub⟩ := exists_bite_of_edge (by nlinarith)
       (by omega) hfree hside hsΘ hΘ hr hreg (hE.mem i hi) (hedgeΘ hi)
     exact ⟨F, hb, by omega, fun l h₁ h₂ ↦ by
       obtain rfl : l = i := by omega
@@ -405,14 +404,14 @@ theorem theorem_11_2_proof {side : Set S} (hside : side ∈ χ.Φ.longSides) {n 
     intro F i j hb hc hi hij hj h₁ h₂
     obtain ⟨v₁, v₂, Β, L, A, A', Di, Do, hsh⟩ := hshape hb hc
     have hmem := fun l (hl : l ≤ k + 1) (hs : cap.emb '' e l ⊆ D.ins F) ↦ image_subset_iff.1
-      (hsh.edge_subset hS (hE.mem l hl) (hedgeΘ hl) hs)
+      (hsh.edge_subset (hE.mem l hl) (hedgeΘ hl) hs)
     have hJc : J F ⊆ Θ := fun x hx ↦ by
-      obtain ⟨y, hy, he⟩ := (hsh.biteArc_subset hS hx).2
+      obtain ⟨y, hy, he⟩ := (hsh.biteArc_subset hx).2
       exact cap.isEmbedding.injective he ▸ hy
     have hin : ∀ {l}, e l ⊆ J F → cap.emb '' e l ⊆ D.ins F := fun hl ↦ by
       rintro _ ⟨z, hz, rfl⟩
-      exact (hsh.biteArc_subset hS (hl hz)).1
-    rcases hE.between (hsh.isPreconnected_biteArc hS) hJc hi hij hj (hmem i (by omega) h₁) (hmem j
+      exact (hsh.biteArc_subset (hl hz)).1
+    rcases hE.between (hsh.isPreconnected_biteArc) hJc hi hij hj (hmem i (by omega) h₁) (hmem j
       (by omega) h₂) with hc' | ⟨hc₁, hc₂⟩
     · exact Or.inl ⟨F, hb, hc, fun l h₃ h₄ ↦ hin (hc' l h₃ h₄)⟩
     · exact Or.inr ⟨⟨F, hb, hc, fun l _ h₄ ↦ hin (hc₁ l h₄)⟩, ⟨F, hb, hc,
@@ -424,14 +423,14 @@ theorem theorem_11_2_proof {side : Set S} (hside : side ∈ χ.Φ.longSides) {n 
     obtain ⟨v₁, v₂, Β, L, A, A', Di, Do, hsh⟩ := hshape hb hc
     have hsΓ := D.P.fits.short_sides hs
     have hJc : J F ⊆ Θ := fun x hx ↦ by
-      obtain ⟨y, hy, he⟩ := (hsh.biteArc_subset hS hx).2
+      obtain ⟨y, hy, he⟩ := (hsh.biteArc_subset hx).2
       exact cap.isEmbedding.injective he ▸ hy
     have hin : ∀ {l}, e l ⊆ J F → cap.emb '' e l ⊆ D.ins F := fun hl ↦ by
       rintro _ ⟨z, hz, rfl⟩
-      exact (hsh.biteArc_subset hS (hl hz)).1
-    rcases hE.between_short (hsh.isPreconnected_biteArc hS) hJc hi hik (image_subset_iff.1
-      (hsh.edge_subset hS (hE.mem i (by omega)) (hedgeΘ (by omega)) h₁)) hs hsΓ hsΘ'
-      (image_subset_iff.1 (hsh.edge_subset hS hsΓ hsΘ' h₂)) with hc' | hc'
+      exact (hsh.biteArc_subset (hl hz)).1
+    rcases hE.between_short (hsh.isPreconnected_biteArc) hJc hi hik (image_subset_iff.1
+      (hsh.edge_subset (hE.mem i (by omega)) (hedgeΘ (by omega)) h₁)) hs hsΓ hsΘ'
+      (image_subset_iff.1 (hsh.edge_subset hsΓ hsΘ' h₂)) with hc' | hc'
     · exact Or.inl ⟨F, hb, hc, fun l h₃ h₄ ↦ hin (hc' l h₃ h₄)⟩
     · exact Or.inr ⟨F, hb, hc, fun l _ h₄ ↦ hin (hc' l h₄)⟩
   have hnochain : ∀ a b, ¬ SideChain Nr P k m a b := by
@@ -494,8 +493,8 @@ theorem theorem_11_2_proof {side : Set S} (hside : side ∈ χ.Φ.longSides) {n 
           exact h₀ (hmono _ _ _ _ le_rfl (by omega) (hle (by omega) (by omega)) hc₁)
   have feast_from_chain : ∃ ℱ, D.IsFeast r side ω ℱ ∧ feastOrder ℱ ≤ N ∧
       ∀ F ∈ ℱ, F.E.ncard ≤ 2 * n := by
-    exact exists_feast_of_chain_cover (S := S) (Shat := Shat) (cap := cap) (β := β) (χ := χ) (D :=
-      D) hS (side := side) (n := n) (ω := ω)  hm1  Θ f a b k t e hsΘ hE r hshape   hmono
+    exact exists_feast_of_chain_cover (S := S) (Shat := Shat) (cap := cap) (β := β) (χ := χ)
+      (D := D) (side := side) (n := n) (ω := ω) hm1 Θ f a b k t e hsΘ hE r hshape hmono
       hedgeΘ hself hstart hnochain
   exact feast_from_chain
 

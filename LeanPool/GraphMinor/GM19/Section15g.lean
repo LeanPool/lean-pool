@@ -146,7 +146,7 @@ theorem IsSkHat.exists_edge_of_adj [ConnectedSpace S] (hS : IsSurface S) {Γ : P
   obtain ⟨he, hxV, hxt⟩ := hx
   obtain ⟨-, hyV, hyt⟩ := hy
   obtain ⟨f, hf, hxf, hyf⟩ := Γ.exists_skEdge_of_mem_tilde he hxt hyt hne
-  have hg : cap.emb '' f ∈ H.E := (h.edge_iff hS).mpr ⟨f, hf, rfl⟩
+  have hg : cap.emb '' f ∈ H.E := h.edge_iff.mpr ⟨f, hf, rfl⟩
   have hcl : closure (cap.emb '' f) = cap.emb '' closure f := ((cap.isClosedEmbedding
     hS).closure_image_eq f).symm ▸ rfl
   refine ⟨_, hg, ⟨hg, ?_, ?_⟩, hg, ?_, ?_⟩

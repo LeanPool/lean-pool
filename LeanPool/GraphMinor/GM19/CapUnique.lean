@@ -163,7 +163,7 @@ theorem IsCappedSurface.nonempty_homeomorph (hS : IsSurface S) (cap₁ : IsCappe
     rw [dite_eq_left h, cap₁.isEmbedding.injective h.choose_spec]
   have hH₂ : ∀ Θ ∈ cuffs S, ∀ x ∈ closure (cap₁.cuffDisc Θ), H x = G Θ x := by
     intro Θ hΘ x hx
-    rw [cap₁.closure_cuffDisc hS hΘ] at hx
+    rw [cap₁.closure_cuffDisc hΘ] at hx
     rcases hx with hx | ⟨y, hy, rfl⟩
     · have hr := cap₁.notMem_range hΘ hx
       have h' : ∃ Θ ∈ cuffs S, x ∈ cap₁.cuffDisc Θ := ⟨Θ, hΘ, hx⟩
@@ -177,11 +177,11 @@ theorem IsCappedSurface.nonempty_homeomorph (hS : IsSurface S) (cap₁ : IsCappe
       rw [he]
     · rw [hH₁, hGe Θ hΘ y hy]
   have hsub₁ : ∀ {Θ}, Θ ∈ cuffs S → cap₁.emb '' Θ ⊆ closure (cap₁.cuffDisc Θ) := fun {Θ} hΘ ↦ by
-    rw [cap₁.closure_cuffDisc hS hΘ]
+    rw [cap₁.closure_cuffDisc hΘ]
     exact subset_union_right
   have hrange₂ : ∀ {Θ}, Θ ∈ cuffs S → ∀ y, cap₂.emb y ∈ closure (cap₂.cuffDisc Θ) → y ∈ Θ
     := fun {Θ} hΘ y hy ↦ by
-    rw [cap₂.closure_cuffDisc hS hΘ] at hy
+    rw [cap₂.closure_cuffDisc hΘ] at hy
     rcases hy with hy | ⟨z, hz, he⟩
     · exact absurd (mem_range_self y) (cap₂.notMem_range hΘ hy)
     · exact cap₂.isEmbedding.injective he ▸ hz

@@ -366,7 +366,7 @@ theorem ring_marks [Nonempty S] {C : Drawing Shat} (hC : C.IsCircuitOf D.rad.G)
   have hKU' : cap.emb ⁻¹' C.U = K.U := by rw [hKU, preimage_image_eq _ cap.isEmbedding.injective]
   obtain ⟨a, ha, b, hb, hab⟩ := two_vertices_of_ring (D := D) h3 hO h₁.inter hsing fun Δ d₁ d₂ d₃
     d₄ ↦
-    D.no_empty_disc hS hC hlt hr hri d₁ d₂ (d₃.trans hKU.symm) (by rwa [hKU])
+    D.no_empty_disc hC hlt hr hri d₁ d₂ (d₃.trans hKU.symm) (by rwa [hKU])
   rw [hKU']
   exact ⟨hO, a, b, hab, ha, hb⟩
 

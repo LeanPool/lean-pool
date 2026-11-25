@@ -204,7 +204,7 @@ theorem ncard_poles (D : TangleDatum cap χ) : D.rad.poles.ncard = numCuffs S :=
     exact disjoint_left.mp (cap.cuffDisc_disjoint Θ₁ h₁ Θ₂ h₂ hne) (subset_closure hp₁)
       (subset_closure hp₂)
   refine le_antisymm ?_ ?_
-  · choose! f hf hreg hmem using fun p (hp : p ∈ D.rad.poles) ↦ D.rad.pole_cases hS hp
+  · choose! f hf hreg hmem using fun p (hp : p ∈ D.rad.poles) ↦ D.rad.pole_cases hp
     refine ncard_le_ncard_of_injOn f hf ?_ hcf
     intro p hp q hq hpq
     have hq' : q ∈ cap.cuffDisc (f p) := hpq ▸ hmem q hq
@@ -214,7 +214,7 @@ theorem ncard_poles (D : TangleDatum cap χ) : D.rad.poles.ncard = numCuffs S :=
     refine (hG3 _ hr).unique ⟨(D.rad.regionOf_mem hp.1).2, hp.1.1⟩ ?_
     exact ⟨hreg' ▸ (D.rad.regionOf_mem hq.1).2, hq.1.1⟩
   · have : ConnectedSpace Shat := cap.connected
-    choose! g hg hmem hreg using fun Θ (hΘ : Θ ∈ cuffs S) ↦ D.rad.exists_pole hS hΘ
+    choose! g hg hmem hreg using fun Θ (hΘ : Θ ∈ cuffs S) ↦ D.rad.exists_pole hΘ
     refine ncard_le_ncard_of_injOn g hg ?_ hpf
     intro Θ₁ h₁ Θ₂ h₂ h
     exact hdisj Θ₁ h₁ Θ₂ h₂ (g Θ₁) (hmem Θ₁ h₁) (h ▸ hmem Θ₂ h₂)

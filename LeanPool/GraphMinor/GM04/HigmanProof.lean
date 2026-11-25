@@ -32,54 +32,6 @@ namespace GraphMinor.GM04
 
 open Set
 
-private lemma exists_inj_of_sublistForall₂ {κ Ω : Type*}
-    {r : Ω → Ω → Prop} {l₁ l₂ : List κ} {ℓ₁ ℓ₂ : κ → Ω}
-    (hnd₁ : l₁.Nodup) (hnd₂ : l₂.Nodup)
-    (h : List.SublistForall₂ (fun x y ↦ r (ℓ₁ x) (ℓ₂ y)) l₁ l₂) :
-    ∃ g : κ → κ, (∀ x ∈ l₁, ∀ y ∈ l₁, g x = g y → x = y) ∧
-      (∀ x ∈ l₁, g x ∈ l₂) ∧ (∀ x ∈ l₁, r (ℓ₁ x) (ℓ₂ (g x))) := by
-  classical
-  induction h with
-  | nil =>
-    exact ⟨id, by simp, by simp, by simp⟩
-  | @cons a₁ a₂ t₁ t₂ hr hsub ih =>
-    obtain ⟨ha₁, hnd₁'⟩ := List.nodup_cons.1 hnd₁
-    obtain ⟨ha₂, hnd₂'⟩ := List.nodup_cons.1 hnd₂
-    obtain ⟨g, hinj, hmem, hrel⟩ := ih hnd₁' hnd₂'
-    refine ⟨fun x ↦ if x = a₁ then a₂ else g x, ?_, ?_, ?_⟩
-    · intro x hx y hy hxy
-      simp only [List.mem_cons] at hx hy
-      rcases hx with rfl | hx <;> rcases hy with rfl | hy
-      · rfl
-      · exfalso
-        have hne : y ≠ x := fun h ↦ ha₁ (h ▸ hy)
-        simp only [↓reduceIte, ite_eq_right hne] at hxy
-        exact ha₂ (hxy ▸ hmem y hy)
-      · exfalso
-        have hne : x ≠ y := fun h ↦ ha₁ (h ▸ hx)
-        simp only [↓reduceIte, ite_eq_right hne] at hxy
-        exact ha₂ (hxy.symm ▸ hmem x hx)
-      · have hnex : x ≠ a₁ := fun h ↦ ha₁ (h ▸ hx)
-        have hney : y ≠ a₁ := fun h ↦ ha₁ (h ▸ hy)
-        simp only [ite_eq_right hnex, ite_eq_right hney] at hxy
-        exact hinj x hx y hy hxy
-    · intro x hx
-      simp only [List.mem_cons] at hx ⊢
-      rcases hx with rfl | hx
-      · simp
-      · have hnex : x ≠ a₁ := fun h ↦ ha₁ (h ▸ hx)
-        simp [ite_eq_right hnex, hmem x hx]
-    · intro x hx
-      simp only [List.mem_cons] at hx
-      rcases hx with rfl | hx
-      · simpa using hr
-      · have hnex : x ≠ a₁ := fun h ↦ ha₁ (h ▸ hx)
-        simpa [ite_eq_right hnex] using hrel x hx
-  | @cons_right a l₁ t₂ hsub ih =>
-    obtain ⟨_, hnd₂'⟩ := List.nodup_cons.1 hnd₂
-    obtain ⟨g, hinj, hmem, hrel⟩ := ih hnd₁ hnd₂'
-    exact ⟨g, hinj, fun x hx ↦ List.mem_cons_of_mem a (hmem x hx), hrel⟩
-
 public section
 
 /-- Graph Minors IV, (8.3) (page 249): for every sequence of finite sets `X i` with labels `ℓ i`

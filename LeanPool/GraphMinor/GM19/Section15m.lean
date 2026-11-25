@@ -117,7 +117,7 @@ variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat
 omit [T2Space S] in
 /-- **A spoke of a radial drawing of `sk(Γ)` in a region of `Γ` is already a spoke of `Γ*`.** -/
 theorem RadialDrawing.mem_of_extension {cap : IsCappedSurface S Shat} {Γ : Painting S}
-  (rad : RadialDrawing cap Γ) (hS : IsSurface S) {H G₃ : Drawing Shat} (hH : IsSkHat cap Γ H)
+  (rad : RadialDrawing cap Γ) {H G₃ : Drawing Shat} (hH : IsSkHat cap Γ H)
     (hpre : PreRad (PaintingOrDrawing.drawing H) G₃) (hsub : rad.G.IsSubdrawing G₃) {e r : Set
       Shat} (he : e ∈ G₃.E) (hr : r ∈ Γ.hatRegions cap) (her : e ⊆ r) : e ∈ rad.G.E := by
   classical
@@ -127,7 +127,7 @@ theorem RadialDrawing.mem_of_extension {cap : IsCappedSurface S Shat} {Γ : Pain
   have hhat : ∀ x ∈ Γ.hatRegions cap, Disjoint x (Γ.hatU cap) := by
     rintro _ ⟨y, hy, rfl⟩
     exact disjoint_left.mpr fun z hz hzU ↦ connectedComponentIn_subset _ _ hz hzU
-  have hrH := hH.hatRegion_mem_R hS hr
+  have hrH := hH.hatRegion_mem_R hr
   obtain ⟨v, hv, r', hr', w, hw, hwV, hset, hsubr⟩ := GM11.spoke_ends hpre hT he
   have hrr : r' = r := by
     obtain ⟨y, hy⟩ := he.1
@@ -181,7 +181,7 @@ theorem RadialDrawing.mem_of_extension {cap : IsCappedSurface S Shat} {Γ : Pain
   have hv'H : v' ∈ H.V := by
     rw [hH.hV]
     exact hv'
-  have hr₂H := hH.hatRegion_mem_R hS hr₂
+  have hr₂H := hH.hatRegion_mem_R hr₂
   have hee' : closure e ∩ G₃.V = {v', w'} := hKV ▸ hee
   have hfe' : closure f ∩ G₃.V = {v', w'} := by
     obtain ⟨v₂, hv₂, w₂, ⟨hw₂V, hw₂n⟩, hc⟩ := hpre.2.2.2.2.2.1 f (hsub.2 hf)
@@ -235,7 +235,7 @@ theorem TangleDatum.exists_skData {α : Type w} {χ : ColourScheme S α} {cap : 
         exact le_csSup hAb ⟨G₄, h₄, ⟨hsub₃.1.trans hs.1, hsub₃.2.trans hs.2⟩, rfl⟩
       exact (eq_of_subset_of_ncard_le hs.2 hle G₄.finite_edges).ge
   have hsub : D.rad.G.IsSubdrawing G₃ := ⟨hGsub.1.trans hsub₃.1, hGsub.2.trans hsub₃.2⟩
-  exact ⟨H, G₃, hD, hrad, hmax, hsub, fun e he r hr her => D.rad.mem_of_extension hS hD hrad hsub
+  exact ⟨H, G₃, hD, hrad, hmax, hsub, fun e he r hr her => D.rad.mem_of_extension hD hrad hsub
     he hr her⟩
 
 end GraphMinor.GM19

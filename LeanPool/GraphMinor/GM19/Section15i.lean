@@ -74,7 +74,7 @@ omit [T2Space S] in
 /-- A centre of a region of `Γ` in the radial drawing of `sk(Γ)` is a vertex of `Γ*`. -/
 theorem hub_mem (hd : D.SkData H G₃) {r : Set Shat} (hr : r ∈ D.P.Γ.hatRegions cap) {c : Shat}
   (hc : c ∈ r) (hcV : c ∈ G₃.V) : c ∈ D.rad.G.V := by
-  have hrR := hd.sk.hatRegion_mem_R χ.isSurface hr
+  have hrR := hd.sk.hatRegion_mem_R hr
   obtain ⟨w, -, huniq⟩ := hd.pre.2.2.2.1 r hrR
   obtain ⟨w', ⟨hw'r, hw'V⟩, -⟩ := D.rad.isPreRadial.2.2.1 r hr
   have e : c = w' := (huniq c ⟨hc, hcV⟩).trans (huniq w' ⟨hw'r, hd.sub.1 hw'V⟩).symm
@@ -103,7 +103,7 @@ theorem exists_anchor (hd : D.SkData H G₃) (hrep : 4 ≤ D.rep) {x : Shat} (hx
     rw [connectedComponentIn_eq hxr, connectedComponentIn_eq hxr']
   have hne : ∀ v ∈ D.P.Γ.V, x ≠ cap.emb v := fun v hv h => hxH (hd.sk.hV ▸ h ▸ mem_image_of_mem _
     hv)
-  rcases hd.sk.region_cases hS hr with hh | ⟨c, hc, h3', hrc⟩
+  rcases hd.sk.region_cases hr with hh | ⟨c, hc, h3', hrc⟩
   · have hxG := hd.hub_mem hh hxr hx
     have hxR : x ∈ D.rad.Rstar := ⟨hxG, fun h => hxH (hd.sk.hV ▸ h)⟩
     have hreg : D.rad.regionOf x = r := by

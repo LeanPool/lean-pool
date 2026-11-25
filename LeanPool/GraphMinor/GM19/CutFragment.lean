@@ -65,7 +65,7 @@ theorem IsCappedSurface.isPreconnected_compl (cap : IsCappedSurface S Shat) {�
 
 omit [T2Space S] [T2Space Shat] in
 /-- The complement of the capping discs is the image of the interior. -/
-theorem IsCappedSurface.compl_eq_image (hS : IsSurface S) (cap : IsCappedSurface S Shat) :
+theorem IsCappedSurface.compl_eq_image (cap : IsCappedSurface S Shat) :
     (⋃ Θ ∈ cuffs S, closure (cap.cuffDisc Θ))ᶜ = cap.emb '' (bd S)ᶜ := by
   ext y
   constructor
@@ -81,11 +81,11 @@ theorem IsCappedSurface.compl_eq_image (hS : IsSurface S) (cap : IsCappedSurface
     rw [← sUnion_cuffs] at hxb
     obtain ⟨Θ, hΘ, hxΘ⟩ := hxb
     refine hy (mem_biUnion hΘ ?_)
-    rw [cap.closure_cuffDisc hS hΘ]
+    rw [cap.closure_cuffDisc hΘ]
     exact Or.inr (mem_image_of_mem _ hxΘ)
   · rintro ⟨x, hx, rfl⟩ hy
     obtain ⟨Θ, hΘ, hyΘ⟩ := mem_iUnion₂.mp hy
-    rw [cap.closure_cuffDisc hS hΘ] at hyΘ
+    rw [cap.closure_cuffDisc hΘ] at hyΘ
     rcases hyΘ with hy | ⟨z, hz, hzx⟩
     · have : cap.emb x ∈ (range cap.emb)ᶜ := by
         rw [cap.compl_eq]
@@ -128,7 +128,7 @@ theorem nonempty_interior (hS : IsSurface S) [ConnectedSpace S] : (bd S)ᶜ.None
       by_cases h : Θ' = Θ
       · exact hyΔ (by rw [hΔdef, ← h]; exact hyΘ')
       · exact hyW (mem_biUnion (show Θ' ∈ cuffs S \ {Θ} from ⟨hΘ', h⟩) hyΘ')
-    rw [cap.compl_eq_image hS] at hyG
+    rw [cap.compl_eq_image] at hyG
     obtain ⟨x, hx, -⟩ := hyG
     exact ⟨x, hx⟩
   · obtain ⟨x⟩ : Nonempty S := inferInstance
@@ -143,7 +143,7 @@ theorem isConnected_interior (hS : IsSurface S) [ConnectedSpace S] : IsConnected
   obtain ⟨Shat, _, ⟨cap⟩⟩ := exists_cappedSurface _ S hS inferInstance rfl
   have : T2Space Shat := cap.isSurface.2.1
   have h := (cap.isPreconnected_compl (cuff_statement S hS).2.1 subset_rfl).2
-  rw [cap.compl_eq_image hS, cap.isEmbedding.isInducing.isPreconnected_image] at h
+  rw [cap.compl_eq_image, cap.isEmbedding.isInducing.isPreconnected_image] at h
   exact ⟨nonempty_interior hS, h⟩
 
 end Interior

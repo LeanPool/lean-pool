@@ -259,7 +259,7 @@ omit [T2Space S] in
 /-- A form with a line of a cuff reduces to two closed discs with boundary in `S`, one with the same
 part of `S` as `Δ` and one with
 the same part of `S` in its inside. -/
-theorem exists_form_discs (hS : IsSurface S) (cap : IsCappedSurface S Shat) {K : Drawing S} {Δ :
+theorem exists_form_discs (cap : IsCappedSurface S Shat) {K : Drawing S} {Δ :
   Set Shat} (hΔ : IsClosedDisc Δ)
     {s t : S} {Θ : Set S} (hΘ : Θ ∈ cuffs S) (hst : s ≠ t) (hs : s ∈ Θ) (ht : t ∈ Θ)
       (hKb : K.U ∩ bd S = {s, t})
@@ -276,7 +276,7 @@ theorem exists_form_discs (hS : IsSurface S) (cap : IsCappedSurface S Shat) {K :
   have hE := cap.cuffDisc_closedDisc Θ hΘ
   set E := closure (cap.cuffDisc Θ) with hEdef
   have hbE : discBd E = cap.emb '' Θ := cap.cuffDisc_bd Θ hΘ
-  have hcl : E = cap.cuffDisc Θ ∪ cap.emb '' Θ := cap.closure_cuffDisc hS hΘ
+  have hcl : E = cap.cuffDisc Θ ∪ cap.emb '' Θ := cap.closure_cuffDisc hΘ
   have hEr : ∀ {z}, cap.emb z ∈ E → z ∈ Θ := fun {z} hz ↦ by
     rw [hcl] at hz
     rcases hz with h | ⟨y, hy, he⟩
@@ -386,10 +386,10 @@ theorem exists_form_discs (hS : IsSurface S) (cap : IsCappedSurface S Shat) {K :
 
 omit [T2Space Shat] in
 omit [T2Space S] in
-theorem IsCappedSurface.mem_of_emb_mem (hS : IsSurface S) (cap : IsCappedSurface S Shat) {Θ : Set
+theorem IsCappedSurface.mem_of_emb_mem (cap : IsCappedSurface S Shat) {Θ : Set
   S} (hΘ : Θ ∈ cuffs S) {z : S}
     (hz : cap.emb z ∈ closure (cap.cuffDisc Θ)) : z ∈ Θ := by
-  rw [cap.closure_cuffDisc hS hΘ] at hz
+  rw [cap.closure_cuffDisc hΘ] at hz
   rcases hz with h | ⟨y, hy, he⟩
   · exact absurd (mem_range_self z) (cap.notMem_range hΘ h)
   · exact cap.isEmbedding.injective he ▸ hy
@@ -414,28 +414,28 @@ theorem discSide : DiscSideStatement := by
     rw [hF] at hxb hyb
     obtain ⟨a, ha, rfl⟩ := hxb
     obtain ⟨b, hb, rfl⟩ := hyb
-    rw [hsing ⟨ha, cuff_subset_bd ⟨Θ₁, h₁.1⟩ (cap.mem_of_emb_mem hS h₁.1 hxΘ)⟩
-      ⟨hb, cuff_subset_bd ⟨Θ₂, h₂.1⟩ (cap.mem_of_emb_mem hS h₂.1 hyΘ)⟩]
+    rw [hsing ⟨ha, cuff_subset_bd ⟨Θ₁, h₁.1⟩ (cap.mem_of_emb_mem h₁.1 hxΘ)⟩
+      ⟨hb, cuff_subset_bd ⟨Θ₂, h₂.1⟩ (cap.mem_of_emb_mem h₂.1 hyΘ)⟩]
   · obtain ⟨Δ₁, -, h₁, -, hK₁, -, hr₁, -, hs₁, -, hnE, -, -, hpre, -⟩
-    := exists_form_discs hS cap hΔ hΘ hst hs ht hKb hl hsub hrest
+    := exists_form_discs cap hΔ hΘ hst hs ht hKb hl hsub hrest
     rw [← hpre]
     refine exists_inner_fragment hS cap hY hψ h₁ hK₁ (fun x hx ↦ ?_) hr₁ ?_
     · rcases hs₁ hx with h | h
       · exact Or.inr h
       · refine Or.inl (mem_biUnion hΘ ?_)
-        rw [cap.closure_cuffDisc hS hΘ]
+        rw [cap.closure_cuffDisc hΘ]
         exact Or.inr h
     · rintro x ⟨hx, hxb⟩
       exfalso
       obtain ⟨Θ₁, h, hxΘ⟩ := mem_iUnion₂.1 hx
       have hne : Θ₁ ≠ Θ := fun he ↦ hnE (he ▸ h.2)
       rcases hs₁ hxb with ⟨z, hz, rfl⟩ | ⟨z, hz, rfl⟩
-      · have hzΘ := cap.mem_of_emb_mem hS h.1 hxΘ
+      · have hzΘ := cap.mem_of_emb_mem h.1 hxΘ
         have hzb : z ∈ K.U ∩ bd S := ⟨hz, cuff_subset_bd ⟨Θ₁, h.1⟩ hzΘ⟩
         rw [hKb] at hzb
         rcases hzb with rfl | h'
         · exact hne (cuffs_eq_of_mem h.1 hΘ hzΘ hs)
         · exact hne (cuffs_eq_of_mem h.1 hΘ hzΘ (mem_singleton_iff.1 h' ▸ ht))
-      · exact hne (cuffs_eq_of_mem h.1 hΘ (cap.mem_of_emb_mem hS h.1 hxΘ) hz)
+      · exact hne (cuffs_eq_of_mem h.1 hΘ (cap.mem_of_emb_mem h.1 hxΘ) hz)
 
 end GraphMinor.GM19

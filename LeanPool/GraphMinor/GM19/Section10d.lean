@@ -170,7 +170,7 @@ theorem exists_part_of_form [Nonempty S] {F : Drawing Shat} (hF : F.IsCircuitOf 
   obtain ⟨hFG, hFc⟩ := hF
   rcases hform with ⟨hc, hr⟩ | ⟨hc, hr⟩
   · have hnp : ∀ z ∈ F.V, z ∉ D.rad.poles := fun z hz hzp ↦ by
-      obtain ⟨Θ, hΘ, -, hzd⟩ := D.rad.pole_cases hS hzp
+      obtain ⟨Θ, hΘ, -, hzd⟩ := D.rad.pole_cases hzp
       exact cap.notMem_range hΘ hzd (hr (F.V_subset_U hz))
     have hfin : (F.U ∩ cap.emb '' bd S).Finite := F.finite_V.subset fun x ⟨hx, v, hv, hvx⟩ ↦ by
       subst hvx
@@ -187,7 +187,7 @@ theorem exists_part_of_form [Nonempty S] {F : Drawing Shat} (hF : F.IsCircuitOf 
       push Not at hno
       exact hr (subset_range_of_no_pole D.rad hFG fun z hz hzp ↦ hno z hzp hz)
     obtain ⟨p, hp, hpF⟩ := hex
-    obtain ⟨Θ, hΘ, hreg, hpd⟩ := D.rad.pole_cases hS hp
+    obtain ⟨Θ, hΘ, hreg, hpd⟩ := D.rad.pole_cases hp
     obtain ⟨e₁, e₂, v₁, v₂, he₁, he₂, hv₁, hv₂, hne, hs₁, hs₂, -⟩ := D.rad.circuit_edges hS h3
       ⟨hFG, hFc⟩ hpF hp.1
     have hfin : (F.U ∩ cap.emb '' bd S).Finite := F.finite_V.subset fun x ⟨hx, v, hv, hvx⟩ ↦ by
@@ -195,7 +195,7 @@ theorem exists_part_of_form [Nonempty S] {F : Drawing Shat} (hF : F.IsCircuitOf 
       exact (D.rad.bd_point hFG hv hx).2.1
     have hend : ∀ {e v}, e ∈ F.E → closure e ∩ D.rad.G.V = {cap.emb v, p} → v ∈ Θ ∧ cap.emb v ∈ F.V
       := fun {e v} he hset ↦ by
-      refine ⟨(D.rad.pole_edge hS (hFG.2 he) hp hΘ hreg hset).2, ?_⟩
+      refine ⟨(D.rad.pole_edge (hFG.2 he) hp hΘ hreg hset).2, ?_⟩
       have : cap.emb v ∈ closure e ∩ F.V := by
         rw [hFG.closure_inter_V he, hset]
         exact mem_insert _ _
@@ -221,10 +221,10 @@ theorem exists_part_of_form [Nonempty S] {F : Drawing Shat} (hF : F.IsCircuitOf 
       · exact Or.inr (cap.isEmbedding.injective h)
     refine chord_of_circuit hS D.rad h3 D.P.fits hFG hFc hp hpF (fun z hz hzp ↦ ?_) fun {x} hxb _
       hxF ↦ ?_
-    · obtain ⟨Θ', hΘ', hreg', hzd⟩ := D.rad.pole_cases hS hzp
+    · obtain ⟨Θ', hΘ', hreg', hzd⟩ := D.rad.pole_cases hzp
       obtain ⟨f₁, -, u₁, -, hf₁, -, hu₁, -, -, hs₁', -, -⟩ := D.rad.circuit_edges hS h3 ⟨hFG, hFc⟩
         hz hzp.1
-      have huΘ := (D.rad.pole_edge hS (hFG.2 hf₁) hzp hΘ' hreg' hs₁').2
+      have huΘ := (D.rad.pole_edge (hFG.2 hf₁) hzp hΘ' hreg' hs₁').2
       have huF : cap.emb u₁ ∈ F.V := by
         have : cap.emb u₁ ∈ closure f₁ ∩ F.V := by
           rw [hFG.closure_inter_V hf₁, hs₁']

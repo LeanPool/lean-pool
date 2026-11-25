@@ -91,7 +91,7 @@ theorem cuffs_disjoint {Θ₁ Θ₂ : Set S} (h₁ : Θ₁ ∈ cuffs S) (h₂ : 
   exact (connectedComponentIn_eq ha).trans (connectedComponentIn_eq hb).symm
 
 /-- One step: a capping of the surface with the cuff `C` filled is a capping of the surface. -/
-theorem nonempty_capped_of_paste {Shat : Type u} [TopologicalSpace Shat] (_hS : IsSurface S)
+theorem nonempty_capped_of_paste {Shat : Type u} [TopologicalSpace Shat]
     (hT : IsSurface T) {C : Set S} (hC : C ∈ cuffs S) {ι : S → T} (hι : IsClosedEmbedding ι)
     {Δ : Set T} (hΔ : IsClosedDisc Δ) (hcov : range ι ∪ Δ = univ) (hinter : range ι ∩ Δ = ι '' C)
     (hΔb : discBd Δ = ι '' C) (hbd : bd T = ι '' (bd S \ C)) (cap' : IsCappedSurface T Shat) :
@@ -124,7 +124,7 @@ theorem nonempty_capped_of_paste {Shat : Type u} [TopologicalSpace Shat] (_hS : 
       Disjoint (j '' Δ) (closure (cap'.cuffDisc (ι '' Θ))) := fun Θ hΘ hne ↦ by
     refine disjoint_left.2 ?_
     rintro _ ⟨z, hz, rfl⟩ hcl'
-    rw [cap'.closure_cuffDisc hT (hmem Θ hΘ hne)] at hcl'
+    rw [cap'.closure_cuffDisc (hmem Θ hΘ hne)] at hcl'
     rcases hcl' with h | ⟨w, ⟨y, hy, rfl⟩, hw⟩
     · exact hcap _ (hmem Θ hΘ hne) _ h (mem_range_self z)
     · obtain rfl := hjc.injective hw
@@ -252,6 +252,6 @@ theorem exists_cappedSurface : ∀ (n : ℕ) (S : Type u) [TopologicalSpace S], 
           hC, hn]
       rfl
     obtain ⟨Shat, _, ⟨cap'⟩⟩ := ih T hT hTconn hcount
-    exact ⟨Shat, inferInstance, nonempty_capped_of_paste hS hT hC hι hΔ hcov hinter hΔb hbd cap'⟩
+    exact ⟨Shat, inferInstance, nonempty_capped_of_paste hT hC hι hΔ hcov hinter hΔb hbd cap'⟩
 
 end GraphMinor.GM19

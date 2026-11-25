@@ -49,10 +49,10 @@ theorem cover_compl (hc : D.IsWheelCover ω₀ 𝒲) : (⋃ W ∈ 𝒲, discInt 
   have hman : ∀ x : Shat, IsManifoldPoint x := cap.isSurface.2.2
   have hin : ∀ Θ ∈ cuffs S, ∃ W ∈ 𝒲, closure (cap.cuffDisc Θ) ⊆ discInt W := by
     intro Θ hΘ
-    obtain ⟨p, hp, hpd, -⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨p, hp, hpd, -⟩ := D.rad.exists_pole hΘ
     obtain ⟨W, hW, hpW⟩ := hc.poles_covered p hp
     have hcl : closure (cap.cuffDisc Θ) = cap.cuffDisc Θ ∪ cap.emb '' Θ
-      := cap.closure_cuffDisc hS hΘ
+      := cap.closure_cuffDisc hΘ
     have hoffr : ∀ {x}, x ∈ cap.cuffDisc Θ → x ∉ range cap.emb := fun {x} hx hr ↦ by
       have : x ∈ (range cap.emb)ᶜ := by
         rw [cap.compl_eq]
@@ -88,7 +88,7 @@ theorem cover_compl (hc : D.IsWheelCover ω₀ 𝒲) : (⋃ W ∈ 𝒲, discInt 
     refine ⟨x, fun hxb ↦ ?_, rfl⟩
     obtain ⟨Θ, hΘ, hxΘ⟩ := sUnion_cuffs (S := S) ▸ hxb
     refine key Θ hΘ ?_
-    rw [cap.closure_cuffDisc hS hΘ]
+    rw [cap.closure_cuffDisc hΘ]
     exact .inr ⟨x, hxΘ, rfl⟩
   · have : y ∈ (range cap.emb)ᶜ := hr
     rw [cap.compl_eq] at this

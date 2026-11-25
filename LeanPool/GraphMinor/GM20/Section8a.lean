@@ -15,6 +15,7 @@ public import LeanPool.GraphMinor.Surface.InvarianceOfDomain
 public import LeanPool.GraphMinor.Surface.TopologyStatements
 public import Mathlib.Analysis.Convex.StrictConvexSpace
 public import Mathlib.Analysis.InnerProductSpace.Convex
+import LeanPool.GraphMinor.Surface.Fan
 
 /-!
 # Graph Minors XX, Section 8: making the discs narrow
@@ -139,72 +140,9 @@ theorem line_facts [T2Space S] {L : Set S} {a b : S} (h : IsLineWithEnds L a b) 
 theorem exists_chord [T2Space S] {D : Set S} (hD : IsClosedDisc D) {a b : S} (ha : a ∈ discBd D)
     (hb : b ∈ discBd D) (hab : a ≠ b) :
     ∃ L, IsLineWithEnds L a b ∧ L ⊆ D ∧ L \ {a, b} ⊆ D \ discBd D := by
-  obtain ⟨φ⟩ := hD
-  have hbd := image_bd_homeomorph φ
-  rw [bd_closedUnitDisc] at hbd
-  obtain ⟨a', ha', rfl⟩ := ha
-  obtain ⟨b', hb', rfl⟩ := hb
-  rw [← hbd] at ha' hb'
-  obtain ⟨p, hp, rfl⟩ := ha'
-  obtain ⟨q, hq, rfl⟩ := hb'
-  have hpq : p.1 ≠ q.1 := fun h ↦ hab (by rw [Subtype.ext h])
-  have hconv : Convex ℝ ClosedUnitDisc := convex_closedBall 0 1
-  let sg : unitInterval → ClosedUnitDisc := fun t ↦
-    ⟨(1 - t.1) • p.1 + t.1 • q.1, hconv p.2 q.2 (by linarith [t.2.2]) t.2.1 (by ring)⟩
-  have hsc : Continuous sg := by
-    refine Continuous.subtype_mk ?_ _
-    fun_prop
-  let c : C(unitInterval, S) := ⟨fun t ↦ (φ (sg t)).1, continuous_subtype_val.comp
-    (φ.continuous.comp hsc)⟩
-  have hsi : Function.Injective sg := by
-    intro s t h
-    have h₁ := congrArg Subtype.val h
-    simp only [sg] at h₁
-    have h₂ : (s.1 - t.1) • (q.1 - p.1) = 0 := by
-      have h₃ : (s.1 - t.1) • (q.1 - p.1) =
-          ((1 - s.1) • p.1 + s.1 • q.1) - ((1 - t.1) • p.1 + t.1 • q.1) := by
-        simp only [smul_sub, sub_smul, one_smul]
-        abel
-      rw [h₃, h₁, sub_self]
-    rcases smul_eq_zero.mp h₂ with h₃ | h₃
-    · exact Subtype.ext (by linarith)
-    · exact absurd (sub_eq_zero.mp h₃).symm hpq
-  have hci : Function.Injective c := fun s t h ↦
-    hsi (φ.injective (Subtype.ext h))
-  have hL := GM11.isLineWithEnds_range c hci
-  have h0 : c 0 = (φ p).1 := by
-    change (φ (sg 0)).1 = _
-    congr 2
-    exact Subtype.ext (by simp [sg])
-  have h1 : c 1 = (φ q).1 := by
-    change (φ (sg 1)).1 = _
-    congr 2
-    exact Subtype.ext (by simp [sg])
-  rw [h0, h1] at hL
-  refine ⟨_, hL, ?_, ?_⟩
-  · rintro _ ⟨t, rfl⟩
-    exact (φ (sg t)).2
-  · rintro _ ⟨⟨t, rfl⟩, hne⟩
-    refine ⟨(φ (sg t)).2, ?_⟩
-    rintro ⟨y, hy, hyeq⟩
-    rw [← hbd] at hy
-    obtain ⟨r, hr, rfl⟩ := hy
-    have h₂ : r = sg t := φ.injective (Subtype.ext hyeq)
-    have ht₀ : t ≠ 0 := by
-      rintro rfl
-      exact hne (Or.inl h0)
-    have ht₁ : t ≠ 1 := by
-      rintro rfl
-      exact hne (Or.inr h1)
-    have ht₀' : 0 < t.1 := lt_of_le_of_ne t.2.1 (fun h ↦ ht₀ (Subtype.ext h.symm))
-    have ht₁' : t.1 < 1 := lt_of_le_of_ne t.2.2 (fun h ↦ ht₁ (Subtype.ext h))
-    have hs := (strictConvex_closedBall ℝ (0 : EuclideanPlane) 1) p.2 q.2 hpq
-      (show 0 < 1 - t.1 by linarith) ht₀' (by ring)
-    rw [interior_closedBall _ one_ne_zero] at hs
-    have hr' : ‖r.1‖ = 1 := mem_sphere_zero_iff_norm.mp hr
-    rw [h₂] at hr'
-    have : ‖(sg t).1‖ < 1 := mem_ball_zero_iff.mp hs
-    linarith
+  obtain ⟨L, hL, hLD, hbd⟩ := Surface.exists_chord hD ha hb hab
+  refine ⟨L, hL, hLD, fun x hx => ⟨hLD hx.1, fun hxb => hx.2 ?_⟩⟩
+  exact hbd ▸ ⟨hx.1, hxb⟩
 
 /-- `L` gives for each cell of size 2 a line in its closure with the same two ends. For a border
 cell this

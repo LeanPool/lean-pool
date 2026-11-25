@@ -27,9 +27,8 @@ also does not lie in `Z`, then we can push out of it as well, and we get a null-
 identity map of the circle, which
 is impossible.
 
-This is not the proof of Epstein, *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966)
-83–107, Theorem 1.7, which goes by
-covering spaces and the universal cover.
+Epstein's Theorem 1.7 gives the ambient result using covering spaces. Robertson and Seymour's
+Graph Minors XI (7.2) gives the relative disc containment proved here.
 -/
 
 @[expose] public section
@@ -383,10 +382,9 @@ theorem epstein_first {S : Type u} [TopologicalSpace S] [ConnectedSpace S] {Z F 
         hη (conc_inj c3 c4 c7 c8 e1 e2) e1 e2
       exact not_null_D hi' hN hLf hp hs₂ hNS h5 h4 h3
 
-/-- The theorem of Epstein on null-homotopic curves. Route: cutting along the `O`-arc and values in
-a finite group, see the top of this
-file. Compare D. B. A. Epstein, *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107,
-Theorem 1.7. -/
+/-- Disc bounding inside the subset of a null-homotopy, as in Robertson and Seymour's
+Graph Minors XI (7.2). Their XI (7.1) quotes Epstein's ambient result, Theorem 1.7 of
+*Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107. -/
 theorem epstein : EpsteinStatement.{u} := by
   intro S _ Z F hS hconn hO hFZ hd
   refine ⟨epstein_first hS hO hFZ hd, ?_, ?_⟩

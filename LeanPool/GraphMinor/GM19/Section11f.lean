@@ -213,13 +213,13 @@ private theorem side_shape_of_feast_discs
           refine ⟨h₁, fun h₃ ↦ h₂ (hIn ?_)⟩
           obtain ⟨F, hF, hxF⟩ := mem_iUnion₂.1 h₃
           have hF' := hf.mem_toFinset.1 hF
-          exact mem_biUnion hF' ((hshape F hF').biteArc_subset hS hxF).1
+          exact mem_biUnion hF' ((hshape F hF').biteArc_subset hxF).1
         · rintro ⟨h₁, h₂⟩
           refine ⟨h₁, fun h₃ ↦ h₂ ?_⟩
           obtain ⟨F, hF, hxF⟩ := hKsub h₃
           refine mem_biUnion (hf.mem_toFinset.2 hF) ?_
           change cap.emb x ∈ D.biteArc r F
-          rw [hfe.arc_eq F hF, closure_region_sdiff hS hΘ' hreg]
+          rw [hfe.arc_eq F hF, closure_region_sdiff hΘ' hreg]
           exact ⟨hxF, mem_image_of_mem _ (hsΘ' h₁)⟩
       rw [hset]
       have hdis : Disjoint (closure side) s := by
@@ -230,7 +230,7 @@ private theorem side_shape_of_feast_discs
         (hf.mem_toFinset.1 hF)
       have hF' := hf.mem_toFinset.1 hF
       refine ⟨A' F, (hshape F hF').isPreconnected_A', fun x hx ↦
-        ⟨(hshape F hF').cuff_mem_A' hS hx, fun y hy ↦ ?_⟩⟩
+        ⟨(hshape F hF').cuff_mem_A' hx, fun y hy ↦ ?_⟩⟩
       obtain ⟨z, hz, he⟩ := ((hshape F hF').A'_sub hy).1
       exact cap.isEmbedding.injective he ▸ hz
     · right
@@ -238,7 +238,7 @@ private theorem side_shape_of_feast_discs
         refine sdiff_eq_left.2 (disjoint_right.2 fun x hx hxs ↦ ?_)
         obtain ⟨F, hF, hxF⟩ := hKsub hx
         exact disjoint_left.1 (X.disjoint_cuff_ins hS hgt (hsm' F hF) (hshape F hF) hΘ' hsame)
-          (cap.mem_closure_emb hS hΘ' (hsΘ' hxs)) hxF
+          (cap.mem_closure_emb hΘ' (hsΘ' hxs)) hxF
       rw [hset]
       exact hspc
 
@@ -365,20 +365,20 @@ theorem exists_side_data [ConnectedSpace S] (hS : IsSurface S)
     have := D.ins_spec (hG hF) (hlt hF)
     exact ⟨this.2.2.1, this.2.2.2.1⟩
   have hsub : ∀ {F}, F ∈ ℱ → F.U ⊆ D.ins F := fun {F} hF ↦ D.U_subset_ins (hG hF) (hlt hF)
-  have hrnr := D.pole_notMem_range hS X.pole
+  have hrnr := D.pole_notMem_range X.pole
   have hrd : r ∈ cap.cuffDisc Θ := by
     rw [← hreg]
     exact (D.rad.regionOf_mem X.pole.1).2
   have hE := cap.cuffDisc_closedDisc Θ hΘ
   have hEb : discBd (closure (cap.cuffDisc Θ)) = cap.emb '' Θ := cap.cuffDisc_bd Θ hΘ
-  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hS hΘ
+  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hΘ
   have hemb : ∀ x, cap.emb x ∉ discInt (closure (cap.cuffDisc Θ)) := fun x h ↦ cap.notMem_range hΘ
     (hdE ▸ h) (mem_range_self x)
   have hinter : ∀ {F F'}, F ∈ ℱ → F' ∈ ℱ → F ≠ F' → D.ins F ∩ D.ins F' = {r}
     := fun hF hF' hne ↦ hfe.ins_inter _ hF _ hF' hne
   obtain ⟨Z, hZ, hEZ, hΔZ, hZc, -, hJ3, hJ1, hJ2, hJ4⟩ := exists_disc_union hT hE hf.toFinset D.ins
     Β (fun F ↦ cap.emb (v₁ F)) (fun F ↦ cap.emb (v₂ F))
-    (fun F hF ↦ (hshape F (hf.mem_toFinset.1 hF)).isChordDisc hS (hfe.arc_eq F
+    (fun F hF ↦ (hshape F (hf.mem_toFinset.1 hF)).isChordDisc (hfe.arc_eq F
       (hf.mem_toFinset.1 hF)))
     (fun F hF F' hF' hne ↦ by
       rw [hinter (hf.mem_toFinset.1 hF) (hf.mem_toFinset.1 hF') hne, singleton_subset_iff, ← hdE]
@@ -395,7 +395,7 @@ theorem exists_side_data [ConnectedSpace S] (hS : IsSurface S)
   have hline : ∀ {F}, F ∈ ℱ → IsLineWithEnds (cap.emb ⁻¹' L F) (v₁ F) (v₂ F)
     := fun {F} hF ↦ isLine_comap hj (by rw [hLr hF]; exact (hshape F hF).L_line)
   have hLU : ∀ {F}, F ∈ ℱ → cap.emb ⁻¹' L F = cap.emb ⁻¹' F.U := fun {F} hF ↦
-    ((hshape F hF).preimage_U hS).symm
+    ((hshape F hF).preimage_U).symm
   set 𝓛 : Set (Set S) := (fun F ↦ cap.emb ⁻¹' L F) '' ℱ with h𝓛
   have h𝓛f : 𝓛.Finite := hf.image _
   have hLdis : ∀ {F F'}, F ∈ ℱ → F' ∈ ℱ → F ≠ F' → Disjoint (cap.emb ⁻¹' L F) (cap.emb ⁻¹' L F')
@@ -529,7 +529,7 @@ theorem exists_side_data [ConnectedSpace S] (hS : IsSurface S)
       have hoff : ∀ {y}, y ∈ B → y ∈ side \ cap.emb ⁻¹' D.feastArcUnion r ℱ := fun {y} hy ↦ by
         refine ⟨(hB hy).1, fun h ↦ (hB hy).2 (hIn ?_)⟩
         obtain ⟨F, hF, hyF⟩ := mem_iUnion₂.1 h
-        exact mem_biUnion hF ((hshape F hF).biteArc_subset hS hyF).1
+        exact mem_biUnion hF ((hshape F hF).biteArc_subset hyF).1
       obtain ⟨h, hh, hall⟩ := hfe.component_omits _ (mem_image_of_mem _ (hoff hx))
       exact ⟨h, hh, fun e he hsub' ↦ hall e he (hsub'.trans (hconn.subset_connectedComponentIn hx
         fun y hy ↦ hoff hy))⟩

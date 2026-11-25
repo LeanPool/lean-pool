@@ -32,7 +32,10 @@ universe u w
 /-- **Graph Minors XIX, (6.1)** (page 339): "Let $\chi$ satisfy* **S**$_1$, **S**$_3$, *and let*
 $(\Gamma_i, \phi_i)$ $(i = 1, 2, \dots)$
 *be a similarly oriented bad sequence for $\chi$. Then there exists $h \ge 1$ such that for
-all $j > i \ge h$ there is no inflation of $(\Gamma_i, \phi_i)$ in $(\Gamma_j, \phi_j)$." -/
+all $j > i \ge h$ there is no inflation of $(\Gamma_i, \phi_i)$ in $(\Gamma_j, \phi_j)$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 theorem theorem_6_1_proof
     {S Shat : Type u} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     {β : Type w} [Infinite β] (cap : IsCappedSurface S Shat) (χ : ColourScheme S β)

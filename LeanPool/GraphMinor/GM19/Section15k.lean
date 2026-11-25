@@ -71,7 +71,7 @@ theorem no_circuit_holds_tilde (hS : IsSurface S) {n : ℕ} (hn : 8 ≤ n) (hrep
     omega
   have hnb : ∀ Θ ∈ cuffs S, ∀ y ∈ Θ, cap.emb y ∉ F.U := fun Θ hΘ y hy hyF => by
     obtain ⟨hyV, hyFV, -⟩ := D.rad.bd_point hF.1 (cuff_subset_bd ⟨Θ, hΘ⟩ hy) hyF
-    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
     obtain ⟨e, he, hcap⟩ := D.rad.exists_pole_edge hS h3 hp hΘ hreg hyV hy
     have hyG : cap.emb y ∈ D.rad.G.V := hF.1.1 hyFV
     have hl₁ : D.rad.G.toGraph.IsLink e (cap.emb y) p := ⟨he, hyG, hp.1.1, hcap⟩
@@ -90,7 +90,7 @@ theorem no_circuit_holds_tilde (hS : IsSurface S) {n : ℕ} (hn : 8 ≤ n) (hrep
     have hmem : z ∈ (range cap.emb)ᶜ := hzr
     rw [cap.compl_eq] at hmem
     obtain ⟨Θ, hΘ, hzd⟩ := mem_iUnion₂.mp hmem
-    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
     have hpF := pole_mem_of_meet hF.1 hp hΘ hreg hz hzd
     exact npole p hp (D.U_subset_ins hF hl (F.V_subset_U hpF))
   have hnebd : Disjoint (cap.emb ⁻¹' F.U) (bd S) := disjoint_left.mpr fun y hy hyb =>

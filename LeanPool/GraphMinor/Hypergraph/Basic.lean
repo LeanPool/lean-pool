@@ -129,6 +129,24 @@ instance : Inter (Hypergraph α β) where
       vertexSet_finite := G₁.vertexSet_finite.subset Set.inter_subset_left
       edgeSet_finite := G₁.edgeSet_finite.subset Set.inter_subset_left }
 
+theorem union_vertexSet_eq (G₁ G₂ : Hypergraph α β) :
+    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet := rfl
+
+theorem union_edgeSet_eq (G₁ G₂ : Hypergraph α β) :
+    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet := rfl
+
+theorem union_inc_iff (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
+    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v := Iff.rfl
+
+theorem inter_vertexSet_eq (G₁ G₂ : Hypergraph α β) :
+    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet := rfl
+
+theorem inter_edgeSet_eq (G₁ G₂ : Hypergraph α β) :
+    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet := rfl
+
+theorem inter_inc_iff (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
+    (G₁ ∩ G₂).Inc e v ↔ G₁.Inc e v ∧ G₂.Inc e v := Iff.rfl
+
 /-- The union `⋃ (G i : i ∈ s)` of finitely many hypergraphs. For subhypergraphs of a hypergraph
 `G` it is the subhypergraph of `G` whose vertices and edges are those of the `G i`. -/
 def biUnion {ι : Type*} (s : Finset ι) (G : ι → Hypergraph α β) : Hypergraph α β where

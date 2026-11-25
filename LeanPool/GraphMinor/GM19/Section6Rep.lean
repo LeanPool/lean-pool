@@ -42,6 +42,83 @@ open Set Topology GraphMinor.Surface GraphMinor.GM11
 
 local notation "𝕀" => unitInterval
 
+/-- The skeleton edge along a three-ended cell joining two of its vertices, with a point in
+the open edge. -/
+theorem exists_sk_boundary_with_point {S : Type}
+    [TopologicalSpace S] [T2Space S] (Γ : Painting S) {c₀ : Set S} (hc₀ : c₀ ∈ Γ.E)
+    (h3c : (tilde c₀).ncard = 3) {u₀ v₀ : S}
+    (hut : u₀ ∈ tilde c₀) (hvt : v₀ ∈ tilde c₀) (huv₀ : u₀ ≠ v₀) :
+    ∃ f ∈ arcComponentsIn (Γ.skU \ Γ.V), f ⊆ discBd (closure c₀) ∧ f ⊆ c₀ ∧
+      tilde f = {u₀, v₀} ∧ ∃ x ∈ f, x ∈ c₀ ∧ x ∉ Γ.V := by
+  classical
+  obtain ⟨hdisc, hT', -⟩ := Γ.isDisc_of_three hc₀ h3c
+  have htil : ∀ {x₀ : S}, x₀ ∈ closure c₀ → x₀ ∈ Γ.V → x₀ ∈ tilde c₀ := fun hx hxV =>
+    ⟨hx, fun h => Γ.disjoint_V hc₀ h hxV⟩
+  have hu₀ : u₀ ∈ Γ.V := Γ.tilde_subset_V hc₀ hut
+  have hv₀ : v₀ ∈ Γ.V := Γ.tilde_subset_V hc₀ hvt
+  obtain ⟨w₀, hw₀, hwu, hwv⟩ : ∃ w₀ ∈ tilde c₀, w₀ ≠ u₀ ∧ w₀ ≠ v₀ := by
+    by_contra hn
+    push Not at hn
+    have hsub : tilde c₀ ⊆ {u₀, v₀} := fun x hx => by
+      by_cases hxu : x = u₀
+      · exact .inl hxu
+      · exact .inr (hn x hx hxu)
+    have := ncard_le_ncard hsub (toFinite _)
+    have h2 := ncard_pair huv₀
+    omega
+  have htri : tilde c₀ = {u₀, v₀, w₀} := by
+    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀, w₀}) ?_ ?_ (Γ.isDisc_of_three hc₀ h3c).2.2).symm
+    · rintro x (rfl | rfl | rfl)
+      · exact hut
+      · exact hvt
+      · exact hw₀
+    · rw [h3c, ncard_eq_toFinset_card', Set.toFinset_insert, Set.toFinset_insert]
+      simp [Finset.card_insert_of_notMem, huv₀, hwu.symm, hwv.symm]
+  obtain ⟨A₁, A₂, hA₁, hA₂, hAU, hAI⟩ := hdisc.isOArc_discBd.lines (hT' hut) (hT' hvt) huv₀
+  obtain ⟨A₀, hA₀, hAw, hAB⟩ : ∃ A₀, IsLineWithEnds A₀ u₀ v₀ ∧ w₀ ∉ A₀ ∧ A₀ ⊆ discBd (closure c₀)
+    := by
+    by_cases hw₁ : w₀ ∈ A₁
+    · refine ⟨A₂, hA₂, fun hw₂ => ?_, hAU ▸ subset_union_right⟩
+      have : w₀ ∈ A₁ ∩ A₂ := ⟨hw₁, hw₂⟩
+      rw [hAI] at this
+      rcases this with h | h
+      · exact hwu h
+      · exact hwv h
+    · exact ⟨A₁, hA₁, hw₁, hAU ▸ subset_union_left⟩
+  have hint₀ : ∀ {x}, x ∈ A₀ \ {u₀, v₀} → x ∈ c₀ ∧ x ∈ Γ.skU \ Γ.V := by
+    intro x hx
+    have hxB := hAB hx.1
+    have hxcl : x ∈ closure c₀ := Surface.discBd_subset _ hxB
+    have hxV : x ∉ Γ.V := fun h => by
+      have h₁ := htil hxcl h
+      rw [htri] at h₁
+      rcases h₁ with h₁ | h₁ | h₁
+      · exact hx.2 (.inl h₁)
+      · exact hx.2 (.inr h₁)
+      · exact hAw (h₁ ▸ hx.1)
+    refine ⟨by_contra fun h => hxV (Γ.tilde_subset_V hc₀ ⟨hxcl, h⟩), ?_, hxV⟩
+    exact Or.inr (mem_iUnion₂.2 ⟨c₀, ⟨hc₀, h3c⟩, hxB⟩)
+  have hpc := isPathConnected_sdiff_pair hA₀
+  obtain ⟨f, hf, hsubf⟩ := exists_arcComp_superset hpc fun x hx => (hint₀ hx).2
+  obtain ⟨x₀, hx₀⟩ := hpc.nonempty
+  have hx₀f := hsubf hx₀
+  obtain ⟨p, q, hpq, ht, htV, hline⟩ := Γ.sk_line hf
+  have hclf : A₀ ⊆ closure f := hA₀.subset_closure_diff.trans (closure_mono hsubf)
+  have htf : ∀ {y}, y ∈ A₀ → y ∈ Γ.V → y ∈ tilde f := fun hy hyV =>
+    ⟨hclf hy, fun h => (hf.2.1 h).2 hyV⟩
+  have ht' : tilde f = {u₀, v₀} := by
+    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀}) ?_ ?_ (by rw [ht]; exact toFinite _)).symm
+    · rintro y (rfl | rfl)
+      · exact htf hA₀.left_mem hu₀
+      · exact htf hA₀.right_mem hv₀
+    · rw [ht, ncard_pair hpq, ncard_pair huv₀]
+  rcases Γ.sk_cases hf with ⟨hfE, h2⟩ | ⟨c, hc, -, hfc, hfB⟩
+  · have := arcComp_eq_of_mem hfE hc₀ hx₀f (hint₀ hx₀).1
+    rw [this, h3c] at h2
+    omega
+  · obtain rfl := arcComp_eq_of_mem hc hc₀ (hfc hx₀f) (hint₀ hx₀).1
+    exact ⟨f, hf, hfB, hfc, ht', x₀, hx₀f, (hint₀ hx₀).1, (hint₀ hx₀).2.2⟩
+
 variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
   {cap : IsCappedSurface S Shat} {Γ : Painting S} {D : Drawing Shat}
 
@@ -51,9 +128,9 @@ theorem sk_region_disc (hS : IsSurface S) (hD : IsSkHat cap Γ D)
     (h3 : Γ.IsInternallyThreeConnected) {r : Set Shat} (hr : r ∈ D.R) : IsOpenDisc r := by
   have hT := cap.isClosedSurface
   have hman : ∀ x : Shat, IsManifoldPoint x := (Surface.IsClosedSurface.isSurface hT).2.2
-  rcases hD.region_cases hS hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
+  rcases hD.region_cases hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
   · exact h3.hatRegions_isOpenDisc hS cap r hh
-  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hS hD hr hc₀ h3c rfl hrs
+  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hD hr hc₀ h3c rfl hrs
     have hdis : Disjoint (discInt (cap.emb '' closure c₀)) D.U :=
       disjoint_left.mpr fun x hx hxU => hx.2 (hU ⟨hx.1, hxU⟩)
     obtain ⟨y, hy⟩ := region_nonempty hr
@@ -70,11 +147,11 @@ theorem sk_pinch (hS : IsSurface S) (hD : IsSkHat cap Γ D) (h3 : Γ.IsInternall
       ∃ Δ, IsClosedDisc Δ ∧ discBd Δ = F ∧ Δ ∩ D.U ⊆ {v} := by
   intro F hF hvF hcl hsub
   have hT := cap.isClosedSurface
-  rcases hD.region_cases hS hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
+  rcases hD.region_cases hr with hh | ⟨c₀, hc₀, h3c, hrs⟩
   · rw [hD.hV] at hv
     obtain ⟨v₀, hv₀, rfl⟩ := hv
     exact pinch hS hD h3 hh hv₀ hF hvF hcl hsub
-  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hS hD hr hc₀ h3c rfl hrs
+  · obtain ⟨hΔ, hint, hU⟩ := cell_facts hD hr hc₀ h3c rfl hrs
     have hrΔ : closure r ⊆ cap.emb '' closure c₀ := closure_minimal hrs hΔ.isClosed
     refine pinch_of_cell hT hΔ hF (fun x hx ↦ ?_) (fun x hx ↦ hint (hsub hx)) hU
     by_cases hxv : x = v
@@ -226,7 +303,7 @@ theorem segment_hat {r : Set Shat} (hr : r ∈ Γ.hatRegions cap) {u v : Shat} (
     ∃ w : (rad.G.adj.induce rad.G.V).Walk ⟨u, huG⟩ ⟨v, hvG⟩, w.length ≤ 2 ∧
       g.Homotopic (walkP (rad_loopFree rad) w) := by
   have hl := rad_loopFree rad
-  have hrD := hD.hatRegion_mem_R hS hr
+  have hrD := hD.hatRegion_mem_R hr
   have hρd := sk_region_disc hS hD h3 hrD
   have h2 := h3.hatRegions_isOpenDisc hS cap
   obtain ⟨c, hcR, hcr, hc⟩ := exists_hub rad hr
@@ -324,8 +401,8 @@ theorem segment_cell {ρ : Set Shat} (hρ : ρ ∈ D.R) {c₀ : Set S} (hc₀ : 
   have hT := cap.isClosedSurface
   have hman : ∀ x : Shat, IsManifoldPoint x := (Surface.IsClosedSurface.isSurface hT).2.2
   have hinj := cap.isEmbedding.injective
-  obtain ⟨hΔ, hint, hU⟩ := cell_facts hS hD hρ hc₀ h3c rfl hrs
-  obtain ⟨hdisc, hT', -⟩ := Γ.isDisc_of_three hc₀ h3c
+  obtain ⟨hΔ, hint, hU⟩ := cell_facts hD hρ hc₀ h3c rfl hrs
+  obtain ⟨hdisc, -, -⟩ := Γ.isDisc_of_three hc₀ h3c
   obtain ⟨hC, hbd⟩ := isClosedDisc_image hdisc cap.isEmbedding
   have hclρ : closure ρ ⊆ cap.emb '' closure c₀ := closure_minimal hrs hΔ.isClosed
   have hu₁ := hclρ (start_mem_closure g hg)
@@ -344,71 +421,13 @@ theorem segment_cell {ρ : Set Shat} (hρ : ρ ∈ D.R) {c₀ : Set S} (hc₀ : 
   have huv₀ : u₀ ≠ v₀ := fun h => huv (congrArg _ h)
   have hut := htil hu₂ hu₀
   have hvt := htil hv₂ hv₀
-  obtain ⟨w₀, hw₀, hwu, hwv⟩ : ∃ w₀ ∈ tilde c₀, w₀ ≠ u₀ ∧ w₀ ≠ v₀ := by
-    by_contra hn
-    push Not at hn
-    have hsub : tilde c₀ ⊆ {u₀, v₀} := fun x hx => by
-      by_cases hxu : x = u₀
-      · exact .inl hxu
-      · exact .inr (hn x hx hxu)
-    have := ncard_le_ncard hsub (toFinite _)
-    have h2 := ncard_pair huv₀
-    omega
-  have htri : tilde c₀ = {u₀, v₀, w₀} := by
-    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀, w₀}) ?_ ?_ (Γ.isDisc_of_three hc₀ h3c).2.2).symm
-    · rintro x (rfl | rfl | rfl)
-      · exact hut
-      · exact hvt
-      · exact hw₀
-    · rw [h3c, ncard_eq_toFinset_card', Set.toFinset_insert, Set.toFinset_insert]
-      simp [Finset.card_insert_of_notMem, huv₀, hwu.symm, hwv.symm]
-  obtain ⟨A₁, A₂, hA₁, hA₂, hAU, hAI⟩ := hdisc.isOArc_discBd.lines (hT' hut) (hT' hvt) huv₀
-  obtain ⟨A₀, hA₀, hAw, hAB⟩ : ∃ A₀, IsLineWithEnds A₀ u₀ v₀ ∧ w₀ ∉ A₀ ∧ A₀ ⊆ discBd (closure c₀)
-    := by
-    by_cases hw₁ : w₀ ∈ A₁
-    · refine ⟨A₂, hA₂, fun hw₂ => ?_, hAU ▸ subset_union_right⟩
-      have : w₀ ∈ A₁ ∩ A₂ := ⟨hw₁, hw₂⟩
-      rw [hAI] at this
-      rcases this with h | h
-      · exact hwu h
-      · exact hwv h
-    · exact ⟨A₁, hA₁, hw₁, hAU ▸ subset_union_left⟩
-  have hint₀ : ∀ {x}, x ∈ A₀ \ {u₀, v₀} → x ∈ c₀ ∧ x ∈ Γ.skU \ Γ.V := by
-    intro x hx
-    have hxB := hAB hx.1
-    have hxcl : x ∈ closure c₀ := Surface.discBd_subset _ hxB
-    have hxV : x ∉ Γ.V := fun h => by
-      have h₁ := htil hxcl h
-      rw [htri] at h₁
-      rcases h₁ with h₁ | h₁ | h₁
-      · exact hx.2 (.inl h₁)
-      · exact hx.2 (.inr h₁)
-      · exact hAw (h₁ ▸ hx.1)
-    refine ⟨by_contra fun h => hxV (Γ.tilde_subset_V hc₀ ⟨hxcl, h⟩), ?_, hxV⟩
-    exact Or.inr (mem_iUnion₂.2 ⟨c₀, ⟨hc₀, h3c⟩, hxB⟩)
-  have hpc := isPathConnected_sdiff_pair hA₀
-  obtain ⟨f, hf, hsubf⟩ := exists_arcComp_superset hpc fun x hx => (hint₀ hx).2
-  obtain ⟨x₀, hx₀⟩ := hpc.nonempty
-  have hx₀f := hsubf hx₀
-  obtain ⟨p, q, hpq, ht, htV, hline⟩ := Γ.sk_line hf
-  have hclf : A₀ ⊆ closure f := hA₀.subset_closure_diff.trans (closure_mono hsubf)
-  have htf : ∀ {y}, y ∈ A₀ → y ∈ Γ.V → y ∈ tilde f := fun hy hyV =>
-    ⟨hclf hy, fun h => (hf.2.1 h).2 hyV⟩
-  have ht' : tilde f = {u₀, v₀} := by
-    refine (eq_of_subset_of_ncard_le (s := {u₀, v₀}) ?_ ?_ (by rw [ht]; exact toFinite _)).symm
-    · rintro y (rfl | rfl)
-      · exact htf hA₀.left_mem hu₀
-      · exact htf hA₀.right_mem hv₀
-    · rw [ht, ncard_pair hpq, ncard_pair huv₀]
-  have hfc₀ : f ⊆ discBd (closure c₀) ∧ f ⊆ c₀ := by
-    rcases Γ.sk_cases hf with ⟨hfE, h2⟩ | ⟨c, hc, -, hfc, hfB⟩
-    · have := arcComp_eq_of_mem hfE hc₀ hx₀f (hint₀ hx₀).1
-      rw [this, h3c] at h2
-      omega
-    · obtain rfl := arcComp_eq_of_mem hc hc₀ (hfc hx₀f) (hint₀ hx₀).1
-      exact ⟨hfB, hfc⟩
+  obtain ⟨f, hf, hfb, hfc, ht', x₀, hx₀f, hx₀c, hx₀V⟩ :=
+    exists_sk_boundary_with_point Γ hc₀ h3c hut hvt huv₀
+  have htV : tilde f ⊆ Γ.V := by
+    rw [ht']
+    exact pair_subset hu₀ hv₀
   let e : Set Shat := cap.emb '' f
-  have he : e ∈ D.E := (hD.edge_iff hS).mpr ⟨f, hf, rfl⟩
+  have he : e ∈ D.E := hD.edge_iff.mpr ⟨f, hf, rfl⟩
   have hcle : closure e = cap.emb '' closure f := (cap.isClosedEmbedding hS).closure_image_eq f
   have hsetV : closure f ∩ Γ.V = {u₀, v₀} := by
     rw [← ht']
@@ -418,10 +437,10 @@ theorem segment_cell {ρ : Set Shat} (hρ : ρ ∈ D.R) {c₀ : Set S} (hc₀ : 
     rw [hcle, hD.hV, ← image_inter hinj, hsetV, image_pair]
   have hL : IsLineWithEnds (closure e) (cap.emb u₀) (cap.emb v₀) := isLine_closure he huv hset
   have hLC : closure e ⊆ cap.emb '' closure c₀ :=
-    closure_minimal (image_mono (hfc₀.2.trans subset_closure)) hΔ.isClosed
+    closure_minimal (image_mono (hfc.trans subset_closure)) hΔ.isClosed
   have hLB : closure e ⊆ discBd (cap.emb '' closure c₀) := by
     rw [hbd, hcle]
-    exact image_mono (closure_minimal hfc₀.1 (isCompact_of_isOArc hdisc.isOArc_discBd).isClosed)
+    exact image_mono (closure_minimal hfb (isCompact_of_isOArc hdisc.isOArc_discBd).isClosed)
   let Z : Set Shat := D.V ∪ ⋃ f' ∈ D.E \ {e}, closure f'
   have hZ : IsClosed Z := D.finite_V.isClosed.union
     ((D.finite_edges.subset sdiff_subset).isClosed_biUnion fun _ _ => isClosed_closure)
@@ -456,18 +475,18 @@ theorem segment_cell {ρ : Set Shat} (hρ : ρ ∈ D.R) {c₀ : Set S} (hc₀ : 
         · exact hm ▸ hL.right_mem
     obtain ⟨a, ha, hy₀a⟩ := exists_region_of_notMem (disjoint_left.mp hYU hy₀)
     have hYa := subset_region ha hYc hYU hy₀ hy₀a
-    rcases hD.region_cases hS ha with hh | ⟨c', hc', h3', hac⟩
+    rcases hD.region_cases ha with hh | ⟨c', hc', h3', hac⟩
     · exact .inl ⟨a, hh, hYa⟩
     · refine .inr ?_
-      obtain ⟨hΔ', -, -⟩ := cell_facts hS hD ha hc' h3' rfl hac
+      obtain ⟨hΔ', -, -⟩ := cell_facts hD ha hc' h3' rfl hac
       have hm : cap.emb x₀ ∈ cap.emb '' closure c' :=
         closure_minimal (hYa.trans hac) hΔ'.isClosed (hLY (subset_closure
           (mem_image_of_mem _ hx₀f)))
       obtain ⟨z, hz, hze⟩ := hm
       obtain rfl := hinj hze
-      have hzV : z ∉ Γ.V := (hint₀ hx₀).2.2
+      have hzV : z ∉ Γ.V := hx₀V
       have hzc' : z ∈ c' := by_contra fun h => hzV (Γ.tilde_subset_V hc' ⟨hz, h⟩)
-      obtain rfl := arcComp_eq_of_mem hc' hc₀ hzc' (hint₀ hx₀).1
+      obtain rfl := arcComp_eq_of_mem hc' hc₀ hzc' hx₀c
       exact hYa.trans hac
   have hAD : A ⊆ D₀ := by
     rw [hDe]
@@ -481,7 +500,7 @@ theorem segment_cell {ρ : Set Shat} (hρ : ρ ∈ D.R) {c₀ : Set S} (hc₀ : 
     have hxV : cap.emb x₀ ∉ D.V := by
       rw [hD.hV]
       rintro ⟨z, hz, hze⟩
-      exact (hint₀ hx₀).2.2 (hinj hze ▸ hz)
+      exact hx₀V (hinj hze ▸ hz)
     have hxb : cap.emb x₀ ∈ discInt D₀ := ⟨hLD hxe, fun hb => by
       have := hbL ⟨hb, hxe⟩
       rw [← hset] at this
@@ -539,7 +558,7 @@ theorem segment_walk {u v : Shat} (huV : u ∈ D.V) (hvV : v ∈ D.V) (huG : u �
   by_cases huv : u = v
   · subst huv
     exact ⟨.nil, by simp, segment_loop hS hD h3 hγ hval hρ huV g hgρ⟩
-  rcases hD.region_cases hS hρ with hh | ⟨c₀, hc₀, h3c, hrs⟩
+  rcases hD.region_cases hρ with hh | ⟨c₀, hc₀, h3c, hrs⟩
   · exact segment_hat rad hS hD h3 hγ hval hh huV hvV huG hvG g hgρ
   · obtain ⟨r, hr, g', hh', hg'⟩ := segment_cell hS hD hρ hc₀ h3c hrs huV hvV huv g hgρ
     obtain ⟨w, hw, hhw⟩ := segment_hat rad hS hD h3 hγ hval hr huV hvV huG hvG g' hg'

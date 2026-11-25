@@ -2683,6 +2683,77 @@ theorem isRespectfulDrawingTangle_truncation {S : Type w} [TopologicalSpace S]
     IsRespectfulDrawingTangle H θ₁ (GM10.truncation T θ₁) := by
   exact GM12.IsRespectfulDrawingTangle.truncation hResp h1 hle
 
+/-- A path on the interface and a chord meeting the drawing only at the ends of the path
+avoid one of three or more disjoint stripes if the path meets at most two stripe ends. -/
+theorem exists_stripe_avoiding_path_and_chord {X : Type*} [TopologicalSpace X] [T2Space X]
+    {φ : ℕ} (hφ : 3 ≤ φ) {H P : Drawing X} {S₁ S₂ F : Set X} {u v : X}
+    {a b : Fin φ → X} {L : Fin φ → Set X} (hS₁ : IsClosed S₁) (hS₂ : IsClosed S₂)
+    (hL_ends : ∀ i, L i ∩ S₁ = {a i, b i})
+    (hL_disj : Pairwise fun i j => Disjoint (L i) (L j))
+    (hL_verts : ∀ i, a i ∈ H.V ∧ b i ∈ H.V) (hL_sub : ∀ i, L i ⊆ H.U)
+    (hF_line : IsLineWithEnds F u v) (hF_U : F ∩ H.U ⊆ {u, v})
+    (hP_sub : P.IsSubdrawing (H.interSet (S₁ ∩ S₂))) (hP_path : P.IsPathBetween u v)
+    (hP_ends : (P.V ∩ (range a ∪ range b)).ncard ≤ 2) :
+    P.IsSubdrawing H ∧ P.U ⊆ S₁ ∩ S₂ ∧ IsLineWithEnds P.U u v ∧ IsClosed (P.U ∪ F) ∧
+      ∃ i₀ : Fin φ, Disjoint (P.U ∪ F) (L i₀) := by
+  have hP' : P.IsSubdrawing H := by
+    refine ⟨hP_sub.1.trans ?_, hP_sub.2.trans ?_⟩
+    · rw [interSet_V_of_isClosed H (hS₁.inter hS₂)]
+      exact inter_subset_left
+    · rw [interSet_E H (S₁ ∩ S₂)]
+      exact fun _ he => he.1
+  have hPU : P.U ⊆ S₁ ∩ S₂ := by
+    refine (isSubdrawing_U_subset hP_sub).trans ?_
+    rw [(H.interSet (S₁ ∩ S₂)).U_eq, interSet_V_of_isClosed H (hS₁.inter hS₂), interSet_E]
+    exact union_subset inter_subset_right
+      (iUnion₂_subset fun e he => (hS₁.inter hS₂).closure_subset_iff.mpr he.2)
+  have huv : u ≠ v := by
+    obtain ⟨ψ, hψ₀, hψ₁⟩ := hF_line
+    exact fun heq => zero_ne_one (ψ.injective (Subtype.ext (hψ₀.trans (heq.trans hψ₁.symm))))
+  have hP_line := GM14.isLine_of_isPathBetween hP_path huv
+  refine ⟨hP', hPU, hP_line, P.isClosed_U.union hF_line.isCompact.isClosed, ?_⟩
+  have hpair_disj : Pairwise (fun i j => Disjoint ({a i, b i} : Set X) {a j, b j}) := by
+    intro i j hij
+    refine (hL_disj hij).mono ?_ ?_
+    · rw [← hL_ends i]
+      exact inter_subset_left
+    · rw [← hL_ends j]
+      exact inter_subset_left
+  obtain ⟨i, hi⟩ := exists_disjoint_of_three_le hφ
+    (P.finite_V.subset inter_subset_left) hP_ends hpair_disj (fun i =>
+      inter_subset_inter_right _ (by
+        rintro _ (rfl | rfl)
+        · exact Or.inl ⟨i, rfl⟩
+        · exact Or.inr ⟨i, rfl⟩))
+  have hPV : P.U ∩ H.V = P.V := isSubdrawing_U_inter_V hP'
+  have hpath : Disjoint P.U (L i) := disjoint_left.mpr fun x hxP hxL => by
+    have hx : x ∈ ({a i, b i} : Set X) := hL_ends i ▸ ⟨hxL, (hPU hxP).1⟩
+    rcases hx with rfl | rfl
+    · exact disjoint_left.mp hi (hPV ▸ ⟨hxP, (hL_verts i).1⟩) (Or.inl rfl)
+    · exact disjoint_left.mp hi (hPV ▸ ⟨hxP, (hL_verts i).2⟩) (Or.inr rfl)
+  obtain ⟨hu, hv⟩ := hP_line.ends_mem
+  have hchord : Disjoint F (L i) := disjoint_left.mpr fun x hxF hxL => by
+    rcases hF_U ⟨hxF, hL_sub i hxL⟩ with rfl | rfl
+    · exact disjoint_left.mp hpath hu hxL
+    · exact disjoint_left.mp hpath hv hxL
+  exact ⟨i, hpath.union_left hchord⟩
+
+/-- The path and chord lie in the striped disc, the path on its boundary. Reindexing the retained
+stripes preserves the covering of the drawing inside the disc. -/
+theorem reindex_striped_disc {X : Type*} [TopologicalSpace X] {φ n : ℕ} {i₀ : Fin φ}
+    {P H : Drawing X} {F D S₁ S₂ : Set X} (paths : Fin φ → Drawing X)
+    (e : Fin n ≃ {i : Fin φ // i ≠ i₀})
+    (hPU : P.U ⊆ S₁ ∩ S₂) (hPF : P.U ∪ F ⊆ D) (hbd : D ∩ (S₁ ∩ S₂) ⊆ discBd D)
+    (hcover : D ∩ H.U ⊆ (D ∩ (S₁ ∩ S₂)) ∪ ⋃ j : {i : Fin φ // i ≠ i₀}, (paths j.1).U) :
+    P.U ⊆ D ∧ F ⊆ D ∧ P.U ⊆ discBd D ∧
+      D ∩ H.U ⊆ discBd D ∪ ⋃ k, (paths (e k).1).U := by
+  have hPD : P.U ⊆ D := subset_union_left.trans hPF
+  refine ⟨hPD, subset_union_right.trans hPF, (subset_inter hPD hPU).trans hbd, ?_⟩
+  refine hcover.trans (union_subset (hbd.trans subset_union_left) ?_)
+  intro x hx
+  obtain ⟨j, hxj⟩ := mem_iUnion.mp hx
+  exact Or.inr (mem_iUnion.mpr ⟨e.symm j, by simpa using hxj⟩)
+
 /-- Truncation of a controlling tangle (Graph Minors XV, Section 3, page 120). -/
 theorem isControllingTangle_truncation {α : Type u} {β : Type v}
     {S : Type w} [TopologicalSpace S]
@@ -3014,78 +3085,20 @@ private theorem cylinder_disc_of_normal_chord
   let L := fun i => GluedSpace.inr hb_inj '' {p : ClosedCylinder | p.1.2 = w i}
   let X_unp := range a' ∪ range b'
   intro F u v P hF_S₂ hu hv hF_line hF_U hP_sub_inter hP_path hPX_card
-  have hP_sub_H' : P.IsSubdrawing H' := by
-    refine ⟨hP_sub_inter.1.trans ?_, hP_sub_inter.2.trans ?_⟩
-    · rw [interSet_V_of_isClosed H' (hS₁_cl.inter hS₂_cl)]
-      exact inter_subset_left
-    · rw [interSet_E H' (S₁ ∩ S₂)]
-      exact fun _ he => he.1
-  have hPU_inter : P.U ⊆ S₁ ∩ S₂ := by
-    refine (isSubdrawing_U_subset hP_sub_inter).trans ?_
-    rw [(H'.interSet (S₁ ∩ S₂)).U_eq,
-      interSet_V_of_isClosed H' (hS₁_cl.inter hS₂_cl), interSet_E]
-    exact union_subset inter_subset_right
-      (iUnion₂_subset fun e he => (hS₁_cl.inter hS₂_cl).closure_subset_iff.mpr he.2)
+  obtain ⟨hP_sub_H', hPU_inter, hP_line, hK_sub_cl, i₀, havoid⟩ :=
+    exists_stripe_avoiding_path_and_chord hφ hS₁_cl hS₂_cl hL_S₁ hL_disj
+      (fun i => ⟨hSub_H₁.1 (ha'_V i), hSub_H₁.1 (hb'_V i)⟩)
+      (fun i x hx => by rw [hH'_U]; exact Or.inr (mem_iUnion.mpr ⟨i, hx⟩))
+      hF_line hF_U hP_sub_inter hP_path hPX_card
+  obtain ⟨ψ_P, -, -⟩ := hP_line
   have hPU_S₂ : P.U ⊆ S₂ := hPU_inter.trans inter_subset_right
-  have hPX_fin : (P.V ∩ X_unp).Finite :=
-    (P.finite_V).subset inter_subset_left
-  have hpair_disj : Pairwise (fun i j => Disjoint ({a' i, b' i} : Set S') {a' j, b' j}) := by
-    intro i j hij
-    refine (hL_disj hij).mono ?_ ?_
-    · rw [← hL_S₁ i]; exact inter_subset_left
-    · rw [← hL_S₁ j]; exact inter_subset_left
-  obtain ⟨i₀, hi₀_disj⟩ :=
-    exists_disjoint_of_three_le hφ hPX_fin hPX_card hpair_disj
-      (fun i => inter_subset_inter_right _ (by
-        rintro _ (rfl | rfl)
-        · exact .inl ⟨i, rfl⟩
-        · exact .inr ⟨i, rfl⟩))
-  have ha'i₀_not_PV : a' i₀ ∉ P.V := fun h =>
-    Set.disjoint_left.mp hi₀_disj h (.inl rfl)
-  have hb'i₀_not_PV : b' i₀ ∉ P.V := fun h =>
-    Set.disjoint_left.mp hi₀_disj h (.inr rfl)
-  have hPU_V : P.U ∩ H'.V = P.V := isSubdrawing_U_inter_V hP_sub_H'
-  have hPU_disj_i₀ : Disjoint P.U (L i₀) := by
-    refine Set.disjoint_left.mpr fun x hxP hxL => ?_
-    have hx_pair : x ∈ ({a' i₀, b' i₀} : Set S') :=
-      hL_S₁ i₀ ▸ ⟨hxL, (hPU_inter hxP).1⟩
-    rcases hx_pair with rfl | rfl
-    · exact ha'i₀_not_PV (hPU_V ▸ ⟨hxP, hSub_H₁.1 (ha'_V i₀)⟩)
-    · exact hb'i₀_not_PV (hPU_V ▸ ⟨hxP, hSub_H₁.1 (hb'_V i₀)⟩)
-  have ⟨ψ_F, hψ_F0, hψ_F1⟩ := hF_line
-  have huv : u ≠ v := fun heq => zero_ne_one
-    (ψ_F.injective (Subtype.ext (hψ_F0.trans (heq.trans hψ_F1.symm))))
-  have hP_line : IsLineWithEnds P.U u v := GM14.isLine_of_isPathBetween hP_path huv
-  have ⟨ψ_P, hψ_P0, hψ_P1⟩ := hP_line
-  have huPU : u ∈ P.U := hψ_P0 ▸ (ψ_P 0).2
-  have hvPU : v ∈ P.U := hψ_P1 ▸ (ψ_P 1).2
-  have hF_disj_i₀ : Disjoint F (L i₀) := by
-    refine Set.disjoint_left.mpr fun x hxF hxL => ?_
-    have hxU : x ∈ H'.U := by
-      rw [hH'_U]; exact .inr (mem_iUnion.mpr ⟨i₀, hxL⟩)
-    rcases hF_U ⟨hxF, hxU⟩ with rfl | rfl
-    · exact Set.disjoint_left.mp hPU_disj_i₀ huPU hxL
-    · exact Set.disjoint_left.mp hPU_disj_i₀ hvPU hxL
-  have hF_cl_line : IsClosed F := by
-    have hEq : F = range (fun s : unitInterval => (ψ_F s).1) := by
-      ext x
-      exact ⟨fun hx => ⟨ψ_F.symm ⟨x, hx⟩, by simp⟩, fun ⟨s, hs⟩ => hs ▸ (ψ_F s).2⟩
-    rw [hEq]
-    exact (isCompact_range (continuous_subtype_val.comp ψ_F.continuous)).isClosed
-  have hK_sub_cl : IsClosed (P.U ∪ F) := P.isClosed_U.union hF_cl_line
   obtain ⟨D, hD_S₂, hD_disc, hPF_D, hD_bd, hD_U, hD_paths⟩ :=
     exists_striped_disc_in_S₂ hS hΛ₁_open hΛ₂_open hd g₁ g₂ hb_inj hw_inj
       ha'_inr hb'_inr (fun _ => rfl) (fun i => (hH_path i).1) hS₂_U hK_sub_cl
-      (union_subset hPU_S₂ hF_S₂) i₀ (hPU_disj_i₀.union_left hF_disj_i₀)
-  have hPU_D : P.U ⊆ D := subset_union_left.trans hPF_D
-  have hF_D : F ⊆ D := subset_union_right.trans hPF_D
-  have hPU_bd : P.U ⊆ discBd D := (subset_inter hPU_D hPU_inter).trans hD_bd
+      (union_subset hPU_S₂ hF_S₂) i₀ havoid
   let e_sub := (Fintype.equivFin {i : Fin φ // i ≠ i₀}).symm
-  have hD_U_fin : D ∩ H'.U ⊆ discBd D ∪ ⋃ k, (H_path (e_sub k).1).U := by
-    refine hD_U.trans (union_subset (hD_bd.trans subset_union_left) ?_)
-    intro x hx
-    obtain ⟨j, hxj⟩ := mem_iUnion.mp hx
-    exact Or.inr (mem_iUnion.mpr ⟨e_sub.symm j, by simpa using hxj⟩)
+  obtain ⟨hPU_D, hF_D, hPU_bd, hD_U_fin⟩ :=
+    reindex_striped_disc H_path e_sub hPU_inter hPF_D hD_bd hD_U
   have hNo_both : ∀ k, ¬ (a' (e_sub k).1 ∈ P.V ∧ b' (e_sub k).1 ∈ P.V) := by
     rintro k ⟨ha_j, hb_j⟩
     let j := e_sub k

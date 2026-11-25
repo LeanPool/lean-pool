@@ -87,7 +87,10 @@ def ModelOrientationStatement : Prop :=
 /-- **Graph Minors XIX, (5.4)** (page 337): "Let $\chi$ satisfy* **S**$_3$, *and let $(\Gamma_i,
 \phi_i)$ $(i = 1, 2, \dots)$ be a
 similarly oriented bad sequence for $\chi$. Then for all $n \ge 0$, there exists $h \ge 0$
-such that $dist(\Gamma_i) > n$ for all $i \ge h$." -/
+such that $dist(\Gamma_i) > n$ for all $i \ge h$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem54Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat) (χ : ColourScheme S β),
@@ -100,7 +103,10 @@ well-behaved set $\mathscr{C}_1(n)$ of $\chi$-places with the following property
 $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ satisfy $rep(\Gamma),
 ord(\mathscr{T}) \ge n > rep(\mathscr{T})$, and $dist(\Gamma) \ge \frac{1}{2}n + 1$. Then
 there is a rooted location $\mathscr{L}$ which $n$-isolates $\mathscr{T}$ and for which
-$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_1(n)$." -/
+$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_1(n)$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem103Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)
@@ -116,7 +122,10 @@ be an integer. Then there is a
 well-behaved set $\mathscr{C}_2(n)$ of $\chi$-places with the following property. Let
 $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ be $n$-flawed in distance. Then there
 is a rooted location $\mathscr{L}$ which $(n + 1)$-isolates $\mathscr{T}$ and for which
-$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_2(n)$." -/
+$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_2(n)$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem104Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)
@@ -133,7 +142,10 @@ be an integer. Then there is a
 well-behaved set $\mathscr{C}_3(n)$ of $\chi$-places with the following property. Let
 $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ be $n$-flawed in freedom. Then there
 is a rooted location $\mathscr{L}$ which $(n + 1)$-isolates $\mathscr{T}$ and for which
-$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_3(n)$." -/
+$(\Gamma, \phi, \mathscr{L}) \in \mathscr{C}_3(n)$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem105Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)
@@ -151,7 +163,10 @@ well-behaved set $\mathscr{C}_4(S, (\omega_1, \dots, \omega_m), n)$ of $\chi$-pl
 the following property. Let $(\Gamma, \phi, \lambda, \mathscr{T}) \in \mathscr{D}$ be $(n,
 (\omega_1, \dots, \omega_m))$-flawed on $S$. Then there is a rooted location $\mathscr{L}$
 which $(m + 1)n$-isolates $\mathscr{T}$, and for which $(\Gamma, \phi, \mathscr{L}) \in
-\mathscr{C}_4(S, (\omega_1, \dots, \omega_m), n)$." -/
+\mathscr{C}_4(S, (\omega_1, \dots, \omega_m), n)$."
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem111Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)
@@ -171,7 +186,10 @@ with the following property. Let $(\Gamma, \phi, \lambda, \mathscr{T}) \in \math
 $(m, n, \omega_0)$-flawed internally. Then there is a rooted location $\mathscr{L}$ which
 $(4n \cdot 5^{2m} + 3)$-isolates $\mathscr{T}$, and for which $(\Gamma, \phi, \mathscr{L})
 \in \mathscr{C}_5(m, n, \omega_0)$."
-The printed `q_0` in the family of places is a misprint for `ω₀`. -/
+The printed `q_0` in the family of places is a misprint for `ω₀`.
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem141Statement : Prop :=
   ∀ (S Shat : Type) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat)

@@ -643,7 +643,7 @@ theorem injOn_of_outside (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY :
       exact hzim ⟨hzZ, hb⟩
     rcases hrest hzb with h | ⟨a, ha, hae⟩
     · obtain ⟨Θ, hΘ, hzΘ⟩ := mem_iUnion₂.1 h
-      exact hoff (Or.inl (cap.bd_of_mem hS hΘ hzΘ))
+      exact hoff (Or.inl (cap.bd_of_mem hΘ hzΘ))
     · exact hoff (Or.inr (cap.isEmbedding.injective hae ▸ ha))
   obtain ⟨a, ha, ha'⟩ := hmeet h₁ rfl
   obtain ⟨b, hb, hb'⟩ := hmeet h₂ he.symm

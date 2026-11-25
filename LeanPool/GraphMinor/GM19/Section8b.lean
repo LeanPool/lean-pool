@@ -154,7 +154,7 @@ variable {cap : IsCappedSurface S Shat} {Γ : Painting S} {D : Drawing Shat}
 omit [T2Space S] in
 /-- A region of `sk(Γ)` in `Σ̂` is a region of `Γ`, or the inside of the disc of an edge of size 3.
 -/
-theorem IsSkHat.region_cases (h : IsSkHat cap Γ D) (hS : IsSurface S) {r : Set Shat}
+theorem IsSkHat.region_cases (h : IsSkHat cap Γ D) {r : Set Shat}
   (hr : r ∈ D.R) :
     r ∈ Γ.hatRegions cap ∨ ∃ c ∈ Γ.E, (tilde c).ncard = 3 ∧ r ⊆ cap.emb '' closure c := by
   have hT := cap.isClosedSurface
@@ -195,7 +195,7 @@ theorem IsSkHat.region_cases (h : IsSkHat cap Γ D) (hS : IsSurface S) {r : Set 
     exact fun w hw ↦ (hin hw).1
   · left
     have hhat : connectedComponentIn (Γ.hatU cap)ᶜ x ∈ Γ.hatRegions cap := ⟨x, hxU, rfl⟩
-    have hR := h.hatRegion_mem_R hS hhat
+    have hR := h.hatRegion_mem_R hhat
     have hxm : x ∈ connectedComponentIn (Γ.hatU cap)ᶜ x := mem_connectedComponentIn hxU
     have : connectedComponentIn (univ \ D.U) x = connectedComponentIn (Γ.hatU cap)ᶜ x :=
       GM11.region_eq_of_mem ⟨x, hx, rfl⟩ hR (mem_connectedComponentIn hx) hxm
@@ -287,7 +287,7 @@ theorem vertex_step (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
   have hk : ∀ k : GM11.halfEdges D γ (cap.emb v₀), ∃ f c, cap.emb '' f = k.1.1 ∧
       Γ.IsSkEdgeIn f c ∧ v₀ ∈ tilde f := by
     rintro ⟨⟨E, b⟩, hE, hb⟩
-    obtain ⟨f, hf, rfl⟩ := (hD.edge_iff hS).mp hE
+    obtain ⟨f, hf, rfl⟩ := hD.edge_iff.mp hE
     obtain ⟨c, hc⟩ := Γ.exists_isSkEdgeIn hf
     refine ⟨f, c, rfl, hc, ?_⟩
     have := GM11.end_mem_closure hγ hE b
@@ -297,7 +297,7 @@ theorem vertex_step (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
   have hfind : ∀ f c, Γ.IsSkEdgeIn f c → v₀ ∈ tilde f →
       ∃ k, cl k = c := by
     intro f c hc hvf
-    have hE : cap.emb '' f ∈ D.E := (hD.edge_iff hS).mpr ⟨f, hc.mem, rfl⟩
+    have hE : cap.emb '' f ∈ D.E := hD.edge_iff.mpr ⟨f, hc.mem, rfl⟩
     have hcl : cap.emb v₀ ∈ closure (cap.emb '' f) :=
       image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ hvf.1)
     obtain ⟨b, hb⟩ := GM11.exists_end_eq hγ hE hvD hcl
@@ -330,7 +330,7 @@ theorem vertex_step (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
       have hk₂ : k.1.1 ⊆ closure (ρ k) := by
         obtain ⟨k', rfl⟩ := hsurj k
         exact hsec.corners.right k'
-      rcases hD.region_cases hS hrD with hhat | ⟨c₀, hc₀, h₃₀, hsubr⟩
+      rcases hD.region_cases hrD with hhat | ⟨c₀, hc₀, h₃₀, hsubr⟩
       · obtain ⟨w, ⟨hwr, hwV⟩, -⟩ := rad.isPreRadial.2.2.1 _ hhat
         have hdis : Disjoint (ρ k) (Γ.hatU cap) := by
           obtain ⟨y, hy, hyr⟩ := hhat
@@ -401,8 +401,8 @@ theorem exists_edge_incident (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnec
     exact mem_image_of_mem _ hyV
   obtain ⟨G', hpreG, -⟩ := hG' rad.G rad.isPreRadial
   have hrad : GM11.PreRad (GM11.PaintingOrDrawing.drawing D) G' := ⟨hD2, hpreG⟩
-  obtain ⟨e, he, hye⟩ := GM11.exists_edge_at hrad hT (hD.E_nonempty hS h3.1) hvD
-  obtain ⟨f, hf, rfl⟩ := (hD.edge_iff hS).mp he
+  obtain ⟨e, he, hye⟩ := GM11.exists_edge_at hrad hT (hD.E_nonempty h3.1) hvD
+  obtain ⟨f, hf, rfl⟩ := hD.edge_iff.mp he
   obtain ⟨c, hc⟩ := Γ.exists_isSkEdgeIn hf
   rw [(cap.isClosedEmbedding hS).closure_image_eq] at hye
   obtain ⟨y', hy', hyy⟩ := hye

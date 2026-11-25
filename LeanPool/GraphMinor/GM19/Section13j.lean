@@ -17,7 +17,7 @@ This is the paragraph of the proof of (13.6) before its step (9). We have a disc
 Δ \ U(C)`, and `Y = Δ'_v`
 simply-connected. If each arc of `C` is homotopic in `Δ₀ \ {h}` to a curve in `Y`, then `U(C)` is
 null-homotopic in `Δ₀ \ {h}`, and
-by Epstein's theorem it bounds a disc in `Δ₀ \ {h}`, which is false. So some arc is not. Since
+by Graph Minors XI (7.2) it bounds a disc in `Δ₀ \ {h}`, which is false. So some arc is not. Since
 `U(F)` is null-homotopic in `Δ₀ \ {h}`
 there cannot be just one such arc.
 -/

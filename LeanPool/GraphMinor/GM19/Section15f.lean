@@ -150,7 +150,7 @@ theorem exists_inside_cover (D : TangleDatum cap χ) {A B : Hypergraph S (Set S)
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   have h2 := h3.hatRegions_isOpenDisc hS cap
   obtain ⟨H, G₃, hH, hrad, hmax, hsub, hhat⟩ := rad.exists_full hS h2 h3.1
-  have hHE := hH.E_nonempty hS h3.1
+  have hHE := hH.E_nonempty h3.1
   have hAB : Γ.toHypergraph.IsSeparation A B := D.isTangle.isSeparation hmem
   let t : Set S → Prop := (· ∈ A.edgeSet)
   let Z : Set (Set Shat) := colourSet cap Γ G₃ t
@@ -204,7 +204,7 @@ theorem exists_inside_cover (D : TangleDatum cap χ) {A B : Hypergraph S (Set S)
     exact hyi.2 (Or.inl hyU)
   have hreg : ∀ f, f ∈ arcComponentsIn (Γ.skU \ Γ.V) → ∃ s ∈ G₃.R, cap.emb '' f ⊆ s := by
     intro f hf
-    have hg := (hH.edge_iff hS).mpr ⟨f, hf, rfl⟩
+    have hg := hH.edge_iff.mpr ⟨f, hf, rfl⟩
     have hdis : Disjoint (cap.emb '' f) G₃.U := by
       refine disjoint_left.mpr fun y hy hyU ↦ ?_
       have hyD := hg.2.1 hy
@@ -219,7 +219,7 @@ theorem exists_inside_cover (D : TangleDatum cap χ) {A B : Hypergraph S (Set S)
     intro f c s hfc hs hfs
     constructor
     · rintro ⟨-, f', c', h', hf', ht⟩
-      rw [(colour_unique hS hH hrad hmax hHE hs hfc h' hfs hf').2]
+      rw [(colour_unique hH hrad hmax hHE hs hfc h' hfs hf').2]
       exact ht
     · exact fun h ↦ ⟨hs, f, c, hfc, hfs, h⟩
   have hcov : ∀ c ∈ Γ.E, (∀ f, Γ.IsSkEdgeIn f c → ∀ s ∈ G₃.R, cap.emb '' f ⊆ s → Disjoint s r₀)

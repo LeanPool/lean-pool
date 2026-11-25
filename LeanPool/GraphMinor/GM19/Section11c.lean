@@ -132,7 +132,7 @@ include X
 
 omit [T2Space S] in
 /-- A short circuit with `r` inside has `r` on it, or else it is a flaw in freedom. -/
-theorem pole_mem (hS : IsSurface S) {C : Drawing Shat} (hC : C.IsCircuitOf D.rad.G) (hc : C.E.ncard
+theorem pole_mem {C : Drawing Shat} (hC : C.IsCircuitOf D.rad.G) (hc : C.E.ncard
   ≤ 2 * N) (hri : r ∈ D.ins C) : r ∈ C.V := by
   have hT := cap.isClosedSurface
   have hman : ∀ x : Shat, IsManifoldPoint x := fun x ↦ (hT.2.2 x).isManifoldPoint
@@ -152,7 +152,7 @@ theorem pole_mem (hS : IsSurface S) {C : Drawing Shat} (hC : C.IsCircuitOf D.rad
     (discInt_subset _)) hi.2.2.1.isClosed
   refine X.free C ⟨hC, hc, Or.inl ⟨side, X.long, ?_⟩⟩
   rintro _ ⟨y, hy, rfl⟩
-  exact hcl (cap.mem_closure_emb hS X.cuff (X.side_cuff hy))
+  exact hcl (cap.mem_closure_emb X.cuff (X.side_cuff hy))
 
 theorem shape (hS : IsSurface S) {F : Drawing Shat} (hb : D.IsBiteAt r F) (hc : F.E.ncard
   ≤ 2 * N) : ∃ v₁ v₂ Β L A A' Di Do, D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do :=
@@ -163,13 +163,13 @@ theorem biteArc_subset_of_ins (hS : IsSurface S) {F₁ F₂ : Drawing Shat} (h�
     (hsub : D.ins F₁ ⊆ D.ins F₂) : D.biteArc r F₁ ⊆ D.biteArc r F₂ := by
   obtain ⟨_, _, _, _, _, _, _, _, s₁⟩ := X.shape hS h₁ c₁
   obtain ⟨_, _, _, _, _, _, _, _, s₂⟩ := X.shape hS h₂ c₂
-  exact s₁.biteArc_mono hS s₂ hsub
+  exact s₁.biteArc_mono s₂ hsub
 
 omit [T2Space S] in
 /-- A short circuit with `r` inside is a bite. -/
-theorem bite_of_ins (hS : IsSurface S) {C : Drawing Shat} (hC : C.IsCircuitOf D.rad.G)
+theorem bite_of_ins {C : Drawing Shat} (hC : C.IsCircuitOf D.rad.G)
   (hc : C.E.ncard ≤ 2 * N) (hri : r ∈ D.ins C) : D.IsBiteAt r C :=
-  ⟨X.pole, hC, by have := X.rep_gt; omega, X.pole_mem hS hC hc hri⟩
+  ⟨X.pole, hC, by have := X.rep_gt; omega, X.pole_mem hC hc hri⟩
 
 omit [TopologicalSpace S] [T2Space S] X in
 omit [T2Space Shat] in
@@ -217,7 +217,7 @@ theorem exists_merge (hS : IsSurface S) {side' : Set S} {ω : List β} {ℱ : Se
       have h₆ := ncard_le_ncard this (F₁.finite_V.subset inter_subset_left)
       rwa [ncard_pair hxy] at h₆
     omega
-  have bC : D.IsBiteAt r C := X.bite_of_ins hS hC (by omega) (i₁ (D.U_subset_ins b₁.is_circuit
+  have bC : D.IsBiteAt r C := X.bite_of_ins hC (by omega) (i₁ (D.U_subset_ins b₁.is_circuit
     b₁.card_lt (F₁.V_subset_U b₁.rstar_mem)))
   set 𝒜 := (ℱ \ {F₁}) \ {F₂} with h𝒜
   have hfA : 𝒜.Finite := hf.subset fun z hz ↦ hz.1.1

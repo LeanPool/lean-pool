@@ -38,7 +38,7 @@ theorem IsSkHat.skAdj_of_edge (hS : IsSurface S) {Γ : Painting S} {H : Drawing 
   (h : IsSkHat cap Γ H) {C : Set Shat} (hC : C ∈ H.E) {x y : Shat} (hcap : closure C ∩ H.V
     = {x, y}) :
     ∃ u w, x = cap.emb u ∧ y = cap.emb w ∧ Γ.skAdj.Adj u w := by
-  obtain ⟨e, he, rfl⟩ := (h.edge_iff hS).mp hC
+  obtain ⟨e, he, rfl⟩ := h.edge_iff.mp hC
   obtain ⟨u, w, huw, ht, htV, -⟩ := Γ.sk_line he
   have hcl : closure (cap.emb '' e) = cap.emb '' closure e := ((cap.isClosedEmbedding
     hS).closure_image_eq e).symm ▸ rfl

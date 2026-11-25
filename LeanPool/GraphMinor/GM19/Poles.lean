@@ -64,7 +64,7 @@ theorem RadialDrawing.edge_subset_region (rad : RadialDrawing cap Γ) {e : Set S
 variable (hS : IsSurface S)
 include hS
 
-omit [T2Space Shat] in
+omit [T2Space Shat] hS in
 omit [T2Space S] in
 /-- A cuff has a pole, and the region of this pole is the pasted open disc. -/
 theorem RadialDrawing.exists_pole (rad : RadialDrawing cap Γ) {Θ : Set S} (hΘ : Θ ∈ cuffs S) :
@@ -73,7 +73,7 @@ theorem RadialDrawing.exists_pole (rad : RadialDrawing cap Γ) {Θ : Set S} (hΘ
   obtain ⟨x, hx⟩ : (cap.cuffDisc Θ).Nonempty := by
     by_contra hne
     rw [not_nonempty_iff_eq_empty] at hne
-    have h₁ := cap.closure_cuffDisc hS hΘ
+    have h₁ := cap.closure_cuffDisc hΘ
     rw [hne, closure_empty, empty_union] at h₁
     obtain ⟨y, hy, rfl⟩ := hΘ
     exact (h₁.symm ▸ mem_image_of_mem cap.emb (mem_connectedComponentIn hy) : cap.emb y ∈
@@ -82,7 +82,7 @@ theorem RadialDrawing.exists_pole (rad : RadialDrawing cap Γ) {Θ : Set S} (hΘ
   have hr : connectedComponentIn (Γ.hatU cap)ᶜ x ∈ Γ.hatRegions cap := ⟨x, hxU, rfl⟩
   have hxr := mem_connectedComponentIn hxU
   have hreg : connectedComponentIn (Γ.hatU cap)ᶜ x = cap.cuffDisc Θ := by
-    rcases hatRegion_cases hS cap Γ hr with h | ⟨Θ', hΘ', h⟩
+    rcases hatRegion_cases cap Γ hr with h | ⟨Θ', hΘ', h⟩
     · exact absurd (h hxr) (cap.notMem_range hΘ hx)
     · have : Θ' = Θ := by
         by_contra hne
@@ -99,13 +99,13 @@ theorem RadialDrawing.exists_pole (rad : RadialDrawing cap Γ) {Θ : Set S} (hΘ
   exact ⟨p, ⟨⟨hpG, hpU⟩, fun h ↦ cap.notMem_range hΘ hpΘ
     (h (hreg'.symm ▸ hpΘ : p ∈ rad.regionOf p))⟩, hpΘ, hreg'⟩
 
-omit [T2Space Shat] in
+omit [T2Space Shat] hS in
 omit [T2Space S] in
 /-- The region of a pole is a pasted open disc. -/
 theorem RadialDrawing.pole_cases (rad : RadialDrawing cap Γ) {p : Shat} (hp : p ∈ rad.poles) :
     ∃ Θ ∈ cuffs S, rad.regionOf p = cap.cuffDisc Θ ∧ p ∈ cap.cuffDisc Θ := by
   obtain ⟨hr, hpr⟩ := rad.regionOf_mem hp.1
-  rcases hatRegion_cases hS cap Γ hr with h | ⟨Θ, hΘ, h⟩
+  rcases hatRegion_cases cap Γ hr with h | ⟨Θ, hΘ, h⟩
   · exact absurd h hp.2
   · exact ⟨Θ, hΘ, h, h ▸ hpr⟩
 
@@ -116,7 +116,7 @@ theorem RadialDrawing.region_subset_range (rad : RadialDrawing cap Γ) {w : Shat
   by_contra h
   exact hn ⟨hw, h⟩
 
-omit [T2Space Shat] in
+omit [T2Space Shat] hS in
 omit [T2Space S] in
 /-- An edge of `Γ*` at a pole misses `Σ`, and its other end lies on the cuff of the pole. -/
 theorem RadialDrawing.pole_edge (rad : RadialDrawing cap Γ) {e : Set Shat} {p : Shat} {v : S}
@@ -130,7 +130,7 @@ theorem RadialDrawing.pole_edge (rad : RadialDrawing cap Γ) {e : Set Shat} {p :
     have : cap.emb v ∈ closure e ∩ rad.G.V := by rw [hset]; exact Or.inl rfl
     exact this.1
   have h₁ := closure_mono hsub hvcl
-  rw [cap.closure_cuffDisc hS hΘ] at h₁
+  rw [cap.closure_cuffDisc hΘ] at h₁
   rcases h₁ with h | ⟨y, hy, hyv⟩
   · exact absurd ⟨v, rfl⟩ (cap.notMem_range hΘ h)
   · rwa [← cap.isEmbedding.injective hyv]
@@ -152,7 +152,7 @@ theorem RadialDrawing.exists_pole_edge (rad : RadialDrawing cap Γ) {p : Shat} (
     {Θ : Set S} (hΘ : Θ ∈ cuffs S) (hreg : rad.regionOf p = cap.cuffDisc Θ) {v : S}
     (hv : v ∈ Γ.V) (hvΘ : v ∈ Θ) : ∃ e ∈ rad.G.E, closure e ∩ rad.G.V = {cap.emb v, p} := by
   refine rad.exists_spoke hS (h3.hatRegions_isOpenDisc hS cap) h3.1 hp.1 hv ?_
-  rw [hreg, cap.closure_cuffDisc hS hΘ]
+  rw [hreg, cap.closure_cuffDisc hΘ]
   exact Or.inr (mem_image_of_mem _ hvΘ)
 
 /-- There is at most one edge of `Γ*` between two given vertices. -/

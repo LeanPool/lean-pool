@@ -192,10 +192,10 @@ theorem outer_fragment {Y : Type} [TopologicalSpace Y] [T2Space Y] [ConnectedSpa
   have hle : numCuffs S ≤ numCuffs (connectedComponent y) := by
     refine le_numCuffs_fragment hS hY hψ y hΘ₁ (fun Θ' hΘ' hne ↦ disjoint_left.2 fun x hx hxK ↦ ?_)
       (fun Θ' hΘ' hne x hx ↦ ?_) hp (by rw [hy']; exact hnotin hp)
-    · exact disjoint_left.1 (hdis Θ' hΘ' hne) (cap.mem_closure_emb hS hΘ' hx)
+    · exact disjoint_left.1 (hdis Θ' hΘ' hne) (cap.mem_closure_emb hΘ' hx)
         (Surface.discBd_subset _ (h.sub (mem_image_of_mem _ hxK)))
     · rw [hy']
-      exact fun hi ↦ disjoint_left.1 (hdis Θ' hΘ' hne) (cap.mem_closure_emb hS hΘ' hx)
+      exact fun hi ↦ disjoint_left.1 (hdis Θ' hΘ' hne) (cap.mem_closure_emb hΘ' hx)
         (discInt_subset _ hi)
   have hcard : numCuffs (connectedComponent y) = numCuffs S := by
     refine le_antisymm ?_ hle

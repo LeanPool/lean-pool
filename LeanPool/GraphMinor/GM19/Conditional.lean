@@ -69,7 +69,10 @@ def Theorem41Statement : Prop :=
 *be a similarly oriented bad sequence for $\chi$. Then for all $n \ge 0$ there exists $h \ge
 1$ such that $rep(\Gamma_i) > n$ for all $i \ge h$." The value of `rep(Γ_i)` is read from any radial
 drawing of `Γ_i`. The proof cuts the surface
-along a feature, so it needs (5.2) and (5.3). -/
+along a feature, so it needs (5.2) and (5.3).
+
+The Lean form uses an infinite ambient label type `β` as in (4.1). The scheme's colour sets
+can still be finite. -/
 def Theorem55Statement : Prop :=
   ∀ (S Shat : Type u) [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
     (β : Type w) [Infinite β] (cap : IsCappedSurface S Shat) (χ : ColourScheme S β),

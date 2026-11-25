@@ -217,7 +217,7 @@ theorem rep_le_sk' (rad : RadialDrawing cap Γ) (hS : IsSurface S) (hD : IsSkHat
   classical
   have hl := sk_loopFree hS hD
   obtain ⟨γ, hγ⟩ := exists_edgePar D
-  rcases two_edges_or_single hl (sk_block rad hS hD h3) (hD.E_nonempty hS h3.1) with hall | ⟨e, he,
+  rcases two_edges_or_single hl (sk_block rad hS hD h3) (hD.E_nonempty h3.1) with hall | ⟨e, he,
     hU⟩
   · refine rep_le_sk rad hS hD h3 hγ fun v hv => ?_
     obtain ⟨e₁, he₁, e₂, he₂, hne, hv₁, hv₂⟩ := hall v hv
@@ -237,7 +237,7 @@ theorem rep_le_sk' (rad : RadialDrawing cap Γ) (hS : IsSurface S) (hD : IsSkHat
 omit [ConnectedSpace Shat] in
 omit [T2Space S] in
 /-- `rep(sk(Γ)) ≤ rep(Γ)`: a circuit of `Γ*` is an `sk(Γ)`-normal `O`-arc. -/
-theorem sk_le_rep (rad : RadialDrawing cap Γ) (_hS : IsSurface S) (hD : IsSkHat cap Γ D) :
+theorem sk_le_rep (rad : RadialDrawing cap Γ) (hD : IsSkHat cap Γ D) :
     D.rep ≤ Painting.rep rad := by
   have hVhat : D.V = Γ.hatV cap := hD.hV
   have hUhat : D.U ⊆ Γ.hatU cap := by
@@ -296,6 +296,6 @@ surface
 `Σ`, then `sk(Γ)` is a block and `rep(sk(Γ)) = rep(Γ)`. -/
 theorem theorem_6_7_proof (rad : RadialDrawing cap Γ) (hS : IsSurface S) (hD : IsSkHat cap Γ D)
     (h3 : Γ.IsInternallyThreeConnected) : D.IsBlock ∧ D.rep = Painting.rep rad :=
-  ⟨sk_block rad hS hD h3, le_antisymm (sk_le_rep rad hS hD) (rep_le_sk' rad hS hD h3)⟩
+  ⟨sk_block rad hS hD h3, le_antisymm (sk_le_rep rad hD) (rep_le_sk' rad hS hD h3)⟩
 
 end GraphMinor.GM19

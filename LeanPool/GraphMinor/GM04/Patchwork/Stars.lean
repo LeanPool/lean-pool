@@ -741,29 +741,9 @@ theorem Patchwork.IsRemovable.simulated_restrict_of_roots_eq {P' : Patchwork Ω 
         rwa [marchMapSubgraph_id hverts]
       φ_le := fun _ _ ↦ le_rfl }
 
-open Classical in
-@[simp]
-private theorem hypergraph_union_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).vertexSet = G₁.vertexSet ∪ G₂.vertexSet := rfl
-
-open Classical in
-@[simp]
-private theorem hypergraph_union_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∪ G₂).edgeSet = G₁.edgeSet ∪ G₂.edgeSet := rfl
-
-open Classical in
-private theorem hypergraph_union_inc (G₁ G₂ : Hypergraph α β) (e : β) (v : α) :
-    (G₁ ∪ G₂).Inc e v ↔ G₁.Inc e v ∨ G₂.Inc e v := Iff.rfl
-
-open Classical in
-@[simp]
-private theorem hypergraph_inter_vertexSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).vertexSet = G₁.vertexSet ∩ G₂.vertexSet := rfl
-
-open Classical in
-@[simp]
-private theorem hypergraph_inter_edgeSet (G₁ G₂ : Hypergraph α β) :
-    (G₁ ∩ G₂).edgeSet = G₁.edgeSet ∩ G₂.edgeSet := rfl
+attribute [local simp] GraphMinor.Hypergraph.union_vertexSet_eq
+  GraphMinor.Hypergraph.union_edgeSet_eq
+  GraphMinor.Hypergraph.inter_vertexSet_eq GraphMinor.Hypergraph.inter_edgeSet_eq
 
 open Classical in
 theorem Hypergraph.biUnion_insert (s : ι) (A : Finset ι) (f : ι → Hypergraph α β) :
@@ -771,7 +751,7 @@ theorem Hypergraph.biUnion_insert (s : ι) (A : Finset ι) (f : ι → Hypergrap
   ext v e
   · simp [Hypergraph.biUnion]
   · simp [Hypergraph.biUnion]
-  · simp [Hypergraph.biUnion, hypergraph_union_inc]
+  · simp [Hypergraph.biUnion, GraphMinor.Hypergraph.union_inc_iff]
 
 open Classical in
 theorem Hypergraph.biUnion_singleton (s : ι) (f : ι → Hypergraph α β) :
@@ -927,7 +907,8 @@ theorem isSeparation_cross_insert {G : RootedHypergraph α β} {S : RootedTree �
               Finset.insert_comm]
           edgeSet_inter_eq := by
             ext e
-            simp only [hypergraph_inter_edgeSet, cross, Hypergraph.biUnion, Set.mem_inter_iff,
+            simp only [GraphMinor.Hypergraph.inter_edgeSet_eq, cross, Hypergraph.biUnion,
+              Set.mem_inter_iff,
               Set.mem_iUnion, Set.mem_empty_iff_false, iff_false, not_and, not_exists]
             intro hes t ht het
             have ht_verts : t ∈ S.verts := by
@@ -947,7 +928,8 @@ theorem isSeparation_cross_insert {G : RootedHypergraph α β} {S : RootedTree �
       rootSet_left := by
         rw [htd.rootSet_edge s hs, hstar s hs]
         ext v
-        simp only [hypergraph_inter_vertexSet, cross, Hypergraph.biUnion, Set.mem_inter_iff,
+        simp only [GraphMinor.Hypergraph.inter_vertexSet_eq, cross, Hypergraph.biUnion,
+          Set.mem_inter_iff,
           Set.mem_iUnion, exists_prop]
         refine ⟨fun ⟨hvs, hvr⟩ ↦ ⟨hvs, S.root, Finset.mem_insert_self _ _, hvr⟩, ?_⟩
         rintro ⟨hvs, t, ht, hvt⟩

@@ -33,29 +33,29 @@ variable {S Shat Y : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Sh
 
 omit [T2Space S] in
 /-- A pasted disc that meets a closed disc with boundary in `S` lies in that disc. -/
-theorem IsCappedSurface.subset_of_meet (hS : IsSurface S) (cap : IsCappedSurface S Shat) {D : Set
+theorem IsCappedSurface.subset_of_meet (cap : IsCappedSurface S Shat) {D : Set
   Shat} (hD : IsClosedDisc D)
     (h : discBd D ⊆ range cap.emb) {Θ : Set S} (hΘ : Θ ∈ cuffs S) (hm :
       (cap.cuffDisc Θ ∩ D).Nonempty) :
     closure (cap.cuffDisc Θ) ⊆ D := by
   obtain ⟨x, hx, hxD⟩ := hm
-  rcases cap.side hS hD h hΘ with h' | h'
+  rcases cap.side hD h hΘ with h' | h'
   · exact h'
   · exfalso
     refine disjoint_left.1 h' (subset_closure hx) ⟨hxD, fun hb ↦ ?_⟩
     exact cap.notMem_range hΘ hx (h hb)
 
 omit [T2Space S] [T2Space Shat] in
-theorem IsCappedSurface.bd_of_mem (hS : IsSurface S) (cap : IsCappedSurface S Shat) {Θ : Set S}
+theorem IsCappedSurface.bd_of_mem (cap : IsCappedSurface S Shat) {Θ : Set S}
   (hΘ : Θ ∈ cuffs S) {z : S}
     (hz : cap.emb z ∈ closure (cap.cuffDisc Θ)) : z ∈ bd S :=
-  cuff_subset_bd ⟨Θ, hΘ⟩ (cap.mem_of_emb_mem hS hΘ hz)
+  cuff_subset_bd ⟨Θ, hΘ⟩ (cap.mem_of_emb_mem hΘ hz)
 
 omit [T2Space S] [T2Space Shat] in
-theorem IsCappedSurface.mem_closure_emb (hS : IsSurface S) (cap : IsCappedSurface S Shat) {Θ : Set
+theorem IsCappedSurface.mem_closure_emb (cap : IsCappedSurface S Shat) {Θ : Set
   S} (hΘ : Θ ∈ cuffs S) {z : S}
     (hz : z ∈ Θ) : cap.emb z ∈ closure (cap.cuffDisc Θ) := by
-  rw [cap.closure_cuffDisc hS hΘ]
+  rw [cap.closure_cuffDisc hΘ]
   exact Or.inr (mem_image_of_mem _ hz)
 
 omit [T2Space Y] in
@@ -86,7 +86,7 @@ theorem outer_disc (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsSur
       := by
       rintro x ⟨hxE, hxD⟩
       refine ⟨hxE, ?_⟩
-      rcases cap.side hS hD hr hΘ with h | h
+      rcases cap.side hD hr hΘ with h | h
       · exact absurd h hn
       · by_contra hb
         exact disjoint_left.1 h hxE ⟨hxD, hb⟩
@@ -103,41 +103,41 @@ theorem outer_shape1 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
   rcases hf with ⟨hF, -, hsing⟩ | ⟨s, t, Θ, hΘ, hst, hs, ht, hKb, hl, hsub, hrest⟩
   · have hr : discBd Δ ⊆ range cap.emb := hF.le.trans (image_subset_range _ _)
     refine outer_disc hS cap hY hψ hΔ hr hF.ge (hF.le.trans subset_union_right) ?_ h₁ h₂ hne
-      (cap.subset_of_meet hS hΔ hr h₁ m₁) (cap.subset_of_meet hS hΔ hr h₂ m₂)
+      (cap.subset_of_meet hΔ hr h₁ m₁) (cap.subset_of_meet hΔ hr h₂ m₂)
     rintro Θ' hΘ' - x ⟨hxE, hx⟩ y ⟨hyE, hy⟩
     rw [hF] at hx hy
     obtain ⟨a, ha, rfl⟩ := hx
     obtain ⟨b, hb, rfl⟩ := hy
-    rw [hsing ⟨ha, cap.bd_of_mem hS hΘ' hxE⟩ ⟨hb, cap.bd_of_mem hS hΘ' hyE⟩]
+    rw [hsing ⟨ha, cap.bd_of_mem hΘ' hxE⟩ ⟨hb, cap.bd_of_mem hΘ' hyE⟩]
   · obtain ⟨-, Δ₂, -, hd₂, -, hK₂, -, hr₂, -, hs₂, -, hE₂, hΔΔ₂, -, hpre⟩ :=
-      exists_form_discs hS cap hΔ hΘ hst hs ht hKb hl hsub hrest
+      exists_form_discs cap hΔ hΘ hst hs ht hKb hl hsub hrest
     have hres := outer_disc (ψ := ψ) hS cap hY hψ hd₂ hr₂ hK₂ (fun x hx ↦ ?_) ?_ h₁ h₂ hne
-      (cap.subset_of_meet hS hd₂ hr₂ h₁ (m₁.mono (inter_subset_inter_right _ hΔΔ₂)))
-      (cap.subset_of_meet hS hd₂ hr₂ h₂ (m₂.mono (inter_subset_inter_right _ hΔΔ₂)))
+      (cap.subset_of_meet hd₂ hr₂ h₁ (m₁.mono (inter_subset_inter_right _ hΔΔ₂)))
+      (cap.subset_of_meet hd₂ hr₂ h₂ (m₂.mono (inter_subset_inter_right _ hΔΔ₂)))
     · rwa [preimage_compl, hpre, ← preimage_compl] at hres
     · rcases hs₂ hx with h | ⟨z, hz, rfl⟩
       · exact Or.inr h
-      · exact Or.inl (mem_biUnion hΘ (cap.mem_closure_emb hS hΘ hz))
+      · exact Or.inl (mem_biUnion hΘ (cap.mem_closure_emb hΘ hz))
     · rintro Θ' hΘ' hn x ⟨hxE, hx⟩
       exfalso
       have hne' : Θ' ≠ Θ := fun he ↦ hn (he ▸ hE₂)
       rcases hs₂ hx with ⟨z, hz, rfl⟩ | ⟨z, hz, rfl⟩
-      · have hzΘ := cap.mem_of_emb_mem hS hΘ' hxE
+      · have hzΘ := cap.mem_of_emb_mem hΘ' hxE
         have hzb : z ∈ K.U ∩ bd S := ⟨hz, cuff_subset_bd ⟨Θ', hΘ'⟩ hzΘ⟩
         rw [hKb] at hzb
         rcases hzb with rfl | h'
         · exact hne' (cuffs_eq_of_mem hΘ' hΘ hzΘ hs)
         · exact hne' (cuffs_eq_of_mem hΘ' hΘ hzΘ (mem_singleton_iff.1 h' ▸ ht))
-      · exact hne' (cuffs_eq_of_mem hΘ' hΘ (cap.mem_of_emb_mem hS hΘ' hxE) hz)
+      · exact hne' (cuffs_eq_of_mem hΘ' hΘ (cap.mem_of_emb_mem hΘ' hxE) hz)
 
 omit [T2Space Shat] in
 omit [T2Space S] in
-theorem IsCappedSurface.preimage_compl_discInt (hS : IsSurface S) (cap : IsCappedSurface S Shat) {Θ
+theorem IsCappedSurface.preimage_compl_discInt (cap : IsCappedSurface S Shat) {Θ
   : Set S} (hΘ : Θ ∈ cuffs S)
     (G : Set Shat) : cap.emb ⁻¹' (G ∪ discInt (closure (cap.cuffDisc Θ)))ᶜ = cap.emb ⁻¹' Gᶜ := by
   ext z
   simp only [mem_preimage, mem_compl_iff, mem_union, not_or]
-  rw [← cap.cuffDisc_eq_discInt hS hΘ]
+  rw [← cap.cuffDisc_eq_discInt hΘ]
   exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun h' ↦ cap.notMem_range hΘ h' (mem_range_self z)⟩⟩
 
 theorem isPreconnected_of_line {T : Type} [TopologicalSpace T] {L : Set T} {a b : T}
@@ -181,9 +181,9 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
   have hbE : discBd E = cap.emb '' Θ := cap.cuffDisc_bd Θ hΘ
   have hnot : ¬ E ⊆ Δ := by
     obtain ⟨x, hx⟩ := hE.nonempty_discInt
-    rw [← cap.cuffDisc_eq_discInt hS hΘ] at hx
+    rw [← cap.cuffDisc_eq_discInt hΘ] at hx
     exact fun h ↦ disjoint_left.1 hdj hx (h (subset_closure hx))
-  have hEi : Disjoint E (discInt Δ) := (cap.side hS hΔ hr hΘ).resolve_left hnot
+  have hEi : Disjoint E (discInt Δ) := (cap.side hΔ hr hΘ).resolve_left hnot
   have hbdmem : ∀ {Θ₂}, Θ₂ ∈ cuffs S → Disjoint (closure (cap.cuffDisc Θ₂)) (discInt Δ) →
       ∀ {x}, x ∈ closure (cap.cuffDisc Θ₂) → x ∈ Δ → x = cap.emb u := by
     intro Θ₂ h₂ hd x hxE hxD
@@ -191,22 +191,22 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
       by_contra hb
       exact disjoint_left.1 hd hxE ⟨hxD, hb⟩
     obtain ⟨z, rfl⟩ := hr hb
-    exact hbd ⟨hb, mem_image_of_mem _ (cap.bd_of_mem hS h₂ hxE)⟩
+    exact hbd ⟨hb, mem_image_of_mem _ (cap.bd_of_mem h₂ hxE)⟩
   have hEΔ : ∀ {x}, x ∈ E → x ∈ Δ → x = cap.emb u := fun h h' ↦ hbdmem hΘ hEi h h'
   have hLs : ∀ {Θ₂}, Θ₂ ∈ cuffs S → ∀ {z}, z ∈ L → cap.emb z ∈ closure (cap.cuffDisc Θ₂) → z = s
     := by
     intro Θ₂ h₂ z hz hzE
-    exact hLb ⟨hz, cap.bd_of_mem hS h₂ hzE⟩
+    exact hLb ⟨hz, cap.bd_of_mem h₂ hzE⟩
   have huL : cap.emb u ∈ cap.emb '' L ∩ Δ := by rw [hLΔ]; rfl
-  have hE'Δ : closure (cap.cuffDisc Θ') ⊆ Δ := cap.subset_of_meet hS hΔ hr hΘ' hmeet
+  have hE'Δ : closure (cap.cuffDisc Θ') ⊆ Δ := cap.subset_of_meet hΔ hr hΘ' hmeet
   have hmO : ∀ Θ₂ ∈ cuffs S, Θ₂ ≠ Θ → ¬ closure (cap.cuffDisc Θ₂) ⊆ Δ → ∀ {x}, x ∈ closure
     (cap.cuffDisc Θ₂) →
       (x ∈ Δ ∨ x ∈ cap.emb '' L) → x = cap.emb u := by
     rintro Θ₂ h₂ hn₂ hn x hx (h | ⟨z, hz, rfl⟩)
-    · exact hbdmem h₂ ((cap.side hS hΔ hr h₂).resolve_left hn) hx h
+    · exact hbdmem h₂ ((cap.side hΔ hr h₂).resolve_left hn) hx h
     · have hzs := hLs h₂ hz hx
       subst hzs
-      exact absurd (cuffs_eq_of_mem h₂ hΘ (cap.mem_of_emb_mem hS h₂ hx) hs) hn₂
+      exact absurd (cuffs_eq_of_mem h₂ hΘ (cap.mem_of_emb_mem h₂ hx) hs) hn₂
   have hEd : ∀ Θ₂ ∈ cuffs S, Θ₂ ≠ Θ → Disjoint (closure (cap.cuffDisc Θ₂)) E
     := fun Θ₂ h₂ hn ↦ cap.cuffDisc_disjoint Θ₂ h₂ Θ hΘ hn
   have hrestK : ∀ {x}, x ∈ discBd Δ ∨ x ∈ cap.emb '' L ∨ x ∈ E → x ∈ cap.discs ∪ cap.emb '' K.U
@@ -216,7 +216,7 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
     · exact Or.inr (hK ▸ Or.inr h)
     · exact Or.inl (mem_biUnion hΘ h)
   rcases hL with ⟨rfl, rfl⟩ | hl
-  · have hsE : cap.emb s ∈ E := cap.mem_closure_emb hS hΘ hs
+  · have hsE : cap.emb s ∈ E := cap.mem_closure_emb hΘ hs
     have hsimp : cap.emb '' {s} = {cap.emb s} := image_singleton
     have ht : Δ ∩ E = {cap.emb s} := by
       ext x
@@ -253,7 +253,7 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
           · exact absurd h (disjoint_left.1 (hEd Θ₂ h₂ hn₂) hxE)
         rw [key hx, key hy])
       hΘ hΘ' hne subset_union_right (hE'Δ.trans subset_union_left)
-    rwa [cap.preimage_compl_discInt hS hΘ] at hres
+    rwa [cap.preimage_compl_discInt hΘ] at hres
   · obtain ⟨hsL, huL', hsu⟩ := ends_of_line hl
     have hline := hl.map_of_embedding cap.isEmbedding
     have hLE : cap.emb '' L ∩ E = {cap.emb s} := by
@@ -263,7 +263,7 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
         rw [hLs hΘ hz h]
         rfl
       · rintro rfl
-        exact ⟨mem_image_of_mem _ hsL, cap.mem_closure_emb hS hΘ hs⟩
+        exact ⟨mem_image_of_mem _ hsL, cap.mem_closure_emb hΘ hs⟩
     have hdE : Disjoint E Δ := disjoint_left.2 fun x hx hxΔ ↦ by
       have hxu := hEΔ hx hxΔ
       have : cap.emb u ∈ cap.emb '' L ∩ E := ⟨huL.1, hxu ▸ hx⟩
@@ -306,7 +306,7 @@ theorem outer_shape2 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
           · exact hmO Θ₂ h₂ hn₂ hn₃ hxE (Or.inl h)
         rw [key hx, key hy])
       hΘ hΘ' hne (subset_union_left.trans subset_union_left) (hE'Δ.trans subset_union_right)
-    rwa [union_comm, cap.preimage_compl_discInt hS hΘ] at hres
+    rwa [union_comm, cap.preimage_compl_discInt hΘ] at hres
 
 omit [T2Space Y] in
 /-- The third shape: two circuits with a path between them. The cell is the two discs and the path.
@@ -327,8 +327,8 @@ theorem outer_shape3 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
   have hT := cap.isClosedSurface
   have : ConnectedSpace Shat := cap.connected
   have hman : ∀ x : Shat, IsManifoldPoint x := fun x ↦ (hT.2.2 x).isManifoldPoint
-  have hE₁ := cap.subset_of_meet hS hΔ₁ hr₁ h₁ m₁
-  have hE₂ := cap.subset_of_meet hS hΔ₂ hr₂ h₂ m₂
+  have hE₁ := cap.subset_of_meet hΔ₁ hr₁ h₁ m₁
+  have hE₂ := cap.subset_of_meet hΔ₂ hr₂ h₂ m₂
   have hG : IsOpen (discInt Δ₁ ∪ discInt Δ₂) := (hΔ₁.isOpen_discInt hman).union
     (hΔ₂.isOpen_discInt hman)
   have haL : cap.emb a ∈ cap.emb '' L ∩ Δ₁ := by rw [hL₁]; rfl
@@ -342,10 +342,10 @@ theorem outer_shape3 (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY : IsS
       · exact hr₁
       · exact hr₂
     by_contra hb
-    exact disjoint_left.1 ((cap.side hS hD hr hΘ).resolve_left hn) hx ⟨hxD, hb⟩
+    exact disjoint_left.1 ((cap.side hD hr hΘ).resolve_left hn) hx ⟨hxD, hb⟩
   have hEb : ∀ {Θ}, Θ ∈ cuffs S → ∀ {z}, cap.emb z ∈ closure (cap.cuffDisc Θ)
     → cap.emb z ∈ cap.emb '' bd S := fun hΘ _ hz ↦
-    mem_image_of_mem _ (cap.bd_of_mem hS hΘ hz)
+    mem_image_of_mem _ (cap.bd_of_mem hΘ hz)
   have hrange : ∀ {D}, (D = Δ₁ ∨ D = Δ₂) → discBd D ⊆ range cap.emb := by
     rintro D (rfl | rfl)
     · exact hr₁

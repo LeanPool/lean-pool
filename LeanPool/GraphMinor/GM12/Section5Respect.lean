@@ -263,8 +263,8 @@ variable {φ : C(Circle, S)} {J : Finset (Set Circle)} {a b' : Set Circle → �
 omit [T2Space T] in
 /-- The homotopy of the proof of (5.3). We replace the pieces in `J` by lines on the common
 boundary,
-and we push the rest of the curve across the collar. Then (iii) applies, and the theorem of Epstein
-gives a disc. -/
+and we push the rest of the curve across the collar. Then (iii) applies, and Graph Minors XI (7.2)
+gives a disc in the subset of the null-homotopy. -/
 theorem exists_disc_of_pieces [NeZero n] (h : IsCappedSplit C P₁ P₂ ι D) (hN : ∀ k, Γ.IsNormal
   (C k))
     (hφ : Function.Injective φ) (hFN : Γ.IsNormal (range φ)) (hsmall : (range φ ∩ Γ.V).ncard < θ)

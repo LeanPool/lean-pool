@@ -91,7 +91,7 @@ theorem exists_isSkPart (D : TangleDatum cap χ) (hΔ : IsClosedDisc Δ)
       rw [arcs_comap hj hP]
       exact mem_image_of_mem _ he
     obtain ⟨heS, -⟩ := (hE' _).mp heE
-    obtain ⟨f, hf, hfe⟩ := (hSk.edge_iff hS).mp heS
+    obtain ⟨f, hf, hfe⟩ := hSk.edge_iff.mp heS
     obtain ⟨c, hc'⟩ := D.P.Γ.exists_isSkEdgeIn hf
     have hmem : ∀ z : Δ, z ∈ closure e → z ∈ (D'.comap hj hP).V → ∃ a, cap.emb a = z.1
       ∧ a ∈ D.P.Γ.V ∧ a ∈ tilde c := fun z hz hzV ↦ by

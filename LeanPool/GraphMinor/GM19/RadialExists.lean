@@ -862,7 +862,7 @@ theorem exists_disc_around {y : S} (hy : IsInteriorPoint y) :
   simp at hz'
 
 /-- The pasted open disc of a cuff is the inside of its closure. -/
-theorem IsCappedSurface.cuffDisc_eq_discInt (_hS : IsSurface S) (cap : IsCappedSurface S Shat)
+theorem IsCappedSurface.cuffDisc_eq_discInt (cap : IsCappedSurface S Shat)
     {Θ : Set S} (hΘ : Θ ∈ cuffs S) : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := by
   have hsurf := cap.isSurface
   have : T2Space Shat := hsurf.2.1
@@ -912,7 +912,7 @@ theorem IsCappedSurface.cuffDisc_eq_discInt (_hS : IsSurface S) (cap : IsCappedS
       · exact hxc (he ▸ hx')
       · exact disjoint_left.1 (cap.cuffDisc_disjoint _ hΘ' _ hΘ he) (subset_closure hx') hxD
 
-theorem IsCappedSurface.closure_cuffDisc (hS : IsSurface S) (cap : IsCappedSurface S Shat)
+theorem IsCappedSurface.closure_cuffDisc (cap : IsCappedSurface S Shat)
     {Θ : Set S} (hΘ : Θ ∈ cuffs S) :
     closure (cap.cuffDisc Θ) = cap.cuffDisc Θ ∪ cap.emb '' Θ := by
   rw [← cap.cuffDisc_bd Θ hΘ]
@@ -922,7 +922,7 @@ theorem IsCappedSurface.closure_cuffDisc (hS : IsSurface S) (cap : IsCappedSurfa
     by_cases hb : x ∈ discBd (closure (cap.cuffDisc Θ))
     · exact Or.inr hb
     · left
-      rw [cap.cuffDisc_eq_discInt hS hΘ]
+      rw [cap.cuffDisc_eq_discInt hΘ]
       exact ⟨hx, hb⟩
   · rintro (hx | hx)
     · exact subset_closure hx
@@ -959,7 +959,7 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
   have hUc : IsClosed (Γ.hatU cap) := hιc.isClosedMap _ Γ.isClosed_U
   obtain ⟨-, hcfin, -⟩ := cuff_statement.{u} S hS'
   have hcapopen : ∀ Θ ∈ cuffs S, IsOpen (cap.cuffDisc Θ) := fun Θ hΘ ↦ by
-    rw [cap.cuffDisc_eq_discInt hS' hΘ]
+    rw [cap.cuffDisc_eq_discInt hΘ]
     exact (cap.cuffDisc_closedDisc Θ hΘ).isOpen_discInt hman
   have hcaprange : ∀ Θ ∈ cuffs S, ∀ x ∈ cap.cuffDisc Θ, x ∉ range ι := fun Θ hΘ x hx hr ↦ by
     have : x ∈ (range cap.emb)ᶜ := by
@@ -969,7 +969,7 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
   have hbdsub : ∀ y ∈ bd S, ι y ∈ ⋃ Θ ∈ cuffs S, closure (cap.cuffDisc Θ) := fun y hy ↦ by
     have hΘ : connectedComponentIn (bd S) y ∈ cuffs S := ⟨y, hy, rfl⟩
     refine mem_iUnion₂.2 ⟨_, hΘ, ?_⟩
-    rw [cap.closure_cuffDisc hS' hΘ]
+    rw [cap.closure_cuffDisc hΘ]
     exact Or.inr (mem_image_of_mem _ (mem_connectedComponentIn hy))
   let Y₀ : Set Shat := (⋃ Θ ∈ cuffs S, closure (cap.cuffDisc Θ))ᶜ
   have hY₀ : IsOpen Y₀ := (hcfin.isClosed_biUnion fun _ _ ↦ isClosed_closure).isOpen_compl
@@ -991,7 +991,7 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
     have hcapU : cap.cuffDisc Θ ⊆ (Γ.hatU cap)ᶜ := fun w hw ⟨y, _, hy⟩ ↦
       hcaprange Θ hΘ w hw ⟨y, hy⟩
     have hconn : IsPreconnected (cap.cuffDisc Θ) := by
-      rw [cap.cuffDisc_eq_discInt hS' hΘ]
+      rw [cap.cuffDisc_eq_discInt hΘ]
       exact (cap.cuffDisc_closedDisc Θ hΘ).isPreconnected_discInt
     have h₁ : cap.cuffDisc Θ ⊆ r := hconn.subset_connectedComponentIn hxΘ hcapU
     have h₂ : r ⊆ cap.cuffDisc Θ := by
@@ -1001,14 +1001,14 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
       · by_cases hwc : w ∈ cap.cuffDisc Θ
         · exact Or.inl hwc
         · refine Or.inr fun hcl ↦ ?_
-          rw [cap.closure_cuffDisc hS' hΘ] at hcl
+          rw [cap.closure_cuffDisc hΘ] at hcl
           rcases hcl with h | ⟨y, hy, rfl⟩
           · exact hwc h
           · have hyb : y ∈ bd S := by
               obtain ⟨z, hz, rfl⟩ := hΘ
               exact connectedComponentIn_subset _ _ hy
             exact hrU hw (hbdU y hyb)
-    rw [Subset.antisymm h₂ h₁, cap.cuffDisc_eq_discInt hS' hΘ]
+    rw [Subset.antisymm h₂ h₁, cap.cuffDisc_eq_discInt hΘ]
     exact isOpenDisc_discInt hman (cap.cuffDisc_closedDisc Θ hΘ)
   · have hxr : ∃ y, ι y = x := by
       by_contra hn
@@ -1020,7 +1020,7 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
     have hxY : x ∈ Y₀ := by
       intro hmem
       obtain ⟨Θ, hΘ, hcl⟩ := mem_iUnion₂.1 hmem
-      rw [cap.closure_cuffDisc hS' hΘ] at hcl
+      rw [cap.closure_cuffDisc hΘ] at hcl
       rcases hcl with h | ⟨y, hy, rfl⟩
       · exact hxcap ⟨Θ, hΘ, h⟩
       · have hyb : y ∈ bd S := by
@@ -1038,7 +1038,7 @@ theorem Painting.IsInternallyThreeConnected.hatRegions_isOpenDisc {Γ : Painting
         · left
           intro hmem
           obtain ⟨Θ, hΘ, hcl⟩ := mem_iUnion₂.1 hmem
-          rw [cap.closure_cuffDisc hS' hΘ] at hcl
+          rw [cap.closure_cuffDisc hΘ] at hcl
           rcases hcl with h | ⟨y, hy, rfl⟩
           · exact hwc (mem_iUnion₂.2 ⟨Θ, hΘ, h⟩)
           · have hyb : y ∈ bd S := by

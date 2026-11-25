@@ -52,7 +52,8 @@ structure IsChordFan (Δ Q : Set X) (𝓛 𝓒 : Set (Set X)) : Prop where
 variable [T2Space X]
 
 /-- Two points of the boundary of a closed disc are joined by an arc through the interior. -/
-theorem exists_chord {Δ : Set X} (hΔ : IsClosedDisc Δ) {a b : X} (ha : a ∈ discBd Δ)
+theorem exists_chord {Y : Type*} [TopologicalSpace Y] [T2Space Y]
+    {Δ : Set Y} (hΔ : IsClosedDisc Δ) {a b : Y} (ha : a ∈ discBd Δ)
     (hb : b ∈ discBd Δ) (hab : a ≠ b) :
     ∃ F, IsLineWithEnds F a b ∧ F ⊆ Δ ∧ F ∩ discBd Δ = {a, b} := by
   obtain ⟨h, g, c⟩ := hΔ.exists_isChart

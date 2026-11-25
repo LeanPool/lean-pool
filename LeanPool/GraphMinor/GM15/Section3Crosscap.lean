@@ -1137,13 +1137,8 @@ theorem isCappedSplit_crosscap_unpinched {S : Type w} [TopologicalSpace S] [T2Sp
 
 /-- Homeomorphism between `MobiusBand` (`Quotient Surface.mobiusSetoid`) and
 `Quotient GM12.mobiusSetoid`. -/
-noncomputable def mobiusSetoidHomeo : MobiusBand ≃ₜ Quotient GM12.mobiusSetoid where
-  toFun := Quotient.lift (Quotient.mk GM12.mobiusSetoid) (fun _ _ h => Quotient.sound h)
-  invFun := Quotient.lift (Quotient.mk Surface.mobiusSetoid) (fun _ _ h => Quotient.sound h)
-  left_inv y := by obtain ⟨p, rfl⟩ := Quotient.exists_rep y; rfl
-  right_inv y := by obtain ⟨p, rfl⟩ := Quotient.exists_rep y; rfl
-  continuous_toFun := Continuous.quotient_lift continuous_quotient_mk' _
-  continuous_invFun := Continuous.quotient_lift continuous_quotient_mk' _
+def mobiusSetoidHomeo : MobiusBand ≃ₜ Quotient GM12.mobiusSetoid :=
+  Homeomorph.refl _
 
 /-- Given `δ : Circle → ℝ`, the pinched subset `Q_mid` of `unitInterval × unitInterval`. -/
 def mobPinchPairSet (δ : Circle → ℝ) : Set (unitInterval × unitInterval) :=
@@ -2425,7 +2420,7 @@ theorem exists_pinched_crosscapSplit {S : Type w} [TopologicalSpace S] [T2Space 
       hD₀_open P₁_XII C_XII f_XII hf_img_C0 e_P₁ (fun _ => rfl) hXD_bd hiUnion1 hC0_sub_P₁
         hf_injOn_P₁
   refine ⟨C_XII, P₁_XII, P₂_XII, ι_XII, ![D₀], f_XII, f_C0,
-    ⟨?_, inferInstance, ⟨e_P₂.symm.trans mobiusSetoidHomeo⟩⟩,
+    ⟨?_, inferInstance, ⟨e_P₂.symm⟩⟩,
     subset_union_left, fun _ => rfl, fun _ => rfl, hι_XII_emb, hD₀_sub, hcl_D₀_sub,
     ?_, ?_, ?_, ?_, ?_⟩
   · refine
@@ -2900,78 +2895,20 @@ private theorem drawing_on_added_crosscap_is_rigid
   · -- Condition (iv): open disc in `S₂` via `exists_striped_disc_in_S₂_crosscap` and
     -- `openDisc_of_chord_in_striped_disc`.
     intro F u v P hF_S₂ hu hv hF_line hF_U hP_sub_inter hP_path hPX_card
-    have hP_sub_H' : P.IsSubdrawing H' := by
-      refine ⟨hP_sub_inter.1.trans ?_, hP_sub_inter.2.trans ?_⟩
-      · rw [interSet_V_of_isClosed H' (hS₁_cl.inter hS₂_cl)]
-        exact inter_subset_left
-      · rw [interSet_E H' (S₁ ∩ S₂)]
-        exact fun _ he => he.1
-    have hPU_inter : P.U ⊆ S₁ ∩ S₂ := by
-      refine (isSubdrawing_U_subset hP_sub_inter).trans ?_
-      rw [(H'.interSet (S₁ ∩ S₂)).U_eq,
-        interSet_V_of_isClosed H' (hS₁_cl.inter hS₂_cl), interSet_E]
-      exact union_subset inter_subset_right
-        (iUnion₂_subset fun e he => (hS₁_cl.inter hS₂_cl).closure_subset_iff.mpr he.2)
+    obtain ⟨hP_sub_H', hPU_inter, hP_line, hK_sub_cl, i₀, havoid⟩ :=
+      exists_stripe_avoiding_path_and_chord hφ hS₁_cl hS₂_cl hL_S₁ hL_disj
+        (fun i => ⟨hSub_H₁.1 (ha'_V i), hSub_H₁.1 (hb'_V i)⟩)
+        (fun i x hx => by rw [hH'_U]; exact Or.inr (mem_iUnion.mpr ⟨i, hx⟩))
+        hF_line hF_U hP_sub_inter hP_path hPX_card
+    obtain ⟨ψ_P, -, -⟩ := hP_line
     have hPU_S₂ : P.U ⊆ S₂ := hPU_inter.trans inter_subset_right
-    have hPX_fin : (P.V ∩ X_unp).Finite :=
-      (P.finite_V).subset inter_subset_left
-    have hpair_disj : Pairwise (fun i j => Disjoint ({a' i, b' i} : Set S') {a' j, b' j}) := by
-      intro i j hij
-      refine (hL_disj hij).mono ?_ ?_
-      · rw [← hL_S₁ i]; exact inter_subset_left
-      · rw [← hL_S₁ j]; exact inter_subset_left
-    obtain ⟨i₀, hi₀_disj⟩ :=
-      exists_disjoint_of_three_le hφ hPX_fin hPX_card hpair_disj
-        (fun i => inter_subset_inter_right _ (by
-          rintro _ (rfl | rfl)
-          · exact .inl ⟨i, rfl⟩
-          · exact .inr ⟨i, rfl⟩))
-    have ha'i₀_not_PV : a' i₀ ∉ P.V := fun h =>
-      Set.disjoint_left.mp hi₀_disj h (.inl rfl)
-    have hb'i₀_not_PV : b' i₀ ∉ P.V := fun h =>
-      Set.disjoint_left.mp hi₀_disj h (.inr rfl)
-    have hPU_V : P.U ∩ H'.V = P.V := isSubdrawing_U_inter_V hP_sub_H'
-    have hPU_disj_i₀ : Disjoint P.U (L i₀) := by
-      refine Set.disjoint_left.mpr fun x hxP hxL => ?_
-      have hx_pair : x ∈ ({a' i₀, b' i₀} : Set S') :=
-        hL_S₁ i₀ ▸ ⟨hxL, (hPU_inter hxP).1⟩
-      rcases hx_pair with rfl | rfl
-      · exact ha'i₀_not_PV (hPU_V ▸ ⟨hxP, hSub_H₁.1 (ha'_V i₀)⟩)
-      · exact hb'i₀_not_PV (hPU_V ▸ ⟨hxP, hSub_H₁.1 (hb'_V i₀)⟩)
-    have ⟨ψ_F, hψ_F0, hψ_F1⟩ := hF_line
-    have huv : u ≠ v := fun heq => zero_ne_one
-      (ψ_F.injective (Subtype.ext (hψ_F0.trans (heq.trans hψ_F1.symm))))
-    have hP_line : IsLineWithEnds P.U u v := GM14.isLine_of_isPathBetween hP_path huv
-    have ⟨ψ_P, hψ_P0, hψ_P1⟩ := hP_line
-    have huPU : u ∈ P.U := hψ_P0 ▸ (ψ_P 0).2
-    have hvPU : v ∈ P.U := hψ_P1 ▸ (ψ_P 1).2
-    have hF_disj_i₀ : Disjoint F (L i₀) := by
-      refine Set.disjoint_left.mpr fun x hxF hxL => ?_
-      have hxU : x ∈ H'.U := by
-        rw [hH'_U]; exact .inr (mem_iUnion.mpr ⟨i₀, hxL⟩)
-      rcases hF_U ⟨hxF, hxU⟩ with rfl | rfl
-      · exact Set.disjoint_left.mp hPU_disj_i₀ huPU hxL
-      · exact Set.disjoint_left.mp hPU_disj_i₀ hvPU hxL
-    have hF_cl_line : IsClosed F := by
-      have hEq : F = range (fun s : unitInterval => (ψ_F s).1) := by
-        ext x
-        exact ⟨fun hx => ⟨ψ_F.symm ⟨x, hx⟩, by simp⟩, fun ⟨s, hs⟩ => hs ▸ (ψ_F s).2⟩
-      rw [hEq]
-      exact (isCompact_range (continuous_subtype_val.comp ψ_F.continuous)).isClosed
-    have hK_sub_cl : IsClosed (P.U ∪ F) := P.isClosed_U.union hF_cl_line
     obtain ⟨D, hD_S₂, hD_disc, hPF_D, hD_bd, hD_U, hD_paths⟩ :=
       exists_striped_disc_in_S₂_crosscap hS hΛ_open g hb_inj hu_inj hu_int
         ha'_inr hb'_inr (fun _ => rfl) (fun i => (hH_path i).1) hS₂_U hK_sub_cl
-        (union_subset hPU_S₂ hF_S₂) i₀ (hPU_disj_i₀.union_left hF_disj_i₀)
-    have hPU_D : P.U ⊆ D := subset_union_left.trans hPF_D
-    have hF_D : F ⊆ D := subset_union_right.trans hPF_D
-    have hPU_bd : P.U ⊆ discBd D := (subset_inter hPU_D hPU_inter).trans hD_bd
+        (union_subset hPU_S₂ hF_S₂) i₀ havoid
     let e_sub := (Fintype.equivFin {i : Fin φ // i ≠ i₀}).symm
-    have hD_U_fin : D ∩ H'.U ⊆ discBd D ∪ ⋃ k, (H_path (e_sub k).1).U := by
-      refine hD_U.trans (union_subset (hD_bd.trans subset_union_left) ?_)
-      intro x hx
-      obtain ⟨j, hxj⟩ := mem_iUnion.mp hx
-      exact Or.inr (mem_iUnion.mpr ⟨e_sub.symm j, by simpa using hxj⟩)
+    obtain ⟨hPU_D, hF_D, hPU_bd, hD_U_fin⟩ :=
+      reindex_striped_disc H_path e_sub hPU_inter hPF_D hD_bd hD_U
     have hNo_both : ∀ k, ¬ (a' (e_sub k).1 ∈ P.V ∧ b' (e_sub k).1 ∈ P.V) := by
       rintro k ⟨ha_j, hb_j⟩
       let j := e_sub k
@@ -3016,12 +2953,12 @@ private theorem drawing_on_added_crosscap_is_rigid
       have hwa_i₀_not : w_a i₀ ∉ A_circ := by
         intro h
         have ha_PU : a' i₀ ∈ P.U := ha'_mobBd i₀ ▸ h
-        exact ha'i₀_not_PV (hPU_V ▸ ⟨ha_PU, hSub_H₁.1 (ha'_V i₀)⟩)
+        exact disjoint_left.mp havoid (Or.inl ha_PU) (hL_line i₀).left_mem
       have hneg_wa_i₀_not : - w_a i₀ ∉ A_circ := by
         rw [← hwb_eq_neg i₀]
         intro h
         have hb_PU : b' i₀ ∈ P.U := hb'_mobBd i₀ ▸ h
-        exact hb'i₀_not_PV (hPU_V ▸ ⟨hb_PU, hSub_H₁.1 (hb'_V i₀)⟩)
+        exact disjoint_left.mp havoid (Or.inl hb_PU) (hL_line i₀).right_mem
       have hwa_j_mem : w_a j.1 ∈ A_circ := by
         change GluedSpace.inr hb_inj (mobBd (w_a j.1)) ∈ P.U
         rw [← ha'_mobBd j.1]

@@ -46,7 +46,7 @@ variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat
 omit [T2Space Shat] in
 omit [T2Space S] in
 /-- The pasted disc of a cuff is a region of `sk(Γ)` in `Σ̂`. -/
-theorem cuffDisc_mem_regions (hS : IsSurface S) (hD : IsSkHat cap Γ D) {Θ : Set S}
+theorem cuffDisc_mem_regions (hD : IsSkHat cap Γ D) {Θ : Set S}
   (hΘ : Θ ∈ cuffs S) :
     cap.cuffDisc Θ ∈ D.regions := by
   have hnotR : ∀ {Θ' : Set S} {x : Shat}, Θ' ∈ cuffs S → x ∈ cap.cuffDisc Θ' → x ∉ range cap.emb
@@ -68,7 +68,7 @@ theorem cuffDisc_mem_regions (hS : IsSurface S) (hD : IsSkHat cap Γ D) {Θ : Se
     exact hnotR hΘ hx (mem_range_self y)
   have hr : connectedComponentIn (Γ.hatU cap)ᶜ x ∈ Γ.hatRegions cap := ⟨x, hxU, rfl⟩
   have hxr := mem_connectedComponentIn hxU
-  rcases hatRegion_cases hS cap Γ hr with h | ⟨Θ', hΘ', h⟩
+  rcases hatRegion_cases cap Γ hr with h | ⟨Θ', hΘ', h⟩
   · exact absurd (h hxr) (hnotR hΘ hx)
   · have hxΘ' : x ∈ cap.cuffDisc Θ' := h ▸ hxr
     obtain rfl : Θ = Θ' := by
@@ -76,7 +76,7 @@ theorem cuffDisc_mem_regions (hS : IsSurface S) (hD : IsSkHat cap Γ D) {Θ : Se
       exact disjoint_left.mp (cap.cuffDisc_disjoint Θ hΘ Θ' hΘ' hne) (subset_closure hx)
         (subset_closure hxΘ')
     rw [regions_eq_R]
-    exact hD.hatRegion_mem_R hS (h ▸ hr)
+    exact hD.hatRegion_mem_R (h ▸ hr)
 
 /-- A connected drawing is a connected set. -/
 theorem drawing_U_preconnected {T : Type} [TopologicalSpace T] (G : Drawing T)
@@ -134,9 +134,9 @@ theorem three_mixed (hS : IsSurface S) {D₂ : Drawing Shat} (hD₂ : IsSkHat ca
   have hDisc := cap.cuffDisc_closedDisc Θ hΘ
   have hF : IsOArc (cap.emb '' Θ) := cap.cuffDisc_bd Θ hΘ ▸ hDisc.isOArc_discBd
   set r := cap.cuffDisc Θ with hrdef
-  have hr : r ∈ D₂.regions := cuffDisc_mem_regions hS hD₂ hΘ
+  have hr : r ∈ D₂.regions := cuffDisc_mem_regions hD₂ hΘ
   set T := ρ.interSet (closure r) with hTdef
-  have hclr : closure r = r ∪ cap.emb '' Θ := cap.closure_cuffDisc hS hΘ
+  have hclr : closure r = r ∪ cap.emb '' Θ := cap.closure_cuffDisc hΘ
   have hrU : ∀ {x}, x ∈ r → x ∉ D₂.U := by
     intro x hx hU
     rw [hD₂.hU] at hU
@@ -171,7 +171,7 @@ theorem three_mixed (hS : IsSurface S) {D₂ : Drawing Shat} (hD₂ : IsSkHat ca
     intro f hf hfΘ
     obtain ⟨x, hx⟩ := hf.2.2.1.nonempty
     have h2 := (edge_sub_cuff Γ₂ hΘ hf ⟨x, hx, hfΘ hx⟩).2
-    exact ⟨(hD₂.edge_iff hS).mpr ⟨f, sk_of_edge Γ₂ hf h2, rfl⟩, closure_minimal hfΘ hcΘ⟩
+    exact ⟨hD₂.edge_iff.mpr ⟨f, sk_of_edge Γ₂ hf h2, rfl⟩, closure_minimal hfΘ hcΘ⟩
   have hdisj : ∀ {f}, f ∈ Γ₂.E → f ⊆ Θ → Mixed (cap.emb ⁻¹' ρ.V) f → Disjoint T.U (cap.emb '' f)
     := by
     intro f hf hfΘ hmix

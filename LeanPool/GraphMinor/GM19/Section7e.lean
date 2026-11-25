@@ -251,7 +251,7 @@ theorem closure_sk_region (D : TangleDatum cap χ) (hrep : 4 ≤ D.rep) {Sk : Dr
   have hS := χ.isSurface
   have hT := cap.isClosedSurface
   obtain ⟨p, hpr, hpa⟩ := hm
-  rcases hSk.region_cases hS hr with hρ | ⟨c₀, hc₀, -, hrsub⟩
+  rcases hSk.region_cases hr with hρ | ⟨c₀, hc₀, -, hrsub⟩
   · obtain ⟨w, ⟨hw, hwG⟩, -⟩ := D.rad.isPreRadial.2.2.1 r hρ
     obtain ⟨s₁, hs₁, hm₁, hp₁⟩ := D.rad.exists_region_at hS hρ hpr
     obtain ⟨X₁, hX₁, hl₁, hsX₁⟩ := exists_tie D hrep hs₁

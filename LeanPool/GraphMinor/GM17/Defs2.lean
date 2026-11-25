@@ -472,16 +472,14 @@ a subset of $V(G)$ the members of which are mutually adjacent in $G^*$." -/
 def IsClique {α : Type u} {β : Type v} (G : Hypergraph α β) (K : Set α) : Prop :=
   K ⊆ G.vertexSet ∧ ∀ u ∈ K, ∀ v ∈ K, u ≠ v → G.skeleton.Adj u v
 
-open Classical in
 /-- Given a subhypergraph $G' \le G$ and a tangle $\mathcal{T}'$ in $G'$ of order $\theta$,
 the *tangle induced by $\mathcal{T}'$* in $G$ is the set of all separations $(A, B)$ of $G$ of
 order $< \theta$ such that $(A \cap G', B \cap G') \in \mathcal{T}'$.
 Graph Minors XVII, Section 12 (page 199). -/
-def inducedSubhypergraphTangle {α : Type u} {β : Type v}
+abbrev inducedSubhypergraphTangle {α : Type u} {β : Type v}
     (G G' : Hypergraph α β) (𝒯' : Set (Hypergraph α β × Hypergraph α β)) (θ : ℕ) :
     Set (Hypergraph α β × Hypergraph α β) :=
-  {p | G.IsSeparation p.1 p.2 ∧ separationOrder p.1 p.2 < θ ∧
-    (p.1 ∩ G', p.2 ∩ G') ∈ 𝒯'}
+  GM10.inducedTangleFromSubgraph G G' θ 𝒯'
 
 open Classical in
 /-- The 1-skeleton $A^*$ of a hypergraph $A$, viewed as a `Hypergraph α (Sym2 α)` with vertex set

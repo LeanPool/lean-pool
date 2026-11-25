@@ -236,7 +236,7 @@ theorem IsSkHat.exists_class_of_corners {Γ : Painting S} {H : Drawing Shat} (hH
     hS).closure_image_eq f
   have hL' : IsLineWithEnds (closure (cap.emb '' f)) (cap.emb a) (cap.emb b)
     := hcle ▸ hL.map_of_embedding cap.isEmbedding
-  have hfE : cap.emb '' f ∈ H.E := (hH.edge_iff hS).mpr ⟨f, hfm, rfl⟩
+  have hfE : cap.emb '' f ∈ H.E := hH.edge_iff.mpr ⟨f, hfm, rfl⟩
   have hV : closure (cap.emb '' f) ∩ H.V = {cap.emb a, cap.emb b} := by
     rw [hcle, hH.hV]
     ext z
@@ -251,7 +251,7 @@ theorem IsSkHat.exists_class_of_corners {Γ : Painting S} {H : Drawing Shat} (hH
       · exact ⟨mem_image_of_mem _ haf, mem_image_of_mem _ haV⟩
       · exact ⟨mem_image_of_mem _ hbf, mem_image_of_mem _ hbV⟩
   obtain ⟨g, hg, hq⟩ := exists_class_beside_edge hT H hfE hL' (cap.isEmbedding.injective.ne hab) hV
-    (hH.hatRegion_mem_R hS hr) hfr
+    (hH.hatRegion_mem_R hr) hfr
   obtain ⟨q, hq'⟩ := IsLineWithEnds.exists_path hL'
   refine ⟨g, hg.mono (union_subset_union_left _ fun x hx => mem_iUnion₂.mpr ⟨r, hr, hx⟩), ?_⟩
   rw [← hq q hq']
@@ -277,9 +277,9 @@ theorem TangleDatum.exists_flat_skeleton (D : TangleDatum cap χ) {H G₃ : Draw
   have h3 := D.P.fits.internally_three_connected
   set Γ := D.P.Γ with hΓ
   have hf : S₀.Finite := H.finite_V.subset hS₀
-  have hE : H.E.Nonempty := hd.sk.E_nonempty hS h3.1
+  have hE : H.E.Nonempty := hd.sk.E_nonempty h3.1
   have hrad : (PaintingOrDrawing.drawing H).IsRadialDrawing G₃ := ⟨hd.pre.1, hd.pre.2, hd.max⟩
-  have hRH : Γ.hatRegions cap ⊆ H.R := fun r hr => hd.sk.hatRegion_mem_R hS hr
+  have hRH : Γ.hatRegions cap ⊆ H.R := fun r hr => hd.sk.hatRegion_mem_R hr
   have hS₀G : S₀ ⊆ D.rad.G.V := fun s hs => by
     have := hS₀ hs
     rw [hd.sk.hV] at this
@@ -364,7 +364,7 @@ theorem TangleDatum.exists_flat_skeleton (D : TangleDatum cap χ) {H G₃ : Draw
   refine ⟨D', hD'o, hsD', hfl'.mono (union_subset (iUnion₂_subset fun r hr => ?_) fun x hx => .inl
     (.inr hx))⟩
   intro x hx
-  rcases hd.sk.region_cases hS hr with hh | ⟨c, hc, h3', hrc⟩
+  rcases hd.sk.region_cases hr with hh | ⟨c, hc, h3', hrc⟩
   · exact .inl (.inl (mem_iUnion₂.mpr ⟨r, hh, hx⟩))
   · refine .inr (mem_iUnion₂.mpr ⟨_, ⟨c, ⟨hc, h3'⟩, rfl⟩, hrc hx, fun hb => ?_⟩)
     exact region_subset hr hx (hcellU c hc h3' hb)
@@ -457,7 +457,7 @@ theorem TangleDatum.isRespectful_skTangle (D : TangleDatum cap χ) {H G₃ : Dra
   refine isNullHomotopicOArcIn_of_subset_disc hF' (subset_univ _) hD₁ ?_
   refine oArc_subset_of_edges hF' hD₁.isClosed C.finite_V (E₀ := C.E) (fun e he => ?_) fun x hx
     => ?_
-  · obtain ⟨f₀, hf₀, rfl⟩ := (hH.edge_iff hS).mp (hCs.2 he)
+  · obtain ⟨f₀, hf₀, rfl⟩ := hH.edge_iff.mp (hCs.2 he)
     obtain ⟨u, w, -, ht, htV, -⟩ := D.P.Γ.sk_line hf₀
     have hu : u ∈ tilde f₀ := ht ▸ .inl rfl
     have huV : u ∈ D.P.Γ.V := htV hu

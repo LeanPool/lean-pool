@@ -152,8 +152,8 @@ theorem RadialDrawing.dist_le_of_two_cuffs (rad : RadialDrawing cap Γ) {F : Dra
   have hvne : cap.emb v₁ ≠ cap.emb v₂ := fun h ↦ by
     have h' := cap.isEmbedding.injective h
     exact disjoint_left.mp (cuffs_disjoint hΘ₁ hΘ₂ hne) h₁ (h' ▸ h₂)
-  obtain ⟨p₁, hp₁, hp₁Θ, hr₁⟩ := rad.exists_pole hS hΘ₁
-  obtain ⟨p₂, hp₂, hp₂Θ, hr₂⟩ := rad.exists_pole hS hΘ₂
+  obtain ⟨p₁, hp₁, hp₁Θ, hr₁⟩ := rad.exists_pole hΘ₁
+  obtain ⟨p₂, hp₂, hp₂Θ, hr₂⟩ := rad.exists_pole hΘ₂
   have hpne : p₁ ≠ p₂ := fun h ↦ disjoint_left.mp (cap.cuffDisc_disjoint Θ₁ hΘ₁ Θ₂ hΘ₂ hne)
     (subset_closure hp₁Θ) (subset_closure (h ▸ hp₂Θ))
   obtain ⟨e₁, he₁, hs₁⟩ := rad.exists_pole_edge hS h3 hp₁ hΘ₁ hr₁ hv₁ h₁
@@ -279,9 +279,9 @@ theorem spoke_mem (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F)
     D.rad.isPreRadial.2.1 (mem_image_of_mem _ hv)
   have hpG : p ∈ G.V := hp.1.1
   have hvp : ∀ {v}, v ∈ D.P.Γ.V → cap.emb v ≠ p := fun hv h ↦ hp.1.2 (h ▸ mem_image_of_mem _ hv)
-  obtain ⟨Θ, hΘ, hreg, hpΘ⟩ := D.rad.pole_cases hS hp
-  have hnr₁ := (D.rad.pole_edge hS he₁ hp hΘ hreg hs₁).1
-  have hnr₂ := (D.rad.pole_edge hS he₂ hp hΘ hreg hs₂).1
+  obtain ⟨Θ, hΘ, hreg, hpΘ⟩ := D.rad.pole_cases hp
+  have hnr₁ := (D.rad.pole_edge he₁ hp hΘ hreg hs₁).1
+  have hnr₂ := (D.rad.pole_edge he₂ hp hΘ hreg hs₂).1
   have hrange : ∀ f ∈ F.E, p ∉ closure f → f ⊆ range cap.emb := by
     intro f hf hpf
     obtain ⟨v, -, w, hw, hset⟩ := D.rad.edge_ends (hF.1.2 hf)
@@ -436,7 +436,7 @@ theorem second_of_thetaFree (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F) :
     exact mem_image_of_mem _ (D.rad.bd_point hF.1 hv hx).1
   by_cases hpole : ∃ p ∈ D.rad.poles, p ∈ F.V
   · obtain ⟨p, hp, hpF⟩ := hpole
-    obtain ⟨Θ, hΘ, hreg, hpΘ⟩ := D.rad.pole_cases hS hp
+    obtain ⟨Θ, hΘ, hreg, hpΘ⟩ := D.rad.pole_cases hp
     obtain ⟨e₁, e₂, v₁, v₂, he₁, he₂, hv₁, hv₂, hne, hs₁, hs₂, huniq⟩ :=
       D.rad.circuit_edges hS h3' hF hpF hp.1
     have hG : ∀ {e}, e ∈ F.E → e ∈ D.rad.G.E := fun h ↦ hF.1.2 h
@@ -447,13 +447,13 @@ theorem second_of_thetaFree (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F) :
       exact mem_V_of_mem_U hF.1 (F.closure_subset_U he hm.1) hm.2
     have hV₁ := honF he₁ hs₁
     have hV₂ := honF he₂ hs₂
-    have hΘ₁ := (D.rad.pole_edge hS (hG he₁) hp hΘ hreg hs₁).2
-    have hΘ₂ := (D.rad.pole_edge hS (hG he₂) hp hΘ hreg hs₂).2
+    have hΘ₁ := (D.rad.pole_edge (hG he₁) hp hΘ hreg hs₁).2
+    have hΘ₂ := (D.rad.pole_edge (hG he₂) hp hΘ hreg hs₂).2
     have honly : ∀ p' ∈ D.rad.poles, p' ∈ F.V → p' = p := by
       intro p' hp' hp'F
-      obtain ⟨Θ', hΘ', hreg', hp'Θ⟩ := D.rad.pole_cases hS hp'
+      obtain ⟨Θ', hΘ', hreg', hp'Θ⟩ := D.rad.pole_cases hp'
       obtain ⟨f, -, u, -, hf, -, hu, -, -, hset, -, -⟩ := D.rad.circuit_edges hS h3' hF hp'F hp'.1
-      have huΘ := (D.rad.pole_edge hS (hG hf) hp' hΘ' hreg' hset).2
+      have huΘ := (D.rad.pole_edge (hG hf) hp' hΘ' hreg' hset).2
       have heq := hsame hΘ' hΘ huΘ hΘ₁ (F.V_subset_U (honF hf hset)) (F.V_subset_U hV₁)
       subst heq
       obtain ⟨hr, -⟩ := D.rad.regionOf_mem hp.1
@@ -499,7 +499,7 @@ theorem second_of_thetaFree (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F) :
       obtain ⟨hvV₂, hvF₂, Θ₂, hΘ₂, hvΘ₂⟩ := D.rad.bd_point hF.1 hv₂ hx₂
       have heq := hsame hΘ₂ hΘ hvΘ₂ hvΘ₁ hx₂ hx₁
       subst heq
-      obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+      obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
       obtain ⟨e₁, he₁, hs₁⟩ := D.rad.exists_pole_edge hS h3' hp hΘ hreg hvV₁ hvΘ₁
       obtain ⟨e₂, he₂, hs₂⟩ := D.rad.exists_pole_edge hS h3' hp hΘ hreg hvV₂ hvΘ₂
       have heF := spoke_mem hS h3' hF hθ hp

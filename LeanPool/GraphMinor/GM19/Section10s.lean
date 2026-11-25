@@ -40,7 +40,7 @@ theorem distanceFlaw {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourSc
   obtain ⟨hn, hd, r₁, h₁, r₂, h₂, hne, hdist⟩ := hf
   have hS := χ.isSurface
   have h3 := D.P.fits.internally_three_connected
-  obtain ⟨Θ, hΘ, -, -⟩ := D.rad.pole_cases hS h₁
+  obtain ⟨Θ, hΘ, -, -⟩ := D.rad.pole_cases h₁
   obtain ⟨x, -, -⟩ := hΘ
   have : Nonempty S := ⟨x⟩
   by_cases hNP : ∃ C, D.IsPairCircuit n C

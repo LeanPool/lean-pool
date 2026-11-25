@@ -171,12 +171,12 @@ theorem Sided.edge_nonempty (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnect
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   obtain ⟨D, G₃, hD, hrad, hmax, hsub, hhat⟩ :=
     rad.exists_full hS (h3.hatRegions_isOpenDisc hS cap) h3.1
-  have hDE := hD.E_nonempty hS h3.1
+  have hDE := hD.E_nonempty h3.1
   have hs := h.left hT
   obtain ⟨y, hy⟩ := hs.nonempty
   obtain ⟨s, hs₁, -, hm⟩ := exists_region_near hT G₃ hs.isOpen (subset_closure hy)
   have hsΩ := hs.region_subset (hF.1.trans hsub) hs₁ hm
-  obtain ⟨f, c, hfc, hfs⟩ := exists_colour hS hD hrad hmax hDE hs₁
+  obtain ⟨f, c, hfc, hfs⟩ := exists_colour hD hrad hmax hDE hs₁
   obtain ⟨x, hx⟩ := hfc.mem.1
   have hxc := mem_image_of_mem cap.emb (hfc.subset hx)
   exact ⟨c, restrict_side hfc.1 (side_edge rad hF.1 hs hfc.1 ⟨_, hxc, hsΩ (hfs

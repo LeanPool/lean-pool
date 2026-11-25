@@ -174,7 +174,7 @@ theorem exists_pole_ins {n : ℕ} (hn : n < D.rep) {F : Drawing Shat} (hF : D.Is
   have hrange := subset_range_of_no_pole D.rad hF.1.1 hnp
   have hall : ∀ Θ ∈ cuffs S, (closure (cap.cuffDisc Θ) ∩ D.ins F).Subsingleton ∧ closure
     (cap.cuffDisc Θ) ∩ D.ins F ⊆ F.U := fun Θ hΘ ↦ by
-    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
     have hdis : Disjoint (cap.cuffDisc Θ) F.U := disjoint_left.2 fun x hx hxF ↦ cap.notMem_range hΘ
       hx (hrange hxF)
     exact ⟨touch_subsingleton hS h3 hn hF hmin hp (hno p hp) hΘ hreg hdis,
@@ -188,13 +188,13 @@ theorem exists_pole_ins {n : ℕ} (hn : n < D.rep) {F : Drawing Shat} (hF : D.Is
     have hv : v ∈ closure s := (hset ▸ mem_insert_of_mem u rfl : v ∈ closure s ∩ (χ.Φ.V ∩ Θ)).1
     have h₁ := hcl hu
     have h₂ := hcl hv
-    exact huv (cap.isEmbedding.injective ((hall Θ hΘ).1 ⟨cap.mem_closure_emb hS hΘ h₁.2,
-      h₁.1⟩ ⟨cap.mem_closure_emb hS hΘ h₂.2, h₂.1⟩))
+    exact huv (cap.isEmbedding.injective ((hall Θ hΘ).1 ⟨cap.mem_closure_emb hΘ h₁.2,
+      h₁.1⟩ ⟨cap.mem_closure_emb hΘ h₂.2, h₂.1⟩))
   · have hsub : (cap.emb '' χ.Φ.V) ∩ D.ins F ⊆ F.V ∩ D.P.Γ.hatV cap := by
       rintro _ ⟨⟨v, hv, rfl⟩, hvi⟩
       have hvb := χ.Φ.V_subset hv
       have hΘ : connectedComponentIn (bd S) v ∈ cuffs S := ⟨v, hvb, rfl⟩
-      have hF' := (hall _ hΘ).2 ⟨cap.mem_closure_emb hS hΘ (mem_connectedComponentIn hvb), hvi⟩
+      have hF' := (hall _ hΘ).2 ⟨cap.mem_closure_emb hΘ (mem_connectedComponentIn hvb), hvi⟩
       exact ⟨(D.rad.bd_point hF.1.1 hvb hF').2.1, mem_image_of_mem _ (D.P.fits.V_subset hv)⟩
     have h₁ := ncard_le_ncard hsub (F.finite_V.subset inter_subset_left)
     have h₂ := D.ncard_E_eq_hat hF.1
@@ -652,10 +652,10 @@ private theorem free_data_when_pole_is_on_circuit
     ∃ Δ Z K, IsFreeData D n Δ Z K := by
   obtain ⟨e₁, e₂, v₁, v₂, he₁, he₂, hv₁, hv₂, hne, hs₁, hs₂, hedges⟩ := D.rad.circuit_edges hS h3
     hFc hrF hr.1
-  obtain ⟨hd₁, hvΘ₁⟩ := D.rad.pole_edge hS (hFc.1.2 he₁) hr hΘ hreg hs₁
-  obtain ⟨hd₂, hvΘ₂⟩ := D.rad.pole_edge hS (hFc.1.2 he₂) hr hΘ hreg hs₂
+  obtain ⟨hd₁, hvΘ₁⟩ := D.rad.pole_edge (hFc.1.2 he₁) hr hΘ hreg hs₁
+  obtain ⟨hd₂, hvΘ₂⟩ := D.rad.pole_edge (hFc.1.2 he₂) hr hΘ hreg hs₂
   set G := D.rad.G with hG
-  have hrnr := D.pole_notMem_range hS hr
+  have hrnr := D.pole_notMem_range hr
   have hvG : ∀ {v}, v ∈ D.P.Γ.V → cap.emb v ∈ G.V := fun hv ↦ D.rad.isPreRadial.2.1
     (mem_image_of_mem _ hv)
   have hvp : ∀ {v}, v ∈ D.P.Γ.V → cap.emb v ≠ r := fun hv h ↦ hr.1.2 (h ▸ mem_image_of_mem _ hv)
@@ -729,7 +729,7 @@ private theorem free_data_when_pole_is_on_circuit
   set K := coarseDrawing D.P.Γ U₀ hc hfe fun e he ↦ (hmk e he).1 with hK
   have hKimg : cap.emb '' K.U = L := hU₀i
   have hEb : discBd (closure (cap.cuffDisc Θ)) = cap.emb '' Θ := cap.cuffDisc_bd Θ hΘ
-  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hS hΘ
+  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hΘ
   have hΒE : Β ⊆ closure (cap.cuffDisc Θ) := union_subset (hclE (hFc.1.2 he₁) hs₁) (hclE
     (hFc.1.2 he₂) hs₂)
   have hmeet : Β ∩ discBd (closure (cap.cuffDisc Θ)) = {cap.emb v₁, cap.emb v₂} := by
@@ -817,7 +817,7 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
     have := hd p hp q hq hne
     omega
   obtain ⟨r, hr, hri⟩ := exists_pole_ins hS h3 hn hF hmin
-  obtain ⟨Θ, hΘ, hreg, hrd⟩ := D.rad.pole_cases hS hr
+  obtain ⟨Θ, hΘ, hreg, hrd⟩ := D.rad.pole_cases hr
   have hE := cap.cuffDisc_closedDisc Θ hΘ
   have hone : ∀ p ∈ D.rad.poles, p ∈ F.V → p = r := fun p hp hpF ↦
     huniq p hp r hr (D.U_subset_ins hFc hlt (F.V_subset_U hpF)) hri
@@ -829,7 +829,7 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
     ∧ p' ∉ D.ins F ∧
       Disjoint (cap.cuffDisc Θ') F.U ∧ (closure (cap.cuffDisc Θ') ∩ D.ins F).Subsingleton ∧ closure
         (cap.cuffDisc Θ') ∩ D.ins F ⊆ F.U := fun {Θ'} hΘ' hne ↦ by
-    obtain ⟨p, hp, hpd, hreg'⟩ := D.rad.exists_pole hS hΘ'
+    obtain ⟨p, hp, hpd, hreg'⟩ := D.rad.exists_pole hΘ'
     have hne' : p ≠ r := by
       rintro rfl
       exact disjoint_left.1 (hEE hΘ' hne) (subset_closure hpd) (subset_closure hrd)
@@ -847,10 +847,10 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
       hrd hE hone hcover hEE hother hNle hrF
   · have hnp : ∀ z ∈ F.V, z ∉ D.rad.poles := fun z hz hzp ↦ hrF (hone z hzp hz ▸ hz)
     have hrange := subset_range_of_no_pole D.rad hFc.1 hnp
-    have hrnr := D.pole_notMem_range hS hr
+    have hrnr := D.pole_notMem_range hr
     have hrint : r ∈ discInt (D.ins F) := ⟨hri, fun hb ↦ hrnr (hrange (hbd ▸ hb))⟩
     have hEin : closure (cap.cuffDisc Θ) ⊆ D.ins F := by
-      rcases cap.side hS hdisc (hbd.trans_subset hrange) hΘ with h | h
+      rcases cap.side hdisc (hbd.trans_subset hrange) hΘ with h | h
       · exact h
       · exact absurd hrint (disjoint_left.1 h (subset_closure hrd))
     obtain ⟨hinter₀, -, -, -, -⟩ := comap_facts D.rad D.P.fits hFc.1 hrange hj (circuit_iso hFc.2)
@@ -863,7 +863,7 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
     obtain ⟨a, ha, b, hb, hab⟩ : ∃ a ∈ U₀ ∩ D.P.Γ.V, ∃ b ∈ U₀ ∩ D.P.Γ.V, a ≠ b := by
       by_cases hsing : (U₀ ∩ bd S).Subsingleton
       · exact two_vertices_of_ring (K := K₀) (D := D) h3 hO hinter₀ hsing fun Δ' d₁ d₂ d₃ d₄ ↦
-          D.no_empty_disc hS hFc hlt hr hri d₁ d₂ (d₃.trans hKU) (by rwa [hKU] at d₄)
+          D.no_empty_disc hFc hlt hr hri d₁ d₂ (d₃.trans hKU) (by rwa [hKU] at d₄)
       · obtain ⟨x, hx, y, hy, hxy⟩ := not_subsingleton_iff.1 hsing
         exact ⟨x, ⟨hx.1, (D.rad.bd_point hFc.1 hx.2 hx.1).1⟩, y, ⟨hy.1,
           (D.rad.bd_point hFc.1 hy.2 hy.1).1⟩, hxy⟩
@@ -900,7 +900,7 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
           · exact absurd (h (subset_closure hpd)) hpi
           · exact h
         · intro x hx
-          exact ⟨fun _ h ↦ h, fun _ ↦ hIn (hEin (cap.mem_closure_emb hS hΘ hx))⟩
+          exact ⟨fun _ h ↦ h, fun _ ↦ hIn (hEin (cap.mem_closure_emb hΘ hx))⟩
         · rw [sdiff_empty]
           exact isClosed_cuff hS ⟨Θ, hΘ⟩
     refine ⟨D.ins F, D.ins F, K, free_data_of_cut hS h3 hn hF hlink hc hfe _ rfl ?_ hcount.le

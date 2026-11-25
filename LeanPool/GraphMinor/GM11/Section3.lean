@@ -591,37 +591,6 @@ theorem closedCurvesHomotopicIn_of_path {Z : Set S} {a : Z} (z : Circle) (φ φ'
     rw [cylinderLift_apply, ← hq]
     simp [F]
 
-/-- Homotopy of closed curves in `Z` is transitive. -/
-theorem _root_.GraphMinor.Surface.ClosedCurvesHomotopicIn.trans {Z : Set S} {φ₀ φ₁ φ₂ : C(Circle,
-  S)}
-    (h₁ : ClosedCurvesHomotopicIn Z φ₀ φ₁) (h₂ : ClosedCurvesHomotopicIn Z φ₁ φ₂) :
-    ClosedCurvesHomotopicIn Z φ₀ φ₂ := by
-  obtain ⟨ψ₁, h₁Z, h₁0, h₁1⟩ := h₁
-  obtain ⟨ψ₂, h₂Z, h₂0, h₂1⟩ := h₂
-  have hmem₀ : ∀ x, φ₀ x ∈ Z := fun x => h₁0 x ▸ h₁Z _
-  have hmem₁ : ∀ x, φ₁ x ∈ Z := fun x => h₁1 x ▸ h₁Z _
-  have hmem₂ : ∀ x, φ₂ x ∈ Z := fun x => h₂1 x ▸ h₂Z _
-  let f₀ : C(Circle, Z) := ⟨fun x => ⟨φ₀ x, hmem₀ x⟩, by fun_prop⟩
-  let f₁ : C(Circle, Z) := ⟨fun x => ⟨φ₁ x, hmem₁ x⟩, by fun_prop⟩
-  let f₂ : C(Circle, Z) := ⟨fun x => ⟨φ₂ x, hmem₂ x⟩, by fun_prop⟩
-  let H₁ : ContinuousMap.Homotopy f₀ f₁ :=
-    { toFun := fun p => ⟨ψ₁ (p.2, p.1), h₁Z _⟩
-      continuous_toFun := by fun_prop
-      map_zero_left := fun x => Subtype.ext (h₁0 x)
-      map_one_left := fun x => Subtype.ext (h₁1 x) }
-  let H₂ : ContinuousMap.Homotopy f₁ f₂ :=
-    { toFun := fun p => ⟨ψ₂ (p.2, p.1), h₂Z _⟩
-      continuous_toFun := by fun_prop
-      map_zero_left := fun x => Subtype.ext (h₂0 x)
-      map_one_left := fun x => Subtype.ext (h₂1 x) }
-  let H := H₁.trans H₂
-  refine ⟨⟨fun p => (H (p.2, p.1)).1, by fun_prop⟩, fun p => (H (p.2, p.1)).2, fun x => ?_,
-    fun x => ?_⟩
-  · have := H.map_zero_left x
-    exact congrArg Subtype.val this
-  · have := H.map_one_left x
-    exact congrArg Subtype.val this
-
 /-- A homotopy in `Z` is a homotopy in any larger set. -/
 theorem _root_.GraphMinor.Surface.ClosedCurvesHomotopicIn.mono {Z Z' : Set S}
   (hZ : Z ⊆ Z') {φ₀ φ₁ : C(Circle, S)}

@@ -216,6 +216,7 @@ theorem RadialDrawing.other_end_Rstar {e : Set Shat} (he : e ∈ rad.G.E) {u : S
   · exact absurd (⟨u, hu, rfl⟩ : cap.emb u ∈ Γ.hatV cap) (h₁ ▸ hw'.2)
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A neighbour in `Γ*` of a vertex on the cuff `Θ` is in `Σ`, unless it is the pole of `Θ`. -/
 theorem RadialDrawing.step_in_range {e : Set Shat} (he : e ∈ rad.G.E) {u : S} {w p : Shat}
   (hu : u ∈ Γ.V) {Θ : Set S}
@@ -224,8 +225,8 @@ theorem RadialDrawing.step_in_range {e : Set Shat} (he : e ∈ rad.G.E) {u : S} 
   have hw := rad.other_end_Rstar he hu hset
   by_cases hpw : w ∈ rad.poles
   · exfalso
-    obtain ⟨Θ', hΘ', hreg', -⟩ := rad.pole_cases hS hpw
-    obtain ⟨-, huΘ'⟩ := rad.pole_edge hS he hpw hΘ' hreg' hset
+    obtain ⟨Θ', hΘ', hreg', -⟩ := rad.pole_cases hpw
+    obtain ⟨-, huΘ'⟩ := rad.pole_edge he hpw hΘ' hreg' hset
     have hΘe : Θ' = Θ := by
       by_contra hne
       exact disjoint_left.1 (cuffs_disjoint hΘ' hΘ hne) huΘ' huΘ
@@ -302,7 +303,7 @@ theorem exists_smaller_of_two {n : ℕ} {F : Drawing Shat} (hF : IsShortCircuit 
     have hwR := rad.other_end_Rstar heG hu hset
     have hwp : w ≠ p := fun h ↦ hpF (hsQ.1 (h ▸ hw))
     have hwb : w ≠ cap.emb v := fun h ↦ hwR.2 ⟨v, hv, h.symm⟩
-    refine ⟨?_, w, hw, hwa, hwb, rad.step_in_range hS heG hu hΘ huΘ hp hreg hset hwp⟩
+    refine ⟨?_, w, hw, hwa, hwb, rad.step_in_range heG hu hΘ huΘ hp hreg hset hwp⟩
     have h₂ : 2 ≤ Q.E.ncard := (hend.resolve_left hwb).2
     exact (ncard_le_ncard hRE (toFinite _)).trans ((ncard_insert_le _ _).trans (by simpa using h₂))
 

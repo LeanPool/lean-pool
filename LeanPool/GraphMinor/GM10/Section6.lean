@@ -289,7 +289,7 @@ theorem IsTangle.exists_separation_order_eq {G : Hypergraph α β} {θ : ℕ}
     refine ⟨?_, ?_, ?_⟩
     · change (A.vertexSet ∪ {v}) ∪ B.vertexSet = G.vertexSet
       rw [Set.union_assoc, Set.singleton_union, Set.insert_eq_of_mem hvB, hsep.vertexSet_union]
-    · simp [union_edgeSet, Kv, vertexHypergraph, hsep.edgeSet_union]
+    · simp [Kv, vertexHypergraph, hsep.edgeSet_union]
     · simpa [union_edgeSet, Kv, vertexHypergraph] using hsep.edgeSet_inter_eq
   have hAK_not : (A ∪ Kv, B) ∉ 𝒯 := by
     intro hm
@@ -618,9 +618,9 @@ theorem theorem_6_1_proof {G : Graph α β} {H : Graph (Set α) β}
       (A₁' ∪ A₂' ∪ A₃').edgeSet
         = (A₁.edgeSet ∩ H_hyp.edgeSet) ∪ (A₂.edgeSet ∩ H_hyp.edgeSet) ∪
             (A₃.edgeSet ∩ H_hyp.edgeSet) := by
-          simp [union_edgeSet, hE₁, hE₂, hE₃, H_hyp]
+          simp [hE₁, hE₂, hE₃, H_hyp]
       _ = (A₁ ∪ A₂ ∪ A₃).edgeSet ∩ H_hyp.edgeSet := by
-          simp [union_edgeSet, Set.union_inter_distrib_right]
+          simp [Set.union_inter_distrib_right]
       _ = G_hyp.edgeSet ∩ H_hyp.edgeSet := by rw [hEU]
       _ = H_hyp.edgeSet := Set.inter_eq_right.2 hEH_sub
   · intro A B hAB hVA
@@ -819,7 +819,7 @@ theorem theorem_6_2_proof {G : Hypergraph α β} {θ : ℕ}
       (A₁ ∪ A₂ ∪ A₃).vertexSet
         = ((A₁ ∪ A₂ ∪ A₃).vertexSet \ W) ∪ W := (Set.sdiff_union_of_subset hW_U).symm
       _ = ((A₁.vertexSet \ W) ∪ (A₂.vertexSet \ W) ∪ (A₃.vertexSet \ W)) ∪ W := by
-          simp [union_vertexSet, Set.union_sdiff_distrib]
+          simp [Set.union_sdiff_distrib]
       _ = (G.vertexSet \ W) ∪ W := by rw [hVU']
       _ = G.vertexSet := Set.sdiff_union_of_subset hW
   axiom3 A' B' h hVA' := by

@@ -398,7 +398,7 @@ theorem cuff {k : ℕ} (hk : k + 3 = 2 * t) (hsep : ∀ p ∈ D.rad.poles, p ≠
     omega
   have haG : a ∈ D.P.Γ.V := D.P.Γ.tilde_subset_V he haV
   obtain ⟨Θ, hΘ, haΘ⟩ := mem_sUnion.mp ((sUnion_cuffs (S := S)).symm ▸ hab : a ∈ ⋃₀ cuffs S)
-  obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+  obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
   obtain ⟨g, hg, hcap⟩ := D.rad.exists_pole_edge hS h3c hp hΘ hreg haG haΘ
   have hag : cap.emb a ∈ D.rad.G.V := D.rad.isPreRadial.2.1 (mem_image_of_mem _ haG)
   have hlink : D.rad.G.toGraph.IsLink g (cap.emb a) p := ⟨hg, hag, hp.1.1, hcap⟩

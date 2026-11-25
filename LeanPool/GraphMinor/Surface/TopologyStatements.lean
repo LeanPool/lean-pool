@@ -368,13 +368,15 @@ def PasteDiscStatement : Prop :=
 
 /-! ## 6. Null-homotopic `O`-arcs -/
 
-/-- **Epstein's theorem.** Let `S` be a connected surface, and let `F ⊆ Z` be an `O`-arc disjoint
-from `bd S`. Then `F` is null-homotopic in `Z` if and only if `F` bounds a closed disc included in
-`Z`, and this holds if and only if `F` is included in a closed disc that lies in `Z`. If `S` is
+/-- **Disc bounding for null-homotopic curves.** Let `S` be a connected surface, and let
+`F ⊆ Z` be an `O`-arc disjoint from `bd S`. Then `F` is null-homotopic in `Z` if and only if
+`F` bounds a closed disc included in `Z`. This is equivalent to `F` lying inside a closed disc
+included in `Z`. If `S` is
 not a sphere, a closed disc bounded by `F` is unique.
 Graph Minors VII, Section 2 (page 214), citing H. I. Levine, *Homotopic curves on surfaces*;
-Graph Minors XI, (7.1) and (7.2) (page 93), citing D. B. A. Epstein, *Curves on 2-manifolds and
-isotopies*, Acta Math. 115 (1966) 83–107. -/
+Epstein's *Curves on 2-manifolds and isotopies*, Acta Math. 115 (1966) 83–107, Theorem 1.7,
+gives ambient disc bounding and is quoted as Graph Minors XI (7.1). Robertson and Seymour's
+XI (7.2) (page 93) gives disc containment in the subset `Z`. -/
 def EpsteinStatement : Prop :=
   ∀ (S : Type u) [TopologicalSpace S] (Z F : Set S), IsSurface S → ConnectedSpace S →
     IsOArc F → F ⊆ Z → Disjoint F (bd S) →

@@ -65,7 +65,7 @@ theorem dense_interior (hS : IsSurface S) [ConnectedSpace S] : Dense (bd S)ᶜ :
       obtain ⟨Θ', hΘ', hxΘ'⟩ := mem_iUnion₂.1 hn
       exact disjoint_left.1 (cap.cuffDisc_disjoint Θ hΘ Θ' hΘ'.1 (Ne.symm hΘ'.2))
         (discBd_subset _ hxb) hxΘ'
-    rw [hc.closure_eq_preimage_closure_image, mem_preimage, ← cap.compl_eq_image hS]
+    rw [hc.closure_eq_preimage_closure_image, mem_preimage, ← cap.compl_eq_image]
     rw [_root_.mem_closure_iff] at hcl ⊢
     intro O hO hxO
     obtain ⟨y, hy, hyE⟩ := hcl (O ∩ V) (hO.inter hVo) ⟨hxO, hxV⟩
@@ -254,7 +254,7 @@ theorem exists_fragment_of_region (hS : IsSurface S) (cap : IsCappedSurface S Sh
         (connectedComponent y))ᶜ ∧ e'.target = Pᶜ := by
   classical
   have : T2Space T' := hT'.2.1
-  have hcomp : cap.discsᶜ = cap.emb '' (bd S)ᶜ := cap.compl_eq_image hS
+  have hcomp : cap.discsᶜ = cap.emb '' (bd S)ᶜ := cap.compl_eq_image
   have hXA : Xᶜ ⊆ cap.emb '' (bd S)ᶜ := by
     rw [← hcomp]
     exact compl_subset_compl.2 (subset_union_left.trans hsub)

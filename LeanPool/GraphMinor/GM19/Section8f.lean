@@ -171,7 +171,7 @@ theorem spoke_unique (hS : IsSurface S) (hD : IsSkHat cap Γ D)
   have hT := cap.isClosedSurface
   have hman : ∀ x : Shat, IsManifoldPoint x := (Surface.IsClosedSurface.isSurface hT).2.2
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
-  have hrD := hD.hatRegion_mem_R hS hr
+  have hrD := hD.hatRegion_mem_R hr
   have hdis : Disjoint r D.U := by
     refine disjoint_left.mpr fun x hx hxU ↦ region_subset hrD hx hxU
   have hvne : cap.emb v₀ ≠ w := fun h ↦ disjoint_left.mp hdis hw
@@ -254,9 +254,9 @@ theorem pair_side [ConnectedSpace Shat] (hS : IsSurface S) (hD : IsSkHat cap Γ 
   classical
   have hT := cap.isClosedSurface
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
-  have hrD := hD.hatRegion_mem_R hS hr
-  have hDE : D.E.Nonempty := hD.E_nonempty hS h3.1
-  have hg : cap.emb '' f ∈ D.E := (hD.edge_iff hS).mpr ⟨f, hf, rfl⟩
+  have hrD := hD.hatRegion_mem_R hr
+  have hDE : D.E.Nonempty := hD.E_nonempty h3.1
+  have hg : cap.emb '' f ∈ D.E := hD.edge_iff.mpr ⟨f, hf, rfl⟩
   have : Nonempty Shat := ⟨w⟩
   let H := radialUnion hrad
   have hE : H.E = D.E ∪ G₃.E := radialUnion_E hrad
@@ -481,7 +481,7 @@ theorem disc_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
   have hsub' : F.U ⊆ rad.G.U := hFG.U_subset
   obtain ⟨D, G₃, hD, hrad, hmax, hsub, hhat⟩ :=
     rad.exists_full hS (h3.hatRegions_isOpenDisc hS cap) h3.1
-  have hDE := hD.E_nonempty hS h3.1
+  have hDE := hD.E_nonempty h3.1
   have hbU : discBd Δ ⊆ G₃.U := by
     rw [hbd]
     exact hFG.U_subset.trans hsub.U_subset
@@ -490,7 +490,7 @@ theorem disc_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
       hΔ.nonempty_discInt
     obtain ⟨s, hs, hys⟩ := exists_region_of_notMem hyU
     have hsI := region_in hT hΔ hbU hs (subset_closure hys) hyO
-    obtain ⟨f, c, hfc, hfs⟩ := exists_colour hS hD hrad hmax hDE hs
+    obtain ⟨f, c, hfc, hfs⟩ := exists_colour hD hrad hmax hDE hs
     obtain ⟨x, hx⟩ := hfc.mem.1
     refine ⟨c, restrict_in hman hΔ hfc.1 ?_⟩
     rcases disc_edge_side rad hFG hman hΔ hbd hfc.1 with h | h
@@ -524,7 +524,7 @@ theorem disc_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
       · exact absurd (D.V_subset_U hvhat) (h ▸ region_subset hr hw')
     subst hvv
     obtain ⟨hrO, hwO⟩ := rad.regionOf_mem hw
-    have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hS hrO) hr hwO hw'
+    have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hrO) hr hwO hw'
     rw [hrr] at hrO hfr₁ hfr₂
     obtain ⟨p₁, hp₁, hep₁, hfp₁⟩ := pair_side hS hD h3 hrad hmax h₁.mem hv₀ ht₁ hrO hfr₁ heG her hw'
       hw'G hset'
@@ -671,8 +671,8 @@ theorem tangleRep_spec (rad : RadialDrawing cap Γ) (ord : ℕ)
   exact Nat.sSup_mem hne ⟨ord, fun _ h ↦ h.1⟩
 
 omit [T2Space S] in
-/-- `rep(𝒯) ≤ rep(Γ)`: a circuit of half-length less than `rep(𝒯)` bounds a disc, and so it is
-null-homotopic, by Epstein's theorem. -/
+/-- `rep(𝒯) ≤ rep(Γ)`: a circuit of half-length less than `rep(𝒯)` bounds a disc and is consequently
+null-homotopic. -/
 theorem tangleRep_le_rep (rad : RadialDrawing cap Γ) (ord : ℕ)
     (𝒯 : Set (Hypergraph S (Set S) × Hypergraph S (Set S))) :
     (tangleRep rad ord 𝒯 : ℕ∞) ≤ Painting.rep rad := by
@@ -721,7 +721,7 @@ theorem left_ne_of_mem {G : Hypergraph S (Set S)} {θ : ℕ}
   rw [heq]
   exact eq_of_le_of_vertexSet_eq_of_edgeSet_eq
     (GM10.union_le (GM10.union_le le_rfl le_rfl) le_rfl) le_rfl
-    (by simp [GM10.union_vertexSet]) (by simp [GM10.union_edgeSet])
+    (by simp) (by simp)
 
 omit [T2Space Shat] in
 /-- If `(P, P')` has its middle in the middle of `(A, B)`, and splits only edges that `(A, B)`

@@ -110,6 +110,12 @@ def TangleAxiom2 (G : Hypergraph α β) (𝒯 : Set (Hypergraph α β × Hypergr
 def TangleAxiom3 (G : Hypergraph α β) (𝒯 : Set (Hypergraph α β × Hypergraph α β)) : Prop :=
   ∀ ⦃A B : Hypergraph α β⦄, (A, B) ∈ 𝒯 → A.vertexSet ≠ G.vertexSet
 
+/-- The tangle induced in `G` by a tangle in `H`, obtained by restricting each separation
+to `H` while retaining the order bound in `G`. -/
+def inducedTangleFromSubgraph (G H : Hypergraph α β) (θ : ℕ)
+    (T : Set (Hypergraph α β × Hypergraph α β)) : Set (Hypergraph α β × Hypergraph α β) :=
+  {p | G.IsSeparation p.1 p.2 ∧ separationOrder p.1 p.2 < θ ∧ (p.1 ∩ H, p.2 ∩ H) ∈ T}
+
 /-- A tangle in `G` of order `θ` (Graph Minors X, Section 1, page 154):
 "Let $G$ be a hypergraph and let $\theta \ge 1$ be an integer. A *tangle* in $G$ of *order*
 $\theta$ is a set $\mathscr{T}$ of separations of $G$, each of order $< \theta$, such that

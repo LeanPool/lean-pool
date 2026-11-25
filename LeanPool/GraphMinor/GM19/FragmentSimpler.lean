@@ -189,7 +189,7 @@ theorem simpler_of_piece (hS : IsSurface S) (cap : IsCappedSurface S Shat) (hY :
   have hxb : ψ y' ∉ bd S := fun h ↦ h (isInteriorPoint_image hψ K.isClosed_U hint' hxK)
   have hxd : cap.emb (ψ y') ∉ cap.discs := fun h ↦ by
     have hc' : cap.emb (ψ y') ∈ cap.discsᶜ := by
-      rw [show cap.discsᶜ = _ from cap.compl_eq_image hS]
+      rw [show cap.discsᶜ = _ from cap.compl_eq_image]
       exact mem_image_of_mem _ hxb
     exact hc' h
   have hxZ : cap.emb (ψ y') ∉ cap.discs ∪ cap.emb '' K.U := by
@@ -332,7 +332,7 @@ theorem cutSimpler : CutSimplerStatement := by
     · exact ⟨s⟩
   have : ConnectedSpace S := by
     have h := (cap.isPreconnected_compl hfc subset_rfl).2
-    rw [cap.compl_eq_image hS, cap.isEmbedding.isInducing.isPreconnected_image] at h
+    rw [cap.compl_eq_image, cap.isEmbedding.isInducing.isPreconnected_image] at h
     have hc := h.closure
     rw [(dense_interior' hS).closure_eq] at hc
     exact { toPreconnectedSpace := ⟨hc⟩, toNonempty := hSne }
@@ -369,7 +369,7 @@ theorem cutSimpler : CutSimplerStatement := by
       · rintro _ ⟨a, ha, rfl⟩ _ ⟨b, hb, rfl⟩ he
         by_contra hne
         obtain ⟨Θ, hΘ, h₁, h₂⟩ := hsame he hne
-        rw [hsing ⟨ha, cap.bd_of_mem hS hΘ h₁⟩ ⟨hb, cap.bd_of_mem hS hΘ h₂⟩] at hne
+        rw [hsing ⟨ha, cap.bd_of_mem hΘ h₁⟩ ⟨hb, cap.bd_of_mem hΘ h₂⟩] at hne
         exact hne rfl
       · obtain ⟨Y, tY, t2, ψ, h₁, h₂, h₃⟩ := exists_cut_drawing (𝓐 := cuffs S ∪ {K.U}) (𝓛
         := ∅) hS hlines hKbd hKne
@@ -377,8 +377,8 @@ theorem cutSimpler : CutSimplerStatement := by
             (fun L hL ↦ absurd hL (notMem_empty L)))
           (by simp [sUnion_cuffs, union_comm])
         exact ⟨Y, tY, t2, ψ, h₁, h₂, h₃⟩
-    · have hE := cap.mem_closure_emb hS hΘ hs
-      have hE' := cap.mem_closure_emb hS hΘ ht
+    · have hE := cap.mem_closure_emb hΘ hs
+      have hE' := cap.mem_closure_emb hΘ ht
       have hline := hl.map_of_embedding cap.isEmbedding
       have hab : c₀ (cap.emb s) = c₀ (cap.emb t) := by
         rw [hq _ (mem_image_of_mem _ hΘ) _ hE, hq _ (mem_image_of_mem _ hΘ) _ hE']
@@ -401,8 +401,8 @@ theorem cutSimpler : CutSimplerStatement := by
         by_cases hne : cap.emb a = cap.emb b
         · exact Or.inl hne
         · obtain ⟨Θ', hΘ', h₁, h₂⟩ := hsame he hne
-          have hma : a ∈ K.U ∩ bd S := ⟨ha, cap.bd_of_mem hS hΘ' h₁⟩
-          have hmb : b ∈ K.U ∩ bd S := ⟨hb, cap.bd_of_mem hS hΘ' h₂⟩
+          have hma : a ∈ K.U ∩ bd S := ⟨ha, cap.bd_of_mem hΘ' h₁⟩
+          have hmb : b ∈ K.U ∩ bd S := ⟨hb, cap.bd_of_mem hΘ' h₂⟩
           rw [hKb] at hma hmb
           rcases hma with rfl | hma <;> rcases hmb with rfl | hmb
           · exact absurd rfl hne

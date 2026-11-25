@@ -456,7 +456,7 @@ theorem theorem_14_1_proof
     have hV_union : (A₁ ∪ A₂ ∪ A₃).vertexSet = G.vertexSet := by
       have hU'_V : (A'₁ ∪ A'₂ ∪ A'₃).vertexSet = G.vertexSet :=
         congrArg Hypergraph.vertexSet hU'
-      simpa [union_vertexSet, hVA₁, hVA₂, hVA₃] using hU'_V
+      simpa [hVA₁, hVA₂, hVA₃] using hU'_V
     have hE_union : (A₁ ∪ A₂ ∪ A₃).edgeSet = G.edgeSet := by
       refine Subset.antisymm hle_all.edgeSet_subset ?_
       intro e heG

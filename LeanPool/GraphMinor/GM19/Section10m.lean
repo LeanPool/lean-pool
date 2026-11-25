@@ -73,19 +73,21 @@ variable (hS : IsSurface S)
 include hS
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- A pole does not lie in `Σ`. -/
 theorem pole_notMem_range (D : TangleDatum cap χ) {r : Shat} (hr : r ∈ D.rad.poles) : r ∉ range
   cap.emb := by
-  obtain ⟨Θ, hΘ, -, hd⟩ := D.rad.pole_cases hS hr
+  obtain ⟨Θ, hΘ, -, hd⟩ := D.rad.pole_cases hr
   exact fun h ↦ cap.notMem_range hΘ hd h
 
 omit [T2Space S] [T2Space Shat] in
+omit hS in
 /-- Distinct poles belong to distinct cuffs. -/
 theorem pole_cuffs_ne (D : TangleDatum cap χ) {r₁ r₂ : Shat} (h₁ : r₁ ∈ D.rad.poles)
   (h₂ : r₂ ∈ D.rad.poles) (hne : r₁ ≠ r₂) :
     ∃ Θ₁ ∈ cuffs S, ∃ Θ₂ ∈ cuffs S, Θ₁ ≠ Θ₂ ∧ r₁ ∈ cap.cuffDisc Θ₁ ∧ r₂ ∈ cap.cuffDisc Θ₂ := by
-  obtain ⟨Θ₁, hΘ₁, hreg₁, hd₁⟩ := D.rad.pole_cases hS h₁
-  obtain ⟨Θ₂, hΘ₂, hreg₂, hd₂⟩ := D.rad.pole_cases hS h₂
+  obtain ⟨Θ₁, hΘ₁, hreg₁, hd₁⟩ := D.rad.pole_cases h₁
+  obtain ⟨Θ₂, hΘ₂, hreg₂, hd₂⟩ := D.rad.pole_cases h₂
   refine ⟨Θ₁, hΘ₁, Θ₂, hΘ₂, ?_, hd₁, hd₂⟩
   rintro rfl
   obtain ⟨-, -, hG3, -⟩ := id D.rad.isPreRadial
@@ -94,6 +96,7 @@ theorem pole_cuffs_ne (D : TangleDatum cap χ) {r₁ r₂ : Shat} (h₁ : r₁ �
   exact hne ((hG3 _ m₁.1).unique ⟨m₁.2, h₁.1.1⟩ ⟨(hreg₁.trans hreg₂.symm) ▸ m₂.2, h₂.1.1⟩)
 
 omit [T2Space S] in
+omit hS in
 /-- A circuit with a pole in its inside is not the edge of a disc of `Σ` that misses the vertices of
 `Γ` off the circuit. -/
 theorem no_empty_disc (D : TangleDatum cap χ) {F : Drawing Shat} (hF : F.IsCircuitOf D.rad.G)
@@ -105,7 +108,7 @@ theorem no_empty_disc (D : TangleDatum cap χ) {F : Drawing Shat} (hF : F.IsCirc
   have : ConnectedSpace Shat := cap.connected
   have hi := D.ins_spec hF hlt
   rcases isSidesOf_cases hT hd hbd (D.sides_ins hF hlt) with ⟨e₁, -⟩ | ⟨e₁, e₂⟩
-  · exact D.pole_notMem_range hS hr (hsub (e₁ ▸ hri))
+  · exact D.pole_notMem_range hr (hsub (e₁ ▸ hri))
   · have hm := hi.2.2.2.2
     refine D.isTangle.axiom3 hm ?_
     refine subset_antisymm inter_subset_left fun v hv ↦ ⟨hv, ?_⟩
@@ -158,10 +161,10 @@ theorem exists_outer_of_pair [Nonempty S] {n : ℕ} (hn : n < D.rep) (hd :
     · exact Or.inr h
     · exact (not_dist_le hd hle₂ h).elim
   obtain ⟨K, hK, htwo⟩ := exists_part_of_form hS h3 hFc hform fun Δ h₁ h₂ h₃ h₄ ↦
-    D.no_empty_disc hS hFc hlt hp₀ (hsub hi₀) h₁ h₂ h₃ h₄
+    D.no_empty_disc hFc hlt hp₀ (hsub hi₀) h₁ h₂ h₃ h₄
   have hi := D.ins_spec hFc hlt
   have hbd : discBd (D.ins F) = F.U := hi.2.2.2.1
-  obtain ⟨Θ₁, hΘ₁, Θ₂, hΘ₂, hΘ, hd₁, hd₂⟩ := D.pole_cuffs_ne hS hp₀ hq₀ hne₀
+  obtain ⟨Θ₁, hΘ₁, Θ₂, hΘ₂, hΘ, hd₁, hd₂⟩ := D.pole_cuffs_ne hp₀ hq₀ hne₀
   have hKF : cap.emb '' K.U ⊆ F.U := by
     rcases hK.form with ⟨h, -⟩ | ⟨s, t, Θ, -, -, -, -, -, -, h, -⟩
     · exact h.symm.subset

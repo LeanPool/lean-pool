@@ -109,7 +109,7 @@ theorem no_parallel (D : TangleDatum cap χ) {g₁ g₂ : Set Shat} (hg₁ : g�
       · exact .inr rfl
       · exact .inl htr
   have hclosed : ∃ Δ, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {v} ∧ discBd Δ = F₀ := by
-    rcases hatRegion_cases hS cap D.P.Γ hrm with hsub | ⟨Θ, hΘ, hreq⟩
+    rcases hatRegion_cases cap D.P.Γ hrm with hsub | ⟨Θ, hΘ, hreq⟩
     · -- the region lies in `Σ`
       obtain ⟨b, hb, rfl⟩ := hv
       have hrU : Disjoint r (D.P.Γ.hatU cap) := by
@@ -174,7 +174,7 @@ theorem no_parallel (D : TangleDatum cap χ) {g₁ g₂ : Set Shat} (hg₁ : g�
         exact .inl (subset_closure hp)
       have hpcl := hE.subset_closure_discInt (Surface.discBd_subset _ hpb)
       obtain ⟨y, hy₁, hy₂⟩ := mem_closure_iff.mp hpcl _ (isOpen_regionOf D ht) hpr
-      have hRr := hSk.hatRegion_mem_R hS hrm
+      have hRr := hSk.hatRegion_mem_R hrm
       have hdis : Disjoint (discInt (cap.emb '' Δ₁)) Sk.U := by
         rw [disjoint_left]
         intro z hz hzU
@@ -202,7 +202,7 @@ theorem no_parallel (D : TangleDatum cap χ) {g₁ g₂ : Set Shat} (hg₁ : g�
       · exact hF₀r hxF
       · have hxb : x ∉ discBd (closure (cap.cuffDisc Θ)) := disjoint_left.mp h₄ ⟨hx, hxF⟩
         have hxc := h₁ hx
-        rw [cap.closure_cuffDisc hS hΘ] at hxc
+        rw [cap.closure_cuffDisc hΘ] at hxc
         rcases hxc with h | h
         · exact .inl (hreq ▸ h)
         · exact absurd (by rw [cap.cuffDisc_bd Θ hΘ]; exact h) hxb

@@ -59,7 +59,7 @@ theorem pair_in_side (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
     · exact absurd (D.V_subset_U hvhat) (h ▸ region_subset hr hw')
   subst hvv
   obtain ⟨hrO, hwO⟩ := rad.regionOf_mem hw
-  have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hS hrO) hr hwO hw'
+  have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hrO) hr hwO hw'
   rw [hrr] at hrO hfr₁ hfr₂
   have key : ∀ {f c : Set S} , Γ.IsSkEdgeIn f c → v₀ ∈ tilde f →
       cap.emb '' f ⊆ frontier r → cap.emb '' c ⊆ Ω := by

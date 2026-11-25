@@ -265,7 +265,7 @@ private lemma theorem_8_3_axiom1 {G G' C C' D : Hypergraph α β} {θ : ℕ}
     have hordG : separationOrder (X' ∩ D) ((Y' ∩ D) ∪ C) < θ := by omega
     rcases h𝒯.axiom1 hsepG hordG with hm | hm
     · refine Or.inl ⟨hs', ho', ⟨(X' ∩ D, (Y' ∩ D) ∪ C), hm, ?_⟩⟩
-      simp [inter_edgeSet]
+      simp
     · refine Or.inr ⟨hs'.symm, by rwa [separationOrder_comm],
         ⟨((Y' ∩ D) ∪ C, X' ∩ D), hm, ?_⟩⟩
       ext e
@@ -483,7 +483,7 @@ theorem theorem_8_3_proof
             (A₁'.vertexSet ∩ C'.vertexSet) ∪ (A₂'.vertexSet ∩ C'.vertexSet) ∪
                 (A₃'.vertexSet ∩ C'.vertexSet)
               = (A₁' ∪ A₂' ∪ A₃').vertexSet ∩ C'.vertexSet := by
-                simp [union_vertexSet, Set.union_inter_distrib_right]
+                simp [Set.union_inter_distrib_right]
             _ = G'.vertexSet ∩ C'.vertexSet := by rw [hVU]
             _ = C'.vertexSet := Set.inter_eq_right.2 hC'D.1.left_le.vertexSet_subset
         · change (A₁'.edgeSet ∩ C'.edgeSet) ∪ (A₂'.edgeSet ∩ C'.edgeSet) ∪
@@ -494,7 +494,7 @@ theorem theorem_8_3_proof
             (A₁'.edgeSet ∩ C'.edgeSet) ∪ (A₂'.edgeSet ∩ C'.edgeSet) ∪
                 (A₃'.edgeSet ∩ C'.edgeSet)
               = (A₁' ∪ A₂' ∪ A₃').edgeSet ∩ C'.edgeSet := by
-                simp [union_edgeSet, Set.union_inter_distrib_right]
+                simp [Set.union_inter_distrib_right]
             _ = G'.edgeSet ∩ C'.edgeSet := by rw [hEU]
             _ = C'.edgeSet := Set.inter_eq_right.2 hC'D.1.left_le.edgeSet_subset
       have hdF₁₂ : Disjoint F₁.edgeSet F₂.edgeSet :=
@@ -538,7 +538,7 @@ theorem theorem_8_3_proof
       (theorem_2_7_proof h1_le (fun _ _ h ↦ h𝒯.isSeparation h)
         (fun _ _ h ↦ h𝒯.order_lt h) h𝒯.axiom1 h𝒯.axiom2).1 h𝒯 e heG hsizeG
     refine ⟨hsep_e', hord_e', ⟨(edgeHypergraph G e, G.deleteEdges {e}), hKe_mem, ?_⟩⟩
-    simp [inter_edgeSet, edgeHypergraph]
+    simp [edgeHypergraph]
 
 /-! ## Graph Minors X, (8.4) -/
 

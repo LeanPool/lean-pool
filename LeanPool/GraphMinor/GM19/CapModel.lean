@@ -498,7 +498,7 @@ theorem nonempty_capped_model (a b c : ℕ) : Nonempty (IsCappedSurface (Surface
     have : T2Space (SurfaceModel a b c) := (presents_ew a b c).1
     have : T2Space (SurfaceModel a b (c + 1)) := (presents_ew a b (c + 1)).1
     have hd := fillDisc_facts (a := a) (b := b) (c := c)
-    exact nonempty_capped_of_paste (isSurface_model a b (c + 1)).1 (isSurface_model a b c).1
+    exact nonempty_capped_of_paste (isSurface_model a b c).1
       lastCuff_mem_cuffs
       isClosedEmbedding_plug hd.1 range_union_fillDisc range_inter_fillDisc
       (by rw [hd.2, image_lastCuff]) bd_plug cap

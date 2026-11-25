@@ -170,10 +170,10 @@ theorem exists_bite_shape {r : Shat} {F : Drawing Shat} (hFc : F.IsCircuitOf D.r
   have hcover := U_subset_of_one_pole hFc.1 hreg hrd hone
   obtain ⟨e₁, e₂, v₁, v₂, he₁, he₂, hv₁, hv₂, hne, hs₁, hs₂, hedges⟩ := D.rad.circuit_edges hS h3
     hFc hrF hr.1
-  obtain ⟨hd₁, hvΘ₁⟩ := D.rad.pole_edge hS (hFc.1.2 he₁) hr hΘ hreg hs₁
-  obtain ⟨hd₂, hvΘ₂⟩ := D.rad.pole_edge hS (hFc.1.2 he₂) hr hΘ hreg hs₂
+  obtain ⟨hd₁, hvΘ₁⟩ := D.rad.pole_edge (hFc.1.2 he₁) hr hΘ hreg hs₁
+  obtain ⟨hd₂, hvΘ₂⟩ := D.rad.pole_edge (hFc.1.2 he₂) hr hΘ hreg hs₂
   set G := D.rad.G with hG
-  have hrnr := D.pole_notMem_range hS hr
+  have hrnr := D.pole_notMem_range hr
   have hvG : ∀ {v}, v ∈ D.P.Γ.V → cap.emb v ∈ G.V := fun hv ↦ D.rad.isPreRadial.2.1
     (mem_image_of_mem _ hv)
   have hvp : ∀ {v}, v ∈ D.P.Γ.V → cap.emb v ≠ r := fun hv h ↦ hr.1.2 (h ▸ mem_image_of_mem _ hv)
@@ -274,7 +274,7 @@ theorem exists_bite_shape {r : Shat} {F : Drawing Shat} (hFc : F.IsCircuitOf D.r
       · exact ⟨_, h'.symm⟩
       · exact ⟨_, (mem_singleton_iff.1 h').symm⟩
   have hEb : discBd (closure (cap.cuffDisc Θ)) = cap.emb '' Θ := cap.cuffDisc_bd Θ hΘ
-  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hS hΘ
+  have hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ)) := cap.cuffDisc_eq_discInt hΘ
   have hΒE : Β ⊆ closure (cap.cuffDisc Θ) := union_subset (hclE (hFc.1.2 he₁) hs₁) (hclE
     (hFc.1.2 he₂) hs₂)
   have hmeet : Β ∩ cap.emb '' Θ = {cap.emb v₁, cap.emb v₂} := by
@@ -393,7 +393,7 @@ theorem line_of_discBd {T : Type} [TopologicalSpace T] [T2Space T] {Di A Β : Se
 omit hS h3 in
 omit [T2Space S] in
 /-- **`I(F)` is the arc of the cuff on the inner side of the chord.** -/
-theorem IsBiteShape.biteArc_eq (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.biteArc_eq {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) :
     D.biteArc r F = A ∪ {cap.emb v₁, cap.emb v₂} := by
   classical
@@ -423,7 +423,7 @@ theorem IsBiteShape.biteArc_eq (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di
     · exact hins (h.Β_F hb₁)
     · exact (mem_singleton_iff.1 hx) ▸ hins (h.Β_F hb₂))
   have hcl : closure (D.rad.regionOf r) \ D.rad.regionOf r = cap.emb '' Θ := by
-    rw [h.reg, cap.closure_cuffDisc hS h.cuff]
+    rw [h.reg, cap.closure_cuffDisc h.cuff]
     ext x
     constructor
     · rintro ⟨hx | hx, hn⟩
@@ -473,10 +473,10 @@ theorem IsBiteShape.biteArc_eq (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di
 omit hS h3 in
 omit [T2Space S] in
 /-- An edge of `Γ` on the cuff inside `F` lies on the arc `I(F)`. -/
-theorem IsBiteShape.edge_subset (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.edge_subset {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) {e : Set S} (he : e ∈ D.P.Γ.E) (heΘ : e ⊆ Θ)
     (hi : cap.emb '' e ⊆ D.ins F) : cap.emb '' e ⊆ D.biteArc r F := by
-  rw [h.biteArc_eq hS]
+  rw [h.biteArc_eq]
   rintro _ ⟨x, hx, rfl⟩
   have hoff : cap.emb x ∉ F.U := disjoint_left.1 (disc_edge_disjoint D.rad h.circuit.1 he)
     (mem_image_of_mem _ hx)
@@ -489,11 +489,11 @@ theorem IsBiteShape.edge_subset (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' D
 omit hS h3 in
 omit [T2Space S] in
 /-- The arc `I(F)` lies inside `F` and on the cuff. -/
-theorem IsBiteShape.biteArc_subset (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.biteArc_subset {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) :
     D.biteArc r F ⊆ D.ins F ∩ cap.emb '' Θ := by
   have : ConnectedSpace Shat := cap.connected
-  rw [h.biteArc_eq hS]
+  rw [h.biteArc_eq]
   have hb₁ : cap.emb v₁ ∈ Β := (h.meet ▸ mem_insert _ _ : cap.emb v₁ ∈ Β ∩ cap.emb '' Θ).1
   have hb₂ : cap.emb v₂ ∈ Β := (h.meet ▸ mem_insert_of_mem _ rfl : cap.emb v₂ ∈ Β ∩ cap.emb '' Θ).1
   rintro x (hx | rfl | hx)
@@ -505,39 +505,39 @@ theorem IsBiteShape.biteArc_subset (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A
 omit hS h3 in
 omit [T2Space S] in
 /-- The arc `I(F)` read in `Σ` is connected. -/
-theorem IsBiteShape.isPreconnected_biteArc (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.isPreconnected_biteArc {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) :
     IsPreconnected (cap.emb ⁻¹' D.biteArc r F) := by
   have hne : cap.emb v₁ ≠ cap.emb v₂ := fun he ↦ h.ne (cap.isEmbedding.injective he)
   have hdis : Disjoint A Β := disjoint_left.2 fun x hx hxΒ ↦ (h.A_sub hx).2 (h.meet ▸ ⟨hxΒ,
     (h.A_sub hx).1⟩)
   have hl := line_of_discBd h.di h.bd_i h.line hdis hne
-  rw [← h.biteArc_eq hS] at hl
+  rw [← h.biteArc_eq] at hl
   rw [← cap.isEmbedding.isInducing.isPreconnected_image, image_preimage_eq_of_subset fun x hx ↦ by
-    obtain ⟨y, -, rfl⟩ := (h.biteArc_subset hS hx).2
+    obtain ⟨y, -, rfl⟩ := (h.biteArc_subset hx).2
     exact mem_range_self y]
   exact isPreconnected_of_line hl
 
 omit hS h3 in
 omit [T2Space S] in
 /-- The arc `I(F)` is a line. -/
-theorem IsBiteShape.isLine_biteArc (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.isLine_biteArc {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) :
     IsLineWithEnds (D.biteArc r F) (cap.emb v₁) (cap.emb v₂) := by
   have hne : cap.emb v₁ ≠ cap.emb v₂ := fun he ↦ h.ne (cap.isEmbedding.injective he)
   have hdis : Disjoint A Β := disjoint_left.2 fun x hx hxΒ ↦ (h.A_sub hx).2 (h.meet ▸ ⟨hxΒ,
     (h.A_sub hx).1⟩)
-  rw [h.biteArc_eq hS]
+  rw [h.biteArc_eq]
   exact line_of_discBd h.di h.bd_i h.line hdis hne
 
 omit hS h3 in
 omit [T2Space S] in
 /-- A point of the cuff inside `F` is on the arc `I(F)` or is a vertex of `F`. -/
-theorem IsBiteShape.mem_biteArc_or (hS : IsSurface S) {r Θ F v₁ v₂ Β L A A' Di Do}
+theorem IsBiteShape.mem_biteArc_or {r Θ F v₁ v₂ Β L A A' Di Do}
   (h : D.IsBiteShape r Θ F v₁ v₂ Β L A A' Di Do) {x : Shat} (hxΘ : x ∈ cap.emb '' Θ)
     (hxi : x ∈ D.ins F) :
     x ∈ D.biteArc r F ∨ x ∈ F.V ∧ x ∈ A' := by
-  rw [h.biteArc_eq hS]
+  rw [h.biteArc_eq]
   by_cases hst : x ∈ ({cap.emb v₁, cap.emb v₂} : Set Shat)
   · exact Or.inl (Or.inr hst)
   rcases h.cover ⟨hxΘ, hst⟩ with h₁ | h₁
@@ -566,16 +566,16 @@ theorem line_subset_closure_diff {T : Type} [TopologicalSpace T] {L Z : Set T} {
 omit hS h3 in
 omit [T2Space S] in
 /-- **A bite inside another has its arc inside the arc of the other.** -/
-theorem IsBiteShape.biteArc_mono (hS : IsSurface S) {r Θ F₁ F₂ v₁ v₂ Β L A A' Di Do w₁ w₂ Β' L' B
+theorem IsBiteShape.biteArc_mono {r Θ F₁ F₂ v₁ v₂ Β L A A' Di Do w₁ w₂ Β' L' B
   B' Ei Eo} (h₁ : D.IsBiteShape r Θ F₁ v₁ v₂ Β L A A' Di Do)
     (h₂ : D.IsBiteShape r Θ F₂ w₁ w₂ Β' L' B B' Ei Eo) (hsub : D.ins F₁ ⊆ D.ins F₂) : D.biteArc r
       F₁ ⊆ D.biteArc r F₂ := by
-  have hT₂ : IsClosed (D.biteArc r F₂) := isClosed_of_cuffLine (h₂.isLine_biteArc hS)
-  refine (line_subset_closure_diff (h₁.isLine_biteArc hS) F₂.finite_V).trans
+  have hT₂ : IsClosed (D.biteArc r F₂) := isClosed_of_cuffLine (h₂.isLine_biteArc)
+  refine (line_subset_closure_diff (h₁.isLine_biteArc) F₂.finite_V).trans
     (closure_minimal ?_ hT₂)
   rintro x ⟨hx, hxV⟩
-  have hm := h₁.biteArc_subset hS hx
-  rcases h₂.mem_biteArc_or hS hm.2 (hsub hm.1) with h' | h'
+  have hm := h₁.biteArc_subset hx
+  rcases h₂.mem_biteArc_or hm.2 (hsub hm.1) with h' | h'
   · exact h'
   · exact absurd h'.1 hxV
 

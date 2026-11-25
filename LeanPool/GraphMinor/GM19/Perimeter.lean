@@ -524,7 +524,7 @@ theorem IsCappedSurface.notMem_range (cap : IsCappedSurface S Shat) {Θ : Set S}
 
 omit [T2Space S] in
 /-- A region of `Γ` in `Σ̂` either lies in `Σ`, or is the inside of a pasted disc. -/
-theorem hatRegion_cases (hS : IsSurface S) (cap : IsCappedSurface S Shat)
+theorem hatRegion_cases (cap : IsCappedSurface S Shat)
   (Γ : Painting S) {r : Set Shat}
     (hr : r ∈ Γ.hatRegions cap) : r ⊆ range cap.emb ∨ ∃ Θ ∈ cuffs S, r = cap.cuffDisc Θ := by
   have hsurf := cap.isSurface
@@ -541,12 +541,12 @@ theorem hatRegion_cases (hS : IsSurface S) (cap : IsCappedSurface S Shat)
     have hrpre : IsPreconnected r := isPreconnected_connectedComponentIn
     have hrU : r ⊆ (Γ.hatU cap)ᶜ := connectedComponentIn_subset _ _
     have hcapopen : IsOpen (cap.cuffDisc Θ) := by
-      rw [cap.cuffDisc_eq_discInt hS hΘ]
+      rw [cap.cuffDisc_eq_discInt hΘ]
       exact (cap.cuffDisc_closedDisc Θ hΘ).isOpen_discInt hman
     have hcapU : cap.cuffDisc Θ ⊆ (Γ.hatU cap)ᶜ := fun w hw ⟨y, _, hy⟩ ↦
       cap.notMem_range hΘ hw ⟨y, hy⟩
     have hconn : IsPreconnected (cap.cuffDisc Θ) := by
-      rw [cap.cuffDisc_eq_discInt hS hΘ]
+      rw [cap.cuffDisc_eq_discInt hΘ]
       exact (cap.cuffDisc_closedDisc Θ hΘ).isPreconnected_discInt
     have h₁ : cap.cuffDisc Θ ⊆ r := hconn.subset_connectedComponentIn hxΘ hcapU
     have h₂ : r ⊆ cap.cuffDisc Θ := by
@@ -557,7 +557,7 @@ theorem hatRegion_cases (hS : IsSurface S) (cap : IsCappedSurface S Shat)
       · by_cases hwc : w ∈ cap.cuffDisc Θ
         · exact Or.inl hwc
         · refine Or.inr fun hcl ↦ ?_
-          rw [cap.closure_cuffDisc hS hΘ] at hcl
+          rw [cap.closure_cuffDisc hΘ] at hcl
           rcases hcl with h | ⟨y, hy, rfl⟩
           · exact hwc h
           · have hyb : y ∈ bd S := by
@@ -643,7 +643,7 @@ theorem exists_isSkHat (hS : IsSurface S) (cap : IsCappedSurface S Shat) (Γ : P
   exact ⟨D, hDU, hDV⟩
 
 omit [T2Space S] in
-theorem IsSkHat.edge_iff (_hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ : Painting S}
+theorem IsSkHat.edge_iff {cap : IsCappedSurface S Shat} {Γ : Painting S}
     {D : Drawing Shat} (h : IsSkHat cap Γ D) {C : Set Shat} :
     C ∈ D.E ↔ ∃ e ∈ arcComponentsIn (Γ.skU \ Γ.V), cap.emb '' e = C := by
   have hset : D.U \ D.V = cap.emb '' (Γ.skU \ Γ.V) := by
@@ -663,7 +663,7 @@ omit [T2Space S] in
 beyond the region it would enter the inside of a disc of an edge of size 3. The frontier of that
 inside lies in `sk(Γ)`, so the component would lie in it, which it does not. -/
 theorem IsSkHat.hatRegion_mem_R {cap : IsCappedSurface S Shat} {Γ : Painting S}
-    {D : Drawing Shat} (h : IsSkHat cap Γ D) (_hS : IsSurface S) {r : Set Shat}
+    {D : Drawing Shat} (h : IsSkHat cap Γ D) {r : Set Shat}
     (hr : r ∈ Γ.hatRegions cap) : r ∈ D.R := by
   have hT := cap.isClosedSurface
   have : T2Space Shat := hT.2.1
@@ -716,7 +716,7 @@ theorem IsSkHat.no_loops (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ :
     {D : Drawing Shat} (h : IsSkHat cap Γ D) :
     ∀ e ∈ D.E, ∃ u w, u ≠ w ∧ closure e ∩ D.V = {u, w} := by
   intro C hC
-  obtain ⟨e, he, rfl⟩ := (h.edge_iff hS).mp hC
+  obtain ⟨e, he, rfl⟩ := h.edge_iff.mp hC
   obtain ⟨u, w, huw, ht, htV, -⟩ := Γ.sk_line he
   refine ⟨cap.emb u, cap.emb w, cap.isEmbedding.injective.ne huw, ?_⟩
   have hset : closure e ∩ Γ.V = {u, w} := by
@@ -766,7 +766,7 @@ theorem pinch (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ : Painting S
   have hrU : r ⊆ (Γ.hatU cap)ᶜ := by
     obtain ⟨x, hx, rfl⟩ := hr
     exact connectedComponentIn_subset _ _
-  rcases hatRegion_cases hS cap Γ hr with hrr | ⟨Θ, hΘ, rfl⟩
+  rcases hatRegion_cases cap Γ hr with hrr | ⟨Θ, hΘ, rfl⟩
   · have hFr : F ⊆ range cap.emb := fun x hx ↦ by
       by_cases hxv : x = cap.emb v₀
       · exact ⟨v₀, hxv.symm⟩
@@ -809,7 +809,7 @@ theorem pinch (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ : Painting S
       exact congrArg _ (hVU ⟨hV ⟨hx, hz⟩, hz⟩)
   · have hC := cap.cuffDisc_closedDisc Θ hΘ
     have hint : F \ {cap.emb v₀} ⊆ discInt (closure (cap.cuffDisc Θ)) := by
-      rw [← cap.cuffDisc_eq_discInt hS hΘ]
+      rw [← cap.cuffDisc_eq_discInt hΘ]
       exact hsub
     refine pinch_of_cell hT hC hF (fun x hx ↦ ?_) hint ?_
     · by_cases hxv : x = cap.emb v₀
@@ -818,7 +818,7 @@ theorem pinch (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ : Painting S
       · exact subset_closure (hsub ⟨hx, hxv⟩)
     · rintro y ⟨hyC, hyU⟩
       rw [cap.cuffDisc_bd Θ hΘ]
-      rw [cap.closure_cuffDisc hS hΘ] at hyC
+      rw [cap.closure_cuffDisc hΘ] at hyC
       rcases hyC with hy | hy
       · rw [h.hU] at hyU
         obtain ⟨z, -, rfl⟩ := hyU
@@ -846,7 +846,7 @@ theorem sk_frontier_pair (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ :
   have hhalf : ∀ f ∈ arcComponentsIn (Γ.skU \ Γ.V), v₀ ∈ tilde f →
       ∃ x ∈ GM11.halfEdges D γ (cap.emb v₀), x.1 = cap.emb '' f := by
     intro f hf hv
-    have hE : cap.emb '' f ∈ D.E := (hD.edge_iff hS).mpr ⟨f, hf, rfl⟩
+    have hE : cap.emb '' f ∈ D.E := hD.edge_iff.mpr ⟨f, hf, rfl⟩
     have hcl : cap.emb v₀ ∈ closure (cap.emb '' f) :=
       image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ hv.1)
     obtain ⟨b, hb⟩ := GM11.exists_end_eq hγ hE hvD hcl
@@ -857,7 +857,7 @@ theorem sk_frontier_pair (hS : IsSurface S) {cap : IsCappedSurface S Shat} {Γ :
     (GM11.finite_halfEdges D γ _).to_subtype
   by_cases h2 : 2 ≤ Nat.card (GM11.halfEdges D γ (cap.emb v₀))
   · obtain ⟨next, ρ, P, W, Q, τ, hsec, hcov, hPQ⟩ := exists_sectors' hT D hγ hvD h2
-    have hrD : r ∈ D.R := hD.hatRegion_mem_R hS hr
+    have hrD : r ∈ D.R := hD.hatRegion_mem_R hr
     have hsurj : Function.Surjective next := Finite.injective_iff_surjective.mp hsec.corners.inj
     have hcl : ∀ f : Set S, cap.emb '' f ⊆ frontier r → cap.emb '' f ⊆ closure r :=
       fun f hf ↦ hf.trans frontier_subset_closure

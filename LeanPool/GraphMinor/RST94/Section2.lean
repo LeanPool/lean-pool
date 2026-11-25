@@ -34,41 +34,14 @@ variable {α β : Type*} {G H A B C D : Hypergraph α β} {θ θ' : ℕ}
 /-- The set of all separations `(A, B)` of `G` of order `< θ'` with `(A ∩ H, B ∩ H) ∈ T'` (page
 327): the tangle in `G`
 induced by a tangle `T'` in a subgraph `H`. -/
-def inducedTangle (G H : Hypergraph α β) (T' : Set (Hypergraph α β × Hypergraph α β)) (θ' : ℕ) :
+abbrev inducedTangle (G H : Hypergraph α β) (T' : Set (Hypergraph α β × Hypergraph α β)) (θ' : ℕ) :
     Set (Hypergraph α β × Hypergraph α β) :=
-  {p | G.IsSeparation p.1 p.2 ∧ separationOrder p.1 p.2 < θ' ∧ (p.1 ∩ H, p.2 ∩ H) ∈ T'}
+  GM10.inducedTangleFromSubgraph G H θ' T'
 
 /-- **(2.5)** (page 327): the induced set is a tangle in `G` of order `ord(T')`. -/
 theorem isTangle_inducedTangle (hH : H ≤ G) (hT' : IsTangle H θ' T') : IsTangle G θ'
-  (inducedTangle G H T' θ') where
-  one_le := hT'.one_le
-  isSeparation _ _ h := h.1
-  order_lt _ _ h := h.2.1
-  axiom1 A B hs ho := by
-    have ho' := (order_restrict_le A B H).trans_lt ho
-    rcases hT'.axiom1 (hs.restrict hH) ho' with h | h
-    · exact Or.inl ⟨hs, ho, h⟩
-    · exact Or.inr ⟨hs.symm, by rwa [separationOrder_comm], h⟩
-  axiom2 A₁ B₁ A₂ B₂ A₃ B₃ h₁ h₂ h₃ heq := by
-    refine hT'.axiom2 h₁.2.2 h₂.2.2 h₃.2.2 (sub_ext (G := H)
-      (union_le (union_le (inter_le_right h₁.1.left_le hH) (inter_le_right h₂.1.left_le hH))
-        (inter_le_right h₃.1.left_le hH)) le_rfl (subset_antisymm ?_ fun v hv => ?_)
-      (subset_antisymm ?_ fun e he => ?_))
-    · rintro v ((h | h) | h) <;> exact h.2
-    · have : v ∈ (A₁ ∪ A₂ ∪ A₃).vertexSet := heq ▸ hH.vertexSet_subset hv
-      rcases this with (h | h) | h
-      · exact Or.inl (Or.inl ⟨h, hv⟩)
-      · exact Or.inl (Or.inr ⟨h, hv⟩)
-      · exact Or.inr ⟨h, hv⟩
-    · rintro v ((h | h) | h) <;> exact h.2
-    · have : e ∈ (A₁ ∪ A₂ ∪ A₃).edgeSet := heq ▸ hH.edgeSet_subset he
-      rcases this with (h | h) | h
-      · exact Or.inl (Or.inl ⟨h, he⟩)
-      · exact Or.inl (Or.inr ⟨h, he⟩)
-      · exact Or.inr ⟨h, he⟩
-  axiom3 A B h heq := by
-    refine hT'.axiom3 h.2.2 (subset_antisymm (fun v hv => hv.2) fun v hv => ?_)
-    exact ⟨heq ▸ hH.vertexSet_subset hv, hv⟩
+  (inducedTangle G H T' θ') :=
+  GM10.isTangle_inducedTangleFromSubgraph hH hT'
 
 /-- `T'`, a tangle of order `θ'` in `H`, is *conformal* with the tangle `T` in `G` of order `θ`
 (page 327): the tangle

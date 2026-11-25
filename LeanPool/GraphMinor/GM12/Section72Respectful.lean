@@ -81,50 +81,7 @@ theorem theorem_7_2_respectful_of_incident (hS : IsClosedSurface S)
     · have hxv : x = v := mem_singleton_iff.mp (hpush ⟨hxC, hxD⟩)
       exact hxv.symm ▸ Γ'.V_subset_U hvnew
     · exact hUeq.symm ▸ ⟨hxU, subset_closure ⟨mem_univ x, hxD⟩⟩
-  have hCnormal : (PaintingOrDrawing.drawing Γ).IsNormal (h '' C) := by
-    rintro x ⟨hxC, hxU⟩
-    have hxU' := holdU hxC hxU
-    obtain ⟨y, hy, hyx⟩ := hxC
-    have hyx' : y = x := h.injective (hyx.trans (hfix x hxU').symm)
-    exact hsub.1 (hCn ⟨hyx' ▸ hy, hxU'⟩)
-  have hverts : (h '' C) ∩ Γ.V = C ∩ Γ'.V := by
-    ext x
-    constructor
-    · rintro ⟨hxC, hxV⟩
-      have hxU' := holdU hxC (Γ.V_subset_U hxV)
-      obtain ⟨y, hy, hyx⟩ := hxC
-      have hyx' : y = x := h.injective (hyx.trans (hfix x hxU').symm)
-      exact ⟨hyx' ▸ hy, hCn ⟨hyx' ▸ hy, hxU'⟩⟩
-    · rintro ⟨hxC, hxV⟩
-      exact ⟨⟨x, hxC, hfix x (Γ'.V_subset_U hxV)⟩, hsub.1 hxV⟩
-  have hCO : IsOArc (h '' C) :=
-    hC.image h.continuous.continuousOn h.symm.continuous.continuousOn (fun x _
-      => h.symm_apply_apply x)
-  obtain ⟨D, hD, hDb, hm⟩ := hrespect.2 (h '' C) hCO hCnormal (hverts.symm ▸ hcard)
-  have hm' : ((PaintingOrDrawing.drawing Γ').inter D,
-      (PaintingOrDrawing.drawing Γ').interOutside D) ∈ restrictTangle T Γ'.toHypergraph := by
-    have hmem : (((PaintingOrDrawing.drawing Γ).inter D) ∩ Γ'.toHypergraph,
-        ((PaintingOrDrawing.drawing Γ).interOutside D) ∩ Γ'.toHypergraph) ∈
-          restrictTangle T Γ'.toHypergraph := ⟨_, _, hm, rfl⟩
-    rwa [drawing_inter_inter_subdrawing hsub, drawing_interOutside_inter_subdrawing hsub] at hmem
-  obtain ⟨hE, hbE⟩ := hD.image h.symm.continuous.continuousOn h.continuous.continuousOn
-    (fun x _ => h.apply_symm_apply x)
-  have hpre : h.symm '' D = h ⁻¹' D := by
-    ext x
-    constructor
-    · rintro ⟨y, hy, rfl⟩
-      simpa only [mem_preimage, h.apply_symm_apply] using hy
-    · intro hx
-      exact ⟨h x, hx, h.symm_apply_apply x⟩
-  have hb : subBd (h ⁻¹' D) = C := by
-    rw [← hpre, subBd_eq_frontier, IsClosedDisc.frontier_eq_discBd hS hE, hbE,
-      ← IsClosedDisc.frontier_eq_discBd hS hD, ← subBd_eq_frontier, hDb]
-    rw [image_image]
-    have heq : (fun x => h.symm (h x)) = id := funext h.symm_apply_apply
-    rw [heq, image_id]
-  refine ⟨h ⁻¹' D, hpre ▸ hE, hb, ?_⟩
-  rw [inter_preimage_of_fixed h hfix, interOutside_preimage_of_fixed h hfix]
-  exact hm'
+  exact respectful_disc_of_diversion hS hsub hrespect hC hCn hcard h hfix holdU
 
 
 /-- The respectful-tangle assertion of XII (7.2), pages 259–260. The

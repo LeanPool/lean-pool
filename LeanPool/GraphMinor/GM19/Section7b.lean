@@ -44,7 +44,7 @@ theorem RadialDrawing.region_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThree
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   have h2 := h3.hatRegions_isOpenDisc hS cap
   obtain ⟨D, G₃, hD, hrad, hmax, hsub, hhat⟩ := rad.exists_full hS h2 h3.1
-  have hDE := hD.E_nonempty hS h3.1
+  have hDE := hD.E_nonempty h3.1
   have hF := regionFacts_of_radial hrad hT hmax hDE
   have hUsub : rad.G.U ⊆ G₃.U := fun x hx ↦ by
     by_cases hxV : x ∈ rad.G.V
@@ -68,7 +68,7 @@ theorem RadialDrawing.region_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThree
     have hqZ : q ∈ G₃.R \ colourSet cap Γ G₃ t := by
       refine ⟨hq, ?_⟩
       rintro ⟨-, f₂, c₂, h₂, hf₂, ht⟩
-      exact hne (ht ▸ (colour_unique hS hD hrad hmax hDE hq hc' h₂ hfq hf₂).2).symm
+      exact hne (ht ▸ (colour_unique hD hrad hmax hDE hq hc' h₂ hfq hf₂).2).symm
     obtain ⟨xp, hxp⟩ := region_nonempty hp
     obtain ⟨xq, hxq⟩ := region_nonempty hq
     obtain ⟨e, he, y, hye, hys⟩ := exists_boundary_edge hT (region_isOpen hs)
@@ -83,7 +83,7 @@ theorem RadialDrawing.region_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThree
       ∃ f p, Γ.IsSkEdgeIn f e ∧ p ∈ G₃.R ∧ p ⊆ s ∧ cap.emb '' f ⊆ p := by
     intro s e hs he hes
     obtain ⟨f, hf⟩ := Γ.exists_sk_in he
-    have hg := (hD.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+    have hg := hD.edge_iff.mpr ⟨f, hf.mem, rfl⟩
     have hdis : Disjoint (cap.emb '' f) G₃.U := by
       refine disjoint_left.mpr fun y hy hyU ↦ ?_
       have hyD := hg.2.1 hy
@@ -102,7 +102,7 @@ theorem RadialDrawing.region_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThree
       ⟨y, hyO⟩
     obtain ⟨p, hp, hzp⟩ := exists_region_of_notMem hzU
     have hps := hin hs hp ⟨z, hzp, hzs⟩
-    obtain ⟨f, c, hc, hfp⟩ := exists_colour hS hD hrad hmax hDE hp
+    obtain ⟨f, c, hc, hfp⟩ := exists_colour hD hrad hmax hDE hp
     refine ⟨c, hc.1, ?_⟩
     obtain ⟨x, hx⟩ := hc.mem.1
     have hdis : Disjoint (cap.emb '' c) rad.G.U := by
@@ -134,9 +134,9 @@ theorem RadialDrawing.region_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThree
     have hfin : {q | q ∈ G₃.R ∧ q ⊆ s}.Finite := hRfin.subset fun _ h ↦ h.1
     rw [hfin.closure_biUnion] at hv'
     obtain ⟨q, ⟨hq, hqs⟩, hvq⟩ := mem_iUnion₂.mp hv'
-    obtain ⟨f, c, hc, hfq⟩ := exists_colour hS hD hrad hmax hDE hq
+    obtain ⟨f, c, hc, hfq⟩ := exists_colour hD hrad hmax hDE hq
     obtain rfl := hsame hs hp hq hps hqs ha hc hap hfq
-    have hg := (hD.edge_iff hS).mpr ⟨f, hc.mem, rfl⟩
+    have hg := hD.edge_iff.mpr ⟨f, hc.mem, rfl⟩
     have hvD : cap.emb v ∈ D.V := by
       rw [hD.hV]
       exact mem_image_of_mem _ hv

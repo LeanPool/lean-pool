@@ -185,7 +185,7 @@ theorem tangleNumber_le_one_of_maxEdgeSize_eq_zero {G : Hypergraph α β}
     have hunion := (h𝒯.isSeparation hAB).edgeSet_union
     rwa [hB_empty, Set.union_empty] at hunion
   have h3 : (A ∪ A ∪ A).edgeSet = G.edgeSet := by
-    simp [union_edgeSet, hA_eq]
+    simp [hA_eq]
   exact theorem_2_3_proof h𝒯 (by omega) hAB hAB hAB h3
 
 /-- If `γ(G) = 0` and `V(G) ≠ ∅`, then `θ(G) = 1`
@@ -1098,7 +1098,7 @@ theorem theorem_4_5_claim_3 {G : Hypergraph α β} {θ : ℕ}
             · exact Or.inl (Or.inl ⟨hx₁, hxv⟩)
           · exact Or.inl (Or.inr hx₂)
           · exact Or.inr hx₃
-      · simp [union_edgeSet, hEA_eq]
+      · simp [hEA_eq]
       · funext e x
         apply propext
         have hinc_eq : (A₁.deleteVertices {v}).Inc e x ↔ A₁.Inc e x := by
@@ -1473,7 +1473,7 @@ private theorem tangleNumber_completeGraph_le {n : ℕ} (hn : 2 ≤ n) :
         tauto
     have hord : separationOrder (completeLeftOf W) (completeRightOf W) < θ + 1 := by
       have : ((completeLeftOf W) ∩ (completeRightOf W)).vertexSet = W := by
-        simp [inter_vertexSet, completeLeftOf, completeRightOf]
+        simp [completeLeftOf, completeRightOf]
       rw [separationOrder, this]
       omega
     exact (h𝒯.axiom1 hsep hord).resolve_right fun hR_mem ↦ h𝒯.axiom3 hR_mem rfl
@@ -1560,13 +1560,13 @@ private theorem le_tangleNumber_completeGraph_of_four_le {n : ℕ} (hn : 4 ≤ n
       · right
         refine ⟨hsep.symm, ?_⟩
         have : (A ∩ B).vertexSet = B.vertexSet := by
-          simp [inter_vertexSet, hVA]
+          simp [hVA]
         rwa [separationOrder, this] at hord
       by_cases hVB : B.vertexSet = Set.univ
       · left
         refine ⟨hsep, ?_⟩
         have : (A ∩ B).vertexSet = A.vertexSet := by
-          simp [inter_vertexSet, hVB]
+          simp [hVB]
         rwa [separationOrder, this] at hord
       · exfalso
         obtain ⟨u, _, hu_notA⟩ := Set.exists_of_ssubset

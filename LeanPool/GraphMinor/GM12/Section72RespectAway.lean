@@ -79,44 +79,20 @@ theorem interOutside_preimage_of_fixed {Γ : Drawing S} (h : S ≃ₜ S)
   unfold PaintingOrDrawing.interOutside
   rw [heq, ← h.preimage_closure, inter_preimage_of_fixed h hfix]
 
-/-- The respectfulness assertion in the diversion step of XII (7.2), page
-260, for a normal circle that does not pass through the boundary vertex. -/
-theorem theorem_7_2_respectful_of_notMem (hS : IsClosedSurface S)
-    {Γ : Drawing S} {θ : ℕ}
+omit [T2Space S] in
+/-- Pull a selected disc back along a diversion that fixes the smaller drawing and sends every
+point of the circle in the old drawing into the smaller drawing. -/
+theorem respectful_disc_of_diversion (hS : IsClosedSurface S)
+    {Γ Γ' : Drawing S} (hsub : Γ'.IsSubdrawing Γ) {θ : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hrespect : (PaintingOrDrawing.drawing Γ).IsRespectful θ T)
-    {Δ F C : Set S} {v : S} (hΔ : IsClosedDisc Δ) (hbd : subBd Δ = F)
-    (hn : (PaintingOrDrawing.drawing Γ).IsNormal F) (hFV : F ∩ Γ.V = {v})
-    (hC : IsOArc C)
-    (hCn : (PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).IsNormal C)
-    (hcard : (C ∩ (Γ.interSet (closure (univ \ Δ))).V).ncard < θ)
-    (hvn : v ∉ C) :
+    {C : Set S} (hC : IsOArc C)
+    (hCn : (PaintingOrDrawing.drawing Γ').IsNormal C) (hcard : (C ∩ Γ'.V).ncard < θ)
+    (h : S ≃ₜ S) (hfix : ∀ x ∈ Γ'.U, h x = x)
+    (holdU : ∀ {x}, x ∈ h '' C → x ∈ Γ.U → x ∈ Γ'.U) :
     ∃ E : Set S, IsClosedDisc E ∧ subBd E = C ∧
-      ((PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).inter E,
-        (PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).interOutside E) ∈
-          restrictTangle T (Γ.interSet (closure (univ \ Δ))).toHypergraph := by
-  let Γ' := Γ.interSet (closure (univ \ Δ))
-  have hsub : Γ'.IsSubdrawing Γ := Drawing.span_isSubdrawing Γ _ _
-  have hfr : frontier Δ = F := (subBd_eq_frontier Δ).symm.trans hbd
-  have hdb : discBd Δ = F := (IsClosedDisc.frontier_eq_discBd hS hΔ).symm.trans hfr
-  have hvFV : v ∈ F ∩ Γ.V := hFV.symm ▸ mem_singleton v
-  have hvb : v ∈ discBd Δ := hdb.symm ▸ hvFV.1
-  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
-    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
-    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
-  have hGD : Γ'.U ∩ Δ ⊆ {v} := by
-    rintro x ⟨hxU, hxD⟩
-    rw [hUeq] at hxU
-    have hxfr : x ∈ frontier Δ := by
-      rw [frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
-      exact ⟨subset_closure hxD, hxU.2⟩
-    exact hFV ▸ ⟨hfr ▸ hxfr, hn ⟨hfr ▸ hxfr, hxU.1⟩⟩
-  obtain ⟨h, hfix, hpush⟩ := theorem_7_2_push_away_of_notMem hS hΔ hvb Γ'.isClosed_U hGD hC hvn
-  have holdU : ∀ {x}, x ∈ h '' C → x ∈ Γ.U → x ∈ Γ'.U := by
-    intro x hxC hxU
-    have hxD : x ∉ Δ := disjoint_left.mp hpush hxC
-    exact hUeq.symm ▸ ⟨hxU, subset_closure ⟨mem_univ x, hxD⟩⟩
+      ((PaintingOrDrawing.drawing Γ').inter E, (PaintingOrDrawing.drawing Γ').interOutside E) ∈
+        restrictTangle T Γ'.toHypergraph := by
   have hCnormal : (PaintingOrDrawing.drawing Γ).IsNormal (h '' C) := by
     rintro x ⟨hxC, hxU⟩
     have hxU' := holdU hxC hxU
@@ -161,5 +137,45 @@ theorem theorem_7_2_respectful_of_notMem (hS : IsClosedSurface S)
   refine ⟨h ⁻¹' D, hpre ▸ hE, hb, ?_⟩
   rw [inter_preimage_of_fixed h hfix, interOutside_preimage_of_fixed h hfix]
   exact hm'
+
+/-- The respectfulness assertion in the diversion step of XII (7.2), page
+260, for a normal circle that does not pass through the boundary vertex. -/
+theorem theorem_7_2_respectful_of_notMem (hS : IsClosedSurface S)
+    {Γ : Drawing S} {θ : ℕ}
+    {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
+    (hrespect : (PaintingOrDrawing.drawing Γ).IsRespectful θ T)
+    {Δ F C : Set S} {v : S} (hΔ : IsClosedDisc Δ) (hbd : subBd Δ = F)
+    (hn : (PaintingOrDrawing.drawing Γ).IsNormal F) (hFV : F ∩ Γ.V = {v})
+    (hC : IsOArc C)
+    (hCn : (PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).IsNormal C)
+    (hcard : (C ∩ (Γ.interSet (closure (univ \ Δ))).V).ncard < θ)
+    (hvn : v ∉ C) :
+    ∃ E : Set S, IsClosedDisc E ∧ subBd E = C ∧
+      ((PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).inter E,
+        (PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ Δ)))).interOutside E) ∈
+          restrictTangle T (Γ.interSet (closure (univ \ Δ))).toHypergraph := by
+  let Γ' := Γ.interSet (closure (univ \ Δ))
+  have hsub : Γ'.IsSubdrawing Γ := Drawing.span_isSubdrawing Γ _ _
+  have hfr : frontier Δ = F := (subBd_eq_frontier Δ).symm.trans hbd
+  have hdb : discBd Δ = F := (IsClosedDisc.frontier_eq_discBd hS hΔ).symm.trans hfr
+  have hvFV : v ∈ F ∩ Γ.V := hFV.symm ▸ mem_singleton v
+  have hvb : v ∈ discBd Δ := hdb.symm ▸ hvFV.1
+  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
+    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
+    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
+  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
+  have hGD : Γ'.U ∩ Δ ⊆ {v} := by
+    rintro x ⟨hxU, hxD⟩
+    rw [hUeq] at hxU
+    have hxfr : x ∈ frontier Δ := by
+      rw [frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
+      exact ⟨subset_closure hxD, hxU.2⟩
+    exact hFV ▸ ⟨hfr ▸ hxfr, hn ⟨hfr ▸ hxfr, hxU.1⟩⟩
+  obtain ⟨h, hfix, hpush⟩ := theorem_7_2_push_away_of_notMem hS hΔ hvb Γ'.isClosed_U hGD hC hvn
+  have holdU : ∀ {x}, x ∈ h '' C → x ∈ Γ.U → x ∈ Γ'.U := by
+    intro x hxC hxU
+    have hxD : x ∉ Δ := disjoint_left.mp hpush hxC
+    exact hUeq.symm ▸ ⟨hxU, subset_closure ⟨mem_univ x, hxD⟩⟩
+  exact respectful_disc_of_diversion hS hsub hrespect hC hCn hcard h hfix holdU
 
 end GraphMinor.GM12

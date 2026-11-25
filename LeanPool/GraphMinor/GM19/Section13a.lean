@@ -81,7 +81,7 @@ theorem exists_side_ends (D : TangleDatum cap χ) {e f : Set S} (hf : D.P.Γ.IsS
   have he := hf.1
   have : ConnectedSpace Shat := cap.connected
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap D.P.Γ
-  have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+  have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
   have hc3 := D.P.Γ.isDisc_of_three he h3
   obtain ⟨hC, hCbd⟩ := isClosedDisc_image hc3.1 cap.isEmbedding
   have hcl : IsClosedEmbedding cap.emb := cap.isClosedEmbedding hS
@@ -152,7 +152,7 @@ theorem vertex_mem_of_side_off (D : TangleDatum cap χ) {e f : Set S} {r : Set S
   obtain ⟨p, hp⟩ := hf.mem.1
   have hpe := hf.subset hp
   have hpr : cap.emb p ∈ closure r := hfr (mem_image_of_mem _ hp)
-  rcases hatRegion_cases hS cap D.P.Γ hr with hsub | ⟨Θ, hΘ, rfl⟩
+  rcases hatRegion_cases cap D.P.Γ hr with hsub | ⟨Θ, hΘ, rfl⟩
   · obtain ⟨r₀, hr₀, rfl⟩ := Painting.exists_region_of_hat hr hsub
     have hcl : ∀ {z : S}, cap.emb z ∈ closure (cap.emb '' r₀) → z ∈ closure r₀ := fun {z} hz ↦ by
       rw [hc.closure_image_eq] at hz
@@ -178,7 +178,7 @@ theorem vertex_mem_of_side_off (D : TangleDatum cap χ) {e f : Set S} {r : Set S
       (connectedComponentIn (e ∩ closure r₀) p) ⟨p, hmem, rfl⟩
     -- the component lies in `f`
     obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap D.P.Γ
-    have hfE : cap.emb '' f ∈ Sk.E := (hSk.edge_iff hS).mpr ⟨f, hf.mem, rfl⟩
+    have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
     set T := connectedComponentIn (e ∩ closure r₀) p with hTdef
     have hTc : IsPreconnected (cap.emb '' T) :=
       isPreconnected_connectedComponentIn.image _ cap.isEmbedding.continuous.continuousOn
@@ -219,7 +219,7 @@ theorem vertex_mem_of_side_off (D : TangleDatum cap χ) {e f : Set S} {r : Set S
     rw [hoff] at hzf
     exact hzf.elim
   · exfalso
-    have hpΘ : p ∈ Θ := cap.mem_of_emb_mem hS hΘ hpr
+    have hpΘ : p ∈ Θ := cap.mem_of_emb_mem hΘ hpr
     have : p ∈ closure f ∩ bd S := ⟨subset_closure hp, cuff_subset_bd ⟨Θ, hΘ⟩ hpΘ⟩
     rw [hoff] at this
     exact this.elim

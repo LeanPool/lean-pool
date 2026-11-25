@@ -93,7 +93,7 @@ theorem outer_of_line [Nonempty S] {n : ℕ} (_hn₁ : 1 ≤ n) (hn : n < D.rep)
     refine or_congr Iff.rfl ⟨?_, mem_image_of_mem _⟩
     rintro ⟨y, hy, hxy⟩
     exact cap.isEmbedding.injective hxy ▸ hy
-  obtain ⟨Θ', hΘ', hreg', hrd⟩ := D.rad.pole_cases hS hr
+  obtain ⟨Θ', hΘ', hreg', hrd⟩ := D.rad.pole_cases hr
   have hΘne : Θ ≠ Θ' := by
     rintro rfl
     obtain ⟨-, -, hG3, -⟩ := id D.rad.isPreRadial
@@ -198,14 +198,14 @@ theorem outer_of_disc_point [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D
   have hpi : p ∉ D.ins C := fun h ↦ hNP ⟨C, hC, hc, r, hr, p, hp, hrp, hri, h⟩
   have hrange : C.U ⊆ range cap.emb := subset_range_of_no_pole D.rad hC.1 hnp
   have hpC : p ∉ C.V := fun h ↦ hnp p h hp
-  have hl₀ : cuffLabel cap (cap.emb s₀) = some Θ := cuffLabel_emb hS hΘ hs₀
+  have hl₀ : cuffLabel cap (cap.emb s₀) = some Θ := cuffLabel_emb hΘ hs₀
   have hsame : ∀ {x : Shat} {Θ' : Set S}, x ∈ Z.support → cuffLabel cap x = some Θ' → Θ' = Θ
     := fun hx hl ↦
     labels_eq hS h3 hd Z hZ hx hs₀Z hl hl₀
   have hbdC : ∀ {v : S}, v ∈ bd S → cap.emb v ∈ C.U → v ∈ D.P.Γ.V ∧ cap.emb v ∈ C.V ∧ v ∈ Θ
     := fun {v} hv hvC ↦ by
     obtain ⟨h₁, h₂, Θ', hΘ', hvΘ⟩ := D.rad.bd_point hC.1 hv hvC
-    have := hsame (hZC _ h₂) (cuffLabel_emb hS hΘ' hvΘ)
+    have := hsame (hZC _ h₂) (cuffLabel_emb hΘ' hvΘ)
     exact ⟨h₁, h₂, this ▸ hvΘ⟩
   have hone : ∀ {x y : S}, x ∈ bd S → y ∈ bd S → cap.emb x ∈ C.U → cap.emb y ∈ C.U → x = y
     := fun {x y} hx hy hxC hyC ↦ by
@@ -232,7 +232,7 @@ theorem outer_of_disc_point [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D
   · push Not at htouch
     have hno : ∀ y, y ∈ closure (cap.cuffDisc Θ) → y ∉ D.ins C := fun y hy hyi ↦ by
       have hyC := D.cuff_inter_ins hC hlt hrange hp hΘ hreg hpi hy hyi
-      rw [cap.closure_cuffDisc hS hΘ] at hy
+      rw [cap.closure_cuffDisc hΘ] at hy
       rcases hy with hy | ⟨w, hw, rfl⟩
       · exact cap.notMem_range hΘ hy (hrange hyC)
       · exact htouch w hw hyC
@@ -260,11 +260,11 @@ theorem outer_of_disc_point [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D
       rw [GraphWalk.support_reverse] at hy
       have hy' : y ∈ R.support := List.mem_reverse.1 hy
       obtain ⟨v, hv, rfl, hset⟩ := D.rad.link_cases hl hb'p.1
-      obtain ⟨-, hΘ₁, hreg₁⟩ := pole_of_label hS D.rad hb'p.1 hb'
-      have hvΘ := (D.rad.pole_edge hS hl.1 hb'p hΘ hreg₁ hset).2
-      exact hya (hRB _ hy' (cuffLabel_emb hS hΘ hvΘ))
+      obtain ⟨-, hΘ₁, hreg₁⟩ := pole_of_label D.rad hb'p.1 hb'
+      have hvΘ := (D.rad.pole_edge hl.1 hb'p hΘ hreg₁ hset).2
+      exact hya (hRB _ hy' (cuffLabel_emb hΘ hvΘ))
     have hRnp : ∀ y ∈ R.support, y ∉ D.rad.poles := fun y hy hyp ↦ by
-      obtain ⟨Θ', hΘ', -, hyd⟩ := D.rad.pole_cases hS hyp
+      obtain ⟨Θ', hΘ', -, hyd⟩ := D.rad.pole_cases hyp
       have hly := cuffLabel_eq hΘ' (subset_closure hyd)
       have := hsame (hRin y hy) hly
       subst this
@@ -272,9 +272,9 @@ theorem outer_of_disc_point [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D
     have hb'V : b' ∈ D.rad.G.V := mem_V_of_mem_support R R.end_mem_support
     have hb'hat : b' ∈ D.P.Γ.hatV cap := by
       by_contra hn'
-      exact hb'np (pole_of_label hS D.rad ⟨hb'V, hn'⟩ hb').1
+      exact hb'np (pole_of_label D.rad ⟨hb'V, hn'⟩ hb').1
     obtain ⟨s, hsV, rfl⟩ := hb'hat
-    have hsΘ := (mem_cuff_of_label hS hb').2
+    have hsΘ := (mem_cuff_of_label hb').2
     obtain ⟨u, rfl⟩ := hrange (C.V_subset_U ha'C)
     set Q := walkDrawing D.rad.G R with hQ
     have hQs : Q.IsSubdrawing D.rad.G := walkDrawing_isSubdrawing _ _
@@ -331,7 +331,7 @@ theorem outer_of_disc_point [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D
     · rintro x ⟨hxQ, hxb⟩
       obtain ⟨h₁, h₂, Θ', hΘ', hxΘ⟩ := D.rad.bd_point hQs hxb hxQ
       have hxs : cap.emb x ∈ R.support := by rwa [hQ, walkDrawing_V] at h₂
-      have hl : cuffLabel cap (cap.emb x) = some Θ' := cuffLabel_emb hS hΘ' hxΘ
+      have hl : cuffLabel cap (cap.emb x) = some Θ' := cuffLabel_emb hΘ' hxΘ
       have := hsame (hRin _ hxs) hl
       subst this
       exact cap.isEmbedding.injective (hRB _ hxs hl)

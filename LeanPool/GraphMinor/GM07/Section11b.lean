@@ -712,55 +712,8 @@ theorem exists_subdivision_in_open_cover {ι : Type*} {J : Set ι} {U : ι → S
 /-- Transitivity of `ClosedCurvesHomotopicIn Z` for closed curves `φ₀, φ₁, φ₂ : C(Circle, S)`. -/
 private theorem closedCurvesHomotopicIn_trans {Z : Set S} {φ₀ φ₁ φ₂ : C(Circle, S)}
     (h₁ : ClosedCurvesHomotopicIn Z φ₀ φ₁) (h₂ : ClosedCurvesHomotopicIn Z φ₁ φ₂) :
-    ClosedCurvesHomotopicIn Z φ₀ φ₂ := by
-  obtain ⟨ψ₁, hψ₁Z, hψ₁0, hψ₁1⟩ := h₁
-  obtain ⟨ψ₂, hψ₂Z, hψ₂0, hψ₂1⟩ := h₂
-  let t₁ : Circle × unitInterval → Circle × unitInterval :=
-    fun p => (p.1, projIcc 0 1 zero_le_one (2 * (p.2 : ℝ)))
-  let t₂ : Circle × unitInterval → Circle × unitInterval :=
-    fun p => (p.1, projIcc 0 1 zero_le_one (2 * (p.2 : ℝ) - 1))
-  have ht₁_cont : Continuous t₁ :=
-    continuous_fst.prodMk (continuous_projIcc.comp (continuous_const.mul
-      (continuous_subtype_val.comp continuous_snd)))
-  have ht₂_cont : Continuous t₂ :=
-    continuous_fst.prodMk (continuous_projIcc.comp
-      ((continuous_const.mul (continuous_subtype_val.comp continuous_snd)).sub continuous_const))
-  let f₁ : Circle × unitInterval → S := ψ₁ ∘ t₁
-  let f₂ : Circle × unitInterval → S := ψ₂ ∘ t₂
-  have hf₁_cont : Continuous f₁ := ψ₁.continuous.comp ht₁_cont
-  have hf₂_cont : Continuous f₂ := ψ₂.continuous.comp ht₂_cont
-  let Ψ_fun : Circle × unitInterval → S :=
-    fun p => if (p.2 : ℝ) ≤ 1 / 2 then f₁ p else f₂ p
-  have hΨ_cont : Continuous Ψ_fun := by
-    refine Continuous.if_le hf₁_cont hf₂_cont
-      (continuous_subtype_val.comp continuous_snd) continuous_const ?_
-    intro p hp
-    have hp1 : projIcc 0 1 zero_le_one (2 * (p.2 : ℝ)) = 1 := by
-      rw [hp]; ext; simp
-    have hp0 : projIcc 0 1 zero_le_one (2 * (p.2 : ℝ) - 1) = 0 := by
-      rw [hp]; ext; simp
-    change ψ₁ (p.1, projIcc 0 1 zero_le_one (2 * (p.2 : ℝ))) =
-      ψ₂ (p.1, projIcc 0 1 zero_le_one (2 * (p.2 : ℝ) - 1))
-    rw [hp1, hp0, hψ₁1 p.1, hψ₂0 p.1]
-  refine ⟨⟨Ψ_fun, hΨ_cont⟩, fun p => ?_, fun z => ?_, fun z => ?_⟩
-  · dsimp [Ψ_fun]
-    split_ifs
-    · exact hψ₁Z (t₁ p)
-    · exact hψ₂Z (t₂ p)
-  · have hle : ((0 : unitInterval) : ℝ) ≤ 1 / 2 := by norm_num
-    have hp0 : projIcc 0 1 zero_le_one (2 * ((0 : unitInterval) : ℝ)) = 0 := by
-      ext; change max (0 : ℝ) (min 1 (2 * 0)) = 0; norm_num
-    change (if ((0 : unitInterval) : ℝ) ≤ 1 / 2 then f₁ (z, 0) else f₂ (z, 0)) = φ₀ z
-    simp only [hle, ↓reduceIte]
-    change ψ₁ (z, projIcc 0 1 zero_le_one (2 * ((0 : unitInterval) : ℝ))) = φ₀ z
-    rw [hp0, hψ₁0 z]
-  · have hnot : ¬ (((1 : unitInterval) : ℝ) ≤ 1 / 2) := by norm_num
-    have hp1 : projIcc 0 1 zero_le_one (2 * ((1 : unitInterval) : ℝ) - 1) = 1 := by
-      ext; change max (0 : ℝ) (min 1 (2 * 1 - 1)) = 1; norm_num
-    change (if ((1 : unitInterval) : ℝ) ≤ 1 / 2 then f₁ (z, 1) else f₂ (z, 1)) = φ₂ z
-    simp only [hnot, ↓reduceIte]
-    change ψ₂ (z, projIcc 0 1 zero_le_one (2 * ((1 : unitInterval) : ℝ) - 1)) = φ₂ z
-    rw [hp1, hψ₂1 z]
+    ClosedCurvesHomotopicIn Z φ₀ φ₂ :=
+  Surface.ClosedCurvesHomotopicIn.trans h₁ h₂
 
 /-- Given paths `γ, α₀, α₁ : C(unitInterval, S)` with `α₀ 1 = γ 0` and `α₁ 1 = γ 1`, the
 time-dependent 3-piece concatenation `whiskerHomotopy α₀ γ α₁ : C(unitInterval × unitInterval, S)`

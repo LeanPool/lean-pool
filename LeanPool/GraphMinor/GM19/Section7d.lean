@@ -70,8 +70,8 @@ theorem RadialDrawing.center_mem_closure (hS : IsSurface S) (rad : RadialDrawing
   obtain ⟨v, hv, w', ⟨hw'G, hw'n⟩, hcap⟩ := hG5 e he
   obtain ⟨r', hr', hw'r⟩ := hG4 w' ⟨hw'G, hw'n⟩
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap Γ
-  have hρD := hSk.hatRegion_mem_R hS hρ
-  have hrD := hSk.hatRegion_mem_R hS hr'
+  have hρD := hSk.hatRegion_mem_R hρ
+  have hrD := hSk.hatRegion_mem_R hr'
   have hdis : ∀ y ∈ e, y ∉ Γ.hatU cap := by
     intro y hy hyU
     have hyG : y ∈ rad.G.U := by
@@ -105,7 +105,7 @@ theorem RadialDrawing.center_mem_closure_region (hS : IsSurface S) (rad : Radial
   have : ConnectedSpace Shat := cap.connected
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap Γ
-  have hρD := hSk.hatRegion_mem_R hS hρ
+  have hρD := hSk.hatRegion_mem_R hρ
   by_contra hn
   let Z : Set (Set Shat) := {r | r ∈ rad.G.R ∧ w ∈ closure r}
   obtain ⟨r₁, hr₁, -, hwr₁⟩ := exists_region_outside (Γ := rad.G) hT (T := ∅) isClosed_empty
@@ -129,7 +129,7 @@ theorem RadialDrawing.exists_region_at (hS : IsSurface S) (rad : RadialDrawing c
   have : ConnectedSpace Shat := cap.connected
   have hlc : LocallyConnectedSpace Shat := IsClosedSurface.locallyConnectedSpace hT
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap Γ
-  have hρD := hSk.hatRegion_mem_R hS hρ
+  have hρD := hSk.hatRegion_mem_R hρ
   have hRfin := finite_R hT rad.G
   have hcov : ρ ⊆ closure (⋃ s ∈ {s | s ∈ rad.G.R ∧ (s ∩ ρ).Nonempty}, s) := by
     intro x hx

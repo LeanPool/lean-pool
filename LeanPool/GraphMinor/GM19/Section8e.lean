@@ -84,7 +84,7 @@ theorem RadialDrawing.exists_full (rad : RadialDrawing cap Γ) (hS : IsSurface S
     rintro e ⟨he, r, hr, her⟩
     obtain ⟨v, hv, r', hr', w, hw, hwV, hset, hsubr⟩ := spoke_ends hrad hT he
     obtain ⟨x, hx⟩ := he.1
-    have hrD := hD.hatRegion_mem_R hS hr
+    have hrD := hD.hatRegion_mem_R hr
     obtain rfl : r' = r := region_eq_of_mem hr' hrD (hsubr hx) (her hx)
     obtain ⟨w₀, ⟨hw₀r, hw₀⟩, -⟩ := hG3 r' hr
     have hww : w = w₀ := (hpre₃.2.2.1 r' hrD).unique ⟨hw, hwV⟩ ⟨hw₀r, hsub.1 hw₀⟩
@@ -145,7 +145,7 @@ theorem RadialDrawing.exists_full (rad : RadialDrawing cap Γ) (hS : IsSurface S
       rw [hG4E] at he hf
       rw [hcap e he] at h₁
       rw [hcap f hf] at h₂
-      refine hpre₃.2.2.2.2.2 e he.1 f hf.1 hne v ?_ r (hD.hatRegion_mem_R hS hr) w
+      refine hpre₃.2.2.2.2.2 e he.1 f hf.1 hne v ?_ r (hD.hatRegion_mem_R hr) w
         ⟨hw.1, hsub.1 (hG4V ▸ hw.2)⟩ h₁ h₂
       change v ∈ D.V
       rw [hD.hV]
@@ -180,39 +180,39 @@ variable [ConnectedSpace Shat] [T2Space Shat]
 
 omit [T2Space S] in
 /-- Each region of `G₃` contains an edge of `sk(Γ)`. -/
-theorem exists_colour (hS : IsSurface S) (hD : IsSkHat cap Γ D)
+theorem exists_colour (hD : IsSkHat cap Γ D)
     (hrad : PreRad (PaintingOrDrawing.drawing D) G₃)
     (hmax : RadMax (PaintingOrDrawing.drawing D) G₃) (hE : D.E.Nonempty) {s : Set Shat}
       (hs : s ∈ G₃.R) :
     ∃ f c, Γ.IsSkEdgeIn f c ∧ cap.emb '' f ⊆ s := by
   have hF := regionFacts_of_radial hrad cap.isClosedSurface hmax hE
   obtain ⟨g, hg, hgs⟩ := hF.1 s hs
-  obtain ⟨f, hf, rfl⟩ := (hD.edge_iff hS).mp hg
+  obtain ⟨f, hf, rfl⟩ := hD.edge_iff.mp hg
   obtain ⟨c, hc⟩ := Γ.exists_isSkEdgeIn hf
   exact ⟨f, c, hc, hgs⟩
 
 omit [T2Space S] in
-theorem colour_unique (hS : IsSurface S) (hD : IsSkHat cap Γ D)
+theorem colour_unique (hD : IsSkHat cap Γ D)
     (hrad : PreRad (PaintingOrDrawing.drawing D) G₃)
     (hmax : RadMax (PaintingOrDrawing.drawing D) G₃) (hE : D.E.Nonempty) {s : Set Shat}
       (hs : s ∈ G₃.R)
     {f f' c c' : Set S} (h : Γ.IsSkEdgeIn f c) (h' : Γ.IsSkEdgeIn f' c') (hf : cap.emb '' f ⊆ s)
     (hf' : cap.emb '' f' ⊆ s) : f = f' ∧ c = c' := by
   have hF := regionFacts_of_radial hrad cap.isClosedSurface hmax hE
-  have hg := (hD.edge_iff hS).mpr ⟨f, h.mem, rfl⟩
-  have hg' := (hD.edge_iff hS).mpr ⟨f', h'.mem, rfl⟩
+  have hg := hD.edge_iff.mpr ⟨f, h.mem, rfl⟩
+  have hg' := hD.edge_iff.mpr ⟨f', h'.mem, rfl⟩
   have := hF.2.1 s hs _ hg _ hg' hf hf'
   obtain rfl : f = f' := cap.isEmbedding.injective.image_injective this
   exact ⟨rfl, h.unique h'⟩
 
 omit [T2Space S] in
-theorem notMem_colourSet (hS : IsSurface S) (hD : IsSkHat cap Γ D)
+theorem notMem_colourSet (hD : IsSkHat cap Γ D)
     (hrad : PreRad (PaintingOrDrawing.drawing D) G₃)
     (hmax : RadMax (PaintingOrDrawing.drawing D) G₃) (hE : D.E.Nonempty) {t : Set S
       → Prop} {s : Set Shat}
     (hs : s ∈ G₃.R \ colourSet cap Γ G₃ t) : ∃ f c, Γ.IsSkEdgeIn f c ∧ cap.emb '' f ⊆ s ∧ ¬ t c
       := by
-  obtain ⟨f, c, hc, hf⟩ := exists_colour hS hD hrad hmax hE hs.1
+  obtain ⟨f, c, hc, hf⟩ := exists_colour hD hrad hmax hE hs.1
   exact ⟨f, c, hc, hf, fun ht ↦ hs.2 ⟨hs.1, f, c, hc, hf, ht⟩⟩
 
 /-- An edge of `sk(Γ)` in a region of `G₃` with `e` on its boundary lies in the closure of the
@@ -272,15 +272,15 @@ theorem boundary_split (hS : IsSurface S) (hE : D.E.Nonempty) (rad : RadialDrawi
   have hes : e ⊆ closure s := edge_subset_closure_of_incident hT heG hinc.2.1 hinc.2.2
   have hes' : e ⊆ closure s' := edge_subset_closure_of_incident hT heG hinc'.2.1 hinc'.2.2
   obtain ⟨f, c, hc, hfs, ht⟩ := hsZ.2
-  obtain ⟨f', c', hc', hfs', ht'⟩ := notMem_colourSet hS hD hrad hmax hE hs'
+  obtain ⟨f', c', hc', hfs', ht'⟩ := notMem_colourSet hD hrad hmax hE hs'
   obtain ⟨v, hv, r, hr, w, hw, hwV, hset, her⟩ := spoke_ends hrad hT heG
   have hne : e.Nonempty := heG.1
-  have hg := (hD.edge_iff hS).mpr ⟨f, hc.mem, rfl⟩
-  have hg' := (hD.edge_iff hS).mpr ⟨f', hc'.mem, rfl⟩
+  have hg := hD.edge_iff.mpr ⟨f, hc.mem, rfl⟩
+  have hg' := hD.edge_iff.mpr ⟨f', hc'.mem, rfl⟩
   have h₁ := sub_closure_region hE hrad hmax hT hsZ.1 hg hfs hr her hes hne
   have h₂ := sub_closure_region hE hrad hmax hT hs'.1 hg' hfs' hr her hes' hne
   have hcc : c ≠ c' := fun h ↦ ht' (h ▸ ht)
-  rcases hD.region_cases hS hr with hhr | ⟨c₀, hc₀, -, hrsub⟩
+  rcases hD.region_cases hr with hhr | ⟨c₀, hc₀, -, hrsub⟩
   · have heR := hhat e heG r hhr her
     obtain ⟨hG1, hG2, hG3, hG4, hG5, hG6⟩ := id rad.isPreRadial
     have hvhat : v ∈ Γ.hatV cap := by
@@ -314,7 +314,7 @@ theorem boundary_split (hS : IsSurface S) (hE : D.E.Nonempty) (rad : RadialDrawi
       have hcl : cap.emb v₀ ∈ closure s₀ := by
         have : closure e ⊆ closure s₀ := closure_minimal he₀ isClosed_closure
         exact this hvcl
-      have := hF.2.2 s₀ hs₀ _ ((hD.edge_iff hS).mpr ⟨g, hgm, rfl⟩) hgs _ hv hcl
+      have := hF.2.2 s₀ hs₀ _ (hD.edge_iff.mpr ⟨g, hgm, rfl⟩) hgs _ hv hcl
       rw [(cap.isClosedEmbedding hS).closure_image_eq] at this
       obtain ⟨x, hx, hxe⟩ := this
       obtain rfl := cap.isEmbedding.injective hxe
@@ -650,7 +650,7 @@ theorem theorem_8_1' (hS : IsSurface S)
   have hman : ∀ x : Shat, IsManifoldPoint x := (Surface.IsClosedSurface.isSurface hT).2.2
   have h2 := h3.hatRegions_isOpenDisc hS cap
   obtain ⟨D, G₃, hD, hrad, hmax, hsub, hhat⟩ := rad.exists_full hS h2 h3.1
-  have hDE := hD.E_nonempty hS h3.1
+  have hDE := hD.E_nonempty h3.1
   obtain ⟨hG1, hG2, hG3, hG4, hG5, hG6⟩ := id rad.isPreRadial
   let t : Set S → Prop := (· ∈ A.edgeSet)
   let Z : Set (Set Shat) := colourSet cap Γ G₃ t
@@ -659,7 +659,7 @@ theorem theorem_8_1' (hS : IsSurface S)
   have hNs : N.IsSubdrawing G₃ := Drawing.span_isSubdrawing G₃ _ _
   have hreg : ∀ f, f ∈ arcComponentsIn (Γ.skU \ Γ.V) → ∃ s ∈ G₃.R, cap.emb '' f ⊆ s := by
     intro f hf
-    have hg := (hD.edge_iff hS).mpr ⟨f, hf, rfl⟩
+    have hg := hD.edge_iff.mpr ⟨f, hf, rfl⟩
     have hdis : Disjoint (cap.emb '' f) G₃.U := by
       refine disjoint_left.mpr fun y hy hyU ↦ ?_
       have hyD := hg.2.1 hy
@@ -674,7 +674,7 @@ theorem theorem_8_1' (hS : IsSurface S)
     intro f c s hfc hs hfs
     constructor
     · rintro ⟨-, f', c', h', hf', ht⟩
-      rw [(colour_unique hS hD hrad hmax hDE hs hfc h' hfs hf').2]
+      rw [(colour_unique hD hrad hmax hDE hs hfc h' hfs hf').2]
       exact ht
     · exact fun h ↦ ⟨hs, f, c, hfc, hfs, h⟩
   obtain ⟨ca, hca⟩ := hA

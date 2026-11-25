@@ -162,7 +162,7 @@ theorem bd_in_interior (hsep : ∀ p ∈ D.rad.poles, p ≠ x → 24 * t < D.vDi
       by_contra hn
       exact hpn ⟨a, ⟨mem_univ _, hn⟩, rfl⟩
     obtain ⟨Θ, hΘ, haΘ⟩ := mem_sUnion.mp ((sUnion_cuffs (S := S)).symm ▸ hab : a ∈ ⋃₀ cuffs S)
-    obtain ⟨r, hrp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨r, hrp, -, hreg⟩ := D.rad.exists_pole hΘ
     obtain ⟨g, hg, hcap⟩ := D.rad.exists_pole_edge hS h3c hrp hΘ hreg haV haΘ
     exact hno hrp ⟨mem_image_of_mem _ haV, hp⟩ ⟨hg, hwG, hrp.1.1, hcap⟩
   · -- `p` lies in a region of `Γ` that is not in `Σ`

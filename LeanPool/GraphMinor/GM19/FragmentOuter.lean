@@ -386,7 +386,7 @@ theorem exists_outer_fragment_core (hS : IsSurface S) (cap : IsCappedSurface S S
       intro Θ hΘ x hxE hxZ
       have hb : cap.emb x ∈ discBd (E Θ) := by
         rw [show discBd (E Θ) = _ from cap.cuffDisc_bd Θ hΘ.1]
-        exact mem_image_of_mem _ (cap.mem_of_emb_mem hS hΘ.1 hxE)
+        exact mem_image_of_mem _ (cap.mem_of_emb_mem hΘ.1 hxE)
       have hlim := discBd_subset_closure_compl hT (cap.cuffDisc_closedDisc Θ hΘ.1) hb
       have hrest' : IsClosed (Z ∪ ⋃₀ (E '' (𝓑 \ {Θ}))) :=
         hZc.union (((hf𝓑.subset sdiff_subset).image E).isClosed_sUnion (by
@@ -410,7 +410,7 @@ theorem exists_outer_fragment_core (hS : IsSurface S) (cap : IsCappedSurface S S
         by_cases hxZ : cap.emb x ∈ Z
         · have hb : cap.emb x ∈ discBd (E Θ) := by
             rw [show discBd (E Θ) = _ from cap.cuffDisc_bd Θ hΘ.1]
-            exact mem_image_of_mem _ (cap.mem_of_emb_mem hS hΘ.1 hxΘ)
+            exact mem_image_of_mem _ (cap.mem_of_emb_mem hΘ.1 hxΘ)
           have hlim := mem_closure_oArc_sdiff (cap.cuffDisc_closedDisc Θ hΘ.1).isOArc_discBd hb
           refine closure_minimal ?_ isClosed_closure hlim
           rintro w ⟨hwb, hwn⟩

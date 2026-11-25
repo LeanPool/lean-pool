@@ -272,7 +272,7 @@ theorem freeFacts_of_cuff (hS : IsSurface S) (Φ : Frame S) {K : Drawing S}
   classical
   have hO : IsOArc Θ := ⟨cuffPar hS ⟨Θ, hΘ⟩⟩
   have hoff : ∀ {Θ' x}, Θ' ∈ cuffs S → Θ' ≠ Θ → x ∈ Θ' → x ∉ In := fun {Θ' x} hΘ' hne hx hxI ↦
-    disjoint_left.1 (hoth Θ' hΘ' hne) (cap.mem_closure_emb hS hΘ' hx) (hInZ hxI)
+    disjoint_left.1 (hoth Θ' hΘ' hne) (cap.mem_closure_emb hΘ' hx) (hInZ hxI)
   have hcuff : ∀ {x}, x ∈ bd S → x ∈ In → x ∈ Θ := fun {x} hx hxI ↦ by
     by_contra hn
     have hΘ' : connectedComponentIn (bd S) x ∈ cuffs S := ⟨x, hx, rfl⟩

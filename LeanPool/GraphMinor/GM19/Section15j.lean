@@ -92,10 +92,10 @@ theorem borderEdgeDist_le_of_bite {r : Shat} {c₁ c₂ : Set S} {C : Drawing Sh
 
 omit [T2Space S] [T2Space Shat] in
 /-- The pole in the disc of a cuff is the one whose region is that disc. -/
-theorem pole_eq_of_mem_cuffDisc (hS : IsSurface S) {r r' : Shat} (hr : r ∈ D.rad.poles) {Θ : Set S}
+theorem pole_eq_of_mem_cuffDisc {r r' : Shat} (hr : r ∈ D.rad.poles) {Θ : Set S}
   (hΘ : Θ ∈ cuffs S) (hreg : D.rad.regionOf r = cap.cuffDisc Θ) (hr' : r' ∈ D.rad.poles)
     (hd : r' ∈ cap.cuffDisc Θ) : r' = r := by
-  obtain ⟨Θ', hΘ', hreg', hd'⟩ := D.rad.pole_cases hS hr'
+  obtain ⟨Θ', hΘ', hreg', hd'⟩ := D.rad.pole_cases hr'
   have e : Θ' = Θ := by
     by_contra hne
     exact disjoint_left.mp (cap.cuffDisc_disjoint Θ' hΘ' Θ hΘ hne) (subset_closure hd')
@@ -168,7 +168,7 @@ omit [T2Space S] in
 have a second common vertex we use `no_two_common_vertices`. If not, the first bite without `r` is
 connected and misses the
 second bite, so it lies inside the second bite. -/
-theorem exists_bite_superset_of_vertex (hS : IsSurface S) {F G : Drawing Shat}
+theorem exists_bite_superset_of_vertex {F G : Drawing Shat}
   (hF : D.IsBiteAt r F) (hG : D.IsBiteAt r G) (hc : F.E.ncard + G.E.ncard ≤ 2 * N) {p : Shat}
     (hpF : p ∈ F.V) (hpr : p ≠ r) (hpG : p ∈ D.ins G) :
     ∃ C, D.IsBiteAt r C ∧ C.E.ncard ≤ F.E.ncard + G.E.ncard ∧ D.ins F ⊆ D.ins C ∧ D.ins G ⊆ D.ins C
@@ -188,7 +188,7 @@ theorem exists_bite_superset_of_vertex (hS : IsSurface S) {F G : Drawing Shat}
     have h₃ := ncard_le_ncard hV (F.finite_V.union G.finite_V)
     have h₄ := ncard_union_le F.V G.V
     have hrF := D.U_subset_ins hF.is_circuit hF.card_lt (F.V_subset_U hF.rstar_mem)
-    exact ⟨C, X.bite_of_ins hS hC hcard (i₁ hrF), by omega, i₁, i₂⟩
+    exact ⟨C, X.bite_of_ins hC hcard (i₁ hrF), by omega, i₁, i₂⟩
   push Not at hx
   have hi := D.ins_spec hG.is_circuit hG.card_lt
   have hconn : IsPreconnected (F.U \ {r}) := (Surface.isPathConnected_oArc_diff
@@ -212,7 +212,7 @@ theorem exists_bite_superset_of_vertex (hS : IsSurface S) {F G : Drawing Shat}
 omit X [T2Space S] in
 /-- What a tight bite meets on the cuff is its arc. -/
 theorem _root_.GraphMinor.GM19.TangleDatum.IsBiteShape.isPreconnected_cuff_inter_ins
-  (hS : IsSurface S) {F : Drawing Shat} {v₁ v₂ Β L A A' Di Do} (h : D.IsBiteShape r Θ F v₁ v₂ Β L A
+ {F : Drawing Shat} {v₁ v₂ Β L A A' Di Do} (h : D.IsBiteShape r Θ F v₁ v₂ Β L A
     A' Di Do) (hdis : Disjoint F.V A') :
     IsPreconnected (cap.emb '' Θ ∩ D.ins F) := by
   classical
@@ -223,7 +223,7 @@ theorem _root_.GraphMinor.GM19.TangleDatum.IsBiteShape.isPreconnected_cuff_inter
   have hsubI : ∀ x ∈ D.biteArc r F, x ∈ cap.emb '' Θ ∧ x ∈ D.ins F := fun x hx => by
     obtain ⟨I, hI, hxI⟩ := hx
     have := hI.1 hxI
-    exact ⟨closure_region_sdiff hS h.cuff h.reg ▸ this.2, this.1⟩
+    exact ⟨closure_region_sdiff h.cuff h.reg ▸ this.2, this.1⟩
   have hfr : IsOpen (discInt (D.ins F)) := hi.2.2.1.isOpen_discInt hman
   have heq : cap.emb '' Θ ∩ D.ins F = D.biteArc r F := by
     refine Subset.antisymm (fun x hx => ?_) fun x hx => hsubI x hx
@@ -232,7 +232,7 @@ theorem _root_.GraphMinor.GM19.TangleDatum.IsBiteShape.isPreconnected_cuff_inter
     have hA' : cap.emb y ∈ A' := by
       by_contra hA'
       exact hn (by
-        rw [h.biteArc_eq hS]
+        rw [h.biteArc_eq]
         by_cases he : cap.emb y ∈ ({cap.emb v₁, cap.emb v₂} : Set Shat)
         · exact .inr he
         · rcases h.cover ⟨mem_image_of_mem _ hy, he⟩ with h' | h'
@@ -249,7 +249,7 @@ theorem _root_.GraphMinor.GM19.TangleDatum.IsBiteShape.isPreconnected_cuff_inter
     exact disjoint_left.mp h.out_ins hw₂ (discInt_subset _ hw₁)
   rw [heq, ← image_preimage_eq_of_subset (f := cap.emb) (s := D.biteArc r F) fun x hx
     => image_subset_range _ _ (hsubI x hx).1]
-  exact (cap.isEmbedding.isInducing.isPreconnected_image).mpr (h.isPreconnected_biteArc hS)
+  exact (cap.isEmbedding.isInducing.isPreconnected_image).mpr (h.isPreconnected_biteArc)
 
 /-- **Two bites at `r` that share a point of the cuff lie in one bite.** We may take the first
 tight, so it meets the cuff in a connected set. Either an end of that set lies in the second bite,
@@ -265,7 +265,7 @@ theorem exists_bite_superset (hS : IsSurface S) {F G : Drawing Shat} (hF : D.IsB
   have : ConnectedSpace Shat := cap.connected
   obtain ⟨F', hF', hle, hsub, v₁, v₂, Β, L, A, A', Di, Do, hs, hdis⟩ := X.exists_tight_bite hS hF
     (by omega)
-  have hcon := hs.isPreconnected_cuff_inter_ins hS hdis
+  have hcon := hs.isPreconnected_cuff_inter_ins hdis
   have hrr : ∀ {y : S}, cap.emb y ≠ r := fun {y} he => by
     have hrd : r ∈ cap.cuffDisc Θ := X.reg ▸ (D.rad.regionOf_mem X.pole.1).2
     exact cap.notMem_range X.cuff hrd ⟨y, he⟩
@@ -279,7 +279,7 @@ theorem exists_bite_superset (hS : IsSurface S) {F G : Drawing Shat} (hF : D.IsB
     intro C h₁ h₂ h₃ h₄
     exact ⟨C, h₁, by omega, hsub.trans h₃, h₄⟩
   by_cases hv : cap.emb v₁ ∈ D.ins G
-  · obtain ⟨C, h₁, h₂, h₃, h₄⟩ := X.exists_bite_superset_of_vertex hS hF' hG (by omega) hv₁F hrr hv
+  · obtain ⟨C, h₁, h₂, h₃, h₄⟩ := X.exists_bite_superset_of_vertex hF' hG (by omega) hv₁F hrr hv
     exact fin h₁ h₂ h₃ h₄
   have hi := D.ins_spec hG.is_circuit hG.card_lt
   have hne : ∃ w, w ∈ cap.emb '' Θ ∩ D.ins F' ∧ w ∈ G.U := by
@@ -294,7 +294,7 @@ theorem exists_bite_superset (hS : IsSurface S) {F G : Drawing Shat} (hF : D.IsB
     · exact disjoint_left.mp h ⟨hzΘ, hsub hzF⟩ hzG
   obtain ⟨w, ⟨⟨y, hy, rfl⟩, hwF⟩, hwG⟩ := hne
   obtain ⟨-, hyG, -⟩ := D.rad.bd_point hG.is_circuit.1 (cuff_subset_bd ⟨Θ, X.cuff⟩ hy) hwG
-  obtain ⟨C, h₁, h₂, h₃, h₄⟩ := X.exists_bite_superset_of_vertex hS hG hF' (by omega) hyG hrr hwF
+  obtain ⟨C, h₁, h₂, h₃, h₄⟩ := X.exists_bite_superset_of_vertex hG hF' (by omega) hyG hrr hwF
   exact fin h₁ (by omega) h₄ h₃
 
 end TangleDatum.IsSideSetting
@@ -361,7 +361,7 @@ theorem no_circuit_holds_cuffEnds (hS : IsSurface S) (hb : D.IsEdgeMap P₀ n b)
     exact mem_image_of_mem _ (χ.Φ.tilde_subset hbd hs hy)
   obtain ⟨side₀, hside₀, hs₀Θ⟩ := hlong
   have X : D.IsSideSetting side₀ Θ r n := ⟨h3, hside₀, hs₀Θ, hΘ, hr, hreg, hnr, hfar, hfree⟩
-  have hri' := X.pole_mem hS hF₀ (by omega) hri
+  have hri' := X.pole_mem hF₀ (by omega) hri
   obtain ⟨F, hbF, hle, hsub, v₁, v₂, Β, L, A, A', Di, Do, hs, hdis⟩ :=
     X.exists_tight_bite hS (⟨hr, hF₀, by omega, hri'⟩ : D.IsBiteAt r F₀) (by omega)
   have hmono : ((cap.emb '' cuffEnds P₀ b Θ) ∩ D.ins F₀).ncard ≤ ((cap.emb '' cuffEnds P₀ b Θ) ∩
@@ -387,7 +387,7 @@ theorem no_circuit_holds_cuffEnds (hS : IsSurface S) (hb : D.IsEdgeMap P₀ n b)
     → ∀ z ∈ closure t, cap.emb z ∈ D.ins B → ∃ C, D.IsBiteAt r C ∧ C.E.ncard ≤ B.E.ncard + 6
       ∧ D.ins B ⊆ D.ins C ∧ cap.emb '' t ⊆ D.ins C := by
     intro t ht htΘ B hB hBn z hz hzB
-    obtain ⟨G, hG, hG6, hGt⟩ := exists_bite_of_edge hS hn (by omega) hfree hside₀ hs₀Θ hΘ hr hreg
+    obtain ⟨G, hG, hG6, hGt⟩ := exists_bite_of_edge hn (by omega) hfree hside₀ hs₀Θ hΘ hr hreg
       ht htΘ
     have hzG : cap.emb z ∈ D.ins G := by
       have hG' := (D.ins_spec hG.is_circuit hG.card_lt).2.2.1.isClosed
@@ -413,7 +413,7 @@ theorem no_circuit_holds_cuffEnds (hS : IsSurface S) (hb : D.IsEdgeMap P₀ n b)
   obtain ⟨x, hx⟩ : e.Nonempty := he.1
   have hcE : c = Θ := cuffs_eq_of_mem hM.cuff hΘ (hM.side_cuff (hes hx)) (hsΘ (hes hx))
   rw [hcE] at hM
-  have hrE : r' = r := pole_eq_of_mem_cuffDisc hS hr hΘ hreg hM.pole hM.pole_disc
+  have hrE : r' = r := pole_eq_of_mem_cuffDisc hr hΘ hreg hM.pole hM.pole_disc
   rw [hrE] at hM
   obtain ⟨i, rfl⟩ := hM.all₀ e he hes
   have hgi := hM.map i
@@ -441,7 +441,7 @@ theorem no_circuit_holds_cuffEnds (hS : IsSurface S) (hb : D.IsEdgeMap P₀ n b)
   have hJ : cap.emb '' Θ ∩ D.ins F ⊆ cap.emb '' closure s :=
     subset_line_of_isPreconnected hcΘ (hline.map_of_embedding cap.isEmbedding) (image_mono
       (closure_minimal hsΘ hΘcl))
-      (hs.isPreconnected_cuff_inter_ins hS hdis) inter_subset_left (fun h => hcorner v hv h.2)
+      (hs.isPreconnected_cuff_inter_ins hdis) inter_subset_left (fun h => hcorner v hv h.2)
         (fun h => hcorner w hwt h.2)
       ⟨mem_image_of_mem _ (closure_minimal (hbs.trans hsΘ) hΘcl hy.1), hyi⟩ (mem_image_of_mem _
         (closure_mono hbs hy.1))

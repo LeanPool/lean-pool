@@ -28,8 +28,8 @@ and invariance of domain says that its inverse is continuous.
 The proof of `exists_homeomorph_closedInner` is not Thomassen's. It uses Eilenberg's criterion to
 show accessibility of all points of an `O`-arc, and cuts by segments of a grid. See
 `Surface/DomainHomeo.lean`. Compare C. Thomassen, *The Jordan–Schönflies theorem and the
-classification of surfaces*, Amer. Math. Monthly 99 (1992) 116–130, Theorem 3.5, for the same
-statement.
+classification of surfaces*, Amer. Math. Monthly 99 (1992) 116–130, Theorem 3.1 (page 122).
+The Lean statement takes the unit circle as the source curve.
 -/
 
 @[expose] public section

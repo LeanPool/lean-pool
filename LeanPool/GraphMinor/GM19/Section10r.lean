@@ -80,7 +80,7 @@ theorem outer_of_touch [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.rep)
       = some Θ) : ∃ 𝓓 K, IsOuterData D n 𝓓 K := by
   have hlt : C.E.ncard < 2 * D.rep := by omega
   have hnp : ∀ z ∈ C.V, z ∉ D.rad.poles := fun z hz hzp ↦ by
-    obtain ⟨Θ', hΘ', hreg', hzd⟩ := D.rad.pole_cases hS hzp
+    obtain ⟨Θ', hΘ', hreg', hzd⟩ := D.rad.pole_cases hzp
     have := labels_eq hS h3 hd Z hZ (hZC z hz) hy (cuffLabel_eq hΘ' (subset_closure hzd)) hl
     subst this
     obtain ⟨-, -, hG3, -⟩ := id D.rad.isPreRadial
@@ -89,7 +89,7 @@ theorem outer_of_touch [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.rep)
     have hzq : z = p := (hG3 _ m₁.1).unique ⟨m₁.2, hzp.1.1⟩ ⟨(hreg'.trans hreg.symm) ▸ m₂.2, hp.1.1⟩
     subst hzq
     exact hNP ⟨C, hC, hc, r, hr, z, hp, hrp, hri, D.U_subset_ins hC hlt (C.V_subset_U hz)⟩
-  obtain ⟨v, -, hvΘ, hvZ⟩ := exists_touch hS Z hpos hy hl
+  obtain ⟨v, -, hvΘ, hvZ⟩ := exists_touch Z hpos hy hl
   exact outer_of_disc_point hS h3 hn₁ hn hd hNP hC hc hlink hr hri hnp hp hrp hΘ hreg Z hZ hZC hvΘ
     hvZ
 
@@ -119,7 +119,7 @@ theorem outer_of_disc_pole [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.
     have h₁ : R.length ≤ T'.length := length_le_of_edges hRs hRe
     have h₂ : T'.length ≤ Q.length := hT'e.length_le
     omega
-  obtain ⟨Θ, hΘ, hreg, hrd⟩ := D.rad.pole_cases hS hp
+  obtain ⟨Θ, hΘ, hreg, hrd⟩ := D.rad.pole_cases hp
   have hlab : cuffLabel cap b' = some Θ := cuffLabel_eq hΘ (subset_closure hrd)
   refine outer_of_touch hS h3 hn₁ hn hd hNP hC hc hlink hr hri hp hrp hΘ hreg (Z₁.append
     (R.append R.reverse)) ?_ ?_ ?_ (y := b') ?_ hlab
@@ -225,7 +225,7 @@ theorem outer_of_discs [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.rep)
   by_cases htouch : ∃ y Θ, y ∈ Z.support ∧ cuffLabel cap y = some Θ
   · obtain ⟨y, Θ, hy, hl⟩ := htouch
     have hΘ := (cuffLabel_some hl).1
-    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hS hΘ
+    obtain ⟨p, hp, -, hreg⟩ := D.rad.exists_pole hΘ
     by_cases hrp : r₁ = p
     · have hrp₂ : r₂ ≠ p := fun h ↦ hne (hrp.trans h.symm)
       exact outer_of_touch hS h3 hn₁ hn hd hNP hC₂ hc₂ hlink₂ hr₂ hi₂ hp hrp₂ hΘ hreg Z hZle hZpos
@@ -235,7 +235,7 @@ theorem outer_of_discs [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.rep)
   · push Not at htouch
     have hnl : ∀ {y}, y ∈ Z.support → ∀ Θ, cuffLabel cap y ≠ some Θ := fun {y} hy Θ ↦ htouch y Θ hy
     have hnp : ∀ {y}, y ∈ Z.support → y ∉ D.rad.poles := fun {y} hy hyp ↦ by
-      obtain ⟨Θ, hΘ, -, hyd⟩ := D.rad.pole_cases hS hyp
+      obtain ⟨Θ, hΘ, -, hyd⟩ := D.rad.pole_cases hyp
       exact hnl hy Θ (cuffLabel_eq hΘ (subset_closure hyd))
     have hnp₁ : ∀ z ∈ C₁.V, z ∉ D.rad.poles := fun z hz ↦ hnp (hC₁Z z hz)
     have hnp₂ : ∀ z ∈ C₂.V, z ∉ D.rad.poles := fun z hz ↦ hnp (hC₂Z z hz)
@@ -248,7 +248,7 @@ theorem outer_of_discs [Nonempty S] {n : ℕ} (hn₁ : 1 ≤ n) (hn : n < D.rep)
     have hnoB : ∀ {X : Drawing Shat}, X.IsSubdrawing D.rad.G → (∀ z ∈ X.V, z ∈ Z.support)
       → ∀ {v : S}, v ∈ bd S → cap.emb v ∉ X.U := fun {X} hX hsup {v} hv hvX ↦ by
       obtain ⟨-, h₂, Θ', hΘ', hvΘ⟩ := D.rad.bd_point hX hv hvX
-      exact hnl (hsup _ h₂) Θ' (cuffLabel_emb hS hΘ' hvΘ)
+      exact hnl (hsup _ h₂) Θ' (cuffLabel_emb hΘ' hvΘ)
     have hone₁ : ∀ {x y : S}, x ∈ bd S → y ∈ bd S → cap.emb x ∈ C₁.U → cap.emb y ∈ C₁.U → x = y
       := fun hx _ hxC _ ↦ (hnoB hC₁.1 hC₁Z hx hxC).elim
     have hone₂ : ∀ {x y : S}, x ∈ bd S → y ∈ bd S → cap.emb x ∈ C₂.U → cap.emb y ∈ C₂.U → x = y
