@@ -391,113 +391,151 @@ private lemma partsCertificateVariantVerifies_of_base
   rw [partsVerifiesVariantNodeB_transform]
   exact verified
 
+-- The data chunks check their trees independently. Keep the existing auxiliary theorems
+-- while forwarding each lookup case to the corresponding check.
 private theorem partsBaseCertificate0_verify :
-    (partsBaseCertificate 0).Verifies := by decide +kernel
+    (partsBaseCertificate 0).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate0_verifies
 
 private theorem partsBaseCertificate1_verify :
-    (partsBaseCertificate 1).Verifies := by decide +kernel
+    (partsBaseCertificate 1).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate1_verifies
 
 private theorem partsBaseCertificate2_verify :
-    (partsBaseCertificate 2).Verifies := by decide +kernel
+    (partsBaseCertificate 2).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate2_verifies
 
 private theorem partsBaseCertificate3_verify :
-    (partsBaseCertificate 3).Verifies := by decide +kernel
+    (partsBaseCertificate 3).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate3_verifies
 
 private theorem partsBaseCertificate4_verify :
-    (partsBaseCertificate 4).Verifies := by decide +kernel
+    (partsBaseCertificate 4).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate4_verifies
 
 private theorem partsBaseCertificate5_verify :
-    (partsBaseCertificate 5).Verifies := by decide +kernel
+    (partsBaseCertificate 5).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate5_verifies
 
 private theorem partsBaseCertificate6_verify :
-    (partsBaseCertificate 6).Verifies := by decide +kernel
+    (partsBaseCertificate 6).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate6_verifies
 
 private theorem partsBaseCertificate7_verify :
-    (partsBaseCertificate 7).Verifies := by decide +kernel
+    (partsBaseCertificate 7).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate7_verifies
 
 private theorem partsBaseCertificate8_verify :
-    (partsBaseCertificate 8).Verifies := by decide +kernel
+    (partsBaseCertificate 8).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate8_verifies
 
 private theorem partsBaseCertificate9_verify :
-    (partsBaseCertificate 9).Verifies := by decide +kernel
+    (partsBaseCertificate 9).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate9_verifies
 
 private theorem partsBaseCertificate10_verify :
-    (partsBaseCertificate 10).Verifies := by decide +kernel
+    (partsBaseCertificate 10).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate10_verifies
 
 private theorem partsBaseCertificate11_verify :
-    (partsBaseCertificate 11).Verifies := by decide +kernel
+    (partsBaseCertificate 11).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate11_verifies
 
 private theorem partsBaseCertificate12_verify :
-    (partsBaseCertificate 12).Verifies := by decide +kernel
+    (partsBaseCertificate 12).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate12_verifies
 
 private theorem partsBaseCertificate13_verify :
-    (partsBaseCertificate 13).Verifies := by decide +kernel
+    (partsBaseCertificate 13).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate13_verifies
 
 private theorem partsBaseCertificate14_verify :
-    (partsBaseCertificate 14).Verifies := by decide +kernel
+    (partsBaseCertificate 14).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate14_verifies
 
 private theorem partsBaseCertificate15_verify :
-    (partsBaseCertificate 15).Verifies := by decide +kernel
+    (partsBaseCertificate 15).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate15_verifies
 
 private theorem partsBaseCertificate16_verify :
-    (partsBaseCertificate 16).Verifies := by decide +kernel
+    (partsBaseCertificate 16).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate16_verifies
 
 private theorem partsBaseCertificate17_verify :
-    (partsBaseCertificate 17).Verifies := by decide +kernel
+    (partsBaseCertificate 17).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate17_verifies
 
 private theorem partsBaseCertificate18_verify :
-    (partsBaseCertificate 18).Verifies := by decide +kernel
+    (partsBaseCertificate 18).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate18_verifies
 
 private theorem partsBaseCertificate19_verify :
-    (partsBaseCertificate 19).Verifies := by decide +kernel
+    (partsBaseCertificate 19).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate19_verifies
 
 private theorem partsBaseCertificate20_verify :
-    (partsBaseCertificate 20).Verifies := by decide +kernel
+    (partsBaseCertificate 20).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate20_verifies
 
 private theorem partsBaseCertificate21_verify :
-    (partsBaseCertificate 21).Verifies := by decide +kernel
+    (partsBaseCertificate 21).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate21_verifies
 
 private theorem partsBaseCertificate22_verify :
-    (partsBaseCertificate 22).Verifies := by decide +kernel
+    (partsBaseCertificate 22).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate22_verifies
 
 private theorem partsBaseCertificate23_verify :
-    (partsBaseCertificate 23).Verifies := by decide +kernel
+    (partsBaseCertificate 23).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate23_verifies
 
 private theorem partsBaseCertificate24_verify :
-    (partsBaseCertificate 24).Verifies := by decide +kernel
+    (partsBaseCertificate 24).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate24_verifies
 
 private theorem partsBaseCertificate25_verify :
-    (partsBaseCertificate 25).Verifies := by decide +kernel
+    (partsBaseCertificate 25).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate25_verifies
 
 private theorem partsBaseCertificate26_verify :
-    (partsBaseCertificate 26).Verifies := by decide +kernel
+    (partsBaseCertificate 26).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate26_verifies
 
 private theorem partsBaseCertificate27_verify :
-    (partsBaseCertificate 27).Verifies := by decide +kernel
+    (partsBaseCertificate 27).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate27_verifies
 
 private theorem partsBaseCertificate28_verify :
-    (partsBaseCertificate 28).Verifies := by decide +kernel
+    (partsBaseCertificate 28).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate28_verifies
 
 private theorem partsBaseCertificate29_verify :
-    (partsBaseCertificate 29).Verifies := by decide +kernel
+    (partsBaseCertificate 29).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate29_verifies
 
 private theorem partsBaseCertificate30_verify :
-    (partsBaseCertificate 30).Verifies := by decide +kernel
+    (partsBaseCertificate 30).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate30_verifies
 
 private theorem partsBaseCertificate31_verify :
-    (partsBaseCertificate 31).Verifies := by decide +kernel
+    (partsBaseCertificate 31).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate31_verifies
 
 private theorem partsBaseCertificate32_verify :
-    (partsBaseCertificate 32).Verifies := by decide +kernel
+    (partsBaseCertificate 32).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate32_verifies
 
 private theorem partsBaseCertificate33_verify :
-    (partsBaseCertificate 33).Verifies := by decide +kernel
+    (partsBaseCertificate 33).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate33_verifies
 
 private theorem partsBaseCertificate34_verify :
-    (partsBaseCertificate 34).Verifies := by decide +kernel
+    (partsBaseCertificate 34).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate34_verifies
 
 private theorem partsBaseCertificate35_verify :
-    (partsBaseCertificate 35).Verifies := by decide +kernel
+    (partsBaseCertificate 35).Verifies := by
+  as_aux_lemma => exact partsBaseCertificate35_verifies
 
 /-- Every stored base tree passes the checker before applying root symmetries. -/
 theorem partsBaseCertificate_verifies (base : Fin 36) :
