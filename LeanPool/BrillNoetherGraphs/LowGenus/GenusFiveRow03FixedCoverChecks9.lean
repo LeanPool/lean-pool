@@ -26,7 +26,7 @@ open GenusFiveCoreAtlas GenusFiveClosedCover Configurations
 
 namespace ReplayChecks9
 
-attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+attribute [local instance 2000] CompactCellTree.decidableCheckPairedKernel
 
 theorem treePart108_check_paired :
     treePart108.checkPaired splitForms farkasReceiptLookup cells

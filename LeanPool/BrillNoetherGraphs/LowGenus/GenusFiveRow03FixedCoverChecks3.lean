@@ -27,7 +27,7 @@ open GenusFiveCoreAtlas GenusFiveClosedCover Configurations
 
 namespace ReplayChecks3
 
-attribute [local instance 2000] CertificateData.decidableCheckClosedRows
+attribute [local instance 2000] CertificateData.decidableCheckClosedRowsIndexedKernel
 
 theorem cell72_check_indexed : cell72.certificate.checkClosedRows 4
     [[], [], [13, 2, 0, 0, 0, 0, 0, 0, 0, 0, 2, 14, 0, 0, 0, 0, 7, 15], [0, 0, 0, 0, 16, 4, 0, 0,

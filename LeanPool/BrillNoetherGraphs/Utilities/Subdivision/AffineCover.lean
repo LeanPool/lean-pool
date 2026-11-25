@@ -55,6 +55,18 @@ def allFin {k : ℕ} (test : Fin k → Bool) : Bool :=
     allFin test = true ↔ ∀ index : Fin k, test index = true := by
   simp [allFin, List.all_eq_true]
 
+/-- Evaluate a bounded Boolean conjunction directly, without an intermediate list. -/
+def allFinFold {n : ℕ} (test : Fin n → Bool) : Bool :=
+  Fin.foldr n (fun index rest => test index && rest) true
+
+theorem allFinFold_eq {n : ℕ} (test : Fin n → Bool) :
+    allFinFold test = allFin test := by
+  induction n with
+  | zero => rfl
+  | succ n ih =>
+    rw [allFinFold, Fin.foldr_succ, ← allFinFold, ih]
+    simp only [allFin, List.ofFn_succ, List.all_cons, id_eq]
+
 /-- Boolean universal quantification over an arbitrary finite set.  `Finset.fold`
 keeps kernel evaluation proof-free even when the element type itself is a
 finite combinatorial object such as `Finset (Fin n)`. -/
@@ -118,6 +130,16 @@ def equal (left right : AffineForm m) : Bool :=
     rfl
   · rintro rfl
     simp [equal]
+
+/-- Check affine equality with an integer comparison specialized for kernel reduction. -/
+noncomputable def kernelEqual {dimension : ℕ} (left right : AffineForm dimension) : Bool :=
+  Int.beq' left.fixedValue right.fixedValue &&
+    allFinFold (fun coordinate =>
+      Int.beq' (left.coefficient coordinate) (right.coefficient coordinate))
+
+theorem kernelEqual_eq_equal {dimension : ℕ} (left right : AffineForm dimension) :
+    kernelEqual left right = equal left right := by
+  simp only [kernelEqual, equal, allFinFold_eq, Int.beq'_eq_beq, beq_eq_decide]
 
 /-- Proof-free list membership for integral affine forms. -/
 def mem (form : AffineForm m) (forms : List (AffineForm m)) : Bool :=
