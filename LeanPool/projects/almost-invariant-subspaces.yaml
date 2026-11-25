@@ -1,0 +1,54 @@
+slug: almost-invariant-subspaces
+title: Almost invariant subspaces and quantitative Kazhdan–Polishchuk bounds
+summary: A family of subspaces with uniformly bounded pairwise quotient dimensions
+  admits an invariant subspace formed from finitely many sums and intersections.
+  The development sharpens the quantitative bounds and extends the construction
+  to submodule lattices using module length.
+branch: linear algebra
+entry_module: LeanPool.AlmostInvariantSubspaces
+authors:
+- Jack Ryan
+source:
+  title: Almost invariant subspaces and operators
+  authors:
+  - David Kazhdan
+  - Alexander Polishchuk
+  url: https://github.com/jackryan225/almost-invariant-subspaces/tree/d199b316dbcd1a78043a7b43902028084a50d38e
+  github_repo: jackryan225/almost-invariant-subspaces
+  commit: d199b316dbcd1a78043a7b43902028084a50d38e
+  arxiv: '2107.08085'
+  completion_url: https://github.com/jackryan225/almost-invariant-subspaces/commit/d199b316dbcd1a78043a7b43902028084a50d38e
+  completion_date: '2026-11-25'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- KPFullFinal.kp_family_finite_form_sharp
+- KPFullFinal.kp_family_canonical
+- KPFullFinal.kp_family_finite_form_lattice
+- AlmostInvariant.question_negative_complex
+main_results:
+- declaration: KPFullFinal.kp_family_finite_form_sharp
+  informal: For an equivariant nonempty family over a division ring in any
+    dimension, a pairwise quotient-rank bound r yields an invariant finite sum
+    of finite intersections. Its two directed errors are at most r and r times
+    the sum of the ceilings of (r + 1) divided by j for j from 1 to r.
+- declaration: KPFullFinal.kp_family_canonical
+  informal: The chosen subspace can be fixed by every order automorphism of the
+    subspace lattice that permutes the given family.
+- declaration: KPFullFinal.kp_family_finite_form_lattice
+  informal: The same finite-sum and quantitative conclusions hold for a group
+    acting on a submodule lattice over an arbitrary ring, with module length
+    in place of quotient rank.
+- declaration: AlmostInvariant.question_negative_complex
+  informal: No bound depending only on the pairwise directed error controls
+    the codimension in the initial subspace of the sum of intersections
+    over strict majorities of translates. The counterexample uses a finite
+    cyclic action on a complex vector space and pairwise error at most one.
+tags:
+- invariant-subspaces
+- module-length
+- modular-lattices
+msc:
+- 15A03
+- 06C05
