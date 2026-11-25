@@ -245,7 +245,7 @@ variable {n : ℕ}
 /-! ## Executable model (boolean adjacency matrix, vertex ids in `ℕ`) -/
 
 /-- A concrete adjacency matrix: rows of booleans. -/
-abbrev Adj (_n : ℕ) := List (List Bool)
+abbrev Adj := List (List Bool)
 
 /-- Row lookup, `false` out of range. -/
 def atRow : List Bool → ℕ → Bool
@@ -254,54 +254,53 @@ def atRow : List Bool → ℕ → Bool
   | _ :: rest, k+1 => atRow rest k
 
 /-- `getAdj a u v`: is the edge `(u, v)` present in `a`? -/
-def getAdj (a : Adj n) (u v : ℕ) : Bool :=
+def getAdj (a : Adj) (u v : ℕ) : Bool :=
   match a[u]? with
   | none => false
   | some row => atRow row v
 
 /-- Number of chosen neighbors of `w`. -/
-def cardC (a : Adj n) (chosen : List ℕ) (w : ℕ) : ℕ :=
+def cardC (a : Adj) (chosen : List ℕ) (w : ℕ) : ℕ :=
   (chosen.filter (fun v => getAdj a v w)).length
 
+/-- Prefer the greater count, breaking ties by the smaller vertex index. -/
+def better (a : Adj) (chosen : List ℕ) (best candidate : ℕ) : ℕ :=
+  let bestCount := cardC a chosen best
+  let candidateCount := cardC a chosen candidate
+  if candidateCount > bestCount ∨ (candidateCount = bestCount ∧ candidate < best) then
+    candidate
+  else
+    best
+
 /-- Canonical MCS pick among `rem`: maximum cardinality, smallest id on ties. -/
-def bestPick (a : Adj n) (chosen : List ℕ) (rem : List ℕ) : ℕ :=
-  rem.foldl (fun best v =>
-    let cb := cardC a chosen best
-    let cv := cardC a chosen v
-    if cv > cb ∨ (cv = cb ∧ v < best) then v else best)
-    (rem.headD 0)
+def bestPick (a : Adj) (chosen : List ℕ) (rem : List ℕ) : ℕ :=
+  rem.foldl (better a chosen) (rem.headD 0)
 
 /-- One MCS step on the state `(chosen in reverse, remaining)`. -/
-def mcsStep (a : Adj n) (st : List ℕ × List ℕ) : List ℕ × List ℕ :=
+def mcsStep (a : Adj) (st : List ℕ × List ℕ) : List ℕ × List ℕ :=
   let (chosen, rem) := st
   match rem with
   | [] => st
   | _ => let v := bestPick a chosen rem; (v :: chosen, rem.erase v)
 
-/-- Canonical MCS ordering of `a`, computed from scratch. -/
-def mcsOrder (a : Adj n) : List ℕ :=
-  let n := a.length
-  let st := ((List.range n).foldl (fun s _ => mcsStep a s) ([], List.range n))
-  st.1.reverse
-
 /-- Set the undirected entry `(u, v)` to `present`. -/
-def setEdge (n : ℕ) (a : Adj n) (u v : ℕ) (present : Bool) : Adj n :=
+def setEdge (a : Adj) (u v : ℕ) (present : Bool) : Adj :=
   List.mapIdx (fun i row =>
     List.mapIdx (fun j b =>
       if i = u ∧ j = v ∨ i = v ∧ j = u then present else b) row) a
 
 /-- Insert the edge `(u, v)`. -/
-def insertEdge (n : ℕ) (a : Adj n) (u v : ℕ) : Adj n := setEdge n a u v true
+def insertEdge (a : Adj) (u v : ℕ) : Adj := setEdge a u v true
 
 /-- Delete the edge `(u, v)`. -/
-def deleteEdge (n : ℕ) (a : Adj n) (u v : ℕ) : Adj n := setEdge n a u v false
+def deleteEdge (a : Adj) (u v : ℕ) : Adj := setEdge a u v false
 
 /-- The matrix is square of size `n`. -/
-def WellShaped (n : ℕ) (a : Adj n) : Prop :=
+def WellShaped (n : ℕ) (a : Adj) : Prop :=
   a.length = n ∧ ∀ x : ℕ, x < n → ∃ row : List Bool, a[x]? = some row ∧ row.length = n
 
 /-- The abstract graph denoted by a symmetric loop-free matrix. -/
-def toUGraph (a : Adj n) (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
+def toUGraph (a : Adj) (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
     (hloop : ∀ u : ℕ, getAdj a u u = false) : UGraph n :=
   { adj := fun x y => getAdj a x.val y.val = true
     symm := by
@@ -319,17 +318,24 @@ def remOf (n : ℕ) (chosen : List ℕ) : List ℕ :=
   (List.range n).filter (fun v => decide (v ∉ chosen))
 
 /-- The canonical MCS pick after the chosen prefix `chosen`. -/
-def pickAt (a : Adj n) (chosen : List ℕ) : ℕ :=
+def pickAt (a : Adj) (chosen : List ℕ) : ℕ :=
   bestPick a chosen (remOf a.length chosen)
 
+/-- Run the specified number of greedy steps from a prefix and its remaining vertices. -/
+def mcsFinish (a : Adj) (steps : ℕ) (state : List ℕ × List ℕ) : List ℕ :=
+  ((List.range steps).foldl (fun state _ => mcsStep a state) state).1.reverse
+
 /-- Keep the prefix `pref` and recompute the rest of the canonical ordering. -/
-def regreedy (a : Adj n) (pref : List ℕ) : List ℕ :=
-  ((List.range (a.length - pref.length)).foldl (fun s _ => mcsStep a s)
-    (pref.reverse, remOf a.length pref)).1.reverse
+def regreedy (a : Adj) (pref : List ℕ) : List ℕ :=
+  mcsFinish a (a.length - pref.length) (pref.reverse, remOf a.length pref)
+
+/-- Canonical MCS ordering of `a`, computed from scratch. -/
+def mcsOrder (a : Adj) : List ℕ :=
+  mcsFinish a a.length ([], List.range a.length)
 
 /-- Executable probe: the first position (starting at `k`) whose old choice
 differs from the canonical pick after the preceding prefix of `order`. -/
-def execFirstBreak (a : Adj n) (order : List ℕ) : ℕ → List ℕ → Option ℕ
+def execFirstBreak (a : Adj) (order : List ℕ) : ℕ → List ℕ → Option ℕ
   | _, [] => none
   | k, x :: xs => if pickAt a (order.take k) = x then execFirstBreak a order (k + 1) xs else some k
 
@@ -352,19 +358,19 @@ def insertWindow (order : List ℕ) (u v : ℕ) : List ℕ :=
     (execLaterPos order u v - execEarlierPos order u v)
 
 /-- Insertion probe on the post-insertion matrix `a`. -/
-def insertProbe (a : Adj n) (order : List ℕ) (u v : ℕ) : Option ℕ :=
+def insertProbe (a : Adj) (order : List ℕ) (u v : ℕ) : Option ℕ :=
   execFirstBreak a order (execEarlierPos order u v + 1) (insertWindow order u v)
 
 /-- Executable insertion update on the post-insertion matrix `a`: probe the
 window, regreedy from the first break, keep `order` if nothing breaks. -/
-def execInsertUpdate (a : Adj n) (order : List ℕ) (u v : ℕ) : List ℕ :=
+def execInsertUpdate (a : Adj) (order : List ℕ) (u v : ℕ) : List ℕ :=
   match insertProbe a order u v with
   | none => order
   | some k => regreedy a (order.take k)
 
 /-- Executable deletion update on the post-deletion matrix `a`: probe the
 single position `laterPos`, regreedy from it if the probe fires. -/
-def execDeleteUpdate (a : Adj n) (order : List ℕ) (u v : ℕ) : List ℕ :=
+def execDeleteUpdate (a : Adj) (order : List ℕ) (u v : ℕ) : List ℕ :=
   if pickAt a (order.take (execLaterPos order u v)) = execLaterVert order u v then order
   else regreedy a (order.take (execLaterPos order u v))
 
@@ -376,20 +382,20 @@ executable updates exactly and additionally return the number of units spent.
 -/
 
 /-- One MCS step, returning `1` if a vertex was picked. -/
-def mcsStepC (a : Adj n) (st : List ℕ × List ℕ) : (List ℕ × List ℕ) × ℕ :=
+def mcsStepC (a : Adj) (st : List ℕ × List ℕ) : (List ℕ × List ℕ) × ℕ :=
   match st.2 with
   | [] => (st, 0)
   | _ => (mcsStep a st, 1)
 
 /-- Instrumented `regreedy`. -/
-def regreedyC (a : Adj n) (pref : List ℕ) : List ℕ × ℕ :=
+def regreedyC (a : Adj) (pref : List ℕ) : List ℕ × ℕ :=
   let r := (List.range (a.length - pref.length)).foldl
     (fun s _ => let t := mcsStepC a s.1; (t.1, s.2 + t.2))
     ((pref.reverse, remOf a.length pref), 0)
   (r.1.1.reverse, r.2)
 
 /-- Instrumented `execFirstBreak`. -/
-def execFirstBreakC (a : Adj n) (order : List ℕ) : ℕ → List ℕ → Option ℕ × ℕ
+def execFirstBreakC (a : Adj) (order : List ℕ) : ℕ → List ℕ → Option ℕ × ℕ
   | _, [] => (none, 0)
   | k, x :: xs =>
       if pickAt a (order.take k) = x then
@@ -398,18 +404,18 @@ def execFirstBreakC (a : Adj n) (order : List ℕ) : ℕ → List ℕ → Option
       else (some k, 1)
 
 /-- Instrumented `insertProbe`. -/
-def insertProbeC (a : Adj n) (order : List ℕ) (u v : ℕ) : Option ℕ × ℕ :=
+def insertProbeC (a : Adj) (order : List ℕ) (u v : ℕ) : Option ℕ × ℕ :=
   execFirstBreakC a order (execEarlierPos order u v + 1) (insertWindow order u v)
 
 /-- Instrumented `execInsertUpdate`. -/
-def execInsertUpdateC (a : Adj n) (order : List ℕ) (u v : ℕ) : List ℕ × ℕ :=
+def execInsertUpdateC (a : Adj) (order : List ℕ) (u v : ℕ) : List ℕ × ℕ :=
   let p := insertProbeC a order u v
   match p.1 with
   | none => (order, p.2)
   | some k => let r := regreedyC a (order.take k); (r.1, p.2 + r.2)
 
 /-- Instrumented `execDeleteUpdate`. -/
-def execDeleteUpdateC (a : Adj n) (order : List ℕ) (u v : ℕ) : List ℕ × ℕ :=
+def execDeleteUpdateC (a : Adj) (order : List ℕ) (u v : ℕ) : List ℕ × ℕ :=
   if pickAt a (order.take (execLaterPos order u v)) = execLaterVert order u v then (order, 1)
   else let r := regreedyC a (order.take (execLaterPos order u v)); (r.1, 1 + r.2)
 

@@ -181,37 +181,42 @@ lemma prefix_preserved (order : List (Vert n)) (u v : Vert n)
   have hnext : IsMCSNext G (order.take i).toFinset (order.get ⟨i, hi⟩) := hstep i hi
   exact IsMCSNext_of_eq_neigh (order.take i).toFinset (order.get ⟨i, hi⟩) hneigh hnext
 
+/-- Appending one step preserves any per-step predicate. -/
+lemma steps_append {Q : Finset (Fin n) → Fin n → Prop} (P : List (Fin n)) (w : Fin n)
+    (hP : ∀ i (hi : i < P.length), Q (P.take i).toFinset (P.get ⟨i, hi⟩))
+    (hw : Q P.toFinset w) :
+    ∀ i (hi : i < (P ++ [w]).length),
+      Q ((P ++ [w]).take i).toFinset ((P ++ [w]).get ⟨i, hi⟩) := by
+  intro i hi
+  by_cases hlt : i < P.length
+  · have htake : (P ++ [w]).take i = P.take i := by
+      rw [List.take_append]
+      have h0 : i - P.length = 0 := Nat.sub_eq_zero_of_le (le_of_lt hlt)
+      simp [h0]
+    have hget : (P ++ [w]).get ⟨i, hi⟩ = P.get ⟨i, hlt⟩ := by
+      apply List.getElem_append_left
+    rw [htake, hget]
+    exact hP i hlt
+  · have hi_eq : i = P.length := by
+      have hlen : (P ++ [w]).length = P.length + 1 := by simp
+      omega
+    subst hi_eq
+    have htake : (P ++ [w]).take P.length = P := by
+      rw [List.take_append]
+      simp
+    have hget : (P ++ [w]).get ⟨P.length, hi⟩ = w := by
+      simp [List.get_eq_getElem, List.getElem_append_right (le_refl P.length)]
+    rw [htake, hget]
+    exact hw
+
 /-- Extending a valid MCS prefix by one legal pick yields a valid prefix. -/
 lemma prefix_valid_append (pref : List (Vert n)) (p : Vert n)
     (hpref : ∀ (i : ℕ) (hi : i < pref.length),
       IsMCSNext G (pref.take i).toFinset (pref.get ⟨i, hi⟩))
     (hp : IsMCSNext G pref.toFinset p) :
     ∀ (i : ℕ) (hi : i < (pref ++ [p]).length),
-      IsMCSNext G ((pref ++ [p]).take i).toFinset ((pref ++ [p]).get ⟨i, hi⟩) := by
-  intro i hi
-  by_cases hlt : i < pref.length
-  · have htake : (pref ++ [p]).take i = pref.take i := by
-      rw [List.take_append]
-      have h0 : i - pref.length = 0 := Nat.sub_eq_zero_of_le (le_of_lt hlt)
-      simp [h0]
-    have hget : (pref ++ [p]).get ⟨i, hi⟩ = pref.get ⟨i, hlt⟩ := by
-      apply List.getElem_append_left
-    rw [htake, hget]
-    exact hpref i hlt
-  · have hi_eq : i = pref.length := by
-      have hle : pref.length ≤ i := le_of_not_gt hlt
-      have hlt2 : i < pref.length + 1 := by
-        have : (pref ++ [p]).length = pref.length + 1 := by simp
-        rwa [this] at hi
-      omega
-    subst i
-    have htake : (pref ++ [p]).take pref.length = pref := by
-      rw [List.take_append]
-      simp
-    have hget : (pref ++ [p]).get ⟨pref.length, hi⟩ = p := by
-      simp [List.get_eq_getElem, List.getElem_append_right (le_refl pref.length)]
-    rw [htake, hget]
-    exact hp
+      IsMCSNext G ((pref ++ [p]).take i).toFinset ((pref ++ [p]).get ⟨i, hi⟩) :=
+  steps_append pref p hpref hp
 
 /-- Loop invariant: if `pref` is a valid MCS prefix whose chosen set is `chosen`,
 then `pref ++ mcsLoop G chosen k hk` is a valid MCS ordering. Prove by induction
@@ -353,4 +358,43 @@ theorem init_valid (G : UGraph n) : ValidMCSState G (greedySuffix G []) := by
   exact absurd hi (Nat.not_lt_zero i)
 
 end UGraph
+
+namespace Proofs
+
+open UGraph
+
+variable {n : ℕ} {G : UGraph n}
+
+/-! ## Uniqueness of the canonical ordering -/
+
+theorem IsMCSNext_unique {S : Finset (Vert n)} {w w' : Vert n}
+    (h : IsMCSNext G S w) (h' : IsMCSNext G S w') : w = w' := by
+  have heq : G.neigh S w' = G.neigh S w := le_antisymm (h.2.1 w' h'.1) (h'.2.1 w h.1)
+  exact le_antisymm (h.2.2 w' h'.1 heq) (h'.2.2 w h.1 heq.symm)
+
+theorem IsMCSOrdering_unique {o₁ o₂ : List (Vert n)}
+    (h₁ : IsMCSOrdering G o₁) (h₂ : IsMCSOrdering G o₂) : o₁ = o₂ := by
+  have key : ∀ i, o₁.take i = o₂.take i := by
+    intro i
+    induction i with
+    | zero => simp
+    | succ i ih =>
+        rw [List.take_add_one, List.take_add_one, ih]
+        congr 1
+        by_cases hi : i < n
+        · have hi₁ : i < o₁.length := by rw [h₁.2.1]; exact hi
+          have hi₂ : i < o₂.length := by rw [h₂.2.1]; exact hi
+          have s₁ := h₁.2.2 i hi₁
+          have s₂ := h₂.2.2 i hi₂
+          rw [ih] at s₁
+          have hsame := IsMCSNext_unique s₁ s₂
+          simp only [List.get_eq_getElem] at hsame
+          rw [List.getElem?_eq_getElem hi₁, List.getElem?_eq_getElem hi₂, hsame]
+        · rw [List.getElem?_eq_none (by rw [h₁.2.1]; omega),
+            List.getElem?_eq_none (by rw [h₂.2.1]; omega)]
+  have := key n
+  rwa [List.take_of_length_le (le_of_eq h₁.2.1),
+    List.take_of_length_le (le_of_eq h₂.2.1)] at this
+
+end Proofs
 end DynamicMcs

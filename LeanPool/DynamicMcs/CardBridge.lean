@@ -41,7 +41,7 @@ lemma chosenFin_nodup (n : ℕ) (chosen : List ℕ) (hnd : chosen.Nodup)
 /-- Bridging the counting sets: filtering the `Fin`-image of `chosen` by
 `w ↦ (getAdj a w b.val = true)` counts the same vertices as filtering `chosen`
 by `v ↦ getAdj a v w`, using symmetry of the adjacency matrix. -/
-lemma cardC_filter_bridge (n : ℕ) (a : Adj n)
+lemma cardC_filter_bridge (n : ℕ) (a : Adj)
     (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
     (chosen : List ℕ) (hchosen : ∀ v ∈ chosen, v < n) (w : ℕ) :
     (List.filter (fun b : Fin n => getAdj a w b.val)
@@ -64,14 +64,14 @@ lemma cardC_filter_bridge (n : ℕ) (a : Adj n)
       · have hcnw : ¬ getAdj a w v = true := by rw [hsymvw]; exact hcv
         simp [hcnw, hcv, ihvs]
 
-lemma cardC_eq_neigh (n : ℕ) (a : Adj n) (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
+lemma cardC_eq_neigh (n : ℕ) (a : Adj) (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
     (hloop : ∀ u : ℕ, getAdj a u u = false)
     (chosen : List ℕ) (hchosen : ∀ v ∈ chosen, v < n) (hnd : chosen.Nodup)
     (w : ℕ) (hw : w < n) :
-    UGraph.neigh (toUGraph a hsymm hloop)
+    UGraph.neigh (toUGraph (n := n) a hsymm hloop)
       (chosenFin n chosen hchosen).toFinset ⟨w, hw⟩ = cardC a chosen w := by
   classical
-  let G : UGraph n := toUGraph a hsymm hloop
+  let G : UGraph n := toUGraph (n := n) a hsymm hloop
   let cf : List (Fin n) := chosenFin n chosen hchosen
   have hcn : cf.Nodup := by
     exact chosenFin_nodup n chosen hnd hchosen
@@ -98,7 +98,7 @@ lemma cardC_eq_neigh (n : ℕ) (a : Adj n) (hsymm : ∀ u v : ℕ, getAdj a u v 
     exact Finset.card_filter_add_card_filter_not (fun x : Fin n => G.adj ⟨w, hw⟩ x)
   have hT : cf.toFinset.card - N.card = T.card := Nat.sub_eq_of_eq_add hsplit.symm
   calc
-    (toUGraph a hsymm hloop).neigh cf.toFinset ⟨w, hw⟩
+    (toUGraph (n := n) a hsymm hloop).neigh cf.toFinset ⟨w, hw⟩
         = cf.toFinset.card - N.card := by rfl
     _ = T.card := hT
     _ = cardC a chosen w := hT_card

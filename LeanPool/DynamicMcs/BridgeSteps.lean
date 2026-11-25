@@ -9,13 +9,11 @@ Authors: Md Thoriqul Islam Thonmay, Gregory Morse
 module
 
 public import LeanPool.DynamicMcs.Exec
-public import LeanPool.DynamicMcs.ExecBridge
 
 /-! # Correctness of the executable tie break -/
 
 @[expose] public section
 
-open DynamicMcs.ExecBridge
 
 namespace DynamicMcs
 
@@ -24,7 +22,7 @@ namespace BridgeSteps
 variable {n : ℕ}
 
 /-- R1: better never decreases cardinality w.r.t. the accumulated best. -/
-lemma better_card_ge_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
+lemma better_card_ge_acc (a : Adj) (chosen : List ℕ) (a0 v : ℕ) :
     cardC a chosen a0 ≤ cardC a chosen (better a chosen a0 v) := by
   by_cases h : cardC a chosen v > cardC a chosen a0 ∨
                (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
@@ -36,7 +34,7 @@ lemma better_card_ge_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
   · simp [better, h]
 
 /-- R2: better never decreases cardinality w.r.t. the new candidate. -/
-lemma better_card_ge_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
+lemma better_card_ge_x (a : Adj) (chosen : List ℕ) (a0 v : ℕ) :
     cardC a chosen v ≤ cardC a chosen (better a chosen a0 v) := by
   by_cases h : cardC a chosen v > cardC a chosen a0 ∨
                (cardC a chosen v = cardC a chosen a0 ∧ v < a0)
@@ -48,7 +46,7 @@ lemma better_card_ge_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
 
 /-- R3: if the accumulated best ties the result, the result is no larger
 (keeps the smaller id on ties). -/
-lemma better_tie_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
+lemma better_tie_acc (a : Adj) (chosen : List ℕ) (a0 v : ℕ) :
     cardC a chosen a0 = cardC a chosen (better a chosen a0 v) →
       better a chosen a0 v ≤ a0 := by
   by_cases h : cardC a chosen v > cardC a chosen a0 ∨
@@ -68,7 +66,7 @@ lemma better_tie_acc (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
     simp [better, h]
 
 /-- R4: if the new candidate ties the result, the result is no larger than it. -/
-lemma better_tie_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
+lemma better_tie_x (a : Adj) (chosen : List ℕ) (a0 v : ℕ) :
     cardC a chosen v = cardC a chosen (better a chosen a0 v) →
       better a chosen a0 v ≤ v := by
   by_cases h : cardC a chosen v > cardC a chosen a0 ∨
@@ -87,13 +85,13 @@ lemma better_tie_x (a : Adj n) (chosen : List ℕ) (a0 v : ℕ) :
 starting from seed `acc`, the result `w` is in `acc :: l`, dominates all of
 `acc :: l` by cardinality, and is the smallest id among those achieving the
 maximum cardinality. -/
-def BetterInv (a : Adj n) (chosen : List ℕ) (acc : ℕ) (l : List ℕ) (w : ℕ) : Prop :=
+def BetterInv (a : Adj) (chosen : List ℕ) (acc : ℕ) (l : List ℕ) (w : ℕ) : Prop :=
   w ∈ acc :: l ∧
   (∀ x ∈ acc :: l, cardC a chosen x ≤ cardC a chosen w) ∧
   (∀ x ∈ acc :: l, cardC a chosen x = cardC a chosen w → w ≤ x)
 
 /-- One `better` step preserves `BetterInv`. -/
-lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
+lemma better_step_inv (a : Adj) (chosen : List ℕ) (acc x : ℕ)
     (l : List ℕ) (w : ℕ) (h : BetterInv a chosen (better a chosen acc x) l w) :
     BetterInv a chosen acc (x :: l) w := by
   rcases h with ⟨hmem, hcard, htie⟩
@@ -171,7 +169,7 @@ lemma better_step_inv (a : Adj n) (chosen : List ℕ) (acc x : ℕ)
 
 /-- Folding `better` over a list from a seed yields the lex-max (card desc,
 id asc) of `acc :: l`. -/
-lemma foldl_better_lex (a : Adj n) (chosen : List ℕ) :
+lemma foldl_better_lex (a : Adj) (chosen : List ℕ) :
     ∀ (l : List ℕ) (acc : ℕ),
       BetterInv a chosen acc l (l.foldl (fun b v => better a chosen b v) acc) := by
   intro l
@@ -188,7 +186,7 @@ lemma foldl_better_lex (a : Adj n) (chosen : List ℕ) :
 
 /-- `bestPick` returns a member of `rem` with maximum cardinality among
 `rem` and smallest id on ties. -/
-lemma bestPick_lex (a : Adj n) (chosen : List ℕ) (rem : List ℕ) (hrem_ne : rem ≠ []) :
+lemma bestPick_lex (a : Adj) (chosen : List ℕ) (rem : List ℕ) (hrem_ne : rem ≠ []) :
     let w := bestPick a chosen rem
     w ∈ rem ∧
     (∀ x ∈ rem, cardC a chosen x ≤ cardC a chosen w) ∧

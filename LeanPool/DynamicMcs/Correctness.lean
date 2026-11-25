@@ -9,7 +9,7 @@ Authors: Md Thoriqul Islam Thonmay, Gregory Morse
 module
 
 public import Mathlib.Order.Interval.Finset.Nat
-public import LeanPool.DynamicMcs.Transfer
+public import LeanPool.DynamicMcs.EdgeUpdate
 
 /-!
 # Correctness and locality of the dynamic updates (on the `Challenge` definitions)
@@ -31,40 +31,9 @@ noncomputable section
 namespace DynamicMcs
 namespace Proofs
 
-open UGraph Transport
+open UGraph
 
 variable {n : ℕ} {G G' : UGraph n}
-
-/-! ## Uniqueness of the canonical ordering -/
-
-theorem IsMCSNext_unique {S : Finset (Vert n)} {w w' : Vert n}
-    (h : IsMCSNext G S w) (h' : IsMCSNext G S w') : w = w' := by
-  have heq : G.neigh S w' = G.neigh S w := le_antisymm (h.2.1 w' h'.1) (h'.2.1 w h.1)
-  exact le_antisymm (h.2.2 w' h'.1 heq) (h'.2.2 w h.1 heq.symm)
-
-theorem IsMCSOrdering_unique {o₁ o₂ : List (Vert n)}
-    (h₁ : IsMCSOrdering G o₁) (h₂ : IsMCSOrdering G o₂) : o₁ = o₂ := by
-  have key : ∀ i, o₁.take i = o₂.take i := by
-    intro i
-    induction i with
-    | zero => simp
-    | succ i ih =>
-        rw [List.take_add_one, List.take_add_one, ih]
-        congr 1
-        by_cases hi : i < n
-        · have hi₁ : i < o₁.length := by rw [h₁.2.1]; exact hi
-          have hi₂ : i < o₂.length := by rw [h₂.2.1]; exact hi
-          have s₁ := h₁.2.2 i hi₁
-          have s₂ := h₂.2.2 i hi₂
-          rw [ih] at s₁
-          have hsame := IsMCSNext_unique s₁ s₂
-          simp only [List.get_eq_getElem] at hsame
-          rw [List.getElem?_eq_getElem hi₁, List.getElem?_eq_getElem hi₂, hsame]
-        · rw [List.getElem?_eq_none (by rw [h₁.2.1]; omega),
-            List.getElem?_eq_none (by rw [h₂.2.1]; omega)]
-  have := key n
-  rwa [List.take_of_length_le (le_of_eq h₁.2.1),
-    List.take_of_length_le (le_of_eq h₂.2.1)] at this
 
 theorem IsMCSNext.toAny {S : Finset (Vert n)} {w : Vert n} (h : IsMCSNext G S w) :
     IsMCSNextAny G S w :=
@@ -76,56 +45,37 @@ theorem IsMCSOrdering.toAny {order : List (Vert n)} (h : IsMCSOrdering G order) 
 
 /-! ## Correctness -/
 
-theorem init_valid (G : UGraph n) : IsMCSOrdering G (initOrder G) := by
-  rw [initOrder, Transport.greedySuffix_eq, IsMCSOrdering_toDyn]
-  exact UGraph.init_valid (Transport.toDyn G)
+theorem init_valid (G : UGraph n) : IsMCSOrdering G (initOrder G) :=
+  UGraph.init_valid G
 
 theorem order_toFinset_univ {order : List (Vert n)} (h : IsMCSOrdering G order) :
     order.toFinset = (Finset.univ : Finset (Vert n)) :=
-  Greedy.Update.order_toFinset_univ order ((IsMCSOrdering_toDyn G order).1 h)
+  Greedy.Update.order_toFinset_univ order h
 
 theorem greedySuffix_full (H : UGraph n) (order : List (Vert n))
     (h : order.toFinset = (Finset.univ : Finset (Vert n))) :
-    greedySuffix H order = order := by
-  rw [Transport.greedySuffix_eq]
-  exact Greedy.Update.greedySuffix_full (Transport.toDyn H) order h
+    greedySuffix H order = order :=
+  Greedy.Update.greedySuffix_full H order h
 
 theorem update_from_prefix (order : List (Vert n)) (k : ℕ)
     (hvalid : IsMCSOrdering G order)
     (hsteps : ∀ i (hi : i < order.length), i < k →
       IsMCSNext G' (order.take i).toFinset (order.get ⟨i, hi⟩)) :
-    IsMCSOrdering G' (greedySuffix G' (order.take k)) := by
-  rw [Transport.greedySuffix_eq, IsMCSOrdering_toDyn]
-  exact Greedy.Update.update_from_prefix (G := Transport.toDyn G) order k
-    ((IsMCSOrdering_toDyn G order).1 hvalid)
-    (fun i hi hlt => (IsMCSNext_toDyn G' _ _).1 (hsteps i hi hlt))
-
-lemma insertUpdate_eq_dyn (H : UGraph n) (order : List (Vert n)) (u v : Vert n) :
-    insertUpdate H order u v = Greedy.Update.insertUpdate (Transport.toDyn H) order u v := by
-  unfold insertUpdate Greedy.Update.insertUpdate
-  rw [laterPos_eq, firstBreakWindow_eq, greedySuffix_eq]
-
-lemma deleteUpdate_eq_dyn (H : UGraph n) (order : List (Vert n)) (u v : Vert n) :
-    deleteUpdate H order u v = Greedy.Update.deleteUpdate (Transport.toDyn H) order u v := by
-  unfold deleteUpdate Greedy.Update.deleteUpdate
-  rw [deletionBreaks_eq, laterPos_eq, greedySuffix_eq]
+    IsMCSOrdering G' (greedySuffix G' (order.take k)) :=
+  Greedy.Update.update_from_prefix order k hvalid hsteps
 
 /-- The insertion update is correct for every flip of `{u, v}` (the proof does
 not need the edge to be absent before). -/
 theorem insert_update_valid (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hvalid : IsMCSOrdering G order) :
-    IsMCSOrdering G' (insertUpdate G' order u v) := by
-  rw [insertUpdate_eq_dyn, IsMCSOrdering_toDyn]
-  exact Greedy.Update.insert_update_valid u v order
-    ((FlipOf_toDyn G G' u v).1 hflip) ((IsMCSOrdering_toDyn G order).1 hvalid)
+    IsMCSOrdering G' (insertUpdate G' order u v) :=
+  Greedy.Update.insert_update_valid u v order hflip hvalid
 
 theorem delete_update_valid (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hdel : G.adj u v) (hdel' : ¬ G'.adj u v)
     (hvalid : IsMCSOrdering G order) :
-    IsMCSOrdering G' (deleteUpdate G' order u v) := by
-  rw [deleteUpdate_eq_dyn, IsMCSOrdering_toDyn]
-  exact Greedy.Update.delete_update_valid (G := Transport.toDyn G) u v order
-    ((FlipOf_toDyn G G' u v).1 hflip) hdel hdel' ((IsMCSOrdering_toDyn G order).1 hvalid)
+    IsMCSOrdering G' (deleteUpdate G' order u v) :=
+  Greedy.Update.delete_update_valid u v order hflip hdel hdel' hvalid
 
 /-! ## Each update returns exactly the from-scratch canonical ordering -/
 
@@ -147,18 +97,14 @@ theorem legal_upto_earlierPos (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hvalid : IsMCSOrdering G order)
     (i : ℕ) (hi : i < order.length) (hle : i ≤ earlierPos order u v) :
     IsMCSNext G' (order.take i).toFinset (order.get ⟨i, hi⟩) :=
-  (IsMCSNext_toDyn G' _ _).2 (UGraph.prefix_preserved order u v
-    ((FlipOf_toDyn G G' u v).1 hflip) ((IsMCSOrdering_toDyn G order).1 hvalid) i
-    hle hi)
+  UGraph.prefix_preserved order u v hflip hvalid i hle hi
 
 /-- Positions after the later endpoint stay legal after any flip. -/
 theorem legal_after_laterPos (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hvalid : IsMCSOrdering G order)
     (i : ℕ) (hi : i < order.length) (hgt : laterPos order u v < i) :
     IsMCSNext G' (order.take i).toFinset (order.get ⟨i, hi⟩) :=
-  (IsMCSNext_toDyn G' _ _).2 (Greedy.Update.legal_after_laterPos order u v
-    ((FlipOf_toDyn G G' u v).1 hflip) ((IsMCSOrdering_toDyn G order).1 hvalid) i hi
-    (by rwa [laterPos_eq] at hgt))
+  Greedy.Update.legal_after_laterPos order u v hflip hvalid i hi hgt
 
 /-- After a deletion, positions strictly between the endpoints stay legal. -/
 theorem delete_legal_between (u v : Vert n) (order : List (Vert n))
@@ -167,10 +113,7 @@ theorem delete_legal_between (u v : Vert n) (order : List (Vert n))
     (i : ℕ) (hi : i < order.length)
     (hgt : earlierPos order u v < i) (hlt : i < laterPos order u v) :
     IsMCSNext G' (order.take i).toFinset (order.get ⟨i, hi⟩) :=
-  (IsMCSNext_toDyn G' _ _).2 (Greedy.Update.legal_middle_delete (G := Transport.toDyn G)
-    order u v ((FlipOf_toDyn G G' u v).1 hflip) hdel hdel'
-    ((IsMCSOrdering_toDyn G order).1 hvalid) i hi
-    hgt (by rwa [laterPos_eq] at hlt))
+  Greedy.Update.legal_middle_delete order u v hflip hdel hdel' hvalid i hi hgt hlt
 
 /-- Inside the insertion window, the old choice breaks exactly when the later
 endpoint now beats it: strictly larger cardinality, or equal cardinality and a
@@ -185,11 +128,8 @@ theorem insert_break_iff (u v : Vert n) (order : List (Vert n))
           G'.neigh (order.take k).toFinset (order.get ⟨k, hk⟩) ∨
         (G'.neigh (order.take k).toFinset (laterVert order u v) =
             G'.neigh (order.take k).toFinset (order.get ⟨k, hk⟩) ∧
-          laterVert order u v < order.get ⟨k, hk⟩) := by
-  rw [IsMCSNext_toDyn, laterVert_eq]
-  exact Greedy.Update.insert_break_iff (G := Transport.toDyn G) order u v
-    ((FlipOf_toDyn G G' u v).1 hflip) hins hins' ((IsMCSOrdering_toDyn G order).1 hvalid) k hk
-    hgt (by rwa [laterPos_eq] at hle)
+          laterVert order u v < order.get ⟨k, hk⟩) :=
+  Greedy.Update.insert_break_iff order u v hflip hins hins' hvalid k hk hgt hle
 
 /-! ## Insertion window: the later endpoint is never a break
 
@@ -199,40 +139,25 @@ post-insertion graph.  Hence the window can be shrunk by one at the right end,
 and strictly inside the open window the break test is the *old-graph* comparison
 of the later endpoint against the old choice. -/
 
-/-- A valid MCS ordering contains every vertex (Challenge-level restatement of
-the project lemma). -/
+/-- A valid MCS ordering contains every vertex. -/
 lemma mem_of_IsMCSOrdering (order : List (Vert n)) (hvalid : IsMCSOrdering G order) :
     ∀ z : Vert n, z ∈ order :=
-  UGraph.mem_of_IsMCSOrdering order ((IsMCSOrdering_toDyn G order).1 hvalid)
-
-/-- The vertex at position `laterPos` is exactly `laterVert`. -/
-lemma laterVert_get (order : List (Vert n)) (u v : Vert n) (_hmem : u ∈ order)
-    (_hmem' : v ∈ order) (h : laterPos order u v < order.length) :
-    order.get ⟨laterPos order u v, h⟩ = laterVert order u v := by
-  classical
-  unfold laterPos laterVert
-  by_cases hh : List.idxOf u order ≤ List.idxOf v order
-  · simp [hh]
-  · have hle : List.idxOf v order ≤ List.idxOf u order := le_of_not_ge hh
-    simp [hh, hle]
+  UGraph.mem_of_IsMCSOrdering order hvalid
 
 /-- The earlier position is strictly below the later position. -/
 lemma earlierPos_lt_laterPos (order : List (Vert n)) (u v : Vert n)
-    (huv : u ≠ v) (hnodup : order.Nodup) (hmu : u ∈ order) (hmv : v ∈ order) :
-    earlierPos order u v < laterPos order u v := by
-  rw [laterPos_eq]
-  exact Greedy.Update.earlierPos_lt_laterPos order u v huv hnodup hmu hmv
+    (huv : u ≠ v) (hmu : u ∈ order) (hmv : v ∈ order) :
+    earlierPos order u v < laterPos order u v :=
+  Greedy.Update.earlierPos_lt_laterPos order u v huv hmu hmv
 
-/-- Transport of the project's insertion cardinality analysis to the
-`Challenge` layer. -/
+/-- Inserting the edge increases the later endpoint’s count by one. -/
 lemma neigh_flip_insert (hflip : FlipOf G G' u v) (hins : ¬ G.adj u v) (hins' : G'.adj u v)
     (s : Finset (Vert n)) (a w : Vert n) (ha : a ∈ s) (hw : w ∉ s)
     (haw : a ≠ w) (hae : a = u ∨ a = v) (hwe : w = u ∨ w = v) :
     (∀ x ∈ s, G'.neigh s x = G.neigh s x) ∧
       G'.neigh s w = G.neigh s w + 1 ∧
       (∀ y, y ∉ s → y ≠ w → G'.neigh s y = G.neigh s y) :=
-  Greedy.Update.neigh_flip_insert (G := Transport.toDyn G) (G' := Transport.toDyn G')
-    ((FlipOf_toDyn G G' u v).1 hflip) hins hins' s a w ha hw haw hae hwe
+  Greedy.Update.neigh_flip_insert hflip hins hins' s a w ha hw haw hae hwe
 
 /-- Arithmetic normalization of the insertion break condition, using that the
 old choice is a maximum (its cardinality `c` is at least the later endpoint's
@@ -266,8 +191,8 @@ theorem no_break_at_laterPos (u v : Vert n) (order : List (Vert n))
   classical
   have hmem : u ∈ order := mem_of_IsMCSOrdering order hvalid u
   have hmv : v ∈ order := mem_of_IsMCSOrdering order hvalid v
-  have hget := laterVert_get order u v hmem hmv hk
-  have hlt := earlierPos_lt_laterPos order u v hflip.1 hvalid.1 hmem hmv
+  have hget := Greedy.Update.laterVert_get order u v hk
+  have hlt := earlierPos_lt_laterPos order u v hflip.1 hmem hmv
   have hiff := insert_break_iff u v order hflip hins hins' hvalid (laterPos order u v) hk hlt le_rfl
   rw [hget] at hiff
   simp only [lt_irrefl, and_false, or_false] at hiff
@@ -300,13 +225,11 @@ theorem insert_break_iff_old (u v : Vert n) (order : List (Vert n))
   have hmv : v ∈ order := mem_of_IsMCSOrdering order hvalid v
   have hwe : w = u ∨ w = v := by
     simp only [w]
-    rw [Transport.laterVert_eq]
     exact Greedy.Update.laterVert_eq order u v
   have hae : a = u ∨ a = v := Greedy.Update.earlierVert_eq order u v
   have haw : a ≠ w := by
-    have h := Greedy.Update.earlier_ne_later order u v huv hnodup hmu hmv
+    have h := Greedy.Update.earlier_ne_later order u v huv
     simp only [w]
-    rw [Transport.laterVert_eq]
     exact h
   have hw_mem : w ∈ order := by
     rcases hwe with h | h
@@ -320,7 +243,7 @@ theorem insert_break_iff_old (u v : Vert n) (order : List (Vert n))
     rw [Greedy.Update.idxOf_earlierVert]
   have hidx_w : List.idxOf w order = laterPos order u v := by
     simp only [w]
-    rw [Transport.laterVert_eq, Greedy.Update.idxOf_laterVert, Transport.laterPos_eq]
+    rw [Greedy.Update.idxOf_laterVert]
   have haC : a ∈ chosen := by
     have hmem : a ∈ order.take k := by
       rw [List.mem_take_iff_idxOf_lt ha_mem, hidx_a]
@@ -384,31 +307,22 @@ theorem insert_window_open (u v : Vert n) (order : List (Vert n))
   have hlegal_hk : IsMCSNext G' (order.take (laterPos order u v)).toFinset
       (order.get ⟨laterPos order u v, hk⟩) :=
     no_break_at_laterPos u v order hflip hins hins' hvalid hk
-  rw [UGraph.firstBreakWindow_eq_scan, UGraph.firstBreakWindow_eq_scan]
+  rw [Greedy.Update.firstBreakWindow_eq_scan, Greedy.Update.firstBreakWindow_eq_scan]
   cases hs : firstBreak G' order (earlierPos order u v + 1) with
   | none => rfl
   | some j =>
-      have hsome := (Greedy.Update.firstBreak_some (H := Transport.toDyn G')
-        order (earlierPos order u v + 1) j)
-      have hsdyn : Greedy.Update.firstBreak (Transport.toDyn G') order
-          (earlierPos order u v + 1) = some j := by
-        rwa [Transport.firstBreak_eq] at hs
-      rcases hsome.mp hsdyn with ⟨hjlen, hjge, hbad, hall⟩
+      rcases (Greedy.Update.firstBreak_some G' order (earlierPos order u v + 1) j).mp hs with
+        ⟨hjlen, _, hbad, _⟩
       have hjle : j ≤ laterPos order u v := by
         by_contra h
         have hgt : laterPos order u v < j := lt_of_not_ge h
         have hleg : IsMCSNext G' (order.take j).toFinset (order.get ⟨j, hjlen⟩) :=
           legal_after_laterPos u v order hflip hvalid j hjlen hgt
-        exact hbad ((IsMCSNext_toDyn G' _ _).1 hleg)
+        exact hbad hleg
       have hjnlt : j ≠ laterPos order u v := by
         intro hjeq
         subst hjeq
-        have hnext : (Transport.toDyn G').IsMCSNext (order.take (laterPos order u v)).toFinset
-            (order.get ⟨laterPos order u v, hjlen⟩) := by
-          rw [show order.get ⟨laterPos order u v, hjlen⟩
-              = order.get ⟨laterPos order u v, hk⟩ from congrArg order.get (Fin.ext rfl)]
-          exact (IsMCSNext_toDyn G' _ _).1 hlegal_hk
-        exact hbad hnext
+        exact hbad hlegal_hk
       have hiff : (j ≤ laterPos order u v) ↔ (j ≤ laterPos order u v - 1) := by omega
       simp only [Option.filter, decide_eq_true_eq, hiff]
 
@@ -553,7 +467,7 @@ open Classical in
 /-- Window form of the step-function identity: the net change of `c_v` over
 `[j, k)` is exactly the number of neighbour positions in the window. -/
 theorem neigh_take_sub_eq_count (G : UGraph n) (order : List (Vert n)) (hnodup : order.Nodup)
-    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) (_hk : k ≤ order.length) :
+    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) :
     G.neigh (order.take k).toFinset v =
       G.neigh (order.take j).toFinset v +
         (List.filter (fun w => G.adj v w) ((order.drop j).take (k - j))).length := by
@@ -570,42 +484,42 @@ theorem neigh_take_sub_eq_count (G : UGraph n) (order : List (Vert n)) (hnodup :
 open Classical in
 /-- The increment over a window is bounded by the number of adjacent vertices added. -/
 theorem neigh_take_sub_le_count (G : UGraph n) (order : List (Vert n)) (hnodup : order.Nodup)
-    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) (hk : k ≤ order.length) :
+    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) :
     G.neigh (order.take k).toFinset v - G.neigh (order.take j).toFinset v ≤
       (List.filter (fun w => G.adj v w) ((order.drop j).take (k - j))).length := by
-  rw [neigh_take_sub_eq_count G order hnodup v j k hjk hk]
+  rw [neigh_take_sub_eq_count G order hnodup v j k hjk]
   omega
 
 /-- `c_v` is monotone along `order`. -/
 lemma neigh_take_mono (G : UGraph n) (order : List (Vert n)) (hnodup : order.Nodup) (v : Vert n)
-    {j k : ℕ} (hjk : j ≤ k) (hk : k ≤ order.length) :
+    {j k : ℕ} (hjk : j ≤ k) :
     G.neigh (order.take j).toFinset v ≤ G.neigh (order.take k).toFinset v := by
-  rw [neigh_take_sub_eq_count G order hnodup v j k hjk hk]
+  rw [neigh_take_sub_eq_count G order hnodup v j k hjk]
   omega
 
 open Classical in
 /-- The number of distinct values of `c_v(t)` as `t` ranges over `[j, k]` is at
 most the number of neighbour positions in the window plus one. -/
 theorem neigh_take_image_card_le (G : UGraph n) (order : List (Vert n)) (hnodup : order.Nodup)
-    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) (hk : k ≤ order.length) :
+    (v : Vert n) (j k : ℕ) (hjk : j ≤ k) :
     (Finset.image (fun t => G.neigh (order.take t).toFinset v) (Finset.Icc j k)).card ≤
       (List.filter (fun w => G.adj v w) ((order.drop j).take (k - j))).length + 1 := by
   classical
   have hmono : ∀ t, j ≤ t → t ≤ k → G.neigh (order.take j).toFinset v ≤
       G.neigh (order.take t).toFinset v :=
-    fun t h1 h2 => neigh_take_mono G order hnodup v h1 (le_trans h2 hk)
+    fun t h1 _ => neigh_take_mono G order hnodup v h1
   have hsub : Finset.image (fun t => G.neigh (order.take t).toFinset v) (Finset.Icc j k)
       ⊆ Finset.Icc (G.neigh (order.take j).toFinset v) (G.neigh (order.take k).toFinset v) := by
     intro y hy
     rcases Finset.mem_image.mp hy with ⟨t, ht, rfl⟩
     rw [Finset.mem_Icc] at ht ⊢
     exact ⟨hmono t ht.1 ht.2,
-      neigh_take_mono G order hnodup v ht.2 hk⟩
+      neigh_take_mono G order hnodup v ht.2⟩
   calc (Finset.image (fun t => G.neigh (order.take t).toFinset v) (Finset.Icc j k)).card
       ≤ (Finset.Icc (G.neigh (order.take j).toFinset v) (G.neigh (order.take k).toFinset v)).card :=
         Finset.card_le_card hsub
     _ = (List.filter (fun w => G.adj v w) ((order.drop j).take (k - j))).length + 1 := by
-        rw [Nat.card_Icc, neigh_take_sub_eq_count G order hnodup v j k hjk hk]
+        rw [Nat.card_Icc, neigh_take_sub_eq_count G order hnodup v j k hjk]
         omega
 
 end Proofs

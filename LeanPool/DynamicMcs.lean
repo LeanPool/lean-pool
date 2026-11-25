@@ -8,6 +8,8 @@ Authors: Md Thoriqul Islam Thonmay, Gregory Morse
 
 module
 
+public import LeanPool.DynamicMcs.ExecFlip
+public import LeanPool.DynamicMcs.ExecUpdate
 public import LeanPool.DynamicMcs.Stability
 
 /-!

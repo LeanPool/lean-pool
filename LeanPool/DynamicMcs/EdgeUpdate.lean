@@ -12,49 +12,11 @@ import Mathlib.Tactic.Push
 public import LeanPool.DynamicMcs.GreedySearch
 
 /-!
-# Dynamic MCS ordering: candidate `gen003_c01` (hash eea71821)
+# Locality and correctness of single-edge updates
 
-Problem.  Maximum Cardinality Search (MCS) ordering on an undirected,
-loop-free graph: repeatedly choose an unchosen vertex with the maximum
-number of already-chosen neighbors, ties broken by the lowest vertex index.
-The chosen order is a *valid MCS ordering* of the graph.
-
-Candidate.  A fully dynamic MCS with a *tight affected window*.  Each vertex
-stores its adjacency as a bitmask of neighbors; flipping an edge `{u, v}` is
-two integer operations on the endpoints' masks.  Let `pu < pv` be the
-positions of the two endpoints in the current ordering, and `v` the later
-endpoint.  The flip changes the selection-time cardinality of exactly one
-vertex, `v` (the later endpoint), and only for prefixes that contain the
-earlier endpoint `u`, i.e. for steps `pu + 1 .. pv`.  No other unchosen
-vertex's selection-time cardinality changes at any step, so the first step
-whose MCS choice can break is tightly characterized:
-
-* insertion: the first break can only occur at steps `pu + 1 .. pv`; the
-  candidate probes that window (`_first_break`) and, if it finds a breaking
-  step, re-runs bucket MCS on the suffix from that step;
-* deletion: only step `pv` can break (`_deletion_breaks`); the candidate
-  probes that single step and regreedies its suffix only when the probe
-  fires.
-
-Once the choice breaks, the prefix changes and the ordering may legitimately
-diverge through the end, so the regreedy runs on the full suffix from the
-first breaking step (bucket MCS / Rose-Tarjan).  Often the probe finds no
-break and no regreedy is needed.
-
-Formalization.  We reuse the graph/invariant framework of
-`McsLean.Formal_gen001c01_3939115c` (`UGraph`, `Vert`, `IsMCSNext`,
-`IsMCSOrdering`, `FlipOf`, `greedySuffix`, `greedySuffix_valid`,
-`mem_of_IsMCSOrdering`).  The candidate's regreedy of the suffix from step
-`k` keeping the prefix `order.take k` is modeled exactly as
-`greedySuffix H (order.take k)`; the probes are modeled by `firstBreakWindow`
-(insertion) and `deletionBreaks` (deletion).  The three main theorems assert
-that `init`, `insert_edge`, and `delete_edge` preserve the invariant for
-every finite graph and every legal edge flip.
-
-This file is the *proved* core of the candidate: definitions, the validity
-predicate, and the theorem/lemma statements with complete proofs (no `sorry`).
-The three main theorems (`init`, `insert_edge`, `delete_edge` preserve the
-invariant) are discharged here.
+An insertion can first invalidate a choice between the two endpoints. A
+deletion can first invalidate only the choice of the later endpoint. Correctness
+follows from the legality of the retained prefix and greedy continuation.
 -/
 
 @[expose] public section
@@ -69,122 +31,21 @@ open UGraph
 
 variable {n : ℕ} {G G' : UGraph n}
 
-/-! ## State and validity -/
-
-/-- The maintained state for an `n`-vertex graph: `order` is the current MCS
-ordering.  The candidate also stores per-vertex adjacency bitmasks (`mask`)
-and positions (`pos`); these are notational sugar for the graph's adjacency
-and the `idxOf` positions, so the proof only needs the ordering. -/
-structure State (n : ℕ) where
-  /-- The current maximum-cardinality ordering. -/
-  order : List (Vert n)
-
-/-- The candidate's state validity predicate: the maintained ordering is a
-valid MCS ordering of the current graph `H`. -/
-def ValidState (H : UGraph n) (order : List (Vert n)) : Prop :=
-  IsMCSOrdering H order
-
-/-- ValidState and IsMCSOrdering coincide. -/
-theorem validState_iff (H : UGraph n) (order : List (Vert n)) :
-    ValidState H order ↔ IsMCSOrdering H order :=
-  Iff.rfl
-
-/-! ## Positional helpers -/
-
-/-- Position (in `order`) of the later of the endpoints `u` and `v`. -/
-def laterPos (order : List (Vert n)) (u v : Vert n) : ℕ :=
-  max (List.idxOf u order) (List.idxOf v order)
-
-/-- The endpoint placed later in `order` (the candidate's `v` after its
-possible swap of the two endpoints). -/
-def laterVert (order : List (Vert n)) (u v : Vert n) : Vert n :=
-  if List.idxOf u order ≤ List.idxOf v order then v else u
-
 /-- The endpoint placed earlier in `order` (the candidate's `u` after its
 possible swap of the two endpoints). -/
 def earlierVert (order : List (Vert n)) (u v : Vert n) : Vert n :=
   if List.idxOf u order ≤ List.idxOf v order then u else v
 
-/-! ## The probes (candidate `_first_break`, `_deletion_breaks`) -/
-
-open Classical in
-/-- Auxiliary scan: the first position at or after `k`, measured against the
-prefix `order.take k`, at which the old choice `x` is not a legal MCS pick
-on `H`. -/
-def firstBreakAux (H : UGraph n) (order : List (Vert n)) :
-    ℕ → List (Vert n) → Option ℕ
-  | _, [] => none
-  | k, x :: xs =>
-      if IsMCSNext H (order.take k).toFinset x then firstBreakAux H order (k + 1) xs
-      else some k
-
-/-- The first step `k ≥ k0` at which the old ordering's choice is illegal on
-`H`, or `none` if every step from `k0` to the end stays legal. -/
-def firstBreak (H : UGraph n) (order : List (Vert n)) (k0 : ℕ) : Option ℕ :=
-  firstBreakAux H order k0 (order.drop k0)
-
-/-- The first breaking step inside the window `[k0, k1]`, or `none` if the
-whole window survives (the candidate's bounded `_first_break` scan). -/
-def firstBreakWindow (H : UGraph n) (order : List (Vert n)) (k0 k1 : ℕ) : Option ℕ :=
-  match firstBreak H order k0 with
-  | some k => if k ≤ k1 then some k else none
-  | none => none
-
-open Classical in
-/-- Boolean negation of a proposition (classical): `isFalse P = true`
-exactly when `P` is false.  (Makes the deletion probe a `Bool`.) -/
-noncomputable def isFalse (P : Prop) : Bool :=
-  if P then false else true
-
-/-- The deletion probe (candidate `_deletion_breaks`), in *semantic* form:
-at step `pv = laterPos` the later endpoint `w` is *not* a legal MCS pick on
-`H`.  (The candidate evaluates this via an arithmetic scan over the unchosen
-vertices; the semantic form is equivalent to it and makes the recombination
-lemmas apply directly.) -/
-noncomputable def deletionBreaks (H : UGraph n) (order : List (Vert n))
-    (u v : Vert n) : Bool :=
-  isFalse (IsMCSNext H (order.take (laterPos order u v)).toFinset
-    (laterVert order u v))
-
-/-! ## The candidate's operations -/
-
-/-- `init`: full deterministic greedy MCS from the empty prefix (the
-candidate's `_regreedy` from step 0). -/
-def initOrder (H : UGraph n) : List (Vert n) :=
-  greedySuffix H []
-
-/-- `insert_edge`: scan the window `[pu + 1, pv]` for the first broken step
-and regreedy from there; if the window survives, keep the whole order
-(`greedySuffix H order` is the identity on a full order). -/
-def insertUpdate (H : UGraph n) (order : List (Vert n)) (u v : Vert n) : List (Vert n) :=
-  let k := Option.getD (firstBreakWindow H order (earlierPos order u v + 1)
-    (laterPos order u v)) order.length
-  greedySuffix H (order.take k)
-
-/-- `delete_edge`: keep the order unless the probe at step `pv` fires, in
-which case regreedy from `pv`. -/
-def deleteUpdate (H : UGraph n) (order : List (Vert n)) (u v : Vert n) : List (Vert n) :=
-  if deletionBreaks H order u v then
-    greedySuffix H (order.take (laterPos order u v))
-  else
-    order
-
-/-! ## Lemma statements (proved in later stages) -/
-
-/-- The later endpoint sits exactly at position `laterPos` in the order. -/
-lemma laterVert_get (order : List (Vert n)) (u v : Vert n) (hmem : u ∈ order)
-    (hmem' : v ∈ order) :
-    order.get ⟨laterPos order u v, by
-      have h1 := List.idxOf_lt_length_of_mem hmem
-      have h2 := List.idxOf_lt_length_of_mem hmem'
-      unfold laterPos
-      omega⟩ = laterVert order u v := by
+/-- The vertex at position `laterPos` is exactly `laterVert`. -/
+lemma laterVert_get (order : List (Vert n)) (u v : Vert n)
+    (h : laterPos order u v < order.length) :
+    order.get ⟨laterPos order u v, h⟩ = laterVert order u v := by
   classical
   unfold laterPos laterVert
-  by_cases h : List.idxOf u order ≤ List.idxOf v order
-  · simp [ite_eq_left h, Nat.max_eq_right h]
-  · have hle : List.idxOf v order ≤ List.idxOf u order := le_of_not_ge h
-    simp [ite_eq_right h, Nat.max_eq_left hle]
+  by_cases hh : List.idxOf u order ≤ List.idxOf v order
+  · simp [hh]
+  · have hle : List.idxOf v order ≤ List.idxOf u order := le_of_not_ge hh
+    simp [hh, hle]
 
 /-- The later endpoint is one of the two endpoints. -/
 lemma laterVert_eq (order : List (Vert n)) (u v : Vert n) :
@@ -277,6 +138,44 @@ lemma firstBreakAux_some_ge (H : UGraph n) (order : List (Vert n)) (k j : ℕ)
           rw [hteq] at hn
           exact (Option.some.inj hn).symm
         rw [hj]
+
+/-- Scanning only the first `m` elements reports the same first break as the
+full scan, provided that break lies among those `m` positions. -/
+lemma firstBreakAux_take (H : UGraph n) (order : List (Vert n)) :
+    ∀ (k m : ℕ) (xs : List (Vert n)),
+      firstBreakAux H order k (xs.take m) =
+        (firstBreakAux H order k xs).filter (fun j => decide (j < k + m)) := by
+  intro k m xs
+  induction xs generalizing k m with
+  | nil => simp [firstBreakAux]
+  | cons x xs ih =>
+      cases m with
+      | zero =>
+          cases h : firstBreakAux H order k (x :: xs) with
+          | none => simp [firstBreakAux]
+          | some j =>
+              have hkj := firstBreakAux_some_ge H order k j (x :: xs) h
+              have hnot : ¬ j < k := by omega
+              simp [firstBreakAux, Option.filter, hnot]
+      | succ m =>
+          by_cases hx : IsMCSNext H (order.take k).toFinset x
+          · simp only [List.take_succ_cons, firstBreakAux, hx, ↓reduceIte]
+            rw [ih, show k + (m + 1) = k + 1 + m by omega]
+          · simp [List.take_succ_cons, firstBreakAux, Option.filter, hx]
+
+/-- The bounded window probe equals the full-suffix scan filtered to the
+window: stopping the scan at `k1` loses nothing. -/
+theorem firstBreakWindow_eq_scan (H : UGraph n) (order : List (Vert n)) (k0 k1 : ℕ) :
+    firstBreakWindow H order k0 k1 =
+      (firstBreak H order k0).filter (fun j => decide (j ≤ k1)) := by
+  unfold firstBreakWindow firstBreak
+  rw [firstBreakAux_take]
+  cases h : firstBreakAux H order k0 (order.drop k0) with
+  | none => rfl
+  | some j =>
+      have := firstBreakAux_some_ge H order k0 j _ h
+      simp only [Option.filter, decide_eq_true_eq]
+      split_ifs <;> first | rfl | (exfalso; omega)
 
 /-- The auxiliary scan returns `some (k + r)` exactly when the first `r`
 choices are legal and the `r`-th is not. -/
@@ -850,7 +749,7 @@ lemma earlierVert_get (order : List (Vert n)) (u v : Vert n) (hmem : u ∈ order
 
 /-- The earlier and later endpoints are distinct vertices. -/
 lemma earlier_ne_later (order : List (Vert n)) (u v : Vert n)
-    (huv : u ≠ v) (_hnodup : order.Nodup) (_hmu : u ∈ order) (_hmv : v ∈ order) :
+    (huv : u ≠ v) :
     earlierVert order u v ≠ laterVert order u v := by
   classical
   by_cases hle : List.idxOf u order ≤ List.idxOf v order
@@ -872,7 +771,7 @@ lemma earlier_ne_later (order : List (Vert n)) (u v : Vert n)
 /-- The earlier position is strictly less than the later position (when
 `u ≠ v`, both present and the order is a permutation). -/
 lemma earlierPos_lt_laterPos (order : List (Vert n)) (u v : Vert n)
-    (huv : u ≠ v) (_hnodup : order.Nodup) (hmu : u ∈ order) (hmv : v ∈ order) :
+    (huv : u ≠ v) (hmu : u ∈ order) (hmv : v ∈ order) :
     earlierPos order u v < laterPos order u v := by
   classical
   unfold earlierPos laterPos
@@ -930,7 +829,7 @@ theorem legal_middle_delete (order : List (Vert n)) (u v : Vert n)
   have hmv : v ∈ order := mem_of_IsMCSOrdering order hvalid v
   have hae : a = u ∨ a = v := earlierVert_eq order u v
   have hwe : w = u ∨ w = v := laterVert_eq order u v
-  have haw : a ≠ w := earlier_ne_later order u v huv hvalid.1 hmu hmv
+  have haw : a ≠ w := earlier_ne_later order u v huv
   have hw_mem_order : w ∈ order := by
     rcases hwe with h1 | h2
     · rw [h1]; exact hmu
@@ -962,87 +861,7 @@ theorem legal_middle_delete (order : List (Vert n)) (u v : Vert n)
       exact List.get_idxOf hvalid.1 ⟨i, hi⟩
     rw [hxw, idxOf_laterVert] at hx_pos
     omega
-  -- Apply the flip cardinality analysis for the deletion of {a, w}
-  have hflipDel : FlipOf G G' a w := by
-    constructor
-    · exact haw
-    · intro p q
-      rcases hflip.2 p q with h | hd | hd
-      · left; exact h
-      · -- (p, q) = (u, v)
-        rcases hae with haa | hav
-        · -- a = u, hence w = v; (u, v) = (a, w)
-          have hwv : w = v := by
-            rcases hwe with hwu | hwv
-            · exfalso; exact haw (by rw [haa, hwu])
-            · exact hwv
-          rcases hd with ⟨hdp, hdq⟩
-          right; left
-          exact ⟨hdp.trans haa.symm, hdq.trans hwv.symm⟩
-        · -- a = v, hence w = u; (u, v) = (w, a)
-          have hwu : w = u := by
-            rcases hwe with hwu | hwv
-            · exact hwu
-            · exfalso; exact haw (by rw [hav, hwv])
-          rcases hd with ⟨hdp, hdq⟩
-          right; right
-          exact ⟨hdp.trans hwu.symm, hdq.trans hav.symm⟩
-      · -- (p, q) = (v, u)
-        rcases hae with haa | hav
-        · -- a = u, w = v; (v, u) = (w, a)
-          have hwv : w = v := by
-            rcases hwe with hwu | hwv
-            · exfalso; exact haw (by rw [haa, hwu])
-            · exact hwv
-          rcases hd with ⟨hdp, hdq⟩
-          right; right
-          exact ⟨hdp.trans hwv.symm, hdq.trans haa.symm⟩
-        · -- a = v, w = u; (v, u) = (a, w)
-          have hwu : w = u := by
-            rcases hwe with hwu | hwv
-            · exact hwu
-            · exfalso; exact haw (by rw [hav, hwv])
-          rcases hd with ⟨hdp, hdq⟩
-          right; left
-          exact ⟨hdp.trans hav.symm, hdq.trans hwu.symm⟩
-  have hdel_aw : G.adj a w := by
-    rcases hae with haa | hav
-    · rw [haa]
-      have hwv : w = v := by
-        rcases hwe with hw1 | hw2
-        · exfalso; exact haw (by rw [haa, hw1])
-        · exact hw2
-      rw [hwv]
-      exact hdel
-    · rw [hav]
-      have hwu : w = u := by
-        rcases hwe with hw1 | hw2
-        · exact hw1
-        · exfalso; exact haw (by rw [hav, hw2])
-      rw [hwu]
-      exact G.symm hdel
-  have hdel'_aw : ¬ G'.adj a w := by
-    rcases hae with haa | hav
-    · rw [haa]
-      have hwv : w = v := by
-        rcases hwe with hw1 | hw2
-        · exfalso; exact haw (by rw [haa, hw1])
-        · exact hw2
-      rw [hwv]
-      exact hdel'
-    · rw [hav]
-      have hwu : w = u := by
-        rcases hwe with hw1 | hw2
-        · exact hw1
-        · exfalso; exact haw (by rw [hav, hw2])
-      rw [hwu]
-      intro h
-      exact hdel' (G'.symm h)
-  -- reorient the endpoint-identity facts to the flipped pair (a, w)
-  have hae' : a = a ∨ a = w := Or.inl rfl
-  have hwe' : w = a ∨ w = w := Or.inr rfl
-  have hneigh_del := neigh_flip_delete hflipDel hdel_aw hdel'_aw chosen a w haC hwN haw hae' hwe'
-  have hA : ∀ z ∈ chosen, G'.neigh chosen z = G.neigh chosen z := hneigh_del.1
+  have hneigh_del := neigh_flip_delete hflip hdel hdel' chosen a w haC hwN haw hae hwe
   have hw_drop : G'.neigh chosen w + 1 = G.neigh chosen w := hneigh_del.2.1
   have hC : ∀ y, y ∉ chosen → y ≠ w → G.neigh chosen y = G'.neigh chosen y := hneigh_del.2.2
   -- pre-digest for IsMCSNext_of_drop
@@ -1142,7 +961,7 @@ theorem insert_break_iff (order : List (Vert n)) (u v : Vert n)
     exact List.mem_toFinset.mpr hmem
   -- the flip cardinality analysis on the prefix `chosen`
   have hAw := neigh_flip_insert hflip hins hins' chosen (earlierVert order u v) w
-    haC hwN (earlier_ne_later order u v huv hvalid.1 hmu hmv)
+    haC hwN (earlier_ne_later order u v huv)
     (earlierVert_eq order u v) hwe
   -- w's cardinality rises by one on G'
   have hB : G'.neigh chosen w = G.neigh chosen w + 1 := hAw.2.1
@@ -1223,13 +1042,12 @@ theorem insert_break_iff (order : List (Vert n)) (u v : Vert n)
 
 /-- Deletion probe correctness: the candidate's probe fires exactly when
 step `pv` (whose choice is the later endpoint) is illegal on `G'`. -/
-theorem deletionBreaks_true_iff (order : List (Vert n)) (u v : Vert n)
-    (_hflip : FlipOf G G' u v) (_hvalid : IsMCSOrdering G order) :
+theorem deletionBreaks_true_iff (order : List (Vert n)) (u v : Vert n) :
     deletionBreaks G' order u v = true ↔
       ¬ IsMCSNext G' (order.take (laterPos order u v)).toFinset
         (laterVert order u v) := by
   classical
-  unfold deletionBreaks isFalse
+  unfold deletionBreaks UGraph.isFalse
   by_cases h : IsMCSNext G' (order.take (laterPos order u v)).toFinset
     (laterVert order u v)
   · simp [h]
@@ -1281,11 +1099,6 @@ theorem greedySuffix_full (H : UGraph n) (order : List (Vert n))
 
 /-! ## Main theorems -/
 
-/-- `init` produces a valid MCS ordering of the given graph. -/
-theorem init_valid (H : UGraph n) : ValidState H (initOrder H) := by
-  unfold ValidState initOrder
-  exact UGraph.init_valid H
-
 /-- A valid MCS ordering is a permutation of all vertices. -/
 lemma order_toFinset_univ (order : List (Vert n))
     (hvalid : IsMCSOrdering G order) :
@@ -1299,9 +1112,9 @@ differing only by the inserted edge `{u, v}`, and every valid MCS ordering
 `order` of `G`, the updated ordering is a valid MCS ordering of `G'`. -/
 theorem insert_update_valid (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hvalid : IsMCSOrdering G order) :
-    ValidState G' (insertUpdate G' order u v) := by
+    IsMCSOrdering G' (insertUpdate G' order u v) := by
   classical
-  unfold ValidState insertUpdate
+  unfold insertUpdate
   -- Expose the `let` binding so the window result can be rewritten.
   change G'.IsMCSOrdering
     (let k := Option.getD (firstBreakWindow G' order
@@ -1313,7 +1126,7 @@ theorem insert_update_valid (u v : Vert n) (order : List (Vert n))
     have hfull : Option.getD (firstBreakWindow G' order
         (earlierPos order u v + 1) (laterPos order u v)) order.length =
         order.length := by
-      unfold firstBreakWindow
+      rw [firstBreakWindow_eq_scan]
       rw [hk0]
       simp
     rw [hfull]
@@ -1340,9 +1153,9 @@ theorem insert_update_valid (u v : Vert n) (order : List (Vert n))
       exact hbad (legal_after_laterPos order u v hflip hvalid k hklen hgt')
     have hkd : Option.getD (firstBreakWindow G' order
         (earlierPos order u v + 1) (laterPos order u v)) order.length = k := by
-      unfold firstBreakWindow
+      rw [firstBreakWindow_eq_scan]
       rw [hk']
-      simp [htight]
+      simp [Option.filter, htight]
     rw [hkd]
     change G'.IsMCSOrdering (G'.greedySuffix (List.take k order))
     refine update_from_prefix order k hvalid ?_
@@ -1360,9 +1173,9 @@ differing only by the deleted edge `{u, v}`, and every valid MCS ordering
 theorem delete_update_valid (u v : Vert n) (order : List (Vert n))
     (hflip : FlipOf G G' u v) (hdel : G.adj u v) (hdel' : ¬G'.adj u v)
     (hvalid : IsMCSOrdering G order) :
-    ValidState G' (deleteUpdate G' order u v) := by
+    IsMCSOrdering G' (deleteUpdate G' order u v) := by
   classical
-  unfold ValidState deleteUpdate
+  unfold deleteUpdate
   by_cases hb : deletionBreaks G' order u v = true
   · -- probe fires: regreedy from laterPos
     rw [ite_eq_left (by simpa [deletionBreaks] using hb)]
@@ -1386,14 +1199,12 @@ theorem delete_update_valid (u v : Vert n) (order : List (Vert n))
       · by_cases heq : i = laterPos order u v
         · -- step laterPos: ending `order.get i = laterVert`; the probe did not
           -- fire, so this step is legal on G'
-          have hmu : u ∈ order := mem_of_IsMCSOrdering order hvalid u
-          have hmv : v ∈ order := mem_of_IsMCSOrdering order hvalid v
-          have hchoose : order.get ⟨laterPos order u v, _⟩ = laterVert order u v :=
-            laterVert_get order u v hmu hmv
+          have positionBound : laterPos order u v < order.length := heq ▸ hi
+          have hchoose := laterVert_get order u v positionBound
           -- deletionBreaks G' order u v = false: the pick is legal
           have hpop : deletionBreaks G' order u v = true ↔
               ¬ IsMCSNext G' (order.take (laterPos order u v)).toFinset
-                (laterVert order u v) := deletionBreaks_true_iff order u v hflip hvalid
+                (laterVert order u v) := deletionBreaks_true_iff order u v
           have hlegal : IsMCSNext G' (order.take (laterPos order u v)).toFinset
               (laterVert order u v) := by
             by_contra hn

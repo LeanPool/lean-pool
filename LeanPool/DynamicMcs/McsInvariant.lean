@@ -46,7 +46,7 @@ lemma listInv_init (n : ℕ) : McListInv n ([], List.range n) := by
 
 /-- `mcsStep` on a nonempty `rem` reduces to prepending `bestPick` to `chosen`
 and erasing it from `rem`. -/
-lemma mcsStep_eq (a : Adj n) (chosen rem : List ℕ) (h : rem ≠ []) :
+lemma mcsStep_eq (a : Adj) (chosen rem : List ℕ) (h : rem ≠ []) :
     mcsStep a (chosen, rem)
       = (bestPick a chosen rem :: chosen, rem.erase (bestPick a chosen rem)) := by
   rcases List.exists_cons_of_ne_nil h with ⟨y, ys, hc⟩
@@ -54,7 +54,7 @@ lemma mcsStep_eq (a : Adj n) (chosen rem : List ℕ) (h : rem ≠ []) :
   rfl
 
 /-- One `mcsStep` transition preserves `McListInv` (nonempty-rem variant). -/
-lemma stepTransition (a : Adj n) (chosen rem : List ℕ)
+lemma stepTransition (a : Adj) (chosen rem : List ℕ)
     (h : McListInv n (chosen, rem)) (hrem_ne : rem ≠ []) :
     McListInv n (bestPick a chosen rem :: chosen,
                  rem.erase (bestPick a chosen rem)) := by
@@ -116,7 +116,7 @@ lemma stepTransition (a : Adj n) (chosen rem : List ℕ)
         exact ⟨hveq, hv_rem⟩
 
 /-- One full `mcsStep` preserves `McListInv`. -/
-lemma mcsStep_preserves (a : Adj n) {chosen rem : List ℕ}
+lemma mcsStep_preserves (a : Adj) {chosen rem : List ℕ}
     (h : McListInv n (chosen, rem)) :
     McListInv n (mcsStep a (chosen, rem)) := by
   by_cases h_empty : rem = []
@@ -130,7 +130,7 @@ lemma mcsStep_preserves (a : Adj n) {chosen rem : List ℕ}
 `mcsOrder` loop, measured over the first `k` steps of the foldl over the
 full `range n` list (the `n`-indexed form, since the seed list is `range n`).
 -/
-lemma foldl_mcsStep_listInv_core (a : Adj n) :
+lemma foldl_mcsStep_listInv_core (a : Adj) :
     ∀ k ≤ n,
       McListInv n ((List.range k).foldl (fun s _ => mcsStep a s) ([], List.range n)) := by
   intro k
@@ -153,20 +153,20 @@ lemma foldl_mcsStep_listInv_core (a : Adj n) :
 `mcsOrder` loop. At step `k` of the foldl over `range a.length`, the
 pair `st` satisfies `McListInv n`: the chosen prefix (in reverse) is `Nodup`,
 all ids are `< n`, and its second component is exactly the complement. -/
-lemma foldl_mcsStep_listInv (a : Adj n) (ha_len : a.length = n) :
+lemma foldl_mcsStep_listInv (a : Adj) (ha_len : a.length = n) :
     ∀ k ≤ a.length,
       McListInv n ((List.range k).foldl (fun s _ => mcsStep a s)
                                           ([], List.range a.length)) := by
   intro k hk
   have hr : List.range a.length = List.range n := congrArg List.range ha_len
   rw [hr]
-  have hcore := foldl_mcsStep_listInv_core a k (by omega)
-  simpa [hr] using hcore
+  have hcore := foldl_mcsStep_listInv_core (n := n) a k (by omega)
+  exact hcore
 
 /-- Length-tracking companion: after `k` steps (each consumes exactly one
 remaining vertex), the chosen prefix has length `k` and `rem` has length
 `n - k`. -/
-lemma foldl_mcsStep_len_core (a : Adj n) :
+lemma foldl_mcsStep_len_core (a : Adj) :
     ∀ k ≤ n,
       ((List.range k).foldl (fun s _ => mcsStep a s) ([], List.range n)).1.length = k ∧
       ((List.range k).foldl (fun s _ => mcsStep a s) ([], List.range n)).2.length = n - k := by
@@ -181,7 +181,7 @@ lemma foldl_mcsStep_len_core (a : Adj n) :
       let stk := (List.range k).foldl (fun s _ => mcsStep a s) ([], List.range n)
       have hscale : stk.1.length = k ∧ stk.2.length = n - k := by
         exact ih hk_le
-      have hstk_inv : McListInv n stk := foldl_mcsStep_listInv_core a k hk_le
+      have hstk_inv : McListInv n stk := foldl_mcsStep_listInv_core (n := n) a k hk_le
       -- rem stk.2 is nonempty since k ≤ n implies n - k ≥ 1
       have hrem_ne : stk.2 ≠ [] := by
         intro hempty
@@ -238,11 +238,11 @@ it is the least index achieving that maximum. This bridges the executable
 `bestPick` selection to the abstract `UGraph.IsMCSNext` predicate via
 `BridgeSteps.bestPick_lex` (max cardinality, smallest-id tie-break) and
 `CardBridge.cardC_eq_neigh` (executable cardinality equals abstract `neigh`). -/
-lemma bestPick_IsMCSNext (n : ℕ) (a : Adj n)
+lemma bestPick_IsMCSNext (n : ℕ) (a : Adj)
     (hsymm : ∀ u v : ℕ, getAdj a u v = getAdj a v u)
     (hloop : ∀ u : ℕ, getAdj a u u = false)
     (chosen rem : List ℕ) (hinv : McListInv n (chosen, rem)) (hrem_ne : rem ≠ []) :
-    UGraph.IsMCSNext (toUGraph a hsymm hloop)
+    UGraph.IsMCSNext (toUGraph (n := n) a hsymm hloop)
       (CardBridge.chosenFin n chosen hinv.2.2.1).toFinset
       ⟨bestPick a chosen rem,
         hinv.2.2.2.1 (bestPick a chosen rem)
@@ -250,7 +250,7 @@ lemma bestPick_IsMCSNext (n : ℕ) (a : Adj n)
   classical
   rcases hinv with ⟨hnd_c, hnd_r, hlt_c, hlt_r, hcomp⟩
   let w := bestPick a chosen rem
-  let G : UGraph n := toUGraph a hsymm hloop
+  let G : UGraph n := toUGraph (n := n) a hsymm hloop
   have hwm : w ∈ rem := (BridgeSteps.bestPick_lex a chosen rem hrem_ne).1
   have hwlt : w < n := hlt_r w hwm
   have hWN : w ∉ chosen := (hcomp w hwlt).mp hwm
@@ -294,7 +294,7 @@ lemma bestPick_IsMCSNext (n : ℕ) (a : Adj n)
 /-- Terminal state of the foldl over the full `range n`: after `n` steps the
 remaining list is empty, so every vertex is chosen exactly once (the MCS
 ordering is complete). -/
-lemma mcsStep_terminal_rem_empty (a : Adj n) (ha_len : a.length = n) (k : ℕ) (hk : k = n) :
+lemma mcsStep_terminal_rem_empty (a : Adj) (ha_len : a.length = n) (k : ℕ) (hk : k = n) :
     ((List.range k).foldl (fun s _ => mcsStep a s) ([], List.range a.length)).2 = [] := by
   have hr : List.range a.length = List.range n := congrArg List.range ha_len
   rw [hr, hk]

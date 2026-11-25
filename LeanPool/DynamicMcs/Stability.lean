@@ -8,7 +8,7 @@ Authors: Md Thoriqul Islam Thonmay, Gregory Morse
 
 module
 
-public import LeanPool.DynamicMcs.ExecUpdate
+public import LeanPool.DynamicMcs.Correctness
 
 /-!
 # Stability of MCS orderings under one-sided edge updates
@@ -89,62 +89,6 @@ theorem exists_common_pick (G G' : UGraph n) (S : Finset (Vert n))
     have h4 := hw w' hw'U
     omega
 
-/-- If, along every *proper common MCS prefix* `P` (the sets the constructive
-proof actually visits), the count of every vertex not in `P` in `G'` is its count
-in `G` plus `0` or `1`, the two graphs share an MCS ordering. This is strictly
-more general than `exists_common_ordering`: the bound is required only on
-reachable prefixes and only for unchosen vertices, not on every subset. -/
-theorem exists_common_ordering_prefix (G G' : UGraph n)
-    (hlo : ∀ P, IsCommonPrefix G G' P → P.length < n →
-             ∀ x, x ∉ P → G.neigh P.toFinset x ≤ G'.neigh P.toFinset x)
-    (hhi : ∀ P, IsCommonPrefix G G' P → P.length < n →
-             ∀ x, x ∉ P → G'.neigh P.toFinset x ≤ G.neigh P.toFinset x + 1) :
-    ∃ ord, IsMCSOrderingAny G ord ∧ IsMCSOrderingAny G' ord := by
-  suffices h : ∀ k ≤ n, ∃ P : List (Vert n), P.length = k ∧ P.Nodup ∧
-      ∀ i (hi : i < P.length), IsMCSNextAny G (P.take i).toFinset (P.get ⟨i, hi⟩) ∧
-        IsMCSNextAny G' (P.take i).toFinset (P.get ⟨i, hi⟩) by
-    obtain ⟨P, hlen, hnd, hP⟩ := h n le_rfl
-    exact ⟨P, ⟨hnd, hlen, fun i hi => (hP i hi).1⟩, ⟨hnd, hlen, fun i hi => (hP i hi).2⟩⟩
-  intro k
-  induction k with
-  | zero => intro _; exact ⟨[], rfl, List.nodup_nil, fun i hi => absurd hi (by simp)⟩
-  | succ k ih =>
-      intro hk
-      obtain ⟨P, hlen, hnd, hP⟩ := ih (by omega)
-      have hS : P.toFinset ≠ (Finset.univ : Finset (Vert n)) := by
-        intro h
-        have hc : P.toFinset.card = n := by rw [h, Finset.card_univ, Fintype.card_fin]
-        rw [List.toFinset_card_of_nodup hnd] at hc
-        omega
-      have hcommon : IsCommonPrefix G G' P := ⟨hnd, hP⟩
-      have hlt : P.length < n := by omega
-      obtain ⟨w, hwG, hwG'⟩ :=
-        exists_common_pick G G' P.toFinset
-          (fun x hx => hlo P hcommon hlt x (fun hm => hx (List.mem_toFinset.2 hm)))
-          (fun x hx => hhi P hcommon hlt x (fun hm => hx (List.mem_toFinset.2 hm))) hS
-      have hwP : w ∉ P := fun hm => (Finset.mem_sdiff.1 hwG.1).2 (List.mem_toFinset.2 hm)
-      refine ⟨P ++ [w], by simp [hlen], ?_,
-        steps_append (Q := fun S x => IsMCSNextAny G S x ∧ IsMCSNextAny G' S x) P w hP ⟨hwG, hwG'⟩⟩
-      rw [List.nodup_append]
-      refine ⟨hnd, List.nodup_singleton w, ?_⟩
-      intro x hx y hy
-      rw [List.mem_singleton] at hy
-      subst hy
-      intro hxy
-      subst hxy
-      exact hwP hx
-
-/-- If counts in `G'` exceed counts in `G` by `0` or `1` for every vertex and
-every subset `S`, some ordering is an MCS ordering of both graphs. This
-every-subset hypothesis is equivalent to `G'` being `G` plus a matching; it is
-the special case of `exists_common_ordering_prefix` in which the bound holds
-everywhere, not only on common prefixes. -/
-theorem exists_common_ordering (G G' : UGraph n)
-    (hlo : ∀ S x, G.neigh S x ≤ G'.neigh S x) (hhi : ∀ S x, G'.neigh S x ≤ G.neigh S x + 1) :
-    ∃ ord, IsMCSOrderingAny G ord ∧ IsMCSOrderingAny G' ord :=
-  exists_common_ordering_prefix G G'
-    (fun _ _ _ x _ => hlo _ x) (fun _ _ _ x _ => hhi _ x)
-
 /-- Online form of the common-ordering theorem: any common MCS prefix — a
 duplicate-free list `P` whose every step is a legal MCS step in *both* graphs —
 extends to a full common MCS ordering of both graphs.  The count bounds are
@@ -211,6 +155,32 @@ theorem common_order_extends_prefix (G G' : UGraph n)
       obtain ⟨ord, hordG, hordG', hpref⟩ :=
         ih (n - (P ++ [w]).length) hltm (P ++ [w]) rfl hnd' hsteps'
       exact ⟨ord, hordG, hordG', (List.prefix_append P [w]).trans hpref⟩
+
+/-- If, along every *proper common MCS prefix* `P` (the sets the constructive
+proof actually visits), the count of every vertex not in `P` in `G'` is its count
+in `G` plus `0` or `1`, the two graphs share an MCS ordering. This is strictly
+more general than `exists_common_ordering`: the bound is required only on
+reachable prefixes and only for unchosen vertices, not on every subset. -/
+theorem exists_common_ordering_prefix (G G' : UGraph n)
+    (hlo : ∀ P, IsCommonPrefix G G' P → P.length < n →
+             ∀ x, x ∉ P → G.neigh P.toFinset x ≤ G'.neigh P.toFinset x)
+    (hhi : ∀ P, IsCommonPrefix G G' P → P.length < n →
+             ∀ x, x ∉ P → G'.neigh P.toFinset x ≤ G.neigh P.toFinset x + 1) :
+    ∃ ord, IsMCSOrderingAny G ord ∧ IsMCSOrderingAny G' ord := by
+  obtain ⟨order, oldValid, newValid, _⟩ :=
+    common_order_extends_prefix G G' hlo hhi [] List.nodup_nil (fun i hi => by simp at hi)
+  exact ⟨order, oldValid, newValid⟩
+
+/-- If counts in `G'` exceed counts in `G` by `0` or `1` for every vertex and
+every subset `S`, some ordering is an MCS ordering of both graphs. This
+every-subset hypothesis is equivalent to `G'` being `G` plus a matching; it is
+the special case of `exists_common_ordering_prefix` in which the bound holds
+everywhere, not only on common prefixes. -/
+theorem exists_common_ordering (G G' : UGraph n)
+    (hlo : ∀ S x, G.neigh S x ≤ G'.neigh S x) (hhi : ∀ S x, G'.neigh S x ≤ G.neigh S x + 1) :
+    ∃ ord, IsMCSOrderingAny G ord ∧ IsMCSOrderingAny G' ord :=
+  exists_common_ordering_prefix G G'
+    (fun _ _ _ x _ => hlo _ x) (fun _ _ _ x _ => hhi _ x)
 
 /-- Inserting a matching leaves a common MCS ordering. -/
 theorem insert_matching_common_order {G F G' : UGraph n} (hadd : AddsEdges G F G')
