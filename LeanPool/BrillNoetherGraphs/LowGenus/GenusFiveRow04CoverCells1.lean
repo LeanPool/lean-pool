@@ -49,7 +49,7 @@ def cell98 : CoordinateCell row04Core :=
       1], aff [0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, -1], aff [0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 1, 0,
       1], aff [0, 0, 0, 0, 0, 0, -1, -1, 0, 0, 0, 1, 1]] }
 
-attribute [local instance 2000] CertificateData.decidableCheckClosedRows
+attribute [local instance 2000] CertificateData.decidableCheckClosedRowsIndexedKernel
 
 private theorem cell98_check_indexed : cell98.certificate.checkClosedRows 4
     [[], [0, 0, 13, 1, 0, 0, 0, 0, 4, 14, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 16], [], [0, 0,

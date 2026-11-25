@@ -187,7 +187,49 @@ def treePart0 : CompactCellTree :=
                           109, 110, 111, 112, 113, 114])
                         (.absurd 115))))))
 
-attribute [local instance 2000] CompactCellTree.decidableCheckPaired
+-- Bound the lookup work by the size of one cell block.
+private def cellBlocks : List (ℕ × List (CoordinateCell row06Core)) :=
+  [(97, GenusFiveRow06CoverCells0.chunk),
+   (97, GenusFiveRow06CoverCells1.chunk),
+   (97, GenusFiveRow06CoverCells2.chunk),
+   (96, GenusFiveRow06CoverCells3.chunk),
+   (96, GenusFiveRow06CoverCells4.chunk)]
+
+private theorem cellBlocks_sizes :
+    ∀ block ∈ cellBlocks, block.1 = block.2.length := by
+  intro block member
+  simp only [cellBlocks, List.mem_cons, List.not_mem_nil, or_false] at member
+  rcases member with rfl | rfl | rfl | rfl | rfl <;> rfl
+
+private def cellConeAt (index : ℕ) : List (ExplicitPotential.AffineForm 12) :=
+  (List.lookupChunks cellBlocks index
+    { divisor := fun _ => 0
+      witness := fun _ =>
+        { alpha := fun _ => 0
+          beta := fun _ => 0
+          potential := fun _ => 0 }
+      cone := [] }).cone
+
+private theorem cellConeAt_eq (index : ℕ) : cellConeAt index = CellTree.coneAt cells index := by
+  have table : cellBlocks.flatMap Prod.snd = cells := by
+    simp only [cellBlocks, cells, List.flatMap_cons, List.flatMap_nil, List.append_nil,
+      List.append_assoc]
+  unfold cellConeAt CellTree.coneAt
+  rw [List.lookupChunks_eq_getD_flatMap cellBlocks cellBlocks_sizes, table]
+
+private theorem cells_count : 483 = cells.length := by
+  simp only [cells, List.length_append]
+  rfl
+
+@[instance_reducible]
+private noncomputable def decidableRow06Tree (tree : CompactCellTree)
+    (forms : List (ExplicitPotential.AffineForm 12)) (lookup : ℕ → FarkasData)
+    (active : List (ExplicitPotential.AffineForm 12)) :
+    Decidable (tree.checkPaired forms lookup cells active = true) :=
+  CompactCellTree.decidableCheckPairedKernelWithLookup tree forms lookup cells active
+    483 cellConeAt cells_count cellConeAt_eq
+
+attribute [local instance 2000] decidableRow06Tree
 
 private theorem treePart0_check_paired :
     treePart0.checkPaired splitForms farkasReceiptLookup cells

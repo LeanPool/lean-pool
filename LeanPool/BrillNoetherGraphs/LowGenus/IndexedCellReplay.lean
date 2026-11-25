@@ -51,6 +51,24 @@ theorem checkMembershipAt_of_checkMembershipAtHint {dimension : ℕ} (form : Aff
         exact Bool.and_eq_true_iff.mpr ⟨decide_eq_true bound, equalRow⟩
     · exact Or.inl zero
 
+/-- Check a zero row or its indexed witness with kernel integer comparisons. -/
+noncomputable def kernelMembership {dimension : ℕ} (form : AffineForm dimension)
+    (cone : List (AffineForm dimension)) (hint : ℕ) : Bool :=
+  match hint with
+  | 0 => kernelEqual form 0
+  | index + 1 =>
+    (match cone[index]? with
+     | none => false
+     | some row => kernelEqual form row) || kernelEqual form 0
+
+theorem kernelMembership_eq {dimension : ℕ} (form : AffineForm dimension)
+    (cone : List (AffineForm dimension)) (hint : ℕ) :
+    kernelMembership form cone hint = checkMembershipAtHint form cone hint := by
+  cases hint with
+  | zero => exact kernelEqual_eq_equal _ _
+  | succ index =>
+    simp only [kernelMembership, checkMembershipAtHint, kernelEqual_eq_equal]
+
 end Utilities.Certificate.AffineCover.AffineForm
 
 namespace Utilities.Certificate.ExplicitPotential.CertificateData
@@ -217,6 +235,89 @@ def decidableCheckClosedRows {dimension vertices edges : ℕ}
   if checked : certificate.checkClosedRowsAtPairedHints degree indices = true then
     isTrue (checkClosedRows_of_checkClosedRowsAtHints
       (checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints checked))
+  else inferInstance
+
+open AffineCover (allFinFold allFinFold_eq)
+
+/-- Recognize the zero witness using direct folds and kernel integer comparisons. -/
+noncomputable def kernelZeroWitness {dimension vertices edges : ℕ}
+    (witness : AnchorWitness dimension vertices edges) : Bool :=
+  (allFinFold fun edge => Int.beq' (witness.alpha edge) 0 && Int.beq' (witness.beta edge) 0) &&
+  (allFinFold fun vertex => kernelEqual (witness.potential vertex) 0)
+
+private theorem kernelZeroWitness_eq {dimension vertices edges : ℕ}
+    (witness : AnchorWitness dimension vertices edges) :
+    kernelZeroWitness witness = isZeroWitness witness := by
+  simp only [kernelZeroWitness, isZeroWitness, allFinFold_eq, kernelEqual_eq_equal,
+    Int.beq'_eq_beq, beq_eq_decide]
+  rfl
+
+/-- Check paired endpoint rows with kernel-specialized comparisons. -/
+noncomputable def kernelEndpointRows {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (anchor : Fin vertices)
+    (edge : Fin edges) (lowerHint upperHint : ℕ) : Bool :=
+  if (lowerHint == 0) && (upperHint == 0) &&
+      Int.beq' ((certificate.witness anchor).alpha edge) 0 &&
+      Int.beq' ((certificate.witness anchor).beta edge) 0 then
+    let potential := (certificate.witness anchor).potential
+    kernelEqual (potential (certificate.core.head edge)) (potential (certificate.core.tail edge))
+  else
+    kernelMembership (certificate.lowerForm anchor edge) certificate.cone lowerHint &&
+      kernelMembership (certificate.upperForm anchor edge) certificate.cone upperHint
+
+theorem kernelEndpointRows_eq {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (anchor : Fin vertices)
+    (edge : Fin edges) (lowerHint upperHint : ℕ) :
+    kernelEndpointRows certificate anchor edge lowerHint upperHint =
+      checkEndpointRowsAtHints certificate anchor edge lowerHint upperHint := by
+  simp only [kernelEndpointRows, checkEndpointRowsAtHints, kernelEqual_eq_equal,
+    kernelMembership_eq, Bool.and_eq_true, beq_iff_eq, Int.beq'_eq, and_assoc]
+
+/-- Replay the explicit cell hints with kernel-specialized comparisons. -/
+noncomputable def checkClosedRowsKernel {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) : Bool :=
+  (allFinFold fun edge : Fin edges =>
+    decide (certificate.core.tail edge ≠ certificate.core.head edge)) &&
+  decide ((∑ vertex : Fin vertices, certificate.divisor vertex) = degree) &&
+  (allFinFold fun edge : Fin edges =>
+    kernelMembership (certificate.segment edge) certificate.cone (edge.val + 1)) &&
+  (allFinFold fun anchor : Fin vertices =>
+    let hints := indices.getD anchor.val []
+    kernelZeroWitness (certificate.witness anchor) ||
+      (allFinFold fun edge : Fin edges =>
+        kernelEndpointRows certificate anchor edge
+          (hints.getD (2 * edge.val) 0) (hints.getD (2 * edge.val + 1) 0)))
+
+theorem checkClosedRowsKernel_eq {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) :
+    checkClosedRowsKernel certificate degree indices =
+      checkClosedRowsAtPairedHints certificate degree indices := by
+  simp only [checkClosedRowsKernel, checkClosedRowsAtPairedHints, kernelMembership_eq,
+    kernelEndpointRows_eq, allFinFold_eq, kernelZeroWitness_eq]
+  rfl
+
+/-- Decide cell hints using the kernel-specialized checker when it succeeds. -/
+@[instance_reducible]
+noncomputable def decidableCheckClosedRowsKernel {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) :
+    Decidable (certificate.checkClosedRowsAtHints degree indices = true) :=
+  if checked : certificate.checkClosedRowsKernel degree indices = true then
+    isTrue (checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints
+      (checkClosedRowsKernel_eq certificate degree indices ▸ checked))
+  else inferInstance
+
+/-- Decide indexed rows using the kernel-specialized checker when it succeeds. -/
+@[instance_reducible]
+noncomputable def decidableCheckClosedRowsIndexedKernel {dimension vertices edges : ℕ}
+    (certificate : CertificateData dimension vertices edges) (degree : ℤ)
+    (indices : List (List ℕ)) : Decidable (certificate.checkClosedRows degree indices = true) :=
+  if checked : certificate.checkClosedRowsKernel degree indices = true then
+    isTrue (checkClosedRows_of_checkClosedRowsAtHints
+      (checkClosedRowsAtHints_of_checkClosedRowsAtPairedHints
+        (checkClosedRowsKernel_eq certificate degree indices ▸ checked)))
   else inferInstance
 
 end Utilities.Certificate.ExplicitPotential.CertificateData
