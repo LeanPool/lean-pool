@@ -44,19 +44,25 @@ private theorem isClosed_image_energyBall (radius : ℝ) :
     exact ContinuousLinearMap.adjoint_inner_right S.ι x y
   have injectiveEmbed : Function.Injective embed :=
     StrongDual.toWeakDual.injective.comp (InnerProductSpace.toDual ℝ H).injective
+  have memBall (x : S.K) :
+      StrongDual.toWeakDual (InnerProductSpace.toDual ℝ S.K x) ∈ ball ↔
+        x ∈ Metric.closedBall 0 radius := by
+    change (InnerProductSpace.toDual ℝ S.K x) ∈ Metric.closedBall 0 radius ↔ _
+    rw [Metric.mem_closedBall, Metric.mem_closedBall,
+      ← map_zero (InnerProductSpace.toDual ℝ S.K), LinearIsometryEquiv.dist_map]
   convert closedTransfer.preimage continuousEmbed using 1
   ext u
   constructor
   · rintro ⟨x, hx, rfl⟩
-    refine ⟨StrongDual.toWeakDual (InnerProductSpace.toDual ℝ S.K x), ?_, transferEmbed x⟩
-    simpa [ball, Metric.mem_closedBall, dist_zero_right] using hx
+    exact ⟨StrongDual.toWeakDual (InnerProductSpace.toDual ℝ S.K x),
+      (memBall x).2 hx, transferEmbed x⟩
   · rintro ⟨f, hf, heq⟩
     let x := (InnerProductSpace.toDual ℝ S.K).symm f.toStrongDual
     have hfx : StrongDual.toWeakDual (InnerProductSpace.toDual ℝ S.K x) = f := by
       simp [x]
     refine ⟨x, ?_, injectiveEmbed ?_⟩
     · rw [← hfx] at hf
-      simpa [ball, Metric.mem_closedBall, dist_zero_right] using hf
+      exact (memBall x).1 hf
     · rw [← transferEmbed, hfx]
       exact heq
 
