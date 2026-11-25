@@ -560,6 +560,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Additiv
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.AdditiveCone.Rational
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.AdditiveCone.Stable
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.AdditiveCone.StableGroup
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterPower
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Growth
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.GrowthRow
