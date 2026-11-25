@@ -74,7 +74,10 @@ structure IsCompletionOf {Ω Ω' : Type*} (P : GM04.Patchwork Ω' α β) (Q : GM
 well-quasi-order $\Omega$ and every countable sequence $P_i$ ($i = 1, 2, \dots$)
 of $\Omega$-completions of members of $\mathcal{F}$ there exist $j > i \ge 1$ such that
 $P_i$ is simulated in $P_j$." Here `Ω` ranges over
-`Type (max u v)`, which is closed under the constructions of the paper. -/
+`Type (max u v)`, which is closed under the constructions of the paper.
+
+This uses the IV simulation relation. On each marked edge it sends source groupings into the
+target patch. XX §3 requires equality with the target patch. -/
 def WellBehaved (𝓕 : Set (UnlabeledPatchwork α β)) : Prop :=
   ∀ (Ω : Type (max u v)) [Preorder Ω], WellQuasiOrderedLE Ω →
     ∀ Q : ℕ → GM04.Patchwork Ω α β, (∀ i, ∃ P ∈ 𝓕, IsCompletionOf P (Q i)) →
@@ -83,7 +86,10 @@ def WellBehaved (𝓕 : Set (UnlabeledPatchwork α β)) : Prop :=
 /-- `γ` is an encoding of `𝓕₂` in `𝓕₁` (Graph Minors XX, Section 4, page 331): "A function $\gamma :
 \mathcal{F}_2 \to \mathcal{F}_1$ is an *encoding* of $\mathcal{F}_2$ in
 $\mathcal{F}_1$ if $P$ is simulated in $P'$ for all $P, P' \in \mathcal{F}_2$ such that
-$\gamma(P)$ is simulated in $\gamma(P')$." -/
+$\gamma(P)$ is simulated in $\gamma(P')$."
+
+Both simulations here use the IV relation, which permits inclusion of transported patches.
+XX §3 uses equality for those patches. -/
 def IsEncoding {Ω₁ Ω₂ : Type*} [Preorder Ω₁] [Preorder Ω₂] (𝓕₁ : Set (GM04.Patchwork Ω₁ α β))
     (𝓕₂ : Set (GM04.Patchwork Ω₂ α β)) (γ : GM04.Patchwork Ω₂ α β → GM04.Patchwork Ω₁ α β) : Prop :=
   (∀ P ∈ 𝓕₂, γ P ∈ 𝓕₁) ∧

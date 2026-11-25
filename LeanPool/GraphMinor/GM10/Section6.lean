@@ -74,20 +74,8 @@ theorem HasCircuit.mono {H G : Hypergraph α β} (hle : H ≤ G) (h : HasCircuit
 
 private lemma walk_support_subset_vertexSet {G : Hypergraph α β} {u v : α}
     (w : G.skeleton.Walk u v) (hu : u ∈ G.vertexSet) :
-    ∀ z ∈ w.support, z ∈ G.vertexSet := by
-  induction w with
-  | nil =>
-    intro z hz
-    simp only [Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false] at hz
-    exact hz ▸ hu
-  | @cons u u' v hadj rest ih =>
-    obtain ⟨_, e, _, heu'⟩ := id hadj
-    have hu' : u' ∈ G.vertexSet := G.vertex_mem_of_inc heu'
-    intro z hz
-    rw [Walk.support_cons, List.mem_cons] at hz
-    rcases hz with rfl | hz
-    · exact hu
-    · exact ih hu' z hz
+    ∀ z ∈ w.support, z ∈ G.vertexSet :=
+  Hypergraph.skeleton_walk_support_subset_vertexSet w hu
 
 private def reachableAvoidingVertex (G : Hypergraph α β) (v₁ : α) (S : Set α) : Set α :=
   {u | ∃ w : G.skeleton.Walk v₁ u, ∀ z ∈ w.support, z ∉ S}

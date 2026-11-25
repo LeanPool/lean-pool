@@ -248,19 +248,19 @@ theorem isLine_spoke_piece [T2Space S] (hγ : EdgePar Γ γ) {x : Set S × Bool}
 
 end Spoke
 
-private theorem isClosed_drawingAwayFromSpokes {Γ : Drawing S} {γ : Set S → I → S}
+/-- A closed drawing remainder away from a vertex and prescribed positive initial pieces of
+its incident half-edges. The vertex and these pieces cover the rest of the drawing. -/
+theorem exists_closed_drawingAwayFromSpokes {Γ : Drawing S} {γ : Set S → I → S}
     (hγ : EdgePar Γ γ) {v : S} (hv : v ∈ Γ.V) [T2Space S]
-    (h2 : 2 ≤ Nat.card (halfEdges Γ γ v))
-    (τ : halfEdges Γ γ v → I) (hτ0 : ∀ x, 0 < τ x)
-    (hvJ : ∀ x : halfEdges Γ γ v, v ∈ spoke γ x.1 '' Icc 0 (τ x)) :
-    let H := halfEdges Γ γ v
-    let J : H → Set S := fun x => spoke γ x.1 '' Icc 0 (τ x)
-    let C : Set S → Set I := fun e => {t | ∀ x : H, x.1.1 = e →
-      (if x.1.2 then t.1 ≤ 1 - (τ x).1 / 2 else (τ x).1 / 2 ≤ t.1)}
-    let K : Set S := (Γ.V \ {v}) ∪ ⋃ e ∈ Γ.E, γ e '' C e
-    IsClosed K ∧ v ∉ K ∧ Γ.U ⊆ K ∪ ⋃ i, J i := by
+    (τ : halfEdges Γ γ v → I) (hτ0 : ∀ x, 0 < τ x) :
+    ∃ K : Set S, IsClosed K ∧ v ∉ K ∧
+      Γ.U ⊆ K ∪ ({v} ∪ ⋃ i : halfEdges Γ γ v, spoke γ i.1 '' Icc 0 (τ i)) := by
   classical
-  intro H J C K
+  let H := halfEdges Γ γ v
+  let J : H → Set S := fun i => spoke γ i.1 '' Icc 0 (τ i)
+  let C : Set S → Set I := fun e => {t | ∀ x : H, x.1.1 = e →
+    (if x.1.2 then t.1 ≤ 1 - (τ x).1 / 2 else (τ x).1 / 2 ≤ t.1)}
+  let K : Set S := (Γ.V \ {v}) ∪ ⋃ e ∈ Γ.E, γ e '' C e
   have hCclosed : ∀ e, IsClosed (C e) := by
     intro e
     have : C e = ⋂ x : H, {t : I | x.1.1 = e →
@@ -312,20 +312,18 @@ private theorem isClosed_drawingAwayFromSpokes {Γ : Drawing S} {γ : Set S → 
     have h' : x ∈ γ e '' Ioo 0 1 := by rw [hγ.image e he]; exact hx
     obtain ⟨t, -, rfl⟩ := h'
     exact ⟨t, mem_univ _, rfl⟩
-  have hUsub : Γ.U ⊆ K ∪ ⋃ i, J i := by
+  have hUsub : Γ.U ⊆ K ∪ ({v} ∪ ⋃ i, J i) := by
     rw [Γ.U_eq]
     rintro x (hx | hx)
     · by_cases hxv : x = v
-      · obtain ⟨k⟩ : Nonempty H := by
-          have : 0 < Nat.card H := lt_of_lt_of_le (by norm_num) h2
-          exact (Nat.card_pos_iff.mp this).1
-        exact Or.inr (mem_iUnion.mpr ⟨k, hxv ▸ hvJ k⟩)
+      · exact Or.inr (Or.inl (mem_singleton_iff.mpr hxv))
       · exact Or.inl (Or.inl ⟨hx, hxv⟩)
     · obtain ⟨e, he, hxe⟩ := mem_iUnion₂.mp hx
       obtain ⟨t, -, rfl⟩ := hclosureE e he hxe
       by_cases htC : t ∈ C e
       · exact Or.inl (Or.inr (mem_iUnion₂.mpr ⟨e, he, t, htC, rfl⟩))
       · right
+        right
         simp only [C, mem_ofPred_eq, not_forall] at htC
         obtain ⟨y, hye, hcon⟩ := htC
         refine mem_iUnion.mpr ⟨y, ?_⟩
@@ -352,7 +350,7 @@ private theorem isClosed_drawingAwayFromSpokes {Γ : Drawing S} {γ : Set S → 
             rw [hb]
             congr 1
             exact Subtype.ext (by simp [halfPar, halfT])
-  exact ⟨hKclosed, hvK, hUsub⟩
+  exact ⟨K, hKclosed, hvK, hUsub⟩
 
 /-- **The rotation at a vertex.** The half-edges at `v`, when there are at least two, have a cyclic
 order `next`. Each half-edge `k` has a corner `P k`, the part near `v` between `k` and `next k`. The
@@ -450,14 +448,13 @@ theorem exists_rotation_sectors (hS : IsClosedSurface S)
   have hvD : v ∉ discBd D := fun h => Set.disjoint_left.mp hbdD' hvD' h
   obtain ⟨next, Q, hF⟩ := exists_fanInv hD hline hsub hbd hJJ hne hvD (Finset.univ : Finset H)
     (by rwa [Finset.card_univ, ← Nat.card_eq_fintype_card])
-  -- The rest of the drawing.
-  let C : Set S → Set I := fun e => {t | ∀ x : H, x.1.1 = e →
-    (if x.1.2 then t.1 ≤ 1 - (τ x).1 / 2 else (τ x).1 / 2 ≤ t.1)}
-  let K : Set S := (Γ.V \ {v}) ∪ ⋃ e ∈ Γ.E, γ e '' C e
-  obtain ⟨hKclosed, hvK, hUsub⟩ := isClosed_drawingAwayFromSpokes hγ hv h2 τ hτ0 hvJ
-  change IsClosed K at hKclosed
-  change v ∉ K at hvK
-  change Γ.U ⊆ K ∪ ⋃ i, J i at hUsub
+  obtain ⟨K, hKclosed, hvK, hcover⟩ := exists_closed_drawingAwayFromSpokes hγ hv τ hτ0
+  have hvJ' : v ∈ ⋃ i, J i := by
+    obtain ⟨i⟩ : Nonempty H := (Nat.card_pos_iff.mp (lt_of_lt_of_le (by norm_num) h2)).1
+    exact mem_iUnion.mpr ⟨i, hvJ i⟩
+  have hUsub : Γ.U ⊆ K ∪ ⋃ i, J i :=
+    hcover.trans (union_subset_union_right _
+      (union_subset (singleton_subset_iff.mpr hvJ') subset_rfl))
   have hJU : ∀ i, J i ⊆ Γ.U := by
     rintro i _ ⟨t, -, rfl⟩
     by_cases ht : 0 < t

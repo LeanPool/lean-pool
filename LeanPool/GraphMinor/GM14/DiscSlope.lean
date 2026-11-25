@@ -20,6 +20,7 @@ public import LeanPool.GraphMinor.Surface.DiscUnion
 public import LeanPool.GraphMinor.Surface.SphereDisc
 public import LeanPool.GraphMinor.Surface.DiscArcs
 import LeanPool.GraphMinor.GM11.DrawingTopology
+import LeanPool.GraphMinor.GM11.NormalNoncover
 
 /-!
 # Slopes from Pretangles and Closed Discs
@@ -290,77 +291,26 @@ variable [T1Space S] {Γ : PaintingOrDrawing S} {Γ' : Drawing S} {θ : ℕ}
 
 omit [T1Space S] in
 theorem PaintingOrDrawing.toHypergraph_inc {Γ : PaintingOrDrawing S} {e : Set S} {v : S} :
-    Γ.toHypergraph.Inc e v ↔ e ∈ Γ.E ∧ v ∈ Γ.V ∧ v ∈ closure e := by
-  cases Γ <;> rfl
+    Γ.toHypergraph.Inc e v ↔ e ∈ Γ.E ∧ v ∈ Γ.V ∧ v ∈ closure e :=
+  GM11.PaintingOrDrawing.toHypergraph_inc
 
 omit [T1Space S] in
 theorem PaintingOrDrawing.edge_props {Γ : PaintingOrDrawing S} {e : Set S} (he : e ∈ Γ.E) :
-    IsPreconnected e ∧ Disjoint e Γ.V ∧ e ⊆ Γ.U ∧ e.Nonempty := by
-  cases Γ with
-  | painting Γ =>
-    exact ⟨he.2.2.1.isConnected.isPreconnected, disjoint_left.mpr fun x hx => (he.2.1 hx).2,
-      fun x hx => (he.2.1 hx).1, he.1⟩
-  | drawing Γ =>
-    exact ⟨he.2.2.1.isConnected.isPreconnected, disjoint_left.mpr fun x hx => (he.2.1 hx).2,
-      fun x hx => (he.2.1 hx).1, he.1⟩
+    IsPreconnected e ∧ Disjoint e Γ.V ∧ e ⊆ Γ.U ∧ e.Nonempty :=
+  GM11.PaintingOrDrawing.edge_props he
 
 omit [T1Space S] in
 theorem edge_subset_or_disjoint_of_radial (hrad : Γ.U ∩ Γ'.U = Γ.V) {Δ : Set S} (hΔ : IsClosed Δ)
-    (hb : frontier Δ ⊆ Γ'.U) {e : Set S} (he : e ∈ Γ.E) : e ⊆ Δ ∨ Disjoint e Δ := by
-  obtain ⟨hp, hd, hU, -⟩ := PaintingOrDrawing.edge_props he
-  refine subset_or_disjoint_of_frontier hΔ hp (disjoint_left.mpr fun x hx hf => ?_)
-  have : x ∈ Γ.U ∩ Γ'.U := ⟨hU hx, hb hf⟩
-  rw [hrad] at this
-  exact disjoint_left.mp hd hx this
+    (hb : frontier Δ ⊆ Γ'.U) {e : Set S} (he : e ∈ Γ.E) : e ⊆ Δ ∨ Disjoint e Δ :=
+  GM11.edge_subset_or_disjoint_of_radial hrad hΔ hb he
 
 omit [T1Space S] in
 theorem not_cover (hT : IsPretangle Γ.toHypergraph θ T) (hrad : Γ.U ∩ Γ'.U = Γ.V)
     {Δ₁ Δ₂ Δ₃ : Set S} (c₁ : IsClosed Δ₁) (c₂ : IsClosed Δ₂) (c₃ : IsClosed Δ₃)
     (b₁ : frontier Δ₁ ⊆ Γ'.U) (b₂ : frontier Δ₂ ⊆ Γ'.U) (b₃ : frontier Δ₃ ⊆ Γ'.U)
     (m₁ : (Γ.inter Δ₁, Γ.interOutside Δ₁) ∈ T) (m₂ : (Γ.inter Δ₂, Γ.interOutside Δ₂) ∈ T)
-    (m₃ : (Γ.inter Δ₃, Γ.interOutside Δ₃) ∈ T) (hcov : Δ₁ ∪ Δ₂ ∪ Δ₃ = univ) : False := by
-  have hedge : ∀ e ∈ Γ.E, e ⊆ Δ₁ ∨ e ⊆ Δ₂ ∨ e ⊆ Δ₃ := by
-    intro e he
-    obtain ⟨x, hx⟩ := (PaintingOrDrawing.edge_props he).2.2.2
-    have hxc : x ∈ Δ₁ ∪ Δ₂ ∪ Δ₃ := hcov ▸ mem_univ x
-    have side : ∀ {Δ : Set S}, IsClosed Δ → frontier Δ ⊆ Γ'.U → x ∈ Δ → e ⊆ Δ := fun c b h =>
-      (edge_subset_or_disjoint_of_radial hrad c b he).resolve_right
-        fun hd => disjoint_left.mp hd hx h
-    rcases hxc with (h | h) | h
-    · exact Or.inl (side c₁ b₁ h)
-    · exact Or.inr (Or.inl (side c₂ b₂ h))
-    · exact Or.inr (Or.inr (side c₃ b₃ h))
-  refine hT.axiom2 m₁ m₂ m₃ (Hypergraph.ext ?_ ?_ ?_)
-  · ext v
-    simp only [PaintingOrDrawing.toHypergraph_vertexSet]
-    constructor
-    · rintro ((h | h) | h) <;> exact h.1
-    · intro hv
-      have hvc : v ∈ Δ₁ ∪ Δ₂ ∪ Δ₃ := hcov ▸ mem_univ v
-      rcases hvc with (h | h) | h
-      · exact Or.inl (Or.inl ⟨hv, h⟩)
-      · exact Or.inl (Or.inr ⟨hv, h⟩)
-      · exact Or.inr ⟨hv, h⟩
-  · ext e
-    simp only [PaintingOrDrawing.toHypergraph_edgeSet]
-    constructor
-    · rintro ((h | h) | h) <;> exact h.1
-    · intro he
-      rcases hedge e he with h | h | h
-      · exact Or.inl (Or.inl ⟨he, h⟩)
-      · exact Or.inl (Or.inr ⟨he, h⟩)
-      · exact Or.inr ⟨he, h⟩
-  · funext e v
-    apply propext
-    constructor
-    · rintro ((h | h) | h) <;> exact h.1
-    · intro hi
-      have hcl : ∀ {Δ : Set S}, IsClosed Δ → e ⊆ Δ → v ∈ Δ := fun c h =>
-        c.closure_subset_iff.mpr h (PaintingOrDrawing.toHypergraph_inc.mp hi).2.2
-      rcases hedge e (PaintingOrDrawing.toHypergraph_inc.mp hi).1 with h | h | h
-      · exact Or.inl (Or.inl ⟨hi, h, hcl c₁ h⟩)
-      · exact Or.inl (Or.inr ⟨hi, h, hcl c₂ h⟩)
-      · exact Or.inr ⟨hi, h, hcl c₃ h⟩
+    (m₃ : (Γ.inter Δ₃, Γ.interOutside Δ₃) ∈ T) (hcov : Δ₁ ∪ Δ₂ ∪ Δ₃ = univ) : False :=
+  GM11.not_cover_of_radial_frontiers hT hrad c₁ c₂ c₃ b₁ b₂ b₃ m₁ m₂ m₃ hcov
 
 /-- The derived slope of a respectful pretangle is a slope (Graph Minors XI, (6.6)). -/
 theorem isSlope_of_derived [ConnectedSpace S] (hS : IsClosedSurface S)

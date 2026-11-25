@@ -129,7 +129,7 @@ theorem gm07_theorem_11_9_closed :
       hZ_flat hZ_lac hZ_cl_or_arc
   exact ⟨Y, hY_open, hY_asc, hZY⟩
 
-/-- Unconditional proof of `GM14.GM07Theorem119Statement` (Graph Minors VII, (11.9), page 253). -/
+/-- Closed-surface case of VII (11.9), with the general form in `gm07_theorem_11_9_subset`. -/
 theorem gm07_theorem_11_9 :
     GM07Theorem119Statement.{u} := by
   intro S _ _ hS hconn hbd Z hZ_flat hZ_lac hZ_cl_or_arc

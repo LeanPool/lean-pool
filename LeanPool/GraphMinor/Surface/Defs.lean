@@ -694,4 +694,12 @@ def ForestsHomotopic {S : Type u} [TopologicalSpace S] (H₁ H₂ : Drawing S) :
       CurveTracesWalk H₁ φ₁ P₁ → CurveTracesWalk H₂ φ₂ P₂ →
       CurvesHomotopic φ₁ φ₂)
 
+/-- The pair `{a, c}` *crosses* `{b, d}` on `C`: the four points are distinct points of `C`, and
+`b` and `d` lie in different components of `C \ {a, c}`. This is the crossing relation of Graph
+Minors VI, Section 2 (page 117). -/
+abbrev PairsCrossOn {S : Type u} [TopologicalSpace S] (C : Set S) (a c b d : S) : Prop :=
+  a ∈ C ∧ b ∈ C ∧ c ∈ C ∧ d ∈ C ∧
+  a ≠ c ∧ b ≠ d ∧ a ≠ b ∧ a ≠ d ∧ c ≠ b ∧ c ≠ d ∧
+  connectedComponentIn (C \ {a, c}) b ≠ connectedComponentIn (C \ {a, c}) d
+
 end GraphMinor.Surface

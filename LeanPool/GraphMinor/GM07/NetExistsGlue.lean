@@ -238,88 +238,11 @@ theorem exists_one_word_off {X : Type u} [TopologicalSpace X] [T2Space X] [Conne
     (∀ c, ∑ i ∈ S, cnt (W i) c ≤ 2) → ∃ (w : List Letter) (g : ℕ × ℂ → X), 2 ≤ w.length ∧ Good w
       ∧ Presents (sW w) g ∧
       OffSides ∅ B (sW w) g := by
-  classical
-  induction n using Nat.strong_induction_on with
-  | _ n ih =>
-  intro S W f hn hW h0 hf hok hlen hS hsum
-  have h0S : 0 ∈ S := by
-    by_contra h
-    exact h0 (hS 0 h)
-  by_cases hall : ∀ j, j ≠ 0 → W j = []
-  · have e : W = sW (W 0) := by
-      funext i
-      by_cases hi : i = 0
-      · subst hi
-        simp [sW]
-      · simp [sW, nW, update_of_ne hi, hall i hi]
-    refine ⟨W 0, f, hlen 0 h0, fun c => ?_, e ▸ hf, e ▸ hok⟩
-    exact (Finset.single_le_sum (f := fun i => cnt (W i) c) (fun _ _ => Nat.zero_le _) h0S).trans
-      (hsum c)
-  push Not at hall
-  obtain ⟨j₀, hj₀, hne⟩ := hall
-  obtain ⟨j, k, e, e', hj, m0, m1⟩ := exists_shared hW hf h0 hj₀ hne
-  have hjne : W j ≠ [] := fun he => by simp [he] at m1
-  have hjS : j ∈ S := by
-    by_contra h
-    exact hjne (hS j h)
-  have split : ∀ c, cnt (W j) c + (cnt (W 0) c + ∑ i ∈ (S.erase j).erase 0, cnt (W i) c) ≤ 2
-    := fun c => by
-    have h1 := Finset.add_sum_erase S (fun i => cnt (W i) c) hjS
-    have h2 := Finset.add_sum_erase (S.erase j) (fun i => cnt (W i) c)
-      (Finset.mem_erase.mpr ⟨hj.symm, h0S⟩)
-    have h3 := hsum c
-    omega
-  have p0 : 0 < cnt (W 0) k := cnt_pos (w := W 0) (l := (k, e)) m0
-  have p1 : 0 < cnt (W j) k := cnt_pos (w := W j) (l := (k, e')) m1
-  have hk := split k
-  have hrest : ∀ i, i ≠ 0 → i ≠ j → cnt (W i) k = 0 := by
-    intro i hi0 hij
-    by_cases hiS : i ∈ S
-    · have h1 : i ∈ (S.erase j).erase 0 := Finset.mem_erase.mpr ⟨hi0, Finset.mem_erase.mpr ⟨hij,
-        hiS⟩⟩
-      have h2 := Finset.single_le_sum (f := fun i => cnt (W i) k) (fun _ _ => Nat.zero_le _) h1
-      omega
-    · rw [hS i hiS]
-      rfl
-  obtain ⟨w, g, hg, hokg, hwl, -, hwc⟩ := exists_net_merge hW hf hok hj m0 m1 (by omega)
-    (by omega) hrest (hlen 0 h0)
-    (hlen j hjne)
-  have hwne : w ≠ [] := fun he => by simp [he] at hwl
-  refine ih (S.erase j).card ?_ (S.erase j) _ g rfl ((hW.update _ _).update _ _)
-    (by simpa using hwne) hg hokg ?_ ?_ ?_
-  · rw [← hn]
-    exact Finset.card_erase_lt_of_mem hjS
-  · intro i hi
-    by_cases hi0 : i = 0
-    · subst hi0
-      simpa using hwl
-    · rw [update_of_ne hi0] at hi ⊢
-      by_cases hij : i = j
-      · subst hij
-        simp at hi
-      · rw [update_of_ne hij] at hi ⊢
-        exact hlen i hi
-  · intro i hi
-    have hi0 : i ≠ 0 := fun h => hi (Finset.mem_erase.mpr ⟨h ▸ hj.symm, h ▸ h0S⟩)
-    rw [update_of_ne hi0]
-    by_cases hij : i = j
-    · subst hij
-      simp
-    · rw [update_of_ne hij]
-      exact hS i fun h => hi (Finset.mem_erase.mpr ⟨hij, h⟩)
-  · intro c
-    have h1 := Finset.add_sum_erase (S.erase j) (fun i => cnt (update (update W j []) 0 w i) c)
-      (Finset.mem_erase.mpr ⟨hj.symm, h0S⟩)
-    have h2 : ∑ i ∈ (S.erase j).erase 0, cnt (update (update W j []) 0 w i) c =
-        ∑ i ∈ (S.erase j).erase 0, cnt (W i) c := by
-      refine Finset.sum_congr rfl fun i hi => ?_
-      have hi0 := (Finset.mem_erase.mp hi).1
-      have hij := (Finset.mem_erase.mp (Finset.mem_erase.mp hi).2).1
-      rw [update_of_ne hi0, update_of_ne hij]
-    simp only [update_self] at h1
-    have h3 := hwc c
-    have h4 := split c
-    omega
+  apply exists_one_word_preserving (OffSides ∅ B) _ n
+  intro W f hW hf hok j k e e' hj hm0 hm1 c0 c1 hrest hlen0 hlen1
+  obtain ⟨w, g, hg, hokg, hwl, -, hwc⟩ :=
+    exists_net_merge hW hf hok hj hm0 hm1 c0 c1 hrest hlen0 hlen1
+  exact ⟨w, g, hg, hokg, hwl, hwc⟩
 
 /-- The number of letters of `w` with a label in `Bad`. -/
 noncomputable def bc (Bad : Set ℕ) (w : List Letter) : ℕ := open Classical in w.countP fun l

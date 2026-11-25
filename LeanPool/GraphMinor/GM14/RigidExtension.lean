@@ -178,7 +178,7 @@ theorem extension_64 {Δ : Set S} (hΔ : IsClosedDisc Δ) (hbdΔ : subBd Δ
         rwa [hP.left (hU₁ (H₁.V_subset_U v.2))] at h₂
       rw [hφ'v, hφ v hvb]
       rfl)
-    (isRigidIn_mapD hP hAc hBc (by rw [hsbD]; exact image_subset_iff.mpr fun _ hx => hfC hx)
+    (isRigidIn_mapD hP hAc (by rw [hsbD]; exact image_subset_iff.mpr fun _ hx => hfC hx)
       (by rw [hsbD]; exact image_subset_iff.mpr fun _ hx => hfC' hx) H₁ hU₁ hr)
   have hH : PH D₁ D₁ h h.symm := by
     refine ⟨?_, ?_, fun x _ => h.symm_apply_apply x, fun x _ => h.apply_symm_apply x,

@@ -55,7 +55,7 @@ universe u v w
 open Classical in
 /-- A subset $F \subseteq \Sigma$ is *$\Gamma$-normal* if $F \cap U(\Gamma) \subseteq N(\Gamma)$.
 Graph Minors XVII, Section 1 (page 165). -/
-def IsGammaNormal {S : Type} [TopologicalSpace S] (Γ : Painting S) (F : Set S) : Prop :=
+def Painting.IsNormal {S : Type} [TopologicalSpace S] (Γ : Painting S) (F : Set S) : Prop :=
   F ∩ Γ.U ⊆ Γ.N
 
 open Classical in

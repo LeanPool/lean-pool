@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+import LeanPool.GraphMinor.GM12.Section79
+
 public import LeanPool.GraphMinor.GM16.Section8
 import LeanPool.GraphMinor.GM16.MetricBounds
 import LeanPool.GraphMinor.GM12.Section4WalkMetric
@@ -34,34 +36,8 @@ theorem HasTangleMetric.truncation {H : Drawing S} {θ θ' : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     {d : Set S → Set S → ℕ} (h : HasTangleMetric H θ T d)
     (hpos : 1 ≤ θ') (hle : θ' ≤ θ) :
-    HasTangleMetric H θ' (GM10.truncation T θ') (fun a b => min (d a b) θ') := by
-  classical
-  obtain ⟨hresp, K, ins, hK, hins, hd⟩ := h
-  refine ⟨IsRespectfulDrawingTangle.truncation hresp hpos hle, K, ins, hK, ?_, ?_⟩
-  · intro C hC hCK hlen
-    obtain ⟨hD, hbd, hmem⟩ := hins C hC hCK (lt_of_lt_of_le hlen (Nat.mul_le_mul_left 2 hle))
-    refine ⟨hD, hbd, hmem, ?_⟩
-    have hsub : (((PaintingOrDrawing.drawing H).inter (ins C)) ∩
-        ((PaintingOrDrawing.drawing H).interOutside (ins C))).vertexSet ⊆ C.V ∩ H.V := by
-      rintro x ⟨⟨hxH, hxD⟩, ⟨_, hxout⟩⟩
-      have hxC : x ∈ C.U := hbd ▸ (show x ∈ subBd (ins C) from ⟨subset_closure hxD, hxout⟩)
-      rw [C.U_eq] at hxC
-      rcases hxC with hxCV | hxE
-      · exact ⟨hxCV, hxH⟩
-      · obtain ⟨e, heC, hxe⟩ := mem_iUnion₂.mp hxE
-        have hxK := hK.2.1.2.1 hxH
-        have hxCV : x ∈ closure e ∩ C.V := by
-          rw [hCK.closure_inter_V heC]
-          exact ⟨hxe, hxK⟩
-        exact ⟨hxCV.2, hxH⟩
-    have hc := (GM12.circuit_length_eq_two_mul_ncard hK.2.1 hC hCK).1
-    have hcount := ncard_le_ncard hsub (C.finite_V.subset inter_subset_left)
-    change (((PaintingOrDrawing.drawing H).inter (ins C)) ∩
-        ((PaintingOrDrawing.drawing H).interOutside (ins C))).vertexSet.ncard < θ'
-    omega
-  · intro a ha b hb
-    change min (d a b) θ' = _
-    rw [hd a ha b hb, tangleMetric_truncation hK ins hle]
+    HasTangleMetric H θ' (GM10.truncation T θ') (fun a b => min (d a b) θ') :=
+  GM12.HasTangleMetric.truncation h hpos hle
 
 omit [T2Space S] in
 /-- Restricting a separation to an embedded drawing cannot increase its order. -/

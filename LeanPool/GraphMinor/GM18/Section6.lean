@@ -443,7 +443,9 @@ class of rootless, robust $\Omega$-patchworks and suppose that for each $P \in \
 is a tie-breaker $\lambda$ in $\|P\|^-$ such that for every tangle $\mathscr{T}$ in $G^-$ of order
 $\ge \theta$, there is an $\Omega$-place $(P, \mathscr{L})$ with heart in $\mathscr{C}$ such that
 $\mathscr{L}^-$ $\theta$-isolates $\mathscr{T}$. Then $\mathscr{D}$ is well-quasi-ordered by
-simulation.*" -/
+simulation.*"
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_6_7_proof [Infinite β] [Preorder Ω]
     (hΩ : WellQuasiOrderedLE Ω)
     {𝒞 : Set (PartialPatchwork Ω α β)} (h𝒞 : WellBehaved 𝒞)

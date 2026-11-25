@@ -5064,7 +5064,7 @@ def GM15Theorem52Statement : Prop :=
     IsRearrangedWithin G H H' η η' θ_star θ lam₁ T_star T T' d d' z₁ →
     IsFlatSpan G H' η' θ_star (θ - (4 * lam₁ + 2)) lam₂ μ T_star T'
 
-/-- **Graph Minors XV, (5.2)** (page 129):
+/-- Corrected Graph Minors XV (5.2) (page 129). For `μ = 0` it requires `θ > 4 * lam + 2`.
 If `H, η, T` is a `(λ, μ)`-flat `Σ`-span of order `θ`, `λ₁, λ₂ ≥ 4`,
 `λ ≥ 6λ₁ + 5λ₂ + 3μ + 4`, and `H', η', T'` is obtained from `H, η, T` by rearranging within `λ₁`
 of `z₁ ∈ A(H)`, then `H', η', T'` is `(λ₂, μ)`-flat.

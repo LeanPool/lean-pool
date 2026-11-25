@@ -48,7 +48,10 @@ $\Omega$-patchworks. For each $i \ge 1$ let $\lambda_i$ be a tie-breaker in $G_i
 suppose that for every tangle $\mathcal{T}$ in $G_i$ of order $\ge \theta$ there is a rooted
 location $\mathcal{L}$ in $G_i$ such that $\mathcal{L}$ $\theta$-isolates $\mathcal{T}$ and
 $(P_i, \mathcal{L})$ has a heart in $\mathcal{F}$. Then there exist $j > i \ge 1$ such that
-$P_i$ is simulated in $P_j$." -/
+$P_i$ is simulated in $P_j$."
+
+Lean uses an infinite ambient edge type to provide fresh edge labels.
+The simulation is the IV relation described in `WellBehaved`. -/
 theorem theorem_3_1_proof [Infinite β] {Ω : Type (max u v)} [Preorder Ω]
     (hΩ : WellQuasiOrderedLE Ω) {𝓕 : Set (PartialPatchwork Ω α β)} (h𝓕 : GM18.WellBehaved 𝓕)
     (hroot : ∀ P ∈ 𝓕, IsRootless P) {θ : ℕ} (hθ : 1 ≤ θ) (P : ℕ → GM04.Patchwork Ω α β)

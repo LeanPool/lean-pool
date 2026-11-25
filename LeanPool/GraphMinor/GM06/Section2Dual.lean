@@ -64,7 +64,7 @@ theorem diff_image_oArcMap {S : Type u} [TopologicalSpace S] {C : Set S} (φ : C
 `circleCrosses circleStdCoord`. -/
 theorem crossesOn_univ_iff_circleStdCoord {a c b d : Circle} :
     CrossesOn (univ : Set Circle) a c b d ↔ circleCrosses circleStdCoord a c b d := by
-  simp only [CrossesOn, mem_univ, true_and, ← compl_eq_univ_sdiff]
+  simp only [CrossesOn, Surface.PairsCrossOn, mem_univ, true_and, ← compl_eq_univ_sdiff]
   constructor
   · rintro ⟨hac, hbd, hab, had, hcb, hcd, hcc⟩
     exact (connectedComponentIn_compl_pair_ne_iff_circleCrosses hac hbd hab had hcb hcd).mp hcc
@@ -96,7 +96,8 @@ theorem crossesOn_oArcMap_iff {S : Type u} [TopologicalSpace S] {C : Set S} (φ 
   have hpair : C \ {oArcMap φ a, oArcMap φ c} = oArcMap φ '' ({a, c} : Set Circle)ᶜ := by
     rw [← diff_image_oArcMap φ]
     simp
-  simp only [CrossesOn, oArcMap_mem, mem_univ, true_and, hinj.ne_iff, ← compl_eq_univ_sdiff]
+  simp only [CrossesOn, Surface.PairsCrossOn, oArcMap_mem, mem_univ, true_and, hinj.ne_iff,
+    ← compl_eq_univ_sdiff]
   refine and_congr_right fun hac => and_congr_right fun hbd =>
     and_congr_right fun hab => and_congr_right fun had =>
     and_congr_right fun hcb => and_congr_right fun hcd => ?_

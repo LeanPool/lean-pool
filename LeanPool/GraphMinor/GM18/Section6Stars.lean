@@ -624,7 +624,9 @@ private theorem arborescenceUnderlying_rootedTreeOfIsTreeFintype
 rootless partial $\Omega$-patchworks. Let $\mathcal{C}'$ be the class of all rootless, robust
 $\Omega$-patchworks $P$ such that there is a rotund, proper tree-decomposition of $\|P\|$ under
 which all pieces of $P$ belong to $\mathcal{C}$. Then $\mathcal{C}'$ is well-quasi-ordered by
-simulation.*" -/
+simulation.*"
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_6_6_proof [Infinite β] [Preorder Ω] (hΩ : WellQuasiOrderedLE Ω)
     {ι : ℕ → Type*} [∀ i, Fintype (ι i)]
     {𝒞 : Set (PartialPatchwork Ω α β)} (h𝒞 : WellBehaved 𝒞)

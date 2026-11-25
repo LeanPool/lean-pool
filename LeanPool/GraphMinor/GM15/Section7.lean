@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM15.EyeInductionParameters
+public import LeanPool.GraphMinor.GM16.ProperArrangementFacts
 
 public import LeanPool.GraphMinor.GM15.Section2
 public import LeanPool.GraphMinor.GM15.Section3
@@ -132,6 +133,19 @@ def Section7S3 (S : Type w) [TopologicalSpace S]
     IsCentralSegregation G T_star S_seg ∧
     IsSegregationOfType G p k S_seg ∧
     IsSurfaceArrangement S_seg α_disc α_pt
+
+/-- Outcome (S3) retaining the properness of the arrangement constructed in XV (7.7). -/
+abbrev Section7ProperS3 (S : Type w) [TopologicalSpace S]
+    (G : Graph α β) (T_star : Set (Hypergraph α β × Hypergraph α β)) (p k : ℕ) : Prop :=
+  ∃ (𝒮 : Set (Society α β)) (disc : Society α β → Set S) (pt : α → S),
+    IsCentralSegregation G T_star 𝒮 ∧
+    IsSegregationOfType G p k 𝒮 ∧ GM16.IsProperArrangement 𝒮 disc pt
+
+theorem Section7ProperS3.toSection7S3 {S : Type w} [TopologicalSpace S]
+    {G : Graph α β} {T_star : Set (Hypergraph α β × Hypergraph α β)} {p k : ℕ}
+    (h : Section7ProperS3 S G T_star p k) : Section7S3 S G T_star p k := by
+  obtain ⟨𝒮, disc, pt, hCentral, hType, hProper⟩ := h
+  exact ⟨𝒮, disc, pt, hCentral, hType, hProper.1⟩
 
 /-- For `1 ≤ i ≤ k`, `Z_i` is the union of all atoms `a` of `H` with `d(r_i, a) ≤ θ' + 12μ + 14`
 (Graph Minors XV, Section 7, page 135). -/
@@ -4923,20 +4937,32 @@ def GM15Theorem12Statement : Prop :=
           Section7S2 S G θ_star T_star φ ∨
           Section7S3 S G T_star p_k k
 
-/-- **Graph Minors XV, (1.2)** (pages 115–116, proved in Section 7, pages 134–145):
-For any connected surface `Σ` with `bd(Σ) = ∅` and any `k ≥ 0`, `φ ≥ 8`, `μ ≥ 12` even,
-`λ_{k+1} ≥ 4`, and `θ_{k+1} ≥ 4λ_{k+1} + μ + 2`, there exist `p_k, λ_k, θ_k` with
-`θ_k ≥ 4λ_k + μ + 2` such that every `(λ_k, μ)`-flat `Σ`-span of order `≥ θ_k` with `k` eyes at
-distance `≥ θ_k` yields one of `(S1)`, `(S2)`, or `(S3)`. -/
-theorem theorem_1_2_proof
-     :
-    GM15Theorem12Statement.{u, v, w} := by
+/-- The eye induction step of XV (1.2) retains the proper arrangement from XV (7.7),
+as required in XVI (7.2), page 62. -/
+theorem theorem_1_2_proper :
+  ∀ (S : Type w) [TopologicalSpace S] [T2Space S],
+    IsSurface S → ConnectedSpace S → bd S = ∅ →
+    ∀ (k φ μ lam_next θ_next : ℕ),
+      8 ≤ φ → 12 ≤ μ → Even μ → 4 ≤ lam_next →
+      4 * lam_next + μ + 2 ≤ θ_next →
+      ∃ (p_k lam_k θ_k : ℕ),
+        4 * lam_k + μ + 2 ≤ θ_k ∧
+        ∀ {α : Type u} {β : Type v} (G : Graph α β) (θ_star : ℕ)
+          (T_star : Set (Hypergraph α β × Hypergraph α β))
+          (H₀ : Drawing S) (η₀ : SpanEmbedding H₀ G) (θ₀ : ℕ)
+          (T₀ : Set (Hypergraph S (Set S) × Hypergraph S (Set S)))
+          (d₀ : Set S → Set S → ℕ),
+          IsFlatSpan G H₀ η₀ θ_star θ₀ lam_k μ T_star T₀ →
+          HasTangleMetric H₀ θ₀ T₀ d₀ →
+          θ_k ≤ θ₀ →
+          HasEyesAtDistance G H₀ η₀ θ₀ T₀ d₀ k θ_k →
+          Section7S1 S G θ_star T_star k μ lam_next θ_next ∨
+          Section7S2 S G θ_star T_star φ ∨
+          Section7ProperS3 S G T_star p_k k := by
   have h71 : GM15Theorem71Statement.{u, v, w} :=
     theorem_7_1_proof
   have h75 : GM15Theorem75Statement.{u, v, w} :=
     theorem_7_5_proof
-  have h77 : GM15Theorem77Statement.{u, v, w} :=
-    theorem_7_7_proof
   have h79 : GM15Theorem79Statement.{u, v, w} := Section7.theorem_7_9_proof
   have h710 : GM15Theorem710Statement.{u, v, w} :=
     Section7.theorem_7_10_proof
@@ -4991,9 +5017,12 @@ theorem theorem_1_2_proof
           (D i).localSociety.IsCrookedTransaction P_set → P_set.ncard ≠ π
     · -- By (7.7), `(S3)` holds.
       right; right
-      exact h77 G H η θ_star θ_k θ'' lam_k π beta μ k T_star T d r η_G0 S₀ α₀_disc α₀_pt D
-        hFlat hMetric (by omega) hπ2 hπ3 rfl hθ''_beta le_rfl
-        hr_inj hr_eye hr_dist hη_G0_v hη_G0_e hThree hLocal hArr₀ hCompat₀ hDisj_Δ hAllNoCrook
+      obtain ⟨𝒮, disc, pt, hCentral, hType, hArr, hDisjoint⟩ :=
+        assemble_eye_arrangement G H η θ_star θ_k θ'' lam_k π beta μ k T_star T d r
+          η_G0 S₀ α₀_disc α₀_pt D hFlat hMetric (by omega) hπ2 hπ3 rfl hθ''_beta le_rfl
+          hr_inj hr_eye hr_dist hη_G0_v hη_G0_e hThree hLocal hArr₀ hCompat₀ hDisj_Δ hAllNoCrook
+      exact ⟨𝒮, disc, pt, hCentral, hType,
+        GM16.IsSurfaceArrangement.isProper_of_disjoint_boundaries hArr hDisjoint⟩
     · -- Some `i : Fin k` has a crooked transaction `P_star` of cardinality `π`.
       push Not at hAllNoCrook
       rcases hAllNoCrook with ⟨i, P_star, hCrook_star, hCard_star⟩
@@ -5018,5 +5047,21 @@ theorem theorem_1_2_proof
           S₀ α₀_disc α₀_pt i (D i) P X hFlat hMetric (by omega) hlam'4 hθ''_ge hθ''_even rfl
           hlam_bound_beta hθ''_beta le_rfl hr_inj hr_eye hr_dist
           hTransP hPathsP hX_sub hEndsP hFreeX hCardτ₂ hDouble)
+
+/-- **Graph Minors XV, (1.2)** (pages 115–116, proved in Section 7, pages 134–145):
+For any connected surface `Σ` with `bd(Σ) = ∅` and any `k ≥ 0`, `φ ≥ 8`, `μ ≥ 12` even,
+`λ_{k+1} ≥ 4`, and `θ_{k+1} ≥ 4λ_{k+1} + μ + 2`, there exist `p_k, λ_k, θ_k` with
+`θ_k ≥ 4λ_k + μ + 2` such that every `(λ_k, μ)`-flat `Σ`-span of order `≥ θ_k` with `k` eyes at
+distance `≥ θ_k` yields one of `(S1)`, `(S2)`, or `(S3)`. -/
+theorem theorem_1_2_proof
+     :
+    GM15Theorem12Statement.{u, v, w} := by
+  intro S _ _ hSurface hConnected hBoundary k φ μ lam θ hφ hμ hEven hlam hθ
+  obtain ⟨width, flatness, order, horder, hstep⟩ :=
+    theorem_1_2_proper.{u,v,w} S hSurface hConnected hBoundary k φ μ lam θ hφ hμ hEven hlam hθ
+  refine ⟨width, flatness, order, horder, ?_⟩
+  intro α β G θ_star T_star H η θ₀ T d hFlat hMetric hle hEyes
+  exact (hstep G θ_star T_star H η θ₀ T d hFlat hMetric hle hEyes).imp id
+    (Or.imp id Section7ProperS3.toSection7S3)
 
 end GraphMinor.GM15

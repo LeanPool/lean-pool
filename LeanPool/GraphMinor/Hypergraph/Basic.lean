@@ -176,6 +176,28 @@ def skeleton (G : Hypergraph α β) : SimpleGraph α where
   symm := ⟨fun _ _ ⟨hxy, e, hx, hy⟩ ↦ ⟨hxy.symm, e, hy, hx⟩⟩
   loopless := ⟨fun _ h ↦ h.1 rfl⟩
 
+/-- A skeleton walk with initial vertex in the hypergraph stays in its vertex set. -/
+theorem skeleton_walk_support_subset_vertexSet {G : Hypergraph α β} {u v : α}
+    (w : G.skeleton.Walk u v) (hu : u ∈ G.vertexSet) :
+    ∀ z ∈ w.support, z ∈ G.vertexSet := by
+  induction w with
+  | nil =>
+    intro z hz
+    simp only [SimpleGraph.Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false] at hz
+    exact hz ▸ hu
+  | @cons u u' v hadj rest ih =>
+    obtain ⟨_, e, _, heu'⟩ := id hadj
+    have hu' : u' ∈ G.vertexSet := G.vertex_mem_of_inc heu'
+    intro z hz
+    rw [SimpleGraph.Walk.support_cons, List.mem_cons] at hz
+    rcases hz with rfl | hz
+    · exact hu
+    · exact ih hu' z hz
+
+/-- The vertices incident with edges on both sides of an edge subset. -/
+abbrev edgeBoundary (G : Hypergraph α β) (X : Set β) : Set α :=
+  {v ∈ G.vertexSet | (∃ e ∈ X, G.Inc e v) ∧ (∃ e ∈ G.edgeSet \ X, G.Inc e v)}
+
 end Hypergraph
 
 /-- A path of the simple graph `K` from `X` to `Y`: a path of `K` whose first vertex is in `X` and

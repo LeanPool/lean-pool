@@ -139,7 +139,9 @@ such that $\mathcal{F}$ contains a heart of $(P, \mathcal{L})$, and* * *for each
 \subseteq A^*$ and $B^* \subseteq (G \setminus C)^-$ or* * *$C^- \subseteq B^*$ and $A^*
 \subseteq (G \setminus C)^-$.* *Then there is a fine rooted location $\mathcal{L}'$ such
 that $\mathcal{L}'$ $\theta^2$-isolates $\mathcal{T}$ and $\mathcal{F}'$ contains a heart of
-$(P, \mathcal{L}')$." -/
+$(P, \mathcal{L}')$."
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_5_5_proof [Infinite β] {𝓕 : Set (UnlabeledPatchwork α β)}
   (h𝓕 : WellBehaved 𝓕) {θ : ℕ}
     (hθ : 1 ≤ θ) :
@@ -183,7 +185,9 @@ $\theta$-isolates $\mathcal{T}$ modulo $W$, and $\mathcal{F}$ contains a heart o
 \mathcal{L})$. Then there is a fine rooted location $\mathcal{L}'$ in $G$ such that $\mathcal{L}$
 $\theta^2$-isolates $\mathcal{T}$ and $\mathcal{F}'$ contains a heart of $(P, \mathcal{L}')$.*"
 (Here "$\mathcal{L}$ $\theta^2$-isolates $\mathcal{T}$" is a misprint in the paper for
-"$\mathcal{L}'$ $\theta^2$-isolates $\mathcal{T}$".) -/
+"$\mathcal{L}'$ $\theta^2$-isolates $\mathcal{T}$".)
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_5_6_proof [Infinite β] {𝓕 : Set (UnlabeledPatchwork α β)}
   (h𝓕 : WellBehaved 𝓕) {θ : ℕ}
     (hθ : 1 ≤ θ) :

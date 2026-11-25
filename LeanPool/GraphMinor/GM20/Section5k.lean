@@ -78,7 +78,10 @@ $\lambda_i$ be a tie-breaker in $G_i$; and suppose that for each tangle $\mathca
 $G_i$ of order $\ge \theta$, there exist $W \subseteq Z(G_i)$ with $|W| \le \theta$ and a
 fine rooted location $\mathcal{L}$ in $G_i$, such that $\mathcal{L}$ $\theta$-isolates
 $\mathcal{T}$ modulo $W$, and $\mathcal{F}$ contains a heart of $((G_i, \mu_i, \Delta_i),
-\mathcal{L})$. Then there exist $j > i \ge 1$ such that $P_i$ is simulated in $P_j$." -/
+\mathcal{L})$. Then there exist $j > i \ge 1$ such that $P_i$ is simulated in $P_j$."
+
+Lean uses an infinite ambient edge type to provide fresh edge labels.
+The simulation is the IV relation described in `WellBehaved`. -/
 theorem theorem_5_7_proof [Infinite β] {Ω : Type (max u v)}
     [Preorder Ω] (hΩ : WellQuasiOrderedLE Ω) {𝓕 : Set (UnlabeledPatchwork α β)}
     (h𝓕 : WellBehaved 𝓕) {θ : ℕ} (hθ : 1 ≤ θ) (P : ℕ → GM04.Patchwork Ω α β)

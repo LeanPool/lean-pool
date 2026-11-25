@@ -217,8 +217,7 @@ theorem tangleNumber_eq_zero_iff {G : Hypergraph α β} :
 /-- The vertex boundary `∂(X)` of an edge subset `X ⊆ E(G)`: vertices of `G` incident both with an
 edge in `X` and with an edge in `E(G) \ X`
 (Graph Minors X, Section 4, proof of (4.3), page 165). -/
-@[expose] def branchEdgeBoundary (G : Hypergraph α β) (X : Set β) : Set α :=
-  {v ∈ G.vertexSet | (∃ e ∈ X, G.Inc e v) ∧ (∃ e ∈ G.edgeSet \ X, G.Inc e v)}
+abbrev branchEdgeBoundary (G : Hypergraph α β) (X : Set β) : Set α := G.edgeBoundary X
 
 /-- `κ₀(X) = |∂(X)|`, the number of vertices of `G` incident with both `X` and `E(G) \ X`
 (Graph Minors X, Section 4, proof of (4.3), page 165). -/

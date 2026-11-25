@@ -34,12 +34,13 @@ universe u
 
 variable {S : Type u} [TopologicalSpace S]
 
-/-- An open connected subset of a closed surface stays connected when finitely many points are
-removed. -/
-theorem isPreconnected_sdiff_finite (hS : IsClosedSurface S) {G F : Set S} (hG : IsOpen G)
-    (hGc : IsPreconnected G) (hF : F.Finite) : IsPreconnected (G \ F) := by
-  have : T2Space S := hS.2.1
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+/-- Finite punctures preserve preconnectedness in an open set when points have arbitrarily
+small preconnected punctured neighbourhoods that accumulate at the removed point. -/
+theorem isPreconnected_sdiff_finite_of_punctured_nbhd [T2Space S] [LocallyConnectedSpace S]
+    (hneighbourhood : ∀ {O : Set S}, IsOpen O → ∀ {x : S}, x ∈ O →
+      ∃ Z : Set S, IsOpen Z ∧ x ∈ Z ∧ Z ⊆ O ∧ IsPreconnected (Z \ {x}) ∧ x ∈ closure (Z \ {x}))
+    {G F : Set S} (hG : IsOpen G) (hGc : IsPreconnected G) (hF : F.Finite) :
+    IsPreconnected (G \ F) := by
   induction F, hF using Set.Finite.induction_on with
   | empty => simpa using hGc
   | @insert x F hxF hF ih =>
@@ -50,7 +51,7 @@ theorem isPreconnected_sdiff_finite (hS : IsClosedSurface S) {G F : Set S} (hG :
     rw [hEq]
     by_cases hx : x ∈ G \ F
     · have hG' : IsOpen (G \ F) := hG.sdiff hF.isClosed
-      obtain ⟨Z, hZ, hxZ, hZG, hZc, hZcl⟩ := exists_punctured_nbhd hS hG' hx
+      obtain ⟨Z, hZ, hxZ, hZG, hZc, hZcl⟩ := hneighbourhood hG' hx
       obtain ⟨a, haZ⟩ : (Z \ {x}).Nonempty := by
         by_contra hcon
         rw [not_nonempty_iff_eq_empty] at hcon
@@ -74,6 +75,16 @@ theorem isPreconnected_sdiff_finite (hS : IsClosedSurface S) {G F : Set S} (hG :
       rw [this]
       exact ih
 
+/-- An open connected subset of a closed surface stays connected when finitely many points are
+removed. -/
+theorem isPreconnected_sdiff_finite (hS : IsClosedSurface S) {G F : Set S} (hG : IsOpen G)
+    (hGc : IsPreconnected G) (hF : F.Finite) : IsPreconnected (G \ F) := by
+  have : T2Space S := hS.2.1
+  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  exact isPreconnected_sdiff_finite_of_punctured_nbhd
+    (fun {_} hO {_} hx => exists_punctured_nbhd hS hO hx)
+    hG hGc hF
+
 variable [T2Space S] {Γ : Drawing S}
 
 theorem deleteEdge_V (Γ : Drawing S) (e : Set S) : (Γ.deleteEdge e).V = Γ.V := by
@@ -81,23 +92,30 @@ theorem deleteEdge_V (Γ : Drawing S) (e : Set S) : (Γ.deleteEdge e).V = Γ.V :
   intro x hx
   exact Or.inl ⟨hx, hx⟩
 
-/-- Graph Minors XI, (5.1) (page 81): "Let $Z \subseteq R(\Gamma)$, and let $\Gamma' \subseteq
-\Gamma$. Let $r'$ be a region of
-$\Gamma'$. If there are regions $r_1 \in Z$, $r_2 \in R(\Gamma) - Z$ with $r_1, r_2
-\subseteq r'$, then there are such regions $r_1, r_2$ which in addition are incident with
-some edge $e$ of $\Gamma$ with $e \notin E(\Gamma')$." -/
-theorem theorem_5_1_proof (hS : IsClosedSurface S)
+/-- Edge deletion separates coloured regions using local facts about the two sides of each edge.
+The drawing property must persist on deleting an edge. When all extra edges have been deleted,
+only finitely many vertices remain to remove from the region. -/
+theorem exists_separating_region_edge [LocallyConnectedSpace S]
+    (P : Drawing S → Prop) (hdelete : ∀ {G : Drawing S}, P G → ∀ e, P (G.deleteEdge e))
+    (hincident : ∀ {G : Drawing S}, P G → ∀ {e r : Set S}, e ∈ G.E → r ∈ G.R →
+      e ⊆ closure r ∨ Disjoint e (closure r))
+    (hsides : ∀ {G : Drawing S}, P G → ∀ {e : Set S}, e ∈ G.E → ∀ {p : S}, p ∈ e →
+      ∃ W A₁ A₂ : Set S, IsOpen W ∧ p ∈ W ∧ W ∩ G.U ⊆ e ∧ W \ G.U ⊆ A₁ ∪ A₂ ∧
+        IsPreconnected A₁ ∧ IsPreconnected A₂ ∧ Disjoint A₁ G.U ∧ Disjoint A₂ G.U ∧
+        e ∩ W ⊆ closure A₁ ∧ e ∩ W ⊆ closure A₂)
+    (hpuncture : ∀ {O F : Set S}, IsOpen O → IsPreconnected O → F.Finite → IsPreconnected (O \ F))
+    (hP : P Γ)
     {Γ' : Drawing S} (hsub : Γ'.IsSubdrawing Γ) {Z : Set (Set S)}
     {r' r₁ r₂ : Set S} (hr' : r' ∈ Γ'.R) (h₁ : r₁ ∈ Γ.R) (hz₁ : r₁ ∈ Z) (h₂ : r₂ ∈ Γ.R)
     (hz₂ : r₂ ∉ Z) (hs₁ : r₁ ⊆ r') (hs₂ : r₂ ⊆ r') :
     ∃ e ∈ Γ.E, e ∉ Γ'.E ∧ ∃ a b : Set S, a ∈ Z ∧ b ∉ Z ∧ a ⊆ r' ∧ b ⊆ r' ∧
       Γ.EdgeRegionIncident e a ∧ Γ.EdgeRegionIncident e b := by
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
   induction hn : (Γ.E \ Γ'.E).ncard using Nat.strong_induction_on generalizing Γ Z r₁ r₂ with
   | _ n ih =>
     by_cases hE : (Γ.E \ Γ'.E).Nonempty
     · obtain ⟨e, heΓ, heΓ'⟩ := hE
       have hdel := deleteEdge_isSubdrawing Γ e
+      have hPdel := hdelete hP e
       have hUe := deleteEdge_U Γ heΓ
       have hsub'' : Γ'.IsSubdrawing (Γ.deleteEdge e) := by
         refine ⟨by rw [deleteEdge_V]; exact hsub.1, ?_⟩
@@ -119,7 +137,7 @@ theorem theorem_5_1_proof (hS : IsClosedSurface S)
         have honly : ∀ {t u : Set S}, t ∈ Γ.R → u ∈ Γ.R → t ⊆ s → u ⊆ s → t ≠ u →
             e ⊆ closure t := by
           intro t u ht hu hts hus htu
-          rcases edge_incident_or_disjoint hS heΓ ht with h | h
+          rcases hincident hP heΓ ht with h | h
           · exact h
           · exfalso
             have htdel := region_deleteEdge_of_not_incident heΓ ht h
@@ -152,7 +170,7 @@ theorem theorem_5_1_proof (hS : IsClosedSurface S)
         exact Set.ncard_sdiff_singleton_lt_of_mem ⟨heΓ, heΓ'⟩
           (Γ.finite_edges.subset sdiff_subset)
       obtain ⟨e', he', he'Γ', a, b, haZ, hbZ, has, hbs, hia, hib⟩ :=
-        ih _ hlt hsub'' hs₁' hs₁Z hs₂' hs₂Z
+        ih _ hlt hPdel hsub'' hs₁' hs₁Z hs₂' hs₂Z
           ((hinr s₁ hs₁' r₁ (region_nonempty h₁) hs₁s hs₁)) hs₂r rfl
       have he'Γ : e' ∈ Γ.E := hdel.2 he'
       have he'e : e' ≠ e := by
@@ -164,7 +182,7 @@ theorem theorem_5_1_proof (hS : IsClosedSurface S)
           ∃ c ∈ Γ.R, c ⊆ s ∧ Γ.EdgeRegionIncident e' c := by
         rintro s hs ⟨p, hpe, hps⟩
         obtain ⟨W, A₁, A₂, hW, hpW, hWU, hcov, c₁, c₂, d₁, d₂, cl₁, cl₂⟩ :=
-          exists_edge_sides hS Γ he'Γ hpe
+          hsides hP he'Γ hpe
         obtain ⟨x, hxW, hxs⟩ := mem_closure_iff.mp hps W hW hpW
         have hxU'' := region_subset hs hxs
         have hxU : x ∉ Γ.U := by
@@ -192,7 +210,7 @@ theorem theorem_5_1_proof (hS : IsClosedSurface S)
         by_contra hf'
         exact hE ⟨f, hf, hf'⟩
       have hconn : IsPreconnected (r' \ Γ.V) :=
-        isPreconnected_sdiff_finite hS (region_isOpen hr') (region_isPreconnected hr') Γ.finite_V
+        hpuncture (region_isOpen hr') (region_isPreconnected hr') Γ.finite_V
       have hdisj : Disjoint (r' \ Γ.V) Γ.U := by
         refine disjoint_left.mpr fun x hx hxU => ?_
         obtain ⟨f, hf, hxf⟩ := Γ.exists_edge_of_mem hxU hx.2
@@ -203,6 +221,23 @@ theorem theorem_5_1_proof (hS : IsClosedSurface S)
       obtain ⟨y, hy⟩ := region_nonempty h₂
       have hy₁ : y ∈ r₁ := subset_region h₁ hconn hdisj (hin h₁ hs₁ hx) hx (hin h₂ hs₂ hy)
       exact hz₂ (region_eq_of_mem h₁ h₂ hy₁ hy ▸ hz₁)
+
+/-- Graph Minors XI, (5.1) (page 81): "Let $Z \subseteq R(\Gamma)$, and let $\Gamma' \subseteq
+\Gamma$. Let $r'$ be a region of
+$\Gamma'$. If there are regions $r_1 \in Z$, $r_2 \in R(\Gamma) - Z$ with $r_1, r_2
+\subseteq r'$, then there are such regions $r_1, r_2$ which in addition are incident with
+some edge $e$ of $\Gamma$ with $e \notin E(\Gamma')$." -/
+theorem theorem_5_1_proof (hS : IsClosedSurface S)
+    {Γ' : Drawing S} (hsub : Γ'.IsSubdrawing Γ) {Z : Set (Set S)}
+    {r' r₁ r₂ : Set S} (hr' : r' ∈ Γ'.R) (h₁ : r₁ ∈ Γ.R) (hz₁ : r₁ ∈ Z) (h₂ : r₂ ∈ Γ.R)
+    (hz₂ : r₂ ∉ Z) (hs₁ : r₁ ⊆ r') (hs₂ : r₂ ⊆ r') :
+    ∃ e ∈ Γ.E, e ∉ Γ'.E ∧ ∃ a b : Set S, a ∈ Z ∧ b ∉ Z ∧ a ⊆ r' ∧ b ⊆ r' ∧
+      Γ.EdgeRegionIncident e a ∧ Γ.EdgeRegionIncident e b := by
+  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  exact exists_separating_region_edge (fun _ => True)
+    (fun {_} _ _ => trivial) (fun {_} _ {_ _} he hr => edge_incident_or_disjoint hS he hr)
+    (fun {G} _ {_} he {_} hp => exists_edge_sides hS G he hp)
+    (isPreconnected_sdiff_finite hS) trivial hsub hr' h₁ hz₁ h₂ hz₂ hs₁ hs₂
 
 /-- A subdrawing `N(Z)` with small weight is confined: a long circuit would have weight at least
 `ω`, by the definition of a weighting. -/

@@ -176,8 +176,7 @@ def gridColPath (θ : ℕ) (j : Fin θ) :
 "When $X \subseteq E(G)$, we define $\partial(X)$ to be the set of vertices $v \in X$ such that $v$
 is incident with an edge in $X$ and with an edge in $E(G) - X$."
 (Here $v \in X$ in the paper is a misprint for $v \in V(G)$.) -/
-def edgeBoundary (G : Hypergraph α β) (X : Set β) : Set α :=
-  {v ∈ G.vertexSet | (∃ e ∈ X, G.Inc e v) ∧ (∃ e ∈ G.edgeSet \ X, G.Inc e v)}
+abbrev edgeBoundary (G : Hypergraph α β) (X : Set β) : Set α := G.edgeBoundary X
 
 /-- A subset `X ⊆ E(G)` of the `θ`-grid is small (Graph Minors X, Section 7, page 172):
 "If $X \subseteq E(G)$, we say that $X$ is *small* (in $G$) if $|\partial(X)| < \theta$ and

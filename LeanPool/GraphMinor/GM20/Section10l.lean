@@ -136,7 +136,9 @@ that* * $(P/W, \mathcal{L})$ *is* $(\Sigma, \rho)$*-shelled for some* $(\Sigma, 
 \mathcal{S}$, *and* * $\mathcal{L}$ *is linked to* $\mathcal{T}/W$." Here `𝒮` is a finite set of
 representatives, and the order `θ` is at least `z + 6p + 9`, so that the standing hypotheses of
 Sections
-8, 9, 11 of Graph Minors XVII hold. -/
+8, 9, 11 of Graph Minors XVII hold.
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_10_3_proof
      : Theorem103Statement.{u, v} := by
   classical

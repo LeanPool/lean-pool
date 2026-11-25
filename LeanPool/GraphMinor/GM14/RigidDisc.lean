@@ -247,7 +247,7 @@ theorem three_paths_of_rigid (hΔ : IsClosedDisc Δ) (hbdΔ : subBd Δ = discBd 
   have hMn : M.U ∩ C ⊆ M.V := by
     rintro _ ⟨⟨x, hx, rfl⟩, hxC⟩
     exact mem_image_of_mem f (hHbd ⟨hx, (hiff x (hHΔ hx)).mp hxC⟩)
-  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hBc hbd hbd' H hHΔ hrigid
+  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hbd hbd' H hHΔ hrigid
   have hR'M : R'.IsSubdrawing M := by
     refine ⟨image_mono hRH.1, ?_⟩
     change (mapD hP hAc R hRU).E ⊆ (mapD hP hAc H hHΔ).E
@@ -331,7 +331,7 @@ theorem two_edges_of_rigid (hΔ : IsClosedDisc Δ) (hbdΔ : subBd Δ = discBd Δ
   have hMn : M.U ∩ C ⊆ M.V := by
     rintro _ ⟨⟨x, hx, rfl⟩, hxC⟩
     exact mem_image_of_mem f (hHbd ⟨hx, (hiff x (hHΔ hx)).mp hxC⟩)
-  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hBc hbd hbd' H hHΔ hrigid
+  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hbd hbd' H hHΔ hrigid
   have m := gmap_mapD hP hAc H hHΔ
   obtain ⟨y, hl⟩ := he
   have hl' := (m.link hl.edge_mem hl.left_mem hl.right_mem).mp hl

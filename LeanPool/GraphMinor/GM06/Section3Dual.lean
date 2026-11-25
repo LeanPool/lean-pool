@@ -51,7 +51,6 @@ theorem crossesOn_iff_pairsCrossOn_discBd_univ {S : Type u} [TopologicalSpace S]
     (a c b d : S) :
     CrossesOn (bd S) a c b d ↔ PairsCrossOn (discBd (univ : Set S)) a c b d := by
   rw [discBd_univ_eq_bd]
-  rfl
 
 /-- Transfer `disc_crossing` to `S` when `IsClosedDiscSpace S`. -/
 theorem discCrossing_of_isClosedDiscSpace

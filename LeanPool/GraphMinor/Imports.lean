@@ -394,6 +394,7 @@ public import LeanPool.GraphMinor.GM11.Nice73
 public import LeanPool.GraphMinor.GM11.NicePush
 public import LeanPool.GraphMinor.GM11.NiceSets
 public import LeanPool.GraphMinor.GM11.NiceStatements
+public import LeanPool.GraphMinor.GM11.NormalNoncover
 public import LeanPool.GraphMinor.GM11.OArcCircuit
 public import LeanPool.GraphMinor.GM11.OpenAround
 public import LeanPool.GraphMinor.GM11.PaintingCells
@@ -1408,6 +1409,8 @@ public import LeanPool.GraphMinor.GM16.PathIsoWalks
 public import LeanPool.GraphMinor.GM16.PathWalkCoordinates
 public import LeanPool.GraphMinor.GM16.PathWalkEquivalences
 public import LeanPool.GraphMinor.GM16.ProperArrangement
+public import LeanPool.GraphMinor.GM16.ProperArrangementDefs
+public import LeanPool.GraphMinor.GM16.ProperArrangementFacts
 public import LeanPool.GraphMinor.GM16.ProperBridgeIntersections
 public import LeanPool.GraphMinor.GM16.ProperDiscCoordinates
 public import LeanPool.GraphMinor.GM16.ProperDiscExtension

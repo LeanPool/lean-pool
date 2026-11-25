@@ -279,19 +279,15 @@ theorem IsLineWithEnds.isPreconnected_sdiff_pair {L : Set S} {a b : S} (h : IsLi
   rw [hEq]
   exact isPreconnected_Ioo.image _ (by fun_prop)
 
-/-- Let `A₀, A₁, A₂` be lines with common ends and otherwise disjoint, and let `Δ_i` be a closed
-disc
-with boundary the union of the other two lines. If `A_i ⊄ Δ_i` for each `i`, then `Δ₀ ∪ Δ₁` is a
-closed disc, other
-than `Δ₂`, with the same boundary as `Δ₂`. -/
-theorem theta_union (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ Δ₂ : Set S} {a b :
-  S}
-    (l₀ : IsLineWithEnds A₀ a b) (l₁ : IsLineWithEnds A₁ a b) (l₂ : IsLineWithEnds A₂ a b)
+/-- Adjacent theta-face discs intersect in their common arc. The interior of each opposite arc
+lies outside its disc. -/
+theorem theta_disc_intersection (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ : Set S} {a b : S}
+    (l₀ : IsLineWithEnds A₀ a b) (l₁ : IsLineWithEnds A₁ a b)
     (i₀₁ : A₀ ∩ A₁ = {a, b}) (i₁₂ : A₁ ∩ A₂ = {a, b}) (i₂₀ : A₂ ∩ A₀ = {a, b})
-    (d₀ : IsClosedDisc Δ₀) (d₁ : IsClosedDisc Δ₁) (d₂ : IsClosedDisc Δ₂)
-    (f₀ : frontier Δ₀ = A₁ ∪ A₂) (f₁ : frontier Δ₁ = A₂ ∪ A₀) (f₂ : frontier Δ₂ = A₀ ∪ A₁)
-    (h₀ : ¬ A₀ ⊆ Δ₀) (h₁ : ¬ A₁ ⊆ Δ₁) (h₂ : ¬ A₂ ⊆ Δ₂) :
-    IsClosedDisc (Δ₀ ∪ Δ₁) ∧ discBd (Δ₀ ∪ Δ₁) = discBd Δ₂ ∧ Δ₀ ∪ Δ₁ ≠ Δ₂ := by
+    (d₀ : IsClosedDisc Δ₀) (d₁ : IsClosedDisc Δ₁)
+    (f₀ : frontier Δ₀ = A₁ ∪ A₂) (f₁ : frontier Δ₁ = A₂ ∪ A₀)
+    (h₀ : ¬ A₀ ⊆ Δ₀) (h₁ : ¬ A₁ ⊆ Δ₁) :
+    Δ₀ ∩ Δ₁ = A₂ ∧ Disjoint (A₀ \ {a, b}) Δ₀ ∧ Disjoint (A₁ \ {a, b}) Δ₁ := by
   have : T2Space S := hS.2.1
   have c₀ : IsClosed Δ₀ := d₀.isCompact.isClosed
   have c₁ : IsClosed Δ₁ := d₁.isCompact.isClosed
@@ -375,13 +371,33 @@ theorem theta_union (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ Δ₂ :
           · exact hb₂.2
         · exact absurd hx₀ (disjoint_left.mp out₀ ⟨h', hxab⟩)
     · exact fun x hx => ⟨sub₀ (Or.inr hx), sub₁ (Or.inl hx)⟩
+  exact ⟨hcap, out₀, out₁⟩
+
+/-- The union of two theta-face discs is a disc bounded by the two unshared arcs. -/
+theorem theta_glue_discs [T2Space S] (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ : Set S} {a b : S}
+    (l₀ : IsLineWithEnds A₀ a b) (l₁ : IsLineWithEnds A₁ a b) (l₂ : IsLineWithEnds A₂ a b)
+    (i₀₁ : A₀ ∩ A₁ = {a, b}) (i₁₂ : A₁ ∩ A₂ = {a, b}) (i₂₀ : A₂ ∩ A₀ = {a, b})
+    (d₀ : IsClosedDisc Δ₀) (d₁ : IsClosedDisc Δ₁)
+    (f₀ : frontier Δ₀ = A₁ ∪ A₂) (f₁ : frontier Δ₁ = A₂ ∪ A₀)
+    (h₀ : ¬ A₀ ⊆ Δ₀) (h₁ : ¬ A₁ ⊆ Δ₁) :
+    IsClosedDisc (Δ₀ ∪ Δ₁) ∧ discBd (Δ₀ ∪ Δ₁) = A₀ ∪ A₁ ∧
+      Δ₀ ∩ Δ₁ = A₂ ∧ Disjoint (A₀ \ {a, b}) Δ₀ ∧ Disjoint (A₁ \ {a, b}) Δ₁ := by
+  obtain ⟨hcap, out₀, out₁⟩ :=
+    theta_disc_intersection hS l₀ l₁ i₀₁ i₁₂ i₂₀ d₀ d₁ f₀ f₁ h₀ h₁
+  have m₂ : ∀ x, x ∈ A₂ → x ∈ A₀ → x = a ∨ x = b := fun x h h' => by
+    have : x ∈ A₂ ∩ A₀ := ⟨h, h'⟩
+    rwa [i₂₀] at this
+  have m₁ : ∀ x, x ∈ A₁ → x ∈ A₂ → x = a ∨ x = b := fun x h h' => by
+    have : x ∈ A₁ ∩ A₂ := ⟨h, h'⟩
+    rwa [i₁₂] at this
+  have ha : a ∈ A₀ ∩ A₁ := by rw [i₀₁]; simp
+  have hb : b ∈ A₀ ∩ A₁ := by rw [i₀₁]; simp
   have e₀ := IsClosedDisc.frontier_eq_discBd hS d₀
   have e₁ := IsClosedDisc.frontier_eq_discBd hS d₁
-  have e₂ := IsClosedDisc.frontier_eq_discBd hS d₂
   obtain ⟨dU, hU⟩ := disc_union Δ₀ Δ₁ A₂ a b d₀ d₁ l₂ hcap
     (by rw [← e₀, f₀]; exact subset_union_right) (by rw [← e₁, f₁]; exact subset_union_left)
-  have hbd : discBd (Δ₀ ∪ Δ₁) = discBd Δ₂ := by
-    rw [hU, ← e₀, ← e₁, ← e₂, f₀, f₁, f₂]
+  have hbd : discBd (Δ₀ ∪ Δ₁) = A₀ ∪ A₁ := by
+    rw [hU, ← e₀, ← e₁, f₀, f₁]
     ext x
     constructor
     · rintro ⟨(h' | h') | h' | h', hn⟩
@@ -402,7 +418,26 @@ theorem theta_union (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ Δ₂ :
     · rintro (h' | h')
       · refine ⟨Or.inr (Or.inr h'), fun hx => hx.2 (m₂ x hx.1 h')⟩
       · refine ⟨Or.inl (Or.inl h'), fun hx => hx.2 (m₁ x h' hx.1)⟩
-  exact ⟨dU, hbd, fun heq => h₂ fun x hx => heq ▸ Or.inl (sub₀ (Or.inr hx))⟩
+  exact ⟨dU, hbd, hcap, out₀, out₁⟩
+
+/-- Let `A₀, A₁, A₂` be lines with common ends and otherwise disjoint, and let `Δ_i` be a closed
+disc
+with boundary the union of the other two lines. If `A_i ⊄ Δ_i` for each `i`, then `Δ₀ ∪ Δ₁` is a
+closed disc, other
+than `Δ₂`, with the same boundary as `Δ₂`. -/
+theorem theta_union (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ Δ₂ : Set S} {a b :
+  S}
+    (l₀ : IsLineWithEnds A₀ a b) (l₁ : IsLineWithEnds A₁ a b) (l₂ : IsLineWithEnds A₂ a b)
+    (i₀₁ : A₀ ∩ A₁ = {a, b}) (i₁₂ : A₁ ∩ A₂ = {a, b}) (i₂₀ : A₂ ∩ A₀ = {a, b})
+    (d₀ : IsClosedDisc Δ₀) (d₁ : IsClosedDisc Δ₁) (d₂ : IsClosedDisc Δ₂)
+    (f₀ : frontier Δ₀ = A₁ ∪ A₂) (f₁ : frontier Δ₁ = A₂ ∪ A₀) (f₂ : frontier Δ₂ = A₀ ∪ A₁)
+    (h₀ : ¬ A₀ ⊆ Δ₀) (h₁ : ¬ A₁ ⊆ Δ₁) (h₂ : ¬ A₂ ⊆ Δ₂) :
+    IsClosedDisc (Δ₀ ∪ Δ₁) ∧ discBd (Δ₀ ∪ Δ₁) = discBd Δ₂ ∧ Δ₀ ∪ Δ₁ ≠ Δ₂ := by
+  have : T2Space S := hS.2.1
+  obtain ⟨dU, hbd, -, -, -⟩ := theta_glue_discs hS l₀ l₁ l₂ i₀₁ i₁₂ i₂₀ d₀ d₁ f₀ f₁ h₀ h₁
+  have sub₀ : A₁ ∪ A₂ ⊆ Δ₀ := f₀ ▸ d₀.isCompact.isClosed.frontier_subset
+  exact ⟨dU, hbd.trans (f₂.symm.trans (IsClosedDisc.frontier_eq_discBd hS d₂)),
+    fun heq => h₂ fun x hx => heq ▸ Or.inl (sub₀ (Or.inr hx))⟩
 
 /-- Under the hypotheses of `theta_union`, the three discs cover `Σ`. -/
 theorem theta_cover [ConnectedSpace S] (hS : IsClosedSurface S) {A₀ A₁ A₂ Δ₀ Δ₁ Δ₂ : Set S} {a b :

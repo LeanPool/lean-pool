@@ -155,10 +155,8 @@ are distinct points of $C$ occurring in cyclic order around $C$, that is, $b$ an
 different connected components of $C \setminus \{a, c\}$.
 Graph Minors VI, Section 2 (page 117): "If $a, b, c, d$ are distinct points of $C$ occurring in
 that order, we say that $\{a, c\}$ *crosses* $\{b, d\}$." -/
-def CrossesOn {S : Type u} [TopologicalSpace S] (C : Set S) (a c b d : S) : Prop :=
-  a ∈ C ∧ b ∈ C ∧ c ∈ C ∧ d ∈ C ∧
-  a ≠ c ∧ b ≠ d ∧ a ≠ b ∧ a ≠ d ∧ c ≠ b ∧ c ≠ d ∧
-  connectedComponentIn (C \ {a, c}) b ≠ connectedComponentIn (C \ {a, c}) d
+abbrev CrossesOn {S : Type u} [TopologicalSpace S] (C : Set S) (a c b d : S) : Prop :=
+  Surface.PairsCrossOn C a c b d
 
 /-- The relation on $U$ defining the dual division $\Delta^*$: there is no $\delta \in \Delta$ and
 $v, v' \in \delta$ such that $\{v, v'\}$ crosses $\{u, u'\}$.

@@ -86,20 +86,8 @@ private lemma separationOrder_ge_of_hasDisjointPaths {G : Hypergraph α β} {X Y
 
 private lemma walk_support_subset_vertexSet {G : Hypergraph α β} {u v : α}
     (w : G.skeleton.Walk u v) (hu : u ∈ G.vertexSet) :
-    ∀ z ∈ w.support, z ∈ G.vertexSet := by
-  induction w with
-  | nil =>
-    intro z hz
-    simp only [Walk.support_nil, List.mem_cons, List.not_mem_nil, or_false] at hz
-    exact hz ▸ hu
-  | @cons u u' v hadj rest ih =>
-    obtain ⟨_, e, _, heu'⟩ := id hadj
-    have hu' : u' ∈ G.vertexSet := G.vertex_mem_of_inc heu'
-    intro z hz
-    rw [Walk.support_cons, List.mem_cons] at hz
-    rcases hz with rfl | hz
-    · exact hu
-    · exact ih hu' z hz
+    ∀ z ∈ w.support, z ∈ G.vertexSet :=
+  Hypergraph.skeleton_walk_support_subset_vertexSet w hu
 
 /-- The vertices reachable from `X` in `G.skeleton` by walks avoiding `S`. -/
 private def reachableAvoiding (G : Hypergraph α β) (X S : Set α) : Set α :=

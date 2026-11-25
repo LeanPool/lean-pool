@@ -354,7 +354,7 @@ private theorem inductive_step_1_1
           HasEyesAtDistance G H₀ η₀ θ₀ T₀ d₀ (κ + 1 - n) θ_n →
           Section7S1 S G θ_star T_star κ μ' lam_target θ_target ∨
           Section7S2 S G θ_star T_star φ' ∨
-          Section7S3 S G T_star p_n κ := by
+          Section7ProperS3 S G T_star p_n κ := by
   intro n
   induction n with
   | zero =>
@@ -374,7 +374,7 @@ private theorem inductive_step_1_1
     have hk_le : k ≤ κ := by omega
     have hk_succ : k + 1 = κ + 1 - n := by omega
     obtain ⟨p_k, lam_k, θ_k, hθ_k_ge, hStep⟩ :=
-      GraphMinor.GM15.theorem_1_2_proof.{u, v, w} S hSurf hConn hBd k φ' μ' lam_n θ_n hφ'8 hμ'12
+      GraphMinor.GM15.theorem_1_2_proper.{u, v, w} S hSurf hConn hBd k φ' μ' lam_n θ_n hφ'8 hμ'12
         hμ'_even hlam_n4 hθ_n_ge
     let p_next := max p_k p_n
     let lam_next := max lam_k 4
@@ -444,18 +444,33 @@ def GM15Theorem11Statement : Prop :=
                φ ≤ θ' ∧ IsSigmaSpan G H' η' θ_star θ' T_star T') ∨
           Section7S3 S G T_star p κ
 
-/-- **Graph Minors XV, (1.1)** (pages 115–116):
-Main theorem of Graph Minors XV, proved from `(1.2)` (`GM15Theorem12Statement`), `(5.1)`
-(`theorem_5_1_proof`), and `(7.1)` (`theorem_7_1_proof`). -/
-theorem theorem_1_1_proof
-     :
-    GM15Theorem11Statement.{u, v, w} := by
-  have h12 : GM15Theorem12Statement.{u, v, w} :=
-    theorem_1_2_proof
-  have h51 : GM15Theorem51Statement.{u, v, w} :=
-    theorem_5_1_proof
-  have h71 : GM15Theorem71Statement.{u, v, w} :=
-    theorem_7_1_proof
+/-- Downward eye induction for XV (1.1) retaining the proper arrangement used in XVI (7.2). -/
+theorem theorem_1_1_proper :
+  ∀ (S : Type w) [TopologicalSpace S] [T2Space S],
+    IsSurface S → ConnectedSpace S → bd S = ∅ →
+    ∀ (κ φ μ : ℕ),
+      ∃ (θ lam p : ℕ),
+        ∀ {α : Type u} {β : Type v} (G : Graph α β) (θ_star : ℕ)
+          (T_star : Set (Hypergraph α β × Hypergraph α β))
+          (H₀ : Drawing S) (η₀ : SpanEmbedding H₀ G) (θ₀ : ℕ)
+          (T₀ : Set (Hypergraph S (Set S) × Hypergraph S (Set S)))
+          (d₀ : Set S → Set S → ℕ),
+          IsFlatSpan G H₀ η₀ θ_star θ₀ lam μ T_star T₀ →
+          HasTangleMetric H₀ θ₀ T₀ d₀ →
+          θ ≤ θ₀ →
+          (∃ (H' : Drawing S) (η' : SpanEmbedding H' G) (θ' : ℕ)
+            (T' : Set (Hypergraph S (Set S) × Hypergraph S (Set S)))
+            (d' : Set S → Set S → ℕ),
+            IsSigmaSpan G H' η' θ_star θ' T_star T' ∧
+            HasTangleMetric H' θ' T' d' ∧
+            φ ≤ θ' ∧
+            HasIndependentEyes G H' η' θ' T' d' (κ + 1)) ∨
+          (∃ (S' : Type w) (_ : TopologicalSpace S') (_ : T2Space S'),
+            IsObtainedByAddingCrosscap S S' ∧
+            ∃ (H' : Drawing S') (η' : SpanEmbedding H' G) (θ' : ℕ)
+              (T' : Set (Hypergraph S' (Set S') × Hypergraph S' (Set S'))),
+               φ ≤ θ' ∧ IsSigmaSpan G H' η' θ_star θ' T_star T') ∨
+          Section7ProperS3 S G T_star p κ := by
   intro S _ _ hSurf hConn hBd κ φ μ
   let μ' : ℕ := 2 * (μ + 6)
   let φ' : ℕ := max φ 8
@@ -494,6 +509,20 @@ theorem theorem_1_1_proof
     exact ⟨S', hTS', hT2S', hCross, H', η', φ', T', hφ_le_φ', hSpan'⟩
   · right; right
     exact hS3
+
+/-- **Graph Minors XV, (1.1)** (pages 115–116):
+Main theorem of Graph Minors XV, proved from `(1.2)` (`GM15Theorem12Statement`), `(5.1)`
+(`theorem_5_1_proof`), and `(7.1)` (`theorem_7_1_proof`). -/
+theorem theorem_1_1_proof
+     :
+    GM15Theorem11Statement.{u, v, w} := by
+  intro S _ _ hSurface hConnected hBoundary κ φ μ
+  obtain ⟨order, flatness, width, hresult⟩ :=
+    theorem_1_1_proper.{u,v,w} S hSurface hConnected hBoundary κ φ μ
+  refine ⟨order, flatness, width, ?_⟩
+  intro α β G θ_star T_star H η θ₀ T d hFlat hMetric hle
+  exact (hresult G θ_star T_star H η θ₀ T d hFlat hMetric hle).imp id
+    (Or.imp id Section7ProperS3.toSection7S3)
 
 /-! ## Section 8: Statements and Proofs of `(8.1)`, `(8.2)`, `(8.3)`, and `(8.4)` -/
 

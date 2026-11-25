@@ -80,7 +80,9 @@ theorem hasCliqueMinor_of_controlsMinor {G : Hypergraph α β} {p : ℕ}
     have hadj : s(x, y) ∈ G.skeleton.edgeSet := hxy ▸ h₃ _ hmem
     exact ⟨x, hx, y, hy, hadj⟩
 
-/-- The statement of (10.3) of Graph Minors XX. -/
+/-- The statement of (10.3) of Graph Minors XX.
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 def Theorem103Statement : Prop :=
   ∀ {α' β' : Type} (H : Hypergraph α' β'), H.IsGraph → ∃ (θ : ℕ) (𝒮 : Set GradedSurface), 1 ≤ θ ∧
     𝒮.Finite ∧ ∀ {α : Type u} {β : Type v} [Infinite β] (P : UnlabeledPatchwork α β), IsFree P →

@@ -487,7 +487,7 @@ theorem subBd_image (hP : PH A B f f')
     exact (hP.mem_image_iff hZ (hWA hz)).mp hzi
 
 /-- **Rigidity carries over.** -/
-theorem isRigidIn_mapD (hP : PH A B f f') (hA : IsCompact A) (_hB : IsCompact B)
+theorem isRigidIn_mapD (hP : PH A B f f') (hA : IsCompact A)
     (hbd : f '' subBd A ⊆ subBd B) (hbd' : f' '' subBd B ⊆ subBd A) (H : Drawing X) (hU : H.U ⊆ A)
     (hr : IsRigidIn H A) : IsRigidIn (mapD hP hA H hU) B := by
   intro F' hF'B hO hcap hc

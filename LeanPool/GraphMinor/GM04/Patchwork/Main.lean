@@ -192,25 +192,38 @@ theorem graphPatchwork_isRobust (G : Graph α β) (hV : V(G).Finite) (hE : E(G).
   exact Inc.eq_or_eq_or_eq ha hb hc
 
 open Classical in
-/-- If `graphPatchwork H hVH hEH` is simulated in `graphPatchwork G hVG hEG`, then there is a
-minor model (`IsMinorModel H G ηv ηe`) of `H` in `G`. -/
-theorem isMinorModel_of_simulated {H G : Graph α β}
+/-- An expansion between graph patchworks gives an undirected minor model once the patches
+outside the retained edges realize its branch sets. The order of each endpoint list is free. -/
+theorem isMinorModel_of_realized_graph_expansion {H G : Graph α β}
     {hVH : V(H).Finite} {hEH : E(H).Finite} {hVG : V(G).Finite} {hEG : E(G).Finite}
-    (hsim : Simulated (graphPatchwork H hVH hEH) (graphPatchwork G hVG hEG)) :
-    ∃ (ηv : α → Set α) (ηe : β → β), IsMinorModel H G ηv ηe := by
-  let PH := graphPatchwork H hVH hEH
-  let PG := graphPatchwork G hVG hEG
-  obtain ⟨ηv, ηe, hexp, R, hreal⟩ := hsim
-  have hVP : ∀ v, v ∈ PH.G.vertexSet ↔ v ∈ V(H) := fun _ ↦ Iff.rfl
-  have hEP : ∀ e, e ∈ PH.G.edgeSet ↔ e ∈ E(H) := fun _ ↦ Iff.rfl
-  have hdomH : ∀ e, e ∈ PH.dom ↔ e ∈ E(H) := fun _ ↦ Iff.rfl
-  have hdomG : ∀ e, e ∈ PG.dom ↔ e ∈ E(G) := fun _ ↦ Iff.rfl
+    {PH PG : Patchwork Unit α β}
+    (hPH : PH.G = (Hypergraph.ofGraph H hVH hEH).toRooted)
+    (hPG : PG.G = (Hypergraph.ofGraph G hVG hEG).toRooted)
+    (hdomPH : PH.dom = E(H)) (hdomPG : PG.dom = E(G))
+    (hpatch : ∀ e ∈ E(G), PG.Δ e = graphPatch {x | G.Inc e x})
+    {ηv : α → Set α} {ηe : β → β} {R : (⊤ : SimpleGraph α).Subgraph}
+    (hexp : IsExpansion PH PG ηv ηe) (hreal : Realizes PH PG ηv ηe R) :
+    IsMinorModel H G ηv ηe := by
+  have hVP : ∀ v, v ∈ PH.G.vertexSet ↔ v ∈ V(H) := by rw [hPH]; exact fun _ => Iff.rfl
+  have hEP : ∀ e, e ∈ PH.G.edgeSet ↔ e ∈ E(H) := by rw [hPH]; exact fun _ => Iff.rfl
+  have hdomH : ∀ e, e ∈ PH.dom ↔ e ∈ E(H) := by rw [hdomPH]; exact fun _ => Iff.rfl
+  have hdomG : ∀ e, e ∈ PG.dom ↔ e ∈ E(G) := by rw [hdomPG]; exact fun _ => Iff.rfl
+  have hVG : PG.G.vertexSet = V(G) := hPG ▸ rfl
+  have hEG : PG.G.edgeSet = E(G) := hPG ▸ rfl
+  have hmemv {v : α} (hv : v ∈ V(H)) : ηv v ⊆ V(G) :=
+    hVG ▸ hexp.vertex_subset v ((hVP v).mpr hv)
+  have hmap_edge {e : β} (he : e ∈ E(H)) : ηe e ∈ E(G) :=
+    hEG ▸ hexp.edge_mem e ((hEP e).mpr he)
+  have hendsH (e : β) (he : e ∈ E(H)) : {x | x ∈ PH.μ e} = {x | H.Inc e x} := by
+    rw [PH.μ_set e ((hdomH e).mpr he), hPH]
+    rfl
+  have hendsG (e : β) (he : e ∈ E(G)) : {x | x ∈ PG.μ e} = {x | G.Inc e x} := by
+    rw [PG.μ_set e ((hdomG e).mpr he), hPG]
+    rfl
   have hinc_iff : ∀ v ∈ V(H), ∀ e ∈ E(H), H.Inc e v ↔ ∃ x ∈ ηv v, G.Inc (ηe e) x := by
     intro v hv e he
-    have he' : ηe e ∈ E(G) := hexp.edge_mem e ((hEP e).mpr he)
-    have hμH := PH.μ_set e ((hdomH e).mpr he)
-    have hμG := PG.μ_set (ηe e) ((hdomG (ηe e)).mpr he')
-    rw [graphPatchwork_ends] at hμH hμG
+    have hμH := hendsH e he
+    have hμG := hendsG (ηe e) (hmap_edge he)
     constructor
     · intro hinc
       have hv_mem : v ∈ PH.μ e := by
@@ -245,10 +258,8 @@ theorem isMinorModel_of_simulated {H G : Graph α β}
   have hisLoopAt_iff : ∀ v ∈ V(H), ∀ e ∈ E(H),
       H.IsLoopAt e v ↔ ∀ x, G.Inc (ηe e) x → x ∈ ηv v := by
     intro v hv e he
-    have he' : ηe e ∈ E(G) := hexp.edge_mem e ((hEP e).mpr he)
-    have hμH := PH.μ_set e ((hdomH e).mpr he)
-    have hμG := PG.μ_set (ηe e) ((hdomG (ηe e)).mpr he')
-    rw [graphPatchwork_ends] at hμH hμG
+    have hμH := hendsH e he
+    have hμG := hendsG (ηe e) (hmap_edge he)
     constructor
     · intro hloop x hinc'
       have hx_mem : x ∈ PG.μ (ηe e) := by
@@ -281,16 +292,15 @@ theorem isMinorModel_of_simulated {H G : Graph α β}
       rw [← isLink_self_iff]
       rw [ha_eq, hb_eq] at hab
       exact hab
-  refine ⟨ηv, ηe,
-    fun v hv ↦ hexp.vertex_nonempty v ((hVP v).mpr hv),
-    fun v hv ↦ hexp.vertex_subset v ((hVP v).mpr hv),
-    fun e he ↦ hexp.edge_mem e ((hEP e).mpr he),
+  refine ⟨fun v hv ↦ hexp.vertex_nonempty v ((hVP v).mpr hv), fun _ => hmemv,
+    fun _ => hmap_edge,
     fun v₁ hv₁ v₂ hv₂ ↦ hexp.vertex_disjoint v₁ ((hVP v₁).mpr hv₁) v₂ ((hVP v₂).mpr hv₂),
-    hexp.edge_injOn, hinc_iff, hisLoopAt_iff, ?_⟩
+    (fun a ha b hb => hexp.edge_injOn ((hEP a).mpr ha) ((hEP b).mpr hb)),
+    hinc_iff, hisLoopAt_iff, ?_⟩
   intro v hv
   let K : Graph α β := (G.deleteEdges (ηe '' E(H))).induce (ηv v)
   have hK_le : K ≤ G.deleteEdges (ηe '' E(H)) :=
-    Graph.induce_le (hexp.vertex_subset v ((hVP v).mpr hv))
+    Graph.induce_le (hmemv hv)
   refine ⟨K, hK_le, rfl, hexp.vertex_nonempty v ((hVP v).mpr hv), ?_⟩
   intro x hx y hy
   obtain ⟨D, ⟨z, rfl⟩, hD_verts⟩ := hreal.2 v ((hVP v).mpr hv)
@@ -309,7 +319,7 @@ theorem isMinorModel_of_simulated {H G : Graph α β}
     have hδ_cases : δ e' = emptySubgraph {w | G.Inc e' w} ∨
         δ e' = completeSubgraph {w | G.Inc e' w} := by
       change δ e' ∈ PG.Δ e' at hδ_mem
-      rw [graphPatchwork_Δ, mem_graphPatch_iff] at hδ_mem
+      rw [hpatch e' (hEG ▸ he'_sdiff.1), mem_graphPatch_iff] at hδ_mem
       exact hδ_mem
     rcases hδ_cases with hEq | hEq
     · rw [hEq] at hδ_adj
@@ -327,7 +337,8 @@ theorem isMinorModel_of_simulated {H G : Graph α β}
         · exact absurd hEq' hne
       refine ⟨e', ?_⟩
       simp only [K, Graph.induce_isLink, Graph.deleteEdges_isLink]
-      exact ⟨⟨hlink, he'_sdiff.2⟩, ha, hb⟩
+      exact ⟨⟨hlink, fun he' => he'_sdiff.2
+        ((show PH.G.edgeSet = E(H) from hPH ▸ rfl).symm ▸ he')⟩, ha, hb⟩
   have hreach_K : ∀ u : R.verts, R.coe.Reachable z u → Relation.ReflTransGen K.Adj z.1 u.1 := by
     intro u hr
     rw [SimpleGraph.reachable_iff_reflTransGen] at hr
@@ -353,6 +364,20 @@ theorem isMinorModel_of_simulated {H G : Graph α β}
     | refl => exact Relation.ReflTransGen.refl
     | @tail a b _ hab ih => exact (Relation.ReflTransGen.single hab.symm).trans ih
   exact hxz.trans hzy
+
+open Classical in
+/-- If `graphPatchwork H hVH hEH` is simulated in `graphPatchwork G hVG hEG`, then there is a
+minor model (`IsMinorModel H G ηv ηe`) of `H` in `G`. -/
+theorem isMinorModel_of_simulated {H G : Graph α β}
+    {hVH : V(H).Finite} {hEH : E(H).Finite} {hVG : V(G).Finite} {hEG : E(G).Finite}
+    (hsim : Simulated (graphPatchwork H hVH hEH) (graphPatchwork G hVG hEG)) :
+    ∃ (ηv : α → Set α) (ηe : β → β), IsMinorModel H G ηv ηe := by
+  let PH := graphPatchwork H hVH hEH
+  let PG := graphPatchwork G hVG hEG
+  obtain ⟨ηv, ηe, hexp, R, hreal⟩ := hsim
+  exact ⟨ηv, ηe, isMinorModel_of_realized_graph_expansion
+    (PH := PH) (PG := PG) (hVH := hVH) (hEH := hEH) (hVG := hVG) (hEG := hEG)
+    rfl rfl rfl rfl (fun _ _ => rfl) hexp hreal⟩
 
 open Classical in
 /-- Graph Minors IV, (1.5): for every `k`, the class of graphs of tree-width at most `k` is

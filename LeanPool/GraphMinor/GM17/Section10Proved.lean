@@ -59,21 +59,8 @@ private lemma walk_skeleton_mono {α : Type u} {β : Type v}
 private lemma walk_support_subset_vertexSet {α : Type u} {β : Type v}
     {H : Hypergraph α β} {u v : α} (hu : u ∈ H.vertexSet)
     (W : H.skeleton.Walk u v) :
-    {z | z ∈ W.support} ⊆ H.vertexSet := by
-  induction W with
-  | nil =>
-    intro z hz
-    simp only [SimpleGraph.Walk.support_nil, mem_ofPred_eq, List.mem_cons, List.not_mem_nil,
-      or_false] at hz
-    exact hz ▸ hu
-  | @cons u w v hadj W ih =>
-    rcases hadj with ⟨_, e, _, hew⟩
-    have hw : w ∈ H.vertexSet := H.vertex_mem_of_inc hew
-    intro z hz
-    change z ∈ u :: W.support at hz
-    rcases List.mem_cons.mp hz with rfl | hz
-    · exact hu
-    · exact ih hw hz
+    {z | z ∈ W.support} ⊆ H.vertexSet :=
+  fun _ hz => Hypergraph.skeleton_walk_support_subset_vertexSet W hu _ hz
 
 /-- Existence of `CuffStandardLinkages` from (9.8) (`theorem_9_8_proof`). -/
 theorem exists_cuffStandardLinkages

@@ -138,8 +138,8 @@ theorem Frame.U_inter_V (f : Frame H J Δ a) {x : S} (hx : x ∈ H.U) (hxV : x �
 omit [T2Space S] in
 /-- A closed disc with boundary in the interior of `Δ`, and inside `Δ`, misses the boundary of `Δ`.
 -/
-theorem disc_misses_bd (_hS : IsClosedSurface S) {D : Set S} (hD : subBd D ⊆ Δ \ subBd Δ)
-    (_hclosed : IsClosed D) (hDΔ : D ⊆ Δ) : Disjoint D (subBd Δ) := by
+theorem disc_misses_bd {D : Set S} (hD : subBd D ⊆ Δ \ subBd Δ)
+    (hDΔ : D ⊆ Δ) : Disjoint D (subBd Δ) := by
   refine disjoint_left.mpr fun x hxD hxb => ?_
   have hxfr : x ∉ frontier D := by
     rw [← subBd_eq_frontier]
@@ -189,7 +189,7 @@ theorem Frame.twoCell [ConnectedSpace S] (f : Frame H J Δ a) (hS : IsClosedSurf
     have hbdin : subBd D ⊆ Δ \ subBd Δ := fun x hx => by
       have hxF : x ∈ F := hbd ▸ hx
       exact ⟨hrΔ (hFr hxF), disjoint_left.mp hfr (hFr hxF)⟩
-    have hDb := disc_misses_bd hS hbdin hd.isClosed hDΔ
+    have hDb := disc_misses_bd hbdin hDΔ
     have hDJ : Disjoint D J.U := by
       refine disjoint_left.mpr fun x hxD hxU => ?_
       have hxH : x ∈ H.U := f.rest ⟨hxU, hDΔ hxD, disjoint_left.mp hDb hxD⟩

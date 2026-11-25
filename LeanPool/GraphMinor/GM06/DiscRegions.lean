@@ -505,39 +505,8 @@ theorem disc_isPreconnected_sdiff_finite (hS : IsClosedDiscSpace S) {G F : Set S
     (hGc : IsPreconnected G) (hF : F.Finite) : IsPreconnected (G \ F) := by
   have : T2Space S := t2Space_of_isClosedDiscSpace hS
   have : LocallyPathConnectedSpace S := locallyPathConnectedSpace_of_isClosedDiscSpace hS
-  induction F, hF using Set.Finite.induction_on with
-  | empty => simpa using hGc
-  | @insert x F hxF hF ih =>
-    have hEq : G \ insert x F = (G \ F) \ {x} := by
-      ext y
-      simp only [mem_sdiff, mem_insert_iff, mem_singleton_iff, not_or]
-      tauto
-    rw [hEq]
-    by_cases hx : x ∈ G \ F
-    · have hG' : IsOpen (G \ F) := hG.sdiff hF.isClosed
-      obtain ⟨Z, hZ, hxZ, hZG, hZc, hZcl⟩ := disc_exists_punctured_nbhd hS hG' hx
-      obtain ⟨a, haZ⟩ : (Z \ {x}).Nonempty := by
-        by_contra hcon
-        rw [not_nonempty_iff_eq_empty] at hcon
-        rw [hcon, closure_empty] at hZcl
-        exact hZcl
-      have hcl : IsClosed ((G \ F)ᶜ ∪ {x}) := hG'.isClosed_compl.union isClosed_singleton
-      refine isPreconnected_sdiff_of_local hG' ih hcl ⟨x, hx, rfl⟩ ⟨hZG haZ.1, haZ.2⟩ ?_
-      rintro y hy ⟨t, ⟨-, ht⟩, htc⟩
-      obtain rfl : t = x := ht
-      obtain ⟨b, hbZ, hbC⟩ := mem_closure_iff.mp htc Z hZ hxZ
-      have hbne : b ≠ t := (connectedComponentIn_subset _ _ hbC).2
-      rw [connectedComponentIn_eq hbC]
-      refine hZc.subset_connectedComponentIn ⟨hbZ, hbne⟩ ?_ haZ
-      exact fun q hq => ⟨hZG hq.1, hq.2⟩
-    · have : (G \ F) \ {x} = G \ F := by
-        ext y
-        constructor
-        · exact fun h => h.1
-        · intro hy
-          exact ⟨hy, fun h => hx (by rw [← mem_singleton_iff.mp h]; exact hy)⟩
-      rw [this]
-      exact ih
+  exact isPreconnected_sdiff_finite_of_punctured_nbhd
+    (fun {_} hO {_} hx => disc_exists_punctured_nbhd hS hO hx) hG hGc hF
 
 /-- A point in any nonempty open subset of `S` lies off `U(Γ)` for a proper drawing `Γ`. -/
 theorem disc_exists_notMem_U (hS : IsClosedDiscSpace S) {Γ : Drawing S} (hprop : Γ.IsProper)
@@ -584,114 +553,11 @@ theorem disc_theorem_5_1 (hS : IsClosedDiscSpace S) {Γ Γ' : Drawing S} (hprop 
       Γ.EdgeRegionIncident e a ∧ Γ.EdgeRegionIncident e b := by
   have : T2Space S := t2Space_of_isClosedDiscSpace hS
   have : LocallyPathConnectedSpace S := locallyPathConnectedSpace_of_isClosedDiscSpace hS
-  induction hn : (Γ.E \ Γ'.E).ncard using Nat.strong_induction_on generalizing Γ Z r₁ r₂ with
-  | _ n ih =>
-    by_cases hE : (Γ.E \ Γ'.E).Nonempty
-    · obtain ⟨e, heΓ, heΓ'⟩ := hE
-      have hdel := deleteEdge_isSubdrawing Γ e
-      have hUe := deleteEdge_U Γ heΓ
-      have hprop_del : (Γ.deleteEdge e).IsProper := deleteEdge_isProper hprop e
-      have hsub'' : Γ'.IsSubdrawing (Γ.deleteEdge e) := by
-        refine ⟨by rw [deleteEdge_V]; exact hsub.1, ?_⟩
-        rw [deleteEdge_E]
-        exact fun f hf => ⟨hsub.2 hf, fun hfe => heΓ' (hfe ▸ hf)⟩
-      by_cases hA : ∃ a b : Set S, a ∈ Γ.R ∧ b ∈ Γ.R ∧ a ∈ Z ∧ b ∉ Z ∧ a ⊆ r' ∧ b ⊆ r' ∧
-          e ⊆ closure a ∧ e ⊆ closure b
-      · obtain ⟨a, b, ha, hb, haZ, hbZ, has, hbs, hia, hib⟩ := hA
-        obtain ⟨p, hp⟩ := heΓ.1
-        exact ⟨e, heΓ, heΓ', a, b, haZ, hbZ, has, hbs, ⟨heΓ, ha, p, hp, hia hp⟩,
-          ⟨heΓ, hb, p, hp, hib hp⟩⟩
-      push Not at hA
-      have hsame : ∀ s ∈ (Γ.deleteEdge e).R, s ⊆ r' → ∀ c ∈ Γ.R, ∀ d ∈ Γ.R, c ⊆ s → d ⊆ s →
-          c ∈ Z → d ∈ Z := by
-        intro s hs hsr c hc d hd hcs hds hcZ
-        by_contra hdZ
-        have hne : c ≠ d := fun h => hdZ (h ▸ hcZ)
-        have honly : ∀ {t u : Set S}, t ∈ Γ.R → u ∈ Γ.R → t ⊆ s → u ⊆ s → t ≠ u →
-            e ⊆ closure t := by
-          intro t u ht hu hts hus htu
-          rcases disc_edge_incident_or_disjoint hS hprop heΓ ht with h | h
-          · exact h
-          · exfalso
-            have htdel := region_deleteEdge_of_not_incident heΓ ht h
-            obtain ⟨x, hx⟩ := region_nonempty ht
-            have hts' : t = s := region_eq_of_mem htdel hs hx (hts hx)
-            obtain ⟨y, hy⟩ := region_nonempty hu
-            exact htu (region_eq_of_mem ht hu (hts' ▸ hus hy) hy)
-        exact hA c d hc hd hcZ hdZ (hcs.trans hsr) (hds.trans hsr) (honly hc hd hcs hds hne)
-          (honly hd hc hds hcs hne.symm)
-      have hinr : ∀ s ∈ (Γ.deleteEdge e).R, ∀ z : Set S, z.Nonempty → z ⊆ s → z ⊆ r' → s ⊆ r' := by
-        intro s hs z ⟨x, hx⟩ hzs hzr
-        refine subset_region hr' (region_isPreconnected hs) ?_ (hzs hx) (hzr hx)
-        exact disjoint_left.mpr fun y hy h => region_subset hs hy (hsub''.U_subset h)
-      let Z'' : Set (Set S) := {s | ∃ z ∈ Γ.R, z ∈ Z ∧ z ⊆ r' ∧ z ⊆ s}
-      obtain ⟨s₁, hs₁', hs₁s⟩ := exists_region_superset hdel h₁
-      obtain ⟨s₂, hs₂', hs₂s⟩ := exists_region_superset hdel h₂
-      have hs₂r : s₂ ⊆ r' := hinr s₂ hs₂' r₂ (region_nonempty h₂) hs₂s hs₂
-      have hs₁Z : s₁ ∈ Z'' := ⟨r₁, h₁, hz₁, hs₁, hs₁s⟩
-      have hs₂Z : s₂ ∉ Z'' := by
-        rintro ⟨z, hz, hzZ, -, hzs⟩
-        exact hz₂ (hsame s₂ hs₂' hs₂r z hz r₂ h₂ hzs hs₂s hzZ)
-      have hlt : ((Γ.deleteEdge e).E \ Γ'.E).ncard < n := by
-        have hEq : (Γ.deleteEdge e).E \ Γ'.E = (Γ.E \ Γ'.E) \ {e} := by
-          rw [deleteEdge_E]
-          ext f
-          simp only [mem_sdiff, mem_singleton_iff]
-          tauto
-        rw [hEq, ← hn]
-        exact ncard_sdiff_singleton_lt_of_mem ⟨heΓ, heΓ'⟩
-          (Γ.finite_edges.subset sdiff_subset)
-      obtain ⟨e', he', he'Γ', a, b, haZ, hbZ, has, hbs, hia, hib⟩ :=
-        ih _ hlt hprop_del hsub'' hs₁' hs₁Z hs₂' hs₂Z
-          ((hinr s₁ hs₁' r₁ (region_nonempty h₁) hs₁s hs₁)) hs₂r rfl
-      have he'Γ : e' ∈ Γ.E := hdel.2 he'
-      have he'e : e' ≠ e := by
-        have := he'
-        rw [deleteEdge_E] at this
-        exact this.2
-      have hlift : ∀ s ∈ (Γ.deleteEdge e).R, (e' ∩ closure s).Nonempty →
-          ∃ c ∈ Γ.R, c ⊆ s ∧ Γ.EdgeRegionIncident e' c := by
-        rintro s hs ⟨p, hpe, hps⟩
-        obtain ⟨W, A₁, A₂, hW, hpW, hWU, hcov, c₁, c₂, d₁, d₂, cl₁, cl₂⟩ :=
-          disc_exists_edge_sides hS Γ hprop he'Γ hpe
-        obtain ⟨x, hxW, hxs⟩ := mem_closure_iff.mp hps W hW hpW
-        have hxU'' := region_subset hs hxs
-        have hxU : x ∉ Γ.U := by
-          intro hxU
-          have hxe' : x ∈ e' := hWU ⟨hxW, hxU⟩
-          have hxe : x ∉ e := fun hxe => he'e (Γ.edge_eq_of_mem he'Γ heΓ hxe' hxe)
-          exact hxU'' (by rw [hUe]; exact ⟨hxU, hxe⟩)
-        obtain ⟨c, hc, hxc⟩ := exists_region_of_notMem hxU
-        have hcs : c ⊆ s := subset_region hs (region_isPreconnected hc)
-          (disjoint_left.mpr fun y hy h => region_subset hc hy (hdel.U_subset h)) hxc hxs
-        refine ⟨c, hc, hcs, he'Γ, hc, p, hpe, ?_⟩
-        rcases hcov ⟨hxW, hxU⟩ with hx | hx
-        · exact closure_mono (subset_region hc c₁ d₁ hx hxc) (cl₁ ⟨hpe, hpW⟩)
-        · exact closure_mono (subset_region hc c₂ d₂ hx hxc) (cl₂ ⟨hpe, hpW⟩)
-      obtain ⟨c, hc, hca, hic⟩ := hlift a hia.2.1 hia.2.2
-      obtain ⟨d, hd, hdb, hid⟩ := hlift b hib.2.1 hib.2.2
-      obtain ⟨z, hz, hzZ, hzr, hza⟩ := haZ
-      have hcZ : c ∈ Z := hsame a hia.2.1 has z hz c hc hza hca hzZ
-      have hdZ : d ∉ Z := fun h => hbZ ⟨d, hd, h, hdb.trans hbs, hdb⟩
-      exact ⟨e', he'Γ, he'Γ', c, d, hcZ, hdZ, hca.trans has, hdb.trans hbs, hic, hid⟩
-    · exfalso
-      have hEsub : Γ.E ⊆ Γ'.E := by
-        intro f hf
-        by_contra hf'
-        exact hE ⟨f, hf, hf'⟩
-      have hconn : IsPreconnected (r' \ Γ.V) :=
-        disc_isPreconnected_sdiff_finite hS (region_isOpen hr') (region_isPreconnected hr')
-          Γ.finite_V
-      have hdisj : Disjoint (r' \ Γ.V) Γ.U := by
-        refine disjoint_left.mpr fun x hx hxU => ?_
-        obtain ⟨f, hf, hxf⟩ := Γ.exists_edge_of_mem hxU hx.2
-        exact region_subset hr' hx.1 ((Γ'.closure_subset_U (hEsub hf)) (subset_closure hxf))
-      have hin : ∀ {r : Set S}, r ∈ Γ.R → r ⊆ r' → r ⊆ r' \ Γ.V := fun hr hrr x hx =>
-        ⟨hrr hx, fun hxV => region_subset hr hx (Γ.V_subset_U hxV)⟩
-      obtain ⟨x, hx⟩ := region_nonempty h₁
-      obtain ⟨y, hy⟩ := region_nonempty h₂
-      have hy₁ : y ∈ r₁ := subset_region h₁ hconn hdisj (hin h₁ hs₁ hx) hx (hin h₂ hs₂ hy)
-      exact hz₂ (region_eq_of_mem h₁ h₂ hy₁ hy ▸ hz₁)
+  exact exists_separating_region_edge Drawing.IsProper
+    (fun {_} hp e => deleteEdge_isProper hp e)
+    (fun {_} hp {_ _} he hr => disc_edge_incident_or_disjoint hS hp he hr)
+    (fun {G} hp {_} he {_} hx => disc_exists_edge_sides hS G hp he hx)
+    (disc_isPreconnected_sdiff_finite hS) hprop hsub hr' h₁ hz₁ h₂ hz₂ hs₁ hs₂
 
 /-- A proper drawing on a closed disc space `S` has finitely many regions. -/
 theorem disc_finite_R (hS : IsClosedDiscSpace S) (Γ : Drawing S) (hprop : Γ.IsProper) :

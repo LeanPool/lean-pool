@@ -92,7 +92,7 @@ theorem exists_part_map {H P₀ : Drawing S} {Δ A : Set S} (hΔ : IsClosedDisc 
     have h₁ : f' (f x) ∈ subBd Δ := hbd' (mem_image_of_mem f' (hsbD.symm ▸ hxC))
     rw [hP.left (hHΔ hx)] at h₁
     exact mem_image_of_mem f (hHbd ⟨hx, h₁⟩)
-  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hBc hbd hbd' H hHΔ hrigid
+  have hMr : IsRigidIn M D₁ := isRigidIn_mapD hP hAc hbd hbd' H hHΔ hrigid
   have hΓ : Γ.IsSubdrawing M := by
     refine ⟨image_mono hP₀.1, ?_⟩
     change (mapD hP hAc P₀ hU₀).E ⊆ (mapD hP hAc H hHΔ).E

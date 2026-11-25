@@ -58,7 +58,9 @@ rootless, robust $\Omega$-patchworks and suppose that for each $P \in \mathscr{D
 tie-breaker $\lambda$ in $\|P\|^-$ such that for every tangle $\mathscr{T}$ in $G^-$ of order $\ge
 \theta$, there is an $\Omega$-place $(P, \mathscr{L})$ with heart in $\mathscr{C}$ such that
 $\mathscr{L}^-$ $\theta$-isolates $\mathscr{T}$. Then $\mathscr{D}$ is well-quasi-ordered by
-simulation.*" -/
+simulation.*"
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 def GM18Theorem67Statement : Prop :=
   ∀ {Ω : Type (max u v)} [Preorder Ω] {α : Type u} {β : Type v} [Infinite β] (𝒞 : Set
     (PartialPatchwork Ω α β))

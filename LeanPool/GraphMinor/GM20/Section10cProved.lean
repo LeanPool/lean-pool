@@ -33,7 +33,9 @@ variable {α : Type u} {β : Type v}
 *Let* $P_i = (G_i, \mu_i, \Delta_i,
 \phi_i)$ $(i = 1, 2, \dots)$ *be a countable sequence of free rootless* $\Omega$*-patchworks
 such that for all* $i \ge 1$, $sk(G_i^-)$ *has no* $K_p$ *minor. Then there exist* $j > i
-\ge 1$ *such that* $P_i$ *is simulated in* $P_j$." -/
+\ge 1$ *such that* $P_i$ *is simulated in* $P_j$."
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_10_4_proof [Infinite β]
     {Ω : Type (max u v)} [Preorder Ω] (hΩ : WellQuasiOrderedLE Ω) (p : ℕ)
     (P : ℕ → GM04.Patchwork Ω α β) (hfree : ∀ i, IsFree (P i)) (hroot : ∀ i, IsRootless (P i))

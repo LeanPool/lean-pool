@@ -51,10 +51,12 @@ def GM07Theorem42Statement : Prop :=
       (∀ F : Set S, IsOArc F → F ⊆ Y → ∃ Δ : Set S, IsClosedDisc Δ ∧ subBd Δ = F ∧ Δ ⊆ Y) →
       (IsSphere S ∧ Y = univ) ∨ IsOpenDisc Y
 
-/-- Statement of Graph Minors VII, (11.9) (page 253):
+/-- Closed-surface form of Graph Minors VII, (11.9) (page 253):
 "If $\Sigma$ is connected and $Z \subseteq \Sigma$ is flat and l.a.c., and either $Z$ is
 closed or $Z$ is arc-connected, then there is an open simply connected subset $Y \subseteq
-\Sigma$ with $Z \subseteq Y$." -/
+\Sigma$ with $Z \subseteq Y$."
+
+For surfaces with boundary, `GM07.gm07_theorem_11_9_subset` uses `IsSimplyConnectedSubset`. -/
 def GM07Theorem119Statement : Prop :=
   ∀ (S : Type u) [TopologicalSpace S] [T1Space S],
     IsSurface S → ConnectedSpace S → bd S = ∅ →

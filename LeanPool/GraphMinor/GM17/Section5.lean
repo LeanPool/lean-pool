@@ -8,6 +8,8 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
+public import LeanPool.GraphMinor.GM17.Defs2
+
 public import LeanPool.GraphMinor.GM17.Section4
 import LeanPool.GraphMinor.Surface.DiscUnion
 import LeanPool.GraphMinor.Surface.DiscsInSurface
@@ -858,12 +860,6 @@ theorem one_le_warp_of_isZeroRedundant
   π.one_le_warp
 
 /-! ## 4. Cutting Along a $\Gamma$-Normal $I$-Arc or $O$-Arc: (5.3) and (5.4) (Pages 172–173) -/
-
-/-- A subset $F \subseteq \Sigma$ is *$\Gamma$-normal* if $F \cap U(\Gamma) \subseteq N(\Gamma)$.
-Graph Minors XVII, Section 1 (page 165). -/
-@[expose]
-def Painting.IsNormal {S : Type} [TopologicalSpace S] (Γ : Painting S) (F : Set S) : Prop :=
-  F ∩ Γ.U ⊆ Γ.N
 
 /-- Separation of $G$ of order $0$ induced by a curve $F$ with $F \cap \operatorname{dom}(\gamma) =
 \emptyset$ and $\beta(n) = \emptyset$ for all $n \in F \cap N(\Gamma) \cap

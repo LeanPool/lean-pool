@@ -168,14 +168,6 @@ def DiscDifferenceStatement : Prop :=
       discBd (closure (Δ₂ \ Δ₁)) = (discBd Δ₁ ∪ discBd Δ₂) \ (L \ {s, t}) ∧
       closure (Δ₂ \ Δ₁) ∩ Δ₁ = discBd Δ₁ \ (L \ {s, t})
 
-/-- The pair `{a, c}` *crosses* `{b, d}` on `C`: the four points are distinct points of `C`, and
-`b` and `d` lie in different components of `C \ {a, c}`. This is the crossing relation of Graph
-Minors VI, Section 2 (page 117). -/
-def PairsCrossOn {S : Type u} [TopologicalSpace S] (C : Set S) (a c b d : S) : Prop :=
-  a ∈ C ∧ b ∈ C ∧ c ∈ C ∧ d ∈ C ∧
-  a ≠ c ∧ b ≠ d ∧ a ≠ b ∧ a ≠ d ∧ c ≠ b ∧ c ≠ d ∧
-  connectedComponentIn (C \ {a, c}) b ≠ connectedComponentIn (C \ {a, c}) d
-
 /-- Two compact connected sets in a closed disc `D` meet if their ends cross on `bd D`.
 Graph Minors VI, Sections 2 and 3; Graph Minors IX, Section 1 (page 41). The sets of the papers
 are paths and connected subgraphs of drawings, which are compact. For arbitrary connected sets

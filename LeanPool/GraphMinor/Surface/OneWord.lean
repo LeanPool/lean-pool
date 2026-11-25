@@ -196,16 +196,26 @@ theorem exists_shared [ConnectedSpace X] {W : ℕ → List Letter} {f : ℕ × �
     | trans _ _ _ _ _ h1 h2 => exact h1.trans h2
   exact hbp ((key a b hr).mp hap)
 
-theorem exists_one_word [ConnectedSpace X] (n : ℕ) : ∀ (S : Finset ℕ) (W : ℕ → List Letter)
-  (f : ℕ × ℂ → X),
-    S.card = n → FinW W → W 0 ≠ [] → Presents W f → (∀ i, W i ≠ [] → 2 ≤ (W i).length) →
-      (∀ i, i ∉ S → W i = []) →
-    (∀ c, ∑ i ∈ S, cnt (W i) c ≤ 2) → ∃ (w : List Letter) (g : ℕ × ℂ → X), w ≠ [] ∧ Good w
-      ∧ Presents (sW w) g := by
+/-- Glue all the polygons while preserving an invariant of their words and presentation.
+The gluing step for two polygons supplies the invariant on the updated presentation. -/
+theorem exists_one_word_preserving [ConnectedSpace X]
+    (P : (ℕ → List Letter) → (ℕ × ℂ → X) → Prop)
+    (hglue : ∀ {W : ℕ → List Letter} {f : ℕ × ℂ → X}, FinW W → Presents W f → P W f →
+      ∀ {j k : ℕ} {e e' : Bool}, j ≠ 0 → (k, e) ∈ W 0 → (k, e') ∈ W j →
+        cnt (W 0) k = 1 → cnt (W j) k = 1 → (∀ i, i ≠ 0 → i ≠ j → cnt (W i) k = 0) →
+        2 ≤ (W 0).length → 2 ≤ (W j).length →
+        ∃ w g, Presents (update (update W j []) 0 w) g ∧ P (update (update W j []) 0 w) g ∧
+          2 ≤ w.length ∧ ∀ c, cnt w c ≤ cnt (W 0) c + cnt (W j) c)
+    (n : ℕ) :
+    ∀ (S : Finset ℕ) (W : ℕ → List Letter) (f : ℕ × ℂ → X),
+      S.card = n → FinW W → W 0 ≠ [] → Presents W f → P W f →
+      (∀ i, W i ≠ [] → 2 ≤ (W i).length) → (∀ i, i ∉ S → W i = []) →
+      (∀ c, ∑ i ∈ S, cnt (W i) c ≤ 2) →
+      ∃ w g, 2 ≤ w.length ∧ Good w ∧ Presents (sW w) g ∧ P (sW w) g := by
   classical
   induction n using Nat.strong_induction_on with
   | _ n ih =>
-  intro S W f hn hW h0 hf hlen hS hsum
+  intro S W f hn hW h0 hf hok hlen hS hsum
   have h0S : 0 ∈ S := by
     by_contra h
     exact h0 (hS 0 h)
@@ -216,7 +226,7 @@ theorem exists_one_word [ConnectedSpace X] (n : ℕ) : ∀ (S : Finset ℕ) (W :
       · subst hi
         simp [sW]
       · simp [sW, nW, update_of_ne hi, hall i hi]
-    refine ⟨W 0, f, h0, fun c => ?_, e ▸ hf⟩
+    refine ⟨W 0, f, hlen 0 h0, fun c => ?_, e ▸ hf, e ▸ hok⟩
     exact (Finset.single_le_sum (f := fun i => cnt (W i) c) (fun _ _ => Nat.zero_le _) h0S).trans
       (hsum c)
   push Not at hall
@@ -240,17 +250,17 @@ theorem exists_one_word [ConnectedSpace X] (n : ℕ) : ∀ (S : Finset ℕ) (W :
     intro i hi0 hij
     by_cases hiS : i ∈ S
     · have h1 : i ∈ (S.erase j).erase 0 := Finset.mem_erase.mpr ⟨hi0, Finset.mem_erase.mpr ⟨hij,
-      hiS⟩⟩
+        hiS⟩⟩
       have h2 := Finset.single_le_sum (f := fun i => cnt (W i) k) (fun _ _ => Nat.zero_le _) h1
       omega
     · rw [hS i hiS]
       rfl
-  obtain ⟨w, hpe, hwl, hwc⟩ := merge_step.{u} hW hj m0 m1 (by omega) (by omega) hrest (hlen 0 h0)
+  obtain ⟨w, g, hg, hokg, hwl, hwc⟩ := hglue hW hf hok hj m0 m1 (by omega)
+    (by omega) hrest (hlen 0 h0)
     (hlen j hjne)
-  obtain ⟨g, hg⟩ := (hpe X).mp ⟨f, hf⟩
   have hwne : w ≠ [] := fun he => by simp [he] at hwl
   refine ih (S.erase j).card ?_ (S.erase j) _ g rfl ((hW.update _ _).update _ _)
-    (by simpa using hwne) hg ?_ ?_ ?_
+    (by simpa using hwne) hg hokg ?_ ?_ ?_
   · rw [← hn]
     exact Finset.card_erase_lt_of_mem hjS
   · intro i hi
@@ -284,5 +294,20 @@ theorem exists_one_word [ConnectedSpace X] (n : ℕ) : ∀ (S : Finset ℕ) (W :
     have h3 := hwc c
     have h4 := split c
     omega
+
+theorem exists_one_word [ConnectedSpace X] (n : ℕ) : ∀ (S : Finset ℕ) (W : ℕ → List Letter)
+  (f : ℕ × ℂ → X),
+    S.card = n → FinW W → W 0 ≠ [] → Presents W f → (∀ i, W i ≠ [] → 2 ≤ (W i).length) →
+      (∀ i, i ∉ S → W i = []) →
+    (∀ c, ∑ i ∈ S, cnt (W i) c ≤ 2) → ∃ (w : List Letter) (g : ℕ × ℂ → X), w ≠ [] ∧ Good w
+      ∧ Presents (sW w) g := by
+  intro S W f hn hW h0 hf hlen hS hsum
+  obtain ⟨w, g, hwl, hgood, hg, -⟩ :=
+    exists_one_word_preserving (X := X) (fun _ _ => True) (by
+      intro W' f' hW' hf' _ j k e e' hj hm0 hm1 c0 c1 hrest hlen0 hlen1
+      obtain ⟨w, hpe, hwl, hwc⟩ := merge_step.{u} hW' hj hm0 hm1 c0 c1 hrest hlen0 hlen1
+      obtain ⟨g, hg⟩ := (hpe X).mp ⟨f', hf'⟩
+      exact ⟨w, g, hg, trivial, hwl, hwc⟩) n S W f hn hW h0 hf trivial hlen hS hsum
+  exact ⟨w, g, fun h => by simp [h] at hwl, hgood, hg⟩
 
 end GraphMinor.Surface

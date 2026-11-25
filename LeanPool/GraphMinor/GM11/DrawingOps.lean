@@ -149,18 +149,18 @@ theorem arcComponentsIn_image {S' : Type*} [TopologicalSpace S'] {F : Set S} {f 
     have h₂ := hmax _ (hgsub hD) (hconn' hD hDc) h₁
     rw [← h₂, hfgim hD]
 
-omit [T2Space S] in
-/-- Move a drawing along a map that is injective on its point set. -/
-theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [CompactSpace S] [Nonempty
-  S]
-    (D : Drawing S) {f : S → S'} (hf : Continuous f) (hinj : InjOn f D.U) :
+/-- Transport a drawing `D : Drawing S` whose point set `D.U` is compact along a map `f : S → S'`
+continuous and injective on `D.U`. -/
+theorem exists_transportOn_of_isCompact {S S' : Type*} [TopologicalSpace S] [Nonempty S]
+    [TopologicalSpace S'] [T2Space S']
+    (D : Drawing S) (hUc : IsCompact D.U) {f : S → S'} (hf : ContinuousOn f D.U)
+    (hinj : InjOn f D.U) :
     ∃ D' : Drawing S', D'.U = f '' D.U ∧ D'.V = f '' D.V ∧ D'.E = image f '' D.E ∧
       ∀ e ∈ D.E, closure (f '' e) = f '' closure e := by
   classical
-  have hUc : IsCompact D.U := D.isClosed_U.isCompact
   have : CompactSpace D.U := isCompact_iff_compactSpace.mp hUc
   let ι : D.U → S' := fun x => f x.1
-  have hιc : Continuous ι := hf.comp continuous_subtype_val
+  have hιc : Continuous ι := hf.comp_continuous continuous_subtype_val Subtype.prop
   have hιi : Function.Injective ι := fun x y h => Subtype.ext (hinj x.2 y.2 h)
   have hemb := hιc.isClosedEmbedding hιi
   have hrange : range ι = f '' D.U := by
@@ -186,20 +186,29 @@ theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [Compac
     exact Continuous.subtype_mk continuous_subtype_val _
   have hsub : D.U \ D.V ⊆ D.U := sdiff_subset
   have hgF : ContinuousOn g (f '' (D.U \ D.V)) := hg.mono (image_mono hsub)
-  have harc := arcComponentsIn_image (F := D.U \ D.V) hf.continuousOn hgF fun x hx => hgf x hx.1
-  have hdiff : f '' D.U \ f '' D.V = f '' (D.U \ D.V) := (InjOn.image_sdiff_subset hinj
-    D.V_subset_U).symm
+  have harc := arcComponentsIn_image (F := D.U \ D.V) (hf.mono hsub) hgF fun x hx => hgf x hx.1
+  have hdiff : f '' D.U \ f '' D.V = f '' (D.U \ D.V) :=
+    (InjOn.image_sdiff_subset hinj D.V_subset_U).symm
   have hcl : ∀ e ∈ D.E, closure (f '' e) = f '' closure e := by
     intro e he
+    have he_sub : closure e ⊆ D.U := D.closure_subset_U he
     apply subset_antisymm
-    · have hc : IsCompact (f '' closure e) := (isClosed_closure.isCompact).image hf
+    · have hc : IsCompact (f '' closure e) :=
+        (hUc.of_isClosed_subset isClosed_closure he_sub).image_of_continuousOn (hf.mono he_sub)
       exact closure_minimal (image_mono subset_closure) hc.isClosed
-    · exact image_closure_subset_closure_image hf
+    · rintro _ ⟨x, hx, rfl⟩
+      rw [_root_.mem_closure_iff]
+      intro V hV hfxV
+      obtain ⟨W, hW_open, hxW, hWV⟩ :=
+        mem_nhdsWithin.mp (hf.mono he_sub x hx (hV.mem_nhds hfxV))
+      obtain ⟨y, hyW, hye⟩ := _root_.mem_closure_iff.mp hx W hW_open hxW
+      exact ⟨f y, hWV ⟨hyW, subset_closure hye⟩, mem_image_of_mem f hye⟩
   have hcap : ∀ e ∈ D.E, closure (f '' e) ∩ f '' D.V = f '' (closure e ∩ D.V) := by
     intro e he
     rw [hcl e he]
     exact (InjOn.image_inter hinj (D.closure_subset_U he) D.V_subset_U).symm
-  refine ⟨⟨f '' D.U, f '' D.V, image_mono D.V_subset_U, hUc.image hf |>.isClosed,
+  refine ⟨⟨f '' D.U, f '' D.V, image_mono D.V_subset_U,
+    (hUc.image_of_continuousOn hf).isClosed,
     D.finite_V.image f, ?_, ?_⟩, rfl, rfl, ?_, hcl⟩
   rotate_left 2
   · change arcComponentsIn (f '' D.U \ f '' D.V) = _
@@ -219,8 +228,9 @@ theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [Compac
       refine ⟨f u, f v, fun h => huv (hinje (hmem u (by simp)) (hmem v (by simp)) h), ?_, ?_⟩
       · rw [hc, image_pair]
       · obtain ⟨φ₁, h0, h1⟩ := hL
-        have hc₁ : Continuous fun t => f (φ₁ t).1 := hf.comp (continuous_subtype_val.comp
-          φ₁.continuous)
+        have hc₁ : Continuous fun t => f (φ₁ t).1 :=
+          hf.comp_continuous (continuous_subtype_val.comp φ₁.continuous)
+            fun t => D.closure_subset_U he (φ₁ t).2
         have hi₁ : Function.Injective fun t => f (φ₁ t).1 := fun x y h =>
           φ₁.injective (Subtype.ext (hinje (φ₁ x).2 (φ₁ y).2 h))
         have hl := isLine_range hc₁ hi₁
@@ -237,8 +247,9 @@ theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [Compac
       refine ⟨f u, ?_, ?_⟩
       · rw [hc, image_singleton]
       · obtain ⟨φ₂⟩ := hF
-        have hc₂ : Continuous fun t => f (φ₂ t).1 := hf.comp (continuous_subtype_val.comp
-          φ₂.continuous)
+        have hc₂ : Continuous fun t => f (φ₂ t).1 :=
+          hf.comp_continuous (continuous_subtype_val.comp φ₂.continuous)
+            fun t => D.closure_subset_U he (φ₂ t).2
         have hi₂ : Function.Injective fun t => f (φ₂ t).1 := fun x y h =>
           φ₂.injective (Subtype.ext (hinje (φ₂ x).2 (φ₂ y).2 h))
         have hr : range (fun t => f (φ₂ t).1) = f '' closure e := by
@@ -250,5 +261,14 @@ theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [Compac
             exact ⟨φ₂.symm ⟨x, hx⟩, by simp⟩
         have hem := (hc₂.isClosedEmbedding hi₂).isEmbedding.toHomeomorph
         exact ⟨hem.trans (Homeomorph.setCongr (hr.trans (hcl e he).symm))⟩
+
+omit [T2Space S] in
+/-- Move a drawing along a map that is injective on its point set. -/
+theorem exists_transport {S' : Type*} [TopologicalSpace S'] [T2Space S'] [CompactSpace S] [Nonempty
+  S]
+    (D : Drawing S) {f : S → S'} (hf : Continuous f) (hinj : InjOn f D.U) :
+    ∃ D' : Drawing S', D'.U = f '' D.U ∧ D'.V = f '' D.V ∧ D'.E = image f '' D.E ∧
+      ∀ e ∈ D.E, closure (f '' e) = f '' closure e :=
+  exists_transportOn_of_isCompact D D.isClosed_U.isCompact hf.continuousOn hinj
 
 end GraphMinor.GM11

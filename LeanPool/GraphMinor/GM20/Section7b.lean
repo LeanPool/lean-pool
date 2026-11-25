@@ -425,7 +425,9 @@ countable sequence of free rootless $\Omega$-patchworks. Suppose that for each t
 $\mathcal{T}$ in $G_i$ of order $\ge \theta$, there exist $W \subseteq V(G_i)$ with $|W| <
 \theta$ and a fine rooted location $\mathcal{L}$ in $G/W$, such that $\mathcal{L}$ is linked
 to $\mathcal{T}/W$, and $\mathcal{F}$ contains a heart of $((G_i, \mu_i, \Delta_i)/W,
-\mathcal{L})$. Then there exist $j > i \ge 1$ such that $P_i$ is simulated in $P_j$." -/
+\mathcal{L})$. Then there exist $j > i \ge 1$ such that $P_i$ is simulated in $P_j$."
+
+Lean uses an infinite ambient edge type to provide fresh edge labels. -/
 theorem theorem_7_3_proof [Infinite β] {Ω : Type (max u v)} [Preorder Ω] (hΩ : WellQuasiOrderedLE Ω)
     {𝓕 : Set (UnlabeledPatchwork α β)} (h𝓕 : WellBehaved 𝓕) {θ : ℕ} (hθ : 1 ≤ θ)
     (P : ℕ → GM04.Patchwork Ω α β) (hfree : ∀ i, IsFree (P i)) (hroot : ∀ i, IsRootless (P i))
