@@ -9,6 +9,7 @@ Authors: Mike Lady
 module
 
 public import LeanPool.TetrahedronPacking.RecordDensity
+public import LeanPool.TetrahedronPacking.ClearanceCertificate
 
 /-!
 # Chen–Engel–Glotzer periodic tetrahedron packing
@@ -17,7 +18,8 @@ Source: arxiv:1001.0586v3, doi:10.1007/s00454-010-9273-0, url:https://github.com
 Authors: Mike Lady
 Status: verified
 Main declarations: `PackingCertificate.packing_density`,
-  `TetrahedronPacking.periodic_convex_density`
+  `TetrahedronPacking.periodic_convex_density`,
+  `TetrahedronPacking.disjoint_interiors_of_checkClearancePair`
 Tags: discrete-geometry, lattice-packing, convex-geometry, exact-certificates
 MSC: 52C17, 52C07, 68V15
 -/
