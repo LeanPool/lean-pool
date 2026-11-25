@@ -85,7 +85,7 @@ theorem mem_subgraphU_iff (hν : ∀ v : V(A), (Y.iso.vertexEquiv v).1 = ν v.1)
     rfl
 
 /-- An edge off the circuit is inside the disc or outside it. -/
-theorem edge_sides (_hν : ∀ v : V(A), (Y.iso.vertexEquiv v).1 = ν v.1) (hS : IsClosedSurface S)
+theorem edge_sides (hS : IsClosedSurface S)
     {E' : Set S} (hE : IsClosedDisc E') (hC : C ≤ A) (hbd : discBd E' = graphDrawingSubgraphU Y C)
     {e : β} (he : e ∈ E(A)) (heC : e ∉ E(C)) :
     graphDrawingEdgeSet Y e ⊆ discInt E' ∨ Disjoint (graphDrawingEdgeSet Y e) E' := by
@@ -150,7 +150,7 @@ theorem exists_cut (hν : ∀ v : V(A), (Y.iso.vertexEquiv v).1 = ν v.1) (hS : 
     rintro e he (h | h)
     · by_cases heC : e ∈ E(C)
       · exact absurd (subset_closure.trans ((hCbd e heC).trans hbE)) h
-      · rcases edge_sides hν hS hE hC hbd he heC with h' | h'
+      · rcases edge_sides hS hE hC hbd he heC with h' | h'
         · exact absurd (h'.trans sdiff_subset) h
         · refine closure_minimal ?_ hopen.isClosed_compl
           exact fun x hx hxi => disjoint_left.mp h' hx hxi.1

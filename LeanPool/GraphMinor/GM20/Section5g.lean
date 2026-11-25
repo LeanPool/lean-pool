@@ -248,7 +248,9 @@ contains a heart of $(P, \mathcal{L}')$, and for each $C \in \mathcal{L}'$ and e
 \mathcal{M}(\mathcal{T}, W, \theta)$, either $C^- \subseteq A^*$ and $B^* \subseteq (G \setminus
 C)^-$, or $C^- \subseteq B^*$ and $A^* \subseteq (G \setminus C)^-$.*"
 
-Lean uses an infinite ambient edge type to provide fresh edge labels. -/
+Lean uses an infinite ambient edge type to provide fresh edge labels. Under the remaining
+hypotheses, the Lean statement applies to every natural number `θ` and every `W`, including
+the printed case `1 ≤ θ`, `W ⊆ zSet P.G.toHypergraph` and `W.ncard ≤ θ`. -/
 theorem theorem_5_4_proof [Infinite β] {𝓕 : Set (UnlabeledPatchwork α β)} (h𝓕 : WellBehaved 𝓕)
   (θ : ℕ) :
     ∃ 𝓕' : Set (UnlabeledPatchwork α β), WellBehaved 𝓕' ∧

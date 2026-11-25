@@ -53,18 +53,42 @@ theorem drawing_V_eq_image {S : Type*} [TopologicalSpace S] {G : Graph α β}
     rw [← hν ⟨x, hx⟩]
     exact (Γ.iso.vertexEquiv ⟨x, hx⟩).2
 
-/-- Transport a `GraphDrawing G S` with compact `U` along a continuous map `f : S → S'` injective on
-`U`. -/
-theorem GraphDrawing.transport {S S' : Type*} [TopologicalSpace S] [Nonempty S]
+private theorem graphDrawingVertexSet_eq_singleton' {S : Type w} [TopologicalSpace S]
+    {G : Graph α β} (Γ : GraphDrawing G S) {v : α} (hv : v ∈ V(G)) :
+    graphDrawingVertexSet Γ v = {(Γ.iso.vertexEquiv ⟨v, hv⟩).1} := by
+  ext x
+  simp [graphDrawingVertexSet, hv, eq_comm]
+
+private theorem graphDrawingVertexSet_of_notMem {S : Type w} [TopologicalSpace S]
+    {G : Graph α β} (Γ : GraphDrawing G S) {v : α} (hv : v ∉ V(G)) :
+    graphDrawingVertexSet Γ v = ∅ := by
+  ext x
+  simp [graphDrawingVertexSet, hv]
+
+private theorem graphDrawingEdgeSet_eq' {S : Type w} [TopologicalSpace S]
+    {G : Graph α β} (Γ : GraphDrawing G S) {e : β} (he : e ∈ E(G)) :
+    graphDrawingEdgeSet Γ e = (Γ.iso.edgeEquiv ⟨e, he⟩).1 := by
+  ext x
+  simp [graphDrawingEdgeSet, he]
+
+private theorem graphDrawingEdgeSet_of_notMem {S : Type w} [TopologicalSpace S]
+    {G : Graph α β} (Γ : GraphDrawing G S) {e : β} (he : e ∉ E(G)) :
+    graphDrawingEdgeSet Γ e = ∅ := by
+  ext x
+  simp [graphDrawingEdgeSet, he]
+
+private theorem transportGraphDrawingImages {S S' : Type*} [TopologicalSpace S] [Nonempty S]
     [TopologicalSpace S'] [T2Space S'] {G : Graph α β}
-    (Γ : GraphDrawing G S) (hUc : IsCompact Γ.drawing.U) {ν : α → S}
-    (hν : ∀ v : V(G), (Γ.iso.vertexEquiv v).1 = ν v.1)
-    {f : S → S'} (hf : Continuous f) (hinj : InjOn f Γ.drawing.U) :
+    (Γ : GraphDrawing G S) (hUc : IsCompact Γ.drawing.U)
+    {f : S → S'} (hf : ContinuousOn f Γ.drawing.U) (hinj : InjOn f Γ.drawing.U) :
     ∃ Γ' : GraphDrawing G S',
       Γ'.drawing.U = f '' Γ.drawing.U ∧
       Γ'.drawing.V = f '' Γ.drawing.V ∧
-      ∀ v : V(G), (Γ'.iso.vertexEquiv v).1 = f (ν v.1) := by
-  obtain ⟨D', hU', hV', hE', hcl⟩ := exists_transport_of_isCompact Γ.drawing hUc hf hinj
+      (∀ v : V(G), (Γ'.iso.vertexEquiv v).1 = f (Γ.iso.vertexEquiv v).1) ∧
+      (∀ v, graphDrawingVertexSet Γ' v = f '' graphDrawingVertexSet Γ v) ∧
+      (∀ e, graphDrawingEdgeSet Γ' e = f '' graphDrawingEdgeSet Γ e) ∧
+      (∀ H, graphDrawingSubgraphU Γ' H = f '' graphDrawingSubgraphU Γ H) := by
+  obtain ⟨D', hU', hV', hE', hcl⟩ := GM11.exists_transportOn_of_isCompact Γ.drawing hUc hf hinj
   have hinjV : InjOn f Γ.drawing.V := hinj.mono Γ.drawing.V_subset_U
   have hinjE : InjOn (image f) Γ.drawing.E := by
     intro e₁ he₁ e₂ he₂ heq
@@ -100,8 +124,6 @@ theorem GraphDrawing.transport {S S' : Type*} [TopologicalSpace S] [Nonempty S]
        exact ⟨⟨e, he⟩, Subtype.ext hfe⟩⟩
   let vEquiv : Γ.drawing.V ≃ D'.V := Equiv.ofBijective vFun hvFun_bij
   let eEquiv : Γ.drawing.E ≃ D'.E := Equiv.ofBijective eFun heFun_bij
-  have hvEquiv_val : ∀ x : Γ.drawing.V, (vEquiv x).1 = f x.1 := fun _ => rfl
-  have heEquiv_val : ∀ e : Γ.drawing.E, (eEquiv e).1 = f '' e.1 := fun _ => rfl
   let iso' : Iso G D'.toGraph :=
     { vertexEquiv := Γ.iso.vertexEquiv.trans vEquiv
       edgeEquiv := Γ.iso.edgeEquiv.trans eEquiv
@@ -132,9 +154,43 @@ theorem GraphDrawing.transport {S S' : Type*} [TopologicalSpace S] [Nonempty S]
             · exact Γ.drawing.V_subset_U x₀.2
             · exact Γ.drawing.V_subset_U y₀.2
           exact hinj.image_eq_image_iff hsub1 hsub2 |>.mp hc' }
-  refine ⟨⟨D', iso'⟩, hU', hV', fun v => ?_⟩
-  change f (Γ.iso.vertexEquiv v).1 = f (ν v.1)
-  rw [hν v]
+  let Γ' : GraphDrawing G S' := ⟨D', iso'⟩
+  have hvert : ∀ v, graphDrawingVertexSet Γ' v = f '' graphDrawingVertexSet Γ v := by
+    intro v
+    by_cases hv : v ∈ V(G)
+    · rw [graphDrawingVertexSet_eq_singleton' Γ' hv, graphDrawingVertexSet_eq_singleton' Γ hv,
+        image_singleton]
+      rfl
+    · rw [graphDrawingVertexSet_of_notMem Γ' hv, graphDrawingVertexSet_of_notMem Γ hv, image_empty]
+  have hedge : ∀ e, graphDrawingEdgeSet Γ' e = f '' graphDrawingEdgeSet Γ e := by
+    intro e
+    by_cases he : e ∈ E(G)
+    · rw [graphDrawingEdgeSet_eq' Γ' he, graphDrawingEdgeSet_eq' Γ he]
+      rfl
+    · rw [graphDrawingEdgeSet_of_notMem Γ' he, graphDrawingEdgeSet_of_notMem Γ he, image_empty]
+  have hedge_cl : ∀ e, closure (graphDrawingEdgeSet Γ' e) = f '' closure (graphDrawingEdgeSet Γ e)
+    := by
+    intro e
+    by_cases he : e ∈ E(G)
+    · rw [graphDrawingEdgeSet_eq' Γ' he, graphDrawingEdgeSet_eq' Γ he]
+      exact hcl (Γ.iso.edgeEquiv ⟨e, he⟩).1 (Γ.iso.edgeEquiv ⟨e, he⟩).2
+    · simp [graphDrawingEdgeSet_of_notMem Γ' he, graphDrawingEdgeSet_of_notMem Γ he]
+  refine ⟨Γ', hU', hV', fun _ => rfl, hvert, hedge, fun H => ?_⟩
+  simp only [graphDrawingSubgraphU, image_union, image_iUnion, hvert, hedge_cl]
+
+/-- Transport a `GraphDrawing G S` with compact `U` along a continuous map `f : S → S'` injective on
+`U`. -/
+theorem GraphDrawing.transport {S S' : Type*} [TopologicalSpace S] [Nonempty S]
+    [TopologicalSpace S'] [T2Space S'] {G : Graph α β}
+    (Γ : GraphDrawing G S) (hUc : IsCompact Γ.drawing.U) {ν : α → S}
+    (hν : ∀ v : V(G), (Γ.iso.vertexEquiv v).1 = ν v.1)
+    {f : S → S'} (hf : Continuous f) (hinj : InjOn f Γ.drawing.U) :
+    ∃ Γ' : GraphDrawing G S',
+      Γ'.drawing.U = f '' Γ.drawing.U ∧
+      Γ'.drawing.V = f '' Γ.drawing.V ∧
+      ∀ v : V(G), (Γ'.iso.vertexEquiv v).1 = f (ν v.1) := by
+  obtain ⟨Γ', hU, hV, hv, -, -, -⟩ := transportGraphDrawingImages Γ hUc hf.continuousOn hinj
+  exact ⟨Γ', hU, hV, fun v => (hv v).trans (congrArg f (hν v))⟩
 
 /-- Glue two `GraphDrawing`s on `G₁, G₂ ≤ G` whose drawings meet only inside `ν '' (V(G₁) ∩ V(G₂))`.
 -/
@@ -2039,30 +2095,6 @@ theorem circle_exp_injOn_Ico :
 
 /-! ## Subgraph Restrictions, Plane Closed Discs, and Radial Shrinking -/
 
-private theorem graphDrawingVertexSet_eq_singleton' {S : Type w} [TopologicalSpace S]
-    {G : Graph α β} (Γ : GraphDrawing G S) {v : α} (hv : v ∈ V(G)) :
-    graphDrawingVertexSet Γ v = {(Γ.iso.vertexEquiv ⟨v, hv⟩).1} := by
-  ext x
-  simp [graphDrawingVertexSet, hv, eq_comm]
-
-private theorem graphDrawingVertexSet_of_notMem {S : Type w} [TopologicalSpace S]
-    {G : Graph α β} (Γ : GraphDrawing G S) {v : α} (hv : v ∉ V(G)) :
-    graphDrawingVertexSet Γ v = ∅ := by
-  ext x
-  simp [graphDrawingVertexSet, hv]
-
-private theorem graphDrawingEdgeSet_eq' {S : Type w} [TopologicalSpace S]
-    {G : Graph α β} (Γ : GraphDrawing G S) {e : β} (he : e ∈ E(G)) :
-    graphDrawingEdgeSet Γ e = (Γ.iso.edgeEquiv ⟨e, he⟩).1 := by
-  ext x
-  simp [graphDrawingEdgeSet, he]
-
-private theorem graphDrawingEdgeSet_of_notMem {S : Type w} [TopologicalSpace S]
-    {G : Graph α β} (Γ : GraphDrawing G S) {e : β} (he : e ∉ E(G)) :
-    graphDrawingEdgeSet Γ e = ∅ := by
-  ext x
-  simp [graphDrawingEdgeSet, he]
-
 theorem graphDrawingSubgraphU_subset_drawing_U {S : Type w} [TopologicalSpace S]
     {G : Graph α β} (Γ : GraphDrawing G S) (H : Graph α β) :
     graphDrawingSubgraphU Γ H ⊆ Γ.drawing.U := by
@@ -2255,7 +2287,7 @@ theorem exists_transportOn_of_isCompact {S S' : Type*} [TopologicalSpace S] [Non
 
 /-- Transport a `GraphDrawing G S` with compact `U` along a map `f : S → S'` continuous and
 injective on `U`. -/
-theorem GraphDrawing.transportOn {S S' : Type*} [TopologicalSpace S] [T2Space S] [Nonempty S]
+theorem GraphDrawing.transportOn {S S' : Type*} [TopologicalSpace S] [Nonempty S]
     [TopologicalSpace S'] [T2Space S'] {G : Graph α β}
     (Γ : GraphDrawing G S) (hUc : IsCompact Γ.drawing.U)
     {f : S → S'} (hf : ContinuousOn f Γ.drawing.U) (hinj : InjOn f Γ.drawing.U) :
@@ -2265,96 +2297,8 @@ theorem GraphDrawing.transportOn {S S' : Type*} [TopologicalSpace S] [T2Space S]
       (∀ v : V(G), (Γ'.iso.vertexEquiv v).1 = f (Γ.iso.vertexEquiv v).1) ∧
       (∀ v, graphDrawingVertexSet Γ' v = f '' graphDrawingVertexSet Γ v) ∧
       (∀ e, graphDrawingEdgeSet Γ' e = f '' graphDrawingEdgeSet Γ e) ∧
-      (∀ H, graphDrawingSubgraphU Γ' H = f '' graphDrawingSubgraphU Γ H) := by
-  obtain ⟨D', hU', hV', hE', hcl⟩ := exists_transportOn_of_isCompact Γ.drawing hUc hf hinj
-  have hinjV : InjOn f Γ.drawing.V := hinj.mono Γ.drawing.V_subset_U
-  have hinjE : InjOn (image f) Γ.drawing.E := by
-    intro e₁ he₁ e₂ he₂ heq
-    ext x
-    constructor
-    · intro hx₁
-      have hfx : f x ∈ f '' e₂ := heq ▸ ⟨x, hx₁, rfl⟩
-      obtain ⟨y, hy₂, hfy⟩ := hfx
-      have hxy : y = x :=
-        hinj (Γ.drawing.closure_subset_U he₂ (subset_closure hy₂))
-          (Γ.drawing.closure_subset_U he₁ (subset_closure hx₁)) hfy
-      exact hxy ▸ hy₂
-    · intro hx₂
-      have hfx : f x ∈ f '' e₁ := heq.symm ▸ ⟨x, hx₂, rfl⟩
-      obtain ⟨y, hy₁, hfy⟩ := hfx
-      have hxy : y = x :=
-        hinj (Γ.drawing.closure_subset_U he₁ (subset_closure hy₁))
-          (Γ.drawing.closure_subset_U he₂ (subset_closure hx₂)) hfy
-      exact hxy ▸ hy₁
-  let vFun : Γ.drawing.V → D'.V := fun x => ⟨f x.1, hV' ▸ ⟨x.1, x.2, rfl⟩⟩
-  have hvFun_bij : Function.Bijective vFun :=
-    ⟨fun x y h => Subtype.ext (hinjV x.2 y.2 (congrArg Subtype.val h)),
-     fun z => by
-       have hz : z.1 ∈ f '' Γ.drawing.V := hV' ▸ z.2
-       obtain ⟨x, hx, hfx⟩ := hz
-       exact ⟨⟨x, hx⟩, Subtype.ext hfx⟩⟩
-  let eFun : Γ.drawing.E → D'.E := fun e => ⟨f '' e.1, hE' ▸ ⟨e.1, e.2, rfl⟩⟩
-  have heFun_bij : Function.Bijective eFun :=
-    ⟨fun e₁ e₂ h => Subtype.ext (hinjE e₁.2 e₂.2 (congrArg Subtype.val h)),
-     fun a => by
-       have ha : a.1 ∈ image f '' Γ.drawing.E := hE' ▸ a.2
-       obtain ⟨e, he, hfe⟩ := ha
-       exact ⟨⟨e, he⟩, Subtype.ext hfe⟩⟩
-  let vEquiv : Γ.drawing.V ≃ D'.V := Equiv.ofBijective vFun hvFun_bij
-  let eEquiv : Γ.drawing.E ≃ D'.E := Equiv.ofBijective eFun heFun_bij
-  let iso' : Iso G D'.toGraph :=
-    { vertexEquiv := Γ.iso.vertexEquiv.trans vEquiv
-      edgeEquiv := Γ.iso.edgeEquiv.trans eEquiv
-      isLink_iff := fun {e x y} => by
-        rw [Γ.iso.isLink_iff]
-        let e₀ := Γ.iso.edgeEquiv e
-        let x₀ := Γ.iso.vertexEquiv x
-        let y₀ := Γ.iso.vertexEquiv y
-        change Γ.drawing.toGraph.IsLink e₀.1 x₀.1 y₀.1 ↔
-          D'.toGraph.IsLink (f '' e₀.1) (f x₀.1) (f y₀.1)
-        have he' : f '' e₀.1 ∈ D'.E := hE' ▸ ⟨e₀.1, e₀.2, rfl⟩
-        have hx' : f x₀.1 ∈ D'.V := hV' ▸ ⟨x₀.1, x₀.2, rfl⟩
-        have hy' : f y₀.1 ∈ D'.V := hV' ▸ ⟨y₀.1, y₀.2, rfl⟩
-        have hcap : closure (f '' e₀.1) ∩ D'.V = f '' (closure e₀.1 ∩ Γ.drawing.V) := by
-          rw [hcl e₀.1 e₀.2, hV']
-          exact (InjOn.image_inter hinj (Γ.drawing.closure_subset_U e₀.2) Γ.drawing.V_subset_U).symm
-        constructor
-        · rintro ⟨_, _, _, hc⟩
-          refine ⟨he', hx', hy', ?_⟩
-          rw [hcap, hc, image_pair]
-        · rintro ⟨_, _, _, hc'⟩
-          refine ⟨e₀.2, x₀.2, y₀.2, ?_⟩
-          rw [hcap, ← image_pair] at hc'
-          have hsub1 : closure e₀.1 ∩ Γ.drawing.V ⊆ Γ.drawing.U :=
-            inter_subset_right.trans Γ.drawing.V_subset_U
-          have hsub2 : ({x₀.1, y₀.1} : Set S) ⊆ Γ.drawing.U := by
-            rintro z (rfl | rfl)
-            · exact Γ.drawing.V_subset_U x₀.2
-            · exact Γ.drawing.V_subset_U y₀.2
-          exact hinj.image_eq_image_iff hsub1 hsub2 |>.mp hc' }
-  let Γ' : GraphDrawing G S' := ⟨D', iso'⟩
-  have hvert : ∀ v, graphDrawingVertexSet Γ' v = f '' graphDrawingVertexSet Γ v := by
-    intro v
-    by_cases hv : v ∈ V(G)
-    · rw [graphDrawingVertexSet_eq_singleton' Γ' hv, graphDrawingVertexSet_eq_singleton' Γ hv,
-        image_singleton]
-      rfl
-    · rw [graphDrawingVertexSet_of_notMem Γ' hv, graphDrawingVertexSet_of_notMem Γ hv, image_empty]
-  have hedge : ∀ e, graphDrawingEdgeSet Γ' e = f '' graphDrawingEdgeSet Γ e := by
-    intro e
-    by_cases he : e ∈ E(G)
-    · rw [graphDrawingEdgeSet_eq' Γ' he, graphDrawingEdgeSet_eq' Γ he]
-      rfl
-    · rw [graphDrawingEdgeSet_of_notMem Γ' he, graphDrawingEdgeSet_of_notMem Γ he, image_empty]
-  have hedge_cl : ∀ e, closure (graphDrawingEdgeSet Γ' e) = f '' closure (graphDrawingEdgeSet Γ e)
-    := by
-    intro e
-    by_cases he : e ∈ E(G)
-    · rw [graphDrawingEdgeSet_eq' Γ' he, graphDrawingEdgeSet_eq' Γ he]
-      exact hcl (Γ.iso.edgeEquiv ⟨e, he⟩).1 (Γ.iso.edgeEquiv ⟨e, he⟩).2
-    · simp [graphDrawingEdgeSet_of_notMem Γ' he, graphDrawingEdgeSet_of_notMem Γ he]
-  refine ⟨Γ', hU', hV', fun _ => rfl, hvert, hedge, fun H => ?_⟩
-  simp only [graphDrawingSubgraphU, image_union, image_iUnion, hvert, hedge_cl]
+      (∀ H, graphDrawingSubgraphU Γ' H = f '' graphDrawingSubgraphU Γ H) :=
+  transportGraphDrawingImages Γ hUc hf hinj
 
 theorem isInteriorPoint_plane (x : EuclideanPlane) : IsInteriorPoint x :=
   Surface.isInteriorPoint_euclideanPlane x

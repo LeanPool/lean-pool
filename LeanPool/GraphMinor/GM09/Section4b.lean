@@ -455,13 +455,15 @@ theorem IsFenceFor.ncard_transactionEnds {P_set : Set (Graph α β)} {A B : Set 
       ext x; simp [transactionEnds]
     simp [hW_empty]
 
-private theorem transaction_end_list_partitions_fence {F : Set (Graph α β)} {A B : Set α}
+/-- A clockwise list of transaction ends starts in the first fence side and ends in the second. -/
+theorem transaction_end_list_partitions_fence {F : Set (Graph α β)} {A B : Set α}
     (hfence : S.IsFenceFor F A B) {b_k a_k : α} {L : List α}
     (hk_pos : 0 < F.ncard) (hL_len : L.length = 2 * F.ncard) (hL_cw : S.Ω.IsClockwiseSeq L)
     (hL_0 : ∀ h0 : 0 < L.length, L[0]'h0 = a_k) :
     let W := S.transactionEnds F
     {v | v ∈ L} = W →
     b_k ∈ B ∩ W → a_k ∈ A ∩ W → Disjoint (S.Ω.interval b_k a_k) W →
+    L[2 * F.ncard - 1]'(by omega) = b_k ∧
     (∀ (i : ℕ) (hi : i < L.length), i < F.ncard → L[i]'hi ∈ A) ∧
     (∀ (i : ℕ) (hi : i < L.length), F.ncard ≤ i → L[i]'hi ∈ B) := by
   classical
@@ -581,7 +583,7 @@ private theorem transaction_end_list_partitions_fence {F : Set (Graph α β)} {A
         exact (List.toFinset_card_le (L.drop (i + 1))).trans (by simp)
       omega
     · exact hB
-  exact ⟨hL_A, hL_B⟩
+  exact ⟨hL_last, hL_A, hL_B⟩
 
 /-- Every transaction `F` in which no two members cross can be enumerated as a list `Q` of length
 `F.ncard` with `{P | P ∈ Q} = F` and `S.AreInOrder Q`. -/
@@ -613,7 +615,7 @@ theorem IsTransaction.exists_areInOrder_of_not_cross {F : Set (Graph α β)}
     obtain ⟨L, hL_len_W, hL_set, hL_0, hL_cw⟩ :=
       S.Ω.exists_isClockwiseSeq_of_subset_bar hW_bar ha_k.2
     have hL_len : L.length = 2 * k := hL_len_W.trans hncard_W
-    obtain ⟨hL_A, hL_B⟩ :=
+    obtain ⟨-, hL_A, hL_B⟩ :=
       transaction_end_list_partitions_fence S hfence hk_pos hL_len hL_cw hL_0 hL_set
         hb_k ha_k hd_bk_ak
     -- Define `a_list` and `b_list` so `a_list.reverse ++ b_list = L`.

@@ -46,6 +46,20 @@ theorem IsLineWithEnds.ends_mem {L : Set X} {u v : X} (h : IsLineWithEnds L u v)
     u ∈ L ∧ v ∈ L :=
   ⟨h.left_mem, h.right_mem⟩
 
+/-- A line has an interior point distinct from its two endpoints. -/
+theorem IsLineWithEnds.nonempty_sdiff {S : Type*} [TopologicalSpace S]
+    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
+  obtain ⟨f, hf0, hf1⟩ := hL
+  let m : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
+  refine ⟨(f m).val, (f m).property, ?_⟩
+  rintro (h | h)
+  · have hm : m = 0 := f.injective (Subtype.ext (h.trans hf0.symm))
+    have hh := congrArg Subtype.val hm
+    norm_num [m] at hh
+  · have hm : m = 1 := f.injective (Subtype.ext (h.trans hf1.symm))
+    have hh := congrArg Subtype.val hm
+    norm_num [m] at hh
+
 theorem IsLineWithEnds.isCompact {L : Set X} {u v : X} (h : IsLineWithEnds L u v) : IsCompact L
   := by
   obtain ⟨f, -, -⟩ := h

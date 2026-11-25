@@ -539,12 +539,14 @@ theorem stretch_mapsTo_cthickening {O : Set ℂ} {A : ℂ → ℂ}
         linarith
   linarith
 
-/-- **Collapsing an arc.** In a closed surface, there is a homotopy from the identity to a map onto
-the surface that sends the arc to one point and is injective off the arc. -/
-theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap a) :
-    ∃ (c : 𝕀 × T → T) (w : T), Continuous c ∧ (∀ x, c (0, x) = x) ∧ (∀ x ∈ range a, c (1, x) = w) ∧
-      (∀ x ∉ range a, c (1, x) ≠ w) ∧ InjOn (fun x => c (1, x)) (range a)ᶜ ∧ Function.Surjective
-        (fun x => c (1, x)) := by
+/-- The chart of a line, as a segment of the real axis, in a given open set. -/
+theorem exists_stretched_arc_chart (hT : IsClosedSurface T) {a : 𝕀 → T}
+  (ha : IsArcMap a) {W : Set T}
+    (hW : IsOpen W) (haW : range a ⊆ W) :
+    ∃ (O : Set ℂ) (K : ℂ → T) (s : ℝ), StripChart O K ∧ 0 < s ∧ s < 1 ∧ closedBall 0 1 ⊆ O
+      ∧ K '' closedBall 0 1 ⊆ W ∧
+      K (-s : ℝ) = a 0 ∧ K (s : ℝ) = a 1 ∧ ∀ x, x ∈ range a ↔ ∃ z ∈ closedBall (0 : ℂ) 1, z.im = 0
+        ∧ |z.re| ≤ s ∧ K z = x := by
   classical
   have hcpt : CompactSpace T := hT.1
   have ht2 : T2Space T := hT.2.1
@@ -565,7 +567,13 @@ theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap
   have hU : range a ⊆ g '' ball 0 1 := by
     rw [← cc.discInt_eq]
     exact hs
-  obtain ⟨O, K, θ, hK, hθc, hθm, hθ⟩ := exists_stripChart hman hbc ha hU
+  obtain ⟨O₀, K, θ, hK₀, hθc, hθm, hθ₀⟩ := exists_stripChart hman hbc ha hU
+  set O := O₀ ∩ K ⁻¹' W with hOdef
+  have hK : StripChart O K := ⟨hK₀.hc.isOpen_inter_preimage hK₀.isOpen hW, hK₀.hc.mono
+    inter_subset_left,
+    hK₀.hi.mono inter_subset_left, fun V hV hVO => hK₀.ho V hV (hVO.trans inter_subset_left)⟩
+  have hθ : ∀ t, (θ t : ℂ) ∈ O ∧ K (θ t) = a t := fun t =>
+    ⟨⟨(hθ₀ t).1, by rw [mem_preimage, (hθ₀ t).2]; exact haW (mem_range_self t)⟩, (hθ₀ t).2⟩
   set α := θ 0 with hα
   set β := θ 1 with hβ
   have hαβ : α < β := hθm zero_lt_one
@@ -591,8 +599,8 @@ theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap
   let A : ℂ ≃ₜ ℂ := axisStretch m (ℓ * a₀) (η / 2) hp hq
   have hAre : ∀ z, (A z).re = m + ℓ * a₀ * z.re := fun z => by simp [A, axisStretch]
   have hAim : ∀ z, (A z).im = η / 2 * z.im := fun z => by simp [A, axisStretch]
-  have hBO : ∀ z ∈ closedBall (0 : ℂ) 1, A z ∈ O := fun _ hz =>
-    stretch_mapsTo_cthickening hαβ hm hℓ hp hq hscale hAre hAim hth hz
+  have hBO : ∀ z ∈ closedBall (0 : ℂ) 1, A z ∈ O := by
+    exact stretch_mapsTo_cthickening hαβ hm hℓ hp hq hscale hAre hAim hth
   let O' : Set ℂ := A ⁻¹' O
   let K' : ℂ → T := fun z => K (A z)
   have hK' : StripChart O' K' := by
@@ -603,33 +611,6 @@ theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap
     refine hK.ho _ (A.isOpenMap _ hW) ?_
     rintro _ ⟨z, hz, rfl⟩
     exact hWO hz
-  obtain ⟨c₀, hc₀, hc₀m, hc₀s, hc₀z, hc₀i, hc₀o⟩ := exists_ball_collapse ha₁
-  have hBc : IsCompact (closedBall (0 : ℂ) 1) := isCompact_closedBall _ _
-  let Φ : 𝕀 × ℂ → ℂ := fun q => ((1 - q.1.1 : ℝ) : ℂ) * q.2 + (q.1.1 : ℂ) * c₀ q.2
-  have hΦc : ContinuousOn Φ (univ ×ˢ closedBall (0 : ℂ) 1) := by
-    have h1 : Continuous fun q : 𝕀 × ℂ => ((q.1.1 : ℝ) : ℂ) := continuous_ofReal.comp
-      (continuous_subtype_val.comp continuous_fst)
-    have h2 : Continuous fun q : 𝕀 × ℂ => ((1 - q.1.1 : ℝ) : ℂ) := continuous_ofReal.comp
-      (by fun_prop)
-    have h3 : ContinuousOn (fun q : 𝕀 × ℂ => c₀ q.2) (univ ×ˢ closedBall (0 : ℂ) 1) :=
-      hc₀.comp continuousOn_snd fun q hq => hq.2
-    exact (h2.continuousOn.mul continuousOn_snd).add (h1.continuousOn.mul h3)
-  have hΦm : ∀ p, ∀ z ∈ closedBall (0 : ℂ) 1, Φ (p, z) ∈ closedBall (0 : ℂ) 1 := by
-    intro p z hz
-    have h1 := (convex_closedBall (0 : ℂ) 1) hz (hc₀m hz) (a := 1 - p.1) (b := p.1)
-      (by linarith [p.2.2]) p.2.1 (by ring)
-    simpa [Φ, Complex.real_smul] using h1
-  have hΦid : ∀ p, ∀ z ∈ frontier (closedBall (0 : ℂ) 1), Φ (p, z) = z := by
-    intro p z hz
-    rw [frontier_closedBall _ one_ne_zero] at hz
-    simp only [Φ, hc₀s z hz]
-    push_cast
-    ring
-  obtain ⟨c, hcc, hc1, hc2⟩ := exists_glue hK' hBc (fun z hz => hBO z hz) Φ hΦc hΦm hΦid
-  have hΦ0 : ∀ z, Φ (0, z) = z := fun z => by simp [Φ]
-  have hΦ1 : ∀ z, Φ (1, z) = c₀ z := fun z => by simp [Φ]
-  have hc1' : ∀ z ∈ closedBall (0 : ℂ) 1, c (1, K' z) = K' (c₀ z) := fun z hz
-    => by rw [hc1 _ z hz, hΦ1]
   have hrange : ∀ x, x ∈ range a ↔ ∃ z ∈ closedBall (0 : ℂ) 1, z.im = 0 ∧ |z.re| ≤ a₀⁻¹ ∧ K' z = x
     := by
     intro x
@@ -694,8 +675,73 @@ theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap
       refine ⟨r, ?_⟩
       change a r = K (A z)
       rw [h4, ← hr, (hθ r).2]
-  have hK'i : InjOn K' (closedBall (0 : ℂ) 1) := fun z hz w hw he => A.injective (hK.hi (hBO z hz)
-    (hBO w hw) he)
+  have hs₀ : 0 < a₀⁻¹ := inv_pos.mpr ha₀pos
+  have hs₁ : a₀⁻¹ < 1 := inv_lt_one_of_one_lt₀ ha₁
+  have hend : ∀ σ : ℝ, |σ| = 1 → A ((σ * a₀⁻¹ : ℝ) : ℂ) = ((m + σ * ℓ : ℝ) : ℂ) := fun σ _ => by
+    apply Complex.ext
+    · rw [hAre]
+      simp only [ofReal_re]
+      have : a₀ * a₀⁻¹ = 1 := mul_inv_cancel₀ ha₀pos.ne'
+      calc m + ℓ * a₀ * (σ * a₀⁻¹) = m + σ * ℓ * (a₀ * a₀⁻¹) := by ring
+        _ = m + σ * ℓ := by rw [this, mul_one]
+    · rw [hAim]
+      simp
+  refine ⟨O', K', a₀⁻¹, hK', hs₀, hs₁, fun z hz => hBO z hz, ?_, ?_, ?_, hrange⟩
+  · rintro _ ⟨z, hz, rfl⟩
+    exact (hBO z hz).2
+  · change K (A _) = _
+    have h1 := hend (-1) (by simp)
+    have h2 : m + -1 * ℓ = α := by rw [hm, hℓ]; ring
+    rw [h2] at h1
+    have h3 : ((-a₀⁻¹ : ℝ) : ℂ) = ((-1 * a₀⁻¹ : ℝ) : ℂ) := by simp
+    rw [h3, h1, (hθ 0).2]
+  · change K (A _) = _
+    have h1 := hend 1 (by simp)
+    have h2 : m + 1 * ℓ = β := by rw [hm, hℓ]; ring
+    rw [h2] at h1
+    have h3 : ((a₀⁻¹ : ℝ) : ℂ) = ((1 * a₀⁻¹ : ℝ) : ℂ) := by simp
+    rw [h3, h1, (hθ 1).2]
+
+/-- **Collapsing an arc.** In a closed surface, there is a homotopy from the identity to a map onto
+the surface that sends the arc to one point and is injective off the arc. -/
+theorem exists_collapse (hT : IsClosedSurface T) {a : 𝕀 → T} (ha : IsArcMap a) :
+    ∃ (c : 𝕀 × T → T) (w : T), Continuous c ∧ (∀ x, c (0, x) = x) ∧ (∀ x ∈ range a, c (1, x) = w) ∧
+      (∀ x ∉ range a, c (1, x) ≠ w) ∧ InjOn (fun x => c (1, x)) (range a)ᶜ ∧ Function.Surjective
+        (fun x => c (1, x)) := by
+  classical
+  have ht2 : T2Space T := hT.2.1
+  obtain ⟨O, K', s, hK', hs₀, hs₁, hBO, -, -, -, hrange⟩ :=
+    exists_stretched_arc_chart hT ha isOpen_univ (subset_univ _)
+  have ha₁ : 1 < s⁻¹ := (one_lt_inv₀ hs₀).2 hs₁
+  obtain ⟨c₀, hc₀, hc₀m, hc₀s, hc₀z, hc₀i, hc₀o⟩ := exists_ball_collapse ha₁
+  simp only [inv_inv] at hc₀z
+  have hBc : IsCompact (closedBall (0 : ℂ) 1) := isCompact_closedBall _ _
+  let Φ : 𝕀 × ℂ → ℂ := fun q => ((1 - q.1.1 : ℝ) : ℂ) * q.2 + (q.1.1 : ℂ) * c₀ q.2
+  have hΦc : ContinuousOn Φ (univ ×ˢ closedBall (0 : ℂ) 1) := by
+    have h1 : Continuous fun q : 𝕀 × ℂ => ((q.1.1 : ℝ) : ℂ) := continuous_ofReal.comp
+      (continuous_subtype_val.comp continuous_fst)
+    have h2 : Continuous fun q : 𝕀 × ℂ => ((1 - q.1.1 : ℝ) : ℂ) := continuous_ofReal.comp
+      (by fun_prop)
+    have h3 : ContinuousOn (fun q : 𝕀 × ℂ => c₀ q.2) (univ ×ˢ closedBall (0 : ℂ) 1) :=
+      hc₀.comp continuousOn_snd fun q hq => hq.2
+    exact (h2.continuousOn.mul continuousOn_snd).add (h1.continuousOn.mul h3)
+  have hΦm : ∀ p, ∀ z ∈ closedBall (0 : ℂ) 1, Φ (p, z) ∈ closedBall (0 : ℂ) 1 := by
+    intro p z hz
+    have h1 := (convex_closedBall (0 : ℂ) 1) hz (hc₀m hz) (a := 1 - p.1) (b := p.1)
+      (by linarith [p.2.2]) p.2.1 (by ring)
+    simpa [Φ, Complex.real_smul] using h1
+  have hΦid : ∀ p, ∀ z ∈ frontier (closedBall (0 : ℂ) 1), Φ (p, z) = z := by
+    intro p z hz
+    rw [frontier_closedBall _ one_ne_zero] at hz
+    simp only [Φ, hc₀s z hz]
+    push_cast
+    ring
+  obtain ⟨c, hcc, hc1, hc2⟩ := exists_glue hK' hBc hBO Φ hΦc hΦm hΦid
+  have hΦ0 : ∀ z, Φ (0, z) = z := fun z => by simp [Φ]
+  have hΦ1 : ∀ z, Φ (1, z) = c₀ z := fun z => by simp [Φ]
+  have hc1' : ∀ z ∈ closedBall (0 : ℂ) 1, c (1, K' z) = K' (c₀ z) := fun z hz
+    => by rw [hc1 _ z hz, hΦ1]
+  have hK'i : InjOn K' (closedBall (0 : ℂ) 1) := hK'.hi.mono hBO
   have h0B : (0 : ℂ) ∈ closedBall (0 : ℂ) 1 := by simp
   refine ⟨c, K' 0, hcc, ?_, ?_, ?_, ?_, ?_⟩
   · intro x

@@ -53,72 +53,9 @@ theorem corner_regions_injective_in_theorem_7_4_base
     (hsec : IsSectors Γ γ c next ρ P W Q τ) : Function.Injective ρ := by
   intro k k' hρ
   by_contra hkk
-  let : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have hcor := IsSectors.corners hsec
-  have hpR : ρ k ∈ Γ.R := IsCorners.region hcor k
-  have hcp : c ∉ ρ k := fun h => region_subset hpR h (Γ.V_subset_U hv)
-  have hppath : IsPathConnected (ρ k) :=
-    isPathConnected_of_isOpen hS (region_isOpen hpR) (region_isPreconnected hpR)
-      (region_nonempty hpR)
-  obtain ⟨g₁, hg₁, hi₁, h₁0, h₁⟩ := exists_path_into_disc (IsSectors.disc hsec k)
-    (IsSectors.bd hsec k) (IsSectors.isOpen hsec) (IsSectors.mem hsec)
-  obtain ⟨g₂, hg₂, hi₂, h₂0, h₂⟩ := exists_path_into_disc (IsSectors.disc hsec k')
-    (IsSectors.bd hsec k') (IsSectors.isOpen hsec) (IsSectors.mem hsec)
-  have hg₁p : ∀ t, 0 < t → g₁ t ∈ ρ k := fun t ht => by
-    obtain ⟨a, b, d⟩ := h₁ t ht
-    exact IsSectors.sub hsec k (IsSectors.inside hsec k ⟨⟨a, b⟩, d⟩)
-  have hg₂p : ∀ t, 0 < t → g₂ t ∈ ρ k := fun t ht => by
-    obtain ⟨a, b, d⟩ := h₂ t ht
-    rw [hρ]
-    exact IsSectors.sub hsec k' (IsSectors.inside hsec k' ⟨⟨a, b⟩, d⟩)
-  obtain ⟨e, he, hei, he0, he1, hep, O, hO, hcO, hOr⟩ :=
-    exists_chord_to_point hppath hcp (hg₂p 1 one_pos) hg₁ h₁0 hg₁p
-  -- The first time after `0` at which `e` meets `g₂`.
-  have hsame : ∀ t, t ≠ 0 → e t ∈ O → e t ∉ range g₂ := by
-    rintro t ht htO ⟨b, hb⟩
-    obtain ⟨a, ha⟩ := hOr t htO
-    have hne : e t ≠ c := fun h => hcp (h ▸ hep t ht)
-    have ha0 : 0 < a := unitInterval.pos_iff_ne_zero.mpr fun h => hne (by rw [← ha, h, h₁0])
-    have hb0 : 0 < b := unitInterval.pos_iff_ne_zero.mpr fun h => hne (by rw [← hb, h, h₂0])
-    have hmem : e t ∈ Q k ∩ Q k' := ⟨ha ▸ (h₁ a ha0).2.1, hb ▸ (h₂ b hb0).2.1⟩
-    exact region_subset hpR (hep t ht) (IsSectors.inter hsec k k' hkk hmem)
-  obtain ⟨δ, hδ, hδa, hδO⟩ := exists_pos_le he hO (he0 ▸ hcO) (a := 1) one_pos
-  let Z : Set I := Icc δ 1 ∩ e ⁻¹' range g₂
-  have hZc : IsCompact Z := isCompact_Icc.inter_right
-    ((isCompact_range hg₂).isClosed.preimage he)
-  have hZne : Z.Nonempty := ⟨1, ⟨hδa, le_rfl⟩, ⟨1, he1.symm⟩⟩
-  obtain ⟨t₀, ⟨ht₀I, s₀, hs₀⟩, ht₀min⟩ := hZc.exists_isLeast hZne
-  have ht₀ : 0 < t₀ := hδ.trans_le ht₀I.1
-  have hne₀ : e t₀ ≠ c := fun h => ht₀.ne' (hei (h.trans he0.symm))
-  have hs₀0 : 0 < s₀ := unitInterval.pos_iff_ne_zero.mpr fun h => hne₀ (by rw [← hs₀, h, h₂0])
-  have hl₁ : IsLineWithEnds (e '' Icc 0 t₀) c (e t₀) := he0 ▸ isLine_piece he hei ht₀
-  have hl₂ : IsLineWithEnds (g₂ '' Icc 0 s₀) c (e t₀) := by
-    have := isLine_piece hg₂ hi₂ hs₀0
-    rwa [h₂0, hs₀] at this
-  have hmeet : e '' Icc 0 t₀ ∩ g₂ '' Icc 0 s₀ ⊆ {c, e t₀} := by
-    rintro y ⟨⟨a, ha, rfl⟩, b, -, hb⟩
-    by_cases ha0 : a = 0
-    · exact Or.inl (by rw [ha0, he0])
-    · refine Or.inr ?_
-      have hle : t₀ ≤ a := by
-        by_cases hδa' : δ ≤ a
-        · exact ht₀min ⟨⟨hδa', unitInterval.le_one _⟩, ⟨b, hb⟩⟩
-        · have hal : a ≤ δ := (not_le.mp hδa').le
-          exact (hsame a ha0 (hδO a hal) ⟨b, hb⟩).elim
-      have : a = t₀ := le_antisymm ha.2 hle
-      change e a = e t₀
-      rw [this]
-  have hJ : IsOArc (e '' Icc 0 t₀ ∪ g₂ '' Icc 0 s₀) := isOArc_union hl₁ hl₂ hmeet
-  have hJp : ∀ y ∈ e '' Icc 0 t₀ ∪ g₂ '' Icc 0 s₀, y = c ∨ y ∈ ρ k := by
-    rintro _ (⟨a, -, rfl⟩ | ⟨a, -, rfl⟩)
-    · by_cases ha : a = 0
-      · exact Or.inl (by rw [ha, he0])
-      · exact Or.inr (hep a ha)
-    · by_cases ha : a = 0
-      · exact Or.inl (by rw [ha, h₂0])
-      · exact Or.inr (hg₂p a (unitInterval.pos_iff_ne_zero.mpr ha))
-  let J := e '' Icc 0 t₀ ∪ g₂ '' Icc 0 s₀
-  have hvJ : c ∈ J := Or.inl ⟨0, ⟨le_rfl, ht₀.le⟩, he0⟩
+  refine corner_regions_ne_of_free_disc hS (Γ.V_subset_U hv) hsec hkk ?_ hρ
+  intro J hJ hvJ hJp
+  have hpR : ρ k ∈ Γ.R := IsCorners.region (IsSectors.corners hsec) k
   have hn : (PaintingOrDrawing.drawing Γ).IsNormal J := by
     intro x hx
     rcases hJp x hx.1 with hxc | hxr
@@ -146,41 +83,6 @@ theorem corner_regions_injective_in_theorem_7_4_base
     rcases hΔr hx.1 with hxr | hxc
     · exact region_subset hpR hxr hxG
     · exact hx.2 (hxc.symm ▸ hcb)
-  obtain ⟨A, W₀, hW₀, hcW₀, hAc, hAΔ, hAb, hAX, -, hclA⟩ :=
-    exists_half_nbhd hΔ (IsSectors.isOpen hsec).isClosed_compl hcb
-      (fun h' => h' (IsSectors.mem hsec))
-  have hAW : ∀ y ∈ A, y ∈ W := fun y hy => by
-    by_contra hn
-    exact disjoint_left.mp hAX hy hn
-  have hAU : ∀ y ∈ A, y ∉ Γ.U := fun y hy hyU =>
-    disjoint_left.mp hfree ⟨hAΔ hy, disjoint_left.mp hAb hy⟩ hyU
-  -- A connected set off `H` near `c`, with a point of a sector interior in its closure, lies in the
-  -- closed disc of that sector.
-  have hinQ : ∀ j, ∀ z, z ∈ closure A → z ∈ Q j → z ∉ discBd (Q j) → A ⊆ Q j := by
-    intro j z hzA hzQ hzb
-    have hQd := IsSectors.disc hsec j
-    have hAfr : Disjoint A (frontier (Q j)) := by
-      rw [IsClosedDisc.frontier_eq_discBd hS hQd]
-      exact disjoint_left.mpr fun y hy hyb => hAU y hy (IsSectors.bdU hsec j ⟨hAW y hy, hyb⟩)
-    have hzint : z ∈ interior (Q j) := by
-      have hnf : z ∉ frontier (Q j) := by
-        rwa [IsClosedDisc.frontier_eq_discBd hS hQd]
-      by_contra hni
-      exact hnf ⟨subset_closure hzQ, hni⟩
-    rcases subset_or_disjoint_of_frontier hQd.isClosed hAc hAfr with h' | h'
-    · exact h'
-    · obtain ⟨y, hyI, hyA⟩ := mem_closure_iff.mp hzA _ isOpen_interior hzint
-      exact (disjoint_left.mp h' hyA (interior_subset hyI)).elim
-  obtain ⟨t, ht, htt₀, htN⟩ := exists_pos_le he (hW₀.inter hO) (by rw [he0]; exact ⟨hcW₀, hcO⟩) ht₀
-  obtain ⟨s, hs, hss₀, hsN⟩ := exists_pos_le hg₂ hW₀ (by rw [h₂0]; exact hcW₀) hs₀0
-  have hzt : e t ∈ closure A := hclA ⟨(htN t le_rfl).1, hb ▸ Or.inl ⟨t, ⟨ht.le, htt₀⟩, rfl⟩⟩
-  have hzs : g₂ s ∈ closure A := hclA ⟨hsN s le_rfl, hb ▸ Or.inr ⟨s, ⟨hs.le, hss₀⟩, rfl⟩⟩
-  obtain ⟨a, ha⟩ := hOr t (htN t le_rfl).2
-  have ha0 : 0 < a := unitInterval.pos_iff_ne_zero.mpr fun h =>
-    ht.ne' (hei ((ha.symm.trans (by rw [h, h₁0])).trans he0.symm))
-  have hA₁ : A ⊆ Q k := hinQ k _ hzt (ha ▸ (h₁ a ha0).2.1) (ha ▸ (h₁ a ha0).2.2)
-  have hA₂ : A ⊆ Q k' := hinQ k' _ hzs (h₂ s hs).2.1 (h₂ s hs).2.2
-  obtain ⟨y, -, hyA⟩ := mem_closure_iff.mp hzs _ isOpen_univ (mem_univ _)
-  exact hAU y hyA (IsSectors.inter hsec k k' hkk ⟨hA₁ hyA, hA₂ hyA⟩)
+  exact ⟨Δ, hΔ, hb, hfree⟩
 
 end GraphMinor.GM12

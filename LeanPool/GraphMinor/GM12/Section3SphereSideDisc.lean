@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.Surface.TopologyStatements
 import LeanPool.GraphMinor.Surface.SphereDisc
 import LeanPool.GraphMinor.GM11.Section6
 import LeanPool.GraphMinor.GM12.Section3ThetaCircles
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Choosing the side of a theta circle opposite its third arc
@@ -52,17 +53,8 @@ private theorem exists_sphere_disc_disjoint_connected
 
 /-- A line has a point other than its two ends. -/
 theorem line_sdiff_ends_nonempty {S : Type*} [TopologicalSpace S]
-    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let m : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
-  refine ⟨(f m).val, (f m).property, ?_⟩
-  rintro (h | h)
-  · have hm : m = 0 := f.injective (Subtype.ext (h.trans hf0.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
-  · have hm : m = 1 := f.injective (Subtype.ext (h.trans hf1.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
+    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff hL
 
 /-- The side disc used for a boundary arc and separator line in
 XII (3.2), page 247. Its opposite arc meets it only at the common ends. -/

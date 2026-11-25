@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.Surface.Triangulate
 public import Mathlib.Analysis.Normed.Module.Connected
 public import Mathlib.LinearAlgebra.Complex.FiniteDimensional
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Local structure of a triangulation
@@ -195,12 +196,7 @@ theorem edge_sub (h : IsTriang V E 𝓕) {e Φ : Set X} (he : e ∈ E) (hΦ : Φ
 omit [T2Space X] in
 theorem exists_inner (h : IsTriang V E 𝓕) {e : Set X} (he : e ∈ E) : ∃ x ∈ e, x ∉ V := by
   obtain ⟨u, v, huv, hl, hi⟩ := h.dis.graph.edge e he
-  have h2 := hl.subset_closure_diff
-  have hne : (e \ {u, v}).Nonempty := by
-    by_contra hc
-    rw [not_nonempty_iff_eq_empty] at hc
-    rw [hc, closure_empty] at h2
-    exact h2 hl.left_mem
+  have hne : (e \ {u, v}).Nonempty := hl.nonempty_sdiff
   obtain ⟨x, hx, hn⟩ := hne
   exact ⟨x, hx, fun hV => hn (hi ▸ ⟨hx, hV⟩)⟩
 
@@ -244,12 +240,7 @@ theorem face_pair (h : IsTriang V E 𝓕) {Φ : Set X} (hΦ : Φ ∈ 𝓕) {a b 
     → IsClosed L' → c ∉ L →
       ∃ e ∈ E, e ⊆ discBd Φ ∧ e ∩ V = {a, b} := by
     intro L L' hL hLu hLi hL' hcL
-    have hne : (L \ {a, b}).Nonempty := by
-      by_contra hc'
-      rw [not_nonempty_iff_eq_empty] at hc'
-      have h2 := hL.subset_closure_diff
-      rw [hc', closure_empty] at h2
-      exact h2 hL.left_mem
+    have hne : (L \ {a, b}).Nonempty := hL.nonempty_sdiff
     obtain ⟨x, hx, hxn⟩ := hne
     have hxb : x ∈ discBd Φ := hLu ▸ .inl hx
     have hxV : x ∉ V := fun hV => by

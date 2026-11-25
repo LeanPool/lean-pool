@@ -861,10 +861,10 @@ theorem mapInlRooted_injective (γ : Type*) :
     (congrArg (fun G : RootedHypergraph α (β ⊕ γ) ↦ G.vertexSet) hEq) ?_ ?_
   · ext e
     have hE := congrArg (fun G : RootedHypergraph α (β ⊕ γ) ↦ Sum.inl e ∈ G.edgeSet) hEq
-    simpa [mapInlRooted, mapInlH] using hE
+    simpa [mapInlRooted, mapInlH, mapInl] using hE
   · funext e v
     have hI := congrArg (fun G : RootedHypergraph α (β ⊕ γ) ↦ G.Inc (Sum.inl e) v) hEq
-    simpa [mapInlRooted, mapInlH] using hI
+    simpa [mapInlRooted, mapInlH, mapInl] using hI
 
 /-- `mapInlRooted γ` maps a rooted location in `G` to a rooted location in `mapInlRooted γ G`. -/
 theorem isRootedLocation_mapInl (γ : Type*) {G : RootedHypergraph α β}
@@ -925,11 +925,11 @@ theorem rootedLocationCore_mapInl_sets (γ : Type*) {G : RootedHypergraph α β}
   refine ⟨?_, ?_⟩
   · ext v
     rw [mem_rootedLocationCore_vertexSet_iff hℒ_plus, mem_rootedLocationCore_vertexSet_iff hℒ]
-    simp only [mapInlRooted, mapInlH, Set.forall_mem_image]
+    simp only [mapInlRooted, mapInlH, mapInl, Set.forall_mem_image]
     rfl
   · ext x
     rw [mem_rootedLocationCore_edgeSet_iff]
-    simp only [mapInlRooted, mapInlH, Set.mem_image]
+    simp only [mapInlRooted, mapInlH, mapInl, Set.mem_image]
     constructor
     · rintro ⟨⟨e, heG, rfl⟩, hall⟩
       refine ⟨e, ?_, rfl⟩
@@ -958,7 +958,7 @@ theorem feasibleGroupings_restrict_mapInl (γ : Type*) (d : β) (P : PartialPatc
     rfl rfl
     (by
       ext e
-      simp only [Set.mem_image, mapInlRooted, mapInlH]
+      simp only [Set.mem_image, mapInlRooted, mapInlH, mapInl]
       exact ⟨fun ⟨_, ⟨e', he', rfl⟩, hEq⟩ ↦ hEq ▸ he', fun he ↦ ⟨Sum.inl e, ⟨e, he, rfl⟩, rfl⟩⟩)
     (by rintro _ ⟨e₁, _, rfl⟩ _ ⟨e₂, _, rfl⟩ hEq; exact congrArg Sum.inl hEq)
     (by
@@ -1329,13 +1329,13 @@ theorem theorem_5_7_proof [Preorder Ω] {α₁ β₁ α₂ β₂ : Type*}
             (P₁_plus.restrict (mapInlRooted γ₁ A₁)) (P₁.restrict A₁)
             (Sum.elim id (fun _ ↦ d₁)) rfl rfl ?_ ?_ ?_ ?_ ?_ ?_ ?_⟩
         · ext e
-          simp only [Set.mem_image, mapInlRooted, mapInlH]
+          simp only [Set.mem_image, mapInlRooted, mapInlH, mapInl]
           exact ⟨fun ⟨_, ⟨e', he', rfl⟩, hEq⟩ ↦ hEq ▸ he', fun he ↦ ⟨Sum.inl e, ⟨e, he, rfl⟩, rfl⟩⟩
         · rintro _ ⟨e₁, _, rfl⟩ _ ⟨e₂, _, rfl⟩ hEq; exact congrArg Sum.inl hEq
         · rintro _ ⟨e, _, rfl⟩; rfl
         · rintro _ ⟨e, heA₁, rfl⟩
           rw [P₁_plus.restrict_dom hle₁_plus, P₁.restrict_dom hle₁]
-          simp only [P₁_plus, mapInlPatchwork, mapInlRooted, mapInlH, Set.mem_inter_iff,
+          simp only [P₁_plus, mapInlPatchwork, mapInlRooted, mapInlH, mapInl, Set.mem_inter_iff,
             Set.mem_image, Sum.inl.injEq, exists_eq_right, Sum.elim_inl, id_eq]
         · intro x hx
           rw [P₁_plus.restrict_dom hle₁_plus] at hx
@@ -1357,7 +1357,7 @@ theorem theorem_5_7_proof [Preorder Ω] {α₁ β₁ α₂ β₂ : Type*}
             Sum.inl rfl rfl rfl (fun _ _ _ _ h ↦ Sum.inl.inj h) (fun _ _ ↦ rfl)
             (fun e _ ↦ by
               rw [P₂.restrict_dom hle₂, P₂_plus.restrict_dom hle₂_plus]
-              simp only [P₂_plus, mapInlPatchwork, mapInlRooted, mapInlH, Set.mem_inter_iff,
+              simp only [P₂_plus, mapInlPatchwork, mapInlRooted, mapInlH, mapInl, Set.mem_inter_iff,
                 Set.mem_image, Sum.inl.injEq, exists_eq_right])
             (fun _ _ ↦ rfl)
             (fun e hd ↦ by
@@ -1404,7 +1404,7 @@ theorem theorem_5_7_proof [Preorder Ω] {α₁ β₁ α₂ β₂ : Type*}
       isRealizableExpansion_of_edge_bij P₂_plus P₂ (Sum.elim id (fun _ ↦ d₂)) rfl rfl ?_ ?_
         ?_ ?_ ?_ ?_ ?_⟩
     · ext e
-      simp only [Set.mem_image, P₂_plus, mapInlPatchwork, mapInlRooted, mapInlH]
+      simp only [Set.mem_image, P₂_plus, mapInlPatchwork, mapInlRooted, mapInlH, mapInl]
       exact ⟨fun ⟨_, ⟨e', he', rfl⟩, hEq⟩ ↦ hEq ▸ he', fun he ↦ ⟨Sum.inl e, ⟨e, he, rfl⟩, rfl⟩⟩
     · rintro _ ⟨e₁, _, rfl⟩ _ ⟨e₂, _, rfl⟩ hEq; exact congrArg Sum.inl hEq
     · rintro _ ⟨e, _, rfl⟩; rfl

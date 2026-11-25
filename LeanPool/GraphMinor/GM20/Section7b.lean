@@ -292,7 +292,11 @@ location in $G/W$ such that $\mathcal{L}$ is linked to $\mathcal{T}/W$, and $\ma
 contains a heart of $(P/W, \mathcal{L})$. Then there is a fine rooted location
 $\mathcal{L}'$ in $G$ such that* - *$W \subseteq \bar{\pi}(A)$ for all $A \in
 \mathcal{L}'$,* - *$\mathcal{L}'/W = \mathcal{L}$ and hence is linked to $\mathcal{T}/W$,
-and* - *$\mathcal{F}'$ contains a heart of $(P, \mathcal{L}')$." -/
+and* - *$\mathcal{F}'$ contains a heart of $(P, \mathcal{L}')$."
+
+The Lean result lifts any fine location with the stated heart. In the linked case,
+`locationSlash ℒ' W = ℒ` transfers linkage of the input to the quotient of the lifted
+location, as in (7.3). The bound `W.ncard < θ` entails `1 ≤ θ`. -/
 theorem theorem_7_2_proof {𝓕 : Set (UnlabeledPatchwork α β)} (h𝓕 : WellBehaved 𝓕) (θ : ℕ) :
     ∃ 𝓕' : Set (UnlabeledPatchwork α β), WellBehaved 𝓕' ∧
       ∀ (P : UnlabeledPatchwork α β), IsFree P →

@@ -120,113 +120,6 @@ theorem PathsHomotopicRelIn.mono {W₁ W₂ : Set S} {γ₀ γ₁ : C(unitInterv
   exact ⟨H, fun p => hsub (hH p), h0, h1, hs0, hs1⟩
 
 /-- Every point `x` in an open subset `A` of a surface `S` has an open, arc-connected, flat
-chart-ball neighbourhood `W ⊆ A` in which any two paths with the same endpoints are homotopic rel
-endpoints (`PathsHomotopicRelIn W`). -/
-theorem exists_chart_ball_subset (hS : IsSurface S) (x : S) {A : Set S}
-    (hA : IsOpen A) (hxA : x ∈ A) :
-    ∃ W : Set S, W ⊆ A ∧ x ∈ W ∧ IsOpen W ∧ IsArcConnected W ∧ IsFlat W ∧
-      (∀ γ₀ γ₁ : C(unitInterval, S), range γ₀ ⊆ W → range γ₁ ⊆ W →
-        γ₀ 0 = γ₁ 0 → γ₀ 1 = γ₁ 1 → PathsHomotopicRelIn W γ₀ γ₁) := by
-  have : T2Space S := hS.2.1
-  obtain ⟨U, O, j, k, hU, hO, hxU, hj, hk, hjU, _, hkj, hjk⟩ := (hS.2.2 x).exists_chart
-  have hUA_open : IsOpen (U ∩ A) := hU.inter hA
-  obtain ⟨O₁, hO₁_open, hO₁_eq⟩ := continuousOn_iff'.mp hk (U ∩ A) hUA_open
-  have hjx_mem : j x ∈ O ∩ O₁ := by
-    refine ⟨(hjU hxU).1, ?_⟩
-    have hmem : j x ∈ k ⁻¹' (U ∩ A) ∩ (O ∩ halfPlane) := by
-      refine ⟨?_, hjU hxU⟩
-      change k (j x) ∈ U ∩ A
-      rw [hkj hxU]
-      exact ⟨hxU, hxA⟩
-    rw [hO₁_eq] at hmem
-    exact hmem.1
-  obtain ⟨r, hr, hball⟩ := Metric.isOpen_iff.mp (hO.inter hO₁_open) (j x) hjx_mem
-  let B : Set ℂ := ball (j x) r ∩ halfPlane
-  let W : Set S := (U ∩ A) ∩ j ⁻¹' ball (j x) r
-  have hB_sub : B ⊆ O ∩ halfPlane := fun z hz => ⟨(hball hz.1).1, hz.2⟩
-  have hW_open : IsOpen W :=
-    (hj.mono inter_subset_left).isOpen_inter_preimage hUA_open isOpen_ball
-  have hxW : x ∈ W := ⟨⟨hxU, hxA⟩, mem_ball_self hr⟩
-  have hWA : W ⊆ A := fun _ hy => hy.1.2
-  have hjW : MapsTo j W B := fun y hy => ⟨hy.2, (hjU hy.1.1).2⟩
-  have hkB : MapsTo k B W := fun z hz => by
-    have hz_pre : z ∈ k ⁻¹' (U ∩ A) ∩ (O ∩ halfPlane) := by
-      rw [hO₁_eq]
-      exact ⟨(hball hz.1).2, (hball hz.1).1, hz.2⟩
-    refine ⟨hz_pre.1, ?_⟩
-    change j (k z) ∈ ball (j x) r
-    rw [hjk (hB_sub hz)]
-    exact hz.1
-  have hkjW : LeftInvOn k j W := hkj.mono fun _ hy => hy.1.1
-  have hB_conv : Convex ℝ B := (convex_ball (j x) r).inter convex_halfPlane
-  have hB_pc : IsPathConnected B := hB_conv.isPathConnected ⟨j x, hjW hxW⟩
-  have hkB_cont : ContinuousOn k B := hk.mono hB_sub
-  have hjW_cont : ContinuousOn j W := hj.mono fun _ hy => hy.1.1
-  have hW_eq : k '' B = W := by
-    ext y
-    constructor
-    · rintro ⟨z, hz, rfl⟩
-      exact hkB hz
-    · intro hy
-      exact ⟨j y, hjW hy, hkjW hy⟩
-  have hW_arc : IsArcConnected W := by
-    rw [← hW_eq]
-    exact isArcConnected_of_isPathConnected (hB_pc.image' hkB_cont)
-  have hW_flat : IsFlat W := by
-    intro φ hφW
-    let L : Circle × unitInterval → ℂ :=
-      fun p => (1 - (p.2 : ℝ)) • j (φ p.1) + (p.2 : ℝ) • j x
-    have hL_cont : Continuous L := by
-      have hjφ : Continuous (j ∘ φ) :=
-        hjW_cont.comp_continuous φ.continuous fun z => hφW (mem_range_self z)
-      refine Continuous.add ?_ ?_
-      · exact (continuous_const.sub (continuous_subtype_val.comp continuous_snd)).smul
-          (hjφ.comp continuous_fst)
-      · exact (continuous_subtype_val.comp continuous_snd).smul continuous_const
-    have hL_mem : ∀ p, L p ∈ B := fun p =>
-      hB_conv (hjW (hφW (mem_range_self p.1))) (hjW hxW)
-        (sub_nonneg.mpr p.2.2.2) p.2.2.1 (sub_add_cancel 1 (p.2 : ℝ))
-    have hΨ_cont : Continuous (k ∘ L) := hkB_cont.comp_continuous hL_cont hL_mem
-    refine ⟨x, mem_univ x, ⟨k ∘ L, hΨ_cont⟩, fun _ => mem_univ _, fun z => ?_, fun z => ?_⟩
-    · change k ((1 - (0 : ℝ)) • j (φ z) + (0 : ℝ) • j x) = φ z
-      rw [sub_zero, one_smul, zero_smul, add_zero]
-      exact hkjW (hφW (mem_range_self z))
-    · change k ((1 - (1 : ℝ)) • j (φ z) + (1 : ℝ) • j x) = x
-      rw [sub_self, zero_smul, one_smul, zero_add]
-      exact hkjW hxW
-  refine ⟨W, hWA, hxW, hW_open, hW_arc, hW_flat, ?_⟩
-  intro γ₀ γ₁ hγ₀ hγ₁ h0 h1
-  let L : unitInterval × unitInterval → ℂ :=
-    fun p => (1 - (p.2 : ℝ)) • j (γ₀ p.1) + (p.2 : ℝ) • j (γ₁ p.1)
-  have hjγ₀ : Continuous (j ∘ γ₀) :=
-    hjW_cont.comp_continuous γ₀.continuous fun t => hγ₀ (mem_range_self t)
-  have hjγ₁ : Continuous (j ∘ γ₁) :=
-    hjW_cont.comp_continuous γ₁.continuous fun t => hγ₁ (mem_range_self t)
-  have hL_cont : Continuous L := by
-    refine Continuous.add ?_ ?_
-    · exact (continuous_const.sub (continuous_subtype_val.comp continuous_snd)).smul
-        (hjγ₀.comp continuous_fst)
-    · exact (continuous_subtype_val.comp continuous_snd).smul (hjγ₁.comp continuous_fst)
-  have hL_mem : ∀ p, L p ∈ B := fun p =>
-    hB_conv (hjW (hγ₀ (mem_range_self p.1))) (hjW (hγ₁ (mem_range_self p.1)))
-      (sub_nonneg.mpr p.2.2.2) p.2.2.1 (sub_add_cancel 1 (p.2 : ℝ))
-  have hH_cont : Continuous (k ∘ L) := hkB_cont.comp_continuous hL_cont hL_mem
-  refine ⟨⟨k ∘ L, hH_cont⟩, fun p => hkB (hL_mem p), fun t => ?_, fun t => ?_, fun s => ?_,
-    fun s => ?_⟩
-  · change k ((1 - (0 : ℝ)) • j (γ₀ t) + (0 : ℝ) • j (γ₁ t)) = γ₀ t
-    rw [sub_zero, one_smul, zero_smul, add_zero]
-    exact hkjW (hγ₀ (mem_range_self t))
-  · change k ((1 - (1 : ℝ)) • j (γ₀ t) + (1 : ℝ) • j (γ₁ t)) = γ₁ t
-    rw [sub_self, zero_smul, one_smul, zero_add]
-    exact hkjW (hγ₁ (mem_range_self t))
-  · change k ((1 - (s : ℝ)) • j (γ₀ 0) + (s : ℝ) • j (γ₁ 0)) = γ₀ 0
-    rw [← h0, ← add_smul, sub_add_cancel, one_smul]
-    exact hkjW (hγ₀ (mem_range_self 0))
-  · change k ((1 - (s : ℝ)) • j (γ₀ 1) + (s : ℝ) • j (γ₁ 1)) = γ₀ 1
-    rw [← h1, ← add_smul, sub_add_cancel, one_smul]
-    exact hkjW (hγ₀ (mem_range_self 1))
-
-/-- Every point `x` in an open subset `A` of a surface `S` has an open, arc-connected, flat
 chart-ball neighbourhood `W ⊆ A` equipped with a pointwise path-interpolation operator
 `pt : S → S → unitInterval → S`. -/
 theorem exists_chart_ball_interp (hS : IsSurface S) (x : S) {A : Set S}
@@ -339,6 +232,33 @@ theorem exists_chart_ball_interp (hS : IsSurface S) (x : S) {A : Set S}
       hB_conv (hjW (hγ₀ (mem_range_self p.1))) (hjW (hγ₁ (mem_range_self p.1)))
         (sub_nonneg.mpr p.2.2.2) p.2.2.1 (sub_add_cancel 1 (p.2 : ℝ))
     exact hkB_cont.comp_continuous hL_cont hL_mem
+
+/-- Every point `x` in an open subset `A` of a surface `S` has an open, arc-connected, flat
+chart-ball neighbourhood `W ⊆ A` in which any two paths with the same endpoints are homotopic rel
+endpoints (`PathsHomotopicRelIn W`). -/
+theorem exists_chart_ball_subset (hS : IsSurface S) (x : S) {A : Set S}
+    (hA : IsOpen A) (hxA : x ∈ A) :
+    ∃ W : Set S, W ⊆ A ∧ x ∈ W ∧ IsOpen W ∧ IsArcConnected W ∧ IsFlat W ∧
+      (∀ γ₀ γ₁ : C(unitInterval, S), range γ₀ ⊆ W → range γ₁ ⊆ W →
+        γ₀ 0 = γ₁ 0 → γ₀ 1 = γ₁ 1 → PathsHomotopicRelIn W γ₀ γ₁) := by
+  obtain ⟨W, pt, hWA, hxW, hWopen, hWarc, hWflat, hmem, hzero, hone, hconst, hcontinuous⟩ :=
+    exists_chart_ball_interp hS x hA hxA
+  refine ⟨W, hWA, hxW, hWopen, hWarc, hWflat, ?_⟩
+  intro γ₀ γ₁ hγ₀ hγ₁ h0 h1
+  have hmem₀ (t : unitInterval) : γ₀ t ∈ W := hγ₀ (mem_range_self t)
+  have hmem₁ (t : unitInterval) : γ₁ t ∈ W := hγ₁ (mem_range_self t)
+  refine ⟨⟨_, hcontinuous γ₀ γ₁ hγ₀ hγ₁⟩,
+    fun p => hmem _ (hmem₀ p.1) _ (hmem₁ p.1) p.2,
+    fun t => hzero _ (hmem₀ t) _ (hmem₁ t), fun t => hone _ (hmem₀ t) _ (hmem₁ t),
+    ?_, ?_⟩
+  · intro t
+    change pt (γ₀ 0) (γ₁ 0) t = γ₀ 0
+    rw [← h0]
+    exact hconst _ (hmem₀ 0) t
+  · intro t
+    change pt (γ₀ 1) (γ₁ 1) t = γ₀ 1
+    rw [← h1]
+    exact hconst _ (hmem₀ 1) t
 
 /-! ## Periodic Functions on `ℝ` and Concatenated Loops on `Circle` -/
 

@@ -265,22 +265,8 @@ theorem exists_strictMono_of_or (p q : ℕ → Prop) (h : ∀ n, p n ∨ q n) :
 
 /-- `Ω₁ ∪ Ω₂` is a well-quasi-order when `Ω₁` and `Ω₂` are. -/
 theorem wqo_disjointUnion {Ω₁ Ω₂ : Type*} [Preorder Ω₁] [Preorder Ω₂] (h₁ : WellQuasiOrderedLE Ω₁)
-    (h₂ : WellQuasiOrderedLE Ω₂) : WellQuasiOrderedLE (DisjointUnionQuasiOrder Ω₁ Ω₂) := by
-  refine ⟨fun f ↦ ?_⟩
-  obtain ⟨g, hg, hor⟩ := exists_strictMono_of_or (fun n ↦ ∃ a, f n = Sum.inl a)
-    (fun n ↦ ∃ b, f n = Sum.inr b) fun n ↦ by
-      have h : ∀ x : Ω₁ ⊕ Ω₂, (∃ a, x = Sum.inl a) ∨ ∃ b, x = Sum.inr b := by
-        rintro (a | b)
-        · exact Or.inl ⟨a, rfl⟩
-        · exact Or.inr ⟨b, rfl⟩
-      exact h (f n)
-  rcases hor with h | h
-  · choose a ha using h
-    obtain ⟨i, j, hij, hle⟩ := h₁.wqo a
-    exact ⟨g i, g j, hg hij, by rw [ha, ha]; exact DisjointUnionLE.inl hle⟩
-  · choose a ha using h
-    obtain ⟨i, j, hij, hle⟩ := h₂.wqo a
-    exact ⟨g i, g j, hg hij, by rw [ha, ha]; exact DisjointUnionLE.inr hle⟩
+    (h₂ : WellQuasiOrderedLE Ω₂) : WellQuasiOrderedLE (DisjointUnionQuasiOrder Ω₁ Ω₂) :=
+  GM18.wellQuasiOrderedLE_disjointUnion h₁ h₂
 
 /-- The union of two well-behaved sets of patchworks is well-behaved (used in the proofs of (4.3)
 and

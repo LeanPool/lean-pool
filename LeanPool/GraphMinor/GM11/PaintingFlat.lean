@@ -179,80 +179,8 @@ variable [ConnectedSpace S] {Γ : Painting S} {Γ' : Drawing S} {θ : ℕ}
 /-- A 2-cell painting with a cell that has no vertex is in a sphere. -/
 theorem sphere_of_free_cell (hS : IsClosedSurface S)
     (hrad : PreRad (PaintingOrDrawing.painting Γ) Γ') {e : Set S} (he : e ∈ Γ.E)
-    (hfree : closure e ∩ Γ.V = ∅) : IsSphere S := by
-  classical
-  have hlc : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have hman : ∀ x : S, IsManifoldPoint x := fun x => (hS.2.2 x).isManifoldPoint
-  have hP : ∀ r ∈ Γ.R, IsOpenDisc r := hrad.1.2
-  obtain ⟨hV, hE⟩ := free_cell hS hP he hfree
-  have hEΓ' : Γ'.E = ∅ := by
-    refine eq_empty_of_forall_notMem fun f hf => ?_
-    obtain ⟨v, hv, -⟩ := hrad.2.2.2.2.2.1 f hf
-    have hv' : v ∈ Γ.V := hv
-    rw [hV] at hv'
-    exact hv'
-  have hU'V : Γ'.U = Γ'.V := by
-    rw [Γ'.U_eq, hEΓ']
-    simp
-  have hN : IsClosedDisc (closure e) := Cell.isClosedDisc_closure he
-  have hUΓ : closure e ⊆ Γ.U := closure_subset_cell_U hrad he
-  have hNV' : Disjoint (closure e) Γ'.V := by
-    refine disjoint_left.mpr fun x hx hxV => ?_
-    have h₁ : x ∈ Γ.U ∩ Γ'.U := ⟨hUΓ hx, Γ'.V_subset_U hxV⟩
-    have h₂ : Γ.U ∩ Γ'.U = Γ.V := hrad.2.1
-    have h₃ := h₂ ▸ h₁
-    rw [hV] at h₃
-    exact h₃
-  have hW : IsOpen Γ'.Vᶜ := Γ'.finite_V.isClosed.isOpen_compl
-  obtain ⟨D, hD, hND, hDsub⟩ := exists_disc_around hman hN (fun x _ => hS.2.2 x) hW
-    (fun x hx h => disjoint_left.mp hNV' (discBd_subset _ hx) h)
-  have hDV : Disjoint D Γ'.V := by
-    refine disjoint_left.mpr fun x hx hxV => ?_
-    rcases hDsub hx with h | h
-    · exact disjoint_left.mp hNV' h hxV
-    · exact h hxV
-  have hF := hD.isOArc_discBd
-  have hUe : Γ.U ⊆ closure e := by
-    intro x hx
-    rcases Cell.mem_V_or_cell Γ hx with h | ⟨f, hf, hxf⟩
-    · rw [hV] at h
-      exact h.elim
-    · have hf' : f ∈ Γ.E := hf
-      rw [hE] at hf'
-      exact subset_closure (hf' ▸ hxf)
-  have hbU : Disjoint (discBd D) Γ.U := by
-    refine disjoint_left.mpr fun x hx hxU => ?_
-    exact (hND (hUe hxU)).2 hx
-  have hbne : (discBd D).Nonempty := by
-    obtain ⟨φ⟩ := hF
-    exact ⟨_, (φ 1).2⟩
-  obtain ⟨y, hy⟩ := hbne
-  have hUclosed : IsClosed Γ.U := cell_isClosed_U hrad
-  obtain ⟨r, hr, hyr⟩ : ∃ r ∈ Γ.R, y ∈ r := by
-    have hy' : y ∈ univ \ Γ.U := ⟨trivial, disjoint_left.mp hbU hy⟩
-    exact ⟨_, ⟨y, hy', rfl⟩, mem_connectedComponentIn hy'⟩
-  have hrU : Disjoint r Γ.U := by
-    obtain ⟨z, hz, rfl⟩ := hr
-    exact disjoint_left.mpr fun x hx h => (connectedComponentIn_subset _ _ hx).2 h
-  have hbconn : IsPreconnected (discBd D) := by
-    obtain ⟨φ⟩ := id hF
-    have : discBd D = range fun z => (φ z).1 := by
-      ext y
-      exact ⟨fun hy => ⟨φ.symm ⟨y, hy⟩, by simp⟩, by rintro ⟨z, rfl⟩; exact (φ z).2⟩
-    rw [this]
-    exact isPreconnected_range (by fun_prop)
-  have hbr : discBd D ⊆ r := by
-    obtain ⟨z, hz, rfl⟩ := hr
-    rw [connectedComponentIn_eq hyr]
-    exact hbconn.subset_connectedComponentIn hy fun x hx => ⟨trivial, disjoint_left.mp hbU hx⟩
-  obtain ⟨Δ, hΔr, hΔ, hb⟩ := exists_disc_in_openDisc (hP r hr) hF hbr
-  have hne : D ≠ Δ := by
-    rintro rfl
-    obtain ⟨x, hx⟩ := he.1
-    exact disjoint_left.mp hrU (hΔr (hND (subset_closure hx)).1) (hUΓ (subset_closure hx))
-  have hcov := cover_of_discBd_eq hS hD hΔ hb.symm hne
-  by_contra hsph
-  exact hne (eq_of_discBd_eq (IsClosedSurface.isSurface hS) hsph hD hΔ hb.symm)
+    (hfree : closure e ∩ Γ.V = ∅) : IsSphere S :=
+  (free_cell_disc_cover hS hrad he hfree).1
 
 /-- A cell of a 2-cell painting in a surface other than a sphere has a vertex. -/
 theorem cell_has_vertex (hS : IsClosedSurface S) (hns : ¬ IsSphere S)

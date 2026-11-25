@@ -277,19 +277,6 @@ theorem exists_isExtSplit {F : Set ℂ} {s t : ℂ} (hF : IsLineWithEnds F s t)
       · exact (Set.disjoint_left.mp dA hx (h₁₂ h)).elim
       · exact (Set.disjoint_left.mp dA hx (h₂₂ h)).elim
 
-theorem _root_.GraphMinor.Surface.IsLineWithEnds.nonempty_sdiff {S : Type*} [TopologicalSpace S]
-    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let m : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
-  refine ⟨(f m).val, (f m).property, ?_⟩
-  rintro (h | h)
-  · have hm : m = 0 := f.injective (Subtype.ext (h.trans hf0.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
-  · have hm : m = 1 := f.injective (Subtype.ext (h.trans hf1.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
-
 theorem IsExtSplit.mem_side {F T₁ T₂ E₁ E₂ Q : Set ℂ} {p q c : ℂ}
     (h : IsExtSplit F T₁ T₂ E₁ E₂) (hF : F = extArc p q Q) (hQb : Q ⊆ closedBall 0 (1 / 2))
     (hp : ‖p‖ = 1 / 2) (hq : ‖q‖ = 1 / 2) (hc : ‖c‖ = 1 / 2) (hcp : c ≠ p) (hcq : c ≠ q)

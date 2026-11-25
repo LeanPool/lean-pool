@@ -94,14 +94,13 @@ theorem exists_inner_outer (hS : IsClosedSurface S) {F : Drawing S} {a u f N : S
 
 variable {Γ : Painting S} {Γ' : Drawing S}
 
-/-- If a 2-cell painting has a cell with no vertex, each region of its radial drawing is an open
-disc.
-In this case the cell and a closed disc in the region fill the surface, so the surface is a sphere,
-and
-`Γ'` is one point. -/
-theorem region_isOpenDisc_of_free_cell (hS : IsClosedSurface S)
+/-- A vertex-free cell gives a sphere and a cover that locates the radial vertices in one
+painting region. -/
+theorem free_cell_disc_cover (hS : IsClosedSurface S)
     (hrad : PreRad (PaintingOrDrawing.painting Γ) Γ') {e : Set S} (he : e ∈ Γ.E)
-    (hfree : closure e ∩ Γ.V = ∅) {s : Set S} (hs : s ∈ Γ'.R) : IsOpenDisc s := by
+    (hfree : closure e ∩ Γ.V = ∅) :
+    IsSphere S ∧ Γ'.U = Γ'.V ∧
+      ∃ D Δ r : Set S, D ∪ Δ = univ ∧ Disjoint D Γ'.V ∧ r ∈ Γ.R ∧ Δ ⊆ r := by
   classical
   have hlc : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
   have hman : ∀ x : S, IsManifoldPoint x := fun x => (hS.2.2 x).isManifoldPoint
@@ -149,7 +148,6 @@ theorem region_isOpenDisc_of_free_cell (hS : IsClosedSurface S)
     obtain ⟨φ⟩ := hF
     exact ⟨_, (φ 1).2⟩
   obtain ⟨y, hy⟩ := hbne
-  have hUclosed : IsClosed Γ.U := cell_isClosed_U hrad
   obtain ⟨r, hr, hyr⟩ : ∃ r ∈ Γ.R, y ∈ r := by
     have hy' : y ∈ univ \ Γ.U := ⟨trivial, disjoint_left.mp hbU hy⟩
     exact ⟨_, ⟨y, hy', rfl⟩, mem_connectedComponentIn hy'⟩
@@ -176,6 +174,19 @@ theorem region_isOpenDisc_of_free_cell (hS : IsClosedSurface S)
   have hsph : IsSphere S := by
     by_contra hsph
     exact hne (eq_of_discBd_eq (IsClosedSurface.isSurface hS) hsph hD hΔ hb.symm)
+  exact ⟨hsph, hU'V, D, Δ, r, hcov, hDV, hr, hΔr⟩
+
+/-- If a 2-cell painting has a cell with no vertex, each region of its radial drawing is an open
+disc.
+In this case the cell and a closed disc in the region fill the surface, so the surface is a sphere,
+and
+`Γ'` is one point. -/
+theorem region_isOpenDisc_of_free_cell (hS : IsClosedSurface S)
+    (hrad : PreRad (PaintingOrDrawing.painting Γ) Γ') {e : Set S} (he : e ∈ Γ.E)
+    (hfree : closure e ∩ Γ.V = ∅) {s : Set S} (hs : s ∈ Γ'.R) : IsOpenDisc s := by
+  have hlc : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  obtain ⟨hsph, hU'V, D, Δ, r, hcov, hDV, hr, hΔr⟩ :=
+    free_cell_disc_cover hS hrad he hfree
   -- All vertices of `Γ'` are the vertex of `r`.
   obtain ⟨c, ⟨hc, hcV⟩, -⟩ := hrad.2.2.2.1 r hr
   have hc' : c ∈ r := hc

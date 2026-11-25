@@ -14,6 +14,7 @@ public import LeanPool.GraphMinor.Surface.ArcTools
 public import LeanPool.GraphMinor.Surface.ChartCells
 public import LeanPool.GraphMinor.Surface.SurfacePull
 public import LeanPool.GraphMinor.Surface.Jordan
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Free curves near a drawing
@@ -417,12 +418,7 @@ theorem exists_lens_of_subline (hX : IsClosed X) (hX₀ : IsClosed X₀)
       · exact Or.inl (Or.inl (Or.inr ⟨subset_closure (hfe ▸ hxf), hxL⟩))
     · exact Or.inl (Or.inl (Or.inl (Or.inr (mem_iUnion₂.mpr ⟨f, ⟨hf, hfe⟩, subset_closure hxf⟩))))
   obtain ⟨B, K, hB, hLB, hBZ, haB, hbB, hconn, hK, hKB, hKL⟩ := exists_plane_lens hL hab hZ hLZ
-  have hL₀ : (L \ {a, b}).Nonempty := by
-    by_contra h
-    rw [not_nonempty_iff_eq_empty] at h
-    have hcl := hL.subset_closure_diff
-    rw [h, closure_empty] at hcl
-    exact hcl hL.left_mem
+  have hL₀ : (L \ {a, b}).Nonempty := hL.nonempty_sdiff
   obtain ⟨y, hy⟩ := hL₀
   have hyr : y ∈ interior X \ X₀ := by
     have hyU := (heV (hLe hy)).1
@@ -452,12 +448,7 @@ theorem exists_oArc_of_line (hX : IsClosed X) (hX₀ : IsClosed X₀)
     ∃ F : Set EuclideanPlane, IsOArc F ∧ a ∈ F ∧ F \ {a} ⊆ interior X \ X₀ ∧
       Disjoint (F \ {a}) D.U := by
   classical
-  have hK₀ : (K \ {a, b}).Nonempty := by
-    by_contra h
-    rw [not_nonempty_iff_eq_empty] at h
-    have hcl := hK.subset_closure_diff
-    rw [h, closure_empty] at hcl
-    exact hcl hK.left_mem
+  have hK₀ : (K \ {a, b}).Nonempty := hK.nonempty_sdiff
   obtain ⟨z, hz⟩ := hK₀
   have hza : z ≠ a := fun h => hz.2 (Or.inl h)
   have hzb : z ≠ b := fun h => hz.2 (Or.inr h)
@@ -483,12 +474,7 @@ theorem exists_oArc_of_line (hX : IsClosed X) (hX₀ : IsClosed X₀)
     exact hoff x ⟨hKsub hx, by rintro (h | h) <;> simp_all⟩ hxZ
   obtain ⟨B, -, hB, hK₁B, hBZ, haB, hzB, hconn, -⟩ :=
     exists_plane_lens hK₁ (Ne.symm hza) hZ hK₁Z
-  have hK₁₀ : (K₁ \ {a, z}).Nonempty := by
-    by_contra h
-    rw [not_nonempty_iff_eq_empty] at h
-    have hcl := hK₁.subset_closure_diff
-    rw [h, closure_empty] at hcl
-    exact hcl hK₁.left_mem
+  have hK₁₀ : (K₁ \ {a, z}).Nonempty := hK₁.nonempty_sdiff
   obtain ⟨y, hy⟩ := hK₁₀
   have hyb : y ≠ b := fun h => hy.2 (Or.inr (hbK₁ y hy.1 h))
   have hyr : y ∈ interior X \ X₀ :=

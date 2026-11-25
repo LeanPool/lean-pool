@@ -113,7 +113,7 @@ theorem isOpen_and_disjoint_bd_of_isClosedDisc (hS : IsSurface S) {Δ : Set S}
 /-- In a surface $S$, no point $x \in \operatorname{discBd} \Delta$ with $x \notin \operatorname{bd}
 S$
 lies in $\operatorname{interior} \Delta$; consequently $x \in \overline{S \setminus \Delta}$. -/
-theorem mem_closure_compl_of_mem_discBd_not_bd (_hS : IsSurface S) {Δ : Set S}
+theorem mem_closure_compl_of_mem_discBd_not_bd {Δ : Set S}
     (hΔ : IsClosedDisc Δ) {x : S} (hx : x ∈ discBd Δ) (hxbd : x ∉ bd S) :
     x ∈ closure (Set.univ \ Δ) := by
   have hnot_int : x ∉ interior Δ := by
@@ -223,7 +223,7 @@ theorem normal_disc_cell_dichotomy (hS : IsSurface S) (Γ : Painting S) {Δ : Se
         rw [← hi, E.cell_tilde i]
         exact mem_insert _ _
       exact closure_mono hc_out hx_tilde.1
-    · exact mem_closure_compl_of_mem_discBd_not_bd hS hΔ hxbdΔ hxbdS
+    · exact mem_closure_compl_of_mem_discBd_not_bd hΔ hxbdΔ hxbdS
   exact ⟨h1, h2, h3⟩
 
 /-- If $\operatorname{discBd} \Delta$ is $\Gamma$-normal and $c \in \Gamma.C$ satisfies

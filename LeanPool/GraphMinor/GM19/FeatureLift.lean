@@ -34,13 +34,9 @@ variable {S : Type u} [TopologicalSpace S] [T2Space S] {W : ℕ → List Letter}
   {A : Set S → unitInterval → S} {lab : Set S → ℕ}
 
 /-- The condition of `WordEdges.vertex_cut` at the end `τ` of the edge `e`. -/
-def EndCase (S : Type u) [TopologicalSpace S] (A : Set S → unitInterval → S) (D : Set (Set S))
-  (e : Set S) (τ : Bool) : Prop :=
-  (∃ e' ∈ D, ∃ τ', e' ≠ e ∧ extI (A e') (eo τ') = extI (A e) (eo τ) ∧ extI (A e) (eo τ) ∉ bd S ∧
-      ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → (e'' = e ∧ τ'' = τ) ∨ (e'' = e'
-        ∧ τ'' = τ')) ∨
-    (extI (A e) (eo τ) ∈ bd S ∧ ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → e''
-      = e ∧ τ'' = τ)
+abbrev EndCase (S : Type u) [TopologicalSpace S] (A : Set S → unitInterval → S) (D : Set (Set S))
+    (e : Set S) (τ : Bool) : Prop :=
+  CutEndCondition A D e τ
 
 variable {Y : Type u} [TopologicalSpace Y] [T2Space Y] {D : Set (Set S)} {g : ℕ × ℂ → Y} {ψ : Y → S}
 

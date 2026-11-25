@@ -900,24 +900,8 @@ so
 that `Sum.inl e` (`e ∈ E(G)`) and `Sum.inr A` (`A ∈ ℒ`) are disjoint by construction, and then push
 forward to `P'` along the edge bijection `Sum.inl e ↦ e`, `Sum.inr A ↦ newEdge A`. -/
 
-/-- Maps a `Hypergraph α β` to `Hypergraph α (β ⊕ γ)` via `Sum.inl`. -/
-@[expose] def mapInlH (γ : Type*) (G : Hypergraph α β) : Hypergraph α (β ⊕ γ) where
-  vertexSet := G.vertexSet
-  edgeSet := Sum.inl '' G.edgeSet
-  Inc e v :=
-    match e with
-    | Sum.inl e₀ => G.Inc e₀ v
-    | Sum.inr _ => False
-  vertex_mem_of_inc e v h := by
-    cases e with
-    | inl e₀ => exact G.vertex_mem_of_inc h
-    | inr _ => exact h.elim
-  edge_mem_of_inc e v h := by
-    cases e with
-    | inl e₀ => exact ⟨e₀, G.edge_mem_of_inc h, rfl⟩
-    | inr _ => exact h.elim
-  vertexSet_finite := G.vertexSet_finite
-  edgeSet_finite := G.edgeSet_finite.image Sum.inl
+/-- The left edge-label inclusion used for patchworks. -/
+abbrev mapInlH (γ : Type*) (G : Hypergraph α β) : Hypergraph α (β ⊕ γ) := mapInl γ G
 
 /-- Maps a `RootedHypergraph α β` to `RootedHypergraph α (β ⊕ γ)` via `mapInlH γ`. -/
 @[expose] def mapInlRooted (γ : Type*) (G : RootedHypergraph α β) : RootedHypergraph α (β ⊕ γ) where
@@ -1157,7 +1141,7 @@ open Classical in
       rcases he_edge with (he_core | he_S) | he_sdiff
       · rcases he_core with ⟨_, _, hEq⟩
         cases hEq
-      · simp only [biUnion, Set.mem_iUnion, mapInlH, Set.mem_image, reduceCtorEq, and_false,
+      · simp only [biUnion, Set.mem_iUnion, mapInlH, mapInl, Set.mem_image, reduceCtorEq, and_false,
           exists_false] at he_S
       · simp only [biUnion, Set.mem_iUnion, placeNewEdgeSum, Set.mem_singleton_iff,
           Sum.inr.injEq] at he_sdiff
@@ -1342,7 +1326,7 @@ theorem isSeparation_placeSumStep_insert (P : UnlabeledPatchwork α β)
     rintro _ ⟨e₀, he₀, rfl⟩ ((⟨e₁, he₁, hEq⟩ | he_S) | he_sdiff)
     · cases hEq
       exact (mem_rootedLocationCore_edgeSet_iff.1 he₁).2 A₀ hA₀_ℒ he₀
-    · simp only [biUnion, Set.mem_iUnion, mapInlH, Set.mem_image] at he_S
+    · simp only [biUnion, Set.mem_iUnion, mapInlH, mapInl, Set.mem_image] at he_S
       rcases he_S with ⟨A, hA_erase, e₁, he₁, hEq⟩
       cases hEq
       have hA_ℒ : A ∈ ℒ := hℒ.finite.mem_toFinset.1 (hS' (Finset.mem_of_mem_erase hA_erase))
@@ -1420,7 +1404,7 @@ theorem isSeparation_placeSumStep_sdiff (P : UnlabeledPatchwork α β)
     rw [Set.disjoint_left]
     rintro _ rfl ((⟨_, _, hEq⟩ | he_S) | he_sdiff)
     · cases hEq
-    · simp only [biUnion, Set.mem_iUnion, mapInlH, Set.mem_image, reduceCtorEq, and_false,
+    · simp only [biUnion, Set.mem_iUnion, mapInlH, mapInl, Set.mem_image, reduceCtorEq, and_false,
         exists_false] at he_S
     · simp only [biUnion, Set.mem_iUnion, placeNewEdgeSum, Set.mem_singleton_iff,
         Sum.inr.injEq] at he_sdiff
@@ -1537,7 +1521,7 @@ theorem theorem_5_4_proof {P P' : UnlabeledPatchwork α β}
           (fun A : RootedHypergraph α β ↦ (placeNewEdgeSum A).toHypergraph)).vertexSet
       simp only [Finset.sdiff_self, biUnion, Finset.notMem_empty, Set.iUnion_of_empty,
         Set.iUnion_empty, Set.mem_empty_iff_false, or_false, Set.mem_iUnion,
-        Set.Finite.mem_toFinset, mapInlH]
+        Set.Finite.mem_toFinset, mapInlH, mapInl]
       constructor
       · intro hv
         by_cases hcore : v ∈ (rootedLocationCore P.G ℒ).vertexSet
@@ -1561,7 +1545,7 @@ theorem theorem_5_4_proof {P P' : UnlabeledPatchwork α β}
           (fun A : RootedHypergraph α β ↦ (placeNewEdgeSum A).toHypergraph)).edgeSet
       simp only [Finset.sdiff_self, biUnion, Finset.notMem_empty, Set.iUnion_of_empty,
         Set.iUnion_empty, Set.mem_empty_iff_false, or_false, Set.mem_iUnion,
-        Set.Finite.mem_toFinset, mapInlH, Set.mem_image]
+        Set.Finite.mem_toFinset, mapInlH, mapInl, Set.mem_image]
       constructor
       · rintro ⟨e₀, he₀, rfl⟩
         by_cases hcore : e₀ ∈ (rootedLocationCore P.G ℒ).edgeSet

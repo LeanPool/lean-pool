@@ -18,6 +18,7 @@ public import LeanPool.GraphMinor.Surface.TriPath
 public import LeanPool.GraphMinor.Surface.DiscArcs
 import Mathlib.Analysis.InnerProductSpace.Convex
 import Mathlib.Analysis.Complex.Isometry
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Graph Minors XII, Section 6: the discs `D_0, …, D_k`
@@ -140,13 +141,10 @@ theorem line_conn {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : IsPreconnec
   rw [this]
   exact isPreconnected_range (by fun_prop)
 
+omit [T2Space S] in
 /-- A line with ends `a, b` has a point other than its ends. -/
-theorem line_mid {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
-  by_contra hc
-  rw [not_nonempty_iff_eq_empty] at hc
-  have := closure_sdiff_pair h
-  rw [hc, closure_empty] at this
-  exact (this ▸ h.left_mem : a ∈ (∅ : Set S))
+theorem line_mid {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff h
 
 /-- A line through a closed disc, meeting the boundary in its two ends, cuts the disc in two. -/
 theorem split_with_arcs {D L A B : Set S} {a b : S} (hD : IsClosedDisc D)

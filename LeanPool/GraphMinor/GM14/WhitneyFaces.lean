@@ -39,17 +39,8 @@ universe u
 variable {S : Type u} [TopologicalSpace S]
 
 theorem line_interior_nonempty {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) :
-    (L \ {a, b}).Nonempty := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let m : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
-  refine ⟨(f m).val, (f m).property, ?_⟩
-  rintro (h | h)
-  · have hm : m = 0 := f.injective (Subtype.ext (h.trans hf0.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
-  · have hm : m = 1 := f.injective (Subtype.ext (h.trans hf1.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
+    (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff hL
 
 variable [T2Space S]
 

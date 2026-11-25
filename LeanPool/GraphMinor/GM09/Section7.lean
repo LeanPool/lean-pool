@@ -513,8 +513,8 @@ theorem exists_clockwise_enumeration {P_set : Set (Graph α β)} {A B : Set α}
   classical
   let W := S.transactionEnds P_set
   have hW_bar : W ⊆ S.Ω.bar := S.transactionEnds_subset_bar P_set
-  obtain ⟨hncard_A, hncard_B, hncard_W⟩ := hfence.ncard_transactionEnds S
-  rw [hk_eq] at hncard_A hncard_B hncard_W
+  obtain ⟨-, -, hncard_W⟩ := hfence.ncard_transactionEnds S
+  rw [hk_eq] at hncard_W
   have hfin_P : P_set.Finite := hfence.1.finite S
   have hP_ne : P_set.Nonempty := (Set.ncard_pos hfin_P).mp (by omega)
   obtain ⟨P₀, hP₀_in⟩ := hP_ne
@@ -529,82 +529,15 @@ theorem exists_clockwise_enumeration {P_set : Set (Graph α β)} {A B : Set α}
     S.Ω.exists_isClockwiseSeq_of_subset_bar hW_bar ha_k.2
   have hL_len : L.length = 2 * k := hL_len_W.trans hncard_W
   have h2k_pos : 0 < L.length := by omega
-  have hL_last : L[2 * k - 1]'(by omega) = b_k := by
-    have hhit_last : S.Ω.FirstHitIn W (L[2 * k - 1]'(by omega)) a_k := by
-      have h := hL_cw.2.2 (2 * k - 1) (by omega)
-      have hmod : (2 * k - 1 + 1) % L.length = 0 := by
-        rw [hL_len, Nat.sub_add_cancel (by omega), Nat.mod_self]
-      rw [hL_set] at h
-      simpa [hmod, hL_0 h2k_pos] using h
-    have hbk_ne_ak : b_k ≠ a_k :=
-      fun h => disjoint_left.mp hfence.2.1.2.2.1 ha_k.1 (h ▸ hb_k.1)
-    have hhit_bk : S.Ω.FirstHitIn W b_k a_k :=
-      (S.Ω.firstHitIn_iff_disjoint_interval hW_bar hb_k.2 ha_k.2 hbk_ne_ak).mpr hd_bk_ak
-    have hlast_W : L[2 * k - 1]'(by omega) ∈ W := by
-      rw [← hL_set]; exact List.getElem_mem (by omega)
-    exact hhit_last.inj_left (hW_bar hlast_W) (hW_bar hb_k.2) hlast_W hb_k.2 hhit_bk
-  have hno_BA : ∀ (i j : ℕ) (hi : i < L.length) (hj : j < L.length),
-      i < j → L[i]'hi ∈ B → L[j]'hj ∈ A → False := by
-    intro i j hi hj hij hLiB hLjA
-    have hi_gt : 0 < i := by
-      rcases Nat.eq_zero_or_pos i with rfl | hpos
-      · rw [hL_0 h2k_pos] at hLiB
-        exact (disjoint_left.mp hfence.2.1.2.2.1 ha_k.1 hLiB).elim
-      · exact hpos
-    have hj_lt : j < 2 * k - 1 := by
-      by_contra hge
-      have hj_eq : j = 2 * k - 1 := by omega
-      subst hj_eq
-      rw [hL_last] at hLjA
-      exact disjoint_left.mp hfence.2.1.2.2.1 hLjA hb_k.1
-    have hLi_in : L[i]'hi ∈ S.Ω.interval a_k (L[j]'hj) := by
-      have h := S.Ω.mem_interval_of_lt hL_cw hi_gt hij hj
-      simpa [hL_0 h2k_pos] using h
-    have hLj_in : L[j]'hj ∈ S.Ω.interval a_k b_k := by
-      have h := S.Ω.mem_interval_of_lt hL_cw (Nat.lt_trans hi_gt hij) hj_lt (by omega)
-      simpa [hL_0 h2k_pos, hL_last] using h
-    have hbk_in : b_k ∈ S.Ω.interval (L[j]'hj) a_k := S.Ω.mem_interval_rotate_left hLj_in
-    have hcr : S.Ω.Crosses a_k (L[j]'hj) (L[i]'hi) b_k :=
-      S.Ω.crosses_iff_interval.mpr (Or.inl ⟨hLi_in, hbk_in⟩)
-    exact hfence.2.1.2.2.2.2 a_k ha_k.1 (L[j]'hj) hLjA
-      (fun h => by
-        have h0j : L[0]'h2k_pos = L[j]'hj := (hL_0 h2k_pos).trans h
-        have := (List.Nodup.getElem_inj_iff hL_cw.1).mp h0j
-        omega)
-      (L[i]'hi) hLiB b_k hb_k.1
-      (fun h => by
-        have hij' : L[i]'hi = L[2 * k - 1]'(by omega) := h.trans hL_last.symm
-        have := (List.Nodup.getElem_inj_iff hL_cw.1).mp hij'
-        omega)
-      hcr
-  have hL_A : ∀ (i : ℕ) (hi : i < L.length), i < k → L[i]'hi ∈ A := by
-    intro i hi hik
-    have hLi_W : L[i]'hi ∈ W := by rw [← hL_set]; exact List.getElem_mem hi
-    have hLi_AB : L[i]'hi ∈ A ∪ B := by rw [hfence.2.1.2.2.2.1]; exact hW_bar hLi_W
-    rcases hLi_AB with hA | hB
-    · exact hA
-    · exfalso
-      have hsub : A ∩ W ⊆ {v | v ∈ L.take i} := by
-        intro x ⟨hxA, hxW⟩
-        rw [← hL_set] at hxW
-        obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem hxW
-        have hji : j < i := by
-          by_contra hge
-          rcases eq_or_lt_of_le (Nat.le_of_not_lt hge) with rfl | hgt
-          · exact disjoint_left.mp hfence.2.1.2.2.1 hxA hB
-          · exact hno_BA i j hi hj hgt hB hxA
-        rw [mem_ofPred_eq, List.mem_take_iff_getElem]
-        exact ⟨j, by omega, rfl⟩
-      have hfin_take : {v | v ∈ L.take i}.Finite :=
-        (L.take i).toFinset.finite_toSet.subset (fun _ hx => List.mem_toFinset.mpr hx)
-      have hle1 : k ≤ {v | v ∈ L.take i}.ncard := by
-        rw [← hncard_A]
-        exact Set.ncard_le_ncard hsub hfin_take
-      have h_eq : {v | v ∈ L.take i} = ((L.take i).toFinset : Set α) := by ext x; simp
-      have hle2 : {v | v ∈ L.take i}.ncard ≤ i := by
-        rw [h_eq, Set.ncard_coe_finset]
-        exact (List.toFinset_card_le (L.take i)).trans (by simp [Nat.le_of_lt hi])
-      omega
+  have hlength : L.length = 2 * P_set.ncard := by rwa [hk_eq]
+  obtain ⟨hLast, hFirstSide, hSecondSide⟩ :=
+    Society.transaction_end_list_partitions_fence S hfence (by omega) hlength hL_cw hL_0
+      hL_set hb_k ha_k hd_bk_ak
+  have hL_last : L[2 * k - 1]'(by omega) = b_k := by simpa only [hk_eq] using hLast
+  have hL_A (i : ℕ) (hi : i < L.length) (hik : i < k) : L[i]'hi ∈ A :=
+    hFirstSide i hi (hk_eq.symm ▸ hik)
+  have hL_B (i : ℕ) (hi : i < L.length) (hki : k ≤ i) : L[i]'hi ∈ B :=
+    hSecondSide i hi (hk_eq.symm ▸ hki)
   have hex_Q : ∀ i : Fin k,
       ∃ P ∈ P_set, ∃ j : Fin k,
         S.IsOmegaPathWithEnds P (L[k - 1 - i.1]'(by omega)) (L[k + j.1]'(by omega)) := by
@@ -634,35 +567,6 @@ theorem exists_clockwise_enumeration {P_set : Set (Graph α β)} {A B : Set α}
   have hR_ends : ∀ i : Fin k,
       S.IsOmegaPathWithEnds (R i) (L[k - 1 - i.1]'(by omega)) (L[k + (φ i).1]'(by omega)) :=
     fun i => (hex_Q i).choose_spec.2.choose_spec
-  have hL_B : ∀ (i : ℕ) (hi : i < L.length), k ≤ i → L[i]'hi ∈ B := by
-    intro i hi hki
-    have hLi_W : L[i]'hi ∈ W := by rw [← hL_set]; exact List.getElem_mem hi
-    have hLi_AB : L[i]'hi ∈ A ∪ B := by rw [hfence.2.1.2.2.2.1]; exact hW_bar hLi_W
-    rcases hLi_AB with hA | hB
-    · exfalso
-      have hsub : B ∩ W ⊆ {v | v ∈ L.drop (i + 1)} := by
-        intro x ⟨hxB, hxW⟩
-        rw [← hL_set] at hxW
-        obtain ⟨j, hj, rfl⟩ := List.getElem_of_mem hxW
-        have hij : i < j := by
-          by_contra hle
-          rcases eq_or_lt_of_le (Nat.le_of_not_lt hle) with rfl | hlt
-          · exact disjoint_left.mp hfence.2.1.2.2.1 hA hxB
-          · exact hno_BA j i hj hi hlt hxB hA
-        rw [mem_ofPred_eq, List.mem_iff_getElem]
-        refine ⟨j - (i + 1), by simp; omega, ?_⟩
-        simp [Nat.add_sub_of_le (by omega : i + 1 ≤ j)]
-      have hfin_drop : {v | v ∈ L.drop (i + 1)}.Finite :=
-        (L.drop (i + 1)).toFinset.finite_toSet.subset (fun _ hx => List.mem_toFinset.mpr hx)
-      have hle1 : k ≤ {v | v ∈ L.drop (i + 1)}.ncard := by
-        rw [← hncard_B]
-        exact Set.ncard_le_ncard hsub hfin_drop
-      have h_eq : {v | v ∈ L.drop (i + 1)} = ((L.drop (i + 1)).toFinset : Set α) := by ext x; simp
-      have hle2 : {v | v ∈ L.drop (i + 1)}.ncard ≤ L.length - (i + 1) := by
-        rw [h_eq, Set.ncard_coe_finset]
-        exact (List.toFinset_card_le (L.drop (i + 1))).trans (by simp)
-      omega
-    · exact hB
   have hR_inj : Function.Injective R := by
     intro i j heq
     have h₁ := hR_ends i

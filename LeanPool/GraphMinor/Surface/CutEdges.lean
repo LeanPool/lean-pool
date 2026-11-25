@@ -266,6 +266,16 @@ theorem WordEdges.f_end₂ (h : WordEdges W f V E A lab) {e : Set S} (he : e ∈
   simp only [spe, EdgeSides.end₂, eo_xn]
   exact h2
 
+/-- At an end of a cut edge, either exactly one other edge of `D` ends there off the boundary,
+or the point is on the boundary and no other cut edge ends there. -/
+def CutEndCondition (A : Set S → unitInterval → S) (D : Set (Set S)) (e : Set S)
+    (τ : Bool) : Prop :=
+  (∃ e' ∈ D, ∃ τ', e' ≠ e ∧ extI (A e') (eo τ') = extI (A e) (eo τ) ∧ extI (A e) (eo τ) ∉ bd S ∧
+    ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → (e'' = e ∧ τ'' = τ) ∨ (e'' = e'
+      ∧ τ'' = τ')) ∨
+  (extI (A e) (eo τ) ∈ bd S ∧ ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → e'' = e
+    ∧ τ'' = τ)
+
 /-- What happens at an end of an edge in `D`, when we cut along the labels `L` of `D`. There are two
 cases. Either exactly
 one other end of an edge in `D` lies at the same point, off the boundary, or no other end does and
@@ -275,12 +285,7 @@ theorem WordEdges.vertex_cut (h : WordEdges W f V E A lab) {D : Set (Set S)}
   (hD : D ⊆ E) {e : Set S} (heD : e ∈ D)
     (hsd : ∀ e ∈ D, ∃ (i p j q : ℕ) (e₁ e₂ : Bool), EdgeSides W (lab e) i p j q e₁ e₂)
     (s : EdgeSides W (lab e) i p j q e₁ e₂) (τ : Bool)
-    (hcase : (∃ e' ∈ D, ∃ τ', e' ≠ e ∧ extI (A e') (eo τ') = extI (A e) (eo τ) ∧ extI (A e)
-      (eo τ) ∉ bd S ∧
-        ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → (e'' = e ∧ τ'' = τ) ∨ (e''
-          = e' ∧ τ'' = τ')) ∨
-      (extI (A e) (eo τ) ∈ bd S ∧ ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → e''
-        = e ∧ τ'' = τ)) :
+    (hcase : CutEndCondition A D e τ) :
     ¬ PRel (cutW W (lab '' D)) (spe W (s.end₁ τ)) (spe W (s.end₂ τ)) ∧ ∀ a ∈ Dsk W, f a = extI
       (A e) (eo τ) →
       PRel (cutW W (lab '' D)) (spe W (s.end₁ τ)) a ∨ PRel (cutW W (lab '' D)) (spe W (s.end₂ τ)) a
@@ -401,11 +406,12 @@ theorem WordEdges.vertex_cut (h : WordEdges W f V E A lab) {D : Set (Set S)}
           obtain ⟨k', e₃, hk⟩ := hlet g
           rcases (prtL_eq_iff hP g hk).mp hfr with h5 | h5
           · exact h5
-          · exact hvb (by
-              rw [h.bd_eq, ← hrelv g hg]
-              exact ⟨spe W g, ⟨_, _, _, g.2, h5, eo_mem _, rfl⟩, rfl⟩))
+          · apply hvb
+            change v ∈ bd S
+            rw [h.bd_eq, ← hrelv g hg]
+            exact ⟨spe W g, ⟨_, _, _, g.2, h5, eo_mem _, rfl⟩, rfl⟩)
     exact ⟨h1, hwrap h2⟩
-  · have hvb' := hvb
+  · have hvb' : v ∈ bd S := hvb
     rw [h.bd_eq] at hvb'
     obtain ⟨x, ⟨i₀, p₀, u, hp₀, hfree, hu, rfl⟩, hfx⟩ := hvb'
     obtain ⟨⟨k₀, e₀⟩, hk₀⟩ : ∃ l, (W i₀)[p₀]? = some l := ⟨_, List.getElem?_eq_getElem hp₀⟩
@@ -497,20 +503,15 @@ theorem exists_descend {Y T : Type*} [TopologicalSpace Y] [TopologicalSpace T] [
   rw [e]
   exact continuousOn_iff_continuous_domRestrict.mp hf
 
-/-- The cut surface over the union of a set `D` of edges, with two lifts of each edge. -/
-theorem WordEdges.cut_space (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD : D ⊆ E)
-    (hsd : ∀ e ∈ D, ∃ (i p j q : ℕ) (e₁ e₂ : Bool), EdgeSides W (lab e) i p j q e₁ e₂)
-    (hcase : ∀ e ∈ D, ∀ τ, (∃ e' ∈ D, ∃ τ', e' ≠ e ∧ extI (A e') (eo τ') = extI (A e) (eo τ) ∧ extI
-      (A e) (eo τ) ∉ bd S ∧
-        ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → (e'' = e ∧ τ'' = τ) ∨ (e''
-          = e' ∧ τ'' = τ')) ∨
-      (extI (A e) (eo τ) ∈ bd S ∧ ∀ e'' ∈ D, ∀ τ'', extI (A e'') (eo τ'') = extI (A e) (eo τ) → e''
-        = e ∧ τ'' = τ))
-    {Y : Type u} [TopologicalSpace Y] [T2Space Y] {g : ℕ × ℂ → Y} (hg : Presents (cutW W
-      (lab '' D)) g) :
-    ∃ ψ : Y → S, Continuous ψ ∧ Function.Surjective ψ ∧ InjOn ψ (ψ ⁻¹' (⋃₀ D)ᶜ) ∧ ψ ⁻¹'
-      (⋃₀ D) ⊆ bd Y ∧ IsSurface Y ∧
-      ∀ e ∈ D, ∃ X X', LiftPair ψ e (extI (A e) 0) (extI (A e) 1) X X' := by
+omit [T2Space S] in
+/-- The map induced by cutting a word, with its boundary and uncut fibers. -/
+theorem WordEdges.descend_cut (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD : D ⊆ E)
+    {Y : Type u} [TopologicalSpace Y] [T2Space Y] {g : ℕ × ℂ → Y}
+    (hg : Presents (cutW W (lab '' D)) g) :
+    ∃ ψ : Y → S, Continuous ψ ∧ Function.Surjective ψ ∧ InjOn ψ (ψ ⁻¹' (⋃₀ D)ᶜ) ∧
+      IsSurface Y ∧ bd Y = g '' freePts (cutW W (lab '' D)) ∧
+      (∀ a ∈ Dsk W, ψ (g a) = f a) ∧ (∀ z : Y, ∃ a ∈ Dsk W, g a = z) ∧
+      ∀ {a b}, a ∈ Dsk W → b ∈ Dsk W → (g a = g b ↔ PRel (cutW W (lab '' D)) a b) := by
   classical
   set L := lab '' D with hL
   have hP := h.paired
@@ -527,12 +528,67 @@ theorem WordEdges.cut_space (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD 
   have hgeq : ∀ {a b}, a ∈ Dsk W → b ∈ Dsk W → (g a = g b ↔ PRel (cutW W L) a b) := fun {a b} ha hb
     =>
     hg.2.2 a (hD' ▸ ha) b (hD' ▸ hb)
-  have hkey : ∀ e ∈ D, ∃ X X', LiftPair ψ e (extI (A e) 0) (extI (A e) 1) X X' ∧ X ∪ X' ⊆ bd Y := by
+  have hoff : ∀ a b, PRel W a b → f a = f b ∧ (f a ∉ ⋃₀ D → PRel (cutW W L) a b) := by
+    intro a b hab
+    induction hab with
+    | rel a b hs =>
+      have hfe := presents_eq_of_stp h.pres hs
+      refine ⟨hfe, fun hF => ?_⟩
+      obtain ⟨i, j, p, q, k, e, e', u, h1, h2, h3, hu, rfl, rfl⟩ := stp_iff.mp hs
+      refine .rel _ _ (stp_to_cut h1 h2 h3 hu fun hk => ?_)
+      obtain ⟨e'', he'', rfl⟩ := hk
+      exact hF ⟨e'', he'', by
+        rw [h.f_side (hD he'') h1 hu]
+        exact h.extI_mem (hD he'') _⟩
+    | refl _ => exact ⟨rfl, fun _ => .refl _⟩
+    | symm a b _ ih => exact ⟨ih.1.symm, fun hF => .symm _ _ (ih.2 (ih.1 ▸ hF))⟩
+    | trans a b c _ _ h1 h2 => exact ⟨h1.1.trans h2.1, fun hF => .trans _ _ _ (h1.2 hF) (h2.2
+      (h1.1 ▸ hF))⟩
+  refine ⟨ψ, hψc, ?_, ?_, hsurf, hbdY, hψ, hrep, fun ha hb => hgeq ha hb⟩
+  · intro x
+    obtain ⟨a, ha, rfl⟩ : x ∈ f '' Dsk W := h.pres.2.1 ▸ mem_univ x
+    exact ⟨g a, hψ a ha⟩
+  · intro z hz z' hz' he
+    obtain ⟨a, ha, rfl⟩ := hrep z
+    obtain ⟨b, hb, rfl⟩ := hrep z'
+    have h1 : f a = f b := by rw [← hψ a ha, ← hψ b hb, he]
+    have h2 : f a ∉ ⋃₀ D := fun h3 => hz (by
+      show ψ (g a) ∈ ⋃₀ D
+      rw [hψ a ha]
+      exact h3)
+    exact (hgeq ha hb).mpr ((hoff a b ((h.pres.2.2 a ha b hb).mp h1)).2 h2)
+
+/-- Two lifts of an edge to the boundary. They are distinct and exhaust each fiber over the
+open edge and at every endpoint satisfying `hend`. -/
+def IsCutEdgeLift {Y : Type u} [TopologicalSpace Y] (ψ : Y → S) (a : ℝ → S) (hend : Bool → Prop)
+  (r r' : ℝ → Y) :
+    Prop :=
+  ContinuousOn r (Icc 0 1) ∧ ContinuousOn r' (Icc 0 1) ∧ (∀ t ∈ Icc (0 : ℝ) 1, ψ (r t) = a t ∧ ψ
+    (r' t) = a t) ∧
+    (∀ t ∈ Icc (0 : ℝ) 1, r t ∈ bd Y ∧ r' t ∈ bd Y) ∧
+    (∀ t ∈ Icc (0 : ℝ) 1, (t ∈ Ioo (0 : ℝ) 1 ∨ ∃ τ, eo τ = t ∧ hend τ) →
+      r t ≠ r' t ∧ ∀ z, ψ z = a t → z = r t ∨ z = r' t)
+
+/-- The cut surface over the union of a set `D` of edges of a word. Each edge has two lifts. -/
+theorem WordEdges.lift_cut_edges (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD : D ⊆ E)
+    (hsd : ∀ e ∈ D, ∃ (i p j q : ℕ) (e₁ e₂ : Bool), EdgeSides W (lab e) i p j q e₁ e₂)
+    {Y : Type u} [TopologicalSpace Y] [T2Space Y] {g : ℕ × ℂ → Y} (hg : Presents (cutW W
+      (lab '' D)) g) :
+    ∃ ψ : Y → S, Continuous ψ ∧ Function.Surjective ψ ∧ InjOn ψ (ψ ⁻¹' (⋃₀ D)ᶜ) ∧ IsSurface Y ∧
+      (∀ a ∈ Dsk W, ψ (g a) = f a) ∧ (∀ z : Y, ∃ a ∈ Dsk W, g a = z) ∧
+      ∀ e ∈ D, ∃ r r', IsCutEdgeLift ψ (extI (A e)) (CutEndCondition A D e) r r' := by
+  classical
+  set L := lab '' D with hL
+  have hP := h.paired
+  have hP' : IsPaired (cutW W L) := isPaired_cut hP
+  have hD' : Dsk (cutW W L) = Dsk W := dsk_cut
+  obtain ⟨ψ, hψc, hsurj, hinj, hsurf, hbdY, hψ, hrep, hgeq⟩ := h.descend_cut hD hg
+  have hkey : ∀ e ∈ D, ∃ r r', IsCutEdgeLift ψ (extI (A e)) (CutEndCondition A D e) r r' := by
     intro e heD
     have heE := hD heD
     obtain ⟨i, p, j, q, e₁, e₂, s⟩ := hsd e heD
     have hL0 : lab e ∈ L := ⟨e, heD, rfl⟩
-    have hv := fun τ => h.vertex_cut hD heD hsd s τ (hcase e heD τ)
+    have hv := fun τ (hτ : CutEndCondition A D e τ) => h.vertex_cut hD heD hsd s τ hτ
     have hp := lt_length s.one
     have hq := lt_length s.two
     let r : ℝ → Y := fun t => g (spt W i p (ofs e₁ t))
@@ -553,121 +609,122 @@ theorem WordEdges.cut_space (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD 
       => by simp only [spe, EdgeSides.end₁, eo_xn]
     have hspe' : ∀ τ, spe W (s.end₂ τ) = spt W j q (ofs e₂ (eo τ)) := fun τ
       => by simp only [spe, EdgeSides.end₂, eo_xn]
-    have hne : ∀ t ∈ Icc (0 : ℝ) 1, r t ≠ r' t := by
-      intro t ht he
+    have hneO : ∀ t ∈ Ioo (0 : ℝ) 1, r t ≠ r' t := by
+      intro t ht' he
       have hpr := (hgeq (hm1 t) (hm2 t)).mp he
-      by_cases hend : ∃ τ, eo τ = t
-      · obtain ⟨τ, rfl⟩ := hend
-        rw [← hspe, ← hspe'] at hpr
-        exact (hv τ).1 hpr
-      · push Not at hend
-        have ht' : t ∈ Ioo (0 : ℝ) 1 := ⟨lt_of_le_of_ne ht.1 fun h0 => hend false
-          (by simp [eo, h0]),
-          lt_of_le_of_ne ht.2 fun h0 => hend true (by simp [eo, h0])⟩
-        have hu := ofs_Ioo e₁ ht'
-        have hl' : (cutW W L i)[p]? = some (2 * Nat.pair i p + 1, e₁)
-          := cut_get_iff.mpr ⟨_, s.one, .inl ⟨hL0, rfl⟩⟩
-        have hpr' : PRel (cutW W L) (spt (cutW W L) i p (ofs e₁ t)) (spt W j q (ofs e₂ t)) := by
-          rw [spt_cut]
-          exact hpr
-        have hfree := freeSide_cut (L := L) s.one hL0
-        have heqs : spt W j q (ofs e₂ t) = spt W i p (ofs e₁ t) := by
-          rcases hpr'.eq_or_stp hP' hl' hu with h1 | h1
-          · rw [h1, spt_cut]
-          · exfalso
-            obtain ⟨j', q', e', h2, h3, -⟩ := stp_of_side hP' hl' hu h1
-            exact h3 (hfree _ _ _ _ _ hl' h2)
-        have h1 : j = i := congrArg Prod.fst heqs
-        subst h1
-        have h2 : per (W j).length (q + ofs e₂ t) = per (W j).length (p + ofs e₁ t)
-          := congrArg Prod.snd heqs
-        obtain ⟨h3, -⟩ := side_unique hq hp (ofs_Ioo e₂ ht') (ofs_mem ht) h2
-        exact s.ne (by rw [h3])
-    have hfill : ∀ z, ψ z ∈ extI (A e) '' Icc 0 1 → z ∈ r '' Icc 0 1 ∪ r' '' Icc 0 1 := by
-      rintro z ⟨t, ht, hzt⟩
+      have hu := ofs_Ioo e₁ ht'
+      have hl' : (cutW W L i)[p]? = some (2 * Nat.pair i p + 1, e₁) := cut_get_iff.mpr ⟨_, s.one,
+        .inl ⟨hL0, rfl⟩⟩
+      have hpr' : PRel (cutW W L) (spt (cutW W L) i p (ofs e₁ t)) (spt W j q (ofs e₂ t)) := by
+        rw [spt_cut]
+        exact hpr
+      have hfree := freeSide_cut (L := L) s.one hL0
+      have heqs : spt W j q (ofs e₂ t) = spt W i p (ofs e₁ t) := by
+        rcases hpr'.eq_or_stp hP' hl' hu with h1 | h1
+        · rw [h1, spt_cut]
+        · exfalso
+          obtain ⟨j', q', e', h2, h3, -⟩ := stp_of_side hP' hl' hu h1
+          exact h3 (hfree _ _ _ _ _ hl' h2)
+      have h1 : j = i := congrArg Prod.fst heqs
+      subst h1
+      have h2 : per (W j).length (q + ofs e₂ t) = per (W j).length (p + ofs e₁ t)
+        := congrArg Prod.snd heqs
+      obtain ⟨h3, -⟩ := side_unique hq hp (ofs_Ioo e₂ ht') (ofs_mem (Ioo_subset_Icc_self ht')) h2
+      exact s.ne (by rw [h3])
+    have hfillO : ∀ t ∈ Ioo (0 : ℝ) 1, ∀ z, ψ z = extI (A e) t → z = r t ∨ z = r' t := by
+      intro t ht' z hzt
       obtain ⟨a, ha, rfl⟩ := hrep z
       rw [hψ a ha] at hzt
-      by_cases hend : ∃ τ, eo τ = t
-      · obtain ⟨τ, rfl⟩ := hend
-        rcases (hv τ).2 a ha hzt.symm with h1 | h1
-        · refine .inl ⟨eo τ, ht, ?_⟩
-          have := (hgeq (spe_mem _) ha).mpr h1
+      have ht := Ioo_subset_Icc_self ht'
+      have hu := ofs_Ioo e₁ ht'
+      have hfx : f (spt W i p (ofs e₁ t)) = f a := by
+        rw [h.f_side heE s.one (ofs_mem ht), ofs_ofs, hzt]
+      have hpr := (h.pres.2.2 _ (hm1 t) _ ha).mp hfx
+      rcases hpr.eq_or_stp hP s.one hu with h1 | h1
+      · exact .inl (by simp only [r]; rw [h1])
+      · obtain ⟨j', q', e', h2, h3, h4⟩ := stp_of_side hP s.one hu h1
+        rcases hP.third s.one s.two h2 s.ne with h5 | h5
+        · exact absurd h5.symm h3
+        · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h5
+          have he' : e' = e₂ := by
+            rw [s.two] at h2
+            simpa using h2.symm
+          subst he'
+          refine .inr ?_
+          simp only [r']
+          rw [h4, flp_ofs]
+    have hbdr : ∀ t ∈ Icc (0 : ℝ) 1, r t ∈ bd Y ∧ r' t ∈ bd Y := by
+      intro t ht
+      constructor
+      · rw [hbdY]
+        refine ⟨spt W i p (ofs e₁ t), ⟨i, p, ofs e₁ t, ?_, freeSide_cut s.one hL0, ofs_mem ht,
+          (spt_cut _ _ _).symm⟩, rfl⟩
+        rw [cutW_length]
+        exact hp
+      · rw [hbdY]
+        refine ⟨spt W j q (ofs e₂ t), ⟨j, q, ofs e₂ t, ?_, freeSide_cut s.two hL0, ofs_mem ht,
+          (spt_cut _ _ _).symm⟩, rfl⟩
+        rw [cutW_length]
+        exact hq
+    refine ⟨r, r', hrc, hrc', fun t ht => ⟨hr t ht, hr' t ht⟩, hbdr, ?_⟩
+    rintro t ht (ht' | ⟨τ, rfl, hτ⟩)
+    · exact ⟨hneO t ht', hfillO t ht'⟩
+    · refine ⟨fun he => ?_, fun z hzt => ?_⟩
+      · have hpr := (hgeq (hm1 _) (hm2 _)).mp he
+        rw [← hspe, ← hspe'] at hpr
+        exact (hv τ hτ).1 hpr
+      · obtain ⟨a, ha, rfl⟩ := hrep z
+        rw [hψ a ha] at hzt
+        rcases (hv τ hτ).2 a ha hzt with h1 | h1
+        · have := (hgeq (spe_mem _) ha).mpr h1
           rw [hspe] at this
-          exact this
-        · refine .inr ⟨eo τ, ht, ?_⟩
-          have := (hgeq (spe_mem _) ha).mpr h1
+          exact .inl this.symm
+        · have := (hgeq (spe_mem _) ha).mpr h1
           rw [hspe'] at this
-          exact this
-      · push Not at hend
-        have ht' : t ∈ Ioo (0 : ℝ) 1 := ⟨lt_of_le_of_ne ht.1 fun h0 => hend false
-          (by simp [eo, h0]),
-          lt_of_le_of_ne ht.2 fun h0 => hend true (by simp [eo, h0])⟩
-        have hu := ofs_Ioo e₁ ht'
-        have hfx : f (spt W i p (ofs e₁ t)) = f a := by
-          rw [h.f_side heE s.one (ofs_mem ht), ofs_ofs, hzt]
-        have hpr := (h.pres.2.2 _ (hm1 t) _ ha).mp hfx
-        rcases hpr.eq_or_stp hP s.one hu with h1 | h1
-        · exact .inl ⟨t, ht, by simp only [r]; rw [h1]⟩
-        · obtain ⟨j', q', e', h2, h3, h4⟩ := stp_of_side hP s.one hu h1
-          rcases hP.third s.one s.two h2 s.ne with h5 | h5
-          · exact absurd h5.symm h3
-          · obtain ⟨rfl, rfl⟩ := Prod.mk.inj h5
-            have he' : e' = e₂ := by
-              rw [s.two] at h2
-              simpa using h2.symm
-            subst he'
-            refine .inr ⟨t, ht, ?_⟩
-            simp only [r']
-            rw [h4, flp_ofs]
-    have hrange : extI (A e) '' Icc 0 1 = e := by
-      rw [image_extI, (h.arc e heE).2.1]
-    have hpair := liftPair_of_maps (ψ := ψ) hrc hrc' hr hr' (extI_injOn (h.arc e heE).1.2) hne hfill
-    rw [hrange] at hpair
+          exact .inr this.symm
+  exact ⟨ψ, hψc, hsurj, hinj, hsurf, hψ, hrep, hkey⟩
+
+/-- The cut surface over the union of a set `D` of edges, with two lifts of each edge. -/
+theorem WordEdges.cut_space (h : WordEdges W f V E A lab) {D : Set (Set S)} (hD : D ⊆ E)
+    (hsd : ∀ e ∈ D, ∃ (i p j q : ℕ) (e₁ e₂ : Bool), EdgeSides W (lab e) i p j q e₁ e₂)
+    (hcase : ∀ e ∈ D, ∀ τ, CutEndCondition A D e τ)
+    {Y : Type u} [TopologicalSpace Y] [T2Space Y] {g : ℕ × ℂ → Y} (hg : Presents (cutW W
+      (lab '' D)) g) :
+    ∃ ψ : Y → S, Continuous ψ ∧ Function.Surjective ψ ∧ InjOn ψ (ψ ⁻¹' (⋃₀ D)ᶜ) ∧ ψ ⁻¹'
+      (⋃₀ D) ⊆ bd Y ∧ IsSurface Y ∧
+      ∀ e ∈ D, ∃ X X', LiftPair ψ e (extI (A e) 0) (extI (A e) 1) X X' := by
+  obtain ⟨ψ, hψ, hsurj, hinj, hsurf, -, -, hlift⟩ := h.lift_cut_edges hD hsd hg
+  have hlifts : ∀ e ∈ D, ∃ X X', LiftPair ψ e (extI (A e) 0) (extI (A e) 1) X X' ∧
+      X ∪ X' ⊆ bd Y := by
+    intro e he
+    obtain ⟨r, r', hc, hc', hmaps, hbd, hsplit⟩ := hlift e he
+    have hall (t : ℝ) (ht : t ∈ Icc (0 : ℝ) 1) :
+        r t ≠ r' t ∧ ∀ z, ψ z = extI (A e) t → z = r t ∨ z = r' t := by
+      apply hsplit t ht
+      rcases lt_or_eq_of_le ht.1 with h0 | rfl
+      · rcases lt_or_eq_of_le ht.2 with h1 | rfl
+        · exact Or.inl ⟨h0, h1⟩
+        · exact Or.inr ⟨true, rfl, hcase e he true⟩
+      · exact Or.inr ⟨false, rfl, hcase e he false⟩
+    have hfill : ∀ z, ψ z ∈ extI (A e) '' Icc 0 1 → z ∈ r '' Icc 0 1 ∪ r' '' Icc 0 1 := by
+      rintro z ⟨t, ht, hzt⟩
+      rcases (hall t ht).2 z hzt.symm with hz | hz
+      · exact Or.inl ⟨t, ht, hz.symm⟩
+      · exact Or.inr ⟨t, ht, hz.symm⟩
+    have hpair := liftPair_of_maps (ψ := ψ) hc hc' (fun t ht => (hmaps t ht).1)
+      (fun t ht => (hmaps t ht).2) (extI_injOn (h.arc e (hD he)).1.2)
+      (fun t ht => (hall t ht).1) hfill
+    rw [image_extI, (h.arc e (hD he)).2.1] at hpair
     refine ⟨_, _, hpair, ?_⟩
     rintro z (⟨t, ht, rfl⟩ | ⟨t, ht, rfl⟩)
-    · rw [hbdY]
-      refine ⟨spt W i p (ofs e₁ t), ⟨i, p, ofs e₁ t, ?_, freeSide_cut s.one hL0, ofs_mem ht,
-        (spt_cut _ _ _).symm⟩, rfl⟩
-      rw [cutW_length]
-      exact hp
-    · rw [hbdY]
-      refine ⟨spt W j q (ofs e₂ t), ⟨j, q, ofs e₂ t, ?_, freeSide_cut s.two hL0, ofs_mem ht,
-        (spt_cut _ _ _).symm⟩, rfl⟩
-      rw [cutW_length]
-      exact hq
-  have hoff : ∀ a b, PRel W a b → f a = f b ∧ (f a ∉ ⋃₀ D → PRel (cutW W L) a b) := by
-    intro a b hab
-    induction hab with
-    | rel a b hs =>
-      have hfe := presents_eq_of_stp h.pres hs
-      refine ⟨hfe, fun hF => ?_⟩
-      obtain ⟨i, j, p, q, k, e, e', u, h1, h2, h3, hu, rfl, rfl⟩ := stp_iff.mp hs
-      refine .rel _ _ (stp_to_cut h1 h2 h3 hu fun hk => ?_)
-      obtain ⟨e'', he'', rfl⟩ := hk
-      exact hF ⟨e'', he'', by
-        rw [h.f_side (hD he'') h1 hu]
-        exact h.extI_mem (hD he'') _⟩
-    | refl _ => exact ⟨rfl, fun _ => .refl _⟩
-    | symm a b _ ih => exact ⟨ih.1.symm, fun hF => .symm _ _ (ih.2 (ih.1 ▸ hF))⟩
-    | trans a b c _ _ h1 h2 => exact ⟨h1.1.trans h2.1, fun hF => .trans _ _ _ (h1.2 hF) (h2.2
-      (h1.1 ▸ hF))⟩
-  refine ⟨ψ, hψc, ?_, ?_, ?_, hsurf, fun e he => ?_⟩
-  · intro x
-    obtain ⟨a, ha, rfl⟩ : x ∈ f '' Dsk W := h.pres.2.1 ▸ mem_univ x
-    exact ⟨g a, hψ a ha⟩
-  · intro z hz z' hz' he
-    obtain ⟨a, ha, rfl⟩ := hrep z
-    obtain ⟨b, hb, rfl⟩ := hrep z'
-    have h1 : f a = f b := by rw [← hψ a ha, ← hψ b hb, he]
-    have h2 : f a ∉ ⋃₀ D := fun h3 => hz (by
-      show ψ (g a) ∈ ⋃₀ D
-      rw [hψ a ha]
-      exact h3)
-    exact (hgeq ha hb).mpr ((hoff a b ((h.pres.2.2 a ha b hb).mp h1)).2 h2)
+    · exact (hbd t ht).1
+    · exact (hbd t ht).2
+  refine ⟨ψ, hψ, hsurj, hinj, ?_, hsurf, ?_⟩
   · rintro z ⟨e, he, hz⟩
-    obtain ⟨X, X', ⟨x0, x1, y0, y1, -, -, -, h4, -⟩, hsub⟩ := hkey e he
-    exact hsub (h4 ▸ hz)
-  · obtain ⟨X, X', hp, -⟩ := hkey e he
-    exact ⟨X, X', hp⟩
+    obtain ⟨X, X', ⟨x0, x1, y0, y1, -, -, -, hcover, -⟩, hbd⟩ := hlifts e he
+    exact hbd (hcover ▸ hz)
+  · intro e he
+    obtain ⟨X, X', hpair, -⟩ := hlifts e he
+    exact ⟨X, X', hpair⟩
 
 end GraphMinor.Surface

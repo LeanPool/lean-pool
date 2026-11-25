@@ -28,17 +28,8 @@ namespace GraphMinor.GM12
 open Set Topology Surface GM11
 
 private theorem line_interior_nonempty {S : Type*} [TopologicalSpace S]
-    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let m : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
-  refine ⟨(f m).val, (f m).property, ?_⟩
-  rintro (h | h)
-  · have hm : m = 0 := f.injective (Subtype.ext (h.trans hf0.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
-  · have hm : m = 1 := f.injective (Subtype.ext (h.trans hf1.symm))
-    have hh := congrArg Subtype.val hm
-    norm_num [m] at hh
+    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff hL
 
 private theorem remove_ends_union {S : Type*} {A L F : Set S} (hF : F ⊆ L) :
     (A \ F) ∪ L = A ∪ L := by

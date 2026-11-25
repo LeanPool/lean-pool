@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM19.Section13zf
 public import LeanPool.GraphMinor.Surface.Fan
+import LeanPool.GraphMinor.Surface.SurfaceGraph
 
 /-!
 # Graph Minors XIX, Section 14: sectors exist
@@ -48,19 +49,8 @@ variable {T : Type} [TopologicalSpace T] [T2Space T]
 omit [T2Space T] in
 /-- A line with ends `a, b` is more than its ends. -/
 theorem IsLineWithEnds.diff_nonempty {L : Set T} {a b : T} (hl : IsLineWithEnds L a b) :
-  (L \ {a, b}).Nonempty := by
-  by_contra hn
-  have hsub : L ⊆ {a, b} := sdiff_eq_empty.mp (not_nonempty_iff_eq_empty.mp hn)
-  obtain ⟨f, hf0, hf1⟩ := hl
-  have hx₀ : (⟨1 / 2, by norm_num, by norm_num⟩ : unitInterval) ≠ 0 := fun h ↦ by
-    have := congrArg Subtype.val h
-    norm_num at this
-  have hx₁ : (⟨1 / 2, by norm_num, by norm_num⟩ : unitInterval) ≠ 1 := fun h ↦ by
-    have := congrArg Subtype.val h
-    norm_num at this
-  rcases hsub (f ⟨1 / 2, by norm_num, by norm_num⟩).2 with h | h
-  · exact hx₀ (f.injective (Subtype.ext (h.trans hf0.symm)))
-  · exact hx₁ (f.injective (Subtype.ext ((mem_singleton_iff.mp h).trans hf1.symm)))
+  (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff hl
 
 /-- If an `O`-arc is two lines with the same ends then a third line with those ends in the `O`-arc
 is one of the two. -/

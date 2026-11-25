@@ -156,29 +156,8 @@ theorem exists_drawing_union_bd (hS : IsSurface S) (G : Drawing S) (hG : G.IsPro
 /-- Pullback of `IsSolid` along a closed embedding `j : S → T`. -/
 theorem isSolid_of_isClosedEmbedding [T2Space S] {T : Type u} [TopologicalSpace T]
     {j : S → T} (hj : IsClosedEmbedding j) {Z : Set S} (hZ : IsSolid (j '' Z)) :
-    IsSolid Z := by
-  refine ⟨fun z hz U hU hzU => ?_, ?_⟩
-  · obtain ⟨U_T, hU_T_open, rfl⟩ := hj.isInducing.isOpen_iff.mp hU
-    obtain ⟨V_T, hVT_sub, hjz_VT, hVT_open, h_arc⟩ :=
-      hZ.1 (j z) ⟨z, hz, rfl⟩ U_T hU_T_open hzU
-    refine ⟨j ⁻¹' V_T, preimage_mono hVT_sub, hjz_VT, hVT_open.preimage hj.continuous, ?_⟩
-    intro a ha b hb hab
-    have hja : j a ∈ j '' Z ∩ V_T := ⟨⟨a, ha.1, rfl⟩, ha.2⟩
-    have hjb : j b ∈ j '' Z ∩ V_T := ⟨⟨b, hb.1, rfl⟩, hb.2⟩
-    obtain ⟨F_T, hFT_sub, hFT_line⟩ := h_arc (j a) hja (j b) hjb (hj.injective.ne hab)
-    have hFT_range : F_T ⊆ range j := fun y hy => by
-      obtain ⟨w, _, rfl⟩ := (hFT_sub hy).1
-      exact ⟨w, rfl⟩
-    obtain ⟨a', b', ha', hb', h_line⟩ := hFT_line.pull hj.isEmbedding hFT_range
-    obtain rfl : a' = a := hj.injective ha'
-    obtain rfl : b' = b := hj.injective hb'
-    refine ⟨j ⁻¹' F_T, fun x hx => ?_, h_line⟩
-    obtain ⟨⟨w, hwZ, hjw⟩, hxVT⟩ := hFT_sub hx
-    obtain rfl : w = x := hj.injective hjw
-    exact ⟨hwZ, hxVT⟩
-  · have h_pre : Z = j ⁻¹' (j '' Z) := (preimage_image_eq Z hj.injective).symm
-    rw [h_pre]
-    exact hZ.2.preimage hj.continuous
+    IsSolid Z :=
+  isSolid_of_isClosedEmbedding_aux hj hZ
 
 /-- Embed a surface `S` with a proper drawing `G` into a closed surface `T` with a drawing
 `Γ : Drawing T` such that for any `ℛ ⊆ G.R` and `Z = closure (⋃₀ ℛ)`, `j '' Z = closure (⋃₀ ℛ_T)`

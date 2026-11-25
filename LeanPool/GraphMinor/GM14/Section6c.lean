@@ -70,15 +70,8 @@ theorem IsLineWithEnds.subset_closure_sdiff_pair {L : Set S} {a b : S}
 
 /-- The interior of a line is nonempty. -/
 theorem IsLineWithEnds.nonempty_sdiff_pair {L : Set S} {a b : S}
-    (h : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty := by
-  obtain ⟨f, hf0, hf1⟩ := h
-  let mid : 𝕀 := ⟨1 / 2, by norm_num, by norm_num⟩
-  refine ⟨(f mid).1, (f mid).2, ?_⟩
-  rintro (h1 | h2)
-  · have : mid = 0 := f.injective (Subtype.ext (h1.trans hf0.symm))
-    exact absurd (congrArg Subtype.val this) (by norm_num [mid])
-  · have : mid = 1 := f.injective (Subtype.ext (h2.trans hf1.symm))
-    exact absurd (congrArg Subtype.val this) (by norm_num [mid])
+    (h : IsLineWithEnds L a b) : (L \ {a, b}).Nonempty :=
+  Surface.IsLineWithEnds.nonempty_sdiff h
 
 /-- An `O`-arc `F` that meets both `Λ` and `Σ \ closure Λ` meets `subBd Λ` in at least two points.
 -/

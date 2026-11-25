@@ -628,6 +628,39 @@ instance {Ω₁ Ω₂ : Type*} [Preorder Ω₁] [Preorder Ω₂] :
       cases hyz with
       | inr h₂ => exact DisjointUnionLE.inr (le_trans h₁ h₂)
 
+/-- If `Ω₁` and `Ω₂` are well-quasi-orders, then their disjoint union `DisjointUnionQuasiOrder Ω₁
+Ω₂`
+is a well-quasi-order. -/
+theorem wellQuasiOrderedLE_disjointUnion {Ω₁ Ω₂ : Type*} [Preorder Ω₁] [Preorder Ω₂]
+    (h₁ : WellQuasiOrderedLE Ω₁) (h₂ : WellQuasiOrderedLE Ω₂) :
+    WellQuasiOrderedLE (DisjointUnionQuasiOrder Ω₁ Ω₂) := by
+  refine ⟨fun f ↦ ?_⟩
+  let S₁ : Set ℕ := {n | ∃ a : Ω₁, f n = Sum.inl a}
+  let S₂ : Set ℕ := {n | ∃ b : Ω₂, f n = Sum.inr b}
+  have huniv : (Set.univ : Set ℕ) ⊆ S₁ ∪ S₂ := by
+    intro n _
+    rcases hfn : f n with a | b
+    · exact Or.inl ⟨a, hfn⟩
+    · exact Or.inr ⟨b, hfn⟩
+  have hinf : (S₁ ∪ S₂).Infinite := Set.infinite_univ.mono huniv
+  rcases Set.infinite_union.1 hinf with hS₁ | hS₂
+  · have : Infinite S₁ := hS₁.to_subtype
+    let e := Nat.Subtype.orderIsoOfNat S₁
+    choose g hg using fun k : ℕ ↦ (e k).2
+    obtain ⟨m, n, hmn, hle⟩ := h₁.wqo g
+    refine ⟨(e m).1, (e n).1, e.strictMono hmn, ?_⟩
+    change DisjointUnionLE (f (e m).1) (f (e n).1)
+    rw [hg m, hg n]
+    exact DisjointUnionLE.inl hle
+  · have : Infinite S₂ := hS₂.to_subtype
+    let e := Nat.Subtype.orderIsoOfNat S₂
+    choose g hg using fun k : ℕ ↦ (e k).2
+    obtain ⟨m, n, hmn, hle⟩ := h₂.wqo g
+    refine ⟨(e m).1, (e n).1, e.strictMono hmn, ?_⟩
+    change DisjointUnionLE (f (e m).1) (f (e n).1)
+    rw [hg m, hg n]
+    exact DisjointUnionLE.inr hle
+
 /-- An `Ω'`-completion of a partial `Ω`-patchwork `P` along an order-embedding `ι : Ω ↪o Ω'`
 (Graph Minors XVIII, Section 6, page 100):
 "Let $P = (G, \mu, \Delta, \phi)$ be a partial $\Omega$-patchwork, and let $\Omega'$ be a

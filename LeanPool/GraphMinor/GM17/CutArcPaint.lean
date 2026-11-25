@@ -129,7 +129,7 @@ theorem side_facts [CompactSpace Y] [T2Space Y] (hS : IsSurface S) (hY : IsSurfa
 
 omit [CompactSpace S] in
 /-- A disc part of the cut surface gives a disc in the surface. -/
-theorem side_disc [CompactSpace Y] (_hS : IsSurface S) {ψ : Y
+theorem side_disc [CompactSpace Y] {ψ : Y
   → S} {F : Set S} {W : Set Y} {Γ : Painting S} (hmap : CutMap (ψ ∘ (Subtype.val : W → Y)) F)
     (hnorm : Γ.IsNormal F) (hW : IsClosed W) (hinj : InjOn ψ W) (hsurj : F ⊆ ψ '' W) [Nonempty W]
       (e : W ≃ₜ ClosedUnitDisc) :
@@ -294,7 +294,7 @@ theorem cutNormalIArc : CutNormalIArcPaintingStatement := by
           · exact hbj.injOn (hcov ▸ ⟨hF, hy⟩) (hcov ▸ ⟨(he ▸ hF : ψ y' ∈ F), hy'⟩) he
           · exact hψ.2.2.1 hF (by rw [mem_preimage, ← he]; exact hF) he
         have : Nonempty W := ⟨e.symm ⟨0, by simp [ClosedUnitDisc]⟩⟩
-        exact side_disc hS (cutMap_sub hψ hFc hW) hnorm hW.1 hinj (fun x hx => by
+        exact side_disc (cutMap_sub hψ hFc hW) hnorm hW.1 hinj (fun x hx => by
           obtain ⟨y, hy, rfl⟩ := hbj.surjOn hx
           exact ⟨y, hKW hy, rfl⟩) e
     obtain ⟨hp₁, hq₁⟩ := hfacts hW₁ hX₁ hcov₁ bX ⟨x0, x1, hlX, hx0, hx1⟩ hc₁

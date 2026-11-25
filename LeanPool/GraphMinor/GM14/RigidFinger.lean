@@ -284,7 +284,7 @@ noncomputable def raise (w : ℝ → ℝ) (z : ℂ) : ℂ := ⟨z.re, w z.re + z
 /-- The inverse of `raise`. -/
 noncomputable def lower (w : ℝ → ℝ) (z : ℂ) : ℂ := ⟨z.re, (z.im - w z.re) / (1 - w z.re)⟩
 
-theorem raise_PH (hw : Continuous w) (_h0 : ∀ s, 0 ≤ w s) (h1 : ∀ s, w s ≤ 1 / 2) :
+theorem raise_PH (hw : Continuous w) (h1 : ∀ s, w s ≤ 1 / 2) :
     PH Rect (Over w) (raise w) (lower w) := by
   have hpos : ∀ s, 0 < 1 - w s := fun s => by linarith [h1 s]
   have hmk : ∀ {a b : ℂ → ℝ}, Continuous a → Continuous b →
@@ -757,7 +757,7 @@ theorem exists_finger [T2Space T] [ConnectedSpace T] (hS : IsClosedSurface T) {E
   have hRd : IsClosedDisc Rect :=
     (isClosedDisc_rect (a := -1) (b := 1) (c := 0) (d := 1) (by norm_num) (by norm_num)).1
   have hUpR : Over w ⊆ Rect := fun z hz => ⟨hz.1, (hw0 _).trans hz.2.1, hz.2.2⟩
-  have hL := raise_PH hwc hw0 hw1
+  have hL := raise_PH hwc hw1
   have hchain := hL.comp (hf.symm.restrict' hUpR)
   have hΔ'd : IsClosedDisc (f' '' Over w) := by
     have := hchain.disc_image Subset.rfl hRd

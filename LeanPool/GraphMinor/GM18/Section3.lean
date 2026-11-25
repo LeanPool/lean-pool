@@ -394,6 +394,8 @@ theorem theorem_3_3_proof {G A B : Hypergraph α β} {θ : ℕ}
 
 /-! ## (3.4): Titanic Locations and Tree-Width -/
 
+@[expose] public section
+
 /-- Embeds a `Hypergraph α β` into `Hypergraph α (β ⊕ γ)` via `Sum.inl`. -/
 def mapInl (γ : Type*) (G : Hypergraph α β) : Hypergraph α (β ⊕ γ) where
   vertexSet := G.vertexSet
@@ -412,6 +414,8 @@ def mapInl (γ : Type*) (G : Hypergraph α β) : Hypergraph α (β ⊕ γ) where
     | inr _ => exact h.elim
   vertexSet_finite := G.vertexSet_finite
   edgeSet_finite := G.edgeSet_finite.image Sum.inl
+
+end
 
 /-- Pulls back a `Hypergraph α (β ⊕ γ)` along `Sum.inl`. -/
 def comapInl {γ : Type*} (H : Hypergraph α (β ⊕ γ)) : Hypergraph α β where
