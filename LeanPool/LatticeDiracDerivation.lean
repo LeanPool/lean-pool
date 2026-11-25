@@ -20,7 +20,7 @@ Main declarations: `LeanDirac.V2.complete_first_principles_free_dirac`,
   `LeanDirac.V2.periodic_integrated_positive_packet_current_bridge`,
   `LeanDirac.V2.positive_packet_pointwise_bridge_is_false`,
   `LeanDirac.V2.lorentz_spin_half_from_native_action`
-Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, fourier-analysis, lorentz-representation, spin-one-half
+Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, fourier-analysis
 MSC: 81Q05, 15A66, 65M06, 81R20
 -/
 
