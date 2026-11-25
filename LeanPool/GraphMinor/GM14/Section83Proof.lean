@@ -891,104 +891,6 @@ private theorem extended_transaction_is_crooked
     rw [hΩ, hΩ₀] at h
     exact h.symm
 
-private theorem inner_society_composition
-    {α : Type u}
-    {β : Type v}
-    {S_comp : Society α β}
-    {S₀ : Society α β}
-    {N : Neighborhood α β}
-    (hcomp : S_comp.IsComposition S₀ N)
-    (C : Fin 2 → Graph α β)
-    (last : Fin 2)
-    (H₁ : Graph α β)
-    (H₂ : Graph α β)
-    (hsep : IsGraphSeparation N.G H₁ H₂)
-    (hKH₁ : C last ≤ H₁)
-    (hbar₀H₁ : N.Ω₀.bar ⊆ V(H₁))
-    (Ω₁ : CyclicPerm α)
-    (hΩ₁ : Ω₁.bar = V(C last))
-    (N₁ : Neighborhood α β)
-    (hH₁S : H₁ ≤ S_comp.G)
-    (hS₀S : S₀.G ≤ S_comp.G)
-    (S₁ : Society α β) (hG₁ : S₁.G = subgraphUnion S_comp.G H₁ S₀.G)
-    (hN₁ : N₁.G = H₁) (hN₁Ω : N₁.Ω = Ω₁) (hN₁Ω₀ : N₁.Ω₀ = N.Ω₀)
-    (hS₁Ω : S₁.Ω = Ω₁) :
-    S₁.IsComposition S₀ N₁ := by
-  obtain ⟨⟨hs₀, -⟩, -, hΩ₀, hbar₀⟩ := hcomp
-  have hUle₀ : S₀.G ≤ S₁.G := hG₁.symm ▸ le_subgraphUnion_right hH₁S hS₀S
-  have hUle₁ : H₁ ≤ S₁.G := hG₁.symm ▸ le_subgraphUnion_left hH₁S hS₀S
-  refine ⟨⟨⟨hUle₀, hN₁.symm ▸ hUle₁, ?_, ?_, ?_⟩, ?_⟩,
-    hN₁Ω.trans hS₁Ω.symm, hN₁Ω₀.trans hΩ₀, ?_⟩
-  · rw [hG₁, hN₁]
-    change V(S₀.G) ∪ V(H₁) = V(H₁) ∪ V(S₀.G)
-    exact union_comm _ _
-  · rw [hG₁, hN₁, edgeSet_subgraphUnion hH₁S hS₀S]
-    exact union_comm _ _
-  · rw [hN₁]
-    exact hs₀.2.2.2.2.mono_right hsep.1.edgeSet_mono
-  · rw [hS₁Ω, hN₁]
-    exact hΩ₁.subset.trans hKH₁.vertexSet_mono
-  · rw [hN₁]
-    apply Subset.antisymm
-    · intro v hv
-      refine ⟨S₀.bar_subset hv, hbar₀H₁ ?_⟩
-      rw [hΩ₀]
-      exact hv
-    · rintro v ⟨hv₀, hv₁⟩
-      rw [hbar₀]
-      exact ⟨hv₀, hsep.1.vertexSet_mono hv₁⟩
-
-private theorem perimeter_drawing_agrees_with_circle
-    {α : Type u}
-    {β : Type v}
-    {N : Neighborhood α β}
-    (Γ : GraphDrawing N.G EuclideanPlane) (last : Fin 2)
-    (D : Fin 2 → Set EuclideanPlane)
-    (φ : Circle ≃ₜ ↑(subBd (D last)))
-    (ν : α → EuclideanPlane)
-    (hν : ∀ v ∈ V(N.G), graphDrawingVertexSet Γ v = {ν v})
-    (Ω₁ : CyclicPerm α)
-    (hagK : AgreesWithOArcHomeo ν Ω₁ (subBd (D last)) φ)
-    (hbarK : ∀ {v : α}, v ∈ Ω₁.bar → v ∈ V(N.G)) :
-    DrawingAgreesWithOArcHomeo Γ Ω₁ (subBd (D last)) φ := by
-  refine ⟨fun v hv => ?_, fun v₁ v₂ v₃ hc => ?_⟩
-  · rw [hν v (hbarK hv), singleton_subset_iff]
-    exact hagK.1 v hv
-  · have hm := CyclicPerm.isClockwise3_iff.mp hc
-    obtain ⟨t₁, t₂, t₃, h₁, h₂, h₃, e₁, e₂, e₃⟩ := hagK.2 v₁ v₂ v₃ hc
-    refine ⟨t₁, t₂, t₃, h₁, h₂, h₃, ?_, ?_, ?_⟩
-    · rw [hν v₁ (hbarK hm.2.2.2.1), e₁]
-      rfl
-    · rw [hν v₂ (hbarK hm.2.2.2.2.1), e₂]
-      rfl
-    · rw [hν v₃ (hbarK hm.2.2.2.2.2.1), e₃]
-      rfl
-
-private theorem inner_presentation_has_nested_circuits
-    {α : Type u}
-    {β : Type v}
-    {N : Neighborhood α β}
-    (P_pres : Presentation N)
-    (C : Fin 2 → Graph α β)
-    (hcir : ∀ (i : Fin 2), IsGraphCircuit N.G (C i))
-    (hdisj : Pairwise fun i j => Disjoint V(C i) V(C j))
-    (D : Fin 2 → Set EuclideanPlane)
-    (hDd : ∀ (i : Fin 2), IsClosedDisc (D i) ∧ subBd (D i) = graphDrawingSubgraphU P_pres.Γ (C i))
-    (hDs : ∀ (i : Fin 2), P_pres.Δ₀ ⊆ D i ∧ D i ⊆ P_pres.Δ)
-    (hDm : ∀ (i j : Fin 2), i ≤ j → D i ⊆ D j)
-    (N₁ : Neighborhood α β) (hCH₁ : ∀ j, C j ≤ N₁.G)
-    (P₁ : Presentation N₁)
-    (hP₁Δ : P₁.Δ = D (1 : Fin 2))
-    (hP₁Δ₀ : P₁.Δ₀ = P_pres.Δ₀)
-    (hP₁U : ∀ R ≤ N₁.G, graphDrawingSubgraphU P₁.Γ R = graphDrawingSubgraphU P_pres.Γ R) :
-    N₁.IsNest P₁ C := by
-  refine ⟨fun j => ⟨hCH₁ j, (hcir j).2⟩, hdisj, D, fun j => ⟨(hDd j).1, ?_⟩, fun j => ?_, hDm⟩
-  · rw [hP₁U _ (hCH₁ j)]
-    exact (hDd j).2
-  · rw [hP₁Δ, hP₁Δ₀]
-    have hjlt : j.1 < 2 := j.2
-    exact ⟨(hDs j).1, hDm j 1 (Fin.mk_le_mk.mpr (by change j.1 ≤ 1; omega))⟩
-
 private theorem inner_segments_form_weak_linkage
     {α : Type u}
     {β : Type v}
@@ -1128,71 +1030,14 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
   have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
   let last : Fin 2 := 1
   obtain ⟨hcir, hdisj, D, hDd, hDs, hDm⟩ := hC
-  let Γ := P_pres.Γ
-  have hKG : C last ≤ N.G := (hcir last).1
-  obtain ⟨hbdK, H₁, H₂, hsep, hcut, hKH₁, hY₁, hUH₁, hUH₂, hbarH₂, hbar₀H₁⟩ :=
-    P_pres.separate_at_circuit C D last (hcir last) (hDd last).1 (hDd last).2
-      (hDs last).1 (hDs last).2 (hCbar last)
-  have hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet Γ v = {q} := fun v hv =>
-    ⟨_, graphDrawingVertexSet_eq_singleton Γ hv⟩
-  have hK₂ : V(C last) ⊆ V(H₂) := fun v hv => (hcut.symm ▸ hv : v ∈ V(H₁) ∩ V(H₂)).2
-  have hCH₁ : ∀ j, C j ≤ H₁ := fun j =>
-    nestedCircuitsOnInnerSide Γ hcir hdisj hDd hDm
-      (fun i => Fin.le_last i) hsep hcut hKH₁ hY₁ hpt hbdK j
-  have hKne : V(C last).Nonempty := by
-    obtain ⟨e, he⟩ := (hcir last).edgeSet_nonempty
-    obtain ⟨u, w, hl⟩ : ∃ u w, (C last).IsLink e u w := exists_isLink_of_mem_edgeSet he
-    exact ⟨u, hl.left_mem⟩
-  have hKfin : V(C last).Finite := N.finite_V.subset hKG.vertexSet_mono
-  obtain ⟨φ, hφ_cw⟩ := exists_isClockwiseDiscHomeo (hDd last).1
-  let ν : α → EuclideanPlane := fun v =>
-    if h : v ∈ V(N.G) then (Γ.iso.vertexEquiv ⟨v, h⟩).1 else 0
-  have hν : ∀ v (h : v ∈ V(N.G)), graphDrawingVertexSet Γ v = {ν v} := by
-    intro v h
-    rw [graphDrawingVertexSet_eq_singleton Γ h]
-    simp only [ν, h, ↓reduceDIte]
-  obtain ⟨Ω₁, hΩ₁, hagK⟩ := exists_cyclicPerm_agrees_of_injOn φ ν hKfin hKne
-    (fun u hu w hw e => graphDrawingVertexSet_inj Γ (x := ν u)
-      (by rw [hν u (hKG.vertexSet_mono hu)]; rfl)
-      (by rw [hν w (hKG.vertexSet_mono hw), e]; rfl))
-    (fun v hv => by
-      have := (hbdK v (hKG.vertexSet_mono hv)).mpr hv
-      rw [hν v (hKG.vertexSet_mono hv), singleton_subset_iff] at this
-      exact this)
-  have hbarK : ∀ {v}, v ∈ Ω₁.bar → v ∈ V(N.G) := fun hv =>
-    hKG.vertexSet_mono (hΩ₁ ▸ hv)
-  have hag : DrawingAgreesWithOArcHomeo Γ Ω₁ (subBd (D last)) φ := by
-    exact perimeter_drawing_agrees_with_circle (α := α) (β := β) (N := N) Γ last D φ ν hν Ω₁ hagK
-      hbarK
-  let N₁ : Neighborhood α β :=
-    { G := H₁, Ω := Ω₁, Ω₀ := N.Ω₀, finite_V := N.finite_V.subset hsep.1.vertexSet_mono,
-      finite_E := N.finite_E.subset hsep.1.edgeSet_mono,
-      bar_subset := hΩ₁.subset.trans hKH₁.vertexSet_mono, bar₀_subset := hbar₀H₁ }
-  let N₂ : Neighborhood α β :=
-    { G := H₂, Ω := N.Ω, Ω₀ := Ω₁, finite_V := N.finite_V.subset hsep.2.1.vertexSet_mono,
-      finite_E := N.finite_E.subset hsep.2.1.edgeSet_mono, bar_subset := hbarH₂,
-      bar₀_subset := hΩ₁.subset.trans hK₂ }
-  have hbdΩ₁ : ∀ G' : Graph α β, G' ≤ N.G → ∀ v ∈ V(G'),
-      (graphDrawingVertexSet Γ v ⊆ subBd (D last) ↔ v ∈ Ω₁.bar) := by
-    intro G' hG' v hv
-    rw [hΩ₁]
-    exact hbdK v (hG'.vertexSet_mono hv)
-  obtain ⟨P₁, hP₁Δ, hP₁Δ₀, -, hP₁U⟩ := Presentation.exists_of_le (N' := N₁) P_pres hsep.1
-    (hDd last).1 (hDs last).1
-    (fun q hq => ⟨hUH₁ hq, (P_pres.U_subset (graphDrawingSubgraphU_subset_U Γ _ hq)).2⟩)
-    (hbdΩ₁ H₁ hsep.1) (fun v hv => P_pres.mem_bd_Δ₀_iff v (hsep.1.vertexSet_mono hv))
-    ⟨φ, hφ_cw, hag⟩ P_pres.agrees_Δ₀
-  obtain ⟨P₂, -, -, -, -⟩ := Presentation.exists_of_le (N' := N₂) P_pres hsep.2.1
-    P_pres.isClosedDisc_Δ (hDs last).2 hUH₂
-    (fun v hv => P_pres.mem_bd_Δ_iff v (hsep.2.1.vertexSet_mono hv))
-    (hbdΩ₁ H₂ hsep.2.1) P_pres.agrees_Δ (Or.inr ⟨(hDd last).1, φ, hφ_cw, hag⟩)
-  have hrural₁ : N₁.IsRural := ⟨P₁.Γ, P₁.Δ, P₁.Δ₀, P₁.isClosedDisc_Δ, P₁.Δ₀_subset_Δ, P₁.U_subset,
-    P₁.mem_bd_Δ_iff, P₁.mem_bd_Δ₀_iff, P₁.agrees_Δ, P₁.agrees_Δ₀⟩
-  have hrural₂ : N₂.IsRural := ⟨P₂.Γ, P₂.Δ, P₂.Δ₀, P₂.isClosedDisc_Δ, P₂.Δ₀_subset_Δ, P₂.U_subset,
-    P₂.mem_bd_Δ_iff, P₂.mem_bd_Δ₀_iff, P₂.agrees_Δ, P₂.agrees_Δ₀⟩
-  have hnest₁ : N₁.IsNest P₁ C := by
-    exact inner_presentation_has_nested_circuits (α := α) (β := β) (N := N)
-      P_pres C hcir hdisj D hDd hDs hDm N₁ hCH₁ P₁ hP₁Δ hP₁Δ₀ hP₁U
+  obtain ⟨N₁, N₂, P₁, S₁, hsep, hcut, hKH₁, hΩ₁, hbarH₂, hbar₀H₁, hrural₁, hrural₂,
+      hnest₁, hS₁S, hcutU, hcomp₁, hcomp₂⟩ :=
+    exists_nested_neighborhood_composition P_pres C D last (fun i => Fin.le_last i)
+      hcir hdisj hDd hDs hDm (hCbar last) hcomp
+  let H₁ := N₁.G
+  let H₂ := N₂.G
+  have hK₂ : V(C last) ⊆ V(H₂) := fun v hv =>
+    (hcut.symm ▸ hv : v ∈ V(H₁) ∩ V(H₂)).2
   have hPN : ∀ i, IsGraphPathWithEnds N.G (P i) (x i) (t i) := fun i => (hP i).1.1
   have hsplit : ∀ i, ∃ (y : α) (R W : Graph α β), y ∈ V(C last) ∧
       IsGraphPathWithEnds H₂ R (x i) y ∧ V(R) ⊆ V(P i) ∧ V(R) ∩ V(C last) = {y} ∧
@@ -1213,27 +1058,10 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
     (hPd hne).mono (hRP _) (hRP _)
   have hYcard : (range y).ncard = X.ncard := by
     rw [← image_univ, ncard_image_of_injective _ hy_inj, ncard_univ, Nat.card_fin]
+  have hΩ₀ : N₁.Ω₀ = N.Ω₀ := hcomp₁.2.2.1.trans hcomp.2.2.1.symm
   have hweak_after_split : N₁.IsWeaklyLinked (range y) := by
     exact inner_segments_form_weak_linkage (α := α) (β := β) (N := N) (X := X) P x t hP hPd
-      N₁ rfl y R W (fun i => hΩ₁.symm ▸ hyK i) hRP hW hWP hyR hYcard
-  have hH₁S : H₁ ≤ S_comp.G := hsep.1.trans hNG
-  obtain ⟨hsU, hVU⟩ := hcomp.isGraphSeparation_union (IsGraphSeparation.symm hsep) hbar₀H₁
-  have hsU' : IsGraphSeparation S_comp.G H₂ (subgraphUnion S_comp.G H₁ S₀.G) := hsU
-  have hS₀S : S₀.G ≤ S_comp.G := hcomp.1.1.1
-  let S₁ : Society α β :=
-    { G := subgraphUnion S_comp.G H₁ S₀.G, Ω := Ω₁,
-      finite_V := S_comp.finite_V.subset (subgraphUnion_le hH₁S hS₀S).vertexSet_mono,
-      finite_E := S_comp.finite_E.subset (subgraphUnion_le hH₁S hS₀S).edgeSet_mono,
-      bar_subset := fun v hv => Or.inl (hKH₁.vertexSet_mono (hΩ₁ ▸ hv)) }
-  have hcutU : V(H₂) ∩ V(S₁.G) = V(C last) := by
-    rw [show V(H₂) ∩ V(S₁.G) = V(H₂) ∩ V(H₁) from hVU, inter_comm, hcut]
-  have hcomp₂ : S_comp.IsComposition S₁ N₂ := by
-    refine ⟨⟨IsGraphSeparation.symm hsU', hΩ ▸ hbarH₂⟩, hΩ, rfl, ?_⟩
-    change Ω₁.bar = V(S₁.G) ∩ V(H₂)
-    rw [hΩ₁, inter_comm, hcutU]
-  have hcomp₁ : S₁.IsComposition S₀ N₁ := by
-    exact inner_society_composition (α := α) (β := β) (S_comp := S_comp) (S₀ := S₀) (N := N) hcomp
-      C last H₁ H₂ hsep hKH₁ hbar₀H₁ Ω₁ hΩ₁ N₁ hH₁S hS₀S S₁ rfl rfl rfl rfl rfl
+      N₁ hΩ₀ y R W (fun i => hΩ₁.symm ▸ hyK i) hRP hW hWP hyR hYcard
   obtain ⟨T₀, hT₀, hpT₀⟩ := GraphMinor.GM09.theorem_9_1_proof hcomp₂ hrural₂ hP₀ hp
   obtain ⟨T, hT, hpT, hTends⟩ := theorem_10_3_p2 hrural₁ ⟨P₁, C, hnest₁⟩ hweak_after_split
     (by rw [hYcard]; exact hcard) hcomp₁ hT₀ hpT₀
@@ -1267,7 +1095,7 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
   have hex : ∀ Q ∈ T, ∃ Qe : Graph α β, ∀ i j, S₁.IsOmegaPathWithEnds Q (y i) (y j) →
       IsGraphPathWithEnds S_comp.G Qe (x i) (x j) ∧ V(Qe) = V(R i) ∪ V(Q) ∪ V(R j) := by
     exact transaction_path_extension (α := α) (β := β) (S_comp := S_comp) (X := X) x
-      y R hy_inj hRd S₁ (subgraphUnion_le hH₁S hS₀S) T hT hS₁T hRSN hRV hTY
+      y R hy_inj hRd S₁ hS₁S T hT hS₁T hRSN hRV hTY
   choose! f hf using hex
   have hTdisj : ∀ {Q Q'}, Q ∈ T → Q' ∈ T → Q ≠ Q' → Disjoint V(Q) V(Q') := by
     intro Q Q' hQ hQ' hne
@@ -1291,9 +1119,10 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
     exact extensions_pairwise_disjoint (α := α) (β := β) (S_comp := S_comp) (X := X) x y R hRd S₁
       T hT hTY f hf hTdisj hRQ
   have hcrook : S_comp.IsCrookedTransaction (f '' T) := by
+    have hΩinner : N₂.Ω₀ = N₁.Ω := hcomp₂.2.2.1.trans hcomp₁.2.1.symm
     exact extended_transaction_is_crooked (α := α) (β := β) (S_comp := S_comp) (X := X)
-      x N₂ hΩ hrural₂ y R (fun i => hΩ₁.symm ▸ hyK i) hR hx_inj hRd S₁ rfl T hT hTends ψ hψ hTY f
-      hxb hendsT hd
+      x N₂ hcomp₂.2.1 hrural₂ y R (fun i => hΩinner.symm ▸ (hΩ₁.symm ▸ hyK i))
+      hR hx_inj hRd S₁ hcomp₂.2.2.1 T hT hTends ψ hψ hTY f hxb hendsT hd
   have hDelivered :
       ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ P'.ncard = 2 ∧
         S_comp.transactionEnds P' ⊆ X ∧

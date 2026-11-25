@@ -487,24 +487,21 @@ theorem Painting.removeDisc_N_inter_bd (hS : IsSurface S) (Γ : Painting S) (Δ 
       exact mem_insert _ _
     exact ht ⟨E.cell i, hc_I₂, x, hx_tilde, hx_bdΔ⟩
 
-/-- If $H = H_1 \cup H_2$ is a union of two subhypergraphs whose vertex sets share at most one
-vertex ($|V(H_1) \cap V(H_2)| \le 1$), then any simple path in $H^*$ with both endpoints in
-$V(H_1)$ lies entirely in $H_1^*$. -/
-private theorem walk_in_left_of_ncard_inter_le_one {α : Type u} {β : Type v}
-    {G H₁ H₂ : Hypergraph α β}
-    (hH₁ : H₁ ≤ G) (hH₂ : H₂ ≤ G)
-    (hcard : (H₁.vertexSet ∩ H₂.vertexSet).ncard ≤ 1)
+/-- If $H = H_1 \cup H_2$ is a union of two subhypergraphs of $G$, $u, v \in V(H_1)$, and
+$w : (H_1 \cup H_2).\text{skeleton}.\text{Walk } u\; v$ is a simple path whose support contains at
+most one vertex of $V(H_1) \cap V(H_2)$, then every vertex in $w.\text{support}$ belongs to
+$V(H_1)$. -/
+theorem walk_in_left_of_ncard_support_inter_le_one {α : Type u} {β : Type v}
+    {G H₁ H₂ : Hypergraph α β} (hH₁ : H₁ ≤ G) (hH₂ : H₂ ≤ G)
     {u v : α} (hu : u ∈ H₁.vertexSet) (hv : v ∈ H₁.vertexSet)
-    (w : (H₁ ∪ H₂).skeleton.Walk u v) (hp : w.IsPath) :
+    (w : (H₁ ∪ H₂).skeleton.Walk u v) (hp : w.IsPath)
+    (hcard : ({z ∈ w.support | z ∈ H₁.vertexSet ∩ H₂.vertexSet}).ncard ≤ 1) :
     ∀ z ∈ w.support, z ∈ H₁.vertexSet := by
   classical
   by_contra hnot
   push Not at hnot
   rcases hnot with ⟨z, hz_sup, hz_not₁⟩
-  -- Split `w` at `z`: `w = w₁.append w₂` where `w₁ : Walk u z` and `w₂ : Walk z v`
   obtain ⟨w₁, w₂, hw_eq⟩ := SimpleGraph.Walk.mem_support_iff_exists_append.mp hz_sup
-  -- Along `w₁` (from `u ∈ V(H₁)` to `z ∉ V(H₁)`), there is an edge with one endpoint in `V(H₁)`
-  -- and the other outside `V(H₁)`, hence in `V(H₁) ∩ V(H₂)`
   have hex_cut : ∀ {a b : α} (p : (H₁ ∪ H₂).skeleton.Walk a b),
       a ∈ H₁.vertexSet → b ∉ H₁.vertexSet →
       ∃ x ∈ p.support, x ≠ b ∧ x ∈ H₁.vertexSet ∩ H₂.vertexSet := by
@@ -529,12 +526,19 @@ private theorem walk_in_left_of_ncard_inter_le_one {α : Type u} {β : Type v}
   obtain ⟨x₁, hx₁_sup, _, hx₁_inter⟩ := hex_cut w₁ hu hz_not₁
   obtain ⟨x₂, hx₂_sup, hx₂_ne_z, hx₂_inter⟩ := hex_cut w₂.reverse hv hz_not₁
   rw [SimpleGraph.Walk.support_reverse, List.mem_reverse] at hx₂_sup
+  have hx₁_w : x₁ ∈ w.support :=
+    hw_eq ▸ SimpleGraph.Walk.support_subset_support_append_left w₁ w₂ hx₁_sup
+  have hx₂_w : x₂ ∈ w.support :=
+    hw_eq ▸ SimpleGraph.Walk.support_subset_support_append_right w₁ w₂ hx₂_sup
   have hx₁_eq_x₂ : x₁ = x₂ := by
     by_contra hne
-    have hpair : ({x₁, x₂} : Set α) ⊆ H₁.vertexSet ∩ H₂.vertexSet := by
-      rintro y (rfl | rfl) <;> assumption
-    have hfin : (H₁.vertexSet ∩ H₂.vertexSet).Finite := H₁.vertexSet_finite.subset inter_subset_left
-    have h2 : 2 ≤ (H₁.vertexSet ∩ H₂.vertexSet).ncard := by
+    have hpair : ({x₁, x₂} : Set α) ⊆ {y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet} := by
+      rintro y (rfl | rfl)
+      · exact ⟨hx₁_w, hx₁_inter⟩
+      · exact ⟨hx₂_w, hx₂_inter⟩
+    have hfin : ({y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet}).Finite :=
+      H₁.vertexSet_finite.subset fun _ hy => hy.2.1
+    have h2 : 2 ≤ ({y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet}).ncard := by
       rw [← ncard_pair hne]
       exact ncard_le_ncard hpair hfin
     omega
@@ -550,6 +554,21 @@ private theorem walk_in_left_of_ncard_inter_le_one {α : Type u} {β : Type v}
       · exact False.elim (hx₂_ne_z hx₁_eq_x₂.symm)
       · exact htail
     exact hdisj.2.2 x₁ hx₁_sup x₁ hx₁_in_tail rfl
+
+/-- If $H = H_1 \cup H_2$ is a union of two subhypergraphs whose vertex sets share at most one
+vertex ($|V(H_1) \cap V(H_2)| \le 1$), then any simple path in $H^*$ with both endpoints in
+$V(H_1)$ lies entirely in $H_1^*$. -/
+private theorem walk_in_left_of_ncard_inter_le_one {α : Type u} {β : Type v}
+    {G H₁ H₂ : Hypergraph α β}
+    (hH₁ : H₁ ≤ G) (hH₂ : H₂ ≤ G)
+    (hcard : (H₁.vertexSet ∩ H₂.vertexSet).ncard ≤ 1)
+    {u v : α} (hu : u ∈ H₁.vertexSet) (hv : v ∈ H₁.vertexSet)
+    (w : (H₁ ∪ H₂).skeleton.Walk u v) (hp : w.IsPath) :
+    ∀ z ∈ w.support, z ∈ H₁.vertexSet := by
+  have hsub : {z ∈ w.support | z ∈ H₁.vertexSet ∩ H₂.vertexSet} ⊆
+      H₁.vertexSet ∩ H₂.vertexSet := fun _ h => h.2
+  exact walk_in_left_of_ncard_support_inter_le_one hH₁ hH₂ hu hv w hp
+    ((ncard_le_ncard hsub (H₁.vertexSet_finite.subset inter_subset_left)).trans hcard)
 
 /-- Given a path `P : PathFromTo (H₁ ∪ H₂).skeleton S₁ S₂` with `S₁, S₂ ⊆ H₁.vertexSet`,
 `Disjoint H₁.edgeSet H₂.edgeSet`, and `(H₁.vertexSet ∩ H₂.vertexSet).ncard ≤ 1`, `P` restricts
@@ -2350,74 +2369,6 @@ theorem walk_endpoints_mem_vertexSet_of_ne {α : Type u} {β : Type v}
       rcases hadj with ⟨_, e, hinc, _⟩
       exact H.vertex_mem_of_inc hinc
   exact ⟨hstart w hne, hstart w.reverse hne.symm⟩
-
-/-- If $H = H_1 \cup H_2$ is a union of two subhypergraphs of $G$, $u, v \in V(H_1)$, and
-$w : (H_1 \cup H_2).\text{skeleton}.\text{Walk } u\; v$ is a simple path whose support contains at
-most one vertex of $V(H_1) \cap V(H_2)$, then every vertex in $w.\text{support}$ belongs to
-$V(H_1)$. -/
-theorem walk_in_left_of_ncard_support_inter_le_one {α : Type u} {β : Type v}
-    {G H₁ H₂ : Hypergraph α β} (hH₁ : H₁ ≤ G) (hH₂ : H₂ ≤ G)
-    {u v : α} (hu : u ∈ H₁.vertexSet) (hv : v ∈ H₁.vertexSet)
-    (w : (H₁ ∪ H₂).skeleton.Walk u v) (hp : w.IsPath)
-    (hcard : ({z ∈ w.support | z ∈ H₁.vertexSet ∩ H₂.vertexSet}).ncard ≤ 1) :
-    ∀ z ∈ w.support, z ∈ H₁.vertexSet := by
-  classical
-  by_contra hnot
-  push Not at hnot
-  rcases hnot with ⟨z, hz_sup, hz_not₁⟩
-  obtain ⟨w₁, w₂, hw_eq⟩ := SimpleGraph.Walk.mem_support_iff_exists_append.mp hz_sup
-  have hex_cut : ∀ {a b : α} (p : (H₁ ∪ H₂).skeleton.Walk a b),
-      a ∈ H₁.vertexSet → b ∉ H₁.vertexSet →
-      ∃ x ∈ p.support, x ≠ b ∧ x ∈ H₁.vertexSet ∩ H₂.vertexSet := by
-    intro a b p
-    induction p with
-    | nil => intro ha hb; exact False.elim (hb ha)
-    | @cons x y c hadj p ih =>
-      intro hx hc
-      by_cases hy : y ∈ H₁.vertexSet
-      · obtain ⟨w₀, hw₀_sup, hw₀_ne, hw₀_mem⟩ := ih hy hc
-        exact ⟨w₀, List.mem_cons_of_mem x hw₀_sup, hw₀_ne, hw₀_mem⟩
-      · refine ⟨x, SimpleGraph.Walk.start_mem_support _, fun h => hc (h ▸ hx), hx, ?_⟩
-        rcases hadj with ⟨_, e, hincx, hincy⟩
-        rcases hincy with hincy₁ | hincy₂
-        · exact False.elim (hy (H₁.vertex_mem_of_inc hincy₁))
-        · rcases hincx with hincx₁ | hincx₂
-          · have he₂ : e ∈ H₂.edgeSet := H₂.edge_mem_of_inc hincy₂
-            have hincxG : G.Inc e x := (inc_iff_of_le hH₁ (H₁.edge_mem_of_inc hincx₁)).mp hincx₁
-            have hincx₂ : H₂.Inc e x := (inc_iff_of_le hH₂ he₂).mpr hincxG
-            exact H₂.vertex_mem_of_inc hincx₂
-          · exact H₂.vertex_mem_of_inc hincx₂
-  obtain ⟨x₁, hx₁_sup, _, hx₁_inter⟩ := hex_cut w₁ hu hz_not₁
-  obtain ⟨x₂, hx₂_sup, hx₂_ne_z, hx₂_inter⟩ := hex_cut w₂.reverse hv hz_not₁
-  rw [SimpleGraph.Walk.support_reverse, List.mem_reverse] at hx₂_sup
-  have hx₁_w : x₁ ∈ w.support :=
-    hw_eq ▸ SimpleGraph.Walk.support_subset_support_append_left w₁ w₂ hx₁_sup
-  have hx₂_w : x₂ ∈ w.support :=
-    hw_eq ▸ SimpleGraph.Walk.support_subset_support_append_right w₁ w₂ hx₂_sup
-  have hx₁_eq_x₂ : x₁ = x₂ := by
-    by_contra hne
-    have hpair : ({x₁, x₂} : Set α) ⊆ {y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet} := by
-      rintro y (rfl | rfl)
-      · exact ⟨hx₁_w, hx₁_inter⟩
-      · exact ⟨hx₂_w, hx₂_inter⟩
-    have hfin : ({y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet}).Finite :=
-      H₁.vertexSet_finite.subset fun _ hy => hy.2.1
-    have h2 : 2 ≤ ({y ∈ w.support | y ∈ H₁.vertexSet ∩ H₂.vertexSet}).ncard := by
-      rw [← ncard_pair hne]
-      exact ncard_le_ncard hpair hfin
-    omega
-  rw [← hx₁_eq_x₂] at hx₂_sup
-  have hnodup := hw_eq ▸ hp.support_nodup
-  rw [SimpleGraph.Walk.support_append] at hnodup
-  have hdisj := List.nodup_append.mp hnodup
-  cases w₂ with
-  | nil => exact hx₂_ne_z (hx₁_eq_x₂.symm.trans (List.mem_singleton.mp hx₂_sup))
-  | cons hadj p' =>
-    have hx₁_in_tail : x₁ ∈ p'.support := by
-      rcases List.mem_cons.mp hx₂_sup with rfl | htail
-      · exact False.elim (hx₂_ne_z hx₁_eq_x₂.symm)
-      · exact htail
-    exact hdisj.2.2 x₁ hx₁_sup x₁ hx₁_in_tail rfl
 
 /-- Given a path `P : PathFromTo K B₁ B₂`, there exists a minimal subpath `Q : PathFromTo K B₁ B₂`
 whose vertex support is a subset of `P.walk.support` such that no internal vertex of `Q` belongs to

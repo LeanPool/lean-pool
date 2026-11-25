@@ -81,16 +81,17 @@ theorem GraphWalk.exists_first_mem {α' β : Type*} {G : Graph α' β} {a b : α
       · exact absurd hyX ha
       · exact hA y hy' hyX
 
-/-- Two simple walks from one vertex with the same edges have the same end and the same vertices. -/
-theorem simple_walks_eq {T : Type} [TopologicalSpace T] {G : Drawing T} {u a b : T}
+/-- A simple walk is determined by its start and its edge set, including its endpoint. -/
+theorem simple_walk_eq_of_common_start_and_edges {T : Type} [TopologicalSpace T]
+    {G : Drawing T} {u a b : T}
   (A : GraphWalk G.toGraph u a)
     (B : GraphWalk G.toGraph u b) (hA : A.IsSimple) (hB : B.IsSimple)
       (hE : ∀ e, e ∈ A.edges ↔ e ∈ B.edges) :
-    a = b ∧ ∀ x, x ∈ A.support ↔ x ∈ B.support := by
+    ∃ h : a = b, (h ▸ A : GraphWalk G.toGraph u b) = B := by
   induction A generalizing b with
   | nil h =>
     cases B with
-    | nil _ => exact ⟨rfl, fun _ ↦ Iff.rfl⟩
+    | nil _ => exact ⟨rfl, rfl⟩
     | @cons _ x _ e hl r =>
       have := (hE e).mpr (by simp)
       simp at this
@@ -125,9 +126,19 @@ theorem simple_walks_eq {T : Type} [TopologicalSpace T] {G : Drawing T} {u a b :
           · subst h
             exact absurd (r'.left_mem_support_of_mem_edges hf hl) hsB.1
           · exact h
-      obtain ⟨h₁, h₂⟩ := ih r' hsA.2 hsB.2 hE'
-      refine ⟨h₁, fun y ↦ ?_⟩
-      simp only [GraphWalk.support_cons, List.mem_cons, h₂]
+      obtain ⟨rfl, htail⟩ := ih r' hsA.2 hsB.2 hE'
+      change r = r' at htail
+      subst r'
+      exact ⟨rfl, rfl⟩
+
+/-- Two simple walks from one vertex with the same edges have the same end and the same vertices. -/
+theorem simple_walks_eq {T : Type} [TopologicalSpace T] {G : Drawing T} {u a b : T}
+  (A : GraphWalk G.toGraph u a)
+    (B : GraphWalk G.toGraph u b) (hA : A.IsSimple) (hB : B.IsSimple)
+      (hE : ∀ e, e ∈ A.edges ↔ e ∈ B.edges) :
+    a = b ∧ ∀ x, x ∈ A.support ↔ x ∈ B.support := by
+  obtain ⟨rfl, rfl⟩ := simple_walk_eq_of_common_start_and_edges A B hA hB hE
+  exact ⟨rfl, fun _ => Iff.rfl⟩
 
 /-- The sum over the set of a list is at most the sum over the list, for nonnegative terms. -/
 theorem sum_toFinset_le_sum_map {β : Type*} [DecidableEq β] (f : β → ℝ) (l : List β)
@@ -236,6 +247,62 @@ theorem IsSpoke.walk_bound (hS : D.IsSpoke W H v h P) (hh' : h' ∈ H.V)
   linarith
 
 omit [T2Space S] in
+/-- Two simple walks of the same weight have the same edges, because the weights are rationally
+independent. -/
+theorem edges_eq_of_weight_eq (D : TangleDatum cap χ) {a b c d : Shat} {Q₁ : GraphWalk
+  D.rad.G.toGraph a b}
+    {Q₂ : GraphWalk D.rad.G.toGraph c d} (h₁ : Q₁.IsSimple) (h₂ : Q₂.IsSimple)
+      (hw : D.tb.walkWeight Q₁ = D.tb.walkWeight Q₂) :
+    ∀ e, e ∈ Q₁.edges ↔ e ∈ Q₂.edges := by
+  classical
+  have : ConnectedSpace Shat := cap.connected
+  set A := walkDrawing D.rad.G Q₁ with hA
+  set B := walkDrawing D.rad.G Q₂ with hB
+  have hAE : ∀ e, e ∈ A.E ↔ e ∈ Q₁.edges := fun e ↦ by rw [hA, walkDrawing_E]; rfl
+  have hBE : ∀ e, e ∈ B.E ↔ e ∈ Q₂.edges := fun e ↦ by rw [hB, walkDrawing_E]; rfl
+  have hwA := D.tb.weightSub_eq_of_simple h₁ hAE
+  have hwB := D.tb.weightSub_eq_of_simple h₂ hBE
+  have hAf : A.E.Finite := A.finite_edges
+  have hBf : B.E.Finite := B.finite_edges
+  have hDisjoint₁ : Disjoint (A.E ∩ B.E) (A.E \ B.E) :=
+    disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
+  have hDisjoint₂ : Disjoint (B.E ∩ A.E) (B.E \ A.E) :=
+    disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
+  have hs₁ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = D.tb.weightSub A := by
+    rw [← finsum_mem_union hDisjoint₁ (hAf.subset inter_subset_left)
+      (hAf.subset sdiff_subset), inter_union_sdiff]
+    rfl
+  have hs₂ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e = D.tb.weightSub B := by
+    rw [Set.inter_comm, ← finsum_mem_union hDisjoint₂ (hBf.subset inter_subset_left)
+      (hBf.subset sdiff_subset), inter_union_sdiff]
+    rfl
+  have heq : ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e := by linarith
+  have hsubA : A.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
+  have hsubB : B.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
+  have hdis : Disjoint (A.E \ B.E) (B.E \ A.E) := disjoint_left.mpr fun e h₁ h₂ ↦ h₂.2 h₁.1
+  have hY : B.E \ A.E = ∅ := by
+    by_contra hne
+    exact D.tb.weight_ne (sdiff_subset.trans hsubA) (sdiff_subset.trans hsubB) hdis
+      (nonempty_iff_ne_empty.mpr hne) heq
+  have hX : A.E \ B.E = ∅ := by
+    by_contra hne
+    exact D.tb.weight_ne (sdiff_subset.trans hsubB) (sdiff_subset.trans hsubA) hdis.symm
+      (nonempty_iff_ne_empty.mpr hne) heq.symm
+  intro e
+  rw [← hAE, ← hBE]
+  constructor
+  · intro h
+    by_contra hn
+    have : e ∈ A.E \ B.E := ⟨h, hn⟩
+    rw [hX] at this
+    exact this
+  · intro h
+    by_contra hn
+    have : e ∈ B.E \ A.E := ⟨h, hn⟩
+    rw [hY] at this
+    exact this
+
+omit [T2Space S] in
 /-- **Graph Minors XIX, (13.2)** (page 366): "**13.2.** *Let $v_1, v_2 \in V(\Gamma) \cap
 bd(\Sigma)$.
 If $S_{v_1}$ meets $S_{v_2}$ then they have the same inner end, and $S_{v_1} \cap S_{v_2}$ is a
@@ -280,52 +347,7 @@ theorem theorem_13_2_proof {v₁ v₂ h₁ h₂ : Shat} {S₁ S₂ : Drawing Sha
   have hweq : D.tb.walkWeight Q₁ = D.tb.walkWeight Q₂ := by linarith
   have hQ₁s : Q₁.IsSimple := (GraphMinor.GM19.GraphWalk.IsSimple.of_append hK₁).2
   have hQ₂s : Q₂.IsSimple := (GraphMinor.GM19.GraphWalk.IsSimple.of_append hK₂).2
-  have hEq : ∀ e, e ∈ Q₁.edges ↔ e ∈ Q₂.edges := by
-    set A := walkDrawing D.rad.G Q₁ with hA
-    set B := walkDrawing D.rad.G Q₂ with hB
-    have hAE : ∀ e, e ∈ A.E ↔ e ∈ Q₁.edges := fun e ↦ by rw [hA, walkDrawing_E]; rfl
-    have hBE : ∀ e, e ∈ B.E ↔ e ∈ Q₂.edges := fun e ↦ by rw [hB, walkDrawing_E]; rfl
-    have hwA := D.tb.weightSub_eq_of_simple hQ₁s hAE
-    have hwB := D.tb.weightSub_eq_of_simple hQ₂s hBE
-    have hAf : A.E.Finite := A.finite_edges
-    have hBf : B.E.Finite := B.finite_edges
-    have hDisjoint₁ : Disjoint (A.E ∩ B.E) (A.E \ B.E) :=
-      disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
-    have hDisjoint₂ : Disjoint (B.E ∩ A.E) (B.E \ A.E) :=
-      disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
-    have hs₁ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = D.tb.weightSub A := by
-      rw [← finsum_mem_union hDisjoint₁ (hAf.subset inter_subset_left)
-        (hAf.subset sdiff_subset), inter_union_sdiff]
-      rfl
-    have hs₂ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e = D.tb.weightSub B := by
-      rw [Set.inter_comm, ← finsum_mem_union hDisjoint₂ (hBf.subset inter_subset_left)
-        (hBf.subset sdiff_subset), inter_union_sdiff]
-      rfl
-    have heq : ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e := by linarith
-    have hsubA : A.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
-    have hsubB : B.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
-    have hdis : Disjoint (A.E \ B.E) (B.E \ A.E) := disjoint_left.mpr fun e h₁ h₂ ↦ h₂.2 h₁.1
-    have hY : B.E \ A.E = ∅ := by
-      by_contra hne
-      exact D.tb.weight_ne (sdiff_subset.trans hsubA) (sdiff_subset.trans hsubB) hdis
-        (nonempty_iff_ne_empty.mpr hne) heq
-    have hX : A.E \ B.E = ∅ := by
-      by_contra hne
-      exact D.tb.weight_ne (sdiff_subset.trans hsubB) (sdiff_subset.trans hsubA) hdis.symm
-        (nonempty_iff_ne_empty.mpr hne) heq.symm
-    intro e
-    rw [← hAE, ← hBE]
-    constructor
-    · intro h
-      by_contra hn
-      have : e ∈ A.E \ B.E := ⟨h, hn⟩
-      rw [hX] at this
-      exact this
-    · intro h
-      by_contra hn
-      have : e ∈ B.E \ A.E := ⟨h, hn⟩
-      rw [hY] at this
-      exact this
+  have hEq := D.edges_eq_of_weight_eq hQ₁s hQ₂s hweq
   obtain ⟨he, hsup⟩ := simple_walks_eq Q₁ Q₂ hQ₁s hQ₂s hEq
   subst he
   refine ⟨rfl, u, walkDrawing D.rad.G Q₁, ⟨walkDrawing_isSubdrawing _ _,

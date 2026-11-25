@@ -25,6 +25,7 @@ import LeanPool.GraphMinor.GM11.OArcCircuit
 import LeanPool.GraphMinor.GM11.Section81
 public import LeanPool.GraphMinor.GM14.BridgeFacts
 import LeanPool.GraphMinor.GM14.Section7b
+import LeanPool.GraphMinor.GM14.DiscBoundaryHomeomorphism
 import LeanPool.GraphMinor.Surface.CircleMove
 
 import LeanPool.GraphMinor.GM09.Bridge
@@ -2886,106 +2887,14 @@ theorem isListedInOrderOn_of_isClockwiseSeq
     (hNat : IsNaturalOrderFrom ν Ω F)
     (hcw : Ω.IsClockwiseSeq L) (hlen : 3 ≤ L.length) :
     GM12.IsListedInOrderOn F (L.map ν) := by
-  classical
   obtain ⟨_, φ, _, hAgree3⟩ := hNat
-  have hpi : 0 < 2 * Real.pi := by positivity
-  let pt : ℝ → S := fun t => (φ (Circle.exp t)).1
-  have hpt_eq_iff : ∀ t₁ t₂ : ℝ, pt t₁ = pt t₂ ↔ ∃ m : ℤ, t₁ = t₂ + m * (2 * Real.pi) := by
-    intro t₁ t₂
-    constructor
-    · intro h
-      have h1 : φ (Circle.exp t₁) = φ (Circle.exp t₂) := Subtype.ext h
-      exact Circle.exp_eq_exp.mp (φ.injective h1)
-    · rintro ⟨m, rfl⟩
-      have h2 : Circle.exp (t₂ + m * (2 * Real.pi)) = Circle.exp t₂ :=
-        Circle.exp_eq_exp.mpr ⟨m, rfl⟩
-      simp [pt, h2]
-  have hpt_inj : ∀ t₀ : ℝ, InjOn pt (Ico t₀ (t₀ + 2 * Real.pi)) := by
-    intro t₀ t₁ ht₁ t₂ ht₂ h
-    obtain ⟨m, rfl⟩ := (hpt_eq_iff t₁ t₂).mp h
-    have hm0 : m = 0 := by
-      by_contra hm
-      rcases lt_or_gt_of_ne hm with hlt | hgt
-      · have hm_le : (m : ℝ) ≤ -1 := by exact_mod_cast Int.le_sub_one_of_lt hlt
-        have : (m : ℝ) * (2 * Real.pi) ≤ -1 * (2 * Real.pi) :=
-          mul_le_mul_of_nonneg_right hm_le hpi.le
-        linarith [ht₁.1, ht₂.2]
-      · have hm_ge : (1 : ℝ) ≤ m := by exact_mod_cast hgt
-        have : 1 * (2 * Real.pi) ≤ (m : ℝ) * (2 * Real.pi) :=
-          mul_le_mul_of_nonneg_right hm_ge hpi.le
-        linarith [ht₁.2, ht₂.1]
-    simp [hm0]
-  have h012 : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) :=
-    (Ω.mem_interval_of_lt hcw (by omega) (by omega) hlen).2
-  obtain ⟨t₀, t₁, t₂, ht01, ht12, ht20, hpt0, hpt1, hpt2⟩ :=
-    hAgree3 (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) h012
-  have hshift3 : ∀ v₁ v₂ : α, Ω.IsClockwise3 (L[0]'(by omega)) v₁ v₂ →
-      ∃ u₁ u₂ : ℝ, t₀ < u₁ ∧ u₁ < u₂ ∧ u₂ < t₀ + 2 * Real.pi ∧
-        pt u₁ = ν v₁ ∧ pt u₂ = ν v₂ := by
-    intro v₁ v₂ hcw3
-    obtain ⟨s₀, s₁, s₂, hs01, hs12, hs20, hs₀, hs₁, hs₂⟩ := hAgree3 (L[0]'(by omega)) v₁ v₂ hcw3
-    obtain ⟨m, hm⟩ := (hpt_eq_iff t₀ s₀).mp (hpt0.trans hs₀.symm)
-    refine ⟨s₁ + m * (2 * Real.pi), s₂ + m * (2 * Real.pi), by linarith, by linarith, by linarith,
-      ?_, ?_⟩
-    · exact ((hpt_eq_iff _ s₁).mpr ⟨m, rfl⟩).trans hs₁
-    · exact ((hpt_eq_iff _ s₂).mpr ⟨m, rfl⟩).trans hs₂
-  have hex : ∀ (i : ℕ) (hi : i < L.length),
-      ∃ u ∈ Ico t₀ (t₀ + 2 * Real.pi), pt u = ν (L[i]'hi) ∧ (0 < i → t₀ < u) := by
-    intro i hi
-    rcases Nat.eq_zero_or_pos i with rfl | hi_pos
-    · exact ⟨t₀, ⟨le_rfl, by linarith⟩, hpt0, fun h => (Nat.lt_irrefl 0 h).elim⟩
-    · by_cases hi1 : i = 1
-      · subst hi1
-        exact ⟨t₁, ⟨le_of_lt ht01, by linarith⟩, hpt1, fun _ => ht01⟩
-      · have hcw_i : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[i]'hi) :=
-          (Ω.mem_interval_of_lt hcw (by omega) (by omega) hi).2
-        obtain ⟨u₁, u₂, hu01, hu12, hu20, _, hu₂⟩ := hshift3 (L[1]'(by omega)) (L[i]'hi) hcw_i
-        exact ⟨u₂, ⟨le_of_lt (hu01.trans hu12), hu20⟩, hu₂, fun _ => hu01.trans hu12⟩
-  let t : ℕ → ℝ := fun i =>
-    if hi : i < L.length then Classical.choose (hex i hi) else t₀ + 2 * Real.pi + i
-  have ht_spec : ∀ (i : ℕ) (hi : i < L.length),
-      t i ∈ Ico t₀ (t₀ + 2 * Real.pi) ∧ pt (t i) = ν (L[i]'hi) ∧ (0 < i → t₀ < t i) := by
-    intro i hi
-    have h_eq : t i = Classical.choose (hex i hi) := by
-      dsimp only [t]; split_ifs; rfl
-    rw [h_eq]
-    exact Classical.choose_spec (hex i hi)
-  have ht0_eq : t 0 = t₀ := by
-    obtain ⟨ht0_mem, ht0_pt, _⟩ := ht_spec 0 (by omega)
-    exact hpt_inj t₀ ht0_mem ⟨le_rfl, by linarith⟩ (ht0_pt.trans hpt0.symm)
-  refine ⟨φ, t, ?_, ?_, ?_⟩
-  · intro i j hij
-    by_cases hj : j < L.length
-    · have hi : i < L.length := hij.trans hj
-      rcases Nat.eq_zero_or_pos i with rfl | hi_pos
-      · rw [ht0_eq]
-        exact (ht_spec j hj).2.2 hij
-      · have hcw_ij : Ω.IsClockwise3 (L[0]'(by omega)) (L[i]'hi) (L[j]'hj) :=
-          (Ω.mem_interval_of_lt hcw hi_pos hij hj).2
-        obtain ⟨u₁, u₂, hu01, hu12, hu20, hu₁, hu₂⟩ := hshift3 (L[i]'hi) (L[j]'hj) hcw_ij
-        have hti : t i = u₁ :=
-          hpt_inj t₀ (ht_spec i hi).1 ⟨le_of_lt hu01, hu12.trans hu20⟩
-            ((ht_spec i hi).2.1.trans hu₁.symm)
-        have htj : t j = u₂ :=
-          hpt_inj t₀ (ht_spec j hj).1 ⟨le_of_lt (hu01.trans hu12), hu20⟩
-            ((ht_spec j hj).2.1.trans hu₂.symm)
-        linarith
-    · by_cases hi : i < L.length
-      · have hti := (ht_spec i hi).1.2
-        have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
-        have hj_nonneg : (0 : ℝ) ≤ j := Nat.cast_nonneg j
-        linarith
-      · have hti : t i = t₀ + 2 * Real.pi + i := by dsimp only [t]; split_ifs; rfl
-        have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
-        have hij_cast : (i : ℝ) < (j : ℝ) := Nat.cast_lt.mpr hij
-        linarith
+  obtain ⟨t, hmono, hturn, hpoint⟩ := GM14.exists_angles_of_clockwise_triples hAgree3 hcw hlen
+  refine ⟨φ, t, hmono, ?_, ?_⟩
   · intro i hi
-    rw [List.length_map] at hi
-    rw [ht0_eq]
-    exact (ht_spec i hi).1.2
+    exact hturn i (by simpa using hi)
   · intro i hi
     have hi' : i < L.length := by simpa using hi
-    simpa [pt] using (ht_spec i hi').2.1
+    simpa using hpoint i hi'
 
 /-- Statement of Graph Minors XV, (7.9) (page 143):
 "If $\mathscr{P}$ is a crosscap transaction of cardinality $\phi$ then (S2) is true." -/

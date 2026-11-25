@@ -30,16 +30,32 @@ namespace GraphMinor.GM19
 
 open Set Topology GraphMinor.Surface unitInterval
 
-/-- A spoke can be added unless there is already one with the same ends. The proof follows
-`GM11.exists_parallel_spoke`. -/
-theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : Set T} {G : Drawing
-  T}
+private theorem line_inter_spoke_vertices {T : Type} [TopologicalSpace T] [T2Space T]
+    {G : Drawing T} {K : Set T} {c x : T} (hc : c ∈ G.V) (hxV : x ∈ G.V)
+    (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKU : Disjoint (K \ {c, x}) G.U) :
+    K ∩ G.V = {x, c} := by
+  apply subset_antisymm
+  · rintro y ⟨hyK, hyV⟩
+    by_contra hn
+    have hn' : y ∉ ({c, x} : Set T) := fun h ↦ hn (by rw [pair_comm]; exact h)
+    exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (G.V_subset_U hyV)
+  · have hend : ({c, x} : Set T) ⊆ K := (GM11.lineDrawing hK hcx).V_subset_U
+    rintro y (rfl | rfl)
+    · exact ⟨hend (Or.inr rfl), hxV⟩
+    · exact ⟨hend (Or.inl rfl), hc⟩
+
+/-- A maximal pre-radial drawing contains a spoke that bounds no disc with another spoke. -/
+theorem mem_spoke_line_of_no_bounded_disc {T : Type} [TopologicalSpace T] [T2Space T]
+    {U V : Set T} {G : Drawing T}
     (hpre : IsPreRadial U V G)
     (hmax : ∀ G' : Drawing T, IsPreRadial U V G' → G.IsSubdrawing G' → G'.IsSubdrawing G)
-    {r : Set T} (_hr : r ∈ componentsIn Uᶜ) {c x : T} (hcr : c ∈ r) (hc : c ∈ G.V) (hx : x ∈ V)
+    {r : Set T} {c x : T} (hcr : c ∈ r) (hc : c ∈ G.V) (hx : x ∈ V)
     {K : Set T} (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKr : K \ {c, x} ⊆ r)
-    (hKU : Disjoint (K \ {c, x}) G.U) (hrU : Disjoint r U) (hVU : V ⊆ U) :
-    ∃ h ∈ G.E, closure h ∩ G.V = {x, c} := by
+    (hKU : Disjoint (K \ {c, x}) G.U) (hrU : Disjoint r U) (hVU : V ⊆ U)
+    (hiv : ∀ f ∈ G.E, K \ {c, x} ≠ f → ∀ v ∈ V, ∀ r' ∈ componentsIn Uᶜ, ∀ w ∈ r' ∩ G.V,
+      K ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
+      ¬ ∃ Δ : Set T, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = K ∪ closure f) :
+    K \ {c, x} ∈ G.E := by
   classical
   obtain ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ := hpre
   have hxV : x ∈ G.V := h₂ hx
@@ -59,33 +75,22 @@ theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : 
     change (G.glue (GM11.lineDrawing hK hcx) hmeet).E = _
     rw [Drawing.glue_E, GM11.lineDrawing_E]
   have hKcl : closure (K \ {c, x}) = K := GM11.closure_sdiff_pair hK
-  have hKV : K ∩ G.V = {x, c} := by
-    apply subset_antisymm
-    · rintro y ⟨hyK, hyV⟩
-      by_contra hn
-      have hn' : y ∉ ({c, x} : Set T) := fun h ↦ hn (by rw [pair_comm]; exact h)
-      exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (G.V_subset_U hyV)
-    · have hend : ({c, x} : Set T) ⊆ K := (GM11.lineDrawing hK hcx).V_subset_U
-      rintro y (rfl | rfl)
-      · exact ⟨hend (Or.inr rfl), hxV⟩
-      · exact ⟨hend (Or.inl rfl), hc⟩
+  have hKV := line_inter_spoke_vertices hc hxV hK hcx hKU
   have hcnV : c ∉ V := fun h ↦ disjoint_left.mp hrU hcr (hVU h)
-  by_contra hno
-  have key : ∀ f ∈ G.E, ∀ v w, K ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} → False :=
-    fun f hf v w hKe hfe ↦ hno ⟨f, hf, hfe.trans (hKe.symm.trans hKV)⟩
-  have hiv : ∀ e ∈ G₂.E, ∀ f ∈ G₂.E, e ≠ f → ∀ v ∈ V, ∀ r' ∈ componentsIn Uᶜ, ∀ w ∈ r' ∩ G₂.V,
+  have hiv₂ : ∀ e ∈ G₂.E, ∀ f ∈ G₂.E, e ≠ f → ∀ v ∈ V, ∀ r' ∈ componentsIn Uᶜ, ∀ w ∈ r' ∩ G₂.V,
       closure e ∩ G₂.V = {v, w} → closure f ∩ G₂.V = {v, w} →
       ¬ ∃ Δ : Set T, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = closure e ∪ closure f := by
     rw [hGE, hGV]
     rintro e (he | rfl) f (hf | rfl) hef v hv r' hr' w hw hee hfe hΔ
     · exact h₆ e he f hf hef v hv r' hr' w hw hee hfe hΔ
-    · rw [hKcl] at hfe
-      exact key e he v w hfe hee
-    · rw [hKcl] at hee
-      exact key f hf v w hee hfe
+    · rw [hKcl] at hfe hΔ
+      obtain ⟨Δ, h₁, h₂, h₃⟩ := hΔ
+      exact hiv e he hef.symm v hv r' hr' w hw hfe hee ⟨Δ, h₁, h₂, by rw [h₃, Set.union_comm]⟩
+    · rw [hKcl] at hee hΔ
+      exact hiv f hf hef v hv r' hr' w hw hee hfe hΔ
     · exact hef rfl
   have hpre' : IsPreRadial U V G₂ := by
-    refine ⟨?_, ?_, ?_, ?_, ?_, hiv⟩
+    refine ⟨?_, ?_, ?_, ?_, ?_, hiv₂⟩
     · apply subset_antisymm
       · rintro y ⟨hyU, hyG | hyK⟩
         · rw [← h₁]
@@ -111,8 +116,22 @@ theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : 
       · exact h₅ e he
       · exact ⟨x, hx, c, ⟨hc, hcnV⟩, by rw [hKcl]; exact hKV⟩
   have hsub : G.IsSubdrawing G₂ := ⟨by rw [hGV], by rw [hGE]; exact subset_union_left⟩
-  have hback := hmax G₂ hpre' hsub
-  have hmem : K \ {c, x} ∈ G.E := hback.2 (by rw [hGE]; exact Or.inr rfl)
+  exact (hmax G₂ hpre' hsub).2 (by rw [hGE]; exact Or.inr rfl)
+
+/-- A spoke can be added unless there is already one with the same ends. The proof follows
+`GM11.exists_parallel_spoke`. -/
+theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : Set T} {G : Drawing
+  T}
+    (hpre : IsPreRadial U V G)
+    (hmax : ∀ G' : Drawing T, IsPreRadial U V G' → G.IsSubdrawing G' → G'.IsSubdrawing G)
+    {r : Set T} (_hr : r ∈ componentsIn Uᶜ) {c x : T} (hcr : c ∈ r) (hc : c ∈ G.V) (hx : x ∈ V)
+    {K : Set T} (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKr : K \ {c, x} ⊆ r)
+    (hKU : Disjoint (K \ {c, x}) G.U) (hrU : Disjoint r U) (hVU : V ⊆ U) :
+    ∃ h ∈ G.E, closure h ∩ G.V = {x, c} := by
+  by_contra hno
+  have hKV := line_inter_spoke_vertices hc (hpre.2.1 hx) hK hcx hKU
+  have hmem := mem_spoke_line_of_no_bounded_disc hpre hmax hcr hc hx hK hcx hKr hKU hrU hVU
+    (fun f hf _ v _ _ _ w _ hKe hfe _ => hno ⟨f, hf, hfe.trans (hKe.symm.trans hKV)⟩)
   obtain ⟨y, hy⟩ := (GM11.isPathConnected_sdiff_pair hK).nonempty
   exact disjoint_left.mp hKU hy (G.closure_subset_U hmem (subset_closure hy))
 

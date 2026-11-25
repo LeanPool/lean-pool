@@ -253,27 +253,9 @@ theorem cutOArc : CutOArcStatement.{u} := by
     have hXb' : X' ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hunX ▸ Or.inr hz)
     rcases cut_comps hψ hY hOX.isPreconnected hOX'.isPreconnected hunX hx hy with hYc | ⟨W₁, W₂,
       hne', hsc, hX₁, hX₂, hW₁, hW₂, hU, hdW, hc₁, hc₂⟩
-    · obtain ⟨a, b, c, ⟨e⟩⟩ := classification.{u} Y hY hYc
-      have hC : connectedComponentIn (bd Y) x ∈ cuffs Y := ⟨_, hXb hx, rfl⟩
-      have hC' : connectedComponentIn (bd Y) y ∈ cuffs Y := ⟨_, hXb' hy, rfl⟩
-      obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
-      obtain ⟨φ₀'⟩ := hdcuff.2.2 _ hC'
-      have eX := oarc_eq φ₀ hOX (hOX.isPreconnected.subset_connectedComponentIn hx hXb)
-      have eX' := oarc_eq φ₀' hOX' (hOX'.isPreconnected.subset_connectedComponentIn hy hXb')
-      have hCC : connectedComponentIn (bd Y) x ≠ connectedComponentIn (bd Y) y := by
-        intro he
-        rw [← eX, ← eX'] at he
-        exact Set.disjoint_left.mp hdX hx (he ▸ hx)
-      obtain ⟨i, hi', j, hj, hij, φ, φ', g, hg, hs, hs'⟩ := exists_two_holes e hC hC' hCC
+    · obtain ⟨a, b, c, e, i, j, -, σ, g', hi', hj, hij, hp, -⟩ :=
+        connected_two_cuff_presentation hY hYc hψ hOX hOX' hdX hunX b1 b2
       obtain ⟨hN, hLf⟩ := erase_erase_facts c i j
-      rw [eX, eX'] at hunX
-      rw [eX] at b1
-      rw [eX'] at b2
-      have hdis := cuffs_disjoint hC hC' hCC
-      obtain ⟨σ, g', hp⟩ := loop_two_aux hY hψ hC' (hdcuff.2.2 _ hC).isCompact.isClosed
-        (hdcuff.2.2 _ hC').isCompact.isClosed hdis hunX b1 b2 φ φ'
-        hij hi' hj hLf hg hs hs'
-      replace hp := hp.1
       have hn := nf_blkE (a := a) (b := b) (c := c) hij hi' hj hN hLf σ
       have hlen := length_erase_erase hij hi' hj
       left

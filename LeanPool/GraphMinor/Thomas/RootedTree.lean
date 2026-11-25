@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM04.TreeDecomposition
 public import LeanPool.GraphMinor.Thomas.Claims
+import LeanPool.GraphMinor.GM04.TreeLemma.Basic
 
 /-!
 # Translation between `GM04.RootedTree` and undirected trees
@@ -46,102 +47,51 @@ section RootedTreeProps
 
 variable {ι : Type u} (T : RootedTree ι)
 
-theorem mem_verts_of_mem_edges {f : ι} (hf : f ∈ T.edges) : f ∈ T.verts := by
-  classical
-  unfold RootedTree.edges at hf
-  exact Finset.mem_of_mem_erase hf
+theorem mem_verts_of_mem_edges {f : ι} (hf : f ∈ T.edges) : f ∈ T.verts :=
+  GM04.RootedTree.mem_verts_of_mem_edges T hf
 
-theorem ne_root_of_mem_edges {f : ι} (hf : f ∈ T.edges) : f ≠ T.root := by
-  classical
-  unfold RootedTree.edges at hf
-  exact Finset.ne_of_mem_erase hf
+theorem ne_root_of_mem_edges {f : ι} (hf : f ∈ T.edges) : f ≠ T.root :=
+  GM04.RootedTree.ne_root_of_mem_edges T hf
 
-theorem mem_edges_iff {f : ι} : f ∈ T.edges ↔ f ∈ T.verts ∧ f ≠ T.root := by
-  classical
-  unfold RootedTree.edges
-  rw [Finset.mem_erase, and_comm]
+theorem mem_edges_iff {f : ι} : f ∈ T.edges ↔ f ∈ T.verts ∧ f ≠ T.root :=
+  (GM04.RootedTree.mem_edges T).trans and_comm
 
 theorem iterate_parent_mem {v : ι} (hv : v ∈ T.verts) (n : ℕ) :
-    T.parent^[n] v ∈ T.verts := by
-  induction n with
-  | zero => exact hv
-  | succ n ih =>
-    rw [Function.iterate_succ_apply']
-    exact T.parent_mem _ ih
+    T.parent^[n] v ∈ T.verts :=
+  GM04.RootedTree.iterate_parent_mem T hv n
 
-theorem iterate_parent_root (n : ℕ) : T.parent^[n] T.root = T.root := by
-  induction n with
-  | zero => rfl
-  | succ n ih => rw [Function.iterate_succ_apply', ih, T.parent_root]
+theorem iterate_parent_root (n : ℕ) : T.parent^[n] T.root = T.root :=
+  GM04.RootedTree.iterate_parent_root T n
 
 theorem iterate_parent_eq_root_of_le {v : ι} {n m : ℕ}
     (hn : T.parent^[n] v = T.root) (hle : n ≤ m) :
-    T.parent^[m] v = T.root := by
-  have hm : m = (m - n) + n := (Nat.sub_add_cancel hle).symm
-  rw [hm, Function.iterate_add_apply, hn, iterate_parent_root T]
+    T.parent^[m] v = T.root :=
+  GM04.RootedTree.iterate_parent_eq_root_of_le T hn hle
 
 theorem not_iterate_succ_eq_self {v : ι} (hv : v ∈ T.verts) (hne : v ≠ T.root) (n : ℕ) :
-    T.parent^[n + 1] v ≠ v := by
-  intro hloop
-  have hmul : ∀ k : ℕ, T.parent^[k * (n + 1)] v = v := by
-    intro k
-    induction k with
-    | zero => simp
-    | succ k ih =>
-      rw [Nat.succ_mul, Function.iterate_add_apply, hloop, ih]
-  obtain ⟨m, hm⟩ := T.exists_iterate_eq_root v hv
-  have hle : m ≤ m * (n + 1) := Nat.le_mul_of_pos_right m (Nat.succ_pos n)
-  have hroot := iterate_parent_eq_root_of_le T hm hle
-  rw [hmul m] at hroot
-  exact hne hroot
+    T.parent^[n + 1] v ≠ v :=
+  fun h => hne (GM04.RootedTree.eq_root_of_iterate_eq_self T hv (Nat.succ_pos n) h)
 
 theorem reaches_refl {v : ι} (hv : v ∈ T.verts) : T.Reaches v v :=
-  ⟨hv, 0, rfl⟩
+  GM04.RootedTree.reaches_refl T hv
 
-theorem reaches_mem_left {u v : ι} (h : T.Reaches u v) : u ∈ T.verts := by
-  obtain ⟨hv, n, rfl⟩ := h
-  exact iterate_parent_mem T hv n
+theorem reaches_mem_left {u v : ι} (h : T.Reaches u v) : u ∈ T.verts :=
+  GM04.RootedTree.Reaches.verts_left T h
 
 theorem reaches_trans {u v w : ι} (huv : T.Reaches u v) (hvw : T.Reaches v w) :
-    T.Reaches u w := by
-  obtain ⟨_, n, rfl⟩ := huv
-  obtain ⟨hw, m, rfl⟩ := hvw
-  exact ⟨hw, n + m, by rw [Function.iterate_add_apply]⟩
+    T.Reaches u w :=
+  GM04.RootedTree.Reaches.trans T huv hvw
 
 theorem reaches_antisymm {u v : ι} (huv : T.Reaches u v) (hvu : T.Reaches v u) :
-    u = v := by
-  obtain ⟨hv, n, rfl⟩ := huv
-  obtain ⟨_, m, hm⟩ := hvu
-  rcases Nat.eq_zero_or_pos n with rfl | hn
-  · rfl
-  · by_cases hv_root : v = T.root
-    · rw [hv_root, iterate_parent_root T]
-    · exfalso
-      have h1 : T.parent^[m + n] v = v := by
-        rw [Function.iterate_add_apply]
-        exact hm
-      have hpos : m + n = (m + n - 1) + 1 := (Nat.sub_add_cancel (by omega)).symm
-      rw [hpos] at h1
-      exact not_iterate_succ_eq_self T hv hv_root (m + n - 1) h1
+    u = v :=
+  GM04.RootedTree.Reaches.antisymm T huv hvu
 
 theorem reaches_total_of_reaches {u v w : ι} (hu : T.Reaches u w) (hv : T.Reaches v w) :
-    T.Reaches u v ∨ T.Reaches v u := by
-  obtain ⟨hw, n, rfl⟩ := hu
-  obtain ⟨_, m, rfl⟩ := hv
-  rcases le_total m n with hle | hle
-  · left
-    refine ⟨iterate_parent_mem T hw m, n - m, ?_⟩
-    rw [← Function.iterate_add_apply, Nat.sub_add_cancel hle]
-  · right
-    refine ⟨iterate_parent_mem T hw n, m - n, ?_⟩
-    rw [← Function.iterate_add_apply, Nat.sub_add_cancel hle]
+    T.Reaches u v ∨ T.Reaches v u :=
+  GM04.RootedTree.Reaches.total_of_reaches T hu hv
 
-theorem reaches_root_iff {u : ι} : T.Reaches u T.root ↔ u = T.root := by
-  constructor
-  · rintro ⟨_, n, rfl⟩
-    exact iterate_parent_root T n
-  · rintro rfl
-    exact reaches_refl T T.root_mem
+theorem reaches_root_iff {u : ι} : T.Reaches u T.root ↔ u = T.root :=
+  GM04.RootedTree.reaches_root_iff T
 
 theorem onPath_subtreeAt_rootSide {f t s : ι} (hf : f ∈ T.edges)
     (ht : t ∈ T.subtreeAt f) (hs : s ∈ T.rootSide f) :

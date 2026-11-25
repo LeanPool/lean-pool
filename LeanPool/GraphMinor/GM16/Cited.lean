@@ -29,7 +29,7 @@ P. D. Seymour, *Graph Minors. XVI. Excluding a non-planar graph*, J. Combin. The
   - `GM09Theorem105Statement`, (10.5) (page 66), used in Step (11) of the proof of (8.1) in
     Section 9 of XVI (page 74).
 * **Graph Minors XII** (*Distance on a surface*, JCTB 64 (1995) 240–272):
-  - `GM12Theorem42Statement`, (4.2) (page 249), monotonicity of controlling a minor, used in the
+  - `GM12Theorem42Statement`, complete-graph corollary of (4.2) (page 249), used in the
     proof of (3.1) of XVI (page 54);
   - `GM12Theorem43Statement`, (4.3) (page 249), stated as (4.3) of XVI (page 54);
   - `GM12Theorem44Statement`, (4.4) (page 251), stated as (5.2) of XVI (page 55);
@@ -88,8 +88,8 @@ def GM09Theorem105Statement : Prop :=
 
 /-! ## Graph Minors XII: Distance on a surface (JCTB 64 (1995) 240–272) -/
 
-/-- Statement of Graph Minors XII, (4.2) (page 249), used in the proof of (3.1) of Graph Minors XVI
-(page 54):
+/-- Complete-graph corollary of Graph Minors XII, (4.2) (page 249), used in the proof of
+(3.1) of Graph Minors XVI (page 54):
 For any finite graph $L$ there exists $p \ge 0$ such that any tangle $\mathcal{T}^*$ in a graph $G$
 controlling a $K_p$-minor (`GM12.ControlsMinor ... (completeGraph p)`) also controls an $L$-minor
 (`GM12.ControlsMinor ... L`). -/

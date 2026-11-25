@@ -11,12 +11,7 @@ module
 public import LeanPool.GraphMinor.GM12.Section3ForestBound
 public import LeanPool.GraphMinor.GM12.Section3BoundaryLinked
 import LeanPool.GraphMinor.GM12.Section3FeasibilityForest
-import LeanPool.GraphMinor.GM12.Section3ForestConnections
-import LeanPool.GraphMinor.GM12.Section3AmbientTransfer
-import LeanPool.GraphMinor.GM12.Section3BoundaryEquality
-
-import LeanPool.GraphMinor.GM07.Section7
-import LeanPool.GraphMinor.GM07.Bridge
+import LeanPool.GraphMinor.GM12.Section3ForestAlphaReduction
 
 /-!
 # The final reduction of XII (3.1) to VII
@@ -46,7 +41,7 @@ theorem connecting_subdrawings_of_alpha_bound
     (hdisj : Pairwise (fun i j => Disjoint (Δ i) (Δ j)))
     (havoid : ∀ i, Γ.U ∩ Δ i = Γ.V ∩ discBd (Δ i))
     (Zs : Fin p → Set S) (hcover : ⋃ j, Zs j = discBoundaryVertices Γ Δ)
-    (hne : ∀ j, (Zs j).Nonempty)
+    (_hne : ∀ j, (Zs j).Nonempty)
     (hdisZ : ∀ i j, i ≠ j → Disjoint (Zs i) (Zs j))
     (hfeasible : IsTopologicallyFeasible Δ Zs)
     (hbound : ∀ F : Set S, Γ.IsNormal F → IsOArc F → F ⊆ discComplement Δ →
@@ -60,10 +55,7 @@ theorem connecting_subdrawings_of_alpha_bound
       GM07.alpha (drawingInSubspace Γ (discComplement Δ)
         (drawing_support_subset_discComplement hS Γ Δ hΔ hdisj havoid))) :
     HasConnectingSubdrawings Γ (discBoundaryVertices Γ Δ) Zs := by
-  let C := discComplement Δ
   let Z := discBoundaryVertices Γ Δ
-  let hUC := drawing_support_subset_discComplement hS Γ Δ hΔ hdisj havoid
-  let G := drawingInSubspace Γ C hUC
   have hZs : ∀ j, Zs j ⊆ Z := by
     intro j x hx
     change x ∈ discBoundaryVertices Γ Δ
@@ -77,49 +69,9 @@ theorem connecting_subdrawings_of_alpha_bound
     intro j x hx
     obtain ⟨i, hxi⟩ := mem_iUnion.mp (hZs j hx)
     exact mem_iUnion.mpr ⟨i, hxi.2⟩
-  have hZsC : ∀ j, Zs j ⊆ C := by
-    intro j x hx
-    obtain ⟨i, hxi⟩ := mem_iUnion.mp (hZsBd j hx)
-    exact disc_boundary_subset_discComplement hS Δ hΔ hdisj i hxi
   obtain ⟨H, hHF, hHB, hclasses⟩ := exists_feasibility_forest hS Δ hΔ hdisj Zs
     (fun j => Γ.finite_V.subset (hZsV j)) hZsBd hfeasible
-  have hHB' : H.V ∩ bd C = (Subtype.val : C → S) ⁻¹' Z := by
-    rw [hcover] at hHB
-    exact hHB
-  have hGBimage := drawingInDiscComplement_boundary_vertices_eq hS Γ Δ hΔ hdisj hUC
-  have hGB : G.V ∩ bd C = (Subtype.val : C → S) ⁻¹' Z := by
-    ext x
-    constructor
-    · intro hx
-      change x.val ∈ discBoundaryVertices Γ Δ
-      rw [← hGBimage]
-      exact mem_image_of_mem Subtype.val hx
-    · intro hx
-      change x.val ∈ discBoundaryVertices Γ Δ at hx
-      rw [← hGBimage] at hx
-      obtain ⟨y, hy, he⟩ := hx
-      have hyx : y = x := Subtype.ext he
-      exact hyx ▸ hy
-  have hlinked := drawingInDiscComplement_isBoundaryLinked hS Γ Δ hΔ hdisj havoid hbound
-  have hcountG : (G.V ∩ bd C).ncard ≤ z :=
-    (drawingInDiscComplement_boundary_vertex_count hS Γ Δ hΔ hUC).trans hcount
-  have hfeas := feasible_forest_of_large_alpha (discComplement_isSurface hS Δ hΔ hdisj)
-    hcomplex hmodel G H hlinked hcountG hα hHF (hGB.trans hHB'.symm)
-  have hparts : ∀ j, (Subtype.val : C → S) ⁻¹' Zs j ⊆ H.V ∩ bd C := by
-    intro j x hx
-    rw [hHB']
-    exact hZs j hx
-  have hparts_ne : ∀ j, ((Subtype.val : C → S) ⁻¹' Zs j).Nonempty := by
-    intro j
-    obtain ⟨x, hx⟩ := hne j
-    exact ⟨⟨x, hZsC j hx⟩, hx⟩
-  have hparts_dis : ∀ i j, i ≠ j → Disjoint
-      ((Subtype.val : C → S) ⁻¹' Zs i) (Subtype.val ⁻¹' Zs j) := by
-    intro i j hij
-    exact (hdisZ i j hij).preimage Subtype.val
-  have hconnect := hasConnectingSubdrawings_of_feasible_forest hfeas hparts hparts_ne hparts_dis
-    hclasses
-  rw [hHB'] at hconnect
-  exact hasConnectingSubdrawings_from_closed_subspace Γ C isClosed_closure hUC hZsC hconnect
+  exact connecting_subdrawings_of_alpha_bound_of_forest hS Γ Δ hΔ hdisj havoid Zs hcover
+    hdisZ H hHF hHB hclasses hbound a b c z hcomplex hmodel hcount hα
 
 end GraphMinor.GM12

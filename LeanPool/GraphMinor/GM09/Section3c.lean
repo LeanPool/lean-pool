@@ -339,11 +339,7 @@ theorem fence_cut_A_arc {Ω : CyclicPerm α} {A B W' : Set α}
     hsub_Bf (Ω.interval_subset_bar b'_0 a_0) disjoint_sdiff_self_right
   exact ⟨A_f, B_f, hfence_f, hA_arc_eq, hB_arc_sub, hG₁_sub, hG₂_sub⟩
 
-/-- Combining the four interval fences: for any `x₁ ∈ G₁`, `x₂ ∈ G₂`, and `u, u' ∈ A_arc ∪ B_arc`
-with `u, u' ∉ W'`, there is a fence `(A_f, B_f)` of `Ω` such that `A ∩ W' ⊆ A_f`, `B ∩ W' ⊆ B_f`,
-`u` and `x₁` lie on opposite sides of `(A_f, B_f)`, and `u'` and `x₂` lie on opposite sides of
-`(A_f, B_f)`. -/
-theorem exists_fence_for_two_switches {Ω : CyclicPerm α} {A B W' : Set α}
+private theorem fence_for_two_switches_of_first_nonmember {Ω : CyclicPerm α} {A B W' : Set α}
     (hfence : Ω.IsFence A B) (hW' : W' ⊆ Ω.bar)
     {a_0 a'_0 b_0 b'_0 x₁ x₂ u u' : α}
     (ha_0 : a_0 ∈ A ∩ W') (ha'_0 : a'_0 ∈ A ∩ W')
@@ -354,7 +350,7 @@ theorem exists_fence_for_two_switches {Ω : CyclicPerm α} {A B W' : Set α}
     (hx₂ : x₂ ∈ Ω.interval b'_0 a_0)
     (hu_bar : u ∈ Ω.bar) (hu_not_W' : u ∉ W')
     (hu_not_G₁ : u ∉ Ω.interval a'_0 b_0) (hu_not_G₂ : u ∉ Ω.interval b'_0 a_0)
-    (hu'_bar : u' ∈ Ω.bar) (_hu'_not_W' : u' ∉ W')
+    (hu'_bar : u' ∈ Ω.bar)
     (hu'_not_G₁ : u' ∉ Ω.interval a'_0 b_0) (hu'_not_G₂ : u' ∉ Ω.interval b'_0 a_0) :
     ∃ A_f B_f : Set α, Ω.IsFence A_f B_f ∧
       A ∩ W' ⊆ A_f ∧ B ∩ W' ⊆ B_f ∧
@@ -472,6 +468,30 @@ theorem exists_fence_for_two_switches {Ω : CyclicPerm α} {A B W' : Set α}
       fence_cut_A_arc hfence.symm hW' hb_0 hb'_0 ha_0 ha'_0 hd_ba hd_ab huB hu_not_W'
     exact ⟨A_f, B_f, hff.symm, hA_sub.trans hAf, hB_sub.trans hBf,
       Or.inr ⟨hG₁f hx₁, hBf huB⟩, Or.inr ⟨hG₂f hx₂, hBf hu'B⟩⟩
+
+/-- Combining the four interval fences: for any `x₁ ∈ G₁`, `x₂ ∈ G₂`, and `u, u' ∈ A_arc ∪ B_arc`
+with `u, u' ∉ W'`, there is a fence `(A_f, B_f)` of `Ω` such that `A ∩ W' ⊆ A_f`, `B ∩ W' ⊆ B_f`,
+`u` and `x₁` lie on opposite sides of `(A_f, B_f)`, and `u'` and `x₂` lie on opposite sides of
+`(A_f, B_f)`. -/
+theorem exists_fence_for_two_switches {Ω : CyclicPerm α} {A B W' : Set α}
+    (hfence : Ω.IsFence A B) (hW' : W' ⊆ Ω.bar)
+    {a_0 a'_0 b_0 b'_0 x₁ x₂ u u' : α}
+    (ha_0 : a_0 ∈ A ∩ W') (ha'_0 : a'_0 ∈ A ∩ W')
+    (hb_0 : b_0 ∈ B ∩ W') (hb'_0 : b'_0 ∈ B ∩ W')
+    (hd_ab : Disjoint (Ω.interval a'_0 b_0) W')
+    (hd_ba : Disjoint (Ω.interval b'_0 a_0) W')
+    (hx₁ : x₁ ∈ Ω.interval a'_0 b_0)
+    (hx₂ : x₂ ∈ Ω.interval b'_0 a_0)
+    (hu_bar : u ∈ Ω.bar) (hu_not_W' : u ∉ W')
+    (hu_not_G₁ : u ∉ Ω.interval a'_0 b_0) (hu_not_G₂ : u ∉ Ω.interval b'_0 a_0)
+    (hu'_bar : u' ∈ Ω.bar) (_hu'_not_W' : u' ∉ W')
+    (hu'_not_G₁ : u' ∉ Ω.interval a'_0 b_0) (hu'_not_G₂ : u' ∉ Ω.interval b'_0 a_0) :
+    ∃ A_f B_f : Set α, Ω.IsFence A_f B_f ∧
+      A ∩ W' ⊆ A_f ∧ B ∩ W' ⊆ B_f ∧
+      ((u ∈ A_f ∧ x₁ ∈ B_f) ∨ (x₁ ∈ A_f ∧ u ∈ B_f)) ∧
+      ((u' ∈ A_f ∧ x₂ ∈ B_f) ∨ (x₂ ∈ A_f ∧ u' ∈ B_f)) := by
+  exact fence_for_two_switches_of_first_nonmember hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
+    hx₁ hx₂ hu_bar hu_not_W' hu_not_G₁ hu_not_G₂ hu'_bar hu'_not_G₁ hu'_not_G₂
 
 /-- If `x₁ ∈ G₁ = S.Ω.interval a'_0 b_0` and `u ∈ S.Ω.bar \ (G₁ ∪ {a'_0, b_0})`, then
 `b_0 ∈ S.Ω.interval x₁ u` and `a'_0 ∈ S.Ω.interval u x₁`. -/
@@ -721,8 +741,8 @@ theorem crookedTransaction_of_two_switches (S : Society α β)
   have hW'_bar : W' ⊆ S.Ω.bar := S.transactionEnds_subset_bar (P_set \ {P₁})
   let P_set'' := (P_set \ {P₁}) ∪ {L₁, L₂}
   obtain ⟨A_f, B_f, hff, hAf, hBf, h_u₁e₁, h_u₂e₂⟩ :=
-    exists_fence_for_two_switches hfence.2.1 hW'_bar ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-      he₁_G₁ he₂_G₂ hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar hu₂_not_W' hu₂_G₁ hu₂_G₂
+    fence_for_two_switches_of_first_nonmember hfence.2.1 hW'_bar ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
+      he₁_G₁ he₂_G₂ hu₁_bar hu₁_not_W' hu₁_G₁ hu₁_G₂ hu₂_bar hu₂_G₁ hu₂_G₂
   have hdisj'' : S.IsDisjointOmegaPathSet P_set'' := by
     refine ⟨?_, ?_⟩
     · rintro R (hR | rfl | rfl)

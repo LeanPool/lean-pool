@@ -35,45 +35,9 @@ variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat
 theorem simple_walk_eq_of_edges {T : Type} [TopologicalSpace T] {G : Drawing T} {u a :
   T} (A B : GraphWalk G.toGraph u a)
     (hA : A.IsSimple) (hB : B.IsSimple) (hE : ∀ e, e ∈ A.edges ↔ e ∈ B.edges) : A = B := by
-  induction A with
-  | nil h =>
-    cases B with
-    | nil _ => rfl
-    | @cons _ x _ e hl r =>
-      have := (hE e).mpr (by simp)
-      simp at this
-  | @cons u x a e hl r ih =>
-    cases B with
-    | nil _ =>
-      have := (hE e).mp (by simp)
-      simp at this
-    | @cons _ x' _ e' hl' r' =>
-      have hsA : (GraphWalk.cons hl r).support.Nodup := hA
-      have hsB : (GraphWalk.cons hl' r').support.Nodup := hB
-      simp only [GraphWalk.support_cons, List.nodup_cons] at hsA hsB
-      have hee : e = e' := by
-        have := (hE e).mp (by simp)
-        rcases List.mem_cons.mp (by simpa using this) with h | h
-        · exact h
-        · exact absurd (r'.left_mem_support_of_mem_edges h hl) hsB.1
-      subst hee
-      obtain rfl := hl.right_unique hl'
-      have hE' : ∀ f, f ∈ r.edges ↔ f ∈ r'.edges := by
-        intro f
-        constructor
-        · intro hf
-          have h₁ := (hE f).mp (by simp [hf])
-          rcases List.mem_cons.mp (by simpa using h₁) with h | h
-          · subst h
-            exact absurd (r.left_mem_support_of_mem_edges hf hl) hsA.1
-          · exact h
-        · intro hf
-          have h₁ := (hE f).mpr (by simp [hf])
-          rcases List.mem_cons.mp (by simpa using h₁) with h | h
-          · subst h
-            exact absurd (r'.left_mem_support_of_mem_edges hf hl) hsB.1
-          · exact h
-      rw [ih r' hsA.2 hsB.2 hE']
+  obtain ⟨h, hwalk⟩ := simple_walk_eq_of_common_start_and_edges A B hA hB hE
+  cases h
+  exact hwalk
 
 /-- In a simple walk, the part after a vertex does not depend on how the walk is split. -/
 theorem tail_unique {α' β : Type*} {G : Graph α' β} {a x b : α'} (A A' : GraphWalk G a x)
@@ -204,62 +168,6 @@ theorem IsSpokeWalk.support_hub {K : GraphWalk D.rad.G.toGraph v h} (hK : D.IsSp
   have h₁ := (hK.bound hyH A).1
   rw [GraphWalk.length_append] at h₁
   exact GraphWalk.eq_of_length_eq_zero (show B.length = 0 by omega)
-
-omit [T2Space S] in
-/-- Two simple walks of the same weight have the same edges, because the weights are rationally
-independent. -/
-theorem edges_eq_of_weight_eq (D : TangleDatum cap χ) {a b c d : Shat} {Q₁ : GraphWalk
-  D.rad.G.toGraph a b}
-    {Q₂ : GraphWalk D.rad.G.toGraph c d} (h₁ : Q₁.IsSimple) (h₂ : Q₂.IsSimple)
-      (hw : D.tb.walkWeight Q₁ = D.tb.walkWeight Q₂) :
-    ∀ e, e ∈ Q₁.edges ↔ e ∈ Q₂.edges := by
-  classical
-  have : ConnectedSpace Shat := cap.connected
-  set A := walkDrawing D.rad.G Q₁ with hA
-  set B := walkDrawing D.rad.G Q₂ with hB
-  have hAE : ∀ e, e ∈ A.E ↔ e ∈ Q₁.edges := fun e ↦ by rw [hA, walkDrawing_E]; rfl
-  have hBE : ∀ e, e ∈ B.E ↔ e ∈ Q₂.edges := fun e ↦ by rw [hB, walkDrawing_E]; rfl
-  have hwA := D.tb.weightSub_eq_of_simple h₁ hAE
-  have hwB := D.tb.weightSub_eq_of_simple h₂ hBE
-  have hAf : A.E.Finite := A.finite_edges
-  have hBf : B.E.Finite := B.finite_edges
-  have hDisjoint₁ : Disjoint (A.E ∩ B.E) (A.E \ B.E) :=
-    disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
-  have hDisjoint₂ : Disjoint (B.E ∩ A.E) (B.E \ A.E) :=
-    disjoint_left.mpr fun _ he₁ he₂ ↦ he₂.2 he₁.2
-  have hs₁ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = D.tb.weightSub A := by
-    rw [← finsum_mem_union hDisjoint₁ (hAf.subset inter_subset_left)
-      (hAf.subset sdiff_subset), inter_union_sdiff]
-    rfl
-  have hs₂ : ∑ᶠ e ∈ A.E ∩ B.E, D.tb.wtE e + ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e = D.tb.weightSub B := by
-    rw [Set.inter_comm, ← finsum_mem_union hDisjoint₂ (hBf.subset inter_subset_left)
-      (hBf.subset sdiff_subset), inter_union_sdiff]
-    rfl
-  have heq : ∑ᶠ e ∈ A.E \ B.E, D.tb.wtE e = ∑ᶠ e ∈ B.E \ A.E, D.tb.wtE e := by linarith
-  have hsubA : A.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
-  have hsubB : B.E ⊆ D.rad.G.E := (walkDrawing_isSubdrawing _ _).2
-  have hdis : Disjoint (A.E \ B.E) (B.E \ A.E) := disjoint_left.mpr fun e h₁ h₂ ↦ h₂.2 h₁.1
-  have hY : B.E \ A.E = ∅ := by
-    by_contra hne
-    exact D.tb.weight_ne (sdiff_subset.trans hsubA) (sdiff_subset.trans hsubB) hdis
-      (nonempty_iff_ne_empty.mpr hne) heq
-  have hX : A.E \ B.E = ∅ := by
-    by_contra hne
-    exact D.tb.weight_ne (sdiff_subset.trans hsubB) (sdiff_subset.trans hsubA) hdis.symm
-      (nonempty_iff_ne_empty.mpr hne) heq.symm
-  intro e
-  rw [← hAE, ← hBE]
-  constructor
-  · intro h
-    by_contra hn
-    have : e ∈ A.E \ B.E := ⟨h, hn⟩
-    rw [hX] at this
-    exact this
-  · intro h
-    by_contra hn
-    have : e ∈ B.E \ A.E := ⟨h, hn⟩
-    rw [hY] at this
-    exact this
 
 omit [T2Space S] in
 /-- Two spokes that meet have the same inner end. -/

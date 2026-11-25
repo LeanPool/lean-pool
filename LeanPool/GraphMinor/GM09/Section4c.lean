@@ -518,14 +518,10 @@ private theorem replacement_of_half_covered_path {p : ℕ} {P_set Q_set : Set (G
     · exact hb₃'_not_P (hP₃_ends.mem_transactionEnds_right S hP₃_in)
   exact ⟨hfence_P', hnot_crooked_P'⟩
 
-/-- **Graph Minors IX, (4.5)** (pages 51–52):
-"(4.5) *Let S be true, and let $Q_1, Q_2, Q_3, Q_4, Q_5 \in \mathscr{Q}$ be in order. Suppose that
-$Q_2, Q_3, Q_4$ are all separating. Then not all of $Q_1, ..., Q_5$ are half-covered.*" -/
-theorem theorem_4_5_proof {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set α}
+private theorem not_all_five_half_covered {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set α}
     (hS : S.StatementS p P_set Q_set A B)
     {Q₁ Q₂ Q₃ Q₄ Q₅ : Graph α β}
-    (_hQ₁ : Q₁ ∈ Q_set) (_hQ₂ : Q₂ ∈ Q_set) (hQ₃ : Q₃ ∈ Q_set)
-    (_hQ₄ : Q₄ ∈ Q_set) (_hQ₅ : Q₅ ∈ Q_set)
+    (hQ₃ : Q₃ ∈ Q_set)
     (hord : S.AreInOrder [Q₁, Q₂, Q₃, Q₄, Q₅])
     (hsep₂ : S.IsSeparatingOmegaPath Q₂)
     (hsep₃ : S.IsSeparatingOmegaPath Q₃)
@@ -719,6 +715,22 @@ theorem theorem_4_5_proof {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set
 
 /-! ## Proof of (4.6) (page 52) -/
 
+/-- **Graph Minors IX, (4.5)** (pages 51–52):
+"(4.5) *Let S be true, and let $Q_1, Q_2, Q_3, Q_4, Q_5 \in \mathscr{Q}$ be in order. Suppose that
+$Q_2, Q_3, Q_4$ are all separating. Then not all of $Q_1, ..., Q_5$ are half-covered.*" -/
+theorem theorem_4_5_proof {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set α}
+    (hS : S.StatementS p P_set Q_set A B)
+    {Q₁ Q₂ Q₃ Q₄ Q₅ : Graph α β}
+    (_hQ₁ : Q₁ ∈ Q_set) (_hQ₂ : Q₂ ∈ Q_set) (hQ₃ : Q₃ ∈ Q_set)
+    (_hQ₄ : Q₄ ∈ Q_set) (_hQ₅ : Q₅ ∈ Q_set)
+    (hord : S.AreInOrder [Q₁, Q₂, Q₃, Q₄, Q₅])
+    (hsep₂ : S.IsSeparatingOmegaPath Q₂)
+    (hsep₃ : S.IsSeparatingOmegaPath Q₃)
+    (hsep₄ : S.IsSeparatingOmegaPath Q₄) :
+    ¬ (S.IsHalfCovered P_set Q₁ ∧ S.IsHalfCovered P_set Q₂ ∧ S.IsHalfCovered P_set Q₃ ∧
+       S.IsHalfCovered P_set Q₄ ∧ S.IsHalfCovered P_set Q₅) := by
+  exact S.not_all_five_half_covered hS hQ₃ hord hsep₂ hsep₃ hsep₄
+
 /-- Under Statement **S** with `p ≠ 3`, `|P_set| = p` by `(3.4)` and minimality of `|P_set|`. -/
 theorem StatementS.card_P_eq {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set α}
     (hS : S.StatementS p P_set Q_set A B) (hp3 : p ≠ 3) :
@@ -833,7 +845,7 @@ theorem theorem_4_6_proof {p : ℕ} {P_set Q_set : Set (Graph α β)} {A B : Set
     have h₃ : Q₃ ∈ H := hH₅_sub (hmem_H₅ Q₃ (by simp))
     have h₄ : Q₄ ∈ H := hH₅_sub (hmem_H₅ Q₄ (by simp))
     have h₅ : Q₅ ∈ H := hH₅_sub (hmem_H₅ Q₅ (by simp))
-    exact S.theorem_4_5_proof hS h₁.1 h₂.1 h₃.1 h₄.1 h₅.1 hQl_ord
+    exact S.not_all_five_half_covered hS h₃.1 hQl_ord
       (hsep Q₂ h₂.1) (hsep Q₃ h₃.1) (hsep Q₄ h₄.1)
       ⟨h₁.2, h₂.2, h₃.2, h₄.2, h₅.2⟩
   -- By (4.3), `Q_set \ (H ∪ C)` has at most 1 element.

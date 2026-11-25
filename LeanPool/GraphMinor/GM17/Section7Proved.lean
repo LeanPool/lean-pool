@@ -866,28 +866,16 @@ theorem path_family_restricts_to_middle_cell
     intro z hz
     exact hQ_sub (hwc_sup ▸ hz)
 
-/-- **Graph Minors XVII, (7.3)** (pages 178–179):
-"Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a portrayal of a hypergraph $G$. Let
-$n_1, n_2$ be distinct nodes bordering a cuff $\Theta$, and let $F \subseteq \Sigma$ be a
-$\Gamma$-normal $1$-arc with ... ends $n_1, n_2$ and with $F \cap N(\Gamma) = \{n_1, n_2\}$. Let
-$\Delta \subseteq \Sigma$ be a disc with $F \subseteq bd(\Delta) \subseteq F \cup \Theta$,
-and for each $n \in N(\Gamma) \cap bd(\Delta)$ let
-$\beta(n_1+) \cap \beta(n_2+) \subseteq \beta(n+)$. Let $\pi$ have warp $\le p$ at $\Theta$, and
-let $|\beta(n_1+)| = |\beta(n_2+)| = p+1$. Then every linkage in $\alpha(\Delta)$ from
-$\beta(n_1+)$ to $\beta(n_2+)$ pairs $\gamma(n_1)$ with $\gamma(n_2)$."
-
- Note: On page 179, the paper defines
-$B_h = \bigcap (\beta(n+) : n \in I_h \cap N(\Gamma))$ ($h = 1, 2$), which is a typographical slip
-for $B_h = \bigcup (\beta(n+) : n \in I_h \cap N(\Gamma))$, as the later uses of $B_1$ and $B_2$
-in the proof on pages 179 and 180 show. -/
-theorem theorem_7_3_proof
+/-- The linkage-pair argument of XVII (7.3) applies with the overlap condition on the cuff nodes
+and with a normal cut whose interior may meet painting nodes. -/
+theorem linkage_pairs_of_boundary_cut
     {α : Type u} {β : Type v} {G : Hypergraph α β} (π : Portrayal G)
     {Θ F Δ : Set π.S} {n₁ n₂ : π.S} {p : ℕ}
     (hΘ : Θ ∈ cuffs π.S) (hn₁ : n₁ ∈ π.Γ.N ∩ Θ) (hn₂ : n₂ ∈ π.Γ.N ∩ Θ) (hne : n₁ ≠ n₂)
     (hnorm : π.Γ.IsNormal F) (hF : IsLineWithEnds F n₁ n₂)
-    (hFbd : F ∩ bd π.S = {n₁, n₂}) (hFN : F ∩ π.Γ.N = {n₁, n₂})
+    (hFbd : F ∩ bd π.S = {n₁, n₂})
     (hΔ : IsClosedDisc Δ) (hF_bd : F ⊆ discBd Δ) (hbd_sub : discBd Δ ⊆ F ∪ Θ)
-    (hinter_sub : ∀ n ∈ π.Γ.N ∩ discBd Δ,
+    (hinter_sub : ∀ n ∈ π.Γ.N ∩ (Θ ∩ discBd Δ),
       π.borderPlus n₁ ∩ π.borderPlus n₂ ⊆ π.borderPlus n)
     (hwarp : π.warpAt Θ ≤ p)
     (hcard₁ : (π.borderPlus n₁).ncard = p + 1)
@@ -979,8 +967,8 @@ theorem theorem_7_3_proof
       hord_I, hborder_split, hint_split,
       ⟨c₁_end, hc₁_C, hc₁_Δ, hc₁_bd, hn₁_c₁⟩,
       ⟨c₂_end, hc₂_C, hc₂_Δ, hc₂_bd, hn₂_c₂⟩⟩ :=
-    GraphMinor.GM17.normalIArcDiscRegion π.S π.isSurface π.Γ Θ n₁ n₂ F Δ e P_mark
-      hΘ hn₁ hn₂ hne hnorm hF hFbd hFN hΔ hF_bd hbd_sub he_props hP_n₁ hP_n₂
+    normalIArcDiscRegion_of_boundary π.S π.isSurface π.Γ Θ n₁ n₂ F Δ e P_mark
+      hΘ hn₁ hn₂ hne hnorm hF hFbd hΔ hF_bd hbd_sub he_props hP_n₁ hP_n₂
   have hc_bd : (c ∩ bd π.S).Nonempty := hc_Θ.mono (inter_subset_inter_right _ hΘ_bd)
   let B₁ : Set α := ⋃ n ∈ I₁ ∩ π.Γ.N, π.borderPlus n
   let B₂ : Set α := ⋃ n ∈ I₂ ∩ π.Γ.N, π.borderPlus n
@@ -999,7 +987,7 @@ theorem theorem_7_3_proof
         {z | z ∈ Q'.walk.support} ⊆ {z | z ∈ (P j).walk.support} ∧
         Q'.first ∈ B₁ ∧ Q'.last ∈ B₂ := by
     exact path_family_restricts_to_middle_cell π hΘ hn₁ hn₂
-      (fun n hn ↦ hinter_sub n ⟨hn.1, hn.2.2⟩) hΘ_bd P m₁ m₂ c I₁ I₂ N₁ N₂ hm₁_mem hm₂_mem hc_C
+      hinter_sub hΘ_bd P m₁ m₂ c I₁ I₂ N₁ N₂ hm₁_mem hm₂_mem hc_C
       htilde_c hI₁_sub hI₂_sub hdisj_I hm₁_I₁ hm₂_I₂ hN₁_sub hN₂_sub hdisj_N hord_I
       c₁_end hc₁_C hc₁_Δ hc₁_bd hn₁_c₁ c₂_end hc₂_C hc₂_Δ hc₂_bd hn₂_c₂ hborder_split hint_split
       hc_bd hbp₁_sub_B₁ hbp₂_sub_B₂ hbp_m₁_sub_B₁ hbp_m₂_sub_B₂
@@ -1007,6 +995,38 @@ theorem theorem_7_3_proof
   exact no_partial_middle_cell_linkage π (fun j ↦ {z | z ∈ (P j).walk.support}) hP_disj hwarp
     ⟨hm₁_mem.1, hΘ_bd hm₁_mem.2.1⟩ ⟨hm₂_mem.1, hΘ_bd hm₂_mem.2.1⟩ hm_ne hc_C hc_Θ hc_bd
     htilde_c hP_m₁.2 hP_m₂ (fun j ↦ (hclaim j).imp fun _ h ↦ h.1)
+
+/-- **Graph Minors XVII, (7.3)** (pages 178–179):
+"Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a portrayal of a hypergraph $G$. Let
+$n_1, n_2$ be distinct nodes bordering a cuff $\Theta$, and let $F \subseteq \Sigma$ be a
+$\Gamma$-normal $1$-arc with ... ends $n_1, n_2$ and with $F \cap N(\Gamma) = \{n_1, n_2\}$. Let
+$\Delta \subseteq \Sigma$ be a disc with $F \subseteq bd(\Delta) \subseteq F \cup \Theta$,
+and for each $n \in N(\Gamma) \cap bd(\Delta)$ let
+$\beta(n_1+) \cap \beta(n_2+) \subseteq \beta(n+)$. Let $\pi$ have warp $\le p$ at $\Theta$, and
+let $|\beta(n_1+)| = |\beta(n_2+)| = p+1$. Then every linkage in $\alpha(\Delta)$ from
+$\beta(n_1+)$ to $\beta(n_2+)$ pairs $\gamma(n_1)$ with $\gamma(n_2)$."
+
+ Note: On page 179, the paper defines
+$B_h = \bigcap (\beta(n+) : n \in I_h \cap N(\Gamma))$ ($h = 1, 2$), which is a typographical slip
+for $B_h = \bigcup (\beta(n+) : n \in I_h \cap N(\Gamma))$, as the later uses of $B_1$ and $B_2$
+in the proof on pages 179 and 180 show. -/
+theorem theorem_7_3_proof
+    {α : Type u} {β : Type v} {G : Hypergraph α β} (π : Portrayal G)
+    {Θ F Δ : Set π.S} {n₁ n₂ : π.S} {p : ℕ}
+    (hΘ : Θ ∈ cuffs π.S) (hn₁ : n₁ ∈ π.Γ.N ∩ Θ) (hn₂ : n₂ ∈ π.Γ.N ∩ Θ) (hne : n₁ ≠ n₂)
+    (hnorm : π.Γ.IsNormal F) (hF : IsLineWithEnds F n₁ n₂)
+    (hFbd : F ∩ bd π.S = {n₁, n₂}) (_hFN : F ∩ π.Γ.N = {n₁, n₂})
+    (hΔ : IsClosedDisc Δ) (hF_bd : F ⊆ discBd Δ) (hbd_sub : discBd Δ ⊆ F ∪ Θ)
+    (hinter_sub : ∀ n ∈ π.Γ.N ∩ discBd Δ,
+      π.borderPlus n₁ ∩ π.borderPlus n₂ ⊆ π.borderPlus n)
+    (hwarp : π.warpAt Θ ≤ p)
+    (hcard₁ : (π.borderPlus n₁).ncard = p + 1)
+    (hcard₂ : (π.borderPlus n₂).ncard = p + 1) :
+    Portrayal.LinkagePairs (π.areaGraph Δ).skeleton
+      (π.borderPlus n₁) (π.borderPlus n₂) (p + 1)
+      (π.nodeVertex n₁) (π.nodeVertex n₂) := by
+  exact linkage_pairs_of_boundary_cut π hΘ hn₁ hn₂ hne hnorm hF hFbd hΔ hF_bd hbd_sub
+    (fun n hn => hinter_sub n ⟨hn.1, hn.2.2⟩) hwarp hcard₁ hcard₂
 
 private lemma isTruer_of_le_of_lt {α : Type u} {β : Type v} {G : Hypergraph α β}
     {π' π : Portrayal G} (hle : ∀ i : Fin 6, π'.truth i ≤ π.truth i)

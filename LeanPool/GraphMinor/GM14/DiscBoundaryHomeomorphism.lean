@@ -263,12 +263,16 @@ theorem exists_disc_extension_of_bd_homeo
     simp only [e_sph, Homeomorph.trans_apply, Homeomorph.symm_apply_apply]
     rw [he₂ (e_bd x), c₂.gh (hsub₂ (e_bd x).2)]
 
-/-- Represent a nonempty clockwise sequence by increasing angles over one turn. -/
-theorem exists_angles_of_isClockwiseSeq
+/-- The order on clockwise triples determines increasing angles for any list of length at least
+three. -/
+theorem exists_angles_of_clockwise_triples
     {S : Type*} [TopologicalSpace S] {α : Type*}
     {ν : α → S} {Ω : CyclicPerm α} {C : Set S} {φ : Circle ≃ₜ C} {L : List α}
-    (hA : AgreesWithOArcHomeo ν Ω C φ) (hinj : InjOn ν Ω.bar)
-    (hcw : Ω.IsClockwiseSeq L) (hlen : 1 ≤ L.length) :
+    (hAgree : ∀ v₁ v₂ v₃ : α, Ω.IsClockwise3 v₁ v₂ v₃ →
+      ∃ (t₁ t₂ t₃ : ℝ), t₁ < t₂ ∧ t₂ < t₃ ∧ t₃ < t₁ + 2 * Real.pi ∧
+        (φ (Circle.exp t₁)).1 = ν v₁ ∧ (φ (Circle.exp t₂)).1 = ν v₂ ∧
+        (φ (Circle.exp t₃)).1 = ν v₃)
+    (hcw : Ω.IsClockwiseSeq L) (hlen3 : 3 ≤ L.length) :
     ∃ t : ℕ → ℝ,
       StrictMono t ∧
       (∀ i < L.length, t i < t 0 + 2 * Real.pi) ∧
@@ -301,76 +305,90 @@ theorem exists_angles_of_isClockwiseSeq
           mul_le_mul_of_nonneg_right hm_ge hpi.le
         linarith [ht₁.2, ht₂.1]
     simp [hm0]
-  by_cases hlen3 : 3 ≤ L.length
-  · have h012 : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) :=
-      (Ω.mem_interval_of_lt hcw (by omega) (by omega) hlen3).2
-    obtain ⟨t₀, t₁, t₂, ht01, ht12, ht20, hpt0, hpt1, hpt2⟩ :=
-      hA.2 (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) h012
-    have hshift3 : ∀ v₁ v₂ : α, Ω.IsClockwise3 (L[0]'(by omega)) v₁ v₂ →
-        ∃ u₁ u₂ : ℝ, t₀ < u₁ ∧ u₁ < u₂ ∧ u₂ < t₀ + 2 * Real.pi ∧
-          pt u₁ = ν v₁ ∧ pt u₂ = ν v₂ := by
-      intro v₁ v₂ hcw3
-      obtain ⟨s₀, s₁, s₂, hs01, hs12, hs20, hs₀, hs₁, hs₂⟩ := hA.2 (L[0]'(by omega)) v₁ v₂ hcw3
-      obtain ⟨m, hm⟩ := (hpt_eq_iff t₀ s₀).mp (hpt0.trans hs₀.symm)
-      refine ⟨s₁ + m * (2 * Real.pi), s₂ + m * (2 * Real.pi), by linarith, by linarith, by linarith,
-        ?_, ?_⟩
-      · exact ((hpt_eq_iff _ s₁).mpr ⟨m, rfl⟩).trans hs₁
-      · exact ((hpt_eq_iff _ s₂).mpr ⟨m, rfl⟩).trans hs₂
-    have hex : ∀ (i : ℕ) (hi : i < L.length),
-        ∃ u ∈ Ico t₀ (t₀ + 2 * Real.pi), pt u = ν (L[i]'hi) ∧ (0 < i → t₀ < u) := by
-      intro i hi
+  have h012 : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) :=
+    (Ω.mem_interval_of_lt hcw (by omega) (by omega) hlen3).2
+  obtain ⟨t₀, t₁, t₂, ht01, ht12, ht20, hpt0, hpt1, hpt2⟩ :=
+    hAgree (L[0]'(by omega)) (L[1]'(by omega)) (L[2]'(by omega)) h012
+  have hshift3 : ∀ v₁ v₂ : α, Ω.IsClockwise3 (L[0]'(by omega)) v₁ v₂ →
+      ∃ u₁ u₂ : ℝ, t₀ < u₁ ∧ u₁ < u₂ ∧ u₂ < t₀ + 2 * Real.pi ∧
+        pt u₁ = ν v₁ ∧ pt u₂ = ν v₂ := by
+    intro v₁ v₂ hcw3
+    obtain ⟨s₀, s₁, s₂, hs01, hs12, hs20, hs₀, hs₁, hs₂⟩ := hAgree (L[0]'(by omega)) v₁ v₂ hcw3
+    obtain ⟨m, hm⟩ := (hpt_eq_iff t₀ s₀).mp (hpt0.trans hs₀.symm)
+    refine ⟨s₁ + m * (2 * Real.pi), s₂ + m * (2 * Real.pi), by linarith, by linarith, by linarith,
+      ?_, ?_⟩
+    · exact ((hpt_eq_iff _ s₁).mpr ⟨m, rfl⟩).trans hs₁
+    · exact ((hpt_eq_iff _ s₂).mpr ⟨m, rfl⟩).trans hs₂
+  have hex : ∀ (i : ℕ) (hi : i < L.length),
+      ∃ u ∈ Ico t₀ (t₀ + 2 * Real.pi), pt u = ν (L[i]'hi) ∧ (0 < i → t₀ < u) := by
+    intro i hi
+    rcases Nat.eq_zero_or_pos i with rfl | hi_pos
+    · exact ⟨t₀, ⟨le_rfl, by linarith⟩, hpt0, fun h => (Nat.lt_irrefl 0 h).elim⟩
+    · by_cases hi1 : i = 1
+      · subst hi1
+        exact ⟨t₁, ⟨le_of_lt ht01, by linarith⟩, hpt1, fun _ => ht01⟩
+      · have hcw_i : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[i]'hi) :=
+          (Ω.mem_interval_of_lt hcw (by omega) (by omega) hi).2
+        obtain ⟨u₁, u₂, hu01, hu12, hu20, _, hu₂⟩ := hshift3 (L[1]'(by omega)) (L[i]'hi) hcw_i
+        exact ⟨u₂, ⟨le_of_lt (hu01.trans hu12), hu20⟩, hu₂, fun _ => hu01.trans hu12⟩
+  let t : ℕ → ℝ := fun i =>
+    if hi : i < L.length then Classical.choose (hex i hi) else t₀ + 2 * Real.pi + i
+  have ht_spec : ∀ (i : ℕ) (hi : i < L.length),
+      t i ∈ Ico t₀ (t₀ + 2 * Real.pi) ∧ pt (t i) = ν (L[i]'hi) ∧ (0 < i → t₀ < t i) := by
+    intro i hi
+    have h_eq : t i = Classical.choose (hex i hi) := by
+      dsimp only [t]; split_ifs; rfl
+    rw [h_eq]
+    exact Classical.choose_spec (hex i hi)
+  have ht0_eq : t 0 = t₀ := by
+    obtain ⟨ht0_mem, ht0_pt, _⟩ := ht_spec 0 (by omega)
+    exact hpt_inj t₀ ht0_mem ⟨le_rfl, by linarith⟩ (ht0_pt.trans hpt0.symm)
+  refine ⟨t, ?_, ?_, ?_⟩
+  · intro i j hij
+    by_cases hj : j < L.length
+    · have hi : i < L.length := hij.trans hj
       rcases Nat.eq_zero_or_pos i with rfl | hi_pos
-      · exact ⟨t₀, ⟨le_rfl, by linarith⟩, hpt0, fun h => (Nat.lt_irrefl 0 h).elim⟩
-      · by_cases hi1 : i = 1
-        · subst hi1
-          exact ⟨t₁, ⟨le_of_lt ht01, by linarith⟩, hpt1, fun _ => ht01⟩
-        · have hcw_i : Ω.IsClockwise3 (L[0]'(by omega)) (L[1]'(by omega)) (L[i]'hi) :=
-            (Ω.mem_interval_of_lt hcw (by omega) (by omega) hi).2
-          obtain ⟨u₁, u₂, hu01, hu12, hu20, _, hu₂⟩ := hshift3 (L[1]'(by omega)) (L[i]'hi) hcw_i
-          exact ⟨u₂, ⟨le_of_lt (hu01.trans hu12), hu20⟩, hu₂, fun _ => hu01.trans hu12⟩
-    let t : ℕ → ℝ := fun i =>
-      if hi : i < L.length then Classical.choose (hex i hi) else t₀ + 2 * Real.pi + i
-    have ht_spec : ∀ (i : ℕ) (hi : i < L.length),
-        t i ∈ Ico t₀ (t₀ + 2 * Real.pi) ∧ pt (t i) = ν (L[i]'hi) ∧ (0 < i → t₀ < t i) := by
-      intro i hi
-      have h_eq : t i = Classical.choose (hex i hi) := by
-        dsimp only [t]; split_ifs; rfl
-      rw [h_eq]
-      exact Classical.choose_spec (hex i hi)
-    have ht0_eq : t 0 = t₀ := by
-      obtain ⟨ht0_mem, ht0_pt, _⟩ := ht_spec 0 (by omega)
-      exact hpt_inj t₀ ht0_mem ⟨le_rfl, by linarith⟩ (ht0_pt.trans hpt0.symm)
-    refine ⟨t, ?_, ?_, ?_⟩
-    · intro i j hij
-      by_cases hj : j < L.length
-      · have hi : i < L.length := hij.trans hj
-        rcases Nat.eq_zero_or_pos i with rfl | hi_pos
-        · rw [ht0_eq]
-          exact (ht_spec j hj).2.2 hij
-        · have hcw_ij : Ω.IsClockwise3 (L[0]'(by omega)) (L[i]'hi) (L[j]'hj) :=
-            (Ω.mem_interval_of_lt hcw hi_pos hij hj).2
-          obtain ⟨u₁, u₂, hu01, hu12, hu20, hu₁, hu₂⟩ := hshift3 (L[i]'hi) (L[j]'hj) hcw_ij
-          have hti : t i = u₁ :=
-            hpt_inj t₀ (ht_spec i hi).1 ⟨le_of_lt hu01, hu12.trans hu20⟩
-              ((ht_spec i hi).2.1.trans hu₁.symm)
-          have htj : t j = u₂ :=
-            hpt_inj t₀ (ht_spec j hj).1 ⟨le_of_lt (hu01.trans hu12), hu20⟩
-              ((ht_spec j hj).2.1.trans hu₂.symm)
-          linarith
-      · by_cases hi : i < L.length
-        · have hti := (ht_spec i hi).1.2
-          have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
-          have hj_nonneg : (0 : ℝ) ≤ j := Nat.cast_nonneg j
-          linarith
-        · have hti : t i = t₀ + 2 * Real.pi + i := by dsimp only [t]; split_ifs; rfl
-          have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
-          have hij_cast : (i : ℝ) < (j : ℝ) := Nat.cast_lt.mpr hij
-          linarith
-    · intro i hi
-      rw [ht0_eq]
-      exact (ht_spec i hi).1.2
-    · intro i hi
-      simpa [pt] using (ht_spec i hi).2.1
+      · rw [ht0_eq]
+        exact (ht_spec j hj).2.2 hij
+      · have hcw_ij : Ω.IsClockwise3 (L[0]'(by omega)) (L[i]'hi) (L[j]'hj) :=
+          (Ω.mem_interval_of_lt hcw hi_pos hij hj).2
+        obtain ⟨u₁, u₂, hu01, hu12, hu20, hu₁, hu₂⟩ := hshift3 (L[i]'hi) (L[j]'hj) hcw_ij
+        have hti : t i = u₁ :=
+          hpt_inj t₀ (ht_spec i hi).1 ⟨le_of_lt hu01, hu12.trans hu20⟩
+            ((ht_spec i hi).2.1.trans hu₁.symm)
+        have htj : t j = u₂ :=
+          hpt_inj t₀ (ht_spec j hj).1 ⟨le_of_lt (hu01.trans hu12), hu20⟩
+            ((ht_spec j hj).2.1.trans hu₂.symm)
+        linarith
+    · by_cases hi : i < L.length
+      · have hti := (ht_spec i hi).1.2
+        have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
+        have hj_nonneg : (0 : ℝ) ≤ j := Nat.cast_nonneg j
+        linarith
+      · have hti : t i = t₀ + 2 * Real.pi + i := by dsimp only [t]; split_ifs; rfl
+        have htj : t j = t₀ + 2 * Real.pi + j := by dsimp only [t]; split_ifs; rfl
+        have hij_cast : (i : ℝ) < (j : ℝ) := Nat.cast_lt.mpr hij
+        linarith
+  · intro i hi
+    rw [ht0_eq]
+    exact (ht_spec i hi).1.2
+  · intro i hi
+    simpa [pt] using (ht_spec i hi).2.1
+
+/-- Represent a nonempty clockwise sequence by increasing angles over one turn. -/
+theorem exists_angles_of_isClockwiseSeq
+    {S : Type*} [TopologicalSpace S] {α : Type*}
+    {ν : α → S} {Ω : CyclicPerm α} {C : Set S} {φ : Circle ≃ₜ C} {L : List α}
+    (hA : AgreesWithOArcHomeo ν Ω C φ) (hinj : InjOn ν Ω.bar)
+    (hcw : Ω.IsClockwiseSeq L) (hlen : 1 ≤ L.length) :
+    ∃ t : ℕ → ℝ,
+      StrictMono t ∧
+      (∀ i < L.length, t i < t 0 + 2 * Real.pi) ∧
+      ∀ (i : ℕ) (hi : i < L.length), (φ (Circle.exp (t i))).1 = ν (L[i]'hi) := by
+  classical
+  have hpi : 0 < 2 * Real.pi := Real.two_pi_pos
+  by_cases hlen3 : 3 ≤ L.length
+  · exact exists_angles_of_clockwise_triples hA.2 hcw hlen3
   · have hmem0 : L[0]'hlen ∈ Ω.bar := hcw.2.1 _ (List.getElem_mem hlen)
     obtain ⟨θ₀, hθ₀⟩ := Circle.exp_surjective (φ.symm ⟨ν (L[0]'hlen), hA.1 _ hmem0⟩)
     have hpt0 : (φ (Circle.exp θ₀)).1 = ν (L[0]'hlen) := by

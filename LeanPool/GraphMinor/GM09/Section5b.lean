@@ -1748,23 +1748,12 @@ private theorem liftCrossFromContractGraph {G₁ Q : Graph α β} {a b : α}
     ⟨hG₁ ▸ hM₁'_path, hM₁.2.1, hs₁_bar₁, ht₁_bar₁⟩,
     ⟨hG₁ ▸ hM₂'_path, hM₂.2.1, hs₂_bar₁, ht₂_bar₁⟩, hcr₁_ends⟩
 
-/-- **Graph Minors IX, (5.4)** (page 54):
-"Let $(G, \Omega)$ be internally 4-connected. Let $Q$ be a separating $\Omega$-path with ends
-$a, b$ and with no internal vertex in $\bar{\Omega}$, and let $(G_1, G_2)$ be a separation
-of $G$ such that $V(G_1 \cap G_2) = V(Q)$, $\Omega(a, b) \subseteq V(G_1)$ and $\Omega(b, a)
-\subseteq V(G_2)$. Let $G' = G \setminus V(G_2)$, let $\Omega' = \Omega \mid V(G')$, and let
-$\Omega_1 = \Omega \mid V(G_1)$. If $(G', \Omega')$ has a tripod then $(G_1, \Omega_1)$ has
-a cross." -/
-theorem theorem_5_4_proof (hconn : S.IsInternallyKConnected 4)
+private theorem cross_of_tripod_in_restricted_society (hconn : S.IsInternallyKConnected 4)
     {Q G₁ G₂ : Graph α β} {a b : α}
     (hQ : S.IsOmegaPathWithEnds Q a b)
-    (_hsep_Q : S.IsSeparatingOmegaPath Q)
-    (_hno_int : Disjoint (pathInternalVerts S.G Q) S.Ω.bar)
     (hsep_G : IsGraphSeparation S.G G₁ G₂)
     (hinter_G : V(G₁) ∩ V(G₂) = V(Q))
     (hQ_G₁ : Q ≤ G₁)
-    (_hint_G₁ : S.Ω.interval a b ⊆ V(G₁))
-    (_hint_G₂ : S.Ω.interval b a ⊆ V(G₂))
     {S' S₁ : Society α β}
     (hG' : S'.G = deleteVertices S.G V(G₂))
     (hΩ' : S.Ω.IsRestriction V(deleteVertices S.G V(G₂)) S'.Ω)
@@ -1974,6 +1963,33 @@ theorem theorem_5_4_proof (hconn : S.IsInternallyKConnected 4)
     exact hconn 3 (by omega) G''₁ G2_star hint_sep_G
 
 /-! ## Proof of (5.5): Combining (5.2), (5.3), and (5.4) -/
+
+/-- **Graph Minors IX, (5.4)** (page 54):
+"Let $(G, \Omega)$ be internally 4-connected. Let $Q$ be a separating $\Omega$-path with ends
+$a, b$ and with no internal vertex in $\bar{\Omega}$, and let $(G_1, G_2)$ be a separation
+of $G$ such that $V(G_1 \cap G_2) = V(Q)$, $\Omega(a, b) \subseteq V(G_1)$ and $\Omega(b, a)
+\subseteq V(G_2)$. Let $G' = G \setminus V(G_2)$, let $\Omega' = \Omega \mid V(G')$, and let
+$\Omega_1 = \Omega \mid V(G_1)$. If $(G', \Omega')$ has a tripod then $(G_1, \Omega_1)$ has
+a cross." -/
+theorem theorem_5_4_proof (hconn : S.IsInternallyKConnected 4)
+    {Q G₁ G₂ : Graph α β} {a b : α}
+    (hQ : S.IsOmegaPathWithEnds Q a b)
+    (_hsep_Q : S.IsSeparatingOmegaPath Q)
+    (_hno_int : Disjoint (pathInternalVerts S.G Q) S.Ω.bar)
+    (hsep_G : IsGraphSeparation S.G G₁ G₂)
+    (hinter_G : V(G₁) ∩ V(G₂) = V(Q))
+    (hQ_G₁ : Q ≤ G₁)
+    (_hint_G₁ : S.Ω.interval a b ⊆ V(G₁))
+    (_hint_G₂ : S.Ω.interval b a ⊆ V(G₂))
+    {S' S₁ : Society α β}
+    (hG' : S'.G = deleteVertices S.G V(G₂))
+    (hΩ' : S.Ω.IsRestriction V(deleteVertices S.G V(G₂)) S'.Ω)
+    (hG₁ : S₁.G = G₁)
+    (hΩ₁ : S.Ω.IsRestriction V(G₁) S₁.Ω)
+    (htripod : ∃ P₁ P₂ P₃ : Graph α β, S'.IsTripod P₁ P₂ P₃) :
+    ∃ M₁ M₂ : Graph α β, S₁.IsCross M₁ M₂ := by
+  exact S.cross_of_tripod_in_restricted_society hconn hQ hsep_G hinter_G hQ_G₁
+    hG' hΩ' hG₁ hΩ₁ htripod
 
 /-- Dropping `a 0` and `b 0` from `(List.ofFn a).reverse ++ List.ofFn b` preserves
 `IsClockwiseSeq`. -/
@@ -3343,8 +3359,8 @@ theorem theorem_5_5_proof {S₀ : Society α β} {p : ℕ}
       obtain ⟨x, hx, y, hy, hft⟩ := hPr_ft i
       exact ⟨x, hx, y, hy, hft.1.mono hK_le_G', hft.2.1, hft.2.2⟩
     obtain ⟨M₁, M₂, hdisj_M, u₁, v₁, u₂, v₂, hM₁_1, hM₂_1, hcr_M_1⟩ :=
-      S.theorem_5_4_proof hconn (hends_Q m_last) (hsep_Q m_last) (hno_int m_last)
-        hsep_G hinter_G hQm_G₁ hint_G₁ hint_G₂
+      S.cross_of_tripod_in_restricted_society hconn (hends_Q m_last)
+        hsep_G hinter_G hQm_G₁
         (rfl : S'.G = _) hrest' (rfl : S₁.G = _) hrest₁ ⟨N₁, N₂, N₃, htri'⟩
     have hM₁_S : S.IsOmegaPathWithEnds M₁ u₁ v₁ :=
       ⟨hM₁_1.1.mono hsep_G.1, hM₁_1.2.1,

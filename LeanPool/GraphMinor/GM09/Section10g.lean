@@ -635,34 +635,38 @@ theorem Presentation.separate_at_circuit {N : Neighborhood α β} (P_pres : Pres
     exact (hbdK v hvG).mp (by rw [hq, singleton_subset_iff]; exact hb)
   exact ⟨hbdK, H₁, H₂, hsep, hcut, hKH₁, hY₁, hUH₁, hUH₂, hbarH₂, hbar₀H₁⟩
 
-/-- **Graph Minors IX, (10.4)** (page 65):
-"Let $p \ge 2$ with $p \ne 3$. Let $(G, \Omega, \Omega_0)$ be a rural neighborhood of breadth
-$\ge p + 5$, and let $X \subseteq \bar{\Omega}$ be linked with $|X| \ge 2p + 8$." -/
-theorem theorem_10_4_proof {S_comp S₀ : Society α β} {N : Neighborhood α β} {p : ℕ} {X : Set α}
-    (hp2 : 2 ≤ p) (hp3 : p ≠ 3) (hbreadth : N.HasBreadthGe (p + 5))
-    (hX : N.IsLinked X) (hcard : 2 * p + 8 ≤ X.ncard) (hcomp : S_comp.IsComposition S₀ N)
-    {P₀ : Set (Graph α β)} (hP₀ : S_comp.IsCrookedTransaction P₀) (hp : p ≤ P₀.ncard) :
-    ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ p ≤ P'.ncard ∧
-      S_comp.transactionEnds P' ⊆ X ∧
-      ∀ P ∈ P', Disjoint (pathInternalVerts S_comp.G P) S_comp.Ω.bar := by
+/-- The last circuit of a nest cuts a rural composition into two rural neighborhoods and
+an intermediate society. The initial nest remains available on the inner side. -/
+theorem exists_nested_neighborhood_composition {S_comp S₀ : Society α β}
+    {N : Neighborhood α β} {m : ℕ} (P_pres : Presentation N) (C : Fin m → Graph α β)
+    (D : Fin m → Set EuclideanPlane) (last : Fin m) (hlast : ∀ j, j ≤ last)
+    (hcir : ∀ j, IsGraphCircuit N.G (C j))
+    (hdisj : Pairwise fun i j => Disjoint V(C i) V(C j))
+    (hDd : ∀ j, IsClosedDisc (D j) ∧ subBd (D j) = graphDrawingSubgraphU P_pres.Γ (C j))
+    (hDs : ∀ j, P_pres.Δ₀ ⊆ D j ∧ D j ⊆ P_pres.Δ)
+    (hDm : ∀ i j, i ≤ j → D i ⊆ D j)
+    (hDisjoint : Disjoint V(C last) N.Ω.bar) (hcomp : S_comp.IsComposition S₀ N) :
+    ∃ (N₁ N₂ : Neighborhood α β) (P₁ : Presentation N₁) (S₁ : Society α β),
+      IsGraphSeparation N.G N₁.G N₂.G ∧ V(N₁.G) ∩ V(N₂.G) = V(C last) ∧
+      C last ≤ N₁.G ∧ N₁.Ω.bar = V(C last) ∧
+      N.Ω.bar ⊆ V(N₂.G) ∧ N.Ω₀.bar ⊆ V(N₁.G) ∧
+      N₁.IsRural ∧ N₂.IsRural ∧ N₁.IsNest P₁ C ∧
+      S₁.G ≤ S_comp.G ∧ V(N₂.G) ∩ V(S₁.G) = V(C last) ∧
+      S₁.IsComposition S₀ N₁ ∧ S_comp.IsComposition S₁ N₂ := by
   classical
-  obtain ⟨P_pres, C', hC'⟩ := hbreadth
-  obtain ⟨C, P, x, t, hC, hCbar, hP, hPd, hI⟩ := exists_clean_paths P_pres hC' hX
   have hΩ : N.Ω = S_comp.Ω := hcomp.2.1
   have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
-  let last : Fin (p + 4) := ⟨p + 3, by omega⟩
-  obtain ⟨hcir, hdisj, D, hDd, hDs, hDm⟩ := hC
   let Γ := P_pres.Γ
   have hKG : C last ≤ N.G := (hcir last).1
   obtain ⟨hbdK, H₁, H₂, hsep, hcut, hKH₁, hY₁, hUH₁, hUH₂, hbarH₂, hbar₀H₁⟩ :=
     P_pres.separate_at_circuit C D last (hcir last) (hDd last).1 (hDd last).2
-      (hDs last).1 (hDs last).2 (hCbar last)
+      (hDs last).1 (hDs last).2 hDisjoint
   have hpt : ∀ v ∈ V(N.G), ∃ q, graphDrawingVertexSet Γ v = {q} := fun v hv =>
     ⟨_, graphDrawingVertexSet_eq_singleton Γ hv⟩
   have hK₂ : V(C last) ⊆ V(H₂) := fun v hv => (hcut.symm ▸ hv : v ∈ V(H₁) ∩ V(H₂)).2
   have hCH₁ : ∀ j, C j ≤ H₁ := by
     intro j
-    exact nestedCircuitsOnInnerSide Γ hcir hdisj hDd hDm (fun j => Fin.mk_le_mk.mpr (by omega))
+    exact nestedCircuitsOnInnerSide Γ hcir hdisj hDd hDm hlast
       hsep hcut hKH₁ hY₁ hpt hbdK j
   have hKne : V(C last).Nonempty := by
     obtain ⟨e, he⟩ := (hcir last).edgeSet_nonempty
@@ -730,32 +734,7 @@ theorem theorem_10_4_proof {S_comp S₀ : Society α β} {N : Neighborhood α β
     · rw [hP₁U _ (hCH₁ j)]
       exact (hDd j).2
     · rw [hP₁Δ, hP₁Δ₀]
-      exact ⟨(hDs j).1, hDm j last (Fin.mk_le_mk.mpr (by omega))⟩
-  have hsplit : ∀ i, ∃ (y : α) (R W : Graph α β), y ∈ V(C last) ∧
-      IsGraphPathWithEnds H₂ R (x i) y ∧ V(R) ⊆ V(P i) ∧ V(R) ∩ V(C last) = {y} ∧
-      IsGraphPathWithEnds H₁ W y (t i) ∧ V(W) ⊆ V(P i) := by
-    intro i
-    obtain ⟨I, hIp, hIP, hIK, hVI⟩ := hI i last
-    exact splitPathAtInnerCircuit hsep hcut hKH₁ (hP i).1.1 hIp hIP hIK hVI
-      (hbarH₂ ((hP i).2.symm ▸ (mem_singleton _ : x i ∈ {x i})).2)
-      (hbar₀H₁ ((hP i).1.2.2.symm ▸ (mem_singleton _ : t i ∈ {t i})).2)
-  choose y R W hyK hR hRP hRK hW hWP using hsplit
-  have hyR : ∀ i, y i ∈ V(R i) := fun i => (hR i).right_mem
-  have hy_inj : Injective y := by
-    intro i j e
-    by_contra hne
-    exact Set.disjoint_left.mp (hPd hne) (hRP i (hyR i)) (e ▸ hRP j (hyR j))
-  have hx_inj : Injective x := by
-    intro i j e
-    by_contra hne
-    exact Set.disjoint_left.mp (hPd hne) (hP i).1.1.left_mem (e ▸ (hP j).1.1.left_mem)
-  have hRd : ∀ {i j}, i ≠ j → Disjoint V(R i) V(R j) := fun hne =>
-    (hPd hne).mono (hRP _) (hRP _)
-  have hYcard : (range y).ncard = X.ncard := by
-    rw [← image_univ, ncard_image_of_injective _ hy_inj, ncard_univ, Nat.card_fin]
-  have hweak : N₁.IsWeaklyLinked (range y) := by
-    exact weakLinkingAlongOuterPaths (N₁ := N₁) hYcard
-      (fun i => hΩ₁.symm ▸ hyK i) hW hPd hWP hRP hyR (fun i => (hP i).1.2.2)
+      exact ⟨(hDs j).1, hDm j last (hlast j)⟩
   have hH₁S : H₁ ≤ S_comp.G := hsep.1.trans hNG
   obtain ⟨hsU, hVU⟩ := hcomp.isGraphSeparation_union (IsGraphSeparation.symm hsep) hbar₀H₁
   have hsU' : IsGraphSeparation S_comp.G H₂ (subgraphUnion S_comp.G H₁ S₀.G) := hsU
@@ -792,13 +771,65 @@ theorem theorem_10_4_proof {S_comp S₀ : Society α β} {N : Neighborhood α β
       · rintro v ⟨hv₀, hv₁⟩
         rw [hbar₀]
         exact ⟨hv₀, hsep.1.vertexSet_mono hv₁⟩
+  exact ⟨N₁, N₂, P₁, S₁, hsep, hcut, hKH₁, hΩ₁, hbarH₂, hbar₀H₁, hrural₁, hrural₂,
+    hnest₁, subgraphUnion_le hH₁S hS₀S, hcutU, hcomp₁, hcomp₂⟩
+
+/-- **Graph Minors IX, (10.4)** (page 65):
+"Let $p \ge 2$ with $p \ne 3$. Let $(G, \Omega, \Omega_0)$ be a rural neighborhood of breadth
+$\ge p + 5$, and let $X \subseteq \bar{\Omega}$ be linked with $|X| \ge 2p + 8$." -/
+theorem theorem_10_4_proof {S_comp S₀ : Society α β} {N : Neighborhood α β} {p : ℕ} {X : Set α}
+    (hp2 : 2 ≤ p) (hp3 : p ≠ 3) (hbreadth : N.HasBreadthGe (p + 5))
+    (hX : N.IsLinked X) (hcard : 2 * p + 8 ≤ X.ncard) (hcomp : S_comp.IsComposition S₀ N)
+    {P₀ : Set (Graph α β)} (hP₀ : S_comp.IsCrookedTransaction P₀) (hp : p ≤ P₀.ncard) :
+    ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ p ≤ P'.ncard ∧
+      S_comp.transactionEnds P' ⊆ X ∧
+      ∀ P ∈ P', Disjoint (pathInternalVerts S_comp.G P) S_comp.Ω.bar := by
+  classical
+  obtain ⟨P_pres, C', hC'⟩ := hbreadth
+  obtain ⟨C, P, x, t, hC, hCbar, hP, hPd, hI⟩ := exists_clean_paths P_pres hC' hX
+  have hΩ : N.Ω = S_comp.Ω := hcomp.2.1
+  have hNG : N.G ≤ S_comp.G := hcomp.1.1.2.1
+  let last : Fin (p + 4) := ⟨p + 3, by omega⟩
+  obtain ⟨hcir, hdisj, D, hDd, hDs, hDm⟩ := hC
+  obtain ⟨N₁, N₂, P₁, S₁, hsep, hcut, hKH₁, hΩ₁, hbarH₂, hbar₀H₁, hrural₁, hrural₂,
+      hnest₁, hS₁S, hcutU, hcomp₁, hcomp₂⟩ :=
+    exists_nested_neighborhood_composition P_pres C D last (fun j => Fin.mk_le_mk.mpr (by omega))
+      hcir hdisj hDd hDs hDm (hCbar last) hcomp
+  let H₁ := N₁.G
+  let H₂ := N₂.G
+  have hsplit : ∀ i, ∃ (y : α) (R W : Graph α β), y ∈ V(C last) ∧
+      IsGraphPathWithEnds H₂ R (x i) y ∧ V(R) ⊆ V(P i) ∧ V(R) ∩ V(C last) = {y} ∧
+      IsGraphPathWithEnds H₁ W y (t i) ∧ V(W) ⊆ V(P i) := by
+    intro i
+    obtain ⟨I, hIp, hIP, hIK, hVI⟩ := hI i last
+    exact splitPathAtInnerCircuit hsep hcut hKH₁ (hP i).1.1 hIp hIP hIK hVI
+      (hbarH₂ ((hP i).2.symm ▸ (mem_singleton _ : x i ∈ {x i})).2)
+      (hbar₀H₁ ((hP i).1.2.2.symm ▸ (mem_singleton _ : t i ∈ {t i})).2)
+  choose y R W hyK hR hRP hRK hW hWP using hsplit
+  have hyR : ∀ i, y i ∈ V(R i) := fun i => (hR i).right_mem
+  have hy_inj : Injective y := by
+    intro i j e
+    by_contra hne
+    exact Set.disjoint_left.mp (hPd hne) (hRP i (hyR i)) (e ▸ hRP j (hyR j))
+  have hx_inj : Injective x := by
+    intro i j e
+    by_contra hne
+    exact Set.disjoint_left.mp (hPd hne) (hP i).1.1.left_mem (e ▸ (hP j).1.1.left_mem)
+  have hRd : ∀ {i j}, i ≠ j → Disjoint V(R i) V(R j) := fun hne =>
+    (hPd hne).mono (hRP _) (hRP _)
+  have hYcard : (range y).ncard = X.ncard := by
+    rw [← image_univ, ncard_image_of_injective _ hy_inj, ncard_univ, Nat.card_fin]
+  have hΩ₀ : N₁.Ω₀ = N.Ω₀ := hcomp₁.2.2.1.trans hcomp.2.2.1.symm
+  have hweak : N₁.IsWeaklyLinked (range y) := by
+    exact weakLinkingAlongOuterPaths (N₁ := N₁) hYcard
+      (fun i => hΩ₁.symm ▸ hyK i) hW hPd hWP hRP hyR (fun i => hΩ₀.symm ▸ (hP i).1.2.2)
   obtain ⟨T₀, hT₀, hpT₀⟩ := theorem_9_1_proof hcomp₂ hrural₂ hP₀ hp
   obtain ⟨T, hT, hpT, hTends⟩ := theorem_10_3_proof hp2 hp3 hrural₁ ⟨P₁, C, hnest₁⟩ hweak
     (by rw [hYcard]; exact hcard) hcomp₁ hT₀ hpT₀
   refine extendTransactionAcrossNeighborhood (N₂ := N₂) (K := C last) (by omega)
-    (subgraphUnion_le hH₁S hS₀S) (hsep.2.1.trans hNG) hcutU hcomp₂.2.1 hcomp₂.2.2.1
+    hS₁S (hsep.2.1.trans hNG) hcutU hcomp₂.2.1 hcomp₂.2.2.1
     hrural₂ (fun v hv => hbarH₂ (hΩ ▸ hv)) (hΩ ▸ hCbar last)
-    hR hRK hy_inj hx_inj hRd (fun i => hΩ₁.symm ▸ hyK i) ?_ ?_ ?_ hT hpT hTends
+    hR hRK hy_inj hx_inj hRd (fun i => hcomp₁.2.1 ▸ (hΩ₁.symm ▸ hyK i)) ?_ ?_ ?_ hT hpT hTends
   · intro i
     have hx : x i ∈ V(P i) ∩ N.Ω.bar := (hP i).2.symm ▸ mem_singleton _
     exact hΩ ▸ hx.2

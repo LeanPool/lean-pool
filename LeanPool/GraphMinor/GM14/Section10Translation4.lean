@@ -208,31 +208,23 @@ theorem no_two_paths_tangle [ConnectedSpace S] {J Γ' : Drawing S} {θ : ℕ}
         (by rwa [hfrE]) with h₃ | h₃
       · exact h₃
       · exact absurd (interior_subset hqi) (disjoint_left.mp h₃ hq)
-  have hbdry : Whitney.bdry J.toGraph A' ⊆ {x, y} := by
-    rintro v ⟨⟨g, hgA, hgi⟩, ⟨g', ⟨hg'J, hg'A⟩, hg'i⟩⟩
-    by_contra hvn
-    have hvx : v ≠ x := fun h' => hvn (Or.inl h')
-    have hvy : v ≠ y := fun h' => hvn (Or.inr h')
-    have hvJ : v ∈ J.V := hgi.vertex_mem
-    have hvE : v ∈ E₀ := closure_minimal hgA.2 hE₀.isClosed (mem_closure_of_inc hgi)
-    by_cases hvK : v ∈ K.U
-    · rw [hKU] at hvK
-      rcases hvK with hv | hv
-      · have hvP : v ∈ P.V := by
-          rw [(h₁.VU hS).1]
-          rw [(h₁.VU hS).2] at hv
-          exact ⟨hvJ, hv.2⟩
-        exact hg'A (hKA' (hKE ▸ Or.inl (holder_inner_edges_self h₁ hS hvP hvx hvy g' hg'J hg'i)))
-      · have hvP : v ∈ P'.V := by
-          rw [(h₂.VU hS).1]
-          rw [(h₂.VU hS).2] at hv
-          exact ⟨hvJ, hv.2⟩
-        exact hg'A (hKA' (hKE ▸ Or.inr (holder_inner_edges_self h₂ hS hvP hvx hvy g' hg'J hg'i)))
-    · have hvi : v ∈ interior E₀ := by
-        by_contra hn
-        exact hvK (hfrE ▸ ⟨subset_closure hvE, hn⟩)
-      obtain ⟨q, hqi, hqg⟩ := mem_closure_iff.mp (mem_closure_of_inc hg'i) _ isOpen_interior hvi
-      exact hg'A (hinA hg'J hqg hqi)
+  have hBoundaryEdges : ∀ {v g}, v ∈ J.V → v ∈ K.U → v ≠ x → v ≠ y →
+      g ∈ J.E → J.toGraph.Inc g v → g ∈ K.E := by
+    intro v g' hvJ hvK hvx hvy hg'J hg'i
+    rw [hKU] at hvK
+    rcases hvK with hv | hv
+    · have hvP : v ∈ P.V := by
+        rw [(h₁.VU hS).1]
+        rw [(h₁.VU hS).2] at hv
+        exact ⟨hvJ, hv.2⟩
+      exact hKE ▸ Or.inl (holder_inner_edges_self h₁ hS hvP hvx hvy g' hg'J hg'i)
+    · have hvP : v ∈ P'.V := by
+        rw [(h₂.VU hS).1]
+        rw [(h₂.VU hS).2] at hv
+        exact ⟨hvJ, hv.2⟩
+      exact hKE ▸ Or.inr (holder_inner_edges_self h₂ hS hvP hvx hvy g' hg'J hg'i)
+  obtain ⟨hbdry, htile⟩ := enclosed_edges_boundary_and_tiles (A' := A') r hE₀.isClosed hfrE hKs
+    (fun _ h => h.2) hKA' hinA hBoundaryEdges
   have hbc : (Whitney.bdry J.toGraph A').ncard ≤ 2 :=
     (ncard_le_ncard hbdry (toFinite _)).trans (ncard_pair hxy).le
   have hA'J : A' ⊆ J.E := fun _ hg => hg.1
@@ -256,41 +248,7 @@ theorem no_two_paths_tangle [ConnectedSpace S] {J Γ' : Drawing S} {θ : ℕ}
       isNullHomotopicOArcIn_of_subset_disc hF₀ (subset_univ _) hE₀ (hF₀A'.trans hundA')
   obtain ⟨F₁, D₁, x₁, y₁, hF₁, hF₁N, hD₁, hbD₁, heD₁, hxy₁, hcap₁, hpath₁, hn₁, -⟩ :=
     exists_dial_of_edge_tangle r hrig hS hns hd' hT_eq hA'J hbc hmemA' heA'
-  have htile : ∀ t ∈ Γ'.R, (t ∩ interior E₀).Nonempty → t ∈ tiles Γ' A' := by
-    intro t ht hm
-    obtain ⟨g, hg, hgt⟩ := r.facts.1 t ht
-    have hgJ : g ∈ J.E := hg
-    refine ⟨ht, g, ?_, hgt⟩
-    by_contra hgA
-    have hgK : g ∉ K.E := fun h' => hgA (hKA' h')
-    have hdisj : Disjoint g K.U := edge_disjoint_U hKs hgJ hgK
-    have htK : Disjoint t (frontier E₀) := by
-      rw [hfrE]
-      refine disjoint_left.mpr fun z hz hzK => ?_
-      have hzU : z ∈ J.U := hKs.U_subset hzK
-      exact disjoint_left.mp hdisj (r.mem_edge hgJ ht hgt hz hzU) hzK
-    rcases subset_or_disjoint_of_frontier hE₀.isClosed (region_isPreconnected ht) htK with h₃ | h₃
-    · obtain ⟨q, hq⟩ := hg.1
-      have hqi : q ∈ interior E₀ := by
-        by_contra hn
-        exact disjoint_left.mp hdisj hq (hfrE ▸ ⟨subset_closure (h₃ (hgt hq)), hn⟩)
-      exact hgA (hinA hgJ hq hqi)
-    · obtain ⟨z, hz, hz'⟩ := hm
-      exact absurd (interior_subset hz') (disjoint_left.mp h₃ hz)
-  have hF₁int : Disjoint F₁ (interior E₀) := by
-    refine disjoint_left.mpr fun z hz hzi => ?_
-    have hzN := hF₁N hz
-    obtain ⟨t, ht, hzt⟩ : ∃ t ∈ Γ'.R \ tiles Γ' A', z ∈ closure t := by
-      rw [Drawing.U_eq] at hzN
-      rcases hzN with h₃ | h₃
-      · obtain ⟨-, t, ht, -, -, hzt⟩ := (mem_boundaryDrawing_V hS).mp h₃
-        exact ⟨t, ht, hzt⟩
-      · obtain ⟨g, hg, hzg⟩ := mem_iUnion₂.mp h₃
-        obtain ⟨-, t, ht, hinc⟩ := mem_boundaryDrawing_E.mp hg
-        exact ⟨t, ht, closure_minimal (edge_subset_closure_of_incident hS hinc.1 hinc.2.1 hinc.2.2)
-          isClosed_closure hzg⟩
-    obtain ⟨q, hqi, hqt⟩ := mem_closure_iff.mp hzt _ isOpen_interior hzi
-    exact ht.2 (htile t ht.1 ⟨q, hqt, hqi⟩)
+  have hF₁int := radial_boundary_disjoint_interior hS hF₁N htile
   have hfrD₁ : frontier D₁ = F₁ := (IsClosedDisc.frontier_eq_discBd hS hD₁).trans hbD₁
   have hInt : E₀ \ frontier E₀ ⊆ interior E₀ := fun z hz => by
     by_contra hn

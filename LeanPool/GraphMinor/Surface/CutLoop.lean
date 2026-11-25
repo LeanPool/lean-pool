@@ -559,4 +559,43 @@ theorem loop_one_aux (hS : IsSurface Y) {a₀ : ℝ → S} {ξ η : ℝ → Y} (
 
 end
 
+/-- Classify the connected cut surface and present the surface obtained by gluing its two
+cuffs back together. -/
+theorem connected_two_cuff_presentation
+    {Y S : Type uu} [TopologicalSpace Y] [TopologicalSpace S] [T2Space S]
+    {ψ : Y → S} {F : Set S} {X X' : Set Y}
+    (hY : IsSurface Y) (hYc : ConnectedSpace Y) (hψ : IsCutting ψ F)
+    (hOX : IsOArc X) (hOX' : IsOArc X') (hdX : Disjoint X X')
+    (hunX : X ∪ X' = ψ ⁻¹' F) (b1 : BijOn ψ X F) (b2 : BijOn ψ X' F) :
+    ∃ (a b c : ℕ) (_ : Y ≃ₜ SurfaceModel a b c)
+      (i j : ℕ) (φ : Circle ≃ₜ X) (σ : Bool) (g : ℕ × ℂ → Y),
+      i < c ∧ j < c ∧ i ≠ j ∧
+      let word := sW (blkE a b i j σ ++ rW a b c (((List.range' 0 c).erase i).erase j))
+      Presents word (ψ ∘ g) ∧ SideVal word (ψ ∘ g) (rL a b i).1 (fun u => ψ (φ (ee u)).1) := by
+  have : T2Space Y := hY.2.1
+  obtain ⟨a, b, c, ⟨e⟩⟩ := classification.{uu} Y hY hYc
+  have hdcuff := cuff_statement.{uu} Y hY
+  obtain ⟨param₁⟩ := id hOX
+  obtain ⟨param₂⟩ := id hOX'
+  let x := (param₁ 1).1
+  let y := (param₂ 1).1
+  have hx : x ∈ X := (param₁ 1).2
+  have hy : y ∈ X' := (param₂ 1).2
+  have hXb : X ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hunX ▸ Or.inl hz)
+  have hXb' : X' ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hunX ▸ Or.inr hz)
+  have hC : connectedComponentIn (bd Y) x ∈ cuffs Y := ⟨_, hXb hx, rfl⟩
+  have hC' : connectedComponentIn (bd Y) y ∈ cuffs Y := ⟨_, hXb' hy, rfl⟩
+  obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
+  obtain ⟨φ₀'⟩ := hdcuff.2.2 _ hC'
+  have eX := oarc_eq φ₀ hOX (hOX.isPreconnected.subset_connectedComponentIn hx hXb)
+  have eX' := oarc_eq φ₀' hOX' (hOX'.isPreconnected.subset_connectedComponentIn hy hXb')
+  have hXc : X ∈ cuffs Y := eX.symm ▸ hC
+  have hXc' : X' ∈ cuffs Y := eX'.symm ▸ hC'
+  have hne : X ≠ X' := fun h => Set.disjoint_left.mp hdX hx (h ▸ hx)
+  obtain ⟨i, hi, j, hj, hij, φ, φ', g, hg, hs, hs'⟩ := exists_two_holes e hXc hXc' hne
+  have hLf := (erase_erase_facts c i j).2
+  obtain ⟨σ, g', hp, side⟩ := loop_two_aux hY hψ hXc' hOX.isCompact.isClosed
+    hOX'.isCompact.isClosed hdX hunX b1 b2 φ φ' hij hi hj hLf hg hs hs'
+  exact ⟨a, b, c, e, i, j, φ, σ, g', hi, hj, hij, hp, side⟩
+
 end GraphMinor.Surface

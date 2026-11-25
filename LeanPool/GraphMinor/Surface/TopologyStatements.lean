@@ -133,8 +133,9 @@ def DiscOArcStatement : Prop :=
 in `bd D`. Then `bd D` minus `{s, t}` has two components `A₁, A₂`, and `F` divides `D` into two
 closed discs `Δ₁, Δ₂` that meet exactly in `F`, with boundaries `A₁ ∪ F` and `A₂ ∪ F`. The set
 `D \ F` has the two components `Δ₁ \ F` and `Δ₂ \ F`.
-Graph Minors VI, (3.1) and (4.2); Graph Minors VII, Section 4 (page 228); Graph Minors XII, (6.1);
-Graph Minors XVII, (5.3). -/
+The two-component fact is used in Graph Minors VII, Section 4 (page 229), and the two-disc
+cut appears in the proof of Graph Minors XVII, (5.3) (page 172). The proof in `disc_iArc` uses
+the planar cross-cut theorem in a chart. -/
 def DiscIArcStatement : Prop :=
   ∀ {S : Type u} [TopologicalSpace S] (D F : Set S) (s t : S), IsClosedDisc D → F ⊆ D →
     s ≠ t → IsLineWithEnds F s t → F ∩ discBd D = {s, t} →

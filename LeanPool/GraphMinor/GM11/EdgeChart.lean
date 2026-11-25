@@ -288,6 +288,38 @@ theorem edge_chart_endpoints [T2Space S]
         exact ⟨v, mem_univ _, rfl⟩
     · exact ⟨by rw [← hz0, hψγ], by rw [hψγ 1, hz1]⟩
 
+/-- A parametrization of an edge visits each interior edge point at just one parameter. -/
+theorem edge_parameter_unique (H : Drawing S) {e : Set S} (he : e ∈ H.E)
+    {γ : I → S} (hγ0 : γ 0 ∈ H.V) (hγ1 : γ 1 ∈ H.V) (hinj : InjOn γ (Ioo 0 1))
+    {t₀ : I} (ht₀ : t₀ ∈ Ioo 0 1) (hpe : γ t₀ ∈ e) {t : I} (h : γ t = γ t₀) :
+    t = t₀ := by
+  have hmemIoo : ∀ {t : I}, γ t ∈ e → γ t ∉ H.V := fun h => (he.2.1 h).2
+  have hend : ∀ {t : I}, t ∉ Ioo (0 : I) 1 → γ t ∈ H.V := by
+    intro t ht
+    have : t = 0 ∨ t = 1 := by
+      by_contra hc
+      push Not at hc
+      exact ht ⟨unitInterval.pos_iff_ne_zero.mpr hc.1, unitInterval.lt_one_iff_ne_one.mpr hc.2⟩
+    rcases this with rfl | rfl
+    · exact hγ0
+    · exact hγ1
+  by_cases hti : t ∈ Ioo (0 : I) 1
+  · exact hinj hti ht₀ h
+  · exact absurd (h ▸ hend hti) (hmemIoo hpe)
+
+/-- The drawing outside an edge segment is closed and misses a point in that segment. -/
+theorem edge_chart_avoidance [T2Space S] (H : Drawing S) {e : Set S} (he : e ∈ H.E)
+    {γ : I → S} (hγ : Continuous γ) {s t₀ u : I} (hpe : γ t₀ ∈ e)
+    (hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀) (hs : s < t₀) (hu : t₀ < u) :
+    let Y := (H.U \ e) ∪ γ '' {t | t ≤ s ∨ u ≤ t}
+    IsClosed Y ∧ γ t₀ ∉ Y := by
+  refine ⟨(isClosed_U_sdiff_edge H he).union
+    ((isClosed_Iic.union isClosed_Ici).isCompact.image hγ).isClosed, ?_⟩
+  rintro (h | ⟨t, ht, hte⟩)
+  · exact h.2 hpe
+  · obtain rfl := hpiece hte
+    exact ht.elim (not_le.mpr hs) (not_le.mpr hu)
+
 /-- **A chart around a point of an edge.** Here `G` maps the closed unit disc of `ℂ` onto a closed
 disc
 around `γ t₀`. The real part of the disc is the piece of `e` from `γ a` to `γ b`, and there is no
@@ -306,34 +338,10 @@ theorem exists_edge_chart (hS : IsClosedSurface S) (H : Drawing S) {e : Set S} (
   have hT2 : T2Space S := hS.2.1
   have hman : ∀ x : S, IsManifoldPoint x := fun x => (hS.2.2 x).isManifoldPoint
   have hpe : γ t₀ ∈ e := hγe ▸ mem_image_of_mem γ ht₀
-  have hX₀ := isClosed_U_sdiff_edge H he
-  have hmemIoo : ∀ {t : I}, γ t ∈ e → γ t ∉ H.V := fun h => (he.2.1 h).2
-  have hend : ∀ {t : I}, t ∉ Ioo (0 : I) 1 → γ t ∈ H.V := by
-    intro t ht
-    have : t = 0 ∨ t = 1 := by
-      by_contra hc
-      push Not at hc
-      exact ht ⟨unitInterval.pos_iff_ne_zero.mpr hc.1, unitInterval.lt_one_iff_ne_one.mpr hc.2⟩
-    rcases this with rfl | rfl
-    · exact hγ0
-    · exact hγ1
-  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ := by
-    intro t ht
-    by_cases hti : t ∈ Ioo (0 : I) 1
-    · exact hinj hti ht₀ ht
-    · exact absurd (ht ▸ hend hti) (hmemIoo hpe)
-  -- The closed set to avoid.
+  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ :=
+    fun h => edge_parameter_unique H he hγ0 hγ1 hinj ht₀ hpe h
   let Y₀ : Set S := (H.U \ e) ∪ γ '' {t | t ≤ s ∨ u ≤ t}
-  have hY₀ : IsClosed Y₀ :=
-    hX₀.union ((isClosed_Iic.union isClosed_Ici).isCompact.image hγ).isClosed
-  have hpY₀ : γ t₀ ∉ Y₀ := by
-    rintro (h | ⟨t, ht, hte⟩)
-    · exact h.2 hpe
-    · have := hpiece hte
-      subst this
-      rcases ht with h | h
-      · exact absurd h (not_le.mpr hs)
-      · exact absurd h (not_le.mpr hu)
+  obtain ⟨hY₀, hpY₀⟩ := edge_chart_avoidance H he hγ hpe hpiece hs hu
   obtain ⟨D, D', a₀, b₀, hD, hD', hpD', hD'D, hDO, hbdD, ha₀, hb₀, hIcc, hIoo, hFline, hFD, hFcap,
     hst⟩ :=
     exists_edge_piece hS H he hγ hγ0 hγ1 hinj hγe ht₀ hY₀.isOpen_compl hpY₀
@@ -355,16 +363,7 @@ theorem exists_edge_chart (hS : IsClosedSurface S) (H : Drawing S) {e : Set S} (
     exact (he.2.1 (hγe ▸ mem_image_of_mem γ (hIcc ht))).1
   -- The rest of `U(H)`.
   let Y₁ : Set S := (H.U \ e) ∪ γ '' {t | t ≤ a₀ ∨ b₀ ≤ t}
-  have hY₁ : IsClosed Y₁ :=
-    hX₀.union ((isClosed_Iic.union isClosed_Ici).isCompact.image hγ).isClosed
-  have hpY₁ : γ t₀ ∉ Y₁ := by
-    rintro (h | ⟨t, ht, hte⟩)
-    · exact h.2 hpe
-    · have := hpiece hte
-      subst this
-      rcases ht with h | h
-      · exact absurd h (not_le.mpr ha₀)
-      · exact absurd h (not_le.mpr hb₀)
+  obtain ⟨hY₁, hpY₁⟩ := edge_chart_avoidance H he hγ hpe hpiece ha₀ hb₀
   let W : Set S := D' ∩ Y₁ᶜ
   have hW : IsOpen W := hD'.inter hY₁.isOpen_compl
   have hpW : γ t₀ ∈ W := ⟨hpD', hpY₁⟩

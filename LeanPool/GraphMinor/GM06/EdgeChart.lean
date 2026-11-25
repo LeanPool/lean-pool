@@ -109,33 +109,10 @@ private theorem edge_has_collared_disc (hS : IsClosedDiscSpace S) (H : Drawing S
   have hbd_cl : IsClosed (bd S) := isClosed_bd_of_isClosedDiscSpace hS
   have hpe : γ t₀ ∈ e := hγe ▸ mem_image_of_mem γ ht₀
   have hpbd₀ : γ t₀ ∉ bd S := fun hbd => (he.2.1 hpe).2 (hprop ⟨hbd, (he.2.1 hpe).1⟩)
-  have hX₀ := isClosed_U_sdiff_edge H he
-  have hmemIoo : ∀ {t : I}, γ t ∈ e → γ t ∉ H.V := fun h => (he.2.1 h).2
-  have hend : ∀ {t : I}, t ∉ Ioo (0 : I) 1 → γ t ∈ H.V := by
-    intro t ht
-    have : t = 0 ∨ t = 1 := by
-      by_contra hc
-      push Not at hc
-      exact ht ⟨unitInterval.pos_iff_ne_zero.mpr hc.1, unitInterval.lt_one_iff_ne_one.mpr hc.2⟩
-    rcases this with rfl | rfl
-    · exact hγ0
-    · exact hγ1
-  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ := by
-    intro t ht
-    by_cases hti : t ∈ Ioo (0 : I) 1
-    · exact hinj hti ht₀ ht
-    · exact absurd (ht ▸ hend hti) (hmemIoo hpe)
+  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ :=
+    fun h => GM11.edge_parameter_unique H he hγ0 hγ1 hinj ht₀ hpe h
   let Y₀ : Set S := (H.U \ e) ∪ γ '' {t | t ≤ s ∨ u ≤ t}
-  have hY₀ : IsClosed Y₀ :=
-    hX₀.union ((isClosed_Iic.union isClosed_Ici).isCompact.image hγ).isClosed
-  have hpY₀ : γ t₀ ∉ Y₀ := by
-    rintro (h | ⟨t, ht, hte⟩)
-    · exact h.2 hpe
-    · have := hpiece hte
-      subst this
-      rcases ht with h | h
-      · exact absurd h (not_le.mpr hs)
-      · exact absurd h (not_le.mpr hu)
+  obtain ⟨hY₀, hpY₀⟩ := GM11.edge_chart_avoidance H he hγ hpe hpiece hs hu
   let O' : Set S := (O \ bd S) ∩ Y₀ᶜ
   have hO' : IsOpen O' := (hO.sdiff hbd_cl).inter hY₀.isOpen_compl
   have hpO' : γ t₀ ∈ O' := ⟨⟨hpO, hpbd₀⟩, hpY₀⟩
@@ -279,16 +256,7 @@ private theorem edge_has_collared_disc (hS : IsClosedDiscSpace S) (H : Drawing S
     rintro _ ⟨t, ht, rfl⟩
     exact (he.2.1 (hγe ▸ mem_image_of_mem γ (hIcc ht))).1
   let Y₁ : Set S := (H.U \ e) ∪ γ '' {t | t ≤ a₀ ∨ b₀ ≤ t}
-  have hY₁ : IsClosed Y₁ :=
-    hX₀.union ((isClosed_Iic.union isClosed_Ici).isCompact.image hγ).isClosed
-  have hpY₁ : γ t₀ ∉ Y₁ := by
-    rintro (h | ⟨t, ht, hte⟩)
-    · exact h.2 hpe
-    · have := hpiece hte
-      subst this
-      rcases ht with h | h
-      · exact absurd h (not_le.mpr ha₀)
-      · exact absurd h (not_le.mpr hb₀)
+  obtain ⟨hY₁, hpY₁⟩ := GM11.edge_chart_avoidance H he hγ hpe hpiece ha₀ hb₀
   let W : Set S := D' ∩ Y₁ᶜ
   have hW : IsOpen W := hD'.inter hY₁.isOpen_compl
   have hpW : γ t₀ ∈ W := ⟨hpD', hpY₁⟩
@@ -409,21 +377,8 @@ theorem disc_exists_edge_chart (hS : IsClosedDiscSpace S) (H : Drawing S) (hprop
   classical
   have hT2 : T2Space S := t2Space_of_isClosedDiscSpace hS
   have hpe : γ t₀ ∈ e := hγe ▸ mem_image_of_mem γ ht₀
-  have hmemIoo : ∀ {t : I}, γ t ∈ e → γ t ∉ H.V := fun h => (he.2.1 h).2
-  have hend : ∀ {t : I}, t ∉ Ioo (0 : I) 1 → γ t ∈ H.V := by
-    intro t ht
-    have : t = 0 ∨ t = 1 := by
-      by_contra hc
-      push Not at hc
-      exact ht ⟨unitInterval.pos_iff_ne_zero.mpr hc.1, unitInterval.lt_one_iff_ne_one.mpr hc.2⟩
-    rcases this with rfl | rfl
-    · exact hγ0
-    · exact hγ1
-  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ := by
-    intro t ht
-    by_cases hti : t ∈ Ioo (0 : I) 1
-    · exact hinj hti ht₀ ht
-    · exact absurd (ht ▸ hend hti) (hmemIoo hpe)
+  have hpiece : ∀ {t : I}, γ t = γ t₀ → t = t₀ :=
+    fun h => GM11.edge_parameter_unique H he hγ0 hγ1 hinj ht₀ hpe h
   obtain ⟨a₀, b₀, W, A₁, Δ₁, ha₀, hb₀, hIcc, hW, hpW, hW_Obd, hA₁W, hW₀, hW₁,
     hΔ₁, hin_univ, hbd₁, hFU⟩ :=
     edge_has_collared_disc hS H hprop he hγ hγ0 hγ1 hinj hγe ht₀ hs hu hO hpO

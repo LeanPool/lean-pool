@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.Section9
 public import LeanPool.GraphMinor.GM14.Section6
 public import LeanPool.GraphMinor.GM14.Section10Translation4
+import LeanPool.GraphMinor.GM14.DiscBoundaryHomeomorphism
 public import LeanPool.GraphMinor.GM14.BridgeFacts
 import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM09.Section3a
@@ -263,65 +264,28 @@ private theorem occurInCircuitOrder_of_isClockwiseSeq {α : Type v}
     (hcw : Ω.IsClockwiseSeq [v₁, v₂, v₃, v₄]) :
     OccurInCircuitOrder C (ν v₁) (ν v₂) (ν v₃) (ν v₄) := by
   obtain ⟨_, φ, _, hAgree3⟩ := hNat
-  have hpi : 0 < 2 * Real.pi := by positivity
-  let pt : ℝ → S := fun t => (φ (Circle.exp t)).1
-  have hpt_eq_iff : ∀ t₁ t₂ : ℝ, pt t₁ = pt t₂ ↔ ∃ m : ℤ, t₁ = t₂ + m * (2 * Real.pi) := by
-    intro t₁ t₂
-    constructor
-    · intro h
-      have h1 : φ (Circle.exp t₁) = φ (Circle.exp t₂) := Subtype.ext h
-      exact Circle.exp_eq_exp.mp (φ.injective h1)
-    · rintro ⟨m, rfl⟩
-      have h2 : Circle.exp (t₂ + m * (2 * Real.pi)) = Circle.exp t₂ :=
-        Circle.exp_eq_exp.mpr ⟨m, rfl⟩
-      simp [pt, h2]
-  have hpt_inj : ∀ t₀ : ℝ, InjOn pt (Ico t₀ (t₀ + 2 * Real.pi)) := by
-    intro t₀ t₁ ht₁ t₂ ht₂ h
-    obtain ⟨m, rfl⟩ := (hpt_eq_iff t₁ t₂).mp h
-    have hm0 : m = 0 := by
-      by_contra hm
-      rcases lt_or_gt_of_ne hm with hlt | hgt
-      · have hm_le : (m : ℝ) ≤ -1 := by exact_mod_cast Int.le_sub_one_of_lt hlt
-        have : (m : ℝ) * (2 * Real.pi) ≤ -1 * (2 * Real.pi) :=
-          mul_le_mul_of_nonneg_right hm_le hpi.le
-        linarith [ht₁.1, ht₂.2]
-      · have hm_ge : (1 : ℝ) ≤ m := by exact_mod_cast hgt
-        have : 1 * (2 * Real.pi) ≤ (m : ℝ) * (2 * Real.pi) :=
-          mul_le_mul_of_nonneg_right hm_ge hpi.le
-        linarith [ht₁.2, ht₂.1]
-    simp [hm0]
-  have h123 : Ω.IsClockwise3 v₁ v₂ v₃ :=
-    (Ω.mem_interval_of_lt hcw (by decide : 0 < 1) (by decide : 1 < 2) (by decide : 2 < 4)).2
-  have h134 : Ω.IsClockwise3 v₁ v₃ v₄ :=
-    (Ω.mem_interval_of_lt hcw (by decide : 0 < 2) (by decide : 2 < 3) (by decide : 3 < 4)).2
-  obtain ⟨t₀, t₁, t₂, ht01, ht12, ht20, hpt0, hpt1, hpt2⟩ := hAgree3 v₁ v₂ v₃ h123
-  obtain ⟨s₀, s₂, s₃, hs02, hs23, hs30, hs₀, hs₂, hs₃⟩ := hAgree3 v₁ v₃ v₄ h134
-  obtain ⟨m, hm⟩ := (hpt_eq_iff t₀ s₀).mp (hpt0.trans hs₀.symm)
-  let u₂ := s₂ + m * (2 * Real.pi)
-  let u₃ := s₃ + m * (2 * Real.pi)
-  have hu₂_pt : pt u₂ = ν v₃ := ((hpt_eq_iff u₂ s₂).mpr ⟨m, rfl⟩).trans hs₂
-  have hu₃_pt : pt u₃ = ν v₄ := ((hpt_eq_iff u₃ s₃).mpr ⟨m, rfl⟩).trans hs₃
-  have ht2_eq_u2 : t₂ = u₂ :=
-    hpt_inj t₀ ⟨le_of_lt (ht01.trans ht12), ht20⟩ ⟨by linarith, by linarith⟩
-      (hpt2.trans hu₂_pt.symm)
-  have ht2_lt_u3 : t₂ < u₃ := by linarith
-  have hu3_lt : u₃ < t₀ + 2 * Real.pi := by linarith
+  obtain ⟨t, hmono, hturn, hpoint⟩ :=
+    exists_angles_of_clockwise_triples hAgree3 hcw (by simp)
+  have h01 : t 0 < t 1 := hmono (by decide)
+  have h12 : t 1 < t 2 := hmono (by decide)
+  have h23 : t 2 < t 3 := hmono (by decide)
+  have h30 : t 3 < t 0 + 2 * Real.pi := hturn 3 (by simp)
   let φ_C : Circle ≃ₜ C.U :=
-    (Homeomorph.mulLeft (Circle.exp t₀)).trans (φ.trans (Homeomorph.setCongr hCU.symm))
-  refine ⟨φ_C, 0, t₁ - t₀, t₂ - t₀, u₃ - t₀, le_rfl, by linarith, by linarith, by linarith,
+    (Homeomorph.mulLeft (Circle.exp (t 0))).trans (φ.trans (Homeomorph.setCongr hCU.symm))
+  refine ⟨φ_C, 0, t 1 - t 0, t 2 - t 0, t 3 - t 0, le_rfl, by linarith, by linarith, by linarith,
     by linarith, ?_, ?_, ?_, ?_⟩
-  · change (φ (Circle.exp t₀ * Circle.exp 0)).1 = ν v₁
+  · change (φ (Circle.exp (t 0) * Circle.exp 0)).1 = ν v₁
     rw [← Circle.exp_add, add_zero]
-    exact hpt0
-  · change (φ (Circle.exp t₀ * Circle.exp (t₁ - t₀))).1 = ν v₂
+    exact hpoint 0 (by simp)
+  · change (φ (Circle.exp (t 0) * Circle.exp (t 1 - t 0))).1 = ν v₂
     rw [← Circle.exp_add, add_sub_cancel]
-    exact hpt1
-  · change (φ (Circle.exp t₀ * Circle.exp (t₂ - t₀))).1 = ν v₃
+    exact hpoint 1 (by simp)
+  · change (φ (Circle.exp (t 0) * Circle.exp (t 2 - t 0))).1 = ν v₃
     rw [← Circle.exp_add, add_sub_cancel]
-    exact hpt2
-  · change (φ (Circle.exp t₀ * Circle.exp (u₃ - t₀))).1 = ν v₄
+    exact hpoint 2 (by simp)
+  · change (φ (Circle.exp (t 0) * Circle.exp (t 3 - t 0))).1 = ν v₄
     rw [← Circle.exp_add, add_sub_cancel]
-    exact hu₃_pt
+    exact hpoint 3 (by simp)
 
 /-- For a closed subset `K`, the vertex set of `H.interSet K` is `H.V ∩ K`. -/
 private theorem interSet_V_of_isClosed (H : Drawing S) {K : Set S} (hK : IsClosed K) :
