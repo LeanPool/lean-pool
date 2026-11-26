@@ -335,6 +335,34 @@ theorem chain_mono' {t : ℕ → ℝ} {m : ℕ} (hlt : ∀ p < m, t p < t (p + 1
   · exact le_rfl
   · exact (chain_mono hlt h hk).le
 
+/-- The images of consecutive intervals of an increasing chain cover the whole interval image. -/
+theorem sUnion_image_Icc_chain {Y : Type*} (f : ℝ → Y) {m : ℕ} {t : ℕ → ℝ}
+    {pieces : ℕ → Set Y} (hm : 0 < m) (hlt : ∀ p < m, t p < t (p + 1))
+    (hpieces : ∀ p < m, f '' Icc (t p) (t (p + 1)) = pieces p) :
+    ⋃₀ (pieces '' Iio m) = f '' Icc (t 0) (t m) := by
+  apply subset_antisymm
+  · rintro z ⟨_, ⟨p, hp, rfl⟩, hz⟩
+    rw [← hpieces p hp] at hz
+    exact image_mono (Icc_subset_Icc (chain_mono' hlt (Nat.zero_le p) hp.le)
+      (chain_mono' hlt hp le_rfl)) hz
+  · have cover : ∀ k ≤ m, f '' Icc (t 0) (t k) ⊆ ⋃₀ (pieces '' Iio m) := by
+      intro k
+      induction k with
+      | zero =>
+        rintro _ _ ⟨x, hx, rfl⟩
+        refine ⟨pieces 0, ⟨0, hm, rfl⟩, ?_⟩
+        rw [← hpieces 0 hm]
+        exact ⟨x, ⟨hx.1, hx.2.trans (hlt 0 hm).le⟩, rfl⟩
+      | succ k ih =>
+        rintro hk _ ⟨x, hx, rfl⟩
+        by_cases hxk : x ≤ t k
+        · exact ih (by omega) ⟨x, ⟨hx.1, hxk⟩, rfl⟩
+        · have hk' : k < m := hk
+          refine ⟨pieces k, ⟨k, hk', rfl⟩, ?_⟩
+          rw [← hpieces k hk']
+          exact ⟨x, ⟨(not_le.mp hxk).le, hx.2⟩, rfl⟩
+    exact cover m le_rfl
+
 omit [TopologicalSpace S₁] [T2Space S₁] in
 /-- The lifts of the edges of a chain fit together. -/
 theorem chain_fold {S' : Type u} [TopologicalSpace S'] [T2Space S'] {ψ : S' → S₁} {ι : ℝ
@@ -465,31 +493,7 @@ theorem exists_cut_arc (hS : IsSurface S₁) [ConnectedSpace S₁] {F : Set S₁
     (by rw [htm]; exact hinj)
   rw [htm, himg, hval0, hval1] at hX
   have hun : ⋃₀ (ss '' Iio m) = range a := by
-    apply subset_antisymm
-    · rintro z ⟨_, ⟨p, hp, rfl⟩, hz⟩
-      exact hsF p hp hz
-    · have key : ∀ k, k ≤ m → extI a '' Icc 0 (τ k) ⊆ ⋃₀ (ss '' Iio m) := by
-        intro k
-        induction k with
-        | zero =>
-          intro _ z hz
-          obtain ⟨x, hx, rfl⟩ := hz
-          rw [ht0] at hx
-          have hx0 : x = 0 := le_antisymm hx.2 hx.1
-          refine ⟨ss 0, ⟨0, hm, rfl⟩, ?_⟩
-          rw [← (hch 0 hm).2.1, ht0]
-          exact ⟨x, ⟨hx.1, by rw [hx0]; exact (ht0 ▸ hlt 0 hm).le⟩, rfl⟩
-        | succ k ih =>
-          intro hk z hz
-          obtain ⟨x, hx, rfl⟩ := hz
-          by_cases hxk : x ≤ τ k
-          · exact ih (by omega) ⟨x, ⟨hx.1, hxk⟩, rfl⟩
-          · refine ⟨ss k, ⟨k, by simpa using hk, rfl⟩, ?_⟩
-            rw [← (hch k (by omega)).2.1]
-            exact ⟨x, ⟨(not_le.mp hxk).le, hx.2⟩, rfl⟩
-      have := key m le_rfl
-      rw [htm, himg] at this
-      exact this
+    rw [sUnion_image_Icc_chain (extI a) hm hlt (fun p hp => (hch p hp).2.1), ht0, htm, himg]
   rw [hun] at h3 h4
   exact ⟨Y, tY, t2, ψ, h5, ⟨h1, h2, h3, fun x hx => (hX.ncard hx).2, h4⟩, X, X', hX⟩
 
@@ -650,31 +654,7 @@ theorem exists_cut_loop (hS : IsSurface S₁) [ConnectedSpace S₁] {F : Set S�
   have hclose := h7.close h8 hi huc hfu.le hfc.le
   rw [hun] at hclose
   have hsu : ⋃₀ (ss '' Iio m) = F := by
-    apply subset_antisymm
-    · rintro z ⟨_, ⟨p, hp, rfl⟩, hz⟩
-      exact hsF p hp hz
-    · have key : ∀ k, k ≤ m → ι '' Icc 0 (τ k) ⊆ ⋃₀ (ss '' Iio m) := by
-        intro k
-        induction k with
-        | zero =>
-          intro _ z hz
-          obtain ⟨u, hu, rfl⟩ := hz
-          rw [ht0] at hu
-          have hx0 : u = 0 := le_antisymm hu.2 hu.1
-          refine ⟨ss 0, ⟨0, hm, rfl⟩, ?_⟩
-          rw [← (hch 0 hm).2.1, ht0]
-          exact ⟨u, ⟨hu.1, by rw [hx0]; exact (ht0 ▸ hlt 0 hm).le⟩, rfl⟩
-        | succ k ih =>
-          intro hk z hz
-          obtain ⟨u, hu, rfl⟩ := hz
-          by_cases hxk : u ≤ τ k
-          · exact ih (by omega) ⟨u, ⟨hu.1, hxk⟩, rfl⟩
-          · refine ⟨ss k, ⟨k, by simpa using hk, rfl⟩, ?_⟩
-            rw [← (hch k (by omega)).2.1]
-            exact ⟨u, ⟨(not_le.mp hxk).le, hu.2⟩, rfl⟩
-      have := key m le_rfl
-      rw [htm, hIcc] at this
-      exact this
+    rw [sUnion_image_Icc_chain ι hm hlt (fun p hp => (hch p hp).2.1), ht0, htm, hIcc]
   rw [hsu] at h3 h4
   have hcount : ∀ z ∈ F, (ψ ⁻¹' {z}).ncard = 2 := by
     intro z hz

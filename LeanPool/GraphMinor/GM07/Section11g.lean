@@ -208,42 +208,8 @@ theorem exists_tame_single_arc {Y : Type u} [MetricSpace Y] (G : List (𝕀 → 
     Set.disjoint_left.mp hdisj_a ⟨0, rfl⟩ (mem_iUnion₂.mpr ⟨g, hg, hmem⟩)
   have hq : ∀ g ∈ G, a 1 ∉ range g := fun g hg hmem =>
     Set.disjoint_left.mp hdisj_a ⟨1, rfl⟩ (mem_iUnion₂.mpr ⟨g, hg, hmem⟩)
-  have hcut : ∃ L : List (𝕀 → Y), (∀ g ∈ L, IsArcMap g) ∧ (⋃ g ∈ L, range g) = G₀ ∧
-      ∀ g ∈ L, ∀ x ∈ range g, ∀ y ∈ range g, dist x y < ε := by
-    clear_value G₀
-    subst hG₀
-    clear hdisj_a hp hq
-    induction G with
-    | nil =>
-      exact ⟨[], by simp, by simp, by simp⟩
-    | cons g G ih =>
-      obtain ⟨L₁, h1', h2', h3'⟩ := (hG g (.head _)).exists_small hε
-      obtain ⟨L₂, h1'', h2'', h3''⟩ := ih (fun g' hg' => hG g' (.tail _ hg'))
-      refine ⟨L₁ ++ L₂, ?_, ?_, ?_⟩
-      · intro g' hg'
-        rcases List.mem_append.mp hg' with h | h
-        · exact h1' g' h
-        · exact h1'' g' h
-      · ext x
-        simp only [mem_iUnion, List.mem_append, exists_prop, List.mem_cons]
-        have e1 := Set.ext_iff.mp h2' x
-        have e2 := Set.ext_iff.mp h2'' x
-        simp only [mem_iUnion, exists_prop] at e1 e2
-        constructor
-        · rintro ⟨g', hg' | hg', hx⟩
-          · exact ⟨g, .inl rfl, e1.mp ⟨g', hg', hx⟩⟩
-          · obtain ⟨g'', h5, h6⟩ := e2.mp ⟨g', hg', hx⟩
-            exact ⟨g'', .inr h5, h6⟩
-        · rintro ⟨g', rfl | hg', hx⟩
-          · obtain ⟨g'', h5, h6⟩ := e1.mpr hx
-            exact ⟨g'', .inl h5, h6⟩
-          · obtain ⟨g'', h5, h6⟩ := e2.mpr ⟨g', hg', hx⟩
-            exact ⟨g'', .inr h5, h6⟩
-      · intro g' hg'
-        rcases List.mem_append.mp hg' with h | h
-        · exact h3' g' h
-        · exact h3'' g' h
-  obtain ⟨L, hL1, hL2, hL3⟩ := hcut
+  obtain ⟨L, hL1, hcover, hL3⟩ := exists_small_arc_cover G hG hε
+  have hL2 : (⋃ g ∈ L, range g) = G₀ := hcover
   have hLG : ∀ g ∈ L, range g ⊆ G₀ := fun g hg => by
     rw [← hL2]
     exact subset_biUnion_of_mem (s := {g | g ∈ L}) (u := fun g : 𝕀 → Y => range g) hg

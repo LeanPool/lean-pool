@@ -228,7 +228,7 @@ theorem isGrouping_iff {V : Set α} {K : (⊤ : SimpleGraph α).Subgraph} :
 /-- A pairing in `V` (Graph Minors IV, Section 6, page 241): "A *pairing* in $V$ is a grouping in
 $V$ every component of which has at most two vertices." -/
 def IsPairing (V : Set α) (K : (⊤ : SimpleGraph α).Subgraph) : Prop :=
-  IsGrouping V K ∧ ∀ D, IsComponent K D → D.verts.ncard ≤ 2
+  IsGrouping V K ∧ ∀ D, IsComponent K D → D.verts.encard ≤ 2
 
 /-- For finite `V`, a subgraph `K` is a pairing in `V` if and only if `V(K) ⊆ V` and every vertex
 is adjacent to at most one vertex in `K`. -/
@@ -243,7 +243,8 @@ theorem isPairing_iff {V : Set α} (hV : V.Finite) {K : (⊤ : SimpleGraph α).S
     have hb : b ∈ K.verts := K.edge_vert hab.symm
     have hc : c ∈ K.verts := K.edge_vert hac.symm
     let x : K.verts := ⟨a, ha⟩
-    have hle : (componentVerts K x).ncard ≤ 2 := hcard (component K x) ⟨x, rfl⟩
+    have hle : (componentVerts K x).ncard ≤ 2 :=
+      ((Set.encard_le_coe_iff_finite_ncard_le (k := 2)).mp (hcard (component K x) ⟨x, rfl⟩)).2
     have haD : a ∈ componentVerts K x := self_mem_componentVerts K x
     have hbD : b ∈ componentVerts K x := ⟨hb, Adj.reachable hab.coe⟩
     have hcD : c ∈ componentVerts K x := ⟨hc, Adj.reachable hac.coe⟩
@@ -285,14 +286,14 @@ theorem isPairing_iff {V : Set α} (hV : V.Finite) {K : (⊤ : SimpleGraph α).S
         rcases hreach_sub ⟨w, hw⟩ hr with hwx | hxw
         · exact Or.inl hwx
         · exact Or.inr (huniq x.1 b w hab hxw).symm
-      exact (Set.ncard_le_ncard hsub (Set.toFinite {x.1, b})).trans (Set.ncard_pair hab.ne).le
+      exact (Set.encard_mono hsub).trans_eq (Set.encard_pair hab.ne)
     · push Not at h
       have hsub : (component K x).verts ⊆ {x.1} := by
         rintro w ⟨hw, hr⟩
         rcases hreach_sub ⟨w, hw⟩ hr with hwx | hxw
         · exact hwx
         · exact (h w hxw).elim
-      exact (Set.ncard_le_ncard hsub (Set.toFinite {x.1})).trans (by simp)
+      exact (Set.encard_mono hsub).trans (by simp)
 
 /-- `K` pairs `X, Y` in `V` (Graph Minors IV, Section 6, page 241): "If $K$ is a pairing in $V$, we
 say that $K$ *pairs* $X, Y$ if $X, Y \subseteq V$ are
@@ -334,7 +335,8 @@ theorem pairs_iff_of_isPairing {V : Set α} (hV : V.Finite) {K : (⊤ : SimpleGr
       have h2le : 2 ≤ (component K x).verts.ncard := by
         rw [← Set.ncard_pair huv.ne]
         exact Set.ncard_le_ncard hsub hfin
-      have hle2 : (component K x).verts.ncard ≤ 2 := hK.2 (component K x) hcomp
+      have hle2 : (component K x).verts.ncard ≤ 2 :=
+        ((Set.encard_le_coe_iff_finite_ncard_le (k := 2)).mp (hK.2 (component K x) hcomp)).2
       have hcard2 : (component K x).verts.ncard = 2 := le_antisymm hle2 h2le
       have hD_eq : (component K x).verts = {u, v} :=
         (Set.eq_of_subset_of_ncard_le hsub (by rw [hcard2, Set.ncard_pair huv.ne]) hfin).symm
@@ -381,7 +383,8 @@ theorem pairs_iff_of_isPairing {V : Set α} (hV : V.Finite) {K : (⊤ : SimpleGr
       have h2le : 2 ≤ (component K x).verts.ncard := by
         rw [← Set.ncard_pair hvw.ne]
         exact Set.ncard_le_ncard hsub hfin
-      have hle2 : (component K x).verts.ncard ≤ 2 := hK.2 (component K x) hcomp
+      have hle2 : (component K x).verts.ncard ≤ 2 :=
+        ((Set.encard_le_coe_iff_finite_ncard_le (k := 2)).mp (hK.2 (component K x) hcomp)).2
       exact ⟨component K x, hcomp, le_antisymm hle2 h2le, hvD⟩
 
 /-! ### Patches -/
@@ -434,11 +437,15 @@ theorem mem_freePatch_iff {U : Set α} {δ : (⊤ : SimpleGraph α).Subgraph} :
 theorem freePatch_isFree (U : Set α) : (freePatch U).IsFree :=
   fun _ h₁ h₂ ↦ ⟨h₁, h₂⟩
 
-/-- A patch `Δ` is robust (Graph Minors IV, Section 6, page 241): "it is *robust* if for every
+/-- A patch `Δ` on a finite carrier is robust (Graph Minors IV, Section 6, page 241):
+"it is *robust* if for every
 choice of $X, Y \subseteq V(\Delta)$ with $|X| = |Y|$ and $X
 \cap Y = \emptyset$, there is a pairing in $\Delta$ which pairs $X, Y$." -/
-def Patch.IsRobust (Δ : Patch α) : Prop :=
-  ∀ X ⊆ Δ.verts, ∀ Y ⊆ Δ.verts, X.ncard = Y.ncard → Disjoint X Y →
+structure Patch.IsRobust (Δ : Patch α) : Prop where
+  /-- The patch has a finite carrier. -/
+  finite_verts : Δ.verts.Finite
+  /-- Disjoint equicardinal subsets have a pairing in the patch. -/
+  exists_pairing : ∀ X ⊆ Δ.verts, ∀ Y ⊆ Δ.verts, X.ncard = Y.ncard → Disjoint X Y →
     ∃ δ ∈ Δ, IsPairing Δ.verts δ ∧ Pairs Δ.verts δ X Y
 
 /-! ### `Ω`-patchworks and realizations -/

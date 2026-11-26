@@ -877,56 +877,24 @@ theorem IsGraphPathWithEnds.exists_inc_of_mem_of_ne {G Q : Graph α β} {x y v :
   · obtain ⟨e, he₁, hinc₁⟩ := hp₁.symm.exists_inc_left_of_ne hvx
     exact ⟨e, hQ₁.edgeSet_mono he₁, hinc₁.mono hQ₁⟩
 
-/-- The single-vertex edgeless subgraph of `G` on `{v}`. -/
-def section9SingleVertex (G : Graph α β) (v : α) : Graph α β :=
-  (G.induce {v}).restrict ∅
-
-@[simp]
-theorem vertexSet_section9SingleVertex (G : Graph α β) (v : α) :
-    V(section9SingleVertex G v) = {v} := rfl
-
-@[simp]
-theorem edgeSet_section9SingleVertex (G : Graph α β) (v : α) :
-    E(section9SingleVertex G v) = ∅ := by simp [section9SingleVertex]
-
-theorem section9SingleVertex_le {G : Graph α β} {v : α} (hv : v ∈ V(G)) :
-    section9SingleVertex G v ≤ G :=
-  restrict_le.trans (G.induce_le (singleton_subset_iff.mpr hv))
-
-theorem isGraphPathWithEnds_section9SingleVertex {G : Graph α β} {v : α} (hv : v ∈ V(G)) :
-    IsGraphPathWithEnds G (section9SingleVertex G v) v v := by
-  let Q := section9SingleVertex G v
+theorem isGraphPathWithEnds_singleVertexSubgraph {G : Graph α β} {v : α} (hv : v ∈ V(G)) :
+    IsGraphPathWithEnds G (singleVertexSubgraph G v) v v := by
+  let Q := singleVertexSubgraph G v
   have hvQ : v ∈ V(Q) := by simp [Q]
-  exact ⟨section9SingleVertex_le hv, GraphWalk.nil hvQ,
+  exact ⟨singleVertexSubgraph_le hv, GraphWalk.nil hvQ,
     by simp [GraphWalk.IsSimple, GraphWalk.support],
     by ext x; simp [GraphWalk.support], by ext e; simp [GraphWalk.edges]⟩
-
-/-- Deleting a single edge `e` from `G` while keeping all vertices. -/
-def section9DeleteEdge (G : Graph α β) (e : β) : Graph α β :=
-  G.restrict (E(G) \ {e})
-
-@[simp]
-theorem vertexSet_section9DeleteEdge (G : Graph α β) (e : β) :
-    V(section9DeleteEdge G e) = V(G) := rfl
-
-@[simp]
-theorem edgeSet_section9DeleteEdge (G : Graph α β) (e : β) :
-    E(section9DeleteEdge G e) = E(G) \ {e} := by
-  unfold section9DeleteEdge; rw [edgeSet_restrict, inter_eq_right]; exact sdiff_subset
-
-theorem section9DeleteEdge_le (G : Graph α β) (e : β) :
-    section9DeleteEdge G e ≤ G := restrict_le
 
 /-- Deleting an edge from a rural neighborhood preserves `IsRural`
 (Graph Minors IX, Section 9, Claim (3), page 62). -/
 theorem rural_deleteEdge (N : Neighborhood α β) (hrural : N.IsRural) (e : β) :
-    (Neighborhood.mk (section9DeleteEdge N.G e) N.Ω N.Ω₀
-      N.finite_V (N.finite_E.subset (section9DeleteEdge_le N.G e).edgeSet_mono)
+    (Neighborhood.mk (deleteSingleEdge N.G e) N.Ω N.Ω₀
+      N.finite_V (N.finite_E.subset (deleteSingleEdge_le N.G e).edgeSet_mono)
       N.bar_subset N.bar₀_subset).IsRural :=
-  hrural.ofSubgraph (section9DeleteEdge_le N.G e)
-    (by rw [vertexSet_section9DeleteEdge, inter_eq_left.mpr N.bar_subset])
+  hrural.ofSubgraph (deleteSingleEdge_le N.G e)
+    (by rw [vertexSet_deleteSingleEdge, inter_eq_left.mpr N.bar_subset])
     (fun _ _ _ h => h)
-    (by rw [vertexSet_section9DeleteEdge, inter_eq_left.mpr N.bar₀_subset])
+    (by rw [vertexSet_deleteSingleEdge, inter_eq_left.mpr N.bar₀_subset])
     (fun _ _ _ h => h)
 
 /-- Deleting an isolated vertex `v ∉ N.Ω₀.bar` (while restricting `N.Ω` to `N.Ω.bar \ {v}`)
@@ -1009,39 +977,39 @@ theorem lemma_9_1_claim_3
   have hEN_sub : E(N.G) ⊆ E(S_comp.transactionUnion P_set) := by
     intro e heN; by_contra he_not_U
     have he_not_S : e ∉ E(S.G) := fun heS => disjoint_right.mp hcomp.1.1.2.2.2.2 heN heS
-    let G₁' := section9DeleteEdge N.G e
-    let G_comp' := section9DeleteEdge S_comp.G e
+    let G₁' := deleteSingleEdge N.G e
+    let G_comp' := deleteSingleEdge S_comp.G e
     let N' : Neighborhood α β :=
       ⟨G₁', N.Ω, N.Ω₀, N.finite_V,
-        N.finite_E.subset (section9DeleteEdge_le N.G e).edgeSet_mono,
+        N.finite_E.subset (deleteSingleEdge_le N.G e).edgeSet_mono,
         N.bar_subset, N.bar₀_subset⟩
     let S_comp' : Society α β :=
       ⟨G_comp', S_comp.Ω, S_comp.finite_V,
-        S_comp.finite_E.subset (section9DeleteEdge_le S_comp.G e).edgeSet_mono,
+        S_comp.finite_E.subset (deleteSingleEdge_le S_comp.G e).edgeSet_mono,
         S_comp.bar_subset⟩
     have hcomp' : S_comp'.IsComposition S N' := by
       refine ⟨⟨⟨?_, ?_, hcomp.1.1.2.2.1, ?_, ?_⟩, hcomp.1.2⟩, hcomp.2.1, hcomp.2.2.1, hcomp.2.2.2⟩
-      · rw [(Compatible.of_le_le hcomp.1.1.1 (section9DeleteEdge_le S_comp.G e)).le_iff,
-          edgeSet_section9DeleteEdge]
+      · rw [(Compatible.of_le_le hcomp.1.1.1 (deleteSingleEdge_le S_comp.G e)).le_iff,
+          edgeSet_deleteSingleEdge]
         exact ⟨hcomp.1.1.1.vertexSet_mono, fun f hf => ⟨hcomp.1.1.1.edgeSet_mono hf,
           fun hfe => he_not_S (hfe ▸ hf)⟩⟩
-      · rw [(Compatible.of_le_le ((section9DeleteEdge_le N.G e).trans hcomp.1.1.2.1)
-          (section9DeleteEdge_le S_comp.G e)).le_iff,
-          edgeSet_section9DeleteEdge, edgeSet_section9DeleteEdge]
+      · rw [(Compatible.of_le_le ((deleteSingleEdge_le N.G e).trans hcomp.1.1.2.1)
+          (deleteSingleEdge_le S_comp.G e)).le_iff,
+          edgeSet_deleteSingleEdge, edgeSet_deleteSingleEdge]
         exact ⟨hcomp.1.1.2.1.vertexSet_mono,
           fun f hf => ⟨hcomp.1.1.2.1.edgeSet_mono hf.1, hf.2⟩⟩
-      · simp only [S_comp', N', G_comp', G₁', edgeSet_section9DeleteEdge]
+      · simp only [S_comp', N', G_comp', G₁', edgeSet_deleteSingleEdge]
         ext f; simp only [mem_union, mem_sdiff, mem_singleton_iff]
         refine ⟨?_, fun ⟨hf_comp, hfe⟩ => by
           rw [← hcomp.1.1.2.2.2.1] at hf_comp; exact hf_comp.imp id (fun hfN => ⟨hfN, hfe⟩)⟩
         rintro (hfS | ⟨hfN, hfe⟩)
         · exact ⟨hcomp.1.1.1.edgeSet_mono hfS, fun hfe => he_not_S (hfe ▸ hfS)⟩
         · exact ⟨hcomp.1.1.2.1.edgeSet_mono hfN, hfe⟩
-      · exact hcomp.1.1.2.2.2.2.mono_right (section9DeleteEdge_le N.G e).edgeSet_mono
+      · exact hcomp.1.1.2.2.2.2.mono_right (deleteSingleEdge_le N.G e).edgeSet_mono
     have hP_le' : ∀ P ∈ P_set, P ≤ S_comp'.G := by
       intro P hP
-      rw [(Compatible.of_le_le (hP_le P hP) (section9DeleteEdge_le S_comp.G e)).le_iff,
-        edgeSet_section9DeleteEdge]
+      rw [(Compatible.of_le_le (hP_le P hP) (deleteSingleEdge_le S_comp.G e)).le_iff,
+        edgeSet_deleteSingleEdge]
       refine ⟨(hP_le P hP).vertexSet_mono, fun f hf => ⟨(hP_le P hP).edgeSet_mono hf, ?_⟩⟩
       intro hfe; apply he_not_U
       rw [Society.transactionUnion, edgeSet_subgraphSUnion hP_le, mem_iUnion₂]
@@ -1052,8 +1020,8 @@ theorem lemma_9_1_claim_3
       rw [Society.transactionUnion, Society.transactionUnion,
         edgeSet_subgraphSUnion hP_le', edgeSet_subgraphSUnion hP_le]
     have hEN_lt : E(N'.G).ncard < E(N.G).ncard := by
-      change E(section9DeleteEdge N.G e).ncard < E(N.G).ncard
-      rw [edgeSet_section9DeleteEdge, ncard_sdiff_singleton_of_mem heN]
+      change E(deleteSingleEdge N.G e).ncard < E(N.G).ncard
+      rw [edgeSet_deleteSingleEdge, ncard_sdiff_singleton_of_mem heN]
       have : 0 < E(N.G).ncard := (ncard_pos N.finite_E).mpr ⟨e, heN⟩
       omega
     have hw_le := hle_weight N' S_comp' P_set ⟨hcomp', rural_deleteEdge N hrural e, hcrooked',
@@ -1190,12 +1158,12 @@ theorem lemma_9_1_claim_3
 /-! ## Proof of Claim (4) (page 62) -/
 
 /-- If `c ∈ pathInternalVerts S.G P ∩ S.Ω.bar` for some `P ∈ P_set` in a transaction `P_set`, then
-`section9SingleVertex S.G c` is an attachment to `P_set` with foot `c` and leg `P`. -/
-theorem isAttachmentWithEnds_section9SingleVertex (S : Society α β)
+`singleVertexSubgraph S.G c` is an attachment to `P_set` with foot `c` and leg `P`. -/
+theorem isAttachmentWithEnds_singleVertexSubgraph (S : Society α β)
     {P_set : Set (Graph α β)} {P : Graph α β} {c : α}
     (hdisj : S.IsDisjointOmegaPathSet P_set) (hP_in : P ∈ P_set)
     (hc_int : c ∈ pathInternalVerts S.G P) (hc_bar : c ∈ S.Ω.bar) :
-    S.IsAttachmentWithEnds P_set (section9SingleVertex S.G c) c c := by
+    S.IsAttachmentWithEnds P_set (singleVertexSubgraph S.G c) c c := by
   obtain ⟨a, b, hP_ends⟩ := hdisj.1 P hP_in
   have hcP : c ∈ V(P) := hc_int.1
   have hcG : c ∈ V(S.G) := hP_ends.1.le.vertexSet_mono hcP
@@ -1205,31 +1173,31 @@ theorem isAttachmentWithEnds_section9SingleVertex (S : Society α β)
     by_cases hRP : R = P
     · subst hRP; exact hc_int.2 ⟨d, hR_ends.1⟩
     · exact disjoint_left.mp (hdisj.2 hP_in hR_in (Ne.symm hRP)) hcP hR_ends.1.left_mem
-  exact ⟨isGraphPathWithEnds_section9SingleVertex hcG, by ext z; simp [hcU],
+  exact ⟨isGraphPathWithEnds_singleVertexSubgraph hcG, by ext z; simp [hcU],
     by ext z; simp [hc_bar, hc_not_ends]⟩
 
-/-- If `section9SingleVertex S.G c` (`c ∈ pathInternalVerts S.G P ∩ S.Ω.bar`, `P ∈ P_set`) is an
+/-- If `singleVertexSubgraph S.G c` (`c ∈ pathInternalVerts S.G P ∩ S.Ω.bar`, `P ∈ P_set`) is an
 exchangeable attachment to a crooked transaction `P_set`, then there is a crooked transaction
 `P_set'` of the same cardinality with strictly fewer edges in `⋃ P_set'`. -/
 theorem exists_lt_edges_of_isExchangeable_singleVertex (S : Society α β)
     {P_set : Set (Graph α β)} {P : Graph α β} {c : α}
     (hcrooked : S.IsCrookedTransaction P_set) (hP_in : P ∈ P_set)
     (hc_int : c ∈ pathInternalVerts S.G P) (hc_bar : c ∈ S.Ω.bar)
-    (hexch : S.IsExchangeableAttachment P_set (section9SingleVertex S.G c)) :
+    (hexch : S.IsExchangeableAttachment P_set (singleVertexSubgraph S.G c)) :
     ∃ P_set' : Set (Graph α β), S.IsCrookedTransaction P_set' ∧
       P_set'.ncard = P_set.ncard ∧
       E(S.transactionUnion P_set').ncard < E(S.transactionUnion P_set).ncard := by
   obtain ⟨A, B, hfence⟩ := hcrooked.1
-  let Q_c := section9SingleVertex S.G c
+  let Q_c := singleVertexSubgraph S.G c
   have hatt_c : S.IsAttachmentWithEnds P_set Q_c c c :=
-    isAttachmentWithEnds_section9SingleVertex S hfence.1 hP_in hc_int hc_bar
+    isAttachmentWithEnds_singleVertexSubgraph S hfence.1 hP_in hc_int hc_bar
   rcases hexch with ⟨_, L, L', ⟨hL_in, b, u, a₁, b₁, hatt_bu, hbL, hL_ends, Q, hQ_or, rfl⟩, hcr'⟩
   have hbc : b = c := by
     have hbQ : b ∈ V(Q_c) := hatt_bu.1.left_mem
-    rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hbQ
+    rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hbQ
   have huc : u = c := by
     have huQ : u ∈ V(Q_c) := hatt_bu.1.right_mem
-    rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at huQ
+    rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at huQ
   rcases hbc with rfl; rcases huc with rfl
   have hLP : L = P := by
     by_contra hne; exact disjoint_left.mp (hfence.1.2 hL_in hP_in hne) hbL hc_int.1
@@ -1277,7 +1245,7 @@ theorem exists_lt_edges_of_isExchangeable_singleVertex (S : Society α β)
     intro e he; rw [mem_iUnion₂] at he ⊢
     rcases he with ⟨R, hR | rfl, heR⟩
     · exact ⟨R, hR.1, heR⟩
-    · rw [edgeSet_subgraphUnion hQc_le hQ_le, edgeSet_section9SingleVertex, empty_union] at heR
+    · rw [edgeSet_subgraphUnion hQc_le hQ_le, edgeSet_singleVertexSubgraph, empty_union] at heR
       exact ⟨L, hL_in, hQ_L.edgeSet_mono heR⟩
   have he₀_in_U : e₀ ∈ E(S.transactionUnion P_set) := by
     rw [Society.transactionUnion, edgeSet_subgraphSUnion hR_le, mem_iUnion₂]; exact ⟨L, hL_in,
@@ -1291,7 +1259,7 @@ theorem exists_lt_edges_of_isExchangeable_singleVertex (S : Society α β)
       rcases (hxyL.mono (hR_le L hL_in)).left_eq_or_eq (huvR.mono (hR_le R hR.1)) with rfl | rfl
       · exact disjoint_left.mp (hfence.1.2 hL_in hR.1 hne_LR) hxyL.left_mem huvR.left_mem
       · exact disjoint_left.mp (hfence.1.2 hL_in hR.1 hne_LR) hxyL.left_mem huvR.right_mem
-    · rw [edgeSet_subgraphUnion hQc_le hQ_le, edgeSet_section9SingleVertex, empty_union] at he₀R
+    · rw [edgeSet_subgraphUnion hQc_le hQ_le, edgeSet_singleVertexSubgraph, empty_union] at he₀R
       exact he₀_not_Q he₀R
   have hEU_fin : E(S.transactionUnion P_set).Finite :=
     S.finite_E.subset (subgraphSUnion_le hR_le).edgeSet_mono
@@ -1315,7 +1283,7 @@ theorem lemma_9_1_claim_4_nonSeparating {S : Society α β} {p : ℕ}
   have hR_le : ∀ R ∈ P_set, R ≤ S_comp.G := fun R hR => by
     obtain ⟨_, _, h⟩ := hfence.1.1 R hR; exact h.1.le
   have hnot_exch : ∀ c ∈ pathInternalVerts S_comp.G P ∩ S_comp.Ω.bar,
-      ¬ S_comp.IsExchangeableAttachment P_set (section9SingleVertex S_comp.G c) := by
+      ¬ S_comp.IsExchangeableAttachment P_set (singleVertexSubgraph S_comp.G c) := by
     intro c ⟨hc_int, hc_bar⟩ hexch
     obtain ⟨P_set', hcr', hcard', hlt_E⟩ :=
       exists_lt_edges_of_isExchangeable_singleVertex S_comp hcrooked hP_in hc_int hc_bar hexch
@@ -1323,33 +1291,33 @@ theorem lemma_9_1_claim_4_nonSeparating {S : Society α β} {p : ℕ}
     unfold section9Weight at hw_le; omega
   have hsub : (pathInternalVerts S_comp.G P ∩ S_comp.Ω.bar).Subsingleton := by
     intro c₁ hc₁ c₂ hc₂; by_contra hc12
-    let Q₁ := section9SingleVertex S_comp.G c₁
-    let Q₂ := section9SingleVertex S_comp.G c₂
+    let Q₁ := singleVertexSubgraph S_comp.G c₁
+    let Q₂ := singleVertexSubgraph S_comp.G c₂
     have hatt₁ : S_comp.IsAttachment P_set Q₁ :=
-      ⟨c₁, c₁, isAttachmentWithEnds_section9SingleVertex S_comp hfence.1 hP_in hc₁.1 hc₁.2⟩
+      ⟨c₁, c₁, isAttachmentWithEnds_singleVertexSubgraph S_comp hfence.1 hP_in hc₁.1 hc₁.2⟩
     have hatt₂ : S_comp.IsAttachment P_set Q₂ :=
-      ⟨c₂, c₂, isAttachmentWithEnds_section9SingleVertex S_comp hfence.1 hP_in hc₂.1 hc₂.2⟩
+      ⟨c₂, c₂, isAttachmentWithEnds_singleVertexSubgraph S_comp hfence.1 hP_in hc₂.1 hc₂.2⟩
     have hdisj_12 : Disjoint V(Q₁) V(Q₂) := by simp [Q₁, Q₂, hc12]
     obtain ⟨P₁, hP₁_in, _, _, _, b, b', hb_foot, hbP₁, hb'_foot, hb'P₁,
         M, hMP₁, hM_path, P_set', hcr', hcard', hunion_le, hdisj_EM⟩ :=
       S_comp.theorem_3_3_proof hcrooked hatt₁ (hnot_exch c₁ hc₁) hatt₂ (hnot_exch c₂ hc₂) hdisj_12
     have hbc₁ : b = c₁ := by
       rcases hb_foot with ⟨u, hatt_bu⟩; have hbQ₁ : b ∈ V(Q₁) := hatt_bu.1.left_mem
-      rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hbQ₁
+      rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hbQ₁
     have hb'c₂ : b' = c₂ := by
       rcases hb'_foot with ⟨u', hatt'_b'u'⟩; have hb'Q₂ : b' ∈ V(Q₂) := hatt'_b'u'.1.left_mem
-      rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hb'Q₂
+      rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hb'Q₂
     obtain ⟨e_M, he_M, _⟩ := hM_path.exists_inc_left_of_ne (hbc₁.symm ▸ hb'c₂.symm ▸ hc12)
     have hU_le : S_comp.transactionUnion P_set ≤ S_comp.G := subgraphSUnion_le hR_le
     have hQ₁_le : Q₁ ≤ S_comp.G :=
-      section9SingleVertex_le ((hR_le P hP_in).vertexSet_mono hc₁.1.1)
+      singleVertexSubgraph_le ((hR_le P hP_in).vertexSet_mono hc₁.1.1)
     have hQ₂_le : Q₂ ≤ S_comp.G :=
-      section9SingleVertex_le ((hR_le P hP_in).vertexSet_mono hc₂.1.1)
+      singleVertexSubgraph_le ((hR_le P hP_in).vertexSet_mono hc₂.1.1)
     have hQ12_le : subgraphUnion S_comp.G Q₁ Q₂ ≤ S_comp.G := subgraphUnion_le hQ₁_le hQ₂_le
     have hE_sub : E(S_comp.transactionUnion P_set') ⊆ E(S_comp.transactionUnion P_set) := by
       intro e he; have he' := hunion_le.edgeSet_mono he
       rw [edgeSet_subgraphUnion hU_le hQ12_le, edgeSet_subgraphUnion hQ₁_le hQ₂_le,
-        edgeSet_section9SingleVertex, edgeSet_section9SingleVertex, union_self, union_empty] at he'
+        edgeSet_singleVertexSubgraph, edgeSet_singleVertexSubgraph, union_self, union_empty] at he'
       exact he'
     have heM_in_U : e_M ∈ E(S_comp.transactionUnion P_set) := by
       rw [Society.transactionUnion, edgeSet_subgraphSUnion hR_le, mem_iUnion₂]
@@ -1362,16 +1330,16 @@ theorem lemma_9_1_claim_4_nonSeparating {S : Society α β} {p : ℕ}
     have hw_le := hle_weight N S_comp P_set' ⟨hcomp, hrural, hcr', by omega⟩
     unfold section9Weight at hw_le; omega
   refine ⟨hsub, fun c hc => ?_⟩
-  let Q_c := section9SingleVertex S_comp.G c
+  let Q_c := singleVertexSubgraph S_comp.G c
   have hatt_cc : S_comp.IsAttachmentWithEnds P_set Q_c c c :=
-    isAttachmentWithEnds_section9SingleVertex S_comp hfence.1 hP_in hc.1 hc.2
+    isAttachmentWithEnds_singleVertexSubgraph S_comp hfence.1 hP_in hc.1 hc.2
   obtain ⟨_, P₁, hleg, hover⟩ :=
     S_comp.theorem_3_2_proof hcrooked ⟨c, c, hatt_cc⟩ (hnot_exch c hc)
   have hP₁_eq : P₁ = P := by
     rcases hleg with ⟨hP₁_in, b, ⟨u, hatt_bu⟩, hbP₁⟩
     have hbc : b = c := by
       have hbQ : b ∈ V(Q_c) := hatt_bu.1.left_mem
-      rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hbQ
+      rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hbQ
     subst hbc; by_contra hne; exact disjoint_left.mp (hfence.1.2 hP₁_in hP_in hne) hbP₁ hc.1.1
   subst hP₁_eq
   refine ⟨hover, fun {a b Q} hP_ends hQP hQ_or => ?_⟩
@@ -2209,12 +2177,12 @@ theorem not_crosses_inner_of_disjoint_paths_to_outer {N : Neighborhood α β} (h
       rw [hU'_inter_bd, mem_iUnion₂] at hp_inter
       rcases hp_inter with ⟨v, hv_Ω', hp_v⟩
       rw [N.Ω.restrict_bar hY_bar] at hv_Ω'
-      have hv_V : p ∈ graphDrawingSubgraphU Γ' (section9SingleVertex N.G v) := by
-        left; rw [mem_iUnion₂]; exact ⟨v, by simp [section9SingleVertex], hp_v⟩
+      have hv_V : p ∈ graphDrawingSubgraphU Γ' (singleVertexSubgraph N.G v) := by
+        left; rw [mem_iUnion₂]; exact ⟨v, by simp [singleVertexSubgraph], hp_v⟩
       obtain ⟨u, huQ, huv⟩ := nonempty_inter_vertexSet_of_nonempty_inter_subgraphU' Γ'
-        hQ.le (section9SingleVertex_le (hbar'G (by rw [N.Ω.restrict_bar hY_bar]; exact hv_Ω')))
+        hQ.le (singleVertexSubgraph_le (hbar'G (by rw [N.Ω.restrict_bar hY_bar]; exact hv_Ω')))
         ⟨p, hp₁, hv_V⟩
-      rw [vertexSet_section9SingleVertex, mem_singleton_iff] at huv
+      rw [vertexSet_singleVertexSubgraph, mem_singleton_iff] at huv
       subst u
       rcases hv_Ω' with rfl | rfl
       · exact disjoint_left.mp hdisj₁ huQ hT₁.left_mem
@@ -3012,21 +2980,21 @@ private theorem replaceByOneEndPath
     (hcard_and_lt : ∀ {P_set' : Set (Graph α β)}, P_set' = P_set \ {P} ∪ {P_left} ∨ P_set' = P_set
       \ {P} ∪ {P_right} ∨ P_set' = P_set \ {P} ∪ {P_left, P_right} → P_set.ncard ≤
       P_set'.ncard ∧ E(S.transactionUnion P_set').ncard < E(S.transactionUnion P_set).ncard)
-    (hexch : S.IsExchangeableAttachment P_set (section9SingleVertex S.G x)) :
+    (hexch : S.IsExchangeableAttachment P_set (singleVertexSubgraph S.G x)) :
     ∃ P_set', (P_set' = P_set \ {P} ∪ {P_left} ∨ P_set' = P_set \ {P} ∪ {P_right} ∨ P_set' = P_set
       \ {P} ∪ {P_left, P_right}) ∧ S.IsCrookedTransaction P_set' ∧ P_set.ncard ≤ P_set'.ncard ∧
       E(S.transactionUnion P_set').ncard < E(S.transactionUnion P_set).ncard := by
   classical
   let W := S.transactionEnds P_set
-  let Q_x := section9SingleVertex S.G x
+  let Q_x := singleVertexSubgraph S.G x
   rcases hexch with ⟨_, L, L', ⟨hL_in, b, u, a₁, b₁, hatt_bu, hbL, hL_ends, Q_sub, hQ_or, rfl⟩,
     hcr'⟩
   have hbx : b = x := by
     have hbQ : b ∈ V(Q_x) := hatt_bu.1.left_mem
-    rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hbQ
+    rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hbQ
   have hux : u = x := by
     have huQ : u ∈ V(Q_x) := hatt_bu.1.right_mem
-    rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at huQ
+    rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at huQ
   rcases hbx.symm with rfl; rcases hux.symm with rfl
   have hLP : L = P := by
     by_contra hne; exact disjoint_left.mp (hfence.1.2 hL_in hP_in hne) hbL hx.1.1
@@ -3173,20 +3141,20 @@ private theorem replaceByBothEndPaths
     (hcard_and_lt : ∀ {P_set' : Set (Graph α β)}, P_set' = P_set \ {P} ∪ {P_left} ∨ P_set' = P_set
       \ {P} ∪ {P_right} ∨ P_set' = P_set \ {P} ∪ {P_left, P_right} → P_set.ncard ≤
       P_set'.ncard ∧ E(S.transactionUnion P_set').ncard < E(S.transactionUnion P_set).ncard)
-    (hatt_x : S.IsAttachmentWithEnds P_set (section9SingleVertex S.G x) x x)
-    (hexch : ¬S.IsExchangeableAttachment P_set (section9SingleVertex S.G x)) :
+    (hatt_x : S.IsAttachmentWithEnds P_set (singleVertexSubgraph S.G x) x x)
+    (hexch : ¬S.IsExchangeableAttachment P_set (singleVertexSubgraph S.G x)) :
     ∃ P_set', (P_set' = P_set \ {P} ∪ {P_left} ∨ P_set' = P_set \ {P} ∪ {P_right} ∨ P_set' = P_set
       \ {P} ∪ {P_left, P_right}) ∧ S.IsCrookedTransaction P_set' ∧ P_set.ncard ≤ P_set'.ncard ∧
       E(S.transactionUnion P_set').ncard < E(S.transactionUnion P_set).ncard := by
   classical
   let W := S.transactionEnds P_set
-  let Q_x := section9SingleVertex S.G x
+  let Q_x := singleVertexSubgraph S.G x
   obtain ⟨_, P₁, hleg, hover⟩ := S.theorem_3_2_proof hcrooked ⟨x, x, hatt_x⟩ hexch
   have hP₁_eq : P₁ = P := by
     rcases hleg with ⟨hP₁_in, b, ⟨u, hatt_bu⟩, hbP₁⟩
     have hbx : b = x := by
       have hbQ : b ∈ V(Q_x) := hatt_bu.1.left_mem
-      rwa [vertexSet_section9SingleVertex, mem_singleton_iff] at hbQ
+      rwa [vertexSet_singleVertexSubgraph, mem_singleton_iff] at hbQ
     subst hbx; by_contra hne; exact disjoint_left.mp (hfence.1.2 hP₁_in hP_in hne) hbP₁ hx.1.1
   subst hP₁_eq
   obtain ⟨a₁_raw, ha₁_raw, b₁_raw, hb₁_raw, hP_ends_raw⟩ := hfence.2.2 P₁ hP_in
@@ -3362,9 +3330,9 @@ theorem exists_crooked_drop_middle_of_empty_interval {S : Society α β}
     intro P_set' hor
     exact cardinalityAfterReplacingPath hP_in hP_left hQ hP_right hfence hR_le hP_le hPL_le hPR_le
       hPL_not_diff hPR_not_diff hPL_ne_PR hfin_P hfin_diff he_Q hdisj_EQ_L hdisj_EQ_R hor
-  let Q_x := section9SingleVertex S.G x
+  let Q_x := singleVertexSubgraph S.G x
   have hatt_x : S.IsAttachmentWithEnds P_set Q_x x x :=
-    isAttachmentWithEnds_section9SingleVertex S hfence.1 hP_in hx.1 hx.2
+    isAttachmentWithEnds_singleVertexSubgraph S hfence.1 hP_in hx.1 hx.2
   by_cases hexch : S.IsExchangeableAttachment P_set Q_x
   · exact replaceByOneEndPath hP_in hP_ends hx hy hxy hP_left hP_right hdisj_int hfence hx_ne_t
       hP_left_ends hP_right_ends hx_not_W hy_not_W hcard_and_lt hexch

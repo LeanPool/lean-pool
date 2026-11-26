@@ -13,6 +13,8 @@ public import LeanPool.GraphMinor.GM19.Section9a
 public import LeanPool.GraphMinor.GM18.Section6
 public import Mathlib.Data.Nat.Nth
 
+import LeanPool.GraphMinor.GM04.Patchwork.Menger
+
 /-!
 # A painting as a patchwork
 
@@ -142,46 +144,8 @@ noncomputable def ColouredPainting.toPatchwork (hd : χ.IsDisjoint) (P : Coloure
 
 omit [TopologicalSpace S] in
 /-- The free patch on a finite set is robust. -/
-theorem freePatch_isRobust {U : Set S} (hU : U.Finite) : (freePatch U).IsRobust := by
-  classical
-  intro X hX Y hY hcard hdisj
-  simp only [GM04.freePatch_verts] at hX hY ⊢
-  have hXf := hU.subset hX
-  have hYf := hU.subset hY
-  have : Finite X := hXf
-  have : Finite Y := hYf
-  have hNat : Nat.card X = Nat.card Y := by
-    rw [Nat.card_coe_set_eq, Nat.card_coe_set_eq, hcard]
-  let f : X ≃ Y := (Finite.equivFin X).trans ((finCongr hNat).trans (Finite.equivFin Y).symm)
-  have hdj := disjoint_left.mp hdisj
-  let R : S → S → Prop := fun a b ↦ ∃ x : X, a = x ∧ b = f x
-  let δ : (⊤ : SimpleGraph S).Subgraph :=
-    { verts := U
-      Adj := fun a b ↦ R a b ∨ R b a
-      adj_sub := by
-        rintro a b (⟨x, rfl, rfl⟩ | ⟨x, rfl, rfl⟩)
-        · exact fun h ↦ hdj x.2 (h ▸ (f x).2)
-        · exact fun h ↦ hdj x.2 (h.symm ▸ (f x).2)
-      edge_vert := by
-        rintro a b (⟨x, rfl, rfl⟩ | ⟨x, rfl, rfl⟩)
-        · exact hX x.2
-        · exact hY (f x).2
-      symm := ⟨fun a b h ↦ h.symm⟩ }
-  have hδ : GM04.IsPairing U δ := by
-    refine (GM04.isPairing_iff hU).mpr ⟨Subset.rfl, ?_⟩
-    rintro a b c (⟨x, hx, hb⟩ | ⟨x, hb, hx⟩) (⟨y, hy, hc⟩ | ⟨y, hc, hy⟩)
-    · rw [hb, hc, Subtype.ext (hx.symm.trans hy)]
-    · exact absurd (hy ▸ (f y).2 : a ∈ Y) (hdj (hx ▸ x.2))
-    · exact absurd (hx ▸ (f x).2 : a ∈ Y) (hdj (hy ▸ y.2))
-    · rw [hb, hc, f.injective (Subtype.ext (hx.symm.trans hy))]
-  refine ⟨δ, ⟨hδ.1, rfl⟩, hδ, (GM04.pairs_iff_of_isPairing hU hδ).mpr
-    ⟨hX, hY, hdisj, ?_, ?_⟩⟩
-  · rintro a b (⟨x, rfl, rfl⟩ | ⟨x, rfl, rfl⟩)
-    · exact Or.inl ⟨x.2, (f x).2⟩
-    · exact Or.inr ⟨(f x).2, x.2⟩
-  · rintro v (hv | hv)
-    · exact ⟨f ⟨v, hv⟩, Or.inl ⟨⟨v, hv⟩, rfl, rfl⟩⟩
-    · exact ⟨f.symm ⟨v, hv⟩, Or.inr ⟨f.symm ⟨v, hv⟩, rfl, by simp⟩⟩
+theorem freePatch_isRobust {U : Set S} (hU : U.Finite) : (freePatch U).IsRobust :=
+  GM04.Patch.IsFree.isRobust hU (GM04.freePatch_isFree U)
 
 theorem ColouredPainting.toPatchwork_isRobust (hd : χ.IsDisjoint) (P : ColouredPainting χ) :
     (P.toPatchwork hd).IsRobust := fun _e he ↦

@@ -552,47 +552,6 @@ theorem isArcConnected_union_closedDisc (hS : IsSurface S) {Y Δ : Set S}
   have hΔ_pc : IsPathConnected Δ := hΔ.isPathConnected
   exact IsPathConnected.isArcConnected (hY_pc.union hΔ_pc ⟨x₀, hx₀_Y, hx₀_Δ⟩)
 
-/-- Graph Minors VII, (11.8) for closed surfaces (`bd S = ∅`), proved from `Surface.epstein` and
-(11.3). -/
-theorem theorem_11_8_closed
-    (hS : IsSurface S) (hbd : bd S = ∅) [ConnectedSpace S] {Z : Set S}
-    (hZ_open : IsOpen Z) (hZ_flat : IsFlat Z) (hZ_arc : IsArcConnected Z) :
-    ∃ Y : Set S, Z ⊆ Y ∧ IsOpen Y ∧ IsSimplyConnectedSubset Y := by
-  have : T2Space S := hS.2.1
-  obtain ⟨Y, ⟨hZY, hY_open, hY_flat, hY_arc⟩, hY_max⟩ :=
-    exists_maximal_open_flat_arcConnected hZ_open hZ_flat hZ_arc
-  refine ⟨Y, hZY, hY_open, hY_arc, fun F hF hFY => ?_⟩
-  have hF_null_S : IsNullHomotopicOArc F := isNullHomotopicOArc_of_isFlat hY_flat hFY hF
-  have hdisj : Disjoint F (bd S) := by
-    rw [hbd]
-    exact disjoint_empty F
-  obtain ⟨Δ, _, hΔ, hΔ_bd⟩ :=
-    (Surface.epstein S univ F hS ‹ConnectedSpace S› hF (subset_univ F) hdisj).1 hF_null_S
-  have hbd_sub : discBd Δ ⊆ Y := hΔ_bd.symm ▸ hFY
-  have hY_inter_bd : Y ∩ discBd Δ = F := by
-    rw [inter_eq_self_of_subset_right hbd_sub, hΔ_bd]
-  have hY_bd_arc : IsArcConnected (Y ∩ discBd Δ) := by
-    rw [hY_inter_bd]
-    exact IsOArc.isArcConnected hF
-  have hYU_open : IsOpen (Y ∪ Δ) := isOpen_union_disc_of_discBd_subset hS hY_open hΔ hbd_sub
-  have hYU_arc : IsArcConnected (Y ∪ Δ) := isArcConnected_union_closedDisc hS hY_arc hΔ hbd_sub
-  have hYU_eq : Y ∪ (Δ \ discBd Δ) = Y ∪ Δ := by
-    ext x
-    constructor
-    · exact Or.imp_right fun h => h.1
-    · rintro (hx | hx)
-      · exact Or.inl hx
-      · by_cases hxb : x ∈ discBd Δ
-        · exact Or.inl (hbd_sub hxb)
-        · exact Or.inr ⟨hx, hxb⟩
-  have hYU_flat : IsFlat (Y ∪ Δ) := by
-    rw [← hYU_eq]
-    exact (theorem_11_3_proof hS hΔ hY_bd_arc).2 hY_flat
-  have hΔ_sub : Δ ⊆ Y :=
-    subset_union_right.trans
-      (hY_max ⟨hZY.trans subset_union_left, hYU_open, hYU_flat, hYU_arc⟩ subset_union_left)
-  exact ⟨Δ, hΔ, hΔ_bd, hΔ_sub⟩
-
 /-- Graph Minors VII, (11.8) (page 253):
 "If $Z \subseteq \Sigma$ is open, flat, and arc-connected, there is an open, simply connected set $Y
 \subseteq \Sigma$ with $Z \subseteq Y$." -/
@@ -630,6 +589,13 @@ theorem theorem_11_8_proof
     subset_union_right.trans
       (hY_max ⟨hZY.trans subset_union_left, hYU_open, hYU_flat, hYU_arc⟩ subset_union_left)
   exact ⟨Δ, hΔ, hΔ_bd, hΔ_sub⟩
+
+/-- Graph Minors VII, (11.8) specialized to closed surfaces. -/
+theorem theorem_11_8_closed
+    (hS : IsSurface S) (_hbd : bd S = ∅) {Z : Set S}
+    (hZ_open : IsOpen Z) (hZ_flat : IsFlat Z) (hZ_arc : IsArcConnected Z) :
+    ∃ Y : Set S, Z ⊆ Y ∧ IsOpen Y ∧ IsSimplyConnectedSubset Y :=
+  theorem_11_8_proof hS hZ_open hZ_flat hZ_arc
 
 /-! ## (11.9): Open Simply Connected Superset -/
 
@@ -684,26 +650,9 @@ theorem theorem_11_9_closed
     (hZ_flat : IsFlat Z) (hZ_lac : IsLocallyArcConnected Z)
     (hZ_cl_or_arc : IsClosed Z ∨ IsArcConnected Z) :
     ∃ Y : Set S, Z ⊆ Y ∧ IsOpen Y ∧ IsArcSimplyConnected Y ∧ Y.Nonempty := by
-  have : T2Space S := hS.2.1
-  have h1 : ∃ Z₁ : Set S, Z ⊆ Z₁ ∧ IsFlat Z₁ ∧ IsLocallyArcConnected Z₁ ∧
-      IsArcConnected Z₁ ∧ Z₁.Nonempty := by
-    rcases Z.eq_empty_or_nonempty with rfl | hZ_ne
-    · obtain ⟨x₀⟩ := ( inferInstance : Nonempty S )
-      exact ⟨{x₀}, empty_subset _, isFlat_singleton x₀,
-        (isSolid_singleton x₀).1, isArcConnected_singleton x₀, singleton_nonempty x₀⟩
-    · rcases hZ_cl_or_arc with hZ_cl | hZ_arc
-      · obtain ⟨Z₁, hZZ₁, hZ₁_solid, hZ₁_flat, hZ₁_arc⟩ :=
-          theorem_11_7_proof hS ⟨hZ_lac, hZ_cl⟩ hZ_flat
-        exact ⟨Z₁, hZZ₁, hZ₁_flat, hZ₁_solid.1, hZ₁_arc, hZ_ne.mono hZZ₁⟩
-      · exact ⟨Z, Subset.rfl, hZ_flat, hZ_lac, hZ_arc, hZ_ne⟩
-  obtain ⟨Z₁, hZZ₁, hZ₁_flat, hZ₁_lac, hZ₁_arc, hZ₁_ne⟩ := h1
-  obtain ⟨Z₂, hZ₁Z₂, hZ₂_open, hZ₂_flat, _, hZ₂_arc_imp⟩ :=
-    theorem_11_5_proof hS hZ₁_flat hZ₁_lac
-  have hZ₂_arc : IsArcConnected Z₂ := hZ₂_arc_imp hZ₁_arc
-  obtain ⟨Y, hZ₂Y, hY_open, hY_sc⟩ :=
-    theorem_11_8_closed hS hbd hZ₂_open hZ₂_flat hZ₂_arc
-  rw [← isArcSimplyConnected_iff_isSimplyConnectedSubset_of_bd_eq_empty hS hbd Y] at hY_sc
-  exact ⟨Y, hZZ₁.trans (hZ₁Z₂.trans hZ₂Y), hY_open, hY_sc, hZ₁_ne.mono (hZ₁Z₂.trans hZ₂Y)⟩
+  obtain ⟨Y, hZY, hY_open, hY_sc, hY_ne⟩ := theorem_11_9_proof hS hZ_flat hZ_lac hZ_cl_or_arc
+  exact ⟨Y, hZY, hY_open,
+    (isArcSimplyConnected_iff_isSimplyConnectedSubset_of_bd_eq_empty hS hbd Y).mpr hY_sc, hY_ne⟩
 
 /-! ## (11.10): Solid Flat Sets are Equal to `Σ` or Planar -/
 

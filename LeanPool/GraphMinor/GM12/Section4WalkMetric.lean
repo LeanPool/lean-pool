@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM12.Section1
 import LeanPool.GraphMinor.GM11.Section6
+import LeanPool.GraphMinor.GM10.TangleLemmas
 
 /-!
 # Length and distance for radial walks
@@ -134,5 +135,38 @@ theorem tangleMetric_le_order {H K : Drawing S}
     have heven := closed_walk_length_eq_two_mul hK.2.1 W
     exact (tangleMetric_le_of_walk hx hy W hlen heven hxW hyW).trans (by omega)
   · simp only [tangleMetric, heq, hex, ↓reduceIte, le_refl]
+
+section EdgeSeparations
+
+open GM10
+
+variable {X : Type u} [TopologicalSpace X]
+
+/-- An edge of a drawing has at most two ends in its hypergraph. -/
+theorem drawing_edge_ends_ncard_le_two {H : Drawing X} {e : Set X} (he : e ∈ H.E) :
+    (H.toHypergraph.ends e).ncard ≤ 2 := by
+  obtain ⟨a, b, hl⟩ := H.toGraph.exists_isLink_of_mem_edgeSet he
+  have hends : H.toHypergraph.ends e ⊆ {a, b} := by
+    intro x hx
+    rw [← hl.2.2.2]
+    exact ⟨hx.2.2, hx.2.1⟩
+  exact (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
+
+/-- Separating one drawing edge from the rest has order at most two. -/
+theorem drawing_edge_separation_order_le_two {H : Drawing X} {e : Set X} (he : e ∈ H.E) :
+    separationOrder (edgeHypergraph H.toHypergraph e) (H.toHypergraph.deleteEdges {e}) ≤ 2 := by
+  rw [separationOrder_edgeHypergraph_deleteEdges]
+  exact drawing_edge_ends_ncard_le_two he
+
+/-- A tangle of order at least three selects the one-edge side as its small side. -/
+theorem drawing_edge_small_side_mem_of_order_three {H : Drawing X} {θ : ℕ}
+    {T : Set (Hypergraph X (Set X) × Hypergraph X (Set X))}
+    (hT : IsTangle H.toHypergraph θ T) (hθ : 2 < θ) {e : Set X} (he : e ∈ H.E) :
+    (edgeHypergraph H.toHypergraph e, H.toHypergraph.deleteEdges {e}) ∈ T :=
+  (hT.axiom1 (isSeparation_edgeHypergraph_deleteEdges (G := H.toHypergraph) he)
+    ((drawing_edge_separation_order_le_two he).trans_lt hθ)).resolve_right
+    fun h => hT.axiom3 h rfl
+
+end EdgeSeparations
 
 end GraphMinor.GM12

@@ -704,24 +704,6 @@ def IsOptimalRestraint (Γ : Drawing S) (ins : Drawing S → Set S) (k : ℕ) (a
   IsRestraint Γ ins k X ∧ a ∈ X ∧ b ∈ X ∧ ∀ Y : Set S, IsRestraint Γ ins k Y → a ∈ Y → b ∈ Y →
     perimeterWalkLength Γ X ≤ perimeterWalkLength Γ Y
 
-/-- A restraint is *`a, b`-extreme* (Graph Minors XI, Section 8, page 100): "it is `a, b`-optimal
-and extreme". -/
-def IsPairExtremeRestraint (Γ : Drawing S) (ins : Drawing S → Set S) (k : ℕ) (a b : S) (X : Set S) :
-    Prop :=
-  IsOptimalRestraint Γ ins k a b X ∧ IsExtremeRestraint Γ ins k X
-
-/-- The optimal version for atoms (Graph Minors XI, Section 8, page 100): "If $b$ is an edge or
-region, we say that $X$ is *$a, b$-optimal* if it is $a, b'$-optimal
-for some $b' \in b$." -/
-def IsAtomOptimalRestraint (Γ : Drawing S) (ins : Drawing S → Set S) (k : ℕ) (a b X : Set S) :
-    Prop :=
-  ∃ a' ∈ a, ∃ b' ∈ b, IsOptimalRestraint Γ ins k a' b' X
-
-/-- The extreme version for atoms (Graph Minors XI, Section 8, page 100). -/
-def IsAtomExtremeRestraint (Γ : Drawing S) (ins : Drawing S → Set S) (k : ℕ) (a b X : Set S) :
-    Prop :=
-  ∃ a' ∈ a, ∃ b' ∈ b, IsPairExtremeRestraint Γ ins k a' b' X
-
 /-! ## Section 9: the distance function -/
 
 /-- `2 d(a, b)` for atoms `a, b` of `Γ` (Graph Minors XI, Section 9, page 104):

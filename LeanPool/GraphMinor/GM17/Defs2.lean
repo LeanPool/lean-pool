@@ -347,16 +347,6 @@ def Portrayal.quotientBy {α : Type u} {β : Type v} {G : Hypergraph α β}
     · exact Or.inr (Or.inl ⟨h4, hvZ⟩)
     · exact Or.inr (Or.inr ⟨⟨h4, hvZ⟩, rfl⟩)
 
-open Classical in
-/-- In a cyclic enumeration $E$ of the nodes and cells around a cuff $\Theta$, the index $i$ is a
-*terminal* of a vertex $x \in V(G)$ if $x \in \beta(n_i +)$ and $x \notin \beta(n_{i+1} +)$.
-Graph Minors XVII, Section 6, proof of (6.6) (page 176). -/
-def Portrayal.IsTerminalIndex {α : Type u} {β : Type v} {G : Hypergraph α β}
-    (π : Portrayal G) {Θ : Set π.S} {k : ℕ} (E : π.Γ.CuffEnumeration Θ k)
-    (x : α) (i : Fin k) : Prop :=
-  x ∈ π.borderPlus (E.node i) ∧
-  x ∉ π.borderPlus (E.node (cyclicSucc (by have := E.two_le; omega) i))
-
 /-! ## 5. Regions of $\Gamma$ and $C^*(\Gamma)$ (Section 8, Pages 181–183) -/
 
 open Classical in

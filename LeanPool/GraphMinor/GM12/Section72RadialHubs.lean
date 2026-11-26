@@ -33,6 +33,13 @@ open Set Topology Surface GM11
 
 variable {S : Type*} [TopologicalSpace S] [T2Space S]
 
+/-- A radial vertex on the disc frontier survives radial disc deletion. -/
+theorem radialDiscDeletion_mem_vertexSet_of_mem_frontier {K : Drawing S} {D f : Set S} {u : S}
+    (huD : u ∈ frontier D) (huK : u ∈ K.V) : u ∈ (radialDiscDeletion K D f).V := by
+  rw [frontier_eq_closure_inter_closure] at huD
+  rw [radialDiscDeletion_V]
+  exact ⟨huK, by simpa only [compl_eq_univ_sdiff] using huD.2⟩
+
 /-- The merged region in XII (7.2), page 260, retains precisely the
 old hub after deleting the interior radial pieces and one spoke. -/
 theorem radialDiscDeletion_merged_hub {Γ K C : Drawing S}
@@ -42,11 +49,8 @@ theorem radialDiscDeletion_merged_hub {Γ K C : Drawing S}
     (hr : r ∈ Γ.R) (hur : u ∈ r) (huK : u ∈ K.V) :
     ∃! w, w ∈ r ∪ (D \ {v}) ∧ w ∈ (radialDiscDeletion K D f).V := by
   have huC : u ∈ C.U := C.V_subset_U (hCV.symm ▸ Or.inr rfl)
-  have huOut : u ∈ closure (univ \ D) := by
-    have huf : u ∈ frontier D := hb.symm ▸ huC
-    rw [frontier_eq_closure_inter_closure] at huf
-    simpa only [compl_eq_univ_sdiff] using huf.2
-  refine ⟨u, ⟨Or.inl hur, radialDiscDeletion_V K D f |>.symm ▸ ⟨huK, huOut⟩⟩, ?_⟩
+  refine ⟨u, ⟨Or.inl hur, radialDiscDeletion_mem_vertexSet_of_mem_frontier
+    (hb.symm ▸ huC) huK⟩, ?_⟩
   rintro w ⟨hwY, hwK'⟩
   obtain ⟨hwK, hwOut⟩ := (radialDiscDeletion_V K D f).subset hwK'
   rcases hwY with hwr | ⟨hwD, hwv⟩
@@ -80,6 +84,30 @@ theorem region_mem_of_ne_merged_region {Γ Γ' : Drawing S}
   have hRs : R ⊆ s := region_subset_region_of_inter_nonempty hΓ hR hs ⟨x, hxR, hx⟩
   exact (Subset.antisymm hsR hRs).symm ▸ hR
 
+/-- A normal disc meeting the drawing at one boundary vertex and enclosing part of its incident
+region determines the merged region and covers the removed drawing points. -/
+theorem radialDiscDeletion_region_facts (hS : IsClosedSurface S)
+    {Γ C : Drawing S} {D r : Set S} {v : S}
+    (hD : IsClosedDisc D) (hb : frontier D = C.U) (hr : r ∈ Γ.R) (hv : v ∈ Γ.V)
+    (hCZ : C.U ⊆ r ∪ {v}) (hmeet : Γ.U ∩ C.U = {v}) :
+    let Γ' := Γ.interSet (closure (univ \ D))
+    let Y := r ∪ (D \ {v})
+    (PaintingOrDrawing.drawing Γ).IsNormal C.U ∧ v ∈ C.U ∧ C.U ∩ Γ.V = {v} ∧
+      C.U \ {v} ⊆ r ∧ Y ∈ Γ'.R ∧ Γ.U ⊆ Γ'.U ∪ Y := by
+  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  have hn : (PaintingOrDrawing.drawing Γ).IsNormal C.U := by
+    rintro x ⟨hxC, hxΓ⟩
+    exact mem_singleton_iff.mp (hmeet.subset ⟨hxΓ, hxC⟩) ▸ hv
+  have hvC : v ∈ C.U := (hmeet.superset (mem_singleton v)).2
+  have hFV : C.U ∩ Γ.V = {v} := by
+    refine Subset.antisymm (fun _ hx => hmeet.subset ⟨Γ.V_subset_U hx.2, hx.1⟩) ?_
+    exact singleton_subset_iff.mpr ⟨hvC, hv⟩
+  have hFr : C.U \ {v} ⊆ r := fun x hx => (hCZ hx.1).resolve_right hx.2
+  have hbd : subBd D = C.U := (subBd_eq_frontier D).trans hb
+  exact ⟨hn, hvC, hFV, hFr, theorem_7_2_region hS hD hbd hn hFV hr hFr,
+    (drawing_U_subset_outside_normal_disc_union hb hn hvC).trans
+      (union_subset_union subset_rfl subset_union_right)⟩
+
 /-- Every region retains exactly one hub in the radial deletion of
 XII (7.2), page 260. The merged region keeps its boundary hub, and
 all other regions keep their original hubs outside the removed disc. -/
@@ -94,24 +122,7 @@ theorem radialDiscDeletion_region_hubs (hS : IsClosedSurface S)
   have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
   let Γ' := Γ.interSet (closure (univ \ D))
   let Y := r ∪ (D \ {v})
-  have hn : (PaintingOrDrawing.drawing Γ).IsNormal C.U := by
-    rintro x ⟨hxC, hxΓ⟩
-    exact mem_singleton_iff.mp (hmeet.subset ⟨hxΓ, hxC⟩) ▸ hv
-  have hvC : v ∈ C.U := C.V_subset_U (hCV.symm ▸ Or.inl rfl)
-  have hFV : C.U ∩ Γ.V = {v} := by
-    apply Subset.antisymm
-    · rintro x ⟨hxC, hxΓ⟩
-      exact hmeet.subset ⟨Γ.V_subset_U hxΓ, hxC⟩
-    · rintro x hx
-      have hxv := mem_singleton_iff.mp hx
-      subst x
-      exact ⟨hvC, hv⟩
-  have hFr : C.U \ {v} ⊆ r := fun x hx => (hCZ hx.1).resolve_right hx.2
-  have hbd : subBd D = C.U := (subBd_eq_frontier D).trans hb
-  have hY : Y ∈ Γ'.R := theorem_7_2_region hS hD hbd hn hFV hr hFr
-  have hcover : Γ.U ⊆ Γ'.U ∪ Y :=
-    (drawing_U_subset_outside_normal_disc_union hb hn hvC).trans
-      (union_subset_union subset_rfl subset_union_right)
+  obtain ⟨_, _, _, _, hY, hcover⟩ := radialDiscDeletion_region_facts hS hD hb hr hv hCZ hmeet
   intro s hs
   by_cases hsY : s = Y
   · subst s

@@ -58,7 +58,7 @@ theorem emptySubgraph_isPairing (V : Set α) : IsPairing V (emptySubgraph V) := 
     induction hy with
     | refl => rfl
     | @tail z u _ hzu => exact False.elim hzu
-  exact (Set.ncard_le_ncard hsub (Set.toFinite {x.1})).trans (by simp)
+  exact (Set.encard_mono hsub).trans (by simp)
 
 /-- `K_V` (`completeSubgraph V`) is a grouping in `V`. -/
 theorem completeSubgraph_isGrouping (V : Set α) : IsGrouping V (completeSubgraph V) := by
@@ -141,17 +141,18 @@ theorem exists_pairing_pairs {V X Y : Set α} (hV : V.Finite) (hX : X ⊆ V) (hY
 "free patches are robust"). -/
 theorem Patch.IsFree.isRobust {Δ : Patch α} (hfin : Δ.verts.Finite) (hfree : Δ.IsFree) :
     Δ.IsRobust := by
+  refine ⟨hfin, ?_⟩
   intro X hX Y hY hcard hdisj
   obtain ⟨δ, hverts, hpair, hpairs⟩ := exists_pairing_pairs hfin hX hY hcard hdisj
   exact ⟨δ, hfree δ hpair.1 hverts, hpair, hpairs⟩
 
-/-- Every robust patch on a finite vertex set contains `N_{V(Δ)}`. -/
-theorem Patch.IsRobust.emptySubgraph_mem {Δ : Patch α} (hfin : Δ.verts.Finite)
-    (hrob : Δ.IsRobust) : emptySubgraph Δ.verts ∈ Δ := by
+/-- Every robust patch contains `N_{V(Δ)}`. -/
+theorem Patch.IsRobust.emptySubgraph_mem {Δ : Patch α} (hrob : Δ.IsRobust) :
+    emptySubgraph Δ.verts ∈ Δ := by
   obtain ⟨δ, hδ, hpair, hpairs⟩ :=
-    hrob ∅ (Set.empty_subset _) ∅ (Set.empty_subset _) rfl (Set.disjoint_empty _)
+    hrob.exists_pairing ∅ (Set.empty_subset _) ∅ (Set.empty_subset _) rfl (Set.disjoint_empty _)
   have hverts : δ.verts = Δ.verts := Δ.verts_eq δ hδ
-  have hadj := (pairs_iff_of_isPairing hfin hpair).mp hpairs
+  have hadj := (pairs_iff_of_isPairing hrob.finite_verts hpair).mp hpairs
   have hEq : δ = emptySubgraph Δ.verts := by
     ext u v
     · simp [hverts]
@@ -165,10 +166,7 @@ robust patchworks are removable"). -/
 theorem Patchwork.IsRobust.isRemovable {P : Patchwork Ω α β} (hrob : P.IsRobust) :
     P.IsRemovable := by
   intro e he
-  have hfin : (P.Δ e).verts.Finite := by
-    rw [P.Δ_verts e he]
-    exact P.G.vertexSet_finite.subset (fun _ hv ↦ P.G.vertex_mem_of_inc hv)
-  have hmem := (hrob e he).emptySubgraph_mem hfin
+  have hmem := (hrob e he).emptySubgraph_mem
   rwa [P.Δ_verts e he] at hmem
 
 /-! ### Properties of realizations -/
@@ -635,7 +633,7 @@ private theorem exists_realization_and_dartPerm {P : Patchwork Ω α β} (hrob :
     have hB : dartSetB Q e ⊆ (P.Δ e).verts := by
       rw [P.Δ_verts e he]
       exact dartSetB_subset_ends Q e
-    exact hrob e he (dartSetA Q e) hA (dartSetB Q e) hB
+    exact (hrob e he).exists_pairing (dartSetA Q e) hA (dartSetB Q e) hB
       (dartSetA_ncard_eq_dartSetB_ncard hQ e) (disjoint_dartSetA_dartSetB hQ hmin e)
   let δ : β → (⊤ : SimpleGraph α).Subgraph := fun e ↦
     if he : e ∈ P.G.edgeSet then (hδ_ex e he).choose else emptySubgraph ∅

@@ -429,6 +429,18 @@ theorem theorem_7_2_proof (hS : IsClosedSurface S) (hConn : ConnectedSpace S)
   obtain ⟨i, hi⟩ := hin e he
   exact ⟨C i, (hC i).1, (hC i).2.1, (hC i).2.2.1, (hC i).2.2.2, hi⟩
 
+/-- The one-edge small side gives a short radial circuit enclosing that edge. -/
+theorem exists_circuit_around_drawing_edge (hS : IsClosedSurface S) (hConn : ConnectedSpace S)
+    {H K : Drawing S} {θ : ℕ} {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
+    {ins : Drawing S → Set S} (hResp : IsRespectfulDrawingTangle H θ T) (hθ : 2 < θ)
+    (hK : (PaintingOrDrawing.drawing H).IsRadialDrawing K)
+    (hd : IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins) {e : Set S} (he : e ∈ H.E) :
+    ∃ D : Drawing S, D.IsCircuit ∧ D.IsSubdrawing K ∧ D.length < 2 * θ ∧
+      D.V ∩ H.V ⊆ (edgeHypergraph H.toHypergraph e ∩ (H.toHypergraph.deleteEdges {e})).vertexSet ∧
+      e ⊆ ins D :=
+  theorem_7_2_proof hS hConn ⟨e, he⟩ hResp hK hd
+    (GM12.drawing_edge_small_side_mem_of_order_three hResp.2.1 hθ he) rfl
+
 /-! ## Proof of (7.3) -/
 
 /-- Graph Minors XIV, (7.3) (page 36), proving `GM15.GM14Theorem73Statement`:

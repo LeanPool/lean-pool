@@ -78,6 +78,7 @@ open Classical in
 theorem graphPatch_isRobust {U : Set α} (hfin : U.Finite)
     (hU : ∀ a ∈ U, ∀ b ∈ U, ∀ c ∈ U, a = b ∨ a = c ∨ b = c) :
     (graphPatch U).IsRobust := by
+  refine ⟨hfin, ?_⟩
   intro X hXU Y hYU hcard hdisj
   have hXfin : X.Finite := hfin.subset hXU
   have hYfin : Y.Finite := hfin.subset hYU

@@ -58,36 +58,7 @@ theorem exists_chain_of_line (hw : WordEdges W f V E A lab) {L : Set S} {u v : S
   refine ⟨extI a, m, τ, ss, ε, hιc, hinj, himg, hval0, hval1, hm, ht0, htm, hlt, hV,
     fun p hp ↦ ⟨(hch p hp).1, (hch p hp).2.1, fun σ ↦ chain_hex (hch p hp).2.2.1
       (hch p hp).2.2.2 σ⟩, hsne, ?_⟩
-  have hτI : ∀ k ≤ m, τ k ∈ Icc (0 : ℝ) 1 := fun k hk =>
-    ⟨ht0 ▸ chain_mono' hlt (Nat.zero_le k) hk, htm ▸ chain_mono' hlt hk le_rfl⟩
-  have hsF : ∀ p < m, ss p ⊆ range a := fun p hp => by
-    rw [← (hch p hp).2.1, ← himg]
-    exact image_mono (Icc_subset_Icc (hτI p hp.le).1 (hτI (p + 1) hp).2)
-  apply subset_antisymm
-  · rintro z ⟨_, ⟨p, hp, rfl⟩, hz⟩
-    exact hsF p hp hz
-  · have key : ∀ k, k ≤ m → extI a '' Icc 0 (τ k) ⊆ ⋃₀ (ss '' Iio m) := by
-      intro k
-      induction k with
-      | zero =>
-        intro _ z hz
-        obtain ⟨x, hx, rfl⟩ := hz
-        rw [ht0] at hx
-        have hx0 : x = 0 := le_antisymm hx.2 hx.1
-        refine ⟨ss 0, ⟨0, hm, rfl⟩, ?_⟩
-        rw [← (hch 0 hm).2.1, ht0]
-        exact ⟨x, ⟨hx.1, by rw [hx0]; exact (ht0 ▸ hlt 0 hm).le⟩, rfl⟩
-      | succ k ih =>
-        intro hk z hz
-        obtain ⟨x, hx, rfl⟩ := hz
-        by_cases hxk : x ≤ τ k
-        · exact ih (by omega) ⟨x, ⟨hx.1, hxk⟩, rfl⟩
-        · refine ⟨ss k, ⟨k, by simpa using hk, rfl⟩, ?_⟩
-          rw [← (hch k (by omega)).2.1]
-          exact ⟨x, ⟨(not_le.mp hxk).le, hx.2⟩, rfl⟩
-    have := key m le_rfl
-    rw [htm, himg] at this
-    exact this
+  rw [sUnion_image_Icc_chain (extI a) hm hlt (fun p hp => (hch p hp).2.1), ht0, htm, himg]
 
 /-- A compact part of an open interval lies in a smaller closed interval, which we may ask to hold a
 finite

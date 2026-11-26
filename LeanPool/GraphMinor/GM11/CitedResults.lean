@@ -14,6 +14,7 @@ public import LeanPool.GraphMinor.GM14.Section7a
 public import LeanPool.GraphMinor.GM19.Cited
 public import LeanPool.GraphMinor.GM12.Cited
 import LeanPool.GraphMinor.GM10.TangleLemmas
+import LeanPool.GraphMinor.GM12.Section4WalkMetric
 
 /-!
 # The results of Graph Minors XI that other papers cite
@@ -86,23 +87,11 @@ theorem tangleMetric_vertex_edge_le (hS : IsClosedSurface S) {H K : Drawing S} {
   · exact (tangleMetric_le_order hP _ _).trans hθ
   push Not at hθ
   have hT := hResp.2.1
-  have heG : e ∈ H.toHypergraph.edgeSet := he
-  have hsep := isSeparation_edgeHypergraph_deleteEdges heG
-  obtain ⟨a, b, hl⟩ := (H.toGraph.edge_mem_iff_exists_isLink e).mp he
-  have hends : H.toHypergraph.ends e ⊆ {a, b} := fun w hw => by
-    rw [← hl.2.2.2]
-    exact ⟨hw.2.2, hw.2.1⟩
-  have hefin : (H.toHypergraph.ends e).Finite := (toFinite ({a, b} : Set S)).subset hends
-  have h2 : (H.toHypergraph.ends e).ncard ≤ 2 :=
-    (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-  have hord : Hypergraph.separationOrder (edgeHypergraph H.toHypergraph e)
-      (H.toHypergraph.deleteEdges {e}) < θ := by
-    rw [separationOrder_edgeHypergraph_deleteEdges]
-    change (H.toHypergraph.ends e).ncard < θ
-    omega
-  have hAB : (edgeHypergraph H.toHypergraph e, H.toHypergraph.deleteEdges {e}) ∈ T :=
-    (hT.axiom1 hsep hord).resolve_right fun h => hT.axiom3 h rfl
-  obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ := GM14.theorem_7_2_proof hS ‹_› ⟨e, he⟩ hResp hK hd hAB rfl
+  have hefin : (H.toHypergraph.ends e).Finite :=
+    H.toHypergraph.vertexSet_finite.subset fun _ hx => H.toHypergraph.vertex_mem_of_inc hx
+  have h2 := GM12.drawing_edge_ends_ncard_le_two he
+  obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ :=
+    GM14.exists_circuit_around_drawing_edge hS ‹_› hResp (by omega) hK hd he
   have hT' : IsPretangle (PaintingOrDrawing.drawing H).toHypergraph θ T := hT.isPretangle
   have hs := isSlope_of_derived hS hT' hP.1 hd
   obtain ⟨-, -, hnice⟩ := ins_slope_facts hS hs hD hDs hDl

@@ -182,56 +182,50 @@ theorem disc_strip {T : Type} [TopologicalSpace T] (hT : IsClosedSurface T) {B L
       · exact hxv h
     exact Filter.mem_of_superset (hop.mem_nhds hxint) fun y hy => hy.1
 
-/-- A thin disc on the far side of a side of a cell. -/
-theorem exists_strip [CompactSpace S] [T2Space S] [ConnectedSpace S] (hS : IsSurface S) {Γ :
-  Painting S} {c L A : Set S} {u v : S} (hc : c ∈ Γ.C) (hL : IsLineWithEnds L u v)
-    (hLb : L ⊆ discBd (closure c)) (hLbd : ∀ x ∈ L, x ≠ u → x ≠ v → x ∉ bd S) (hLN : ∀ x ∈ L, x ≠ u
-      → x ≠ v → x ∉ Γ.N) (hA : IsClosed A) (hAL : A ∩ L ⊆ {u, v}) :
-    ∃ St γ, IsClosedDisc St ∧ IsLineWithEnds γ u v ∧ discBd St = L ∪ γ ∧ L ∩ γ = {u, v}
-      ∧ St ∩ closure c = L ∧ St ∩ A ⊆ {u, v} ∧ St ∩ Γ.U ⊆ L ∧
-      ∀ x ∈ L, x ≠ u → x ≠ v → closure c ∪ St ∈ 𝓝 x := by
+/-- A thin disc along a line on the boundary of a disc, which meets the boundary of the surface only
+in the ends of the line. -/
+theorem strip_along [CompactSpace S] [T2Space S] [ConnectedSpace S] (hS : IsSurface S) {E L A : Set
+  S} {u v : S} (hE : IsClosedDisc E) (hL : IsLineWithEnds L u v)
+    (hLb : L ⊆ discBd E) (hLbd : ∀ x ∈ L, x ≠ u → x ≠ v → x ∉ bd S) (hA : IsClosed A)
+      (hAL : A ∩ L ⊆ {u, v}) :
+    ∃ St γ, IsClosedDisc St ∧ IsLineWithEnds γ u v ∧ discBd St = L ∪ γ ∧ L ∩ γ = {u, v} ∧ St ∩ E
+      = L ∧ St ∩ A ⊆ {u, v} ∧ St ∩ bd S ⊆ {u, v} ∧
+      ∀ x ∈ L, x ≠ u → x ≠ v → E ∪ St ∈ 𝓝 x := by
   classical
   obtain ⟨T, tT, j, cap, hT, hTc, hj, hcap, hcov⟩ := exists_cap_discs _ S hS rfl
   have ht2T : T2Space T := hT.2.1
-  obtain ⟨hdisc, -, -, -⟩ := Γ.cell_disc c hc
-  have hB : IsClosedDisc (j '' closure c) := image_emb_disc hj.isEmbedding hdisc
-  have hbB : discBd (j '' closure c) = j '' discBd (closure c) := discBd_image hj.isEmbedding _
-  have hLcl : L ⊆ closure c := hLb.trans (discBd_subset _)
+  have hB : IsClosedDisc (j '' E) := image_emb_disc hj.isEmbedding hE
+  have hbB : discBd (j '' E) = j '' discBd E := discBd_image hj.isEmbedding _
   have hfinC := (cuff_statement.{0} S hS).2.1
-  let Z : Set T := j '' (A ∪ Γ.N ∪ ⋃ d ∈ Γ.C \ {c}, closure d) ∪ ⋃ C ∈ cuffs S, cap C
-  have hZc : IsClosed Z := (hj.isClosedMap _ ((hA.union Γ.finite_N.isClosed).union
-    ((Γ.finite_cells.subset sdiff_subset).isClosed_biUnion fun _ _ => isClosed_closure))).union
-    (hfinC.isClosed_biUnion fun C hC => (hcap C hC).1.isClosed)
+  let Z : Set T := j '' A ∪ ⋃ C ∈ cuffs S, cap C
+  have hZc : IsClosed Z := (hj.isClosedMap _ hA).union (hfinC.isClosed_biUnion fun C hC =>
+    (hcap C hC).1.isClosed)
   have hbC : ∀ {C : Set S}, C ∈ cuffs S → C ⊆ bd S := fun {C} hC => by
     obtain ⟨x, -, rfl⟩ := hC
     exact connectedComponentIn_subset _ _
-  have hZj : ∀ {x}, j x ∈ Z → x ∈ A ∨ x ∈ Γ.N ∨ (∃ d ∈ Γ.C, d ≠ c ∧ x ∈ closure d) ∨ x ∈ bd S := by
-    intro x hx
-    rcases hx with ⟨y, hy, he⟩ | hx
-    · obtain rfl := hj.injective he
-      rcases hy with (h | h) | h
-      · exact .inl h
-      · exact .inr (.inl h)
-      · obtain ⟨d, hd, h⟩ := mem_iUnion₂.mp h
-        exact .inr (.inr (.inl ⟨d, hd.1, hd.2, h⟩))
-    · obtain ⟨C, hC, hw⟩ := mem_iUnion₂.mp hx
-      obtain ⟨y, hy, he⟩ := ((hcap C hC).2.2 ▸ ⟨⟨x, rfl⟩, hw⟩ : j x ∈ j '' C)
-      obtain rfl := hj.injective he
-      exact .inr (.inr (.inr (hbC hC hy)))
+  have hmem : ∀ {x C}, C ∈ cuffs S → j x ∈ cap C → x ∈ bd S := fun {x C} hC hw => by
+    obtain ⟨y, hy, he⟩ := ((hcap C hC).2.2 ▸ ⟨⟨x, rfl⟩, hw⟩ : j x ∈ j '' C)
+    obtain rfl := hj.injective he
+    exact hbC hC hy
+  have hbdcap : ∀ {x}, x ∈ bd S → j x ∈ ⋃ C ∈ cuffs S, cap C := fun {x} hx => by
+    let C : Set S := connectedComponentIn (bd S) x
+    have hC : C ∈ cuffs S := ⟨x, hx, rfl⟩
+    refine mem_iUnion₂.mpr ⟨C, hC, ?_⟩
+    have h3 : j x ∈ j '' C := ⟨x, mem_connectedComponentIn hx, rfl⟩
+    rw [← (hcap C hC).2.1] at h3
+    exact discBd_subset _ h3
   have hZends : Z ∩ j '' L ⊆ {j u, j v} := by
     rintro _ ⟨hZx, x, hx, rfl⟩
     by_contra hcon
     have hcu : x ≠ u := fun h => hcon (.inl (congrArg j h))
     have hcv : x ≠ v := fun h => hcon (.inr (congrArg j h))
-    rcases hZj hZx with h | h | ⟨d, hd, hne, h⟩ | h
-    · rcases hAL ⟨h, hx⟩ with h | h
-      · exact hcu h
-      · exact hcv h
-    · exact hLN x hx hcu hcv h
-    · exact hLN x hx hcu hcv (closure_inter_closure hc hd hne.symm ⟨hLcl hx, h⟩)
-    · exact hLbd x hx hcu hcv h
+    rcases hZx with ⟨y, hy, he⟩ | hxc
+    · obtain rfl := hj.injective he
+      exact (hAL ⟨hy, hx⟩).elim hcu hcv
+    · obtain ⟨C, hC, hw⟩ := mem_iUnion₂.mp hxc
+      exact hLbd x hx hcu hcv (hmem hC hw)
   have hl : IsLineWithEnds (j '' L) (j u) (j v) := hL.map_of_embedding hj.isEmbedding
-  have hjLb : j '' L ⊆ discBd (j '' closure c) := hbB ▸ image_mono hLb
+  have hjLb : j '' L ⊆ discBd (j '' E) := hbB ▸ image_mono hLb
   obtain ⟨D, γ, hDt, hγ, hDtb, hin, hDB, hDZ', hnb⟩ := disc_strip hT hB hl hjLb hZc hZends
   have hDr : D ⊆ range j := by
     intro z hz
@@ -254,29 +248,17 @@ theorem exists_strip [CompactSpace S] [T2Space S] [ConnectedSpace S] (hS : IsSur
     rw [← h1, hin]
     ext x
     simp only [mem_preimage, mem_insert_iff, mem_singleton_iff, hj.injective.eq_iff]
-  · have h1 : j ⁻¹' (D ∩ j '' closure c) = j ⁻¹' D ∩ closure c := by
+  · have h1 : j ⁻¹' (D ∩ j '' E) = j ⁻¹' D ∩ E := by
       rw [preimage_inter, preimage_image_eq _ hj.injective]
     rw [← h1, hDB, preimage_image_eq _ hj.injective]
   · rintro x ⟨hx, hxA⟩
-    rcases hDZ' ⟨hx, .inl ⟨x, .inl (.inl hxA), rfl⟩⟩ with h | h
+    rcases hDZ' ⟨hx, .inl ⟨x, hxA, rfl⟩⟩ with h | h
     · exact .inl (hj.injective h)
     · exact .inr (hj.injective h)
-  · rintro x ⟨hx, hxU⟩
-    have hends : j x ∈ Z → x ∈ L := fun hz => by
-      rcases hDZ' ⟨hx, hz⟩ with h | h
-      · rw [hj.injective h]
-        exact hL.left_mem
-      · rw [hj.injective h]
-        exact hL.right_mem
-    by_cases hxN : x ∈ Γ.N
-    · exact hends (.inl ⟨x, .inl (.inr hxN), rfl⟩)
-    obtain ⟨d, hd, hxd⟩ := exists_mem_arcComponentsIn (F := Γ.U \ Γ.N) (x := x) ⟨hxU, hxN⟩
-    by_cases hdc : d = c
-    · subst hdc
-      have h1 : j x ∈ D ∩ j '' closure d := ⟨hx, mem_image_of_mem _ (subset_closure hxd)⟩
-      rw [hDB] at h1
-      exact hj.injective.mem_set_image.mp h1
-    · exact hends (.inl ⟨x, .inr (mem_iUnion₂.mpr ⟨d, ⟨hd, hdc⟩, subset_closure hxd⟩), rfl⟩)
+  · rintro x ⟨hx, hxb⟩
+    rcases hDZ' ⟨hx, .inr (hbdcap hxb)⟩ with h | h
+    · exact .inl (hj.injective h)
+    · exact .inr (hj.injective h)
   · intro x hx hxu hxv
     have h1 := hnb (j x) (mem_image_of_mem _ hx) (fun h => hxu (hj.injective h)) (fun h => hxv
       (hj.injective h))
@@ -284,5 +266,45 @@ theorem exists_strip [CompactSpace S] [T2Space S] [ConnectedSpace S] (hS : IsSur
     rcases hy with h | h
     · exact .inl (hj.injective.mem_set_image.mp h)
     · exact .inr h
+
+/-- A thin disc on the far side of a side of a cell. -/
+theorem exists_strip [CompactSpace S] [T2Space S] [ConnectedSpace S] (hS : IsSurface S) {Γ :
+  Painting S} {c L A : Set S} {u v : S} (hc : c ∈ Γ.C) (hL : IsLineWithEnds L u v)
+    (hLb : L ⊆ discBd (closure c)) (hLbd : ∀ x ∈ L, x ≠ u → x ≠ v → x ∉ bd S) (hLN : ∀ x ∈ L, x ≠ u
+      → x ≠ v → x ∉ Γ.N) (hA : IsClosed A) (hAL : A ∩ L ⊆ {u, v}) :
+    ∃ St γ, IsClosedDisc St ∧ IsLineWithEnds γ u v ∧ discBd St = L ∪ γ ∧ L ∩ γ = {u, v}
+      ∧ St ∩ closure c = L ∧ St ∩ A ⊆ {u, v} ∧ St ∩ Γ.U ⊆ L ∧
+      ∀ x ∈ L, x ≠ u → x ≠ v → closure c ∪ St ∈ 𝓝 x := by
+  obtain ⟨hdisc, -, -, -⟩ := Γ.cell_disc c hc
+  let obstacle : Set S := A ∪ Γ.N ∪ ⋃ d ∈ Γ.C \ {c}, closure d
+  have hclosed : IsClosed obstacle := (hA.union Γ.finite_N.isClosed).union
+    ((Γ.finite_cells.subset sdiff_subset).isClosed_biUnion fun _ _ => isClosed_closure)
+  have hLcl : L ⊆ closure c := hLb.trans (discBd_subset _)
+  have hends : obstacle ∩ L ⊆ {u, v} := by
+    rintro x ⟨hx, hLx⟩
+    by_contra hxEnds
+    have hxu : x ≠ u := fun h => hxEnds (.inl h)
+    have hxv : x ≠ v := fun h => hxEnds (.inr h)
+    rcases hx with (hxA | hxN) | hxCells
+    · exact hxEnds (hAL ⟨hxA, hLx⟩)
+    · exact hLN x hLx hxu hxv hxN
+    · obtain ⟨d, hd, hxd⟩ := mem_iUnion₂.mp hxCells
+      have hdc : d ≠ c := hd.2
+      exact hLN x hLx hxu hxv (closure_inter_closure hc hd.1 hdc.symm ⟨hLcl hLx, hxd⟩)
+  obtain ⟨St, γ, hSt, hγ, hbd, hinter, hStc, hStObstacle, _, hnb⟩ :=
+    strip_along hS hdisc hL hLb hLbd hclosed hends
+  refine ⟨St, γ, hSt, hγ, hbd, hinter, hStc, fun _ hx => ?_, ?_, hnb⟩
+  · exact hStObstacle ⟨hx.1, Or.inl (Or.inl hx.2)⟩
+  · rintro x ⟨hxSt, hxU⟩
+    have obstacle_mem_imp_mem_line : x ∈ obstacle → x ∈ L := fun hx => by
+      rcases hStObstacle ⟨hxSt, hx⟩ with h | h
+      · exact h.symm ▸ hL.left_mem
+      · exact h.symm ▸ hL.right_mem
+    by_cases hxN : x ∈ Γ.N
+    · exact obstacle_mem_imp_mem_line (Or.inl (Or.inr hxN))
+    obtain ⟨d, hd, hxd⟩ := exists_mem_arcComponentsIn (F := Γ.U \ Γ.N) (x := x) ⟨hxU, hxN⟩
+    by_cases hdc : d = c
+    · exact hStc ▸ ⟨hxSt, hdc ▸ subset_closure hxd⟩
+    · exact obstacle_mem_imp_mem_line (Or.inr (mem_iUnion₂.mpr ⟨d, ⟨hd, hdc⟩, subset_closure hxd⟩))
 
 end GraphMinor.GM17

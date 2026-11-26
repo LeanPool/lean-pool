@@ -52,33 +52,15 @@ theorem radialDiscDeletion_isRadial
   let Y := r ∪ (D \ {v})
   have hfC : f ∈ C.E := hCE.symm ▸ Or.inr rfl
   have hΓ : Γ'.IsSubdrawing Γ := Drawing.span_isSubdrawing Γ _ _
-  have hn : (PaintingOrDrawing.drawing Γ).IsNormal C.U := by
-    rintro x ⟨hxC, hxΓ⟩
-    exact mem_singleton_iff.mp (hmeet.subset ⟨hxΓ, hxC⟩) ▸ hv
-  have hvC : v ∈ C.U := C.V_subset_U (hCV.symm ▸ Or.inl rfl)
-  have hFV : C.U ∩ Γ.V = {v} := by
-    apply Subset.antisymm
-    · rintro x ⟨hxC, hxΓ⟩
-      exact hmeet.subset ⟨Γ.V_subset_U hxΓ, hxC⟩
-    · rintro x hx
-      have hxv := mem_singleton_iff.mp hx
-      subst x
-      exact ⟨hvC, hv⟩
-  have hFr : C.U \ {v} ⊆ r := fun x hx => (hCZ hx.1).resolve_right hx.2
+  obtain ⟨hn, hvC, hFV, hFr, hY, hcover⟩ :=
+    radialDiscDeletion_region_facts hS hD hb hr hv hCZ hmeet
   have hbd : subBd D = C.U := (subBd_eq_frontier D).trans hb
   have htwo : (PaintingOrDrawing.drawing Γ').IsTwoCell :=
     theorem_7_2_twoCell hS hK.1 hD hbd hn hFV hr hFr
   have hpre : (PaintingOrDrawing.drawing Γ').IsPreRadialDrawing K' :=
     radialDiscDeletion_isPreRadial hS hK.2.1 hC hD hb hCV hr hv hur huK hCZ hmeet hfC hf
-  have hY : Y ∈ Γ'.R := theorem_7_2_region hS hD hbd hn hFV hr hFr
-  have hcover : Γ.U ⊆ Γ'.U ∪ Y :=
-    (drawing_U_subset_outside_normal_disc_union hb hn hvC).trans
-      (union_subset_union subset_rfl subset_union_right)
-  have huNew : u ∈ K'.V := by
-    have huf : u ∈ frontier D := hb.symm ▸ C.V_subset_U (hCV.symm ▸ Or.inr rfl)
-    rw [frontier_eq_closure_inter_closure] at huf
-    rw [radialDiscDeletion_V]
-    exact ⟨huK, by simpa only [compl_eq_univ_sdiff] using huf.2⟩
+  have huNew : u ∈ K'.V := radialDiscDeletion_mem_vertexSet_of_mem_frontier
+    (hb.symm ▸ C.V_subset_U (hCV.symm ▸ Or.inr rfl)) huK
   have hvNew : v ∈ Γ'.V := by
     have hvf : v ∈ frontier D := hb.symm ▸ hvC
     rw [frontier_eq_closure_inter_closure] at hvf

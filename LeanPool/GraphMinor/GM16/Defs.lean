@@ -145,6 +145,22 @@ graphs with $\le N + 1$ vertices (and the smallest such $N$ is of course the *tr
 def HasTreeWidthLE (G : Graph α β) (N : ℕ) : Prop :=
   HasTreeStructureOver {H : Graph α (β ⊕ ℕ) | V(H).encard ≤ (N + 1 : ℕ)} (liftEdgeInl G)
 
+/-- A tree structure over finite graphs has a finite vertex set. -/
+theorem HasTreeStructureOver.finite_vertexSet {C : Set (Graph α β)} {G : Graph α β}
+    (hG : HasTreeStructureOver C G) (hC : ∀ H ∈ C, V(H).Finite) : V(G).Finite := by
+  induction hG with
+  | base h => exact hC _ h
+  | cliqueSum hsum _ _ h₁ h₂ =>
+    obtain ⟨H₁, H₂, K, hsep, _, hsep₁, hsep₂⟩ := hsum
+    rw [← hsep.2.2.1]
+    exact (h₁.subset hsep₁.1.vertexSet_mono).union (h₂.subset hsep₂.1.vertexSet_mono)
+
+/-- A graph with a finite tree-width bound has a finite vertex set. -/
+theorem HasTreeWidthLE.finite_vertexSet {G : Graph α β} {N : ℕ} (hG : HasTreeWidthLE G N) :
+    V(G).Finite := by
+  rw [← vertexSet_liftEdgeInl G]
+  exact HasTreeStructureOver.finite_vertexSet hG fun _ hbound => Set.finite_of_encard_le_coe hbound
+
 /-- The surface `S` has a drawing of the graph `H`: `H` can be drawn in `S`
 (Graph Minors XVI, Section 1, page 44). -/
 def CanBeDrawnIn {α' : Type*} {β' : Type*} (S : Type w) [TopologicalSpace S]
@@ -199,6 +215,12 @@ def wagnerGraphV8 : Graph (Fin 8) (Fin 12) where
 $G$ a *($\le n$)-vertex extension* of $G'$." -/
 def IsVertexExtension (n : ℕ) (G G' : Graph α β) : Prop :=
   ∃ Z ⊆ V(G), Z.encard ≤ n ∧ deleteVertices G Z = G'
+
+/-- A vertex extension is witnessed by a finite deletion set of size at most its bound. -/
+theorem isVertexExtension_iff {n : ℕ} {G G' : Graph α β} :
+    IsVertexExtension n G G' ↔
+      ∃ Z ⊆ V(G), Z.Finite ∧ Z.ncard ≤ n ∧ deleteVertices G Z = G' := by
+  simp only [IsVertexExtension, Set.encard_le_coe_iff_finite_ncard_le, and_assoc]
 
 /-- Loose $(\le n)$-vertex extension: `G'` is a subgraph of `G` and there exists $Z \subseteq V(G)$
 with $|Z| \le n$ such that $G \setminus Z = G' \setminus Z$.

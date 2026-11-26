@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM14.Section7
 public import LeanPool.GraphMinor.GM11.CitedResults
 import LeanPool.GraphMinor.GM14.Section5
 import LeanPool.GraphMinor.GM11.OArcCircuit
+import LeanPool.GraphMinor.GM12.Section4WalkMetric
 
 /-!
 # Graph Minors XIV, Section 9 (Part 1): (9.1), (9.2), and (9.4)
@@ -254,23 +255,11 @@ theorem tangleMetric_region_edge_le [T2Space S] [ConnectedSpace S]
   · exact (GM11.tangleMetric_le_order hP _ _).trans hθ
   push Not at hθ
   have hT := hResp.2.1
-  have heG : e ∈ H.toHypergraph.edgeSet := he
-  have hsep := isSeparation_edgeHypergraph_deleteEdges heG
-  obtain ⟨a, b, hl⟩ := (H.toGraph.edge_mem_iff_exists_isLink e).mp he
-  have hends : H.toHypergraph.ends e ⊆ {a, b} := fun w hw => by
-    rw [← hl.2.2.2]
-    exact ⟨hw.2.2, hw.2.1⟩
-  have hefin : (H.toHypergraph.ends e).Finite := (toFinite ({a, b} : Set S)).subset hends
-  have h2 : (H.toHypergraph.ends e).ncard ≤ 2 :=
-    (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-  have hord : Hypergraph.separationOrder (edgeHypergraph H.toHypergraph e)
-      (H.toHypergraph.deleteEdges {e}) < θ := by
-    rw [separationOrder_edgeHypergraph_deleteEdges]
-    change (H.toHypergraph.ends e).ncard < θ
-    omega
-  have hAB : (edgeHypergraph H.toHypergraph e, H.toHypergraph.deleteEdges {e}) ∈ T :=
-    (hT.axiom1 hsep hord).resolve_right fun h => hT.axiom3 h rfl
-  obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ := GM14.theorem_7_2_proof hS ‹_› ⟨e, he⟩ hResp hK hd hAB rfl
+  have hefin : (H.toHypergraph.ends e).Finite :=
+    H.toHypergraph.vertexSet_finite.subset fun _ hx => H.toHypergraph.vertex_mem_of_inc hx
+  have h2 := GM12.drawing_edge_ends_ncard_le_two he
+  obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ :=
+    GM14.exists_circuit_around_drawing_edge hS ‹_› hResp (by omega) hK hd he
   have hT' : IsPretangle (PaintingOrDrawing.drawing H).toHypergraph θ T := hT.isPretangle
   have hs := GM11.isSlope_of_derived hS hT' hP.1 hd
   obtain ⟨-, -, hnice⟩ := GM11.ins_slope_facts hS hs hD hDs hDl
@@ -352,24 +341,12 @@ theorem atom_subset_walkUnion_of_three_le [T2Space S] [ConnectedSpace S]
   · have hE : H.E.Nonempty := edgeSet_nonempty_of_isTangle hResp.2.1 (by omega)
     have hrf := GM11.regionFacts_of_radial ⟨hK.1, hK.2.1⟩ hS hK.2.2 hE
     obtain ⟨e, he, her'⟩ := hrf.1 z' hr'
-    have heG : e ∈ H.toHypergraph.edgeSet := he
     have hT := hResp.2.1
-    have hsep := isSeparation_edgeHypergraph_deleteEdges heG
-    obtain ⟨a, b, hl⟩ := (H.toGraph.edge_mem_iff_exists_isLink e).mp he
-    have hends : H.toHypergraph.ends e ⊆ {a, b} := fun w hw => by
-      rw [← hl.2.2.2]
-      exact ⟨hw.2.2, hw.2.1⟩
-    have hefin : (H.toHypergraph.ends e).Finite := (toFinite ({a, b} : Set S)).subset hends
-    have h2 : (H.toHypergraph.ends e).ncard ≤ 2 :=
-      (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-    have hord : Hypergraph.separationOrder (edgeHypergraph H.toHypergraph e)
-        (H.toHypergraph.deleteEdges {e}) < θ := by
-      rw [separationOrder_edgeHypergraph_deleteEdges]
-      change (H.toHypergraph.ends e).ncard < θ
-      omega
-    have hAB : (edgeHypergraph H.toHypergraph e, H.toHypergraph.deleteEdges {e}) ∈ T :=
-      (hT.axiom1 hsep hord).resolve_right fun h => hT.axiom3 h rfl
-    obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ := GM14.theorem_7_2_proof hS ‹_› ⟨e, he⟩ hResp hK hd hAB rfl
+    have hefin : (H.toHypergraph.ends e).Finite :=
+      H.toHypergraph.vertexSet_finite.subset fun _ hx => H.toHypergraph.vertex_mem_of_inc hx
+    have h2 := GM12.drawing_edge_ends_ncard_le_two he
+    obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ :=
+      GM14.exists_circuit_around_drawing_edge hS ‹_› hResp (by omega) hK hd he
     have hT' : IsPretangle (PaintingOrDrawing.drawing H).toHypergraph θ T := hT.isPretangle
     have hs := GM11.isSlope_of_derived hS hT' hP.1 hd
     obtain ⟨-, -, hnice⟩ := GM11.ins_slope_facts hS hs hD hDs hDl
@@ -899,24 +876,11 @@ private theorem circuit_edge_closures_in_enlarged_restraint
   have hr'_sub_Y : r' ⊆ Y := by
     by_cases hze : z = e
     · have hz'_eq : r' = z' := hz'_uniq r' (hze.symm ▸ he_corr)
-      have heG : e ∈ H.toHypergraph.edgeSet := heH
-      have hsep := isSeparation_edgeHypergraph_deleteEdges heG
-      obtain ⟨a, b, hl⟩ := (H.toGraph.edge_mem_iff_exists_isLink e).mp heH
-      have hends : H.toHypergraph.ends e ⊆ {a, b} := fun w hw => by
-        rw [← hl.2.2.2]
-        exact ⟨hw.2.2, hw.2.1⟩
-      have hefin : (H.toHypergraph.ends e).Finite := (toFinite ({a, b} : Set S)).subset hends
-      have h2 : (H.toHypergraph.ends e).ncard ≤ 2 :=
-        (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-      have hord : Hypergraph.separationOrder (edgeHypergraph H.toHypergraph e)
-          (H.toHypergraph.deleteEdges {e}) < θ := by
-        rw [separationOrder_edgeHypergraph_deleteEdges]
-        change (H.toHypergraph.ends e).ncard < θ
-        omega
-      have hAB : (edgeHypergraph H.toHypergraph e, H.toHypergraph.deleteEdges {e}) ∈ T :=
-        (hResp.2.1.axiom1 hsep hord).resolve_right fun h => hResp.2.1.axiom3 h rfl
+      have hefin : (H.toHypergraph.ends e).Finite :=
+        H.toHypergraph.vertexSet_finite.subset fun _ hx => H.toHypergraph.vertex_mem_of_inc hx
+      have h2 := GM12.drawing_edge_ends_ncard_le_two heH
       obtain ⟨D, hD, hDs, hDl, hDV, heD⟩ :=
-        GM14.theorem_7_2_proof hS ‹_› ⟨e, heH⟩ hResp hK hd hAB rfl
+        GM14.exists_circuit_around_drawing_edge hS ‹_› hResp (by omega) hK hd heH
       obtain ⟨-, -, hnice⟩ := GM11.ins_slope_facts hS hsl hD hDs hDl
       obtain ⟨u, W₀, hW₀, -, hV, hE_D⟩ := id hD
       obtain ⟨W, hsu, hed⟩ := hDs.exists_walk_up W₀

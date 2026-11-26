@@ -27,7 +27,7 @@ drawing on a closed disc:
 - `exists_curve_of_half_nbhd`: any half-disc neighborhood at a boundary point of a closed disc
   contains a radial entry curve starting at that boundary point.
 - `exists_entry_path_of_spokes`: if at least two injective spokes meet at a point `c` in the plane,
-  then any open set `R_open` off the drawing with `c ∈ closure R_open` is entered by a continuous
+  then any set `R_open` off the drawing with `c ∈ closure R_open` is entered by a continuous
   curve starting at `c`.
 - `exists_entry_path_of_one_spoke` and `exists_entry_path_of_zero_spokes`: the corresponding entry
   curve existence results when `1` or `0` spokes meet at `c`.
@@ -312,12 +312,12 @@ private theorem isLineWithEnds_spoke_piece {sp : I → EuclideanPlane}
 /-! ## 5. Entry Curve for `≥ 2` Spokes (`exists_entry_path_of_spokes`) -/
 
 /-- If `2 ≤ Fintype.card ι` injective spokes meet at `c` and cover `U_full` outside a closed set
-`Bad` missing `c`, then any open set `R_open ⊆ U_fullᶜ` with `c ∈ closure R_open` has a preconnected
+`Bad` missing `c`, then any set `R_open ⊆ U_fullᶜ` with `c ∈ closure R_open` has a preconnected
 subset `P ⊆ U_fullᶜ` meeting `R_open` and a curve `α` starting at `c` with `α t ∈ P` for `t > 0`. -/
 theorem exists_entry_path_of_spokes
     {ι : Type*} [Fintype ι] (h2 : 2 ≤ Fintype.card ι)
     {c : EuclideanPlane} {U_full R_open : Set EuclideanPlane}
-    (_hR_open : IsOpen R_open) (hR_sub : R_open ⊆ U_fullᶜ) (hc_cl : c ∈ closure R_open)
+    (hR_sub : R_open ⊆ U_fullᶜ) (hc_cl : c ∈ closure R_open)
     (Bad : Set EuclideanPlane) (hBad : IsClosed Bad) (hcBad : c ∉ Bad)
     (sp : ι → I → EuclideanPlane)
     (hsp_cont : ∀ i, Continuous (sp i))

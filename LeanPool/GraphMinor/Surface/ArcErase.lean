@@ -418,6 +418,42 @@ theorem IsArcMap.exists_small {Y : Type u} [PseudoMetricSpace Y] {ℓ : 𝕀 →
     have h8 : (1 / N : ℝ) = 1 / (n + 1) := by simp [N]
     constructor <;> linarith
 
+/-- A finite family of arcs can be subdivided into small arcs covering the same set. -/
+theorem exists_small_arc_cover {Y : Type u} [PseudoMetricSpace Y] (G : List (𝕀 → Y))
+    (hG : ∀ g ∈ G, IsArcMap g) {δ : ℝ} (hδ : 0 < δ) :
+    ∃ L : List (𝕀 → Y), (∀ g ∈ L, IsArcMap g) ∧ (⋃ g ∈ L, range g) = (⋃ g ∈ G, range g) ∧
+      ∀ g ∈ L, ∀ x ∈ range g, ∀ y ∈ range g, dist x y < δ := by
+  induction G with
+  | nil =>
+    exact ⟨[], by simp, by simp, by simp⟩
+  | cons g G ih =>
+    obtain ⟨L₁, h1', h2', h3'⟩ := (hG g (.head _)).exists_small hδ
+    obtain ⟨L₂, h1'', h2'', h3''⟩ := ih (fun g' hg' => hG g' (.tail _ hg'))
+    refine ⟨L₁ ++ L₂, ?_, ?_, ?_⟩
+    · intro g' hg'
+      rcases List.mem_append.mp hg' with h | h
+      · exact h1' g' h
+      · exact h1'' g' h
+    · ext x
+      simp only [mem_iUnion, List.mem_append, exists_prop, List.mem_cons]
+      have e1 := Set.ext_iff.mp h2' x
+      have e2 := Set.ext_iff.mp h2'' x
+      simp only [mem_iUnion, exists_prop] at e1 e2
+      constructor
+      · rintro ⟨g', hg' | hg', hx⟩
+        · exact ⟨g, .inl rfl, e1.mp ⟨g', hg', hx⟩⟩
+        · obtain ⟨g'', h5, h6⟩ := e2.mp ⟨g', hg', hx⟩
+          exact ⟨g'', .inr h5, h6⟩
+      · rintro ⟨g', rfl | hg', hx⟩
+        · obtain ⟨g'', h5, h6⟩ := e1.mpr hx
+          exact ⟨g'', .inl h5, h6⟩
+        · obtain ⟨g'', h5, h6⟩ := e2.mpr ⟨g', hg', hx⟩
+          exact ⟨g'', .inr h5, h6⟩
+    · intro g' hg'
+      rcases List.mem_append.mp hg' with h | h
+      · exact h3' g' h
+      · exact h3'' g' h
+
 /-- **Taming two arcs.** Let `a` and `b` be two arcs with the same ends, meeting only in their ends,
 and let `G` be a finite union of arcs that misses the ends. Then `a` and `b` can be moved, by less
 than `ε`, so that the result has the same properties and the part of it off `G` is a finite union
@@ -456,44 +492,8 @@ theorem exists_tame_pair {Y : Type u} [MetricSpace Y] (G : List (𝕀 → Y)) (h
   have hδ : 0 < δ := lt_min hε (by positivity)
   have hδε : δ ≤ ε := min_le_left _ _
   have hδ3 : δ ≤ δ₀ / 3 := min_le_right _ _
-  -- cut `G` into small arcs
-  have hcut : ∃ L : List (𝕀 → Y), (∀ g ∈ L, IsArcMap g) ∧ (⋃ g ∈ L, range g) = G₀ ∧
-      ∀ g ∈ L, ∀ x ∈ range g, ∀ y ∈ range g, dist x y < δ := by
-    clear_value G₀
-    subst hG₀
-    clear hG₀c hdisj hthick hfar
-    induction G with
-    | nil =>
-      exact ⟨[], by simp, by simp, by simp⟩
-    | cons g G ih =>
-      obtain ⟨L₁, h1', h2', h3'⟩ := (hG g (.head _)).exists_small hδ
-      obtain ⟨L₂, h1'', h2'', h3''⟩ := ih (fun g' hg' => hG g' (.tail _ hg'))
-        (fun g' hg' => hp g' (.tail _ hg')) (fun g' hg' => hq g' (.tail _ hg'))
-      refine ⟨L₁ ++ L₂, ?_, ?_, ?_⟩
-      · intro g' hg'
-        rcases List.mem_append.mp hg' with h | h
-        · exact h1' g' h
-        · exact h1'' g' h
-      · ext x
-        simp only [mem_iUnion, List.mem_append, exists_prop, List.mem_cons]
-        have e1 := Set.ext_iff.mp h2' x
-        have e2 := Set.ext_iff.mp h2'' x
-        simp only [mem_iUnion, exists_prop] at e1 e2
-        constructor
-        · rintro ⟨g', hg' | hg', hx⟩
-          · exact ⟨g, .inl rfl, e1.mp ⟨g', hg', hx⟩⟩
-          · obtain ⟨g'', h5, h6⟩ := e2.mp ⟨g', hg', hx⟩
-            exact ⟨g'', .inr h5, h6⟩
-        · rintro ⟨g', rfl | hg', hx⟩
-          · obtain ⟨g'', h5, h6⟩ := e1.mpr hx
-            exact ⟨g'', .inl h5, h6⟩
-          · obtain ⟨g'', h5, h6⟩ := e2.mpr ⟨g', hg', hx⟩
-            exact ⟨g'', .inr h5, h6⟩
-      · intro g' hg'
-        rcases List.mem_append.mp hg' with h | h
-        · exact h3' g' h
-        · exact h3'' g' h
-  obtain ⟨L, hL1, hL2, hL3⟩ := hcut
+  obtain ⟨L, hL1, hcover, hL3⟩ := exists_small_arc_cover G hG hδ
+  have hL2 : (⋃ g ∈ L, range g) = G₀ := hcover
   have hLG : ∀ g ∈ L, range g ⊆ G₀ := fun g hg => by
     rw [← hL2]
     intro x hx

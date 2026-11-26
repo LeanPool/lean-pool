@@ -426,10 +426,10 @@ private theorem exists_region_entry_path_at_vertex
     let R_open : Set EuclideanPlane := ι '' (r \ bd S)
     Continuous ι → Function.Injective ι → IsClosedMap ι →
     (∀ x : S, ι x ∈ UnitCircle ↔ x ∈ bd S) →
-    IsOpen R_open → R_open ⊆ U_fullᶜ → ι p ∈ closure R_open →
+    R_open ⊆ U_fullᶜ → ι p ∈ closure R_open →
     ∃ α : C(I, S), α 0 = p ∧ ∀ t : I, 0 < (t : ℝ) → α t ∈ r \ bd S := by
   classical
-  intro ι U_full R_open hι_cont hι_inj hι_closed hι_bd hR_open hR_sub hc_cl
+  intro ι U_full R_open hι_cont hι_inj hι_closed hι_bd hR_sub hc_cl
   have : Nonempty S := ⟨p⟩
   obtain ⟨γ, hγ⟩ := GM11.exists_edgePar G
   let H := localHalfEdges G γ p
@@ -518,7 +518,7 @@ private theorem exists_region_entry_path_at_vertex
           · obtain ⟨y, ⟨t, rfl⟩⟩ := mem_iUnion.mp hxH
             exact Or.inr (mem_iUnion.mpr ⟨.inl y, ⟨t, rfl⟩⟩)
     obtain ⟨P, α, hP_conn, hP_disj, hP_inter, hα0, hαP⟩ :=
-      exists_entry_path_of_spokes h2 hR_open hR_sub hc_cl Bad hBad hcBad sp
+      exists_entry_path_of_spokes h2 hR_sub hc_cl Bad hBad hcBad sp
         hsp_cont hsp_zero hsp_inj hsp_disj hsp_sub hU_cover
     exact entry_path_of_plane e G hr hP_conn hP_disj hP_inter hα0 hαP
   · -- Interior vertex: p ∈ G.V \ bd S
@@ -554,7 +554,7 @@ private theorem exists_region_entry_path_at_vertex
             · obtain ⟨y, ⟨t, rfl⟩⟩ := mem_iUnion.mp hxH
               exact Or.inr (mem_iUnion.mpr ⟨y, ⟨t, rfl⟩⟩)
       obtain ⟨P, α, hP_conn, hP_disj, hP_inter, hα0, hαP⟩ :=
-        exists_entry_path_of_spokes h2 hR_open hR_sub hc_cl Bad hBad hcBad sp
+        exists_entry_path_of_spokes h2 hR_sub hc_cl Bad hBad hcBad sp
           hsp_cont hsp_zero hsp_inj hsp_disj hspoke_sub hU_cover
       exact entry_path_of_plane e G hr hP_conn hP_disj hP_inter hα0 hαP
     · by_cases h1 : Fintype.card H = 1
@@ -602,10 +602,10 @@ private theorem exists_region_entry_path_at_edge
     let R_open : Set EuclideanPlane := ι '' (r \ bd S)
     Continuous ι → Function.Injective ι → IsClosedMap ι →
     (∀ x : S, ι x ∈ UnitCircle ↔ x ∈ bd S) →
-    IsOpen R_open → R_open ⊆ U_fullᶜ → ι p ∈ closure R_open →
+    R_open ⊆ U_fullᶜ → ι p ∈ closure R_open →
     ∃ α : C(I, S), α 0 = p ∧ ∀ t : I, 0 < (t : ℝ) → α t ∈ r \ bd S := by
   classical
-  intro ι U_full R_open hι_cont hι_inj hι_closed hι_bd hR_open hR_sub hc_cl
+  intro ι U_full R_open hι_cont hι_inj hι_closed hι_bd hR_sub hc_cl
   have hp_not_bd : p ∉ bd S := fun hbd => hpV (hProper ⟨hbd, hpU⟩)
   have hpE_mem : ∃ e_edge ∈ G.E, p ∈ e_edge := by
     rw [G.U_eq] at hpU
@@ -751,7 +751,7 @@ private theorem exists_region_entry_path_at_edge
       · exact Or.inl (Or.inr ⟨x, Or.inl ⟨hxU, hxe⟩, rfl⟩)
   have h2_bool : 2 ≤ Fintype.card Bool := by simp
   obtain ⟨P, α, hP_conn, hP_disj, hP_inter, hα0, hαP⟩ :=
-    exists_entry_path_of_spokes h2_bool hR_open hR_sub hc_cl Bad hBad hcBad sp
+    exists_entry_path_of_spokes h2_bool hR_sub hc_cl Bad hBad hcBad sp
       hsp_cont hsp_zero hsp_inj hsp_disj hsp_sub hU_cover
   exact entry_path_of_plane e G hr hP_conn hP_disj hP_inter hα0 hαP
 
@@ -777,9 +777,6 @@ theorem exists_region_entry_path_of_mem_U
     Metric.isClosed_closedBall.isClosedEmbedding_subtypeVal.isClosedMap.comp e.symm.isClosedMap
   have hbd_img := image_bd_homeomorph e
   rw [bd_closedUnitDisc] at hbd_img
-  have hbd_closed : IsClosed (bd S) := by
-    rw [← hbd_img]
-    exact e.isClosedMap _ (Metric.isClosed_sphere.preimage continuous_subtype_val)
   have hι_bd : ∀ x : S, ι x ∈ UnitCircle ↔ x ∈ bd S := by
     intro x
     rw [← hbd_img]
@@ -791,40 +788,6 @@ theorem exists_region_entry_path_of_mem_U
   let U_full : Set EuclideanPlane := UnitCircle ∪ ι '' G.U
   let R_open : Set EuclideanPlane := ι '' (r \ bd S)
   have hr_open : IsOpen r := isOpen_region hDisc G hr
-  have hR_open : IsOpen R_open := by
-    have h1 : IsOpen (e ⁻¹' (r \ bd S)) :=
-      (hr_open.sdiff hbd_closed).preimage e.continuous
-    have h2 : Subtype.val '' (e ⁻¹' (r \ bd S)) = R_open := by
-      ext z
-      constructor
-      · rintro ⟨x, hx, rfl⟩
-        exact ⟨e x, hx, by simp [ι]⟩
-      · rintro ⟨y, hy, rfl⟩
-        exact ⟨e.symm y, by simpa using hy, rfl⟩
-    have hsub : Subtype.val '' (e ⁻¹' (r \ bd S)) ⊆ OpenUnitDisc := by
-      rw [h2]
-      rintro _ ⟨x, ⟨_, hxbd⟩, rfl⟩
-      have hle : ‖ι x‖ ≤ 1 := mem_closedBall_zero_iff.mp (e.symm x).2
-      have hne : ‖ι x‖ ≠ 1 := by
-        intro hnorm
-        exact hxbd ((hι_bd x).mp (by simpa [UnitCircle] using hnorm))
-      simpa [OpenUnitDisc] using lt_of_le_of_ne hle hne
-    rw [← h2]
-    obtain ⟨W, hW, hWeq⟩ := isOpen_induced_iff.mp h1
-    have h_eq : Subtype.val '' (e ⁻¹' (r \ bd S)) = W ∩ OpenUnitDisc := by
-      ext z
-      constructor
-      · intro hz
-        have hzO := hsub hz
-        rcases hz with ⟨x, hx, rfl⟩
-        rw [← hWeq] at hx
-        exact ⟨hx, hzO⟩
-      · rintro ⟨hzW, hzO⟩
-        let x : ClosedUnitDisc := ⟨z, Metric.ball_subset_closedBall hzO⟩
-        have hx : x ∈ e ⁻¹' (r \ bd S) := by rw [← hWeq]; exact hzW
-        exact ⟨x, hx, rfl⟩
-    rw [h_eq]
-    exact hW.inter Metric.isOpen_ball
   have hR_sub : R_open ⊆ U_fullᶜ := by
     rintro _ ⟨x, ⟨hxr, hxbd⟩, rfl⟩ (h_unit | ⟨y, hyU, hyx⟩)
     · exact hxbd ((hι_bd x).mp h_unit)
@@ -839,9 +802,9 @@ theorem exists_region_entry_path_of_mem_U
     exact image_closure_subset_closure_image hι_cont ⟨p, hp_cl', rfl⟩
   by_cases hpV : p ∈ G.V
   · exact exists_region_entry_path_at_vertex e G hProper hr hpU hpV
-      hι_cont hι_inj hι_closed hι_bd hR_open hR_sub hc_cl
+      hι_cont hι_inj hι_closed hι_bd hR_sub hc_cl
   · exact exists_region_entry_path_at_edge e G hProper hr hpU hpV
-      hι_cont hι_inj hι_closed hι_bd hR_open hR_sub hc_cl
+      hι_cont hι_inj hι_closed hι_bd hR_sub hc_cl
 
 /-- For any point `p ∈ closure r` of a region `r ∈ G.R` of a proper drawing `G` on a closed disc
 space `S`, there is a continuous curve `α : C(unitInterval, S)` with `α 0 = p` and `α t ∈ r` for all

@@ -177,9 +177,9 @@ def IsTreeSubgraph (T : (⊤ : SimpleGraph α).Subgraph) : Prop :=
 def IsLeafOf (T : (⊤ : SimpleGraph α).Subgraph) (v : α) : Prop :=
   v ∈ T.verts ∧ (T.neighborSet v).ncard = 1
 
-/-- The number of connected components of a subgraph `H`
-(Graph Minors I, Section 2, (2.8), page 48). -/
-noncomputable def numComponents (H : (⊤ : SimpleGraph α).Subgraph) : ℕ :=
-  Nat.card H.coe.ConnectedComponent
+/-- The number of connected components of a subgraph `H`, or `⊤` if there are infinitely many.
+For finite graphs this is the count in Graph Minors I, Section 2, (2.8), page 48. -/
+noncomputable def numComponents (H : (⊤ : SimpleGraph α).Subgraph) : ℕ∞ :=
+  ENat.card H.coe.ConnectedComponent
 
 end GraphMinor.GM01

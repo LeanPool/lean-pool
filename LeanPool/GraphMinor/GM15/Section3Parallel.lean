@@ -971,6 +971,32 @@ def leftSphereArc (r : ℝ) : Set ℂ :=
 def rightSphereArc (r : ℝ) : Set ℂ :=
   {z ∈ sphere (0 : ℂ) 1 | r ≤ z.re}
 
+private noncomputable def capNeg : ℂ ≃ₜ ℂ := (ContinuousLinearEquiv.neg ℝ : ℂ ≃L[ℝ] ℂ).toHomeomorph
+
+private theorem preimage_neg_leftOpenCap (r : ℝ) :
+    capNeg ⁻¹' leftOpenCap (-r) = rightOpenCap r := by
+  ext z
+  change -z ∈ leftOpenCap (-r) ↔ z ∈ rightOpenCap r
+  simp [leftOpenCap, rightOpenCap]
+
+private theorem preimage_neg_leftClosedCap (r : ℝ) :
+    capNeg ⁻¹' leftClosedCap (-r) = rightClosedCap r := by
+  ext z
+  change -z ∈ leftClosedCap (-r) ↔ z ∈ rightClosedCap r
+  simp [leftClosedCap, rightClosedCap]
+
+private theorem preimage_neg_leftSphereArc (r : ℝ) :
+    capNeg ⁻¹' leftSphereArc (-r) = rightSphereArc r := by
+  ext z
+  change -z ∈ leftSphereArc (-r) ↔ z ∈ rightSphereArc r
+  simp [leftSphereArc, rightSphereArc]
+
+private theorem preimage_neg_vertChord (r : ℝ) :
+    capNeg ⁻¹' vertChord (-r) = vertChord r := by
+  ext z
+  change -z ∈ vertChord (-r) ↔ z ∈ vertChord r
+  simp [vertChord]
+
 theorem isOpen_leftOpenCap (r : ℝ) : IsOpen (leftOpenCap r) :=
   isOpen_ball.inter (isOpen_lt Complex.continuous_re continuous_const)
 
@@ -1004,10 +1030,11 @@ theorem leftOpenCap_nonempty {r : ℝ} (hr : -1 < r) (hr1 : r < 1) :
 
 theorem rightOpenCap_nonempty {r : ℝ} (hr : -1 < r) (hr1 : r < 1) :
     (rightOpenCap r).Nonempty := by
-  refine ⟨⟨(r + 1) / 2, 0⟩, ?_, by dsimp; linarith⟩
-  rw [mem_ball_unit_iff]
-  dsimp
-  nlinarith
+  obtain ⟨z, hz⟩ := leftOpenCap_nonempty (r := -r) (by linarith) (by linarith)
+  refine ⟨-z, ?_⟩
+  rw [← preimage_neg_leftOpenCap]
+  change -(-z) ∈ leftOpenCap (-r)
+  simpa only [neg_neg] using hz
 
 theorem closure_leftOpenCap {r : ℝ} (hr : -1 < r) (hr1 : r < 1) :
     closure (leftOpenCap r) = leftClosedCap r := by
@@ -1051,43 +1078,8 @@ theorem closure_leftOpenCap {r : ℝ} (hr : -1 < r) (hr1 : r < 1) :
 
 theorem closure_rightOpenCap {r : ℝ} (hr : -1 < r) (hr1 : r < 1) :
     closure (rightOpenCap r) = rightClosedCap r := by
-  refine Subset.antisymm (closure_minimal ?_ (isClosed_rightClosedCap r)) ?_
-  · intro z hz
-    exact ⟨ball_subset_closedBall hz.1, hz.2.le⟩
-  · intro z hz
-    let z₀ : ℂ := ⟨(r + 1) / 2, 0⟩
-    have hz₀ : z₀ ∈ rightOpenCap r := by
-      refine ⟨?_, by dsimp [z₀]; linarith⟩
-      rw [mem_ball_unit_iff]; dsimp [z₀]; nlinarith
-    rw [_root_.mem_closure_iff]
-    intro U hU hzU
-    have hcont : Continuous (fun t : ℝ => (1 - t) • z + t • z₀) := by fun_prop
-    have h0 : (1 - (0 : ℝ)) • z + (0 : ℝ) • z₀ ∈ U := by simpa using hzU
-    obtain ⟨δ, hδ_pos, hδU⟩ := Metric.isOpen_iff.mp (hU.preimage hcont) 0 h0
-    let t : ℝ := min (δ / 2) (1 / 2)
-    have ht_pos : 0 < t := lt_min (by linarith) (by norm_num)
-    have ht_lt1 : t < 1 := lt_of_le_of_lt (min_le_right _ _) (by norm_num)
-    have ht_ball : t ∈ ball (0 : ℝ) δ := by
-      rw [mem_ball_zero_iff, Real.norm_of_nonneg ht_pos.le]
-      exact lt_of_le_of_lt (min_le_left _ _) (by linarith)
-    refine ⟨(1 - t) • z + t • z₀, hδU ht_ball, ?_⟩
-    refine ⟨?_, ?_⟩
-    · rw [mem_ball_zero_iff]
-      have hz_norm : ‖z‖ ≤ 1 := mem_closedBall_zero_iff.mp hz.1
-      have hz₀_norm : ‖z₀‖ < 1 := mem_ball_zero_iff.mp hz₀.1
-      calc ‖(1 - t) • z + t • z₀‖
-          ≤ ‖(1 - t) • z‖ + ‖t • z₀‖ := norm_add_le _ _
-        _ = (1 - t) * ‖z‖ + t * ‖z₀‖ := by
-            rw [norm_smul, norm_smul, Real.norm_of_nonneg (by linarith),
-              Real.norm_of_nonneg ht_pos.le]
-        _ < (1 - t) * 1 + t * 1 := by nlinarith
-        _ = 1 := by ring
-    · show r < ((1 - t) • z + t • z₀).re
-      simp only [Complex.add_re, Complex.real_smul, Complex.mul_re, Complex.ofReal_re,
-        Complex.ofReal_im, zero_mul, sub_zero]
-      have hz_re : r ≤ z.re := hz.2
-      have hz₀_re : r < z₀.re := hz₀.2
-      nlinarith
+  rw [← preimage_neg_leftOpenCap, ← capNeg.preimage_closure,
+    closure_leftOpenCap (r := -r) (by linarith) (by linarith), preimage_neg_leftClosedCap]
 
 theorem leftClosedCap_sdiff_leftOpenCap (r : ℝ) :
     leftClosedCap r \ leftOpenCap r = leftSphereArc r ∪ vertChord r := by
@@ -1107,19 +1099,9 @@ theorem leftClosedCap_sdiff_leftOpenCap (r : ℝ) :
 
 theorem rightClosedCap_sdiff_rightOpenCap (r : ℝ) :
     rightClosedCap r \ rightOpenCap r = rightSphereArc r ∪ vertChord r := by
-  ext z
-  simp only [rightClosedCap, rightOpenCap, rightSphereArc, vertChord, mem_sdiff, mem_union,
-    mem_ofPred_eq, mem_closedBall_zero_iff, mem_ball_zero_iff, mem_sphere_zero_iff_norm]
-  constructor
-  · rintro ⟨⟨h1, h2⟩, hnot⟩
-    by_cases h_eq1 : ‖z‖ = 1
-    · exact Or.inl ⟨h_eq1, h2⟩
-    · have hlt1 : ‖z‖ < 1 := lt_of_le_of_ne h1 h_eq1
-      have h_le : z.re ≤ r := not_lt.mp (fun hlt => hnot ⟨hlt1, hlt⟩)
-      exact Or.inr ⟨h1, le_antisymm h_le h2⟩
-  · rintro (⟨h1, h2⟩ | ⟨h1, rfl⟩)
-    · exact ⟨⟨h1.le, h2⟩, fun ⟨hlt, _⟩ => hlt.ne h1⟩
-    · exact ⟨⟨h1, le_rfl⟩, fun ⟨_, hlt⟩ => hlt.ne rfl⟩
+  rw [← preimage_neg_leftClosedCap, ← preimage_neg_leftOpenCap, ← preimage_sdiff,
+    leftClosedCap_sdiff_leftOpenCap, preimage_union, preimage_neg_leftSphereArc,
+    preimage_neg_vertChord]
 
 /-- Angular parametrization of the left circular arc `leftSphereArc (cos θ₀)` for `θ₀ ∈ (0, π)`. -/
 noncomputable def leftSphereArcMap (θ₀ : ℝ) (s : unitInterval) : ℂ :=

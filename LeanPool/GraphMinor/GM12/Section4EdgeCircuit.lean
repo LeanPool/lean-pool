@@ -37,22 +37,8 @@ theorem edge_small_side_mem_of_order_three
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hT : IsTangle Γ.toHypergraph θ T) (hθ : 2 < θ)
     {e : Set S} (he : e ∈ Γ.E) :
-    (edgeHypergraph Γ.toHypergraph e, Γ.toHypergraph.deleteEdges {e}) ∈ T := by
-  have hsep := isSeparation_edgeHypergraph_deleteEdges (G := Γ.toHypergraph) he
-  obtain ⟨a, b, hl⟩ := Γ.toGraph.exists_isLink_of_mem_edgeSet he
-  have hends : Γ.toHypergraph.ends e ⊆ {a, b} := by
-    intro w hw
-    rw [← hl.2.2.2]
-    exact ⟨hw.2.2, hw.2.1⟩
-  have hcount : (Γ.toHypergraph.ends e).ncard ≤ 2 :=
-    (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-  have hord : separationOrder (edgeHypergraph Γ.toHypergraph e)
-      (Γ.toHypergraph.deleteEdges {e}) ≤ 2 := by
-    rw [separationOrder_edgeHypergraph_deleteEdges]
-    exact hcount
-  have hlt : separationOrder (edgeHypergraph Γ.toHypergraph e)
-      (Γ.toHypergraph.deleteEdges {e}) < θ := hord.trans_lt hθ
-  exact (hT.axiom1 hsep hlt).resolve_right fun h => hT.axiom3 h rfl
+    (edgeHypergraph Γ.toHypergraph e, Γ.toHypergraph.deleteEdges {e}) ∈ T :=
+  drawing_edge_small_side_mem_of_order_three hT hθ he
 
 /-- An edge is enclosed by a short radial circuit with at most two
 original vertices, providing the local metric witness in XII (4.3). -/
@@ -67,21 +53,9 @@ theorem exists_radial_circuit_around_edge
     ∃ C : Drawing S, C.IsCircuit ∧ C.IsSubdrawing K ∧ C.length < 2 * θ ∧
       (C.V ∩ Γ.V).ncard ≤ 2 ∧ e ⊆ ins C := by
   have hsep := isSeparation_edgeHypergraph_deleteEdges (G := Γ.toHypergraph) he
-  obtain ⟨a, b, hl⟩ := Γ.toGraph.exists_isLink_of_mem_edgeSet he
-  have hends : Γ.toHypergraph.ends e ⊆ {a, b} := by
-    intro w hw
-    rw [← hl.2.2.2]
-    exact ⟨hw.2.2, hw.2.1⟩
-  have hcount : (Γ.toHypergraph.ends e).ncard ≤ 2 :=
-    (ncard_le_ncard hends (toFinite _)).trans ((ncard_insert_le a {b}).trans (by simp))
-  have hord : separationOrder (edgeHypergraph Γ.toHypergraph e)
-      (Γ.toHypergraph.deleteEdges {e}) ≤ 2 := by
-    rw [separationOrder_edgeHypergraph_deleteEdges]
-    exact hcount
-  have hlt : separationOrder (edgeHypergraph Γ.toHypergraph e)
-      (Γ.toHypergraph.deleteEdges {e}) < θ := hord.trans_lt hθ
-  have hm : (edgeHypergraph Γ.toHypergraph e, Γ.toHypergraph.deleteEdges {e}) ∈ T :=
-    (hT.2.1.axiom1 hsep hlt).resolve_right fun h => hT.2.1.axiom3 h rfl
+  have hord := drawing_edge_separation_order_le_two he
+  have hlt := hord.trans_lt hθ
+  have hm := edge_small_side_mem_of_order_three hT.2.1 hθ he
   obtain ⟨C, hC, hCs, hCl, hCV, heC⟩ :=
     (theorem_1_1_proof hS hT ⟨e, he⟩ hK hd hsep hlt).mp hm e (mem_singleton e)
   exact ⟨C, hC, hCs, hCl,

@@ -8,7 +8,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 public import LeanPool.GraphMinor.GM09.Defs
-import LeanPool.GraphMinor.GM09.Basic
+public import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM09.Section2d
 import LeanPool.GraphMinor.GM09.Section3a
 
@@ -28,15 +28,6 @@ universe u v w
 variable {α : Type u} {β : Type v} {γ : Type w}
 
 /-! ## Helper definitions and lemmas for (11.6) -/
-
-/-- The single-vertex edgeless subgraph `A_v` of `G` with `V(A_v) = {v}` and `E(A_v) = ∅`. -/
-def singleVertexSubgraph (G : Graph α β) (v : α) : Graph α β := (G.induce {v}).restrict ∅
-@[simp] theorem vertexSet_singleVertexSubgraph (G : Graph α β) (v : α) : V(singleVertexSubgraph G
-  v) = {v} := rfl
-@[simp] theorem edgeSet_singleVertexSubgraph (G : Graph α β) (v : α) :
-    E(singleVertexSubgraph G v) = ∅ := by simp [singleVertexSubgraph]
-theorem singleVertexSubgraph_le {G : Graph α β} {v : α} (hv : v ∈ V(G)) :
-    singleVertexSubgraph G v ≤ G := restrict_le.trans (G.induce_le (singleton_subset_iff.mpr hv))
 
 /-- The single-edge subgraph `A_e` of `G` consisting of `e` and its ends. -/
 def singleEdgeSubgraph (G : Graph α β) (e : β) : Graph α β := (G.induce {u : α | G.Inc e
@@ -62,15 +53,6 @@ theorem singleEdgeSubgraph_isLink {G : Graph α β} {e f : β} {x y : α} :
   · obtain rfl : f = e := mem_singleton_iff.mp hf.2; exact ⟨rfl, hlink⟩
   · rw [edgeSet_singleEdgeSubgraph hlink.edge_mem]; exact ⟨hlink, rfl⟩
 
-/-- The subgraph `G \ e` obtained by deleting a single edge `e` from `G` while keeping all vertices.
--/
-def deleteSingleEdge (G : Graph α β) (e : β) : Graph α β := G.restrict (E(G) \ {e})
-@[simp] theorem vertexSet_deleteSingleEdge (G : Graph α β) (e : β) : V(deleteSingleEdge G e) = V(G)
-  := rfl
-@[simp] theorem edgeSet_deleteSingleEdge (G : Graph α β) (e : β) : E(deleteSingleEdge G e)
-  = E(G) \ {e} := by
-  unfold deleteSingleEdge; rw [edgeSet_restrict, inter_eq_right]; exact sdiff_subset
-theorem deleteSingleEdge_le (G : Graph α β) (e : β) : deleteSingleEdge G e ≤ G := restrict_le
 theorem isGraphPathWithEnds_singleEdgeSubgraph {G : Graph α β} {e : β} {u v : α}
     (huv : u ≠ v) (hlink : G.IsLink e u v) :
     IsGraphPathWithEnds (singleEdgeSubgraph G e) (singleEdgeSubgraph G e) u v := by

@@ -37,6 +37,37 @@ variable {α : Type u} {β : Type v}
 
 /-! ## Subgraph operations (`subgraphUnion`, `subgraphInter`, `subgraphSUnion`, `deleteVertices`) -/
 
+/-- The edgeless graph on the single vertex `v`. -/
+@[expose] def singleVertexSubgraph (G : Graph α β) (v : α) : Graph α β :=
+  (G.induce {v}).restrict ∅
+
+@[simp]
+theorem vertexSet_singleVertexSubgraph (G : Graph α β) (v : α) :
+    V(singleVertexSubgraph G v) = {v} := rfl
+
+@[simp]
+theorem edgeSet_singleVertexSubgraph (G : Graph α β) (v : α) :
+    E(singleVertexSubgraph G v) = ∅ := by simp [singleVertexSubgraph]
+
+theorem singleVertexSubgraph_le {G : Graph α β} {v : α} (hv : v ∈ V(G)) :
+    singleVertexSubgraph G v ≤ G := restrict_le.trans (G.induce_le (singleton_subset_iff.mpr hv))
+
+/-- Delete a single edge `e` while keeping all vertices. -/
+@[expose] def deleteSingleEdge (G : Graph α β) (e : β) : Graph α β :=
+  G.restrict (E(G) \ {e})
+
+@[simp]
+theorem vertexSet_deleteSingleEdge (G : Graph α β) (e : β) :
+    V(deleteSingleEdge G e) = V(G) := rfl
+
+@[simp]
+theorem edgeSet_deleteSingleEdge (G : Graph α β) (e : β) :
+    E(deleteSingleEdge G e) = E(G) \ {e} := by
+  rw [deleteSingleEdge, edgeSet_restrict, inter_eq_right.mpr sdiff_subset]
+
+theorem deleteSingleEdge_le (G : Graph α β) (e : β) :
+    deleteSingleEdge G e ≤ G := restrict_le
+
 @[simp]
 theorem vertexSet_subgraphUnion (G G₁ G₂ : Graph α β) :
     V(subgraphUnion G G₁ G₂) = V(G₁) ∪ V(G₂) := rfl

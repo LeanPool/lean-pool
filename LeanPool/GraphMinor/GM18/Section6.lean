@@ -354,6 +354,7 @@ theorem lemma_6_7_claim_3
       have hrob_PA : P_A.IsRobust := by
         have hrob_part : (toPartialPatchwork P).IsRobust := hrob
         exact isRobust_restrict hrob_part hcompA.le
+      refine ⟨A.rootSet_finite, ?_⟩
       intro X₁ hX₁ X₂ hX₂ hcard hdisj
       change X₁ ⊆ A.rootSet at hX₁
       change X₂ ⊆ A.rootSet at hX₂
