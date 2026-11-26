@@ -25,8 +25,7 @@ is stated over the actual drawings and paintings of `GraphMinor/Surface/Defs.lea
 - **Section 3:** the type `PaintingOrDrawing` for the paper's "painting or drawing". Subdrawings:
   `Drawing.span` builds the subdrawing with given vertices and edges, and adds the ends of the
   edges. Circuits and paths (`Drawing.IsCircuit`, `Drawing.IsPathBetween`). Radial drawings
-  (`PaintingOrDrawing.IsRadialDrawing`). Walks: concatenation, reverse, `Γ | W`, curves that trace
-  a walk (`WalkTraces`) and homotopy of walks (`WalkHomotopicIn`).
+  (`PaintingOrDrawing.IsRadialDrawing`). Walks: concatenation, reverse, and `Γ | W`.
 - **Section 4:** `Γ ∩ Δ` (`PaintingOrDrawing.inter`), respectful tangles, slopes (`IsSlope`),
   capture, confined subdrawings, `ins(Γ')` (`insOf`), non-separable drawings.
 - **Section 5:** weightings, `N(Z)`, small sets.
@@ -457,44 +456,6 @@ $\{e_1, e_2, \dots, e_t\}$"
 (Graph Minors XI, Section 3, page 77). `U(W)` is `(walkDrawing Γ W).U`. -/
 def walkDrawing (Γ : Drawing S) {u v : S} (W : GraphWalk Γ.toGraph u v) : Drawing S :=
   Γ.span {x | x ∈ W.support} {e | e ∈ W.edges}
-
-/-- The extension of a curve to all of `ℝ`, constant outside `[0, 1]`. -/
-noncomputable def curveExtend (φ : Curve S) : ℝ → S :=
-  fun t => φ (projIcc 0 1 zero_le_one t)
-
-/-- The curve `φ`, on the interval `[a, b]`, traces the walk: there are numbers
-`a = x₀ ≤ x₁ ≤ … ≤ x_t = b` such that `φ(x_i) = v_i`, and `φ(x) ∈ closure e_i` for
-`x_{i-1} ≤ x ≤ x_i`. -/
-def TracesOn (Γ : Drawing S) (φ : ℝ → S) : (a b : ℝ) → {u v : S} → GraphWalk Γ.toGraph u v → Prop
-  | a, b, u, _, .nil _ => a = b ∧ φ a = u
-  | a, b, u, _, .cons (e := e) _ rest =>
-      ∃ c, a ≤ c ∧ φ a = u ∧ (∀ x ∈ Icc a c, φ x ∈ closure e) ∧ TracesOn Γ φ c b rest
-
-/-- A curve `φ` *traces* the walk `W = v₀, e₁, …, e_t, v_t` (Graph Minors XI, Section 3, page 77):
-"there are numbers $0 = x_0 \le x_1 \le \dots \le x_t = 1$ such that (i) for $0 \le i \le t$,
-$\phi(x_i) = v_i$, and (ii) for $1 \le i \le t$ and $x_{i-1} \le x \le x_i$,
-$\phi(x) \in \bar{e}_i$". For `t = 0` the condition `0 = x₀ = 1` of the paper cannot hold as
-written; a curve traces a walk of length zero when it is constant at its vertex, which is what the
-paper's use of these walks requires ("*null-homotopic in* $Z$ if it is homotopic in $Z$ to a walk of
-length zero"). -/
-def WalkTraces (Γ : Drawing S) (φ : Curve S) {u v : S} (W : GraphWalk Γ.toGraph u v) : Prop :=
-  (W.length = 0 ∧ ∀ x, φ x = u) ∨ (0 < W.length ∧ TracesOn Γ (curveExtend φ) 0 1 W)
-
-/-- `W` is *homotopic in `Z`* to `W'` (Graph Minors XI, Section 3, pages 77–78): "(i) every loop of
-$W$ and every loop of $W'$ is null-homotopic in $Z$, and ... (ii) there exist
-curves $\phi, \phi'$ tracing $W, W'$, respectively, such that $\phi$ is homotopic in $Z$ to
-$\phi'$". -/
-def WalkHomotopicIn (Γ : Drawing S) (Z : Set S) {u v u' v' : S} (W : GraphWalk Γ.toGraph u v)
-    (W' : GraphWalk Γ.toGraph u' v') : Prop :=
-  (∀ e ∈ W.edges, Γ.IsLoop e → IsNullHomotopicOArcIn Z (closure e)) ∧
-  (∀ e ∈ W'.edges, Γ.IsLoop e → IsNullHomotopicOArcIn Z (closure e)) ∧
-  ∃ φ φ' : Curve S, WalkTraces Γ φ W ∧ WalkTraces Γ φ' W' ∧ CurvesHomotopicIn Z φ φ'
-
-/-- `W` is *null-homotopic in `Z`* (Graph Minors XI, Section 3, page 78): "homotopic in $Z$ to a
-walk of length zero". -/
-def WalkNullHomotopicIn (Γ : Drawing S) (Z : Set S) {u v : S} (W : GraphWalk Γ.toGraph u v) : Prop
-  :=
-  ∃ (x : S) (W₀ : GraphWalk Γ.toGraph x x), W₀.length = 0 ∧ WalkHomotopicIn Γ Z W W₀
 
 /-! ## Section 4: slopes -/
 

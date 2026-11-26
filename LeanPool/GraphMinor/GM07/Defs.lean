@@ -58,8 +58,7 @@ This matches `GraphMinor.Surface.Drawing S` from `GraphMinor/Surface/Defs.lean`:
   `IsPointInsideSurroundingOArc`, `IsPointInsideOArc`, `IsInsideOArc`, `IsBoundaryLinked`.
 - **Section 7 (Adding New Cuffs, pages 238–241):** `IsScriptASet`, `IsInnerHole`,
   `cuffInsideSet` (`Δ_r(C)`), `allCuffsInsideSet` (`Δ_r`).
-- **Section 8 (Schisms, pages 241–242):** `IsX1Arc`, `IsX2Arc`, `IsX3Arc`, `IsX4ArcWithEnd`,
-  `IsX4Arc`, `IsSchismatic`, `IsSchism`, `omega` (`ω(G)`).
+- **Section 8 (Schismatic sets, page 241):** `IsX1Arc`, `IsX2Arc`, `IsX3Arc`, `IsSchismatic`.
 - **Section 9 (Minors, pages 242–246):** `SurfaceDigraph` (`(G, G⁺, G⁻)`),
   `SurfaceDigraph.IsProper`, `IsBoundaryRootedMinor`, `IsDigraphMinor`,
   `numInternalIsolatedVertices`, `GM07Theorem91Statement`, `GM07Theorem92Statement`,
@@ -663,7 +662,7 @@ $\mathcal{A}_r(C) \ne \emptyset$."
 def allCuffsInsideSet (G : Drawing S) (r : ℕ) : Set S :=
   ⋃ C ∈ {C ∈ cuffs S | (scriptA G r C).Nonempty}, cuffInsideSet G r C
 
-/-! ## Section 8: Schisms (pages 241–242) -/
+/-! ## Section 8: Schismatic sets (page 241) -/
 
 /-- An `X₁`-arc in `Σ` (Graph Minors VII, Section 8, page 241):
 "$G_1$ has exactly two vertices ($u$, $v$ say) and three edges, one a loop on $u$, one a loop
@@ -692,20 +691,6 @@ def IsX3Arc (X : Set S) : Prop :=
     u ≠ v ∧ IsLineWithEnds P₁ u v ∧ IsLineWithEnds P₂ u v ∧ IsLineWithEnds P₃ u v ∧
     P₁ ∩ P₂ = {u, v} ∧ P₁ ∩ P₃ = {u, v} ∧ P₂ ∩ P₃ = {u, v} ∧ X = P₁ ∪ P₂ ∪ P₃
 
-/-- An `X₄`-arc in `Σ` with end `w` (Graph Minors VII, Section 8, page 241):
-"Let $X_4$ be the topological space of the graph $G_4$ consisting of two vertices and two
-edges, with exactly one loop. The *end* of an $X_4$-arc is defined to be the point
-representing the monovalent vertex of $G_4$." Thus `X` is the union of an `O`-arc `A` and a `[0,
-1]`-arc `P` with ends `u, w`
-such that `P ∩ A = {u}` and `w ∉ A`. -/
-def IsX4ArcWithEnd (X : Set S) (w : S) : Prop :=
-  ∃ A P : Set S, ∃ u : S,
-    IsOArc A ∧ IsLineWithEnds P u w ∧ u ≠ w ∧ P ∩ A = {u} ∧ X = A ∪ P
-
-/-- `X` is an `X₄`-arc in `Σ` (Graph Minors VII, Section 8, page 241). -/
-def IsX4Arc (X : Set S) : Prop :=
-  ∃ w : S, IsX4ArcWithEnd X w
-
 /-- "We say that $X \subseteq \Sigma$ is *schismatic* if $X$ is either an $O$-arc or an $X_i$-arc
 for some $i$, and $X$ is not near-planar, and every proper subset of $X$ which is an $O$-arc
 is near-planar."
@@ -714,51 +699,6 @@ def IsSchismatic (X : Set S) : Prop :=
   (IsOArc X ∨ IsX1Arc X ∨ IsX2Arc X ∨ IsX3Arc X) ∧
   ¬ IsNearPlanar X ∧
   ∀ F : Set S, IsOArc F → F ⊂ X → IsNearPlanar F
-
-/-- "By a *schism* in a surface $\Sigma \cong \Sigma(a, b, c)$ where $3a + 3b + c \ge 3$ we mean
-a subset of $\Sigma$ which is one of the following: (i) An $O$-arc $F$ which is not
-near-planar, with $|F \cap bd(\Sigma)| \le 1$, (ii) a proper $I$-arc with its ends in
-distinct cuffs, (iii) a proper $I$-arc $F$ with its ends in the same cuff $C$, such that $F
-\cup C$ is not near-planar, ... (iv) an $X_1$-arc or $X_2$-arc such that both its $O$-arcs
-surround distinct cuffs of $\Sigma$, and which contains no point of $bd(\Sigma)$, (v) an
-$X_3$-arc such that all three of its $O$-arcs surround distinct cuffs, and which contains no
-point of $bd(\Sigma)$, (vi) an $X_4$-arc with its end in one cuff and its $O$-arc
-surrounding another cuff, containing only one point of $bd(\Sigma)$."
-(Graph Minors VII, Section 8, pages 241–242). -/
-def IsSchism (X : Set S) : Prop :=
-  -- (i) An O-arc F which is not near-planar, with |F ∩ bd(Σ)| ≤ 1
-  (IsOArc X ∧ ¬ IsNearPlanar X ∧ (X ∩ bd S).Finite ∧ (X ∩ bd S).ncard ≤ 1) ∨
-  -- (ii) a proper I-arc with its ends in distinct cuffs
-  (IsProperIArc X ∧ ∃ C₁ ∈ cuffs S, ∃ C₂ ∈ cuffs S, C₁ ≠ C₂ ∧
-    (lineEnds X ∩ C₁).Nonempty ∧ (lineEnds X ∩ C₂).Nonempty) ∨
-  -- (iii) a proper I-arc F with its ends in the same cuff C, such that F ∪ C is not near-planar
-  (IsProperIArc X ∧ ∃ C ∈ cuffs S, lineEnds X ⊆ C ∧ ¬ IsNearPlanar (X ∪ C)) ∨
-  -- (iv) an X₁-arc or X₂-arc such that both its O-arcs surround distinct cuffs of Σ, and which
-  -- contains no point of bd(Σ)
-  ((IsX1Arc X ∨ IsX2Arc X) ∧ X ∩ bd S = ∅ ∧
-    ∃ A₁ A₂ C₁ C₂ : Set S, IsOArc A₁ ∧ IsOArc A₂ ∧ A₁ ⊆ X ∧ A₂ ⊆ X ∧
-      C₁ ∈ cuffs S ∧ C₂ ∈ cuffs S ∧ C₁ ≠ C₂ ∧
-      SurroundsCuff A₁ C₁ ∧ SurroundsCuff A₂ C₂) ∨
-  -- (v) an X₃-arc such that all three of its O-arcs surround distinct cuffs, and which contains no
-  -- point of bd(Σ)
-  (IsX3Arc X ∧ X ∩ bd S = ∅ ∧
-    ∃ A₁ A₂ A₃ C₁ C₂ C₃ : Set S,
-      IsOArc A₁ ∧ IsOArc A₂ ∧ IsOArc A₃ ∧ A₁ ⊆ X ∧ A₂ ⊆ X ∧ A₃ ⊆ X ∧
-      C₁ ∈ cuffs S ∧ C₂ ∈ cuffs S ∧ C₃ ∈ cuffs S ∧
-      C₁ ≠ C₂ ∧ C₁ ≠ C₃ ∧ C₂ ≠ C₃ ∧
-      SurroundsCuff A₁ C₁ ∧ SurroundsCuff A₂ C₂ ∧ SurroundsCuff A₃ C₃) ∨
-  -- (vi) an X₄-arc with its end in one cuff and its O-arc surrounding another cuff, containing only
-  -- one point of bd(Σ)
-  (∃ w : S, ∃ A P C₁ C₂ : Set S, ∃ u : S,
-    IsOArc A ∧ IsLineWithEnds P u w ∧ u ≠ w ∧ P ∩ A = {u} ∧ X = A ∪ P ∧
-    C₁ ∈ cuffs S ∧ C₂ ∈ cuffs S ∧ C₁ ≠ C₂ ∧
-    w ∈ C₁ ∧ SurroundsCuff A C₂ ∧ X ∩ bd S = {w})
-
-/-- "If $G$ is a proper graph in $\Sigma$, let us define $\omega(G)$ to be the minimum of $|V(G)
-\cap X|$ taken over all $G$-normal schisms $X$ in $\Sigma$."
-(Graph Minors VII, Section 8, page 242). -/
-noncomputable def omega (G : Drawing S) : ℕ :=
-  sInf {n : ℕ | ∃ X : Set S, G.IsNormal X ∧ IsSchism X ∧ (G.V ∩ X).ncard = n}
 
 /-! ## Section 9: Minors (pages 242–246) -/
 

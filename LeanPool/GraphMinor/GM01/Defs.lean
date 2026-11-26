@@ -40,11 +40,10 @@ so that the proofs can delete and contract edges as in the paper.
   walk `walk : (⊤ : SimpleGraph α).Walk first last` with `walk.IsPath`. Its subgraph is
   `P.toSubgraph`, its vertex set is `P.verts`, its ends are `P.ends = {P.first, P.last}`, and its
   internal vertices are `P.internalVerts = P.verts \ P.ends`.
-* `Path.Precedes`, `Path.MeetsInOrder`, `Path.IsFirstGe`: the order of vertices along a path.
+* `Path.Precedes`: the order of vertices along a path.
 * `Path.IsIn`, `Path.IsFromTo`, `Path.Avoids`, `Separates`: paths in `G`, paths from `A₁` to `A₂`,
   paths avoiding `X`, and vertex sets `X` separating `Y` and `Z` in `G`.
-* `IsDisjointPathFamily`, `IsUniqueDisjointPathFamily`: families of disjoint paths from `A₁` to
-  `A₂`, and uniqueness of such a set of paths as in (2.5) and (2.6).
+* `IsDisjointPathFamily`: families of disjoint paths from `A₁` to `A₂`.
 * `IsStarWithCenter`, `IsStar`, `IsTreeSubgraph`, `IsLeafOf`, `numComponents`: stars, trees,
   end-vertices, and the number of connected components of a subgraph.
 -/
@@ -141,17 +140,6 @@ def Precedes (u v : α) : Prop :=
   ∃ (i j : ℕ) (hi : i < P.walk.support.length) (hj : j < P.walk.support.length),
     i < j ∧ P.walk.support[i] = u ∧ P.walk.support[j] = v
 
-/-- For `j < j'`, all vertices of `B j` on `P` occur before all vertices of `B j'` on `P`
-(Graph Minors I, Section 2, (2.1)–(2.4), pages 42–44). When `P` has a single vertex in common with
-each `B j`, this says that `P` meets `B₁, …, Bₙ` in that order. -/
-def MeetsInOrder {n : ℕ} (B : Fin n → (⊤ : SimpleGraph α).Subgraph) : Prop :=
-  ∀ ⦃j j' : Fin n⦄, j < j' →
-    ∀ u ∈ P.verts ∩ (B j).verts, ∀ v ∈ P.verts ∩ (B j').verts, P.Precedes u v
-
-/-- `v` is the first vertex on `P` with `μ v ≥ t` (Graph Minors I, Section 2, (2.5), page 44). -/
-def IsFirstGe (μ : α → ℤ) (t : ℤ) (v : α) : Prop :=
-  v ∈ P.verts ∧ t ≤ μ v ∧ ∀ u ∈ P.verts, P.Precedes u v → μ u < t
-
 end Path
 
 /-- `H` is a path subgraph: there is a path `P : Path α` with `P.toSubgraph = H`. -/
@@ -169,13 +157,6 @@ and Section 2, (2.5)–(2.8), pages 44–48). -/
 def IsDisjointPathFamily (G : (⊤ : SimpleGraph α).Subgraph) (A₁ A₂ : Set α)
     {m : ℕ} (P : Fin m → Path α) : Prop :=
   (∀ i, (P i).IsFromTo G A₁ A₂) ∧ Pairwise fun i j ↦ Disjoint (P i).verts (P j).verts
-
-/-- `{P₁, …, Pₘ}` is the unique set of `m` disjoint paths in `G` from `A₁` to `A₂`
-(Graph Minors I, Section 2, (2.5) and (2.6), pages 44, 46). -/
-def IsUniqueDisjointPathFamily (G : (⊤ : SimpleGraph α).Subgraph) (A₁ A₂ : Set α)
-    {m : ℕ} (P : Fin m → Path α) : Prop :=
-  IsDisjointPathFamily G A₁ A₂ P ∧
-    ∀ P' : Fin m → Path α, IsDisjointPathFamily G A₁ A₂ P' → Set.range P' = Set.range P
 
 /-- "A star is a tree in which one vertex, called the *centre*, is adjacent to all others"
 (Graph Minors I, Section 2, (2.2), page 42). Here `B` is a star with centre `c`. -/

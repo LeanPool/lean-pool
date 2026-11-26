@@ -30,8 +30,7 @@ from Section 5, used by the society results of Graph Minors IX.
     point sets $U$ (`IsDualPointSet`), crossing pairs on a circle (`CrossesOn`), the dual and
     double-dual divisions $\Delta^*$ and $\Delta^{**}$ (`dualEquivRel`, `dualDivision`,
     `doubleDualDivision`), cross-free divisions (`IsCrossFree`), the counting function
-    $\Delta(x, y)$ (`divisionCount`), $\Delta$-minimizers and $\Delta^*$-maximizers, and the
-    statements of (2.1)–(2.4).
+    $\Delta(x, y)$ (`divisionCount`), and the statements of (2.1)–(2.4).
 - **Section 3 (pages 119–122):**
   - Closed disc spaces (`IsClosedDiscSpace`), dual drawings $G^*$ on a closed disc
     (`IsDiscDualDrawing`), peripheral vertices and regions (`ChainTerm`, `ChainTerm.IsPeripheral`),
@@ -187,28 +186,6 @@ Graph Minors VI, Section 2 (page 118):
 noncomputable def divisionCount {S : Type u} [TopologicalSpace S] (C : Set S)
     (Δ : Set (Set S)) (x y : S) : ℕ :=
   {δ ∈ Δ | (δ ∩ {x, y}).Nonempty ∨ ∃ u ∈ δ, ∃ v ∈ δ, CrossesOn C u v x y}.ncard
-
-/-- A pair $(v_1, v_2)$ is a *$\Delta$-minimizer* with respect to $(C_1, C_2, x, y)$ if
-(i) $v_1 \in C_1 \cap V$, $v_2 \in C_2 \cap V$, and $v_1, v_2 \ne x$; and
-(ii) there exists $\delta \in \Delta$ such that $v_1, v_2 \in \delta$ and $\{v, x\}$ crosses
-$\{v_1, v_2\}$ for every $v \in \delta \setminus \{v_1, v_2\}$.
-Graph Minors VI, Section 2, proof of (2.4) (pages 118–119). -/
-def IsDeltaMinimizer {S : Type u} [TopologicalSpace S] (C C₁ C₂ : Set S)
-    (Δ : Set (Set S)) (x : S) (p : S × S) : Prop :=
-  p.1 ∈ C₁ ∩ divisionUnion Δ ∧ p.2 ∈ C₂ ∩ divisionUnion Δ ∧ p.1 ≠ x ∧ p.2 ≠ x ∧
-  ∃ δ ∈ Δ, p.1 ∈ δ ∧ p.2 ∈ δ ∧
-    ∀ v ∈ δ \ {p.1, p.2}, CrossesOn C v x p.1 p.2
-
-/-- A pair $(u_1, u_2)$ is a *$\Delta^*$-maximizer* with respect to $(C_1, C_2, U, x, y)$ if
-(i) $u_1 \in C_1 \cap U$, $u_2 \in C_2 \cap U$, and $u_1, u_2 \ne y$; and
-(ii) there exists $\delta^* \in \Delta^*$ such that $u_1, u_2 \in \delta^*$ and $\{u, y\}$ crosses
-$\{u_1, u_2\}$ for every $u \in \delta^* \setminus \{u_1, u_2\}$.
-Graph Minors VI, Section 2, proof of (2.4) (page 119). -/
-def IsDualMaximizer {S : Type u} [TopologicalSpace S] (C C₁ C₂ U : Set S)
-    (Δ : Set (Set S)) (y : S) (p : S × S) : Prop :=
-  p.1 ∈ C₁ ∩ U ∧ p.2 ∈ C₂ ∩ U ∧ p.1 ≠ y ∧ p.2 ≠ y ∧
-  ∃ δ_star ∈ dualDivision C U Δ, p.1 ∈ δ_star ∧ p.2 ∈ δ_star ∧
-    ∀ u ∈ δ_star \ {p.1, p.2}, CrossesOn C u y p.1 p.2
 
 /-- **Graph Minors VI, (2.1)** (page 117):
 "$\Delta^*$ is cross-free, for any $\Delta$." -/

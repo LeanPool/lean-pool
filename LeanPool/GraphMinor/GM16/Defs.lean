@@ -27,8 +27,7 @@ over the shared definitions from `GraphMinor.GM09.Defs`, `GraphMinor.GM10.Defs`,
   (`HasTreeStructureOver`), tree-width via tree-structures (`HasTreeWidthLE`), the complete graph
   $K_n$ (`completeGraph`), the Wagner graph $V_8$ (`wagnerGraphV8`), drawings of a graph in a
   surface (`CanBeDrawnIn`), $(\le n)$-vertex extensions (`IsVertexExtension`), $r$-rings with
-  perimeter $t_1, \dots, t_n$ (`IsRRing`), and outgrowths by $d$ $r$-rings of a graph in a surface
-  $\Sigma$ (`IsOutgrowthByRings`).
+  perimeter $t_1, \dots, t_n$ (`IsRRing`).
 - **Section 2 (pages 47–48):** designs, locations, tree-decompositions, and $n$-enlargements over
   graphs (`GraphDesign`, `IsGraphDesign`, `IsGraphLocation`, `graphLocationCore`,
   `graphLocationDesign`, `IsGraphPervasive`, `IsGraphTreeDecomposition`, `graphVertexDesign`,
@@ -144,7 +143,7 @@ inductive HasTreeStructureOver (𝒞 : Set (Graph α β)) : Graph α β → Prop
 graphs with $\le N + 1$ vertices (and the smallest such $N$ is of course the *tree-width* of $G$)."
 -/
 def HasTreeWidthLE (G : Graph α β) (N : ℕ) : Prop :=
-  HasTreeStructureOver {H : Graph α (β ⊕ ℕ) | V(H).ncard ≤ N + 1} (liftEdgeInl G)
+  HasTreeStructureOver {H : Graph α (β ⊕ ℕ) | V(H).encard ≤ (N + 1 : ℕ)} (liftEdgeInl G)
 
 /-- The surface `S` has a drawing of the graph `H`: `H` can be drawn in `S`
 (Graph Minors XVI, Section 1, page 44). -/
@@ -199,7 +198,7 @@ def wagnerGraphV8 : Graph (Fin 8) (Fin 12) where
 "If a subgraph $G'$ of $G$ can be obtained from $G$ by deleting $\le n$ vertices of $G$, let us call
 $G$ a *($\le n$)-vertex extension* of $G'$." -/
 def IsVertexExtension (n : ℕ) (G G' : Graph α β) : Prop :=
-  ∃ Z ⊆ V(G), Z.ncard ≤ n ∧ deleteVertices G Z = G'
+  ∃ Z ⊆ V(G), Z.encard ≤ n ∧ deleteVertices G Z = G'
 
 /-- Loose $(\le n)$-vertex extension: `G'` is a subgraph of `G` and there exists $Z \subseteq V(G)$
 with $|Z| \le n$ such that $G \setminus Z = G' \setminus Z$.
@@ -211,7 +210,7 @@ of $(H', M') \in \mathscr{D}^n$ can have torso edges with both ends in $Z \cap V
 $G' = H \cup (G \setminus Z)$ of $(H, M)$ keeps the vertices of $Z \cap V(H)$ and satisfies
 $G \setminus Z = G' \setminus Z$ rather than $G \setminus Z = G'$. -/
 def IsLooseVertexExtension (n : ℕ) (G G' : Graph α β) : Prop :=
-  ∃ Z ⊆ V(G), Z.ncard ≤ n ∧ G' ≤ G ∧ deleteVertices G Z = deleteVertices G' Z
+  ∃ Z ⊆ V(G), Z.encard ≤ n ∧ G' ≤ G ∧ deleteVertices G Z = deleteVertices G' Z
 
 /-- $r$-ring with perimeter $t_1, \dots, t_n$ (Graph Minors XVI, Section 1, page 45):
 "More precisely, we say $G$ is an *$r$-ring with perimeter $t_1, \dots, t_n$* if
@@ -231,44 +230,7 @@ def IsRRing (G : Graph α β) (r : ℕ) (t : List α) : Prop :=
     (∀ e ∈ E(G), ∃ i, ∀ v : α, G.Inc e v → v ∈ X i) ∧
     (∀ i : Fin t.length, t[i.1] ∈ X i) ∧
     (∀ i j k : Fin t.length, i ≤ j → j ≤ k → X i ∩ X k ⊆ X j) ∧
-    (∀ i : Fin t.length, (X i).ncard ≤ r)
-
-/-- Outgrowth by $\le d$ $r$-rings of a graph in $\Sigma$ (Graph Minors XVI, Section 1, page 45):
-"Now let $G_0$ be a graph drawn in a surface $\Sigma$, and let
-$\Delta_1, \dots, \Delta_d \subseteq \Sigma$ be pairwise disjoint closed discs, each meeting the
-drawing only in vertices of $G_0$, and each containing no vertices of $G_0$ in its interior. For
-$1 \le i \le d$ let the vertices of $G_0$ in $\text{bd}(\Delta_i)$ be $t_1, \dots, t_n$ say, in
-order, and choose an $r$-ring $G_i$ with perimeter $t_1, \dots, t_n$, meeting $G_0$ just in
-$t_1, \dots, t_n$ and disjoint from every other $G_j$; and let $G$ be the union of
-$G_0, G_1, \dots, G_d$. Such a graph $G$ (and any graph isomorphic to it) is called an *outgrowth by
-$d$ $r$-rings of a graph in $\Sigma$*." -/
-def IsOutgrowthByRings (S : Type w) [TopologicalSpace S]
-    (G : Graph α β) (d r : ℕ) : Prop :=
-  ∃ (G' G₀ : Graph α β) (_ : Nonempty (Iso G G')) (k : ℕ)
-    (Δ : Fin k → Set S) (G_ring : Fin k → Graph α β)
-    (t : Fin k → List α) (ν : α → S) (edgeOf : β → Set S),
-    k ≤ d ∧
-    G₀ ≤ G' ∧ (∀ i, G_ring i ≤ G') ∧
-    V(G') = V(G₀) ∪ ⋃ i, V(G_ring i) ∧
-    E(G') = E(G₀) ∪ ⋃ i, E(G_ring i) ∧
-    InjOn ν V(G₀) ∧
-    (∀ e ∈ E(G₀), ∀ u v : α, G₀.IsLink e u v → u ≠ v →
-      IsLineWithEnds (edgeOf e) (ν u) (ν v)) ∧
-    (∀ e ∈ E(G₀), ∀ v : α, G₀.IsLoopAt e v → IsOArc (edgeOf e) ∧ ν v ∈ edgeOf e) ∧
-    (∀ e ∈ E(G₀), ∀ f ∈ E(G₀), e ≠ f → edgeOf e ∩ edgeOf f ⊆ ν '' V(G₀)) ∧
-    (∀ e ∈ E(G₀), ∀ v ∈ V(G₀), ν v ∈ edgeOf e → G₀.Inc e v) ∧
-    (∀ i, IsClosedDisc (Δ i)) ∧
-    (∀ i j, i ≠ j → Disjoint (Δ i) (Δ j)) ∧
-    (∀ i, ∀ e ∈ E(G₀), edgeOf e ∩ Δ i ⊆ ν '' V(G₀)) ∧
-    (∀ i, ∀ v ∈ V(G₀), ν v ∈ Δ i → ν v ∈ discBd (Δ i)) ∧
-    (∀ i, {v ∈ V(G₀) | ν v ∈ discBd (Δ i)} = {v | v ∈ t i}) ∧
-    (∀ i, ∃ Ω : CyclicPerm α, Ω.bar = {v | v ∈ t i} ∧ Ω.IsClockwiseSeq (t i) ∧
-      IsNaturalOrderFrom ν Ω (discBd (Δ i))) ∧
-    (∀ i, IsRRing (G_ring i) r (t i)) ∧
-    (∀ i, V(G_ring i) ∩ V(G₀) = {v | v ∈ t i}) ∧
-    (∀ i, Disjoint E(G_ring i) E(G₀)) ∧
-    (∀ i j, i ≠ j → Disjoint V(G_ring i) V(G_ring j) ∧
-      Disjoint E(G_ring i) E(G_ring j))
+    (∀ i : Fin t.length, (X i).encard ≤ r)
 
 end Section1
 

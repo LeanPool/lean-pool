@@ -906,7 +906,11 @@ theorem exists_isTorsoOfDesign_isLooseVertexExtension_of_isGraphEnlargement
     refine ⟨X ∩ V(d.1), hvia.inter_mem hX_mem hX_ne_Z, ?_⟩
     intro v ⟨w, hlink⟩
     exact ⟨hX_inc v ⟨w, hlink.mono hH_le_G'⟩, hlink.left_mem⟩
-  · refine ⟨Z, htorso.1 ▸ hvia.subset_vertexSet, hZ_card, hH_le_G', ?_⟩
+  · have hZ_finite := hvia.isDesign'.1.subset hvia.subset_vertexSet
+    have hZ_bound : Z.encard ≤ n := by
+      rw [← hZ_finite.cast_ncard_eq, Nat.cast_le]
+      exact hZ_card
+    refine ⟨Z, htorso.1 ▸ hvia.subset_vertexSet, hZ_bound, hH_le_G', ?_⟩
     have hdelH_le_G' : GM09.deleteVertices H Z ≤ G' :=
       (H.induce_le sdiff_subset).trans hH_le_G'
     refine (Compatible.of_le_le hdel_le_G' hdelH_le_G').ext ?_ ?_
@@ -941,17 +945,17 @@ theorem theorem_2_3_proof {G : Graph α (β ⊕ ℕ)} {θ : ℕ} {𝒟 : Set (Gr
     (hV : V(G).Finite) (hE : E(G).Finite) (hθ : 1 ≤ θ)
     (hperv : IsGraphPervasive G θ 𝒟) :
     HasTreeStructureOver
-      {G' : Graph α (β ⊕ ℕ) | V(G').ncard ≤ 4 * θ - 3 ∨
+      {G' : Graph α (β ⊕ ℕ) | V(G').encard ≤ (4 * θ - 3 : ℕ) ∨
         ∃ H ∈ torsosOfClass 𝒟, IsLooseVertexExtension (3 * θ - 2) G' H} G := by
   obtain ⟨ι, hfin, T, τ, hover⟩ := theorem_2_1_proof hV hE hθ hperv
   refine (theorem_2_2_proof hV hE hover).mono ?_
   rintro G' ⟨d', hd'_mem, htorso⟩
-  rcases hd'_mem with ⟨d, hd_mem, henl⟩ | ⟨_, hcard⟩
+  rcases hd'_mem with ⟨d, hd_mem, henl⟩ | ⟨hdesign, hcard⟩
   · right
     obtain ⟨H, hH_torso, hext⟩ :=
       exists_isTorsoOfDesign_isLooseVertexExtension_of_isGraphEnlargement henl htorso
     exact ⟨H, ⟨d, hd_mem, hH_torso⟩, hext⟩
   · left
-    rwa [← htorso.1]
+    rwa [← htorso.1, ← hdesign.1.cast_ncard_eq, Nat.cast_le]
 
 end GraphMinor.GM16

@@ -1251,6 +1251,9 @@ theorem theorem_3_2_with_edge_cover :
     exact lemma_3_2_claim_3 hLD (Fin.mk_le_mk.mpr (Fin.mk_le_mk.mp hij))
       (Fin.mk_le_mk.mpr (Fin.mk_le_mk.mp hjk))
   · intro i
+    have hfinite : (X_ring i).Finite :=
+      S.finite_V.subset (inter_subset_left.trans (hLD.le_G _).vertexSet_mono)
+    rw [← hfinite.cast_ncard_eq, Nat.cast_le]
     exact hord_le (castFin i)
 
 /-- Graph Minors XVI, (3.2), page 50, by the paper's linear

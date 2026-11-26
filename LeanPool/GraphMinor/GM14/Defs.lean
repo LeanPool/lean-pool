@@ -41,9 +41,8 @@ This file formalizes the definitions of N. Robertson and P. D. Seymour,
 - **Section 6 (pages 33–35):** Simply-connected subsets `X ⊆ Σ` in the sense of Section 6
   (`IsArcSimplyConnected`) and isomorphic drawings (`AreIsomorphicDrawings`).
 - **Section 7 (pages 37–39):** `α`-normal subsets `X ⊆ Σ` (`IsArrangementNormal`).
-- **Section 8 (pages 39–45):** Pullback cyclic permutation `α⁻¹(F)` (`IsPullbackPerm`), rural
-  neighborhoods in a closed cylinder `Σ` (`IsCylinderRuralNeighborhood`), and cylinder breadth `≥ q`
-  (`HasCylinderBreadthGe`).
+- **Section 8 (pages 39–45):** Pullback cyclic permutation `α⁻¹(F)` (`IsPullbackPerm`) and
+  cylinder breadth `≥ q` (`HasCylinderBreadthGe`).
 - **Section 9 (pages 45–47):** Battlefields `(Λ, C, X)` of size `β` around `z` (`IsBattlefield`) and
   pullback subgraphs `α⁻¹(Σ')` (`arrangementPullbackGraph`).
 -/
@@ -470,20 +469,6 @@ on `F`, `Ω` is the pullback cyclic permutation `α⁻¹(F)` on `{v ∈ V(S_seg)
 def IsPullbackPerm {α : Type v} {β : Type w} (S_seg : Set (Society α β))
     (α_pt : α → S) (F : Set S) (Ω : CyclicPerm α) : Prop :=
   Ω.bar = {v ∈ segregationVertices S_seg | α_pt v ∈ F} ∧ IsNaturalOrderFrom α_pt Ω F
-
-/-- "A neighbourhood $(H, \Omega_1, \Omega_2)$ is *rural* if $H$ is a drawing in a closed
-cylinder $\Sigma$ with ends $F_1, F_2$ and $\Omega_i$ is a natural order of $V(H) \cap F_i$
-from $F_i$ for $i = 1, 2$. (The *ends* of a closed cylinder $\Sigma$ are the two $O$-arcs in
-$bd(\Sigma)$.)"
-(Graph Minors XIV, Section 8, page 40). -/
-def IsCylinderRuralNeighborhood {α : Type v} {β : Type w}
-    (N : Neighborhood α β) (F₁ F₂ : Set S) : Prop :=
-  Nonempty (S ≃ₜ ClosedCylinder) ∧ bd S = F₁ ∪ F₂ ∧ Disjoint F₁ F₂ ∧ IsOArc F₁ ∧ IsOArc F₂ ∧
-    ∃ Γ : GraphDrawing N.G S,
-      (∀ v ∈ V(N.G), (graphDrawingVertexSet Γ v ⊆ F₁ ↔ v ∈ N.Ω.bar)) ∧
-      (∀ v ∈ V(N.G), (graphDrawingVertexSet Γ v ⊆ F₂ ↔ v ∈ N.Ω₀.bar)) ∧
-      (∃ φ₁ : Circle ≃ₜ F₁, DrawingAgreesWithOArcHomeo Γ N.Ω F₁ φ₁) ∧
-      (∃ φ₂ : Circle ≃ₜ F₂, DrawingAgreesWithOArcHomeo Γ N.Ω₀ F₂ φ₂)
 
 /-- "Let $(H, \Omega_1, \Omega_2)$ be a rural neighbourhood, in a closed cylinder $\Sigma$ with
 ends $F_1, F_2$. It has *breadth* $\ge q$ if there are $q$ circuits of $H$, mutually

@@ -35,8 +35,6 @@ This file formalizes the remaining definitions of N. Robertson and P. D. Seymour
 - **Section 13 (pages 366–375):** Spokes of a wheel (`IsSpoke`), inner ends of spokes, optimal
   $W$-hubs (`IsOptimalWheelHub`), boundary sector discs $\Delta_v$ and boundary sector circuits
   $D_v$ (`IsBoundarySector`).
-- **Section 14 (pages 375–379):** Singular and regular boundary region vertices
-  (`IsSingularBoundaryRegion`).
 -/
 
 @[expose] public section
@@ -681,26 +679,6 @@ structure IsBoundarySector (D : TangleDatum cap χ) (W : Set Shat) (H : Drawing 
     (Disjoint S₁.V S₂.V ∧ ∃ P : Drawing Shat, P.IsPathOf H h₁ h₂ ∧
       discBd Δv = S₁.U ∪ S₂.U ∪ P.U ∪ closure f₁ ∪ closure f₂ ∧
       ¬ (D.ins H ⊆ Δv)))
-
-/-! ## Section 14: Removing wheel covers -/
-
-open Classical in
-/-- A region vertex `r* ∈ R* ∩ bd(W)` is *singular* (and *regular* otherwise) with respect to an
-optimal `W`-hub `H` (Graph Minors XIX, Section 14, page 375:
-"If $|V(H(W))| = 1$, designate some vertex of $R^* \cap bd(W)$ as *singular*, and the other
-vertices of $R^* \cap bd(W)$ as *regular*. If $|V(H(W))| > 1$, we say $r^* \in R^* \cap
-bd(W)$ is *singular* if $S_{v_1}, S_{v_2}$ have distinct inner ends, where $v_1, v_2$ are
-the neighbours of $r^*$ in $\Gamma^* \cap bd(W)$, and $S_{v_1}, S_{v_2}$ are the
-corresponding spokes; and $r^*$ is *regular* otherwise"). -/
-def IsSingularBoundaryRegion (D : TangleDatum cap χ) (W : Set Shat) (H : Drawing Shat)
-    (rstar₀ rstar : Shat) : Prop :=
-  rstar ∈ D.rad.Rstar ∩ discBd W ∧
-  ((H.V.ncard = 1 ∧ rstar = rstar₀) ∨
-   (1 < H.V.ncard ∧ ∃ (v₁ v₂ h₁ h₂ : Shat) (f₁ f₂ : Set Shat) (S₁ S₂ : Drawing Shat),
-      v₁ ≠ v₂ ∧ h₁ ≠ h₂ ∧
-      f₁ ∈ D.rad.G.E ∧ f₁ ⊆ discBd W ∧ tilde f₁ = {rstar, v₁} ∧
-      f₂ ∈ D.rad.G.E ∧ f₂ ⊆ discBd W ∧ tilde f₂ = {rstar, v₂} ∧
-      D.IsSpoke W H v₁ h₁ S₁ ∧ D.IsSpoke W H v₂ h₂ S₂))
 
 end TangleDatum
 
