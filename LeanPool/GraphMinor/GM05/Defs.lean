@@ -26,8 +26,8 @@ J. Combin. Theory Ser. B **41** (1986), 92–114, Sections 1–7 (pages 92–109
     each vertex of `T` satisfying conditions (i)–(iii).
   - The width of a tree-decomposition (`decompWidth` and the predicate `WidthLE χ w` for width at
     most `w`), and the tree-width of `G` (both as the predicate `TreeWidthLE G w`, stating that `G`
-    has a tree-decomposition of width at most `w`, and as the minimum `treeWidth G : ℕ` of `w ≥ 0`
-    such that `TreeWidthLE G w` holds).
+    has a tree-decomposition of width at most `w`, and as the least finite bound `treeWidth G : ℕ∞`, or
+    `⊤` when no finite bound exists).
   - Relabelling of tree-decompositions along an equivalence `e : ι ≃ ι'`
     (`IsTreeDecomposition.relabel`, `treeWidthLE_of_isTreeDecomposition`).
   - Separations `(V₁, V₂)` of a graph `G` (`IsSeparation`).
@@ -76,12 +76,12 @@ structure IsTreeDecomposition [Fintype ι] (G : (⊤ : SimpleGraph V).Subgraph)
 "The width of the tree-decomposition is $\max(|X_t| - 1 : t \in V(T))$;" Thus the width is `≤ w`
 for `w : ℕ` when `|X_t| ≤ w + 1` for every `t ∈ V(T)`. -/
 def WidthLE (χ : ι → Set V) (w : ℕ) : Prop :=
-  ∀ t : ι, (χ t).ncard ≤ w + 1
+  ∀ t : ι, (χ t).encard ≤ (w + 1 : ℕ)
 
-/-- The width `max(|X_t| - 1 : t ∈ V(T))` of a tree-decomposition `(T, χ)` as a natural number
-(Graph Minors V, Section 1, page 93). -/
-noncomputable def decompWidth (χ : ι → Set V) : ℕ :=
-  sSup (Set.range fun t : ι ↦ (χ t).ncard - 1)
+/-- The supremum of `|X_t| - 1` over the bags of a tree-decomposition. An infinite bag
+gives width `⊤` (Graph Minors V, Section 1, page 93). -/
+noncomputable def decompWidth (χ : ι → Set V) : ℕ∞ :=
+  ⨆ t, (χ t).encard - 1
 
 /-- `G` has tree-width at most `w` (Graph Minors V, Section 1, page 93):
 "and the *tree-width* of $G$ is the minimum $w \ge 0$ such that $G$ has a tree-decomposition
@@ -94,11 +94,10 @@ def TreeWidthLE (G : (⊤ : SimpleGraph V).Subgraph) (w : ℕ) : Prop :=
   ∃ (ι : Type) (_ : Fintype ι) (T : SimpleGraph ι) (χ : ι → Set V),
     IsTreeDecomposition G T χ ∧ WidthLE χ w
 
-/-- The tree-width of `G` as a natural number (Graph Minors V, Section 1, page 93):
-"the *tree-width* of $G$ is the minimum $w \ge 0$ such that $G$ has a tree-decomposition of
-width $\le w$." -/
-noncomputable def treeWidth (G : (⊤ : SimpleGraph V).Subgraph) : ℕ :=
-  sInf {w : ℕ | TreeWidthLE G w}
+/-- The least finite width bound of a tree-decomposition of `G`, or `⊤` if no finite bound
+exists (Graph Minors V, Section 1, page 93). -/
+noncomputable def treeWidth (G : (⊤ : SimpleGraph V).Subgraph) : ℕ∞ :=
+  ⨅ w : {w : ℕ // TreeWidthLE G w}, (w.1 : ℕ∞)
 
 /-- Relabelling a tree-decomposition `(T, χ)` along an equivalence `e : ι ≃ ι'` gives a
 tree-decomposition `(T.map e.toEmbedding, χ ∘ e.symm)`. -/
@@ -126,12 +125,8 @@ theorem widthLE_comp_equiv {χ : ι → Set V} {w : ℕ} (e : ι ≃ ι') :
 
 /-- Relabelling a tree-decomposition along an equivalence `e : ι ≃ ι'` preserves `decompWidth`. -/
 theorem decompWidth_comp_equiv (χ : ι → Set V) (e : ι ≃ ι') :
-    decompWidth (χ ∘ e.symm) = decompWidth χ := by
-  simp only [decompWidth]
-  congr 1
-  ext n
-  simp only [Set.mem_range, Function.comp_apply]
-  exact e.symm.exists_congr (fun _ ↦ Iff.rfl)
+    decompWidth (χ ∘ e.symm) = decompWidth χ :=
+  e.symm.iSup_comp (g := fun t ↦ (χ t).encard - 1)
 
 /-- Any tree-decomposition `(T, χ)` of `G` of width `≤ w` on an arbitrary finite index type
 `ι : Type*` witnesses `TreeWidthLE G w`. -/
@@ -148,8 +143,9 @@ theorem treeWidthLE_of_isTreeDecomposition [Fintype ι] {G : (⊤ : SimpleGraph 
 theorem treeWidth_le_of_isTreeDecomposition [Fintype ι] {G : (⊤ : SimpleGraph V).Subgraph}
     {T : SimpleGraph ι} {χ : ι → Set V} {w : ℕ}
     (h : IsTreeDecomposition G T χ) (hw : WidthLE χ w) :
-    treeWidth G ≤ w :=
-  Nat.sInf_le (treeWidthLE_of_isTreeDecomposition h hw)
+    treeWidth G ≤ (w : ℕ∞) :=
+  iInf_le (fun bound : {n : ℕ // TreeWidthLE G n} => (bound.1 : ℕ∞))
+    ⟨w, treeWidthLE_of_isTreeDecomposition h hw⟩
 
 /-- `(V₁, V₂)` is a separation of `G` (Graph Minors V, Section 1, page 94):
 "A *separation* of a graph $G$ is a pair $(V_1, V_2)$, where $V_1, V_2 \subseteq V(G)$, $V_1
