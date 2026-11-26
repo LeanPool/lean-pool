@@ -79,13 +79,11 @@ theorem mkRight_blank (L : ListBlank (Fin 2)) : Tape.mk' L B0 = ⟨0, L, B0⟩ :
 def ones (k : ℕ) (L : ListBlank (Fin 2)) : ListBlank (Fin 2) :=
   ListBlank.append (List.replicate k 1) L
 
-theorem ones_succ' (k : ℕ) (L : ListBlank (Fin 2)) : ones (k + 1) L = ones k (L.cons 1) := by
-  rw [ones, List.replicate_succ', ListBlank.append_assoc]
-  rfl
+theorem ones_succ' (k : ℕ) (L : ListBlank (Fin 2)) : ones (k + 1) L = ones k (L.cons 1) :=
+  (Goldbach21.append_replicate_cons k 1 L).symm
 
-theorem ones_add (j k : ℕ) (L : ListBlank (Fin 2)) : ones (j + k) L = ones j (ones k L) := by
-  rw [ones, List.replicate_add, ListBlank.append_assoc]
-  rfl
+theorem ones_add (j k : ℕ) (L : ListBlank (Fin 2)) : ones (j + k) L = ones j (ones k L) :=
+  (Goldbach21.append_replicate_add j k 1 L).symm
 
 /-- The 28-state, two-symbol transition table from the upstream `brocard_28` artifact. -/
 def brocard28 : Machine 28 2 := Machine.ofRows [
@@ -508,9 +506,8 @@ theorem multiply (n v : ℕ) (hn : 1 ≤ n) :
 def zeros (k : ℕ) (L : ListBlank (Fin 2)) : ListBlank (Fin 2) :=
   ListBlank.append (List.replicate k 0) L
 
-theorem zeros_succ' (k : ℕ) (L : ListBlank (Fin 2)) : zeros (k + 1) L = zeros k (L.cons 0) := by
-  rw [zeros, List.replicate_succ', ListBlank.append_assoc]
-  rfl
+theorem zeros_succ' (k : ℕ) (L : ListBlank (Fin 2)) : zeros (k + 1) L = zeros k (L.cons 0) :=
+  (Goldbach21.append_replicate_cons k 0 L).symm
 
 theorem zeros_B0 (k : ℕ) : zeros k B0 = B0 := by
   induction k with
@@ -876,13 +873,15 @@ theorem init_eq : (init : Cfg 28 2) = ⟨0, Tape.mk' B0 B0⟩ := rfl
 `TR0` turn it into `1 0 0 1` and move on. -/
 theorem seed₁ : nSteps brocard28 12 ⟨0, Tape.mk' B0 B0⟩ =
     some ⟨14, Tape.mk' (((((B0.cons 1).cons 0).cons 0).cons 1).cons 0) B0⟩ := by
-  rfl
+  simp only [mkRight_blank, nSteps_succ, sGO_0, mkL_B0, Option.bind_some, sEC_0, sLN0_0, sLN1_0,
+    mk'_cons, nSteps_zero, sEN_0, sX_0, sTLs_1, mkL_cons, sTLs_0, sTLx_1, sTR0_1, sTR0_0]
 
 /-- Start, steps `13`–`24`: one chunk of the test runs on `1 0 0 1`. -/
 theorem seed₂ : nSteps brocard28 12
     ⟨14, Tape.mk' (((((B0.cons 1).cons 0).cons 0).cons 1).cons 0) B0⟩ =
     some ⟨14, Tape.mk' (((((B0.cons 1).cons 0).cons 1).cons 0).cons 0) ((B0.cons 1).cons 0)⟩ := by
-  rfl
+  simp only [mkRight_blank, nSteps_succ, sTR1_0, mkL_cons, nSteps_zero, Option.bind_some, sSB_0,
+    sSC_1, mk'_cons, sTR0_0, sTR1_1, sSB_1, sTL0_0, sTL1_1, sTL1_0, sTE_1]
 
 /-- Start, steps `25`–`36`: `TR1`, `SB`, `SC` end the chunk as a success; `M0`, `M1` reading `0`,
 `GO`, `LN1`, `EN`, `X` write `1111 0 111`; `TLs` reading `0` enters `TLx`. -/
@@ -890,7 +889,8 @@ theorem seed₃ : nSteps brocard28 12
     ⟨14, Tape.mk' (((((B0.cons 1).cons 0).cons 1).cons 0).cons 0) ((B0.cons 1).cons 0)⟩ =
     some ⟨1, Tape.mk' (ListBlank.cons 0
       ((((((((B0.cons 1).cons 1).cons 1).cons 1).cons 0).cons 1).cons 1).cons 1)) B0⟩ := by
-  rfl
+  simp only [mk'_cons, nSteps_succ, sTR1_0, mkL_cons, nSteps_zero, Option.bind_some, sSB_0, sSC_0,
+    sM0_1, sM1_0, sGO_1, sLN1_0, sEN_0, sX_1, mkRight_blank, sX_0, sTLs_0]
 
 /-- Start, steps `37`–`46`: `TLx` reading `0`, `EC`, `LN0`, `LN1` walk left to the blank left of
 `N`. -/
