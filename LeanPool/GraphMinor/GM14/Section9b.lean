@@ -1154,7 +1154,7 @@ private theorem lemma_9_5_claim_2 [T2Space S]
     (hbd_cl₂ : subBd (closure Λ₂) = C_in.U) (hdiff₂ : closure Λ₂ \ C_in.U = Λ₂)
     (hZone₂ : IsLambdaZoneAround H d (beta + 2) z Λ₂)
     (hsub₂ : ∀ x ∈ H.A, d z x < beta → x ⊆ Λ₂)
-    (hCoutH : C_out.IsSubdrawing H) (_hCout : C_out.IsCircuit)
+    (hCoutH : C_out.IsSubdrawing H)
     (hbd_cl₁ : subBd (closure Λ₁) = C_out.U) (hdiff₁ : closure Λ₁ \ C_out.U = Λ₁)
     (hZone₁ : IsLambdaZoneAround H d (3 * beta + 3) z Λ₁)
     (hcl₂_sub_Λ₁ : closure Λ₂ ⊆ Λ₁) :
@@ -1711,7 +1711,7 @@ theorem theorem_9_5_proof :
   -- Λ₁`.
   obtain ⟨P₀, hP₀⟩ :=
     lemma_9_5_claim_2 hS hConn hMetric hz hbeta hθ hCinH hCin hbd_cl₂ hdiff₂ hZone₂ hsub₂
-      hCoutH hCout hbd_cl₁ hdiff₁ hZone₁ hcl₂_sub_Λ₁
+      hCoutH hbd_cl₁ hdiff₁ hZone₁ hcl₂_sub_Λ₁
   -- Step 3: Claim (3) and choosing `(C, P)` maximizing `Δ_h` (`h = beta / 2 + 1` in 0-indexed `Fin
   -- (beta + 1)`).
   have hbd_disc₁ : discBd (closure Λ₁) = C_out.U := by

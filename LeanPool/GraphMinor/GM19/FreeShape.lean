@@ -177,43 +177,22 @@ theorem IsFreeShape.ofHomeo {cap : IsCappedSurface S Shat} {Φ : Frame S} {K K' 
     (h : IsFreeShape cap Φ K' Z) (f : S ≃ₜ S) (hf : IsFramePreservingHomeo Φ f) (hU : f '' K.U
       = K'.U) (hV : f '' K.V = K'.V) :
     IsFreeShape (cap.ofHomeo f) Φ K Z := by
-  have him : ∀ A : Set S, (cap.ofHomeo f).emb '' A = cap.emb '' (f '' A) := fun A ↦ by
-    rw [image_image]
-    rfl
-  have hsym : ∀ A : Set S, f '' (f.symm '' A) = A := fun A ↦ by
-    rw [image_image]
-    simp
-  have hc : ∀ {Θ}, Θ ∈ cuffs S → f '' Θ ∈ cuffs S ∧ (cap.ofHomeo f).cuffDisc Θ = cap.cuffDisc
-    (f '' Θ) := fun {Θ} hΘ ↦
-    ⟨by rw [cuffs_eq_image f]; exact mem_image_of_mem _ hΘ, rfl⟩
-  have hc' : ∀ {Θ}, Θ ∈ cuffs S → f.symm '' Θ ∈ cuffs S ∧ (cap.ofHomeo f).cuffDisc (f.symm '' Θ)
-    = cap.cuffDisc Θ := fun {Θ} hΘ ↦ by
-    refine ⟨?_, ?_⟩
-    · rw [cuffs_eq_image f.symm]
-      exact mem_image_of_mem _ hΘ
-    · change cap.cuffDisc (f '' (f.symm '' Θ)) = _
-      rw [hsym]
-  have hdiscs : (cap.ofHomeo f).discs = cap.discs := by
-    ext x
-    simp only [IsCappedSurface.discs, mem_iUnion₂]
-    constructor
-    · rintro ⟨Θ, hΘ, hx⟩
-      rw [(hc hΘ).2] at hx
-      exact ⟨_, (hc hΘ).1, hx⟩
-    · rintro ⟨Θ, hΘ, hx⟩
-      rw [← (hc' hΘ).2] at hx
-      exact ⟨_, (hc' hΘ).1, hx⟩
-  have hKU : (cap.ofHomeo f).emb '' K.U = cap.emb '' K'.U := by rw [him, hU]
-  refine ⟨h.disc, by rw [hKU]; exact h.sub, by rw [hKU, hdiscs]; exact h.rest, ?_, ?_, ?_⟩
+  have hKU : (cap.ofHomeo f).emb '' K.U = cap.emb '' K'.U := by rw [cap.ofHomeo_emb_image, hU]
+  refine ⟨h.disc, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hKU]
+    exact h.sub
+  · rw [hKU, cap.ofHomeo_discs]
+    exact h.rest
   · intro Θ hΘ hn
-    rw [(hc hΘ).2] at hn ⊢
-    exact h.touch _ (hc hΘ).1 hn
+    rw [(cap.ofHomeo_cuffDisc f hΘ).2] at hn ⊢
+    exact h.touch _ (cap.ofHomeo_cuffDisc f hΘ).1 hn
   · obtain ⟨Θ, hΘ, hin⟩ := h.inner
-    exact ⟨_, (hc' hΘ).1, by rw [(hc' hΘ).2]; exact hin⟩
+    obtain ⟨hΘ', hDisc⟩ := cap.ofHomeo_cuffDisc_symm f hΘ
+    exact ⟨_, hΘ', hDisc.symm ▸ hin⟩
   · intro hall
     obtain ⟨hf₁, hf₂⟩ := h.facts fun Θ hΘ ↦ by
-      have := hall _ (hc' hΘ).1
-      rwa [(hc' hΘ).2] at this
+      have := hall _ (cap.ofHomeo_cuffDisc_symm f hΘ).1
+      rwa [(cap.ofHomeo_cuffDisc_symm f hΘ).2] at this
     set In' := cap.emb ⁻¹' discInt Z ∪ K'.U with hIn'
     have hmem : ∀ x, x ∈ (cap.ofHomeo f).emb ⁻¹' discInt Z ∪ K.U ↔ f x ∈ In' := fun x ↦ by
       refine or_congr Iff.rfl ?_

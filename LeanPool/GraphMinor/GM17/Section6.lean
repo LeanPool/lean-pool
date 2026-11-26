@@ -871,16 +871,10 @@ theorem Portrayal.restrictQuotient_isCentral {α : Type u} {β : Type v} {G : Hy
 
 /-- Next index around `Fin k` for $k \ge 2$. -/
 def nextIdx {k : ℕ} (hk : 2 ≤ k) (i : Fin k) : Fin k :=
-  ⟨(i.1 + 1) % k, Nat.mod_lt _ (by omega)⟩
+  cyclicSucc (by omega) i
 
-theorem nextIdx_ne_self {k : ℕ} (hk : 2 ≤ k) (i : Fin k) : nextIdx hk i ≠ i := by
-  intro h
-  have hval : (i.1 + 1) % k = i.1 := congrArg Fin.val h
-  have hi := i.2
-  by_cases hlt : i.1 + 1 < k
-  · rw [Nat.mod_eq_of_lt hlt] at hval; omega
-  · have hEq : i.1 + 1 = k := by omega
-    rw [hEq, Nat.mod_self] at hval; omega
+theorem nextIdx_ne_self {k : ℕ} (hk : 2 ≤ k) (i : Fin k) : nextIdx hk i ≠ i :=
+  cyclicSucc_ne_self hk i
 
 /-- **Graph Minors XVII, proof of (6.6), Claim (1)** (page 176):
 "For each $x \in X$ there is at most one $n \in N(\Gamma) \cap \Theta$ such that
@@ -901,13 +895,13 @@ theorem lemma_6_6_claim_1 {α : Type u} {β : Type v} {G : Hypergraph α β}
   have hcyc : cyclicDist i₁ (nextIdx hk i₁) + cyclicDist (nextIdx hk i₁) i₂ +
       cyclicDist i₂ (nextIdx hk i₂) ≤ k := by
     have hnext1 : (nextIdx hk i₁).1 = if i₁.1 + 1 < k then i₁.1 + 1 else 0 := by
-      dsimp [nextIdx]
+      dsimp [nextIdx, cyclicSucc]
       split_ifs with h
       · exact Nat.mod_eq_of_lt h
       · have : i₁.1 + 1 = k := by omega
         rw [this, Nat.mod_self]
     have hnext2 : (nextIdx hk i₂).1 = if i₂.1 + 1 < k then i₂.1 + 1 else 0 := by
-      dsimp [nextIdx]
+      dsimp [nextIdx, cyclicSucc]
       split_ifs with h
       · exact Nat.mod_eq_of_lt h
       · have : i₂.1 + 1 = k := by omega

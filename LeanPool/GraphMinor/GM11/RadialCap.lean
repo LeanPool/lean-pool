@@ -168,7 +168,7 @@ private theorem cap_inside_neighborhood [T2Space S] (hS : IsClosedSurface S)
     {z₀ : ClosedUnitDisc} (hz₀ : z₀ ∉ N) (hz₀b : f z₀ ∈ discBd Q)
     (A₁ A₂ Δ₁ Δ₂ : Set S) (hne : A₁ ≠ A₂)
     (hcomp : componentsIn (discBd Q \ {y₁, y₂}) = {A₁, A₂})
-    (hd₁ : IsClosedDisc Δ₁) (_hd₂ : IsClosedDisc Δ₂)
+    (hd₁ : IsClosedDisc Δ₁)
     (hcov : Δ₁ ∪ Δ₂ = Q) (hmeet : Δ₁ ∩ Δ₂ = C)
     (hb₁ : discBd Δ₁ = A₁ ∪ C) (hb₂ : discBd Δ₂ = A₂ ∪ C) (hxA : x ∈ A₁) :
     ∃ C Q₁ : Set S, IsLineWithEnds C y₁ y₂ ∧ C ⊆ W ∧ C ⊆ Q ∧
@@ -450,8 +450,8 @@ theorem exists_cap (hS : IsClosedSurface S) {Q : Set S} (hQ : IsClosedDisc Q) {x
     mem_connectedComponentIn ⟨hTb hxT, hxnot⟩
   rw [hcomp] at hcc
   rcases hcc with e | e
-  · exact main A₁ A₂ Δ₁ Δ₂ hne hcomp hd₁ hd₂ hcov hmeet hb₁ hb₂ (e ▸ hmemc)
-  · exact main A₂ A₁ Δ₂ Δ₁ hne.symm (by rw [hcomp, pair_comm]) hd₂ hd₁ (by rw [union_comm, hcov])
+  · exact main A₁ A₂ Δ₁ Δ₂ hne hcomp hd₁ hcov hmeet hb₁ hb₂ (e ▸ hmemc)
+  · exact main A₂ A₁ Δ₂ Δ₁ hne.symm (by rw [hcomp, pair_comm]) hd₂ (by rw [union_comm, hcov])
       (by rw [inter_comm, hmeet]) hb₂ hb₁ (e ▸ hmemc)
 
 end GraphMinor.GM11

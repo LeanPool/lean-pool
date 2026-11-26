@@ -404,67 +404,9 @@ theorem two_mul_countP_le_of_bipartite {S : Type w} [TopologicalSpace S]
 theorem circuit_props_of_preRadial {S : Type w} [TopologicalSpace S] [T2Space S]
     {H K C : Drawing S} (hrad : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K)
     (hC : C.IsCircuit) (hCs : C.IsSubdrawing K) :
-    IsOArc C.U ∧ 2 ≤ C.length ∧ 2 * (C.U ∩ H.V).ncard ≤ C.length := by
-  classical
-  have hbip := GM11.bipartite_of_preRadial hrad
-  have hbC : ∀ e x y, C.toGraph.IsLink e x y → (x ∈ H.V ↔ y ∉ H.V) := by
-    intro e x y hl
-    refine hbip e x y ⟨hCs.2 hl.1, hCs.1 hl.2.1, hCs.1 hl.2.2.1, ?_⟩
-    rw [← hCs.closure_inter_V hl.1]
-    exact hl.2.2.2
-  obtain ⟨u, W, ⟨hnd, hed⟩, hpos, hCV, hCE⟩ := id hC
-  have hlen : C.length = W.length := by
-    rw [Drawing.length, hCE]
-    have h : {e | e ∈ W.edges} = (W.edges.toFinset : Set (Set S)) := by ext; simp
-    rw [h, ncard_coe_finset, List.toFinset_card_of_nodup hed]
-    rfl
-  have heven : Even W.length := (even_length_of_bipartite hbC W).mp Iff.rfl
-  have h2le : 2 ≤ C.length := by
-    rcases heven with ⟨k, hk⟩
-    omega
-  have hc := two_mul_countP_le_of_bipartite H.V hbC W
-  have hU_sub : C.U ∩ H.V ⊆ ((W.support.tail.filter (· ∈ H.V)).toFinset : Set S) := by
-    rintro x ⟨hxU, hxV⟩
-    have hxCV : x ∈ C.V := by
-      by_contra hxCV
-      obtain ⟨e, he, hxe⟩ := C.exists_edge_of_mem hxU hxCV
-      exact ((hCs.2 he).2.1 hxe).2 (hrad.2.1 hxV)
-    rw [hCV] at hxCV
-    have hxtail : x ∈ W.support.tail := by
-      cases W with
-      | nil _ => simp at hpos
-      | cons hl r =>
-        rcases List.mem_cons.mp hxCV with rfl | hx'
-        · exact r.end_mem_support
-        · exact hx'
-    simpa using ⟨hxtail, hxV⟩
-  have hcard : (C.U ∩ H.V).ncard ≤ W.support.tail.countP (· ∈ H.V) := by
-    have hf : (W.support.tail.filter (· ∈ H.V)).Nodup := hnd.filter _
-    have hle := ncard_le_ncard hU_sub (Finset.finite_toSet _)
-    rw [ncard_coe_finset, List.toFinset_card_of_nodup hf, ← List.countP_eq_length_filter] at hle
-    exact hle
-  have hcard2 : 2 * (C.U ∩ H.V).ncard ≤ C.length := by omega
-  have hoarc : IsOArc C.U := by
-    cases W with
-    | nil _ => simp at hpos
-    | @cons u v _ e hl r =>
-      have huv : u ≠ v := by
-        intro hEq
-        subst hEq
-        by_cases hu : u ∈ H.V
-        · exact (hbC e u u hl).mp hu hu
-        · exact hu ((hbC e u u hl).mpr hu)
-      obtain ⟨P, Q, hP, hQ, hPs, hQs, _, _, hPQV, hdisjE, hsup⟩ :=
-        Drawing.IsCircuit.exists_two_paths hC hl.2.1 hl.2.2.1 huv
-      have hsupU : (C.sup P Q).U = P.U ∪ Q.U := by
-        rw [Drawing.U_eq, Drawing.sup_V hPs hQs, Drawing.sup_E hPs hQs, P.U_eq, Q.U_eq,
-          biUnion_union]
-        ext x; simp only [mem_union]; tauto
-      rw [← hsup, hsupU]
-      refine GM11.isOArc_union (GM11.isLine_of_isPathBetween hP huv)
-        (GM11.isLine_of_isPathBetween hQ huv) ?_
-      rw [GM11.U_inter_of_disjoint hPs hQs hdisjE, hPQV]
-  exact ⟨hoarc, h2le, hcard2⟩
+    IsOArc C.U ∧ 2 ≤ C.length ∧ 2 * (C.U ∩ H.V).ncard ≤ C.length :=
+  let ⟨hoarc, hlen, hmin⟩ := GM12.circuit_props_of_preRadial hrad hC hCs
+  ⟨hoarc, hmin, hlen.ge⟩
 
 /-- Every respectful tangle `T` of order `θ` in a 2-cell drawing `H` has a derived slope `ins` in
 any radial drawing `K` of `H`. -/
@@ -472,27 +414,8 @@ theorem exists_derivedSlope {S : Type w} [TopologicalSpace S] [T2Space S]
     {H K : Drawing S} {θ : ℕ} {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T)
     (hrad : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K) :
-    ∃ ins : Drawing S → Set S, IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins := by
-  classical
-  have hUU : H.U ∩ K.U = H.V := hrad.1
-  have hex : ∀ C : Drawing S, C.IsCircuit → C.IsSubdrawing K → C.length < 2 * θ →
-      ∃ Δ : Set S, IsClosedDisc Δ ∧ subBd Δ = C.U ∧
-        ((PaintingOrDrawing.drawing H).inter Δ, (PaintingOrDrawing.drawing H).interOutside Δ) ∈ T
-          := by
-    intro C hC hCs hlen
-    obtain ⟨hoarc, _, hcard2⟩ := circuit_props_of_preRadial hrad hC hCs
-    have hnorm : (PaintingOrDrawing.drawing H).IsNormal C.U := by
-      rintro x ⟨hxC, hxH⟩
-      have : x ∈ H.U ∩ K.U := ⟨hxH, hCs.U_subset hxC⟩
-      rwa [hUU] at this
-    refine hResp.2.2.2 C.U hoarc hnorm ?_
-    change (C.U ∩ H.V).ncard < θ
-    omega
-  refine ⟨fun C => if h : C.IsCircuit ∧ C.IsSubdrawing K ∧ C.length < 2 * θ then
-    (hex C h.1 h.2.1 h.2.2).choose else ∅, fun C hC hCs hlen => ?_⟩
-  have h : C.IsCircuit ∧ C.IsSubdrawing K ∧ C.length < 2 * θ := ⟨hC, hCs, hlen⟩
-  simp only [h]
-  exact (hex C hC hCs hlen).choose_spec
+    ∃ ins : Drawing S → Set S, IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins :=
+  GM12.exists_derivedSlope_of_respectful hResp hrad
 
 /-- Every respectful tangle `T` of order `θ` in a 2-cell drawing `H` in a closed surface `S` has a
 tangle metric `d` (`HasTangleMetric H θ T d`). -/
@@ -500,10 +423,8 @@ theorem exists_hasTangleMetric {S : Type w} [TopologicalSpace S] [T2Space S]
     (hS : IsClosedSurface S) {H : Drawing S} {θ : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T) :
-    ∃ d : Set S → Set S → ℕ, HasTangleMetric H θ T d := by
-  obtain ⟨K, hK⟩ := GM11.exists_radialDrawing hS hResp.1
-  obtain ⟨ins, hins⟩ := exists_derivedSlope hResp hK.2.1
-  exact ⟨tangleMetric H K ins θ, hResp, K, ins, hK, hins, fun _ _ _ _ => rfl⟩
+    ∃ d : Set S → Set S → ℕ, HasTangleMetric H θ T d :=
+  GM12.exists_hasTangleMetric hS hResp
 
 /-- If `H₁` is a 2-cell drawing in a closed surface `S` with `H₁.E = ∅`, then `H₁.V.ncard ≤ 1`. -/
 theorem ncard_V_le_one_of_E_empty {S : Type w} [TopologicalSpace S] [T2Space S] [ConnectedSpace S]

@@ -38,7 +38,7 @@ theorem drawingPath_symm {J : Drawing S} {a b : S} (hP : J.IsPathBetween a b) :
 /-- A subdrawing gives a subgraph with the same vertices and edges. -/
 theorem toGraph_le_of_isSubdrawing {H J : Drawing S} (hJ : J.IsSubdrawing H) :
     J.toGraph ≤ H.toGraph :=
-  ⟨hJ.1, fun _ _ _ hl => (hJ.isLink_iff hl.1).mp hl⟩
+  hJ.toGraph_le
 
 /-- A drawing path is a graph path in every drawing containing it. -/
 theorem graphPath_of_drawingPath {H J : Drawing S} {a b : S}

@@ -15,6 +15,7 @@ import LeanPool.GraphMinor.GM11.Section7b
 import LeanPool.GraphMinor.GM11.Section85
 import LeanPool.GraphMinor.GM11.Section810
 import LeanPool.GraphMinor.GM11.CitedResults
+import LeanPool.GraphMinor.GM12.Section4MetricExistence
 
 /-!
 # Graph Minors XII, (7.9): uniqueness and restriction of subdrawing tangles
@@ -240,37 +241,16 @@ theorem exists_derivedSlope_of_respectful {H K : Drawing S} {θ : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T)
     (hrad : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K) :
-    ∃ ins : Drawing S → Set S, IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins := by
-  classical
-  have hUU : H.U ∩ K.U = H.V := hrad.1
-  have hex : ∀ C : Drawing S, C.IsCircuit → C.IsSubdrawing K → C.length < 2 * θ →
-      ∃ Δ : Set S, IsClosedDisc Δ ∧ subBd Δ = C.U ∧
-        ((PaintingOrDrawing.drawing H).inter Δ, (PaintingOrDrawing.drawing H).interOutside Δ) ∈ T
-          := by
-    intro C hC hCs hlen
-    obtain ⟨hoarc, hcard2, _⟩ := circuit_props_of_preRadial hrad hC hCs
-    have hnorm : (PaintingOrDrawing.drawing H).IsNormal C.U := by
-      rintro x ⟨hxC, hxH⟩
-      have : x ∈ H.U ∩ K.U := ⟨hxH, hCs.U_subset hxC⟩
-      rwa [hUU] at this
-    refine hResp.2.2.2 C.U hoarc hnorm ?_
-    change (C.U ∩ H.V).ncard < θ
-    omega
-  refine ⟨fun C => if h : C.IsCircuit ∧ C.IsSubdrawing K ∧ C.length < 2 * θ then
-    (hex C h.1 h.2.1 h.2.2).choose else ∅, fun C hC hCs hlen => ?_⟩
-  have h : C.IsCircuit ∧ C.IsSubdrawing K ∧ C.length < 2 * θ := ⟨hC, hCs, hlen⟩
-  simp only [h]
-  exact (hex C hC hCs hlen).choose_spec
+    ∃ ins : Drawing S → Set S, IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins :=
+  GM11.exists_derivedSlope_of_preRadial hResp.2.2 hrad
 
 /-- Every respectful tangle `T` of order `θ` in a 2-cell drawing `H` in a closed surface `S` has a
 tangle metric `d` (`HasTangleMetric H θ T d`). -/
 theorem exists_hasTangleMetric (hS : IsClosedSurface S) {H : Drawing S} {θ : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     (hResp : IsRespectfulDrawingTangle H θ T) :
-    ∃ d : Set S → Set S → ℕ, HasTangleMetric H θ T d := by
-  obtain ⟨K, hK⟩ := GM11.exists_radialDrawing hS hResp.1
-  obtain ⟨ins, hins⟩ := exists_derivedSlope_of_respectful hResp hK.2.1
-  exact ⟨tangleMetric H K ins θ, hResp, K, ins, hK, hins, fun _ _ _ _ => rfl⟩
+    ∃ d : Set S → Set S → ℕ, HasTangleMetric H θ T d :=
+  exists_metric_of_respectful_drawing_tangle hS hResp
 
 /-! ## 2. Helper lemmas for (7.9) -/
 

@@ -32,9 +32,9 @@ from `Section6Part1` and `Section6Part2`:
   robust and belongs to `𝒞*`.
 * `lemma_6_7_claim_4` (6.7, claim (4), page 107): for every `P ∈ 𝒟'`, there is a rotund, proper
   tree-decomposition `(T, τ)` of `G⁻` such that all pieces of `P` under `(T, τ)` belong to `𝒞*`.
-* `theorem_6_7` (6.7, pages 106–107): the class `𝒟` of rootless, robust `Ω`-patchworks whose
+* `theorem_6_7_proof` (6.7, pages 106–107): the class `𝒟` of rootless, robust `Ω`-patchworks whose
   tangles of order `≥ θ` are `θ`-isolated by `Ω`-places with hearts in `𝒞` is well-quasi-ordered by
-  simulation.
+  simulation. The ambient class `𝒞` is well-behaved.
 -/
 
 public section
@@ -445,7 +445,9 @@ $\ge \theta$, there is an $\Omega$-place $(P, \mathscr{L})$ with heart in $\math
 $\mathscr{L}^-$ $\theta$-isolates $\mathscr{T}$. Then $\mathscr{D}$ is well-quasi-ordered by
 simulation.*"
 
-Lean uses an infinite ambient edge type to provide fresh edge labels. -/
+The Lean version allows any well-behaved ambient class `𝒞` containing the specified hearts.
+The input class `𝒟` still consists of rootless, robust patchworks. An infinite ambient edge type
+supplies fresh edge labels. -/
 theorem theorem_6_7_proof [Infinite β] [Preorder Ω]
     (hΩ : WellQuasiOrderedLE Ω)
     {𝒞 : Set (PartialPatchwork Ω α β)} (h𝒞 : WellBehaved 𝒞)

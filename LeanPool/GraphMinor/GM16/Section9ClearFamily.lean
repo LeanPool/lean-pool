@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.GM15.Defs
 import LeanPool.GraphMinor.GM16.Section9Compressions
 import LeanPool.GraphMinor.GM16.Section9Dials
 import LeanPool.GraphMinor.GM16.Section9ZonePreservation
+import LeanPool.GraphMinor.GM16.EnvelopeAfterClearing
 import LeanPool.GraphMinor.GM11.Section810
 import LeanPool.GraphMinor.GM14.Section3b
 
@@ -52,6 +53,13 @@ theorem clearing_preserves_disjoint_zones
         (subset_closure ((hZone y hy).z_subset (mem_singleton y))) (subset_closure hyj)⟩
   · intro y hy
     exact zone_after_disjoint_clearing (hY y hy) (hZone y hy) hjZone (hdis y hy) hClear
+
+omit [ConnectedSpace S] in
+/-- Clearing the empty family leaves the drawing unchanged. -/
+theorem clearEnvelopeDrawing_empty (H : Drawing S) (Λ : S → Set S) :
+    clearEnvelopeDrawing H (↑(∅ : Finset S)) Λ = H := by
+  change H.interSet (univ \ ⋃ y ∈ (↑(∅ : Finset S) : Set S), Λ y) = H
+  simpa using drawing_interSet_univ H
 
 omit [ConnectedSpace S] in
 /-- Clearing an inserted disc first yields the same drawing as removing the union at once. -/
@@ -124,11 +132,7 @@ theorem exists_compression_clearFamily
   classical
   induction ys using Finset.induction_on generalizing H θ T d with
   | empty =>
-    have heq : clearEnvelopeDrawing H (↑(∅ : Finset S)) Λ = H := by
-      change H.interSet (univ \ ⋃ y ∈ (↑(∅ : Finset S) : Set S), Λ y) = H
-      simp only [Finset.coe_empty]
-      have hu : (⋃ y ∈ (∅ : Set S), Λ y) = ∅ := by simp
-      simpa using drawing_interSet_univ H
+    have heq := clearEnvelopeDrawing_empty H Λ
     refine ⟨T, d, ?_, ?_⟩
     · simpa only [Finset.card_empty, Nat.mul_zero, heq, Nat.sub_zero] using
         (show IsLambdaCompression H H θ 0 T T d d from
@@ -161,5 +165,46 @@ theorem exists_compression_clearFamily
       (fun y hy => (hZone y hy).isOpenDisc.1)
     obtain ⟨hComp, hLe⟩ := compression_of_clearFamily_insert hj hMet hθj hClear heq hComp₂ hLe₂
     exact ⟨T₂, d₂, hComp, hLe⟩
+
+/-- Clear one disc of an envelope, then compress along the remaining discs. The first clearing
+preserves the remaining envelope, and the two compressions combine with the total order loss. -/
+theorem exists_compression_clearEnvelope_insert [DecidableEq S]
+    (hS : IsClosedSurface S) {H : Drawing S} {θ γ : ℕ} {ys : Finset S} {j : S}
+    (hj : j ∉ ys) {Λ : S → Set S}
+    {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))} {d : Set S → Set S → ℕ}
+    (hMet : HasTangleMetric H θ T d) (hEnv : IsEnvelope H d (↑(insert j ys)) γ Λ)
+    (hθ : (4 * γ + 2) * (insert j ys).card < θ) :
+    ∃ (T₁ T₂ : Set (Hypergraph S (Set S) × Hypergraph S (Set S)))
+       (d₁ d₂ : Set S → Set S → ℕ),
+      IsClearedTangle H T d θ γ (Λ j) T₁ d₁ ∧ IsRigid (clearedSubdrawing H (Λ j)) ∧
+      IsEnvelope (clearedSubdrawing H (Λ j)) d₁ (ys : Set S) γ Λ ∧
+      IsLambdaCompression (clearedSubdrawing H (Λ j))
+        (clearEnvelopeDrawing (clearedSubdrawing H (Λ j)) (ys : Set S) Λ)
+        (θ - (4 * γ + 2)) ((4 * γ + 2) * ys.card) T₁ T₂ d₁ d₂ ∧
+      IsLambdaCompression H (clearEnvelopeDrawing H (↑(insert j ys)) Λ)
+        θ ((4 * γ + 2) * (insert j ys).card) T T₂ d d₂ := by
+  let c := 4 * γ + 2
+  have hθsum : c * ys.card + c < θ := by
+    simpa only [c, Finset.card_insert_of_notMem hj, Nat.mul_add, Nat.mul_one] using hθ
+  have hθj : c < θ := by omega
+  have hjmem : j ∈ insert j ys := Finset.mem_insert_self _ _
+  obtain ⟨T₁, d₁, hClear, _⟩ := GraphMinor.GM14.theorem_3_2_proof hS inferInstance
+    (by dsimp only [c] at hθj; omega) hMet (hEnv.2.1 j hjmem)
+  have hRig : IsRigid (clearedSubdrawing H (Λ j)) := by
+    have h := hEnv.2.2.2 {j} (singleton_subset_iff.mpr hjmem)
+    have hu : (⋃ y ∈ ({j} : Set S), Λ y) = Λ j := by simp
+    rw [hu] at h
+    exact h
+  have hEnv₁ := envelope_after_clearing (show j ∉ (ys : Set S) from hj)
+    (by simpa only [Finset.coe_insert] using hEnv) hClear
+  have hMet₁ : HasTangleMetric (clearedSubdrawing H (Λ j)) (θ - c) T₁ d₁ := by
+    simpa only [c, Nat.sub_sub] using hClear.hasMetric
+  have hθrem : c * ys.card < θ - c := by omega
+  obtain ⟨T₂, d₂, hComp₂, hLe₂⟩ := exists_compression_clearFamily hS ys Λ γ hMet₁
+    (fun y hy => hEnv₁.1 hy) hEnv₁.2.1 hEnv₁.2.2.1 hθrem
+  have hDraw := clearEnvelopeDrawing_insert H ys j Λ
+    (fun y hy => (hEnv.2.1 y hy).isOpenDisc.1)
+  exact ⟨T₁, T₂, d₁, d₂, hClear, hRig, hEnv₁, hComp₂,
+    (compression_of_clearFamily_insert hj hMet hθj hClear hDraw hComp₂ hLe₂).1⟩
 
 end GraphMinor.GM16

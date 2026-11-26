@@ -124,7 +124,7 @@ private theorem split_oArc_across_openDisc [T2Space S] (hS : IsClosedSurface S)
     {H H' C : Drawing S} {Λ F : Set S}
     (hΛ_open : IsOpenDisc Λ) (hΛ_cl : IsClosedDisc (closure Λ))
     (hC : C.IsCircuit) (hC_sub' : C.IsSubdrawing H') (hbd : subBd Λ = C.U)
-    (_hΛ_R : Λ ∈ H'.R) (hR'_other : ∀ r ∈ H'.R, r ≠ Λ → r ∈ H.R ∧ Disjoint r Λ)
+    (hR'_other : ∀ r ∈ H'.R, r ≠ Λ → r ∈ H.R ∧ Disjoint r Λ)
     (hF : IsOArc F) (hFU : F ∩ H'.U ⊆ H'.V) (hFV : (F ∩ H'.V).ncard ≤ 2)
     (hF_in : (F ∩ Λ).Nonempty) (hF_out : (F \ closure Λ).Nonempty) :
     ∃ (v₁ v₂ : S) (F₁ F₂ r : Set S),
@@ -323,7 +323,7 @@ theorem isRigid_clearedSubdrawing_of_arc_subset [T2Space S] [ConnectedSpace S]
       obtain ⟨v₁, v₂, F₁, F₂, r, hv12, hv₁C, hv₂C, hFV_eq, hFU_eq, hFbd_eq,
         hF₁_line, hF₂_line, hF_union, hF12_inter, hF₁_cl, hF₁_Λ,
         hr_R', hr_H, hdis_rΛ, hr_sub, hF₂_r, _, _⟩ :=
-        split_oArc_across_openDisc hS hΛ_open hΛ_cl hC hC_sub' hbd hΛ_R hR'_other
+        split_oArc_across_openDisc hS hΛ_open hΛ_cl hC hC_sub' hbd hR'_other
           hF hFU hFV hF_in hF_out
       have hCU_cl : C.U ⊆ closure Λ := hbd ▸ fun _ hx => hx.1
       obtain ⟨P₁, P₂, hP₁, hP₂, hP₁s, hP₂s, _, _, hV_inter12, hE_disj12, hsup12⟩ :=

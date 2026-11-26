@@ -694,31 +694,8 @@ theorem curve_image_Ioo_eq_component (N : Net S) {c : Curve N.D}
 and `t` lie in `closure B`. -/
 theorem mem_closure_of_isLineWithEnds {X : Type*} [TopologicalSpace X] [T2Space X]
     {B : Set X} {s t : X} (hline : IsLineWithEnds (B ∪ {s, t}) s t) :
-    IsClosed (B ∪ {s, t}) ∧ s ∈ closure B ∧ t ∈ closure B := by
-  obtain ⟨f, hf0, hf1⟩ := hline
-  let γ : unitInterval → X := fun u => (f u).1
-  have hγ : Continuous γ := continuous_subtype_val.comp f.continuous
-  have hγ_inj : Function.Injective γ := fun u v h => f.injective (Subtype.ext h)
-  have hrange : range γ = B ∪ {s, t} := by
-    ext x
-    simp only [mem_range, γ]
-    exact ⟨fun ⟨u, hu⟩ => hu ▸ (f u).2, fun hx => ⟨f.symm ⟨x, hx⟩, by simp⟩⟩
-  have hcl : IsClosed (B ∪ {s, t}) := hrange ▸ (isCompact_range hγ).isClosed
-  have hIoo_B : ∀ u ∈ Ioo (0 : unitInterval) 1, γ u ∈ B := by
-    intro u hu
-    rcases (f u).2 with hB | hst
-    · exact hB
-    · rcases hst with hs | ht
-      · exact False.elim (hu.1.ne (hγ_inj (hs.trans hf0.symm)).symm)
-      · exact False.elim (hu.2.ne (hγ_inj ((mem_singleton_iff.mp ht).trans hf1.symm)))
-  have hcl_end : ∀ u₀ : unitInterval, γ u₀ ∈ closure B := by
-    intro u₀
-    have hu₀_cl : u₀ ∈ closure (Ioo (0 : unitInterval) 1) := by
-      rw [closure_Ioo zero_ne_one]
-      exact ⟨Subtype.coe_le_coe.mp u₀.2.1, Subtype.coe_le_coe.mp u₀.2.2⟩
-    exact closure_mono (image_subset_iff.mpr hIoo_B)
-      (image_closure_subset_closure_image hγ ⟨u₀, hu₀_cl, rfl⟩)
-  exact ⟨hcl, hf0 ▸ hcl_end 0, hf1 ▸ hcl_end 1⟩
+    IsClosed (B ∪ {s, t}) ∧ s ∈ closure B ∧ t ∈ closure B :=
+  hline.isClosed_union_and_endpoints_mem_closure
 
 /-- A single injective curve `c₀ : Curve N.D` in `bd N.D` and a closed set `K` missing an endpoint
 `x ∈ {c₀ 0, c₀ 1}` cannot together cover `bd N.D`. -/

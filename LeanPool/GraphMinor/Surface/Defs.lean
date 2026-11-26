@@ -259,6 +259,22 @@ theorem IsLineWithEnds.subset_closure_interior {S : Type u} [TopologicalSpace S]
   obtain ⟨t, ht⟩ := f.surjective ⟨x, hx⟩
   exact ⟨t.1, t.2, by simp only [g, projIcc_val, ht]⟩
 
+/-- In a Hausdorff space a line is closed, and its endpoints lie in the closure of any set
+that covers its interior. -/
+theorem IsLineWithEnds.isClosed_union_and_endpoints_mem_closure {X : Type u} [TopologicalSpace X]
+    [T2Space X] {B : Set X} {s t : X} (hline : IsLineWithEnds (B ∪ {s, t}) s t) :
+    IsClosed (B ∪ {s, t}) ∧ s ∈ closure B ∧ t ∈ closure B := by
+  have hsub : (B ∪ {s, t}) \ {s, t} ⊆ B := fun _ hx =>
+    hx.1.resolve_right hx.2
+  have hclosure := hline.subset_closure_interior.trans (closure_mono hsub)
+  refine ⟨?_, hclosure (Or.inr (Or.inl rfl)), hclosure (Or.inr (Or.inr rfl))⟩
+  obtain ⟨f, _, _⟩ := hline
+  have hrange : range (fun u : unitInterval => (f u).1) = B ∪ {s, t} := by
+    ext x
+    exact ⟨fun ⟨u, hu⟩ => hu ▸ (f u).2, fun hx => ⟨f.symm ⟨x, hx⟩, by simp⟩⟩
+  rw [← hrange]
+  exact (isCompact_range (continuous_subtype_val.comp f.continuous)).isClosed
+
 /-- The set of ends of a line $L \subseteq \Sigma$.
 Graph Minors XI, Section 3 (page 74); Graph Minors XIX, Section 15 (page 381). -/
 def lineEnds {S : Type u} [TopologicalSpace S] (L : Set S) : Set S :=

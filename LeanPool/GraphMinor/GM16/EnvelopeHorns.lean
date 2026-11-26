@@ -65,10 +65,7 @@ theorem horn_after_clearFamily
   classical
   induction ys using Finset.induction_on generalizing H θ T d T' d' with
   | empty =>
-    have hUnion : (⋃ y ∈ (↑(∅ : Finset S) : Set S), Λ y) = ∅ := by simp
-    have hDraw : clearEnvelopeDrawing H (↑(∅ : Finset S)) Λ = H := by
-      change H.interSet (univ \ ⋃ y ∈ (↑(∅ : Finset S) : Set S), Λ y) = H
-      rw [hUnion, sdiff_empty, drawing_interSet_univ]
+    have hDraw := clearEnvelopeDrawing_empty H Λ
     have hc : IsLambdaCompression H H θ 0 T T' d d' := by
       simpa only [Finset.card_empty, Nat.mul_zero, hDraw] using hComp
     have hSelf : IsLambdaCompression H H θ 0 T T d d :=
@@ -88,26 +85,16 @@ theorem horn_after_clearFamily
     simpa only [Finset.card_empty, Nat.mul_zero, Nat.sub_zero] using hTrans
   | @insert j ys hj ih =>
     let c := 4 * γ + 2
-    have hθ : c * (ys.card + 1) < θ := by
-      simpa only [Finset.card_insert_of_notMem hj] using hComp.lam_lt
-    have hθj : c < θ := by
-      have h := Nat.mul_le_mul_left c (show 1 ≤ ys.card + 1 by omega)
-      omega
-    have hEnvInsert : IsEnvelope H d (insert j (ys : Set S)) γ Λ := by
-      simpa only [Finset.coe_insert] using hEnv
-    have hjmem : j ∈ insert j (ys : Set S) := mem_insert _ _
-    have hZone := hEnvInsert.2.1 j hjmem
-    obtain ⟨T₁, d₁, hClear, _⟩ := GM14.theorem_3_2_proof hS inferInstance
-      (by dsimp only [c] at hθj; omega) hComp.hasMetric hZone
+    obtain ⟨T₁, T₂, d₁, d₂, hClear, hRig₁, hEnv₁, hComp₂, hTot⟩ :=
+      exists_compression_clearEnvelope_insert hS hj hComp.hasMetric hEnv hComp.lam_lt
     let H₁ := clearedSubdrawing H (Λ j)
-    have hRig₁ : IsRigid H₁ := by
-      have h := hEnvInsert.2.2.2 {j} (singleton_subset_iff.mpr hjmem)
-      have hu : (⋃ y ∈ ({j} : Set S), Λ y) = Λ j := by simp
-      rw [hu] at h
-      exact h
+    have hjmem : j ∈ insert j ys := Finset.mem_insert_self _ _
+    have hZone := hEnv.2.1 j hjmem
+    have hθj : c < θ := by
+      have hleft := hComp₂.lam_lt
+      omega
     have hSpan₁ : IsSigmaSpan G H₁ (restrictCleared η (Λ j)) θ_star (θ - c) T_star T₁ := by
       simpa only [c, Nat.sub_sub] using IsSigmaSpan.clear hSpan hClear hRig₁
-    have hEnv₁ := envelope_after_clearing (show j ∉ (ys : Set S) from hj) hEnvInsert hClear
     let e : Fin ((σ + ys.card) + 1) ≃ Fin (σ + (insert j ys).card) :=
       finCongr (by rw [Finset.card_insert_of_notMem hj]; omega)
     have hHorn₀ := horn_reindex e hHorn
@@ -115,26 +102,13 @@ theorem horn_after_clearFamily
       T_star H η T T₁ d d₁ (Λ j) v (fun i => P (e i)) (fun i => u (e i))
       hSpan hComp.hasMetric hγ (by dsimp only [c] at hθj; omega)
       ⟨{j}, hZone.z_mem, hZone⟩ hRig₁ hClear hHorn₀
-    have hθrem : c * ys.card < θ - c := by
-      rw [Nat.mul_add, Nat.mul_one] at hθ
-      omega
-    obtain ⟨T₂, d₂, hComp₂, _⟩ := exists_compression_clearFamily hS ys Λ γ
-      (show HasTangleMetric H₁ (θ - c) T₁ d₁ by simpa only [c, Nat.sub_sub] using hClear.hasMetric)
-      (fun y hy => hEnv₁.1 hy) hEnv₁.2.1 hEnv₁.2.2.1 hθrem
     have hHorn₁' : IsHorn G H₁ (restrictCleared η (Λ j)) d₁ v (θ - c) (σ + ys.card) P₁ u₁ := by
       simpa only [c, Nat.sub_sub] using hHorn₁
     obtain ⟨P₂, u₂, hHorn₂⟩ := ih (restrictCleared η (Λ j)) hSpan₁ hEnv₁ hComp₂ hHorn₁'
-    have hSet : insert j (ys : Set S) = (↑(insert j ys) : Set S) := by simp
-    have hDraw : clearEnvelopeDrawing H₁ (ys : Set S) Λ =
-        clearEnvelopeDrawing H (↑(insert j ys)) Λ := by
-      rw [show H₁ = clearedSubdrawing H (Λ j) from rfl,
-        clearFamily_after_single H (ys : Set S) Λ j (fun y hy => (hEnvInsert.2.1 y
-          hy).isOpenDisc.1), hSet]
-    have hTot := compression_comp (compression_of_clearing hComp.hasMetric hθj hClear) hComp₂
-    rw [hDraw] at hTot
+    have hDraw := clearEnvelopeDrawing_insert H ys j Λ
+      (fun y hy => (hEnv.2.1 y hy).isOpenDisc.1)
     have hLoss : c + c * ys.card = c * (insert j ys).card := by
       rw [Finset.card_insert_of_notMem hj, Nat.mul_add, Nat.mul_one, Nat.add_comm]
-    rw [hLoss] at hTot
     have hT : T₂ = T' := compression_unique hS inferInstance hTot hComp
     have hM₂ : HasTangleMetric (clearEnvelopeDrawing H (↑(insert j ys)) Λ)
         (θ - c * (insert j ys).card) T' d₂ := by simpa only [hT] using hTot.hasMetric'

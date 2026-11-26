@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM11.ArcDrawings
 public import LeanPool.GraphMinor.GM11.RadialExists
 public import LeanPool.GraphMinor.GM12.Section4FiniteLineDrawing
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # A drawing from finitely many lines and `O`-arcs
@@ -27,33 +28,8 @@ open Set Surface GM11 unitInterval
 
 /-- An `O`-arc less one of its points is path connected. -/
 theorem isPathConnected_oArc_sdiff {S : Type*} [TopologicalSpace S] {F : Set S}
-    (hF : IsOArc F) {a : S} (ha : a ∈ F) : IsPathConnected (F \ {a}) := by
-  obtain ⟨p, hp, h0, h2, hper, himg, -⟩ := exists_oArc_par hF ha
-  have hpos : (0 : ℝ) < 2 * Real.pi := Real.two_pi_pos
-  have hsub : F \ {a} = p '' Ioo 0 (2 * Real.pi) := by
-    rw [← himg]
-    ext x
-    constructor
-    · rintro ⟨⟨t, ht, rfl⟩, hn⟩
-      refine ⟨t, ⟨lt_of_le_of_ne ht.1 fun h => hn ?_, ht.2⟩, rfl⟩
-      rw [← h, h0]
-      rfl
-    · rintro ⟨t, ht, rfl⟩
-      refine ⟨⟨t, ⟨ht.1.le, ht.2⟩, rfl⟩, fun h => ?_⟩
-      have h' : p t = p 0 := by
-        rw [h0]
-        exact h
-      obtain ⟨m, hm⟩ := hper _ _ h'
-      have h₁ : (0 : ℝ) < m * (2 * Real.pi) := by linarith [ht.1]
-      have h₂ : (m : ℝ) * (2 * Real.pi) < 1 * (2 * Real.pi) := by linarith [ht.2]
-      have h₃ : (0 : ℝ) < m := (mul_pos_iff_of_pos_right hpos).mp h₁
-      have h₄ : (m : ℝ) < 1 := lt_of_mul_lt_mul_right h₂ hpos.le
-      have h₅ : 0 < m := by exact_mod_cast h₃
-      have h₆ : m < 1 := by exact_mod_cast h₄
-      omega
-  rw [hsub]
-  exact (convex_Ioo _ _).isPathConnected ⟨Real.pi, by linarith [Real.pi_pos], by
-    linarith [Real.pi_pos]⟩ |>.image hp
+    (hF : IsOArc F) {a : S} (ha : a ∈ F) : IsPathConnected (F \ {a}) :=
+  hF.isPathConnected_sdiff_singleton ha
 
 /-- The drawing on a single `O`-arc, with one vertex. -/
 theorem exists_loop_drawing_E {S : Type*} [TopologicalSpace S] [T2Space S] {F : Set S}

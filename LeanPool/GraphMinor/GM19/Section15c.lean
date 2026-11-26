@@ -18,18 +18,17 @@ public import LeanPool.GraphMinor.GM11.Section5b
 /-!
 # Graph Minors XIX, (15.1)
 
-Let `H` be a 2-cell drawing with a tangle of representativity `θ`, and let `X` be a set of at most
-`θ` vertices on the closure of one region `r`. Theorem (15.1) says that a separation of the tangle
-of order `< |X|` with `X` on its small side exists exactly when a short circuit of the radial
-drawing
-has `r*` on its inside and more than half its length in vertices of `X`.
+Let `H` be a 2-cell drawing with a respectful tangle of order `θ`, and let `X` be a set of at most
+`θ` vertices on the closure of one region `r`. A tangle separation of order `< |X|` with `X` on its
+small side exists exactly when a short circuit of the radial drawing has `r*` on its inside and
+more than half its length in vertices of `X`.
 
 The proof of the paper takes all edges of the radial drawing split by the separation. We take the
 union `G` of the circuits that (6.3) of XI gives for the separation. That is all the argument needs.
 The circuits of `G` with maximal inside are confined, and (4.3) of XI shows that two of them through
 `r*` meet only there. Counting vertices of `Γ` on these circuits then gives one with the property.
 
-The result used later is `theorem_15_1`.
+The result used later is `theorem_15_1_proof`.
 -/
 
 @[expose] public section
@@ -497,13 +496,20 @@ theorem exists_circuit_of_confined (hS : IsClosedSurface S) {H K G : Drawing S} 
     hGZ hZX hcov
   exact ⟨C, h₁, h₂.trans hGK, h₃⟩
 
-/-- **Graph Minors XIX, (15.1)** (page 379): "Let $\Gamma$ be a 2-cell drawing with $E(\Gamma) \ne
+/-- **Graph Minors XIX, (15.1)** (page 379), for a respectful tangle of order `θ`.
+
+"Let $\Gamma$ be a 2-cell drawing with $E(\Gamma) \ne
 \emptyset$ in a surface $\Sigma$ with
 $\text{bd}(\Sigma) = \emptyset$, and let $\mathscr{T}$ be a tangle in $\Gamma$ with
 $\text{rep}(\mathscr{T}) \ge \theta$. Let $r$ be a region of $\Gamma$, and let $X \subseteq
 V(\Gamma) \cap \bar{r}$ with $|X| \le \theta$. Then the following are equivalent:" the existence of
 `(A, B) ∈ 𝒯` of order `< |X|` with `X ⊆ V(A)`, and the existence of a circuit `C` of `Γ*` of length
-`< 2θ` such that `|X ∩ ins(C)| > ½|E(C)|` and `r* ∈ ins(C)`. -/
+`< 2θ` such that `|X ∩ ins(C)| > ½|E(C)|` and `r* ∈ ins(C)`.
+
+The Lean statement takes a respectful tangle of order exactly `θ` and its derived slope.
+The radial vertex `w` represents the region `r`. With the paper's representativity bound, the
+order-`θ` truncation retains the separations of order below `θ`. These include the orientations
+that determine the inside of each circuit of length below `2 * θ` in Section 7. -/
 theorem theorem_15_1_proof (hS : IsClosedSurface S) [ConnectedSpace S]
     {H K : Drawing S} {θ : ℕ} {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
     {ins : Drawing S → Set S} (hE : H.E.Nonempty) (hResp : IsRespectfulDrawingTangle H θ T)

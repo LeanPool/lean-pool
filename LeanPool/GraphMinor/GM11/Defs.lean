@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.Surface.Defs
+import LeanPool.GraphMinor.Surface.Circle
 public import LeanPool.GraphMinor.GM10.Defs
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.Algebra.BigOperators.Finprod
@@ -54,82 +55,10 @@ section Subdrawing
 
 variable {S : Type u} [TopologicalSpace S]
 
-/-- A circle minus one point is path connected. -/
-private theorem isPathConnected_compl_singleton_circle (c : Circle) :
-    IsPathConnected ({c}ᶜ : Set Circle) := by
-  have hIoo : IsPathConnected (Ioo (0 : ℝ) (2 * Real.pi)) :=
-    (convex_Ioo (0 : ℝ) (2 * Real.pi)).isPathConnected
-      ⟨Real.pi, Real.pi_pos, by linarith [Real.pi_pos]⟩
-  have hEq : ({c}ᶜ : Set Circle) = (fun t : ℝ => c * Circle.exp t) '' Ioo (0 : ℝ) (2 * Real.pi)
-    := by
-    ext z
-    constructor
-    · intro hz
-      set w : Circle := c⁻¹ * z with hw
-      have hw1 : w ≠ 1 := by
-        intro h
-        apply hz
-        have : z = c := by
-          have h2 : c * (c⁻¹ * z) = c * 1 := by rw [← hw, h]
-          simpa using h2
-        exact this
-      have hexp : Circle.exp (Complex.arg w) = w := Circle.exp_arg w
-      have harg0 : Complex.arg w ≠ 0 := by
-        intro h
-        rw [h, Circle.exp_zero] at hexp
-        exact hw1 hexp.symm
-      have hz' : c * w = z := by simp [hw]
-      rcases lt_or_gt_of_ne harg0 with hneg | hpos
-      · refine ⟨Complex.arg w + 2 * Real.pi, ⟨?_, by linarith⟩, ?_⟩
-        · linarith [Complex.neg_pi_lt_arg (w : ℂ), Real.pi_pos]
-        · simp only [Circle.periodic_exp _, hexp, hz']
-      · refine ⟨Complex.arg w, ⟨hpos, ?_⟩, ?_⟩
-        · linarith [Complex.arg_le_pi (w : ℂ), Real.pi_pos]
-        · simp only [hexp, hz']
-    · rintro ⟨t, ⟨h0, h1⟩, rfl⟩ h
-      have h' : c * Circle.exp t = c * 1 := by simpa using h
-      have h1' : Circle.exp t = 1 := mul_left_cancel h'
-      obtain ⟨n, hn⟩ := Circle.exp_eq_one.mp h1'
-      have hpi := Real.pi_pos
-      have hn0 : (0 : ℝ) < n := by
-        by_contra hcon
-        have : (n : ℝ) * (2 * Real.pi) ≤ 0 :=
-          mul_nonpos_of_nonpos_of_nonneg (not_lt.mp hcon) (by positivity)
-        linarith
-      have hn1 : (n : ℝ) < 1 := by
-        by_contra hcon
-        have : 1 * (2 * Real.pi) ≤ (n : ℝ) * (2 * Real.pi) :=
-          mul_le_mul_of_nonneg_right (not_lt.mp hcon) (by positivity)
-        linarith
-      have h3 : 0 < n := by exact_mod_cast hn0
-      have h4 : n < 1 := by exact_mod_cast hn1
-      omega
-  rw [hEq]
-  have hc : Continuous (fun t : ℝ => c * Circle.exp t) :=
-    continuous_const.mul Circle.exp.continuous
-  exact hIoo.image hc
-
 /-- An `O`-arc minus one of its points is path connected. -/
 theorem isPathConnected_oArc_diff {F : Set S} (hF : IsOArc F) {u : S} (hu : u ∈ F) :
-    IsPathConnected (F \ {u}) := by
-  obtain ⟨f⟩ := hF
-  let c : Circle := f.symm ⟨u, hu⟩
-  have hEq : F \ {u} = (fun z => (f z).1) '' ({c}ᶜ : Set Circle) := by
-    ext x
-    constructor
-    · rintro ⟨hxF, hx⟩
-      refine ⟨f.symm ⟨x, hxF⟩, ?_, by simp⟩
-      intro h
-      have h2 : f.symm ⟨x, hxF⟩ = f.symm ⟨u, hu⟩ := h
-      have := f.symm.injective h2
-      exact hx (congrArg Subtype.val this)
-    · rintro ⟨z, hz, rfl⟩
-      refine ⟨(f z).2, fun h => hz ?_⟩
-      have : f z = ⟨u, hu⟩ := Subtype.ext h
-      simp [c, ← this]
-  rw [hEq]
-  exact (isPathConnected_compl_singleton_circle c).image
-    (continuous_subtype_val.comp f.continuous)
+    IsPathConnected (F \ {u}) :=
+  hF.isPathConnected_sdiff_singleton hu
 
 namespace Drawing
 

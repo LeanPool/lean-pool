@@ -374,6 +374,11 @@ theorem IsSubdrawing.isLink_iff {Γ₁ Γ₂ : Drawing S} (h : Γ₁.IsSubdrawin
     have hy : y ∈ closure e ∩ Γ₁.V := by rw [hc']; simp
     exact ⟨he, hx.2, hy.2, hc'⟩
 
+/-- The graph of a subdrawing is a subgraph of the graph of the drawing. -/
+theorem IsSubdrawing.toGraph_le {Γ₁ Γ₂ : Drawing S} (h : Γ₁.IsSubdrawing Γ₂) :
+    Γ₁.toGraph ≤ Γ₂.toGraph :=
+  ⟨h.1, fun _ _ _ he => (h.isLink_iff he.1).mp he⟩
+
 theorem toGraph_isLink_mem {Γ : Drawing S} {e : Set S} {x y : S} (h : Γ.toGraph.IsLink e x y) :
     e ∈ Γ.E := h.1
 

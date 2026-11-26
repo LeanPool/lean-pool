@@ -27,7 +27,7 @@ namespace GraphMinor.GM12
 open Set Surface Metric
 
 private theorem tentMap_pos {l w t r : ℝ} (hl : 0 < l) (hlt : l < t)
-    (hw : 0 < w) (_hwt : w < t) (hr : 0 < r) : 0 < tentMap 0 l w t r := by
+    (hw : 0 < w) (hr : 0 < r) : 0 < tentMap 0 l w t r := by
   by_cases hrl : r ≤ l
   · rw [tentMap, tent_left hl hlt hr.le hrl]
     simp only [sub_zero]
@@ -50,8 +50,8 @@ private noncomputable def radialFactor (l w t r : ℝ) : ℝ :=
   tentMap 0 l w t (max l r) / max l r
 
 private theorem radialFactor_pos {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
-    (hw : 0 < w) (hwt : w < t) (r : ℝ) : 0 < radialFactor l w t r :=
-  div_pos (tentMap_pos hl hlt hw hwt (hl.trans_le (le_max_left _ _)))
+    (hw : 0 < w) (r : ℝ) : 0 < radialFactor l w t r :=
+  div_pos (tentMap_pos hl hlt hw (hl.trans_le (le_max_left _ _)))
     (hl.trans_le (le_max_left _ _))
 
 private theorem radialFactor_mul {l w t r : ℝ} (hl : 0 < l) (hlt : l < t)
@@ -66,7 +66,7 @@ private theorem radialFactor_mul {l w t r : ℝ} (hl : 0 < l) (hlt : l < t)
   · simp only [radialFactor, max_eq_right (le_of_not_ge hrl)]
     exact div_mul_cancel₀ _ (hl.trans (lt_of_not_ge hrl)).ne'
 
-private theorem radialFactor_continuous {l w t : ℝ} (hl : 0 < l) (_hlt : l < t) :
+private theorem radialFactor_continuous {l w t : ℝ} (hl : 0 < l) :
     Continuous (radialFactor l w t) := by
   unfold radialFactor tentMap tent
   apply Continuous.div
@@ -79,10 +79,10 @@ private noncomputable def radialMap (l w t : ℝ) (z : ℂ) : ℂ :=
   radialFactor l w t ‖z‖ • z
 
 private theorem radialMap_norm {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
-    (hw : 0 < w) (hwt : w < t) (z : ℂ) :
+    (hw : 0 < w) (z : ℂ) :
     ‖radialMap l w t z‖ = tentMap 0 l w t ‖z‖ := by
   rw [radialMap, norm_smul, Real.norm_eq_abs,
-    abs_of_pos (radialFactor_pos hl hlt hw hwt _)]
+    abs_of_pos (radialFactor_pos hl hlt hw _)]
   exact radialFactor_mul hl hlt (norm_nonneg z)
 
 private theorem radialMap_inverse {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
@@ -94,10 +94,10 @@ private theorem radialMap_inverse {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
   have heq : radialFactor w l t (tentMap 0 l w t ‖z‖) * radialFactor l w t ‖z‖ = 1 := by
     apply mul_right_cancel₀ hn.ne'
     rw [one_mul, mul_assoc, radialFactor_mul hl hlt hn.le,
-      radialFactor_mul hw hwt (tentMap_pos hl hlt hw hwt hn).le,
+      radialFactor_mul hw hwt (tentMap_pos hl hlt hw hn).le,
       tentMap_inv hl hlt hw hwt]
   change radialFactor w l t ‖radialMap l w t z‖ • (radialFactor l w t ‖z‖ • z) = z
-  rw [radialMap_norm hl hlt hw hwt, smul_smul, heq, one_smul]
+  rw [radialMap_norm hl hlt hw, smul_smul, heq, one_smul]
 
 /-- Change one positive disc radius to another, fixing all points
 at or beyond a larger radius. -/
@@ -112,8 +112,8 @@ theorem exists_radial_disc_resize {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
     invFun := radialMap w l t
     left_inv := radialMap_inverse hl hlt hw hwt
     right_inv := radialMap_inverse hw hwt hl hlt
-    continuous_toFun := (radialFactor_continuous hl hlt).comp continuous_norm |>.smul continuous_id
-    continuous_invFun := (radialFactor_continuous hw hwt).comp continuous_norm |>.smul
+    continuous_toFun := (radialFactor_continuous hl).comp continuous_norm |>.smul continuous_id
+    continuous_invFun := (radialFactor_continuous hw).comp continuous_norm |>.smul
       continuous_id }
   have hscale : ∀ z : ℂ, ‖z‖ ≤ l → Θ z = (w / l) • z := by
     intro z hz
@@ -123,7 +123,7 @@ theorem exists_radial_disc_resize {l w t : ℝ} (hl : 0 < l) (hlt : l < t)
       sub_zero, div_self hl.ne', mul_one]
     congr 1
     ring
-  refine ⟨Θ, ?_, radialMap_norm hl hlt hw hwt, ?_⟩
+  refine ⟨Θ, ?_, radialMap_norm hl hlt hw, ?_⟩
   · intro z hz
     change radialFactor l w t ‖z‖ • z = z
     have hn : l ≤ ‖z‖ := hlt.le.trans hz

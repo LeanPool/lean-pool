@@ -235,38 +235,17 @@ theorem IsSideShape.ofHomeo {cap : IsCappedSurface S Shat} {Φ : Frame S} {side 
     (h : IsSideShape cap Φ side K' Z) (f : S ≃ₜ S) (hf : IsFramePreservingHomeo Φ f) (hU : f '' K.U
       = K'.U) :
     IsSideShape (cap.ofHomeo f) Φ side K Z := by
-  have him : ∀ A : Set S, (cap.ofHomeo f).emb '' A = cap.emb '' (f '' A) := fun A ↦ by
-    rw [image_image]
-    rfl
-  have hsym : ∀ A : Set S, f '' (f.symm '' A) = A := fun A ↦ by
-    rw [image_image]
-    simp
-  have hc : ∀ {Θ}, Θ ∈ cuffs S → f '' Θ ∈ cuffs S ∧ (cap.ofHomeo f).cuffDisc Θ = cap.cuffDisc
-    (f '' Θ) := fun {Θ} hΘ ↦
-    ⟨by rw [cuffs_eq_image f]; exact mem_image_of_mem _ hΘ, rfl⟩
-  have hc' : ∀ {Θ}, Θ ∈ cuffs S → f.symm '' Θ ∈ cuffs S ∧ (cap.ofHomeo f).cuffDisc (f.symm '' Θ)
-    = cap.cuffDisc Θ := fun {Θ} hΘ ↦ by
-    refine ⟨?_, ?_⟩
-    · rw [cuffs_eq_image f.symm]
-      exact mem_image_of_mem _ hΘ
-    · change cap.cuffDisc (f '' (f.symm '' Θ)) = _
-      rw [hsym]
-  have hdiscs : (cap.ofHomeo f).discs = cap.discs := by
-    ext x
-    simp only [IsCappedSurface.discs, mem_iUnion₂]
-    constructor
-    · rintro ⟨Θ, hΘ, hx⟩
-      rw [(hc hΘ).2] at hx
-      exact ⟨_, (hc hΘ).1, hx⟩
-    · rintro ⟨Θ, hΘ, hx⟩
-      rw [← (hc' hΘ).2] at hx
-      exact ⟨_, (hc' hΘ).1, hx⟩
-  have hKU : (cap.ofHomeo f).emb '' K.U = cap.emb '' K'.U := by rw [him, hU]
-  refine ⟨h.disc, by rw [hKU]; exact h.sub, by rw [hKU, hdiscs]; exact h.rest, ?_, ?_, ?_⟩
+  have hKU : (cap.ofHomeo f).emb '' K.U = cap.emb '' K'.U := by rw [cap.ofHomeo_emb_image, hU]
+  refine ⟨h.disc, ?_, ?_, ?_, ?_, ?_⟩
+  · rw [hKU]
+    exact h.sub
+  · rw [hKU, cap.ofHomeo_discs]
+    exact h.rest
   · obtain ⟨Θ, hΘ, hin, hdis⟩ := h.cuff
-    refine ⟨_, (hc' hΘ).1, by rw [(hc' hΘ).2]; exact hin, fun Θ' hΘ' hne ↦ ?_⟩
-    rw [(hc hΘ').2]
-    refine hdis _ (hc hΘ').1 fun he ↦ hne ?_
+    obtain ⟨hΘ', hDisc⟩ := cap.ofHomeo_cuffDisc_symm f hΘ
+    refine ⟨_, hΘ', hDisc.symm ▸ hin, fun Θ' hΘ' hne ↦ ?_⟩
+    rw [(cap.ofHomeo_cuffDisc f hΘ').2]
+    refine hdis _ (cap.ofHomeo_cuffDisc f hΘ').1 fun he ↦ hne ?_
     rw [← he]
     ext x
     simp

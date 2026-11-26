@@ -1473,6 +1473,50 @@ private noncomputable def cutSideGraph {α : Type u} {β : Type v} {G : Hypergra
   if d = distinguished then baseGraph d ∪ π.cellsUnion absorbed else baseGraph d
 
 open Classical in
+/-- A vertex shared by distinct cut-side cells comes from two retained original cells. -/
+private theorem cutSideGraph_shared_vertex
+    {α : Type u} {β : Type v} {G : Hypergraph α β} {S' : Type}
+    (π : Portrayal G) {I_keep I_absorb : Set (Set π.S)} {ι : π.S → S'}
+    {baseGraph : Set S' → Hypergraph α β} {d₀ d d₂ : Set S'}
+    (hV_disj : (π.cellsUnion I_keep).vertexSet ∩ (π.cellsUnion I_absorb).vertexSet = ∅)
+    (hbase_eq : ∀ c ∈ I_keep, baseGraph (ι '' c) = π.cellGraph c)
+    (hbase_bot : ∀ d ∉ (fun c => ι '' c) '' I_keep, baseGraph d = π.cellsUnion ∅)
+    (hbase_sub_keep : ∀ d, (baseGraph d).vertexSet ⊆ (π.cellsUnion I_keep).vertexSet)
+    {v : α} (hd₂_ne : d₂ ≠ d)
+    (hv : v ∈ (cutSideGraph π I_absorb baseGraph d₀ d).vertexSet)
+    (hv₂ : v ∈ (cutSideGraph π I_absorb baseGraph d₀ d₂).vertexSet) :
+    ∃ c ∈ I_keep, ∃ c₂ ∈ I_keep, d = ι '' c ∧ d₂ = ι '' c₂ ∧
+      v ∈ (π.cellGraph c).vertexSet ∧ v ∈ (π.cellGraph c₂).vertexSet := by
+  have base_of_ne : ∀ {A : Set S'}, A ≠ d₀ →
+      v ∈ (cutSideGraph π I_absorb baseGraph d₀ A).vertexSet →
+      v ∈ (baseGraph A).vertexSet := by
+    intro A hA hmem
+    simpa only [cutSideGraph, ite_eq_right hA] using hmem
+  have hv_keep : v ∈ (π.cellsUnion I_keep).vertexSet := by
+    by_cases hd : d = d₀
+    · exact hbase_sub_keep d₂ (base_of_ne (fun h => hd₂_ne (h.trans hd.symm)) hv₂)
+    · exact hbase_sub_keep d (base_of_ne hd hv)
+  have hv_not_abs : v ∉ (π.cellsUnion I_absorb).vertexSet :=
+    fun h => eq_empty_iff_forall_notMem.mp hV_disj v ⟨hv_keep, h⟩
+  have recover : ∀ {A : Set S'}, v ∈ (cutSideGraph π I_absorb baseGraph d₀ A).vertexSet →
+      ∃ c ∈ I_keep, A = ι '' c ∧ v ∈ (π.cellGraph c).vertexSet := by
+    intro A hmem
+    have hbase : v ∈ (baseGraph A).vertexSet := by
+      dsimp [cutSideGraph] at hmem
+      split_ifs at hmem
+      · exact hmem.resolve_right hv_not_abs
+      · exact hmem
+    have hA : A ∈ (fun c => ι '' c) '' I_keep := by
+      by_contra hnot
+      rw [hbase_bot A hnot, π.cellsUnion_empty_vertexSet] at hbase
+      exact hbase
+    obtain ⟨c, hc, rfl⟩ := hA
+    exact ⟨c, hc, rfl, hbase_eq c hc ▸ hbase⟩
+  obtain ⟨c, hc, hd, hcV⟩ := recover hv
+  obtain ⟨c₂, hc₂, hd₂, hc₂V⟩ := recover hv₂
+  exact ⟨c, hc, c₂, hc₂, hd, hd₂, hcV, hc₂V⟩
+
+open Classical in
 private noncomputable def assembleCutSidePortrayal
     {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G) {F : Set π.S} {I_keep I_absorb : Set (Set π.S)}
@@ -1681,40 +1725,8 @@ private noncomputable def assembleCutSidePortrayal
       exact hv₁
   p5 := by
     intro d hd hdbd v hv ⟨d₂, _, hd₂_ne, hv₂⟩
-    have hv_not_abs : v ∉ (π.cellsUnion I_absorb).vertexSet := by
-      intro hv_abs
-      have hv_keep : v ∈ (π.cellsUnion I_keep).vertexSet := by
-        by_cases hd_eq : d = d₀
-        · have hd₂_ne_d₀ : d₂ ≠ d₀ := fun h => hd₂_ne (h.trans hd_eq.symm)
-          dsimp [cutSideGraph] at hv₂
-          rw [ite_eq_right hd₂_ne_d₀] at hv₂
-          exact hbase_sub_keep d₂ hv₂
-        · dsimp [cutSideGraph] at hv
-          rw [ite_eq_right hd_eq] at hv
-          exact hbase_sub_keep d hv
-      exact eq_empty_iff_forall_notMem.mp hV_disj v ⟨hv_keep, hv_abs⟩
-    have hv_base : v ∈ (baseGraph d).vertexSet := by
-      dsimp [cutSideGraph] at hv
-      split_ifs at hv with h
-      · exact hv.resolve_right hv_not_abs
-      · exact hv
-    have hv₂_base : v ∈ (baseGraph d₂).vertexSet := by
-      dsimp [cutSideGraph] at hv₂
-      split_ifs at hv₂ with h
-      · exact hv₂.resolve_right hv_not_abs
-      · exact hv₂
-    have hd_mem : d ∈ (fun c => ι '' c) '' I_keep := by
-      by_contra hd_not
-      rw [hbase_bot d hd_not, π.cellsUnion_empty_vertexSet] at hv_base
-      exact hv_base
-    have hd₂_mem : d₂ ∈ (fun c => ι '' c) '' I_keep := by
-      by_contra hd₂_not
-      rw [hbase_bot d₂ hd₂_not, π.cellsUnion_empty_vertexSet] at hv₂_base
-      exact hv₂_base
-    obtain ⟨c, hc, rfl⟩ := hd_mem
-    obtain ⟨c₂, hc₂, rfl⟩ := hd₂_mem
-    rw [hbase_eq c hc] at hv_base
-    rw [hbase_eq c₂ hc₂] at hv₂_base
+    obtain ⟨c, hc, c₂, hc₂, rfl, rfl, hv_base, hv₂_base⟩ :=
+      cutSideGraph_shared_vertex π hV_disj hbase_eq hbase_bot hbase_sub_keep hd₂_ne hv hv₂
     have hc_bd : ¬ (c ∩ bd π.S).Nonempty := mt (hcut.bd_cell_iff c hc).mpr hdbd
     have hc₂_ne : c₂ ≠ c := fun h => hd₂_ne (congrArg _ h)
     obtain ⟨n, ⟨hn_tilde, hnγ⟩, rfl⟩ :=
@@ -1726,40 +1738,8 @@ private noncomputable def assembleCutSidePortrayal
       hγ'_eq n⟩
   p6 := by
     intro d hd hdbd v hv ⟨d₂, _, hd₂_ne, hv₂⟩
-    have hv_not_abs : v ∉ (π.cellsUnion I_absorb).vertexSet := by
-      intro hv_abs
-      have hv_keep : v ∈ (π.cellsUnion I_keep).vertexSet := by
-        by_cases hd_eq : d = d₀
-        · have hd₂_ne_d₀ : d₂ ≠ d₀ := fun h => hd₂_ne (h.trans hd_eq.symm)
-          dsimp [cutSideGraph] at hv₂
-          rw [ite_eq_right hd₂_ne_d₀] at hv₂
-          exact hbase_sub_keep d₂ hv₂
-        · dsimp [cutSideGraph] at hv
-          rw [ite_eq_right hd_eq] at hv
-          exact hbase_sub_keep d hv
-      exact eq_empty_iff_forall_notMem.mp hV_disj v ⟨hv_keep, hv_abs⟩
-    have hv_base : v ∈ (baseGraph d).vertexSet := by
-      dsimp [cutSideGraph] at hv
-      split_ifs at hv with h
-      · exact hv.resolve_right hv_not_abs
-      · exact hv
-    have hv₂_base : v ∈ (baseGraph d₂).vertexSet := by
-      dsimp [cutSideGraph] at hv₂
-      split_ifs at hv₂ with h
-      · exact hv₂.resolve_right hv_not_abs
-      · exact hv₂
-    have hd_mem : d ∈ (fun c => ι '' c) '' I_keep := by
-      by_contra hd_not
-      rw [hbase_bot d hd_not, π.cellsUnion_empty_vertexSet] at hv_base
-      exact hv_base
-    have hd₂_mem : d₂ ∈ (fun c => ι '' c) '' I_keep := by
-      by_contra hd₂_not
-      rw [hbase_bot d₂ hd₂_not, π.cellsUnion_empty_vertexSet] at hv₂_base
-      exact hv₂_base
-    obtain ⟨c, hc, rfl⟩ := hd_mem
-    obtain ⟨c₂, hc₂, rfl⟩ := hd₂_mem
-    rw [hbase_eq c hc] at hv_base
-    rw [hbase_eq c₂ hc₂] at hv₂_base
+    obtain ⟨c, hc, c₂, hc₂, rfl, rfl, hv_base, hv₂_base⟩ :=
+      cutSideGraph_shared_vertex π hV_disj hbase_eq hbase_bot hbase_sub_keep hd₂_ne hv hv₂
     have hc_bd : (c ∩ bd π.S).Nonempty := (hcut.bd_cell_iff c hc).mp hdbd
     have hc₂_ne : c₂ ≠ c := fun h => hd₂_ne (congrArg _ h)
     obtain ⟨n, hn_tilde, hvn⟩ :=

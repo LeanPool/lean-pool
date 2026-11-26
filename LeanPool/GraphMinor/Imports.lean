@@ -307,6 +307,7 @@ public import LeanPool.GraphMinor.GM09.EarDisc
 public import LeanPool.GraphMinor.GM09.EarUnion
 public import LeanPool.GraphMinor.GM09.GraphCircuits
 public import LeanPool.GraphMinor.GM09.Lawns
+public import LeanPool.GraphMinor.GM09.NestEdgeCount
 public import LeanPool.GraphMinor.GM09.NestUncrossing
 public import LeanPool.GraphMinor.GM09.Park
 public import LeanPool.GraphMinor.GM09.PlanarNests

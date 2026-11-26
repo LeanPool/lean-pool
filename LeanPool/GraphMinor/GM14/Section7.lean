@@ -547,7 +547,7 @@ private theorem exists_glued_drawing {ι : Type*} (s : Finset ι) (D_fam : ι �
     · rw [Drawing.glue_E hm, hE₀, Finset.set_biUnion_insert]
 
 /-- Every point of `C.U` in a circuit `C` belongs to the closure of some edge `e ∈ C.E`. -/
-private theorem exists_edge_closure_of_mem_circuit_U {C : Drawing S} (hC : C.IsCircuit)
+theorem exists_edge_closure_of_mem_circuit_U {C : Drawing S} (hC : C.IsCircuit)
     {x : S} (hx : x ∈ C.U) : ∃ e ∈ C.E, x ∈ closure e := by
   by_cases hxV : x ∈ C.V
   · obtain ⟨W, _, hpos, _, hE⟩ := exists_walk_at hC hxV

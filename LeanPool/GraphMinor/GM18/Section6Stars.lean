@@ -31,7 +31,7 @@ arborescences `Tᵢ` live in different types, so we put them side by side in `Σ
 * `patchworkSim_cross_iff`: the simulation of IV, Section 9 between tagged subtree hypergraphs is
   simulation of the restrictions of the untagged patchworks.
 * `theorem_6_6_of_rootedDecomposition`: the proof of (6.6) after its first paragraph, by IV (3.3).
-* `theorem_6_6_proof`: (6.6).
+* `theorem_6_6_proof`: (6.6) for a well-behaved ambient class containing the pieces.
 -/
 
 public section
@@ -626,7 +626,8 @@ $\Omega$-patchworks $P$ such that there is a rotund, proper tree-decomposition o
 which all pieces of $P$ belong to $\mathcal{C}$. Then $\mathcal{C}'$ is well-quasi-ordered by
 simulation.*"
 
-Lean uses an infinite ambient edge type to provide fresh edge labels. -/
+The Lean version allows any well-behaved ambient class `𝒞` containing the pieces of the rootless
+input patchworks. It uses an infinite ambient edge type to supply fresh edge labels. -/
 theorem theorem_6_6_proof [Infinite β] [Preorder Ω] (hΩ : WellQuasiOrderedLE Ω)
     {ι : ℕ → Type*} [∀ i, Fintype (ι i)]
     {𝒞 : Set (PartialPatchwork Ω α β)} (h𝒞 : WellBehaved 𝒞)

@@ -1599,64 +1599,6 @@ private theorem cohRel_iff_mem_range_δ (hS : IsSurface S) (N : Net S) (hpos : 0
     simp only [ψ, Pi.zero_apply, add_zero, CharTwo.sub_eq_add] at hr ⊢
     exact hr
 
-/-- If `B ∪ {s, t}` is a line with ends `s` and `t` and `B` is disjoint from `{s, t}`, then
-`B ∪ {s, t}` is closed and `s, t ∈ closure B`. -/
-private theorem mem_closure_of_isLineWithEnds {X : Type*} [TopologicalSpace X] [T2Space X]
-    {B : Set X} {s t : X} (hline : IsLineWithEnds (B ∪ {s, t}) s t) :
-    IsClosed (B ∪ {s, t}) ∧ s ∈ closure B ∧ t ∈ closure B := by
-  obtain ⟨f, hf0, hf1⟩ := hline
-  let γ : unitInterval → X := fun u => (f u).1
-  have hγ : Continuous γ := continuous_subtype_val.comp f.continuous
-  have hγ_inj : Function.Injective γ := fun u v h => f.injective (Subtype.ext h)
-  have hrange : range γ = B ∪ {s, t} := by
-    ext x
-    simp only [mem_range, γ]
-    exact ⟨fun ⟨u, hu⟩ => hu ▸ (f u).2, fun hx => ⟨f.symm ⟨x, hx⟩, by simp⟩⟩
-  have hcl : IsClosed (B ∪ {s, t}) := hrange ▸ (isCompact_range hγ).isClosed
-  have hIoo_B : ∀ u ∈ Ioo (0 : unitInterval) 1, γ u ∈ B := by
-    intro u hu
-    rcases (f u).2 with hB | hst
-    · exact hB
-    · rcases hst with hs | ht
-      · exact False.elim (hu.1.ne (hγ_inj (hs.trans hf0.symm)).symm)
-      · exact False.elim (hu.2.ne (hγ_inj ((mem_singleton_iff.mp ht).trans hf1.symm)))
-  have hcl_end : ∀ u₀ : unitInterval, (u₀ = 0 ∨ u₀ = 1) → γ u₀ ∈ closure B := by
-    intro u₀ hu₀
-    rw [_root_.mem_closure_iff]
-    intro U hU hu₀U
-    have hpre : γ ⁻¹' U ∈ 𝓝 u₀ := hγ.continuousAt.preimage_mem_nhds (hU.mem_nhds hu₀U)
-    rw [Metric.mem_nhds_iff] at hpre
-    obtain ⟨ε, hε, hball⟩ := hpre
-    let δ : ℝ := min (ε / 2) (1 / 2)
-    have hδ0 : 0 < δ := lt_min (half_pos hε) (by norm_num)
-    have hδ1 : δ < 1 := lt_of_le_of_lt (min_le_right _ _) (by norm_num)
-    have hδε : δ < ε := lt_of_le_of_lt (min_le_left _ _) (half_lt_self hε)
-    rcases hu₀ with rfl | rfl
-    · let u : unitInterval := ⟨δ, hδ0.le, hδ1.le⟩
-      have hu_Ioo : u ∈ Ioo (0 : unitInterval) 1 := by
-        constructor <;> rw [← Subtype.coe_lt_coe]
-        · exact hδ0
-        · exact hδ1
-      have hu_ball : u ∈ Metric.ball (0 : unitInterval) ε := by
-        rw [Metric.mem_ball, Subtype.dist_eq, Real.dist_eq]
-        change |δ - 0| < ε
-        rw [sub_zero, abs_of_pos hδ0]
-        exact hδε
-      exact ⟨γ u, hball hu_ball, hIoo_B u hu_Ioo⟩
-    · let u : unitInterval := ⟨1 - δ, by linarith, by linarith⟩
-      have hu_Ioo : u ∈ Ioo (0 : unitInterval) 1 := by
-        constructor <;> rw [← Subtype.coe_lt_coe]
-        · change (0 : ℝ) < 1 - δ; linarith
-        · change 1 - δ < (1 : ℝ); linarith
-      have hu_ball : u ∈ Metric.ball (1 : unitInterval) ε := by
-        rw [Metric.mem_ball, Subtype.dist_eq, Real.dist_eq]
-        change |(1 - δ) - 1| < ε
-        have : (1 - δ) - 1 = -δ := by ring
-        rw [this, abs_neg, abs_of_pos hδ0]
-        exact hδε
-      exact ⟨γ u, hball hu_ball, hIoo_B u hu_Ioo⟩
-  exact ⟨hcl, hf0 ▸ hcl_end 0 (Or.inl rfl), hf1 ▸ hcl_end 1 (Or.inr rfl)⟩
-
 /-- Helper for `exists_step_func_on_bd_D`: the two halves `Ico 0 t_mid` and `Ioc t_mid 1` of `N.f i`
 lie in opposite components of `bd N.D \ {N.f i t_mid, N.g i t_mid}`. -/
 private theorem half_arc_in_opposite_components (N : Net S) (i : Fin N.r)
@@ -1746,8 +1688,8 @@ private theorem exists_step_func_on_bd_D (N : Net S) (i : Fin N.r) :
   have hm12 : m₁ ≠ m₂ := fun h => N.internally_disjoint_fg i i t_mid ht_mid ⟨t_mid, h.symm⟩
   obtain ⟨B₁, B₂, hcomp, hdisj, hunion, hline₁, hline₂⟩ :=
     oArc_components_diff_pair N.isOArc_bd_D hm₁_bd hm₂_bd hm12
-  obtain ⟨hcl₁, hm₁_cl₁, hm₂_cl₁⟩ := mem_closure_of_isLineWithEnds hline₁
-  obtain ⟨hcl₂, hm₁_cl₂, hm₂_cl₂⟩ := mem_closure_of_isLineWithEnds hline₂
+  obtain ⟨hcl₁, hm₁_cl₁, hm₂_cl₁⟩ := hline₁.isClosed_union_and_endpoints_mem_closure
+  obtain ⟨hcl₂, hm₁_cl₂, hm₂_cl₂⟩ := hline₂.isClosed_union_and_endpoints_mem_closure
   have hB1_sub : B₁ ⊆ bd N.D \ {m₁, m₂} := fun x hx => hunion ▸ Or.inl hx
   have hB2_sub : B₂ ⊆ bd N.D \ {m₁, m₂} := fun x hx => hunion ▸ Or.inr hx
   have hf_half := N.half_arc_in_opposite_components i ht_mid hcomp hdisj hunion hm₁_cl₁ hm₁_cl₂

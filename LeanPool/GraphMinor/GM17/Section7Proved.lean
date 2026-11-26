@@ -1499,7 +1499,8 @@ private theorem cells_partitioned_by_disc
     obtain ⟨x, hx⟩ := Γ.cell_nonempty hc₁.1
     exact hc₂.2 hx (hc₁.2 hx)
 
-/-- **Graph Minors XVII, (7.4)** (page 180):
+/-- Existential form of **Graph Minors XVII, (7.4)** (page 180).
+
 "Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $(2p+3)$-redundant $\mathcal{T}$-central
 portrayal of a hypergraph $G$, with warp $\le p$, and let $ord(\mathcal{T}) > 4p+5$. Let $F
 \subseteq \Sigma$ be a $\Gamma$-normal $1$-arc with $|F \cap N(\Gamma)| = 2$. Let $\Delta \subseteq
@@ -1512,8 +1513,9 @@ $$ \begin{aligned} \alpha'(c') &= \alpha(\Delta) \\ \alpha'(c) &= \alpha(c) \qua
 Then $\pi' = (\Sigma, \Gamma', \alpha', \beta', \gamma')$ is a $\mathcal{T}$-central portrayal of
 $G$ resembling $\pi$."
 
-Furthermore, either $\pi'$ is truer than $\pi$, or $\Delta \cap N(\Gamma) \subseteq F$ and $\Delta$
-includes exactly one cell of $\Gamma$ (used in `(8.3)`). -/
+The Lean proof constructs the disc replacement and the existential conclusion records centrality
+and resemblance. It also records the alternative used in (8.3). Either $\pi'$ is truer than
+$\pi$, or $\Delta \cap N(\Gamma) \subseteq F$ and $\Delta$ includes exactly one cell of $\Gamma$. -/
 theorem theorem_7_4_proof
     {α : Type u} {β : Type v} {G : Hypergraph α β}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ p : ℕ}

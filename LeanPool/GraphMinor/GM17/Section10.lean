@@ -74,16 +74,6 @@ theorem start_eq_end_of_support_tail_eq_nil {α : Type u} {G : SimpleGraph α} {
 
 /-! ## 2. Entry Uniqueness on a Cuff (Dual of Claim (1) of (6.6)) -/
 
-theorem cyclicSucc_ne_self {k : ℕ} (hk : 2 ≤ k) (i : Fin k) :
-    cyclicSucc (by omega) i ≠ i := by
-  intro h
-  have hval : (i.1 + 1) % k = i.1 := congrArg Fin.val h
-  have hi := i.2
-  by_cases hlt : i.1 + 1 < k
-  · rw [Nat.mod_eq_of_lt hlt] at hval; omega
-  · have hEq : i.1 + 1 = k := by omega
-    rw [hEq, Nat.mod_self] at hval; omega
-
 /-- Dual of `lemma_6_6_claim_1`: for each $x \in V(G)$, there is at most one index $i \in \text{Fin
 } k$
 such that $x \notin \beta(n_i+)$ and $x \in \beta(n_{i+1}+)$. -/

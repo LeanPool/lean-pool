@@ -89,6 +89,30 @@ def IsCappedSurface.ofHomeo {Shat : Type u} [TopologicalSpace Shat] (h : T ≃�
   compl_eq := by
     rw [h.surjective.range_comp, cap.compl_eq, cuffs_eq_image h, biUnion_image]
 
+/-- The embedding of the transported capping acts on a set through the homeomorphism. -/
+theorem IsCappedSurface.ofHomeo_emb_image {Shat : Type u} [TopologicalSpace Shat]
+    (cap : IsCappedSurface S Shat) (h : T ≃ₜ S) (A : Set T) :
+    (cap.ofHomeo h).emb '' A = cap.emb '' (h '' A) := by
+  rw [image_image]
+  rfl
+
+/-- A cuff and its image have the same disc in the corresponding cappings. -/
+theorem IsCappedSurface.ofHomeo_cuffDisc {Shat : Type u} [TopologicalSpace Shat]
+    (cap : IsCappedSurface S Shat) (h : T ≃ₜ S) {Θ : Set T} (hΘ : Θ ∈ cuffs T) :
+    h '' Θ ∈ cuffs S ∧ (cap.ofHomeo h).cuffDisc Θ = cap.cuffDisc (h '' Θ) :=
+  ⟨by rw [cuffs_eq_image h]; exact mem_image_of_mem _ hΘ, rfl⟩
+
+/-- A cuff of the original surface has the same disc at its inverse image. -/
+theorem IsCappedSurface.ofHomeo_cuffDisc_symm {Shat : Type u} [TopologicalSpace Shat]
+    (cap : IsCappedSurface S Shat) (h : T ≃ₜ S) {Θ : Set S} (hΘ : Θ ∈ cuffs S) :
+    h.symm '' Θ ∈ cuffs T ∧ (cap.ofHomeo h).cuffDisc (h.symm '' Θ) = cap.cuffDisc Θ := by
+  refine ⟨?_, ?_⟩
+  · rw [cuffs_eq_image h.symm]
+    exact mem_image_of_mem _ hΘ
+  · change cap.cuffDisc (h '' (h.symm '' Θ)) = _
+    rw [image_image]
+    simp
+
 /-- `IsSimplerThan` depends only on the homeomorphism type of its second argument. -/
 theorem IsSimplerThan.of_homeo {Z : Type*} [TopologicalSpace Z] (hZ : IsSimplerThan Z S)
     (h : S ≃ₜ T) : IsSimplerThan Z T := by

@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM09.Defs
 public import LeanPool.GraphMinor.GM09.Basic
+import LeanPool.GraphMinor.GM09.NestEdgeCount
 public import LeanPool.GraphMinor.GM12.Section2DiscChordSplit
 public import LeanPool.GraphMinor.GM14.Section6a
 
@@ -768,11 +769,7 @@ theorem exists_min_totalDrawingEdges {s r : ℕ}
 omit [T2Space S] in
 theorem disjoint_E_of_disjoint_V {H A B : Drawing S} (hA : A.IsSubdrawing H)
     (hB : B.IsSubdrawing H) (hV : Disjoint A.V B.V) : Disjoint A.E B.E := by
-  refine disjoint_left.mpr fun e heA heB => ?_
-  obtain ⟨x, y, hxyH⟩ := (H.toGraph.edge_mem_iff_exists_isLink e).mp (hA.2 heA)
-  have hxyA : A.toGraph.IsLink e x y := (hA.isLink_iff heA).mpr hxyH
-  have hxyB : B.toGraph.IsLink e x y := (hB.isLink_iff heB).mpr hxyH
-  exact disjoint_left.mp hV hxyA.2.1 hxyB.2.1
+  exact disjoint_edgeSet_of_disjoint_vertexSet hA.toGraph_le hB.toGraph_le hV
 
 /-- **Move 2 (Outer detour circuit replacement, GM03 (4.1) paragraph 4, page 60)**:
 Replacing `C j` by `H.sup P_sub Q₁` when `Q₂` has an edge `e₀` not in `⋃ k, (P k).E` strictly
@@ -786,41 +783,21 @@ theorem totalDrawingEdges_lt_of_replace_circuit {s r : ℕ} [DecidableEq (Fin s)
     (hQ₂ : Q₂.IsSubdrawing (C j)) (hQ_disj : Disjoint Q₁.E Q₂.E)
     {e₀ : Set S} (he₀_Q₂ : e₀ ∈ Q₂.E) (he₀_not_P : ∀ k : Fin r, e₀ ∉ (P k).E) :
     totalDrawingEdges (Function.update C j (H.sup P_sub Q₁)) P < totalDrawingEdges C P := by
-  have : T1Space S := inferInstance
-  have hP_sub_H : P_sub.IsSubdrawing H := hP_sub.trans (hPH i)
-  have hQ₁_H : Q₁.IsSubdrawing H := hQ₁.trans (hCH j)
-  have he₀_Cj : e₀ ∈ (C j).E := hQ₂.2 he₀_Q₂
-  have hsub : totalDrawingEdgeSet (Function.update C j (H.sup P_sub Q₁)) P ⊆
-      totalDrawingEdgeSet C P := by
-    rintro f (hfC | hfP)
-    · obtain ⟨m, hfm⟩ := mem_iUnion.mp hfC
-      by_cases hmj : m = j
-      · subst hmj
-        rw [Function.update_self, H.sup_E hP_sub_H hQ₁_H] at hfm
-        rcases hfm with hfm_P | hfm_Q₁
-        · exact Or.inr (mem_iUnion.mpr ⟨i, hP_sub.2 hfm_P⟩)
-        · exact Or.inl (mem_iUnion.mpr ⟨m, hQ₁.2 hfm_Q₁⟩)
-      · rw [Function.update_of_ne hmj] at hfm
-        exact Or.inl (mem_iUnion.mpr ⟨m, hfm⟩)
-    · exact Or.inr hfP
-  have he₀_in : e₀ ∈ totalDrawingEdgeSet C P := Or.inl (mem_iUnion.mpr ⟨j, he₀_Cj⟩)
-  have he₀_not_in :
-      e₀ ∉ totalDrawingEdgeSet (Function.update C j (H.sup P_sub Q₁)) P := by
-    rintro (heC | heP)
-    · obtain ⟨m, hem⟩ := mem_iUnion.mp heC
-      by_cases hmj : m = j
-      · subst hmj
-        rw [Function.update_self, H.sup_E hP_sub_H hQ₁_H] at hem
-        rcases hem with hem_P | hem_Q₁
-        · exact he₀_not_P i (hP_sub.2 hem_P)
-        · exact disjoint_left.mp hQ_disj hem_Q₁ he₀_Q₂
-      · rw [Function.update_of_ne hmj] at hem
-        have hdisjE := disjoint_E_of_disjoint_V (hCH j) (hCH m) (hC_disj (Ne.symm hmj))
-        exact disjoint_left.mp hdisjE he₀_Cj hem
-    · obtain ⟨k, hek⟩ := mem_iUnion.mp heP
-      exact he₀_not_P k hek
-  exact Set.ncard_lt_ncard ⟨hsub, fun h => he₀_not_in (h he₀_in)⟩
-    (totalDrawingEdgeSet_finite hCH hPH)
+  have hP := hP_sub.trans (hPH i)
+  have hQ := hQ₁.trans (hCH j)
+  have hUnion : (H.sup P_sub Q₁).toGraph = subgraphUnion H.toGraph P_sub.toGraph Q₁.toGraph := by
+    refine (Compatible.of_le_le (H.sup_isSubdrawing P_sub Q₁).toGraph_le
+      (subgraphUnion_le hP.toGraph_le hQ.toGraph_le)).ext ?_ ?_
+    · exact Drawing.sup_V hP hQ
+    · change (H.sup P_sub Q₁).E = E(subgraphUnion H.toGraph P_sub.toGraph Q₁.toGraph)
+      rw [edgeSet_subgraphUnion hP.toGraph_le hQ.toGraph_le]
+      exact Drawing.sup_E hP hQ
+  change totalUnionEdges (Drawing.toGraph ∘ Function.update C j (H.sup P_sub Q₁))
+      (Drawing.toGraph ∘ P) < totalUnionEdges (Drawing.toGraph ∘ C) (Drawing.toGraph ∘ P)
+  rw [Function.comp_update, hUnion]
+  exact totalUnionEdges_lt_of_replace_circuit H.finite_edges (fun m => (hCH m).toGraph_le)
+    (fun k => (hPH k).toGraph_le) hC_disj hP_sub.toGraph_le hQ₁.toGraph_le
+    hQ₂.toGraph_le hQ_disj he₀_Q₂ he₀_not_P
 
 omit [T2Space S] in
 /-- **Move 3 (Inner detour path rerouting, GM03 (4.1) paragraph 6, page 61)**:
@@ -839,51 +816,20 @@ theorem totalDrawingEdges_lt_of_reroute_path {s r : ℕ} [DecidableEq (Fin r)] {
     Pairwise (fun k₁ k₂ => Disjoint (Function.update P i P'_i k₁).V (Function.update P i P'_i
       k₂).V) ∧
       totalDrawingEdges C (Function.update P i P'_i) < totalDrawingEdges C P := by
-  refine ⟨?_, ?_⟩
-  · intro k₁ k₂ hk₁₂
-    by_cases hk₁ : k₁ = i
-    · subst hk₁
-      have hk₂ : k₂ ≠ k₁ := hk₁₂.symm
-      rw [Function.update_self, Function.update_of_ne hk₂]
-      exact disjoint_of_subset_left hP'_V
-        (disjoint_union_left.mpr ⟨hP_disj hk₁₂, hQ_disj_other k₂ hk₂⟩)
-    · by_cases hk₂ : k₂ = i
-      · subst hk₂
-        rw [Function.update_of_ne hk₁, Function.update_self]
-        exact disjoint_of_subset_right hP'_V
-          (disjoint_union_right.mpr ⟨hP_disj hk₁₂, (hQ_disj_other k₁ hk₁).symm⟩)
-      · rw [Function.update_of_ne hk₁, Function.update_of_ne hk₂]
-        exact hP_disj hk₁₂
-  · have he₁_Pi : e₁ ∈ (P i).E := hP_sub.2 he₁_sub
-    have hsub : totalDrawingEdgeSet C (Function.update P i P'_i) ⊆ totalDrawingEdgeSet C P := by
-      rintro f (hfC | hfP)
-      · exact Or.inl hfC
-      · obtain ⟨k, hfk⟩ := mem_iUnion.mp hfP
-        by_cases hki : k = i
-        · subst hki
-          rw [Function.update_self] at hfk
-          rcases hP'_E hfk with ⟨hfPi, _⟩ | hfQ
-          · exact Or.inr (mem_iUnion.mpr ⟨k, hfPi⟩)
-          · exact Or.inl (mem_iUnion.mpr ⟨j, hQ_k.2 hfQ⟩)
-        · rw [Function.update_of_ne hki] at hfk
-          exact Or.inr (mem_iUnion.mpr ⟨k, hfk⟩)
-    have he₁_in : e₁ ∈ totalDrawingEdgeSet C P := Or.inr (mem_iUnion.mpr ⟨i, he₁_Pi⟩)
-    have he₁_not_in : e₁ ∉ totalDrawingEdgeSet C (Function.update P i P'_i) := by
-      rintro (heC | heP)
-      · obtain ⟨m, hem⟩ := mem_iUnion.mp heC
-        exact he₁_not_C m hem
-      · obtain ⟨k, hek⟩ := mem_iUnion.mp heP
-        by_cases hki : k = i
-        · subst hki
-          rw [Function.update_self] at hek
-          rcases hP'_E hek with ⟨_, he_not_sub⟩ | heQ
-          · exact he_not_sub he₁_sub
-          · exact he₁_not_C j (hQ_k.2 heQ)
-        · rw [Function.update_of_ne hki] at hek
-          have hdisjE := disjoint_E_of_disjoint_V (hPH i) (hPH k) (hP_disj (Ne.symm hki))
-          exact disjoint_left.mp hdisjE he₁_Pi hek
-    exact Set.ncard_lt_ncard ⟨hsub, fun h => he₁_not_in (h he₁_in)⟩
-      (totalDrawingEdgeSet_finite hCH hPH)
+  let C' := Drawing.toGraph ∘ C
+  let P' := Drawing.toGraph ∘ P
+  have hMoves := totalUnionEdges_lt_of_reroute_path (C := C') (P := P') H.finite_edges
+    (fun m => (hCH m).toGraph_le) (fun k => (hPH k).toGraph_le) hP_disj
+    hP_sub.toGraph_le hQ_k.toGraph_le (P'_i := P'_i.toGraph)
+    hP'_V hP'_E hQ_disj_other he₁_sub he₁_not_C
+  have hUpdate : Drawing.toGraph ∘ Function.update P i P'_i = Function.update P' i P'_i.toGraph :=
+    Function.comp_update _ _ _ _
+  change Pairwise (fun k₁ k₂ => Disjoint
+      V((Drawing.toGraph ∘ Function.update P i P'_i) k₁)
+      V((Drawing.toGraph ∘ Function.update P i P'_i) k₂)) ∧
+    totalUnionEdges C' (Drawing.toGraph ∘ Function.update P i P'_i) < totalUnionEdges C' P'
+  rw [hUpdate]
+  exact hMoves
 
 /-! ## 5. Closed-Disc Nest Uncrossing (Graph Minors III, Theorem (4.1)) -/
 
@@ -1087,31 +1033,11 @@ theorem totalDrawingEdges_lt_of_replace_subpath {s r : ℕ} [DecidableEq (Fin r)
         exact disjoint_of_subset_right hP'_sub.1 (hP_disj hk₁₂)
       · rw [Function.update_of_ne hk₁, Function.update_of_ne hk₂]
         exact hP_disj hk₁₂
-  · have hsub : totalDrawingEdgeSet C (Function.update P i P'_i) ⊆ totalDrawingEdgeSet C P := by
-      rintro f (hfC | hfP)
-      · exact Or.inl hfC
-      · obtain ⟨k, hfk⟩ := mem_iUnion.mp hfP
-        by_cases hki : k = i
-        · subst hki
-          rw [Function.update_self] at hfk
-          exact Or.inr (mem_iUnion.mpr ⟨k, hP'_sub.2 hfk⟩)
-        · rw [Function.update_of_ne hki] at hfk
-          exact Or.inr (mem_iUnion.mpr ⟨k, hfk⟩)
-    have he_in : e ∈ totalDrawingEdgeSet C P := Or.inr (mem_iUnion.mpr ⟨i, he_Pi⟩)
-    have he_not_in : e ∉ totalDrawingEdgeSet C (Function.update P i P'_i) := by
-      rintro (heC | heP)
-      · obtain ⟨m, hem⟩ := mem_iUnion.mp heC
-        exact he_not_C m hem
-      · obtain ⟨k, hek⟩ := mem_iUnion.mp heP
-        by_cases hki : k = i
-        · subst hki
-          rw [Function.update_self] at hek
-          exact he_not_P' hek
-        · rw [Function.update_of_ne hki] at hek
-          have hdisjE := disjoint_E_of_disjoint_V (hPH i) (hPH k) (hP_disj (Ne.symm hki))
-          exact disjoint_left.mp hdisjE he_Pi hek
-    exact Set.ncard_lt_ncard ⟨hsub, fun h => he_not_in (h he_in)⟩
-      (totalDrawingEdgeSet_finite hCH hPH)
+  · change totalUnionEdges (Drawing.toGraph ∘ C) (Drawing.toGraph ∘ Function.update P i P'_i) <
+      totalUnionEdges (Drawing.toGraph ∘ C) (Drawing.toGraph ∘ P)
+    rw [Function.comp_update]
+    exact totalUnionEdges_lt_of_replace_subpath H.finite_edges (fun m => (hCH m).toGraph_le)
+      (fun k => (hPH k).toGraph_le) hP_disj hP'_sub.toGraph_le he_Pi he_not_P' he_not_C
 
 /-- If `P` is a path in `H` from `a ∈ C.V` to `b` and `Drawing.inf H C P` is not a path, then there
 is a subdrawing `P' ≤ P` which is a path from some `v ∈ C.V` to `b` and omits an edge `e ∈ P.E \

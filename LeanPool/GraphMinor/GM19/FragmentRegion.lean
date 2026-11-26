@@ -233,6 +233,20 @@ variable {Shat T' : Type} [TopologicalSpace Shat] [T2Space Shat] [TopologicalSpa
 def IsCappedSurface.discs (cap : IsCappedSurface S Shat) : Set Shat := ⋃ Θ ∈ cuffs S, closure
   (cap.cuffDisc Θ)
 
+omit [T2Space S] [T2Space Shat] in
+/-- Transporting a capping reindexes its cuffs and preserves the union of the pasted discs. -/
+theorem IsCappedSurface.ofHomeo_discs (cap : IsCappedSurface S Shat) (f : S ≃ₜ S) :
+    (cap.ofHomeo f).discs = cap.discs := by
+  ext x
+  simp only [IsCappedSurface.discs, mem_iUnion₂]
+  constructor
+  · rintro ⟨Θ, hΘ, hx⟩
+    rw [(cap.ofHomeo_cuffDisc f hΘ).2] at hx
+    exact ⟨_, (cap.ofHomeo_cuffDisc f hΘ).1, hx⟩
+  · rintro ⟨Θ, hΘ, hx⟩
+    rw [← (cap.ofHomeo_cuffDisc_symm f hΘ).2] at hx
+    exact ⟨_, (cap.ofHomeo_cuffDisc_symm f hΘ).1, hx⟩
+
 omit [T2Space Shat] in
 omit [T2Space Y] in
 /-- If the region off `X` is a component of the complement of `K` and of the pasted discs, and it is

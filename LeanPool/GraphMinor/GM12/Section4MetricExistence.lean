@@ -35,7 +35,7 @@ theorem exists_metric_of_respectful_drawing_tangle
     (hT : IsRespectfulDrawingTangle Γ θ T) :
     ∃ d : Set S → Set S → ℕ, HasTangleMetric Γ θ T d := by
   obtain ⟨K, hK⟩ := exists_radialDrawing hS hT.1
-  obtain ⟨ins, hins⟩ := exists_derivedSlope hS hT.2.2 hK.2.1
+  obtain ⟨ins, hins⟩ := exists_derivedSlope_of_preRadial hT.2.2 hK.2.1
   exact ⟨tangleMetric Γ K ins θ, hT, K, ins, hK, hins, fun _ _ _ _ => rfl⟩
 
 end GraphMinor.GM12

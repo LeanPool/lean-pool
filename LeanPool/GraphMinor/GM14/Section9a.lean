@@ -484,25 +484,6 @@ theorem correspondingAtom_inter_nonempty {H K : Drawing S} {x x' : Set S}
     exact ⟨q, hq, hsub hq⟩
   · exact ⟨v, hvx, rfl⟩
 
-/-- Every point of `C.U` in a circuit `C` belongs to the closure of some edge `e ∈ C.E`. -/
-private theorem exists_edge_closure_of_mem_circuit_U {C : Drawing S} (hC : C.IsCircuit)
-    {x : S} (hx : x ∈ C.U) : ∃ e ∈ C.E, x ∈ closure e := by
-  by_cases hxV : x ∈ C.V
-  · obtain ⟨W, _, hpos, _, hE⟩ := exists_walk_at hC hxV
-    cases W with
-    | nil _ => exact absurd hpos (Nat.lt_irrefl 0)
-    | @cons _ w _ e hl r =>
-      have he : e ∈ C.E := by rw [hE]; exact List.mem_cons_self
-      have hx_cl : x ∈ closure e ∩ C.V := by rw [hl.2.2.2]; exact Or.inl rfl
-      exact ⟨e, he, hx_cl.1⟩
-  · have hx_diff : x ∈ C.U \ C.V := ⟨hx, hxV⟩
-    have he : pathComponentIn (C.U \ C.V) x ∈ C.E :=
-      ⟨⟨x, mem_pathComponentIn_self hx_diff⟩, pathComponentIn_subset,
-        isPathConnected_pathComponentIn hx_diff, fun D hD hc hsub =>
-          subset_antisymm (hc.subset_pathComponentIn (hsub (mem_pathComponentIn_self hx_diff)) hD)
-            hsub⟩
-    exact ⟨pathComponentIn (C.U \ C.V) x, he, subset_closure (mem_pathComponentIn_self hx_diff)⟩
-
 /-- Every point of a closed surface `S` belongs to some atom `x ∈ A(H)` of a drawing `H` on `S`. -/
 theorem exists_atom_mem_of_point (H : Drawing S) (p : S) :
     ∃ x ∈ H.A, p ∈ x := by

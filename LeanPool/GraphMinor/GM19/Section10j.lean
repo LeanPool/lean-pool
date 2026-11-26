@@ -83,23 +83,13 @@ omit [T2Space S] [T2Space Shat] in
 theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
   (h : IsOuterShape cap K' 𝓓) (f : S ≃ₜ S)
     (hU : f '' K.U = K'.U) : IsOuterShape (cap.ofHomeo f) K 𝓓 := by
-  have him : ∀ A : Set S, (cap.ofHomeo f).emb '' A = cap.emb '' (f '' A) := fun A ↦ by
-    rw [image_image]
-    rfl
   have hsym : ∀ A : Set S, f '' (f.symm '' A) = A := fun A ↦ by
     rw [image_image]
     simp
   have hran : range (cap.ofHomeo f).emb = range cap.emb := by
-    rw [← image_univ, him, image_univ, f.range_coe, image_univ]
+    rw [← image_univ, cap.ofHomeo_emb_image, image_univ, f.range_coe, image_univ]
   have hbd : (cap.ofHomeo f).emb '' bd S = cap.emb '' bd S := by
-    rw [him, image_bd]
-  have hc : ∀ {Θ}, Θ ∈ cuffs S → f.symm '' Θ ∈ cuffs S ∧ (cap.ofHomeo f).cuffDisc (f.symm '' Θ)
-    = cap.cuffDisc Θ := fun {Θ} hΘ ↦ by
-    refine ⟨?_, ?_⟩
-    · rw [cuffs_eq_image f.symm]
-      exact mem_image_of_mem _ hΘ
-    · change cap.cuffDisc (f '' (f.symm '' Θ)) = _
-      rw [hsym]
+    rw [cap.ofHomeo_emb_image, image_bd]
   have hne : ∀ {Θ Θ' : Set S}, Θ ≠ Θ' → f.symm '' Θ ≠ f.symm '' Θ' := fun h₁ h₂ ↦ h₁
     (f.symm.injective.image_injective h₂)
   have hline : ∀ {L : Set S} {a b : S}, IsLineWithEnds L a b → IsLineWithEnds (f.symm '' L)
@@ -108,12 +98,12 @@ theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
     rw [hsym, f.apply_symm_apply, f.apply_symm_apply]
     exact hl
   have hL : ∀ L : Set S, (cap.ofHomeo f).emb '' (f.symm '' L) = cap.emb '' L := fun L ↦ by
-    rw [him, hsym]
+    rw [cap.ofHomeo_emb_image, hsym]
   have hpt : ∀ a : S, (cap.ofHomeo f).emb (f.symm a) = cap.emb a := fun a ↦ by
     change cap.emb (f (f.symm a)) = _
     rw [f.apply_symm_apply]
   have hKU : (cap.ofHomeo f).emb '' K.U = cap.emb '' K'.U := by
-    rw [him, hU]
+    rw [cap.ofHomeo_emb_image, hU]
   have hbdL : ∀ {L : Set S} {s : S}, L ∩ bd S ⊆ {s} → f.symm '' L ∩ bd S ⊆ {f.symm s}
     := fun {L s} h ↦ by
     rintro x ⟨⟨y, hy, rfl⟩, hb⟩
@@ -127,11 +117,13 @@ theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
     hr, h₁, h₂, hn, hs, hL₀, hK, hm, hb, hb', hd, hm'⟩ |
     ⟨Δ₁, Δ₂, L, a, b, Θ₁, Θ₂, rfl, hne₀, hΔ₁, hΔ₂, hr₁, hr₂, hL₀, hK, hm₁, hm₂, hd₁, hd₂, hin, h₁,
       h₂, hn, hc₁, hc₂⟩
-  · refine Or.inl ⟨Δ, rfl, hΔ, hform.ofHomeo f hU, _, (hc h₁).1, _, (hc h₂).1, hne hn, ?_, ?_⟩
-    · rwa [(hc h₁).2]
-    · rwa [(hc h₂).2]
+  · refine Or.inl ⟨Δ, rfl, hΔ, hform.ofHomeo f hU, _, (cap.ofHomeo_cuffDisc_symm f h₁).1,
+      _, (cap.ofHomeo_cuffDisc_symm f h₂).1, hne hn, ?_, ?_⟩
+    · rwa [(cap.ofHomeo_cuffDisc_symm f h₁).2]
+    · rwa [(cap.ofHomeo_cuffDisc_symm f h₂).2]
   · refine Or.inr (Or.inl ⟨Δ, f.symm '' L, f.symm s, f.symm u, _, _, rfl, hΔ, hran ▸ hr,
-      (hc h₁).1, (hc h₂).1, hne hn, mem_image_of_mem _ hs, ?_, ?_, ?_, hbdL hb, ?_, ?_, ?_⟩)
+      (cap.ofHomeo_cuffDisc_symm f h₁).1, (cap.ofHomeo_cuffDisc_symm f h₂).1, hne hn,
+      mem_image_of_mem _ hs, ?_, ?_, ?_, hbdL hb, ?_, ?_, ?_⟩)
     · rcases hL₀ with ⟨rfl, rfl⟩ | hl
       · exact Or.inl ⟨image_singleton, rfl⟩
       · exact Or.inr (hline hl)
@@ -141,13 +133,13 @@ theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
       exact hm
     · rw [hbd, hpt]
       exact hb'
-    · rw [(hc h₁).2]
+    · rw [(cap.ofHomeo_cuffDisc_symm f h₁).2]
       exact hd
-    · rw [(hc h₂).2]
+    · rw [(cap.ofHomeo_cuffDisc_symm f h₂).2]
       exact hm'
   · refine Or.inr (Or.inr ⟨Δ₁, Δ₂, f.symm '' L, f.symm a, f.symm b, _, _, rfl, hne₀, hΔ₁, hΔ₂,
       hran ▸ hr₁, hran ▸ hr₂, ?_, ?_, ?_, ?_, ?_, ?_, ?_,
-      (hc h₁).1, (hc h₂).1, hne hn, ?_, ?_⟩)
+      (cap.ofHomeo_cuffDisc_symm f h₁).1, (cap.ofHomeo_cuffDisc_symm f h₂).1, hne hn, ?_, ?_⟩)
     · rcases hL₀ with ⟨rfl, rfl⟩ | hl
       · exact Or.inl ⟨image_singleton, rfl⟩
       · exact Or.inr (hline hl)
@@ -163,9 +155,9 @@ theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
       exact hd₂
     · rw [hpt]
       exact hin
-    · rw [(hc h₁).2]
+    · rw [(cap.ofHomeo_cuffDisc_symm f h₁).2]
       exact hc₁
-    · rw [(hc h₂).2]
+    · rw [(cap.ofHomeo_cuffDisc_symm f h₂).2]
       exact hc₂
 
 /-- One well-behaved set for all distance flaws with a given feature. -/

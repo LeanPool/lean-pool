@@ -132,6 +132,19 @@ open Classical in
 def cyclicSucc {k : ℕ} (hk : 0 < k) (i : Fin k) : Fin k :=
   ⟨(i.1 + 1) % k, Nat.mod_lt _ hk⟩
 
+/-- The cyclic successor moves every index when there are at least two indices. -/
+theorem cyclicSucc_ne_self {k : ℕ} (hk : 2 ≤ k) (i : Fin k) :
+    cyclicSucc (by omega) i ≠ i := by
+  intro h
+  have hval : (i.1 + 1) % k = i.1 := congrArg Fin.val h
+  have hi := i.2
+  by_cases hlt : i.1 + 1 < k
+  · rw [Nat.mod_eq_of_lt hlt] at hval
+    omega
+  · have hEq : i.1 + 1 = k := by omega
+    rw [hEq, Nat.mod_self] at hval
+    omega
+
 open Classical in
 /-- The previous index in `Fin k` in cyclic order: $(i + k - 1) \bmod k$. -/
 def cyclicPred {k : ℕ} (hk : 0 < k) (i : Fin k) : Fin k :=

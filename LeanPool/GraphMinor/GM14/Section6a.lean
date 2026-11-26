@@ -176,10 +176,10 @@ theorem edge_subset_of_inter_nonempty {H : Drawing S} {S' e : Set S}
     exact (he.2.1 hye).2 hyV
   exact subset_of_disjoint_frontier he.2.2.1.isConnected.isPreconnected hS'_cl hdis hxe hxS'
 
-/-- If `S'` is closed and `subBd S' ∩ U(H) ⊆ V(H)`, then `(H.interSet S').V = H.V ∩ S'` and
-`(H.interSet S').U = H.U ∩ S'`. -/
-theorem interSet_V_and_U [T2Space S] {H : Drawing S} {S' : Set S}
-    (hS'_cl : IsClosed S') (hbd : subBd S' ∩ H.U ⊆ H.V) :
+/-- If `S'` is closed and every edge of `H` meeting `S'` is contained in `S'`, then
+`(H.interSet S').V = H.V ∩ S'` and `(H.interSet S').U = H.U ∩ S'`. -/
+theorem interSet_V_and_U_of_edges [T2Space S] {H : Drawing S} {S' : Set S}
+    (hS'_cl : IsClosed S') (hEdges : ∀ e ∈ H.E, (e ∩ S').Nonempty → e ⊆ S') :
     (H.interSet S').V = H.V ∩ S' ∧ (H.interSet S').U = H.U ∩ S' := by
   have hE : (H.interSet S').E = {e | e ∈ H.E ∧ e ⊆ S'} := by
     change (H.span _ _).E = _
@@ -202,16 +202,17 @@ theorem interSet_V_and_U [T2Space S] {H : Drawing S} {S' : Set S}
     by_cases hxV : x ∈ H.V
     · exact (H.interSet S').V_subset_U (hV.symm ▸ ⟨hxV, hxS'⟩)
     · obtain ⟨e, he, hxe⟩ := H.exists_edge_of_mem hxU hxV
-      have heS' : e ⊆ S' := edge_subset_of_inter_nonempty hS'_cl hbd he ⟨x, hxe, hxS'⟩
+      have heS' : e ⊆ S' := hEdges e he ⟨x, hxe, hxS'⟩
       have he' : e ∈ (H.interSet S').E := hE.symm ▸ ⟨he, heS'⟩
       exact (H.interSet S').closure_subset_U he' (subset_closure hxe)
 
-/-- If `S'` is closed and `subBd S' ∩ U(H) ⊆ V(H)`, then for `F ⊆ S'` and `Δ ⊆ S'`, `Δ` is a dial
-for `F, H.interSet S'` if and only if `Δ` is a dial for `F, H`. -/
-theorem isDial_interSet_iff [T2Space S] {H : Drawing S} {S' F Δ : Set S}
-    (hS'_cl : IsClosed S') (hbd : subBd S' ∩ H.U ⊆ H.V) (hF : F ⊆ S') (hΔ : Δ ⊆ S') :
+/-- If `S'` is closed and every edge of `H` meeting `S'` is contained in `S'`, then for `F ⊆ S'`
+and `Δ ⊆ S'`, `IsDial (H.interSet S') F Δ ↔ IsDial H F Δ`. -/
+theorem isDial_interSet_iff_of_edges [T2Space S] {H : Drawing S} {S' F Δ : Set S}
+    (hS'_cl : IsClosed S') (hEdges : ∀ e ∈ H.E, (e ∩ S').Nonempty → e ⊆ S')
+    (hF : F ⊆ S') (hΔ : Δ ⊆ S') :
     IsDial (H.interSet S') F Δ ↔ IsDial H F Δ := by
-  obtain ⟨hV, hU⟩ := interSet_V_and_U hS'_cl hbd
+  obtain ⟨hV, hU⟩ := interSet_V_and_U_of_edges hS'_cl hEdges
   have hΔU : Δ ∩ (H.interSet S').U = Δ ∩ H.U := by
     rw [hU]
     ext x
@@ -224,6 +225,20 @@ theorem isDial_interSet_iff [T2Space S] {H : Drawing S} {S' F Δ : Set S}
     interSet_interSet_of_subset H hΔ
   unfold IsDial
   rw [hΔU, hFV, hinter]
+
+/-- If `S'` is closed and `subBd S' ∩ U(H) ⊆ V(H)`, then `(H.interSet S').V = H.V ∩ S'` and
+`(H.interSet S').U = H.U ∩ S'`. -/
+theorem interSet_V_and_U [T2Space S] {H : Drawing S} {S' : Set S}
+    (hS'_cl : IsClosed S') (hbd : subBd S' ∩ H.U ⊆ H.V) :
+    (H.interSet S').V = H.V ∩ S' ∧ (H.interSet S').U = H.U ∩ S' :=
+  interSet_V_and_U_of_edges hS'_cl (fun _ => edge_subset_of_inter_nonempty hS'_cl hbd)
+
+/-- If `S'` is closed and `subBd S' ∩ U(H) ⊆ V(H)`, then for `F ⊆ S'` and `Δ ⊆ S'`, `Δ` is a dial
+for `F, H.interSet S'` if and only if `Δ` is a dial for `F, H`. -/
+theorem isDial_interSet_iff [T2Space S] {H : Drawing S} {S' F Δ : Set S}
+    (hS'_cl : IsClosed S') (hbd : subBd S' ∩ H.U ⊆ H.V) (hF : F ⊆ S') (hΔ : Δ ⊆ S') :
+    IsDial (H.interSet S') F Δ ↔ IsDial H F Δ :=
+  isDial_interSet_iff_of_edges hS'_cl (fun _ => edge_subset_of_inter_nonempty hS'_cl hbd) hF hΔ
 
 /-! ## 3. Proof of (6.1) (page 33) -/
 

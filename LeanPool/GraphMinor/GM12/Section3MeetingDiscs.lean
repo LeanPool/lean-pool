@@ -32,25 +32,8 @@ variable {S : Type*} [TopologicalSpace S]
 
 /-- Removing one point from a circle leaves a path-connected set. -/
 theorem isPathConnected_oArc_diff {F : Set S} (hF : IsOArc F) {u : S} (hu : u ∈ F) :
-    IsPathConnected (F \ {u}) := by
-  obtain ⟨f⟩ := hF
-  let c : Circle := f.symm ⟨u, hu⟩
-  have hEq : F \ {u} = (fun z => (f z).1) '' ({c}ᶜ : Set Circle) := by
-    ext x
-    constructor
-    · rintro ⟨hxF, hx⟩
-      refine ⟨f.symm ⟨x, hxF⟩, ?_, by simp⟩
-      intro h
-      have h2 : f.symm ⟨x, hxF⟩ = f.symm ⟨u, hu⟩ := h
-      have := f.symm.injective h2
-      exact hx (congrArg Subtype.val this)
-    · rintro ⟨z, hz, rfl⟩
-      refine ⟨(f z).2, fun h => hz ?_⟩
-      have : f z = ⟨u, hu⟩ := Subtype.ext h
-      simp [c, ← this]
-  rw [hEq]
-  exact (Circle.isPathConnected_compl_singleton c).image
-    (continuous_subtype_val.comp f.continuous)
+    IsPathConnected (F \ {u}) :=
+  hF.isPathConnected_sdiff_singleton hu
 
 private theorem discInt_disjoint_of_boundaries_meet_once
     [T2Space S] [ConnectedSpace S] (hS : IsClosedSurface S)

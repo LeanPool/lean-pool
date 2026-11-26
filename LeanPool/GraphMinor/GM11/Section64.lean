@@ -152,8 +152,8 @@ omit [ConnectedSpace S] in
 /-- The derived slope exists: for each short circuit `C` of `Γ'`, the set `U(C)` is a normal `O`-arc
 with fewer than `θ`
 vertices of `Γ`, so that a respectful set `T` gives a closed disc. -/
-theorem exists_derivedSlope [T2Space S] (_hS : IsClosedSurface S) (hresp : Γ.IsRespectful θ T)
-  (hrad : Γ.IsPreRadialDrawing Γ') :
+theorem exists_derivedSlope_of_preRadial [T2Space S] (hresp : Γ.IsRespectful θ T)
+    (hrad : Γ.IsPreRadialDrawing Γ') :
     ∃ ins, IsDerivedSlope Γ Γ' θ T ins := by
   classical
   have hb := bipartite_of_preRadial hrad
@@ -180,6 +180,13 @@ theorem exists_derivedSlope [T2Space S] (_hS : IsClosedSurface S) (hresp : Γ.Is
   have h : C.IsCircuit ∧ C.IsSubdrawing Γ' ∧ C.length < 2 * θ := ⟨hC, hCs, hl⟩
   simp only [h, and_self, dite_true]
   exact (hex C hC hCs hl).choose_spec
+
+omit [ConnectedSpace S] in
+/-- A respectful tangle on a closed surface gives a derived slope in any pre-radial drawing. -/
+theorem exists_derivedSlope [T2Space S] (_hS : IsClosedSurface S) (hresp : Γ.IsRespectful θ T)
+    (hrad : Γ.IsPreRadialDrawing Γ') :
+    ∃ ins, IsDerivedSlope Γ Γ' θ T ins :=
+  exists_derivedSlope_of_preRadial hresp hrad
 
 omit [ConnectedSpace S] in
 /-- A short circuit of `Γ'` bounds a disc in a slope, so it is null-homotopic. -/

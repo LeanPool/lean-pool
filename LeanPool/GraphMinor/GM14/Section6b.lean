@@ -80,56 +80,6 @@ private theorem push_arc_of_fixed_boundary (hS : IsClosedSurface S) {D L Y : Set
 
 /-! ## 2. Subdrawing Outside an Open Disc Bounded by a Circuit -/
 
-/-- If `S'` is closed and every edge of `H` meeting `S'` is contained in `S'`, then
-`(H.interSet S').V = H.V ∩ S'` and `(H.interSet S').U = H.U ∩ S'`. -/
-theorem interSet_V_and_U_of_edges [T2Space S] {H : Drawing S} {S' : Set S}
-    (hS'_cl : IsClosed S') (hEdges : ∀ e ∈ H.E, (e ∩ S').Nonempty → e ⊆ S') :
-    (H.interSet S').V = H.V ∩ S' ∧ (H.interSet S').U = H.U ∩ S' := by
-  have hE : (H.interSet S').E = {e | e ∈ H.E ∧ e ⊆ S'} := by
-    change (H.span _ _).E = _
-    rw [H.span_E]
-    ext e
-    simp only [mem_inter_iff, mem_ofPred_eq]
-    tauto
-  have hV : (H.interSet S').V = H.V ∩ S' := by
-    apply subset_antisymm
-    · rintro x (⟨hx, _⟩ | hx)
-      · exact hx
-      · obtain ⟨e, he, hxe, hxV⟩ := mem_iUnion₂.mp hx
-        exact ⟨hxV, hS'_cl.closure_subset_iff.mpr he.1.2 hxe⟩
-    · exact fun x hx => Or.inl ⟨hx, hx.1⟩
-  refine ⟨hV, subset_antisymm ?_ ?_⟩
-  · rw [(H.interSet S').U_eq, hV, hE]
-    refine union_subset (fun x hx => ⟨H.V_subset_U hx.1, hx.2⟩) (iUnion₂_subset fun e he x hx => ?_)
-    exact ⟨H.closure_subset_U he.1 hx, hS'_cl.closure_subset_iff.mpr he.2 hx⟩
-  · rintro x ⟨hxU, hxS'⟩
-    by_cases hxV : x ∈ H.V
-    · exact (H.interSet S').V_subset_U (hV.symm ▸ ⟨hxV, hxS'⟩)
-    · obtain ⟨e, he, hxe⟩ := H.exists_edge_of_mem hxU hxV
-      have heS' : e ⊆ S' := hEdges e he ⟨x, hxe, hxS'⟩
-      have he' : e ∈ (H.interSet S').E := hE.symm ▸ ⟨he, heS'⟩
-      exact (H.interSet S').closure_subset_U he' (subset_closure hxe)
-
-/-- If `S'` is closed and every edge of `H` meeting `S'` is contained in `S'`, then for `F ⊆ S'`
-and `Δ ⊆ S'`, `IsDial (H.interSet S') F Δ ↔ IsDial H F Δ`. -/
-theorem isDial_interSet_iff_of_edges [T2Space S] {H : Drawing S} {S' F Δ : Set S}
-    (hS'_cl : IsClosed S') (hEdges : ∀ e ∈ H.E, (e ∩ S').Nonempty → e ⊆ S')
-    (hF : F ⊆ S') (hΔ : Δ ⊆ S') :
-    IsDial (H.interSet S') F Δ ↔ IsDial H F Δ := by
-  obtain ⟨hV, hU⟩ := interSet_V_and_U_of_edges hS'_cl hEdges
-  have hΔU : Δ ∩ (H.interSet S').U = Δ ∩ H.U := by
-    rw [hU]
-    ext x
-    exact ⟨fun ⟨hxΔ, hxU, _⟩ => ⟨hxΔ, hxU⟩, fun ⟨hxΔ, hxU⟩ => ⟨hxΔ, hxU, hΔ hxΔ⟩⟩
-  have hFV : F ∩ (H.interSet S').V = F ∩ H.V := by
-    rw [hV]
-    ext x
-    exact ⟨fun ⟨hxF, hxV, _⟩ => ⟨hxF, hxV⟩, fun ⟨hxF, hxV⟩ => ⟨hxF, hxV, hF hxF⟩⟩
-  have hinter : (H.interSet S').interSet Δ = H.interSet Δ :=
-    interSet_interSet_of_subset H hΔ
-  unfold IsDial
-  rw [hΔU, hFV, hinter]
-
 /-- Every edge of `H` is either contained in `Λ` or contained in `univ \ Λ` when `Λ` is an open
 disc whose boundary `subBd Λ` is an `O`-arc in `H.U`. -/
 theorem edge_subset_or_subset_compl_of_openDisc [T2Space S] {H : Drawing S} {Λ e : Set S}

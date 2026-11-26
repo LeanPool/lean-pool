@@ -27,18 +27,13 @@ Taming a Vortex*, J. Combin. Theory Ser. B 77 (1999), 162–210:
   \Delta$,
   every border cell lies in $\Sigma \setminus \Delta$, and every node in
   $\operatorname{bd}(\Delta) \cap N(\Gamma)$ lies in $\overline{\Sigma \setminus \Delta}$.
-- **(7.1)** (`theorem_7_1`, page 178): Removing a disc $\Delta$ with $\operatorname{bd}(\Delta)$
-  $\Gamma$-normal, $|\operatorname{bd}(\Delta) \cap N(\Gamma)| \le 1$, and $\alpha(\Delta)$ small,
-  and merging $\alpha(\Delta)$ into a cell $c' \subseteq \Sigma \setminus \Delta$ chosen with
-  $\tilde{c}' \cap \operatorname{bd}(\Delta) \ne \emptyset$ if possible, yields a
-  $\mathcal{T}$-central
-  portrayal $\pi'$ of $G$ resembling $\pi$.
-- **(7.2)** (`theorem_7_2`, page 178): Replacing the interior of a disc $\Delta$ with
-  $\operatorname{bd}(\Delta)$ $\Gamma$-normal, $|\operatorname{bd}(\Delta) \cap N(\Gamma)| \le 3$,
-  and $\alpha(\Delta)$ small by a single internal cell $c' = \Delta \setminus
-  (\operatorname{bd}(\Delta) \cap N(\Gamma))$
-  with $\alpha'(c') = A$ yields a $\mathcal{T}$-central portrayal $\pi'$ of $G$ resembling $\pi$.
-- **(7.3)** (`theorem_7_3`, pages 178–180): If $F \subseteq \Sigma$ is a $\Gamma$-normal $I$-arc
+- **(7.1)** (`theorem_7_1_proof`, page 178) uses disc removal and cell merging to construct a
+  central, resembling portrayal when the normal disc has at most one boundary node.
+- **(7.2)** (`theorem_7_2_proof`, page 178) uses internal cell replacement to construct a central,
+  resembling portrayal when the normal disc has at most three boundary nodes. The Lean premises
+  include tangle order greater than three and cell incidence for each marked boundary node.
+- **(7.3)** (`theorem_7_3_proof` in `Section7Proved`, pages 178–180). If $F \subseteq \Sigma$ is
+  a $\Gamma$-normal $I$-arc
   with ends $n_1, n_2 \in \Theta$ and $F \cap N(\Gamma) = \{n_1, n_2\}$, $\Delta \subseteq \Sigma$
   is a disc with $F \subseteq \operatorname{bd}(\Delta) \subseteq F \cup \Theta$,
   $\beta(n_1+) \cap \beta(n_2+) \subseteq \beta(n+)$ for all $n \in N(\Gamma) \cap
@@ -46,13 +41,9 @@ Taming a Vortex*, J. Combin. Theory Ser. B 77 (1999), 162–210:
   $\pi$ has warp $\le p$ at $\Theta$, and $|\beta(n_1+)| = |\beta(n_2+)| = p + 1$, then every
   linkage in $\alpha(\Delta)$ from $\beta(n_1+)$ to $\beta(n_2+)$ pairs $\gamma(n_1)$ with
   $\gamma(n_2)$.
-- **(7.4)** (`theorem_7_4`, pages 180–181): Replacing the interior of a disc $\Delta$ bounded by a
-  $\Gamma$-normal $I$-arc $F$ with $|F \cap N(\Gamma)| = 2$ and $\Theta \cap
-  \operatorname{bd}(\Delta)$
-  by a single border cell $c' = \Delta \setminus (F \cap N(\Gamma))$ with $\alpha'(c') =
-  \alpha(\Delta)$
-  yields a $\mathcal{T}$-central portrayal $\pi'$ of $G$ resembling $\pi$.
-The portrayal deductions that use painting results are proved in `Section7Proved`.
+- **(7.4)** (`theorem_7_4_proof` in `Section7Proved`, pages 180–181) uses border cell replacement.
+  The disc lies between a normal $I$-arc with two nodes and the surface boundary. The result gives
+  a central, resembling portrayal.
 -/
 
 public section
@@ -1121,7 +1112,8 @@ private theorem removeDiscTruth
         exact ncard_lt_ncard hssub (π.Γ.finite_N.subset sdiff_subset)
   · exact Or.inl hne_U
 
-/-- **Graph Minors XVII, (7.1)** (page 178):
+/-- Existential form of **Graph Minors XVII, (7.1)** (page 178).
+
 "Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $\mathcal{T}$-central portrayal of a
 hypergraph $G$. Let $\Delta \subseteq \Sigma$ be a disc with $bd(\Delta)$ $\Gamma$-normal and
 $|bd(\Delta) \cap N(\Gamma)| \le 1$, such that $\alpha(\Delta)$ is small. Let $c' \in C(\Gamma)$
@@ -1132,7 +1124,11 @@ bd(\Delta) = \emptyset$, let $\Gamma' = (U(\Gamma) - \Delta, N(\Gamma) - \Delta)
 $$ \begin{aligned} \alpha'(c') &= \alpha(c') \cup \alpha(\Delta) \\ \alpha'(c) &= \alpha(c) \quad (c
 \in C(\Gamma') - \{c'\}) \\ \gamma' &= \gamma \mid N(\Gamma'). \end{aligned} $$
 Then $\pi' = (\Sigma, \Gamma', \alpha', \beta, \gamma')$ is a $\mathcal{T}$-central portrayal of
-$G$ resembling $\pi$." -/
+$G$ resembling $\pi$."
+
+The Lean proof builds the removal portrayal. The existential conclusion records centrality,
+resemblance and the original surface. It also records that the portrayal is truer when the
+interior of the removed disc meets the drawing. -/
 theorem theorem_7_1_proof {α : Type u} {β : Type v} {G : Hypergraph α β}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ : ℕ}
     (h𝒯 : IsTangle G θ 𝒯) (π : Portrayal G) (hcentral : π.IsCentral 𝒯)
@@ -1983,9 +1979,11 @@ private theorem replaceDiscTruth
       by_contra hx_not_bd
       exact hne_N ⟨x, ⟨hxΔ, hx_not_bd⟩, hxN⟩
 
-/-- The construction of (7.2) (`theorem_7_2_proof`), with what it does to the disc: the new cell
-contains `V(α(Δ))` and the images of the nodes of `bd(Δ)`, `β` does not change, and `γ` is
-restricted to the new nodes. -/
+/-- The disc replacement in Graph Minors XVII, (7.2) (page 178), with the same premises as
+`theorem_7_2_proof`. The tangle has order greater than three and every marked boundary node of
+the disc is incident with an original cell. The conclusion records that a cell of the replacement
+portrayal contains the vertices of `α(Δ)` and the images of the marked boundary nodes, and that
+the replacement preserves the stated disjointness property of the border sets. -/
 theorem theorem_7_2_cell {α : Type u} {β : Type v} {G : Hypergraph α β}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ : ℕ}
     (h𝒯 : IsTangle G θ 𝒯) (hθ : 3 < θ) (π : Portrayal G) (hcentral : π.IsCentral 𝒯)
@@ -2164,7 +2162,8 @@ end Theorem72
 
 section Theorem73And74
 
-/-- **Graph Minors XVII, (7.2)** (page 178):
+/-- Existential form of **Graph Minors XVII, (7.2)** (page 178).
+
 "Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $\mathcal{T}$-central portrayal of a
 hypergraph $G$. Let $\Delta \subseteq \Sigma$ be a disc, with $bd(\Delta)$ $\Gamma$-normal and
 $|bd(\Delta) \cap N(\Gamma)| \le 3$, such that $\alpha(\Delta)$ is small. Define $\Gamma' =
@@ -2176,12 +2175,15 @@ $$ \begin{aligned} \alpha'(c') &= A \\ \alpha'(c) &= \alpha(c) \quad (c \in C(\G
 Then $\pi' = (\Sigma, \Gamma', \alpha', \beta, \gamma')$ is a $\mathcal{T}$-central portrayal of
 $G$ resembling $\pi$."
 
-Moreover, if there is a cell $c_0 \in C(\Gamma)$ with $c_0 \subseteq \Delta$ and
-$|\operatorname{bd}(\Delta) \cap N(\Gamma)| \le |\tilde{c}_0|$ (and $\operatorname{ord}(\mathcal{T})
-> 3$),
-then either $\pi'$ is truer than $\pi$ (`π'.IsTruer π`), or
+The Lean construction requires $\operatorname{ord}(\mathcal{T}) > 3$ and that every marked
+node on the disc boundary be incident with an original cell. The conclusion records centrality,
+resemblance and the original surface for the existential portrayal.
+
+It also gives a trueness alternative when a cell $c_0 \in C(\Gamma)$ lies in $\Delta$ and
+$|\operatorname{bd}(\Delta) \cap N(\Gamma)| \le |\tilde{c}_0|$. Either $\pi'$ is truer than
+$\pi$ (`π'.IsTruer π`), or
 $\Delta \cap N(\Gamma) \subseteq \operatorname{bd}(\Delta)$ and $\{c \in C(\Gamma) \mid c \subseteq
-\Delta\} = \{c_0\}$. -/
+\Delta\}$ consists of a single original cell. -/
 theorem theorem_7_2_proof {α : Type u} {β : Type v} {G : Hypergraph α β}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} {θ : ℕ}
     (h𝒯 : IsTangle G θ 𝒯) (hθ : 3 < θ) (π : Portrayal G) (hcentral : π.IsCentral 𝒯)

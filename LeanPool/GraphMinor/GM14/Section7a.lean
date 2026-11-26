@@ -22,6 +22,7 @@ import LeanPool.GraphMinor.GM11.RadialFacts
 import LeanPool.GraphMinor.GM11.Section6
 import LeanPool.GraphMinor.GM11.Section91
 import LeanPool.GraphMinor.GM11.Theorem63
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Graph Minors XIV, Section 7 (Part 1): (7.1)–(7.6)
@@ -88,36 +89,8 @@ theorem IsOArc.isPreconnected {F : Set S} (hF : IsOArc F) : IsPreconnected F := 
 omit [T1Space S] in
 /-- An `O`-arc minus one of its points is path-connected. -/
 theorem isPathConnected_oArc_diff {F : Set S} (hF : IsOArc F) {u : S} (hu : u ∈ F) :
-    IsPathConnected (F \ {u}) := by
-  obtain ⟨p, hp, h0, h2, hper, himg, hr⟩ := GM11.exists_oArc_par hF hu
-  have hpos : (0 : ℝ) < 2 * Real.pi := Real.two_pi_pos
-  have hsd : F \ {u} = p '' Ioo 0 (2 * Real.pi) := by
-    ext y
-    constructor
-    · rintro ⟨hy, hya⟩
-      rw [← himg] at hy
-      obtain ⟨s, hs, rfl⟩ := hy
-      refine ⟨s, ⟨lt_of_le_of_ne hs.1 fun h => hya ?_, hs.2⟩, rfl⟩
-      rw [← h, h0]
-      rfl
-    · rintro ⟨s, hs, rfl⟩
-      refine ⟨hr ⟨s, rfl⟩, fun h => ?_⟩
-      have h' : p s = p 0 := h.trans h0.symm
-      obtain ⟨m, hm⟩ := hper s 0 h'
-      rw [zero_add] at hm
-      have h₁ : (0 : ℝ) < m := by
-        by_contra hc
-        push Not at hc
-        nlinarith [hs.1]
-      have h₂ : (m : ℝ) < 1 := by
-        by_contra hc
-        push Not at hc
-        nlinarith [hs.2]
-      have h₃ : (0 : ℤ) < m := by exact_mod_cast h₁
-      have h₄ : m < (1 : ℤ) := by exact_mod_cast h₂
-      omega
-  rw [hsd]
-  exact ((convex_Ioo _ _).isPathConnected (nonempty_Ioo.mpr hpos)).image hp
+    IsPathConnected (F \ {u}) :=
+  hF.isPathConnected_sdiff_singleton hu
 
 omit [T1Space S] in
 /-- An atom of a drawing is nonempty. -/

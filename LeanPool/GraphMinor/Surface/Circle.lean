@@ -45,6 +45,28 @@ theorem IsOArc.infinite {S : Type u} [TopologicalSpace S] {F : Set S} (hF : IsOA
   rintro _ ⟨t, _, rfl⟩
   exact (f (Circle.exp t)).2
 
+/-- Removing one point from an `O`-arc leaves a path-connected set. -/
+theorem IsOArc.isPathConnected_sdiff_singleton {S : Type u} [TopologicalSpace S] {F : Set S}
+    (hF : IsOArc F) {u : S} (hu : u ∈ F) : IsPathConnected (F \ {u}) := by
+  obtain ⟨f⟩ := hF
+  let c : Circle := f.symm ⟨u, hu⟩
+  have hEq : F \ {u} = (fun z => (f z).1) '' ({c}ᶜ : Set Circle) := by
+    ext x
+    constructor
+    · rintro ⟨hxF, hx⟩
+      refine ⟨f.symm ⟨x, hxF⟩, ?_, by simp⟩
+      intro h
+      have h2 : f.symm ⟨x, hxF⟩ = f.symm ⟨u, hu⟩ := h
+      have := f.symm.injective h2
+      exact hx (congrArg Subtype.val this)
+    · rintro ⟨z, hz, rfl⟩
+      refine ⟨(f z).2, fun h => hz ?_⟩
+      have : f z = ⟨u, hu⟩ := Subtype.ext h
+      simp [c, ← this]
+  rw [hEq]
+  exact (Circle.isPathConnected_compl_singleton c).image
+    (continuous_subtype_val.comp f.continuous)
+
 /-! ## 1. Open Arcs on `Circle` -/
 
 /-- The open counterclockwise arc on `Circle` from $x$ to $y$, defined as the image of $(0, 1)$
