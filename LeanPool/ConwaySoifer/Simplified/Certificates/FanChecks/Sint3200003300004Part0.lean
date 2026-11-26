@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanData.Sint3200003300004
 import LeanPool.ConwaySoifer.Certificates.FanCertificate
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part0RightIntervals
 
 /-! Kernel-checked fan certificates for Sint3200003300004Part0. -/
 
@@ -180,7 +181,17 @@ private theorem checkedWitnessForExcluded32_6Right :
       ([30000000000], [1965000000000]) (some (0, 2, 7)) (some (0, 2, 7))
       fan32Owner6Part5)))))))))))))))))))))))))
       (54) (109) (10900) = true := by
-  rfl
+  refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+  · decide
+  · rfl
+  · rfl
+  · refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+    · decide
+    · rfl
+    · rfl
+    · exact checkedWitnessForExcluded32_6RightLeaf1
+    · exact checkedWitnessForExcluded32_6RightLeaf2
+  · exact checkedWitnessForExcluded32_6RightLeaf3
 
 theorem checkedWitnessForExcluded32_6 :
     ExclusionHint.check

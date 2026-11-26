@@ -539,15 +539,15 @@ def fan62Owner0Part1 : FanWitness := (.next ([2010000000000], [4410000000000]) (
 
 theorem excluded56_0 : ExcludedOn (model56.B 0 ++ [step56.q]) 9000000000000 (model56.caps 0)
     (model56.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 2 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 2 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_1 : ExcludedOn (model56.B 1 ++ [step56.q]) 9000000000000 (model56.caps 1)
     (model56.ord 1) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_3 : ExcludedOn (model56.B 3 ++ [step56.q]) 9000000000000 (model56.caps 3)
     (model56.ord 3) 0 1 100 := by
@@ -572,39 +572,39 @@ theorem excluded56_3 : ExcludedOn (model56.B 3 ++ [step56.q]) 9000000000000 (mod
 
 theorem excluded56_4 : ExcludedOn (model56.B 4 ++ [step56.q]) 9000000000000 (model56.caps 4)
     (model56.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_5 : ExcludedOn (model56.B 5 ++ [step56.q]) 9000000000000 (model56.caps 5)
     (model56.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_6 : ExcludedOn (model56.B 6 ++ [step56.q]) 9000000000000 (model56.caps 6)
     (model56.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_7 : ExcludedOn (model56.B 7 ++ [step56.q]) 9000000000000 (model56.caps 7)
     (model56.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_8 : ExcludedOn (model56.B 8 ++ [step56.q]) 9000000000000 (model56.caps 8)
     (model56.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded56_9 : ExcludedOn (model56.B 9 ++ [step56.q]) 9000000000000 (model56.caps 9)
     (model56.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked56 : StepValid model56 9000000000000 step56 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -629,15 +629,15 @@ theorem next56 : model56.insert step56 = model57 := by
 
 theorem excluded57_0 : ExcludedOn (model57.B 0 ++ [step57.q]) 9000000000000 (model57.caps 0)
     (model57.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 3 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 3 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_1 : ExcludedOn (model57.B 1 ++ [step57.q]) 9000000000000 (model57.caps 1)
     (model57.ord 1) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 1 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_3 : ExcludedOn (model57.B 3 ++ [step57.q]) 9000000000000 (model57.caps 3)
     (model57.ord 3) 0 1 100 := by
@@ -664,39 +664,39 @@ theorem excluded57_3 : ExcludedOn (model57.B 3 ++ [step57.q]) 9000000000000 (mod
 
 theorem excluded57_4 : ExcludedOn (model57.B 4 ++ [step57.q]) 9000000000000 (model57.caps 4)
     (model57.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_5 : ExcludedOn (model57.B 5 ++ [step57.q]) 9000000000000 (model57.caps 5)
     (model57.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_6 : ExcludedOn (model57.B 6 ++ [step57.q]) 9000000000000 (model57.caps 6)
     (model57.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_7 : ExcludedOn (model57.B 7 ++ [step57.q]) 9000000000000 (model57.caps 7)
     (model57.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_8 : ExcludedOn (model57.B 8 ++ [step57.q]) 9000000000000 (model57.caps 8)
     (model57.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded57_9 : ExcludedOn (model57.B 9 ++ [step57.q]) 9000000000000 (model57.caps 9)
     (model57.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked57 : StepValid model57 9000000000000 step57 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -740,15 +740,15 @@ theorem excluded58_0 : ExcludedOn (model58.B 0 ++ [step58.q]) 9000000000000 (mod
 
 theorem excluded58_1 : ExcludedOn (model58.B 1 ++ [step58.q]) 9000000000000 (model58.caps 1)
     (model58.ord 1) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 1 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 1 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded58_2 : ExcludedOn (model58.B 2 ++ [step58.q]) 9000000000000 (model58.caps 2)
     (model58.ord 2) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 3 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 3 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded58_3 : ExcludedOn (model58.B 3 ++ [step58.q]) 9000000000000 (model58.caps 3)
     (model58.ord 3) 0 1 100 := by
@@ -803,27 +803,27 @@ theorem excluded58_5 : ExcludedOn (model58.B 5 ++ [step58.q]) 9000000000000 (mod
 
 theorem excluded58_6 : ExcludedOn (model58.B 6 ++ [step58.q]) 9000000000000 (model58.caps 6)
     (model58.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded58_7 : ExcludedOn (model58.B 7 ++ [step58.q]) 9000000000000 (model58.caps 7)
     (model58.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded58_8 : ExcludedOn (model58.B 8 ++ [step58.q]) 9000000000000 (model58.caps 8)
     (model58.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded58_9 : ExcludedOn (model58.B 9 ++ [step58.q]) 9000000000000 (model58.caps 9)
     (model58.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked58 : StepValid model58 9000000000000 step58 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -848,9 +848,9 @@ theorem next58 : model58.insert step58 = model59 := by
 
 theorem excluded59_0 : ExcludedOn (model59.B 0 ++ [step59.q]) 9000000000000 (model59.caps 0)
     (model59.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 4 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 4 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_1 : ExcludedOn (model59.B 1 ++ [step59.q]) 9000000000000 (model59.caps 1)
     (model59.ord 1) 0 1 100 := by
@@ -902,39 +902,39 @@ theorem excluded59_3 : ExcludedOn (model59.B 3 ++ [step59.q]) 9000000000000 (mod
 
 theorem excluded59_4 : ExcludedOn (model59.B 4 ++ [step59.q]) 9000000000000 (model59.caps 4)
     (model59.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_5 : ExcludedOn (model59.B 5 ++ [step59.q]) 9000000000000 (model59.caps 5)
     (model59.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_6 : ExcludedOn (model59.B 6 ++ [step59.q]) 9000000000000 (model59.caps 6)
     (model59.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_7 : ExcludedOn (model59.B 7 ++ [step59.q]) 9000000000000 (model59.caps 7)
     (model59.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_8 : ExcludedOn (model59.B 8 ++ [step59.q]) 9000000000000 (model59.caps 8)
     (model59.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded59_9 : ExcludedOn (model59.B 9 ++ [step59.q]) 9000000000000 (model59.caps 9)
     (model59.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked59 : StepValid model59 9000000000000 step59 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -959,9 +959,9 @@ theorem next59 : model59.insert step59 = model60 := by
 
 theorem excluded60_0 : ExcludedOn (model60.B 0 ++ [step60.q]) 9000000000000 (model60.caps 0)
     (model60.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 4 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 4 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_1 : ExcludedOn (model60.B 1 ++ [step60.q]) 9000000000000 (model60.caps 1)
     (model60.ord 1) 0 1 100 := by
@@ -995,39 +995,39 @@ theorem excluded60_3 : ExcludedOn (model60.B 3 ++ [step60.q]) 9000000000000 (mod
 
 theorem excluded60_4 : ExcludedOn (model60.B 4 ++ [step60.q]) 9000000000000 (model60.caps 4)
     (model60.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_5 : ExcludedOn (model60.B 5 ++ [step60.q]) 9000000000000 (model60.caps 5)
     (model60.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_6 : ExcludedOn (model60.B 6 ++ [step60.q]) 9000000000000 (model60.caps 6)
     (model60.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_7 : ExcludedOn (model60.B 7 ++ [step60.q]) 9000000000000 (model60.caps 7)
     (model60.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_8 : ExcludedOn (model60.B 8 ++ [step60.q]) 9000000000000 (model60.caps 8)
     (model60.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded60_9 : ExcludedOn (model60.B 9 ++ [step60.q]) 9000000000000 (model60.caps 9)
     (model60.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked60 : StepValid model60 9000000000000 step60 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -1052,9 +1052,9 @@ theorem next60 : model60.insert step60 = model61 := by
 
 theorem excluded61_0 : ExcludedOn (model61.B 0 ++ [step61.q]) 9000000000000 (model61.caps 0)
     (model61.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_1 : ExcludedOn (model61.B 1 ++ [step61.q]) 9000000000000 (model61.caps 1)
     (model61.ord 1) 0 1 100 := by
@@ -1081,45 +1081,45 @@ theorem excluded61_1 : ExcludedOn (model61.B 1 ++ [step61.q]) 9000000000000 (mod
 
 theorem excluded61_2 : ExcludedOn (model61.B 2 ++ [step61.q]) 9000000000000 (model61.caps 2)
     (model61.ord 2) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 6) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 6) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_3 : ExcludedOn (model61.B 3 ++ [step61.q]) 9000000000000 (model61.caps 3)
     (model61.ord 3) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 10) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 10) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_4 : ExcludedOn (model61.B 4 ++ [step61.q]) 9000000000000 (model61.caps 4)
     (model61.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_5 : ExcludedOn (model61.B 5 ++ [step61.q]) 9000000000000 (model61.caps 5)
     (model61.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_6 : ExcludedOn (model61.B 6 ++ [step61.q]) 9000000000000 (model61.caps 6)
     (model61.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_8 : ExcludedOn (model61.B 8 ++ [step61.q]) 9000000000000 (model61.caps 8)
     (model61.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded61_9 : ExcludedOn (model61.B 9 ++ [step61.q]) 9000000000000 (model61.caps 9)
     (model61.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked61 : StepValid model61 9000000000000 step61 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -1163,51 +1163,51 @@ theorem excluded62_0 : ExcludedOn (model62.B 0 ++ [step62.q]) 9000000000000 (mod
 
 theorem excluded62_2 : ExcludedOn (model62.B 2 ++ [step62.q]) 9000000000000 (model62.caps 2)
     (model62.ord 2) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 6) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 6) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_3 : ExcludedOn (model62.B 3 ++ [step62.q]) 9000000000000 (model62.caps 3)
     (model62.ord 3) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 10) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 10) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_4 : ExcludedOn (model62.B 4 ++ [step62.q]) 9000000000000 (model62.caps 4)
     (model62.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_5 : ExcludedOn (model62.B 5 ++ [step62.q]) 9000000000000 (model62.caps 5)
     (model62.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_6 : ExcludedOn (model62.B 6 ++ [step62.q]) 9000000000000 (model62.caps 6)
     (model62.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_7 : ExcludedOn (model62.B 7 ++ [step62.q]) 9000000000000 (model62.caps 7)
     (model62.ord 7) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 2 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 2 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_8 : ExcludedOn (model62.B 8 ++ [step62.q]) 9000000000000 (model62.caps 8)
     (model62.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded62_9 : ExcludedOn (model62.B 9 ++ [step62.q]) 9000000000000 (model62.caps 9)
     (model62.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked62 : StepValid model62 9000000000000 step62 0 1 100 := by
   apply step_checkpoint (fuel := 12)
@@ -1232,39 +1232,39 @@ theorem next62 : model62.insert step62 = model63 := by
 
 theorem excluded63_0 : ExcludedOn (model63.B 0 ++ [step63.q]) 9000000000000 (model63.caps 0)
     (model63.ord 0) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 3 8) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 3 8) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_2 : ExcludedOn (model63.B 2 ++ [step63.q]) 9000000000000 (model63.caps 2)
     (model63.ord 2) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 6) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 6) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_3 : ExcludedOn (model63.B 3 ++ [step63.q]) 9000000000000 (model63.caps 3)
     (model63.ord 3) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 10) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 10) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_4 : ExcludedOn (model63.B 4 ++ [step63.q]) 9000000000000 (model63.caps 4)
     (model63.ord 4) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_5 : ExcludedOn (model63.B 5 ++ [step63.q]) 9000000000000 (model63.caps 5)
     (model63.ord 5) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 5) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 5) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_6 : ExcludedOn (model63.B 6 ++ [step63.q]) 9000000000000 (model63.caps 6)
     (model63.ord 6) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 3) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 3) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_7 : ExcludedOn (model63.B 7 ++ [step63.q]) 9000000000000 (model63.caps 7)
     (model63.ord 7) 0 1 100 := by
@@ -1283,15 +1283,15 @@ theorem excluded63_7 : ExcludedOn (model63.B 7 ++ [step63.q]) 9000000000000 (mod
 
 theorem excluded63_8 : ExcludedOn (model63.B 8 ++ [step63.q]) 9000000000000 (model63.caps 8)
     (model63.ord 8) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem excluded63_9 : ExcludedOn (model63.B 9 ++ [step63.q]) 9000000000000 (model63.caps 9)
     (model63.ord 9) 0 1 100 := by
-  apply ExclusionHint.sound (.pair 0 4) (den := 9000000000000) (fuel := 12) (by decide +kernel) 0 1
-      100 (by decide +kernel)
-  decide +kernel
+  refine exclude_checkpoint (.pair 0 4) (den := 9000000000000) (fuel := 12)
+    (by as_aux_lemma => decide) 0 1 100 (by as_aux_lemma => decide) ?_
+  as_aux_lemma => rfl
 
 theorem checked63 : StepValid model63 9000000000000 step63 0 1 100 := by
   apply step_checkpoint (fuel := 12)

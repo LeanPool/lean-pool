@@ -5,6 +5,7 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.CheckpointOwnerProofs
 import LeanPool.ConwaySoifer.Certificates.FanCertificate
 
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Aown160000170000
@@ -142,8 +143,8 @@ theorem checked40 : StepValid model40 9000000000000 step40 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded40_0
     · exact excluded40_1
     · exact excluded40_2
@@ -155,8 +156,20 @@ theorem checked40 : StepValid model40 9000000000000 step40 0 1 100 := by
     · exact excluded40_8
     · exact excluded40_9
 theorem next40 : model40.insert step40 = model41 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded41_0 : ExcludedOn (model41.B 0 ++ [step41.q]) 9000000000000 (model41.caps 0)
     (model41.ord 0) 0 1 100 := by
@@ -226,8 +239,8 @@ theorem checked41 : StepValid model41 9000000000000 step41 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded41_0
     · exact excluded41_1
     · exact excluded41_2
@@ -239,8 +252,20 @@ theorem checked41 : StepValid model41 9000000000000 step41 0 1 100 := by
     · exact excluded41_8
     · exact excluded41_9
 theorem next41 : model41.insert step41 = model42 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 -- Verify the shared tails in one proof to bound the kernel working set.
 private theorem checkedFan42Owner0Part1Checks :
@@ -387,8 +412,8 @@ theorem checked42 : StepValid model42 9000000000000 step42 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded42_0
     · exact excluded42_1
     · exact excluded42_2
@@ -400,8 +425,20 @@ theorem checked42 : StepValid model42 9000000000000 step42 0 1 100 := by
     · exact excluded42_8
     · exact excluded42_9
 theorem next42 : model42.insert step42 = model43 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded43_1 : ExcludedOn (model43.B 1 ++ [step43.q]) 9000000000000 (model43.caps 1)
     (model43.ord 1) 0 1 100 := by
@@ -524,8 +561,8 @@ theorem checked43 : StepValid model43 9000000000000 step43 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact (hj rfl).elim
     · exact excluded43_1
     · exact excluded43_2
@@ -537,8 +574,20 @@ theorem checked43 : StepValid model43 9000000000000 step43 0 1 100 := by
     · exact excluded43_8
     · exact excluded43_9
 theorem next43 : model43.insert step43 = model44 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded44_1 : ExcludedOn (model44.B 1 ++ [step44.q]) 9000000000000 (model44.caps 1)
     (model44.ord 1) 0 1 100 := by
@@ -774,8 +823,8 @@ theorem checked44 : StepValid model44 9000000000000 step44 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact (hj rfl).elim
     · exact excluded44_1
     · exact excluded44_2
@@ -787,8 +836,20 @@ theorem checked44 : StepValid model44 9000000000000 step44 0 1 100 := by
     · exact excluded44_8
     · exact excluded44_9
 theorem next44 : model44.insert step44 = model45 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 -- Verify the shared tails in one proof to bound the kernel working set.
 private theorem checkedFan45Owner0Part1Checks :
@@ -935,8 +996,8 @@ theorem checked45 : StepValid model45 9000000000000 step45 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded45_0
     · exact excluded45_1
     · exact excluded45_2
@@ -948,8 +1009,20 @@ theorem checked45 : StepValid model45 9000000000000 step45 0 1 100 := by
     · exact excluded45_8
     · exact excluded45_9
 theorem next45 : model45.insert step45 = model46 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 -- Verify the shared tails in one proof to bound the kernel working set.
 private theorem checkedFan46Owner0Part1Checks :
@@ -1084,8 +1157,8 @@ theorem checked46 : StepValid model46 9000000000000 step46 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded46_0
     · exact excluded46_1
     · exact excluded46_2
@@ -1097,8 +1170,20 @@ theorem checked46 : StepValid model46 9000000000000 step46 0 1 100 := by
     · exact excluded46_8
     · exact excluded46_9
 theorem next46 : model46.insert step46 = model47 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded47_0 : ExcludedOn (model47.B 0 ++ [step47.q]) 9000000000000 (model47.caps 0)
     (model47.ord 0) 0 1 100 := by
@@ -1193,8 +1278,8 @@ theorem checked47 : StepValid model47 9000000000000 step47 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded47_0
     · exact excluded47_1
     · exact excluded47_2
@@ -1206,8 +1291,20 @@ theorem checked47 : StepValid model47 9000000000000 step47 0 1 100 := by
     · exact excluded47_8
     · exact excluded47_9
 theorem next47 : model47.insert step47 = model48 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 end Aown160000170000
 end ConwaySoifer.Simplified.Certificates

@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanData.Sext1500001600000
 import LeanPool.ConwaySoifer.Certificates.FanCertificate
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part5SplitIntervals
 
 /-! Kernel-checked fan certificates for Sext1500001600000Part5. -/
 
@@ -172,7 +173,18 @@ theorem checkedWitnessForExcluded5_0 :
       0
       1
       100 = true := by
-  decide +kernel
+  as_aux_lemma =>
+    refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+    · decide
+    · rfl
+    · rfl
+    · exact checkedWitnessForExcluded5_0Leaf1
+    · refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+      · decide
+      · rfl
+      · rfl
+      · exact checkedWitnessForExcluded5_0Leaf2
+      · exact checkedWitnessForExcluded5_0Leaf3
 
 theorem checkedWitnessForExcluded5_1 :
     ExclusionHint.check

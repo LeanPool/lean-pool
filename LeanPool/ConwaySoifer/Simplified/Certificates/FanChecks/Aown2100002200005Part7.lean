@@ -7,6 +7,7 @@ module
 
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanData.Aown2100002200005
 import LeanPool.ConwaySoifer.Certificates.FanCertificate
+import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part7RightIntervals
 
 /-! Kernel-checked fan certificates for Aown2100002200005Part7. -/
 
@@ -132,7 +133,22 @@ private theorem checkedWitnessForExcluded46_2Right :
       (some (6, 6, 3)) fan46Owner2Part4)) (.witnessedFan (.next ([7230000000000, 0], [1140000000000,
       9000000000000]) (some (0, 6, 2)) (some (6, 6, 3)) fan46Owner2Part6)))))
       (5) (11) (1100) = true := by
-  rfl
+  refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+  · decide
+  · rfl
+  · rfl
+  · exact checkedWitnessForExcluded46_2RightLeaf1
+  · refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+    · decide
+    · rfl
+    · rfl
+    · exact checkedWitnessForExcluded46_2RightLeaf2
+    · refine split_check_of_checks ?_ ?_ ?_ ?_ ?_
+      · decide
+      · rfl
+      · rfl
+      · exact checkedWitnessForExcluded46_2RightLeaf3
+      · exact checkedWitnessForExcluded46_2RightLeaf4
 
 theorem checkedWitnessForExcluded46_2 :
     ExclusionHint.check
