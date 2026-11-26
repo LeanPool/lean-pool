@@ -14,7 +14,10 @@ summary: >-
   Friedrichs resolvent and its strongly continuous contraction semigroup.
   The closed energy inherits energy-decreasing maps from the operator core.
   A variational comparison criterion gives fixed points of these maps on
-  resolvent vectors.
+  resolvent vectors. On a smooth weighted Riemannian manifold with finite
+  weighted volume, the negative diffusion generator on smooth compactly
+  supported functions has a symmetric nonnegative dense core in L².
+  Its Friedrichs resolvent and semigroup preserve almost-everywhere nonnegativity.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -45,6 +48,9 @@ main_declarations:
 - CutoffRigidity.Riemann.Diff.FormData.semigroup_integral_D
 - CutoffRigidity.Riemann.Diff.FormData.contraction_energy
 - CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison
+- CutoffRigidity.Riemann.Diff.diffFormData
+- CutoffRigidity.Riemann.Diff.diffusion_resolvent_nonneg
+- CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -106,6 +112,20 @@ main_results:
     If such a map does not increase the norm of a Friedrichs resolvent vector
     and the forcing term has nonnegative pairing with its displacement, the
     map fixes that vector.
+- declaration: CutoffRigidity.Riemann.Diff.diffFormData
+  informal: >-
+    The negative weighted diffusion generator on the smooth compactly supported
+    core is densely defined, symmetric and nonnegative in L² of the finite
+    weighted measure. Its core energy is the integrated gradient pairing.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_resolvent_nonneg
+  informal: >-
+    For every positive resolvent parameter, the Friedrichs resolvent of
+    the weighted diffusion generator sends nonnegative L² functions to
+    nonnegative L² functions, up to almost-everywhere equality.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg
+  informal: >-
+    At every nonnegative time, the Friedrichs semigroup for the same
+    weighted diffusion generator preserves almost-everywhere nonnegativity.
 tags:
 - curvature
 - spectral-gap

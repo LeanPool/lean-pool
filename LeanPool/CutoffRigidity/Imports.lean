@@ -52,6 +52,9 @@ public import LeanPool.CutoffRigidity.EuclideanMollificationStrongLimit
 public import LeanPool.CutoffRigidity.EuclideanMollifiedCompactness
 public import LeanPool.CutoffRigidity.EuclideanWeakHessianEstimates
 public import LeanPool.CutoffRigidity.FirstEigenspaceAffineCoordinates
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionForm
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionPositivity
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionTestFunctions
 public import LeanPool.CutoffRigidity.Friedrichs.EnergyForm
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
 public import LeanPool.CutoffRigidity.Friedrichs.FormSublevels
