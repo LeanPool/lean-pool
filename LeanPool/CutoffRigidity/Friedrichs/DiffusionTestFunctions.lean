@@ -167,10 +167,9 @@ theorem dense_test {μ : Measure M} [IsFiniteMeasure μ] : DenseRange (testToL2 
       (p := 2) (by norm_num) (ε := ENNReal.ofReal (r / 4)) (by positivity)
   let gLp := hgMem.toLp g
   have nearContinuous : dist u gLp ≤ r / 4 := by
-    have difference : u - gLp = (hu.sub hgMem).toLp ((u : M → ℝ) - g) :=
-      ((MemLp.toLp_sub hu hgMem).trans
-        (congrArg (fun v ↦ v - gLp) (Lp.toLp_coeFn u hu))).symm
-    rw [dist_eq_norm, difference, Lp.norm_toLp, ← ENNReal.toReal_ofReal (by positivity : 0 ≤ r / 4)]
+    rw [Lp.dist_edist, ← Lp.toLp_coeFn u hu]
+    change (edist (hu.toLp (u : M → ℝ)) (hgMem.toLp g)).toReal ≤ r / 4
+    rw [Lp.edist_toLp_toLp, ← ENNReal.toReal_ofReal (by positivity : 0 ≤ r / 4)]
     exact ENNReal.toReal_mono ENNReal.ofReal_ne_top hgNear
   let mass : ℝ := ↑(measureUnivNNReal μ ^ (2 : ℝ≥0∞).toReal⁻¹)
   have massNonneg : 0 ≤ mass := NNReal.coe_nonneg _

@@ -94,12 +94,10 @@ noncomputable def liftLp {μ : Measure M} {τ : ℝ → ℝ} (hτ : ContDiff ℝ
     (h1 : ∀ s, |deriv τ s| ≤ 1) : (M →₂[μ] ℝ) → (M →₂[μ] ℝ) :=
   (lipschitzWith_of_deriv_le hτ h1).compLp h0
 
-theorem liftLp_norm_sub_le {μ : Measure M} {τ : ℝ → ℝ} (hτ : ContDiff ℝ ∞ τ) (h0 : τ 0 = 0)
-    (h1 : ∀ s, |deriv τ s| ≤ 1) (u v : M →₂[μ] ℝ) :
-    ‖liftLp hτ h0 h1 u - liftLp hτ h0 h1 v‖ ≤ 1 * ‖u - v‖ := by
-  have := (lipschitzWith_of_deriv_le hτ h1).norm_compLp_sub_le h0 u v
-  unfold liftLp
-  simpa using this
+theorem lipschitzWith_liftLp {μ : Measure M} {τ : ℝ → ℝ}
+    (hτ : ContDiff ℝ ∞ τ) (h0 : τ 0 = 0) (h1 : ∀ s, |deriv τ s| ≤ 1) :
+    LipschitzWith 1 (liftLp (μ := μ) hτ h0 h1) :=
+  (lipschitzWith_of_deriv_le hτ h1).lipschitzWith_compLp h0
 
 theorem liftLp_norm_le {μ : Measure M} {τ : ℝ → ℝ} (hτ : ContDiff ℝ ∞ τ) (h0 : τ 0 = 0)
     (h1 : ∀ s, |deriv τ s| ≤ 1) (u : M →₂[μ] ℝ) : ‖liftLp hτ h0 h1 u‖ ≤ ‖u‖ := by
@@ -217,8 +215,7 @@ theorem diffusion_resolvent_nonneg {parameter : ℝ} (hparameter : 0 < parameter
   let S := diffFormData F hV hμ
   let transform := liftLp (μ := μ) hτ hzero hderiv
   let u := S.resolvent parameter g
-  have hcontinuous : Continuous transform :=
-    ((lipschitzWith_of_deriv_le hτ hderiv).lipschitzWith_compLp hzero).continuous
+  have hcontinuous : Continuous transform := (lipschitzWith_liftLp hτ hzero hderiv).continuous
   have hcore (f : S.Dom) : ∃ v : S.Dom, S.emb v = transform (S.emb f) ∧
       inner ℝ (S.opA v) (S.emb v) ≤ inner ℝ (S.opA f) (S.emb f) := by
     obtain ⟨v, hv⟩ := liftLp_mem_D F hV hμ hτ hzero hderiv f
