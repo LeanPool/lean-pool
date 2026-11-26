@@ -240,6 +240,43 @@ theorem spoke_unique (hS : IsSurface S) (hD : IsSkHat cap Γ D)
     exact mem_image_of_mem _ hv₀
   · rw [← hbd, ← subBd_eq_frontier', IsClosedDisc.frontier_eq_discBd hT hΔ]
 
+omit [T2Space S] [T2Space Shat] in
+/-- The endpoints and region of an original radial edge agree with those in a maximal radial
+drawing containing it. -/
+theorem RadialDrawing.pair_spoke_ends (rad : RadialDrawing cap Γ)
+    (hD : IsSkHat cap Γ D) (hrad : PreRad (PaintingOrDrawing.drawing D) G₃)
+    (hsub : rad.G.IsSubdrawing G₃) {e : Set Shat} (heG : e ∈ G₃.E)
+    {v₀ : S} {w : Shat} (hv₀ : v₀ ∈ Γ.V) (hw : w ∈ rad.Rstar)
+    (hsetG : closure e ∩ rad.G.V = {cap.emb v₀, w}) :
+    rad.regionOf w ∈ Γ.hatRegions cap ∧ w ∈ rad.regionOf w ∧ w ∈ G₃.V ∧
+      closure e ∩ G₃.V = {cap.emb v₀, w} ∧ e ⊆ rad.regionOf w := by
+  have hT := cap.isClosedSurface
+  obtain ⟨v', hv', r, hr, w', hw', hw'G, hset', her⟩ := spoke_ends hrad hT heG
+  have hvhat : cap.emb v₀ ∈ D.V := by
+    rw [hD.hV]
+    exact mem_image_of_mem _ hv₀
+  have hwD : w ∉ D.V := fun h ↦ hw.2 (by rwa [hD.hV] at h)
+  have hwc : w ∈ closure e ∩ G₃.V := by
+    have : w ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inr rfl
+    exact ⟨this.1, hsub.1 this.2⟩
+  have hvc : cap.emb v₀ ∈ closure e ∩ G₃.V := by
+    have : cap.emb v₀ ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inl rfl
+    exact ⟨this.1, hsub.1 this.2⟩
+  rw [hset'] at hwc hvc
+  have hww : w = w' := by
+    rcases hwc with h | h
+    · exact absurd (h ▸ hv') hwD
+    · exact h
+  subst hww
+  have hvv : cap.emb v₀ = v' := by
+    rcases hvc with h | h
+    · exact h
+    · exact absurd (D.V_subset_U hvhat) (h ▸ region_subset hr hw')
+  subst hvv
+  obtain ⟨hrO, hwO⟩ := rad.regionOf_mem hw
+  have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hrO) hr hwO hw'
+  exact ⟨hrO, hrr.symm ▸ hw', hw'G, hset', hrr.symm ▸ her⟩
+
 /-- **The two sides of a spoke.** An edge `f` of `sk(Γ)` on the boundary of a region `r` at `v` and
 the
 spoke from `v` into `r` lie on the boundary of one region of `H = sk(Γ) ∪ G₃`. -/
@@ -501,31 +538,7 @@ theorem disc_facts (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
     obtain ⟨c₁, c₂, ⟨v₀, w, hv₀, hw, hsetG, f₁, f₂, hne, h₁, h₂, ht₁, ht₂, hfr₁, hfr₂⟩, hcase⟩ :=
       rad.splits_iff.mp hsp
     have heG := hsub.2 he
-    obtain ⟨v', hv', r, hr, w', hw', hw'G, hset', her⟩ := spoke_ends hrad hT heG
-    have hvhat : cap.emb v₀ ∈ D.V := by
-      rw [hD.hV]
-      exact mem_image_of_mem _ hv₀
-    have hwD : w ∉ D.V := fun h ↦ hw.2 (by rwa [hD.hV] at h)
-    have hwc : w ∈ closure e ∩ G₃.V := by
-      have : w ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inr rfl
-      exact ⟨this.1, hsub.1 this.2⟩
-    have hvc : cap.emb v₀ ∈ closure e ∩ G₃.V := by
-      have : cap.emb v₀ ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inl rfl
-      exact ⟨this.1, hsub.1 this.2⟩
-    rw [hset'] at hwc hvc
-    have hww : w = w' := by
-      rcases hwc with h | h
-      · exact absurd (h ▸ hv') hwD
-      · exact h
-    subst hww
-    have hvv : cap.emb v₀ = v' := by
-      rcases hvc with h | h
-      · exact h
-      · exact absurd (D.V_subset_U hvhat) (h ▸ region_subset hr hw')
-    subst hvv
-    obtain ⟨hrO, hwO⟩ := rad.regionOf_mem hw
-    have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hrO) hr hwO hw'
-    rw [hrr] at hrO hfr₁ hfr₂
+    obtain ⟨hrO, hw', hw'G, hset', her⟩ := rad.pair_spoke_ends hD hrad hsub heG hv₀ hw hsetG
     obtain ⟨p₁, hp₁, hep₁, hfp₁⟩ := pair_side hS hD h3 hrad hmax h₁.mem hv₀ ht₁ hrO hfr₁ heG her hw'
       hw'G hset'
     obtain ⟨p₂, hp₂, hep₂, hfp₂⟩ := pair_side hS hD h3 hrad hmax h₂.mem hv₀ ht₂ hrO hfr₂ heG her hw'

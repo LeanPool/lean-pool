@@ -555,10 +555,7 @@ theorem exists_edge_closure_of_mem_circuit_U {C : Drawing S} (hC : C.IsCircuit)
       exact ⟨e, he, hx_cl.1⟩
   · have hx_diff : x ∈ C.U \ C.V := ⟨hx, hxV⟩
     have he : pathComponentIn (C.U \ C.V) x ∈ C.E :=
-      ⟨⟨x, mem_pathComponentIn_self hx_diff⟩, pathComponentIn_subset,
-        isPathConnected_pathComponentIn hx_diff, fun D hD hc hsub =>
-          subset_antisymm (hc.subset_pathComponentIn (hsub (mem_pathComponentIn_self hx_diff)) hD)
-            hsub⟩
+      GraphMinor.Surface.mem_arcComponentsIn_of_mem hx_diff
     exact ⟨pathComponentIn (C.U \ C.V) x, he, subset_closure (mem_pathComponentIn_self hx_diff)⟩
 
 /-- Any `O`-arc contained in the boundary `subBd D` of a closed disc `D` equals `subBd D`. -/

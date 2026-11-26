@@ -253,19 +253,8 @@ theorem isRigidIn_cylinder_9_6 [T2Space S] [ConnectedSpace S] {α : Type u} {β 
 /-- For a closed subset `K`, `(H.interSet K).V = H.V ∩ K` and `(H.interSet K).E = {e ∈ H.E | e ⊆
 K}`. -/
 theorem interSet_V_and_E_of_isClosed [T2Space S] (H : Drawing S) {K : Set S} (hK : IsClosed K) :
-    (H.interSet K).V = H.V ∩ K ∧ (H.interSet K).E = {e ∈ H.E | e ⊆ K} := by
-  refine ⟨?_, ?_⟩
-  · apply Subset.antisymm
-    · rintro x (⟨hx, _⟩ | hx)
-      · exact hx
-      · obtain ⟨e, he, hxe, hxV⟩ := mem_iUnion₂.mp hx
-        exact ⟨hxV, hK.closure_subset_iff.mpr he.1.2 hxe⟩
-    · exact fun x hx => Or.inl ⟨hx, hx.1⟩
-  · change (H.span _ _).E = _
-    rw [H.span_E]
-    ext e
-    simp only [mem_inter_iff, mem_ofPred_eq]
-    exact ⟨fun h => h.1, fun h => ⟨h, h.1⟩⟩
+    (H.interSet K).V = H.V ∩ K ∧ (H.interSet K).E = {e ∈ H.E | e ⊆ K} :=
+  ⟨H.interSet_V_of_isClosed hK, H.interSet_E K⟩
 
 /-- In the cylinder `Cyl = Δ \ discInt Δ₂`, `C₁ = H'.interSet (subBd Λ)` and `C₂` are circuit
 subdrawings of `H' = H.interSet Cyl` with `discBd (closure Λ) = C₁.U`,

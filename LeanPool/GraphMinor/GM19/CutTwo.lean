@@ -201,7 +201,7 @@ theorem two_of_sheets {S₁ : Type} [TopologicalSpace S₁] [T2Space S₁] {ψ :
     · have hK0 : ψ x₀ ∈ K.U \ K.V :=
         ⟨(hO x₀ hx₀).1.resolve_left hb0, fun hv ↦ (hO x₀ hx₀).2 (hKA hv)⟩
       obtain ⟨e, he, hxe⟩ : ∃ e ∈ arcComponentsIn (K.U \ K.V), ψ x₀ ∈ e :=
-        ⟨_, GM20.mem_arcComponentsIn_pathComponentIn hK0, mem_pathComponentIn_self hK0⟩
+        ⟨_, Surface.mem_arcComponentsIn_of_mem hK0, mem_pathComponentIn_self hK0⟩
       refine Or.inr ⟨e, he, ?_⟩
       rintro _ ⟨y, hy, rfl⟩
       obtain ⟨J, hJO, hxJ, hyJ, -, hJp⟩ := hJ x₀ hx₀ y hy
@@ -277,7 +277,7 @@ theorem exists_cut_drawing (hS : IsSurface S) [ConnectedSpace S] {K : Drawing S}
       · obtain ⟨e, he, hxe⟩ := mem_iUnion₂.mp (hKne hxV)
         exact ⟨_, ⟨e, he, rfl⟩, hxe⟩
       · have hm : x ∈ K.U \ K.V := ⟨hx, hxV⟩
-        exact ⟨_, ⟨_, GM20.mem_arcComponentsIn_pathComponentIn hm, rfl⟩,
+        exact ⟨_, ⟨_, Surface.mem_arcComponentsIn_of_mem hm, rfl⟩,
           subset_closure (mem_pathComponentIn_self hm)⟩
   have hNs : K.V ⊆ ⋃₀ 𝓔 := hUeq ▸ K.V_subset_U
   obtain ⟨Y, tY, t2, ψ, h1, h2, h3, h4, h5, h6, hlift⟩ := exists_cut_lines hS K.finite_V

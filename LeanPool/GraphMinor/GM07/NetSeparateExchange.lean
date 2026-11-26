@@ -49,60 +49,15 @@ theorem Net.exists_separating_exchange {S : Type u} [TopologicalSpace S] (hS : I
   let : T2Space S := hS.2.1
   obtain ⟨ψ₀, φ₀, hψ₀, hφ₀, hφA, hφB, hiA, hiB, hcross, hαbd, hβbd⟩ :=
     N.exists_separating_pair_disc i hA hB hAB hfA hgB
-  obtain ⟨e₀⟩ := isClosedDisc_closedBall.1
-  obtain ⟨eN⟩ := N.isClosedDisc_D
-  let e : closedBall (0 : ℂ) 1 ≃ₜ N.D :=
-    e₀.symm.trans (eN.trans (Homeomorph.Set.univ N.D))
+  obtain ⟨e, hcα, hcβ, hiα, hiβ, hT, hcross', hαbd', hβbd', hφ, hφA', hφB'⟩ :=
+    N.exists_transported_cut_maps hψ₀ hφ₀ hφA hφB hiA hiB hcross hαbd hβbd
   let α : A → N.D := e ∘ ψ₀ ∘ Sum.inl
   let β : B → N.D := e ∘ ψ₀ ∘ Sum.inr
   let φ : N.D → S := φ₀ ∘ e.symm
-  have hcα : Continuous α := e.continuous.comp (hψ₀.continuous.comp continuous_inl)
-  have hcβ : Continuous β := e.continuous.comp (hψ₀.continuous.comp continuous_inr)
-  have heBd : ∀ z, e z ∈ bd N.D ↔ z ∈ bd (closedBall (0 : ℂ) 1) := by
-    intro z
-    have he := image_bd_homeomorph e
-    constructor
-    · intro hz
-      obtain ⟨w, hw, hwz⟩ := he.symm ▸ hz
-      exact e.injective hwz ▸ hw
-    · intro hz
-      exact he ▸ mem_image_of_mem e hz
-  have hT : range α ∪ range β = univ := by
-    apply eq_univ_of_forall
-    intro z
-    obtain ⟨w, hw⟩ := hψ₀.surjective (e.symm z)
-    cases w with
-    | inl x => exact Or.inl ⟨x, (congrArg e hw).trans (e.apply_symm_apply z)⟩
-    | inr y => exact Or.inr ⟨y, (congrArg e hw).trans (e.apply_symm_apply z)⟩
-  have hcross' : ∀ (x : A) (y : B), α x = β y ↔ ∃ r, x.val = N.f i r ∧ y.val = N.g i r :=
-    fun x y => e.injective.eq_iff.trans (hcross x y)
-  have hαbd' : ∀ x : A, α x ∈ bd N.D ↔ x.val ∈ discBd A ∧
-      x.val ∉ N.f i '' Ioo (0 : unitInterval) 1 := fun x => (heBd _).trans (hαbd x)
-  have hβbd' : ∀ y : B, β y ∈ bd N.D ↔ y.val ∈ discBd B ∧
-      y.val ∉ N.g i '' Ioo (0 : unitInterval) 1 := fun y => (heBd _).trans (hβbd y)
-  have hφA' : ∀ x : A, φ (α x) = N.φ x.val := by
-    intro x
-    change φ₀ (e.symm (e (ψ₀ (Sum.inl x)))) = _
-    rw [e.symm_apply_apply]
-    exact hφA x
-  have hφB' : ∀ y : B, φ (β y) = N.φ y.val := by
-    intro y
-    change φ₀ (e.symm (e (ψ₀ (Sum.inr y)))) = _
-    rw [e.symm_apply_apply]
-    exact hφB y
   obtain ⟨M, eM, hr, hMap, hU⟩ := N.exists_separating_net_of_maps N.isSurface_D N.isClosedDisc_D
     i hF hFbd hs ht hA hB hAB hI hAd hBd hfA hgB α β hcα hcβ
-    (e.injective.comp hiA) (e.injective.comp hiB) hT hcross' hαbd' hβbd'
-    φ (hφ₀.comp e.symm.isQuotientMap) hφA' hφB'
-  have hEBd : ∀ z, eM z ∈ bd M.D ↔ z ∈ bd N.D := by
-    intro z
-    have he := image_bd_homeomorph eM
-    constructor
-    · intro hz
-      obtain ⟨w, hw, hwz⟩ := he.symm ▸ hz
-      exact eM.injective hwz ▸ hw
-    · intro hz
-      exact he ▸ mem_image_of_mem eM hz
+    hiα hiβ hT hcross' hαbd' hβbd'
+    φ hφ hφA' hφB'
   have hmap : ∀ z, M.φ (eM z) = φ z := fun z => congrFun hMap z
   have hT' : range (eM ∘ α) ∪ range (eM ∘ β) = univ := by
     apply eq_univ_of_forall
@@ -111,10 +66,11 @@ theorem Net.exists_separating_exchange {S : Type u} [TopologicalSpace S] (hS : I
     · exact Or.inl ⟨x, (congrArg eM hx).trans (eM.apply_symm_apply z)⟩
     · exact Or.inr ⟨y, (congrArg eM hy).trans (eM.apply_symm_apply z)⟩
   have hCount := N.separating_contact_balance M i hst hFbd hs ht hAB hI hAd hBd hfA hgB
-    (eM ∘ α) (eM ∘ β) (eM.injective.comp (e.injective.comp hiA))
-    (eM.injective.comp (e.injective.comp hiB)) hT'
+    (eM ∘ α) (eM ∘ β) (eM.injective.comp hiα)
+    (eM.injective.comp hiβ) hT'
     (fun x y => eM.injective.eq_iff.trans (hcross' x y))
-    (fun x => (hEBd _).trans (hαbd' x)) (fun y => (hEBd _).trans (hβbd' y))
+    (fun x => (mem_bd_homeomorph_iff eM _).trans (hαbd' x))
+    (fun y => (mem_bd_homeomorph_iff eM _).trans (hβbd' y))
     (fun x => (hmap _).trans (hφA' x)) (fun y => (hmap _).trans (hφB' y)) G.V G.finite_V
   refine ⟨M, N.isNormalFor_of_swap_seam_subset hS M hN hr hU hNormal, ?_⟩
   change (M.φ ⁻¹' G.V ∩ bd M.D).ncard + _ + _ + _ = (N.φ ⁻¹' G.V ∩ bd N.D).ncard + _ + _ + _

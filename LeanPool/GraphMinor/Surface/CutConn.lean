@@ -236,8 +236,8 @@ theorem arc_two_aux (hS : IsSurface Y) (L₀ : ArcLift ψ F a₀ ξ η) (hψc : 
   obtain ⟨n, n1, n2⟩ := exists_lift φ' L₀.cη hη
   obtain ⟨σ, n', c', s', h3, h4⟩ := exists_dir n1 (lift_mono n1 (inj_of_lift n2 hiη))
     (inj_of_lift n2 hiη)
-  have hlt := lift_lt_add_one hmc hmm (inj_of_lift hmξ hiξ)
-  have hlt' := lift_lt_add_one c' s' h4
+  have hlt := lift_lt_add_one hmc (inj_of_lift hmξ hiξ)
+  have hlt' := lift_lt_add_one c' h4
   have c1 : cnt (rW a b c L) (2 * a + b + 2 * i + 1) = 0 := cnt_rW_zero (by omega)
     (by omega) fun m hm => by
     have := hL m hm
@@ -280,7 +280,7 @@ theorem arc_two_aux (hS : IsSurface Y) (L₀ : ArcLift ψ F a₀ ξ η) (hψc : 
     (φ _).2
   obtain ⟨h5, h6⟩ := glue_word (p₁ := 5) L₀ hψc hsurj (A := [tL a b j]) (q := (rL a b j).1) (p :=
     (rL a b i).1) (σ := σ) rfl (by simp)
-    (by ct) (by ct) (by simp [rL]; omega) p5 (p8.congr hmξ) (ζ := fun u => (φ' (ee (n' u))).1) p6
+    (by ct) (by ct) p5 (p8.congr hmξ) (ζ := fun u => (φ' (ee (n' u))).1) p6
     (fun u hu => by simp only [h3 u hu]; exact n2 u hu)
   exact ⟨σ, g₂, h5, h6⟩
 
@@ -301,13 +301,12 @@ theorem arc_one_aux (hS : IsSurface Y) (L₀ : ArcLift ψ F a₀ ξ η) (hψc : 
   obtain ⟨n, n1, n2⟩ := exists_lift φ L₀.cη hη
   obtain ⟨σ, n', c', s', h3, h4⟩ := exists_dir n1 (lift_mono n1 (inj_of_lift n2 hiη))
     (inj_of_lift n2 hiη)
-  have hlt := lift_lt_add_one hmc hmm (inj_of_lift hmξ hiξ)
+  have hlt := lift_lt_add_one hmc (inj_of_lift hmξ hiξ)
   have h0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have h1' : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have hn' : ∀ v ∈ Icc (0 : ℝ) 1, (φ (ee (n' v))).1 = η (ofs σ v) := fun v hv => by
     rw [← n2 _ (ofs_mem hv), ← h3 _ (ofs_mem hv), ofs_ofs]
-  obtain ⟨k, hk1, hk2⟩ := exists_shift hmc c' (hmm.monotoneOn h0 h1' zero_le_one)
-    (s'.monotoneOn h0 h1' zero_le_one)
+  obtain ⟨k, hk1, hk2⟩ := exists_shift hmc c'
     fun u hu v hv he => hdj u hu _ (ofs_mem hv) (by rw [← hmξ u hu, he, hn' v hv])
   have c1 : cnt (rW a b c L) (2 * a + b + 2 * i + 1) = 0 := cnt_rW_zero (by omega)
     (by omega) fun m hm => by
@@ -348,7 +347,7 @@ theorem arc_one_aux (hS : IsSurface Y) (L₀ : ArcLift ψ F a₀ ξ η) (hψc : 
   obtain ⟨h5, h6⟩ := glue_word (p₁ := 1) L₀ hψc hsurj (A := [tL a b i, rL a b i,
     (frL a b c, true)]) (q := frL a b c + 1) (p := (rL a b i).1)
     (B := (frL a b c + 2, true) :: linv (tL a b i) :: rW a b c L) (σ := σ) rfl (by simp)
-    (by ct) (by ct) (by simp [rL, frL]; omega) p1 (p2.congr hmξ) p4
+    (by ct) (by ct) p1 (p2.congr hmξ) p4
     (fun u hu => by simp only [hn2 _ (ofs_mem hu), ofs_ofs])
   refine ⟨σ, g₁, h5, h6, m 1, n' 0 + k, hk1, hmξ 1 h1', hn2 0 h0, fun v hv u hu => ⟨fun he => ?_,
     fun he => ?_⟩⟩

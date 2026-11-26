@@ -224,6 +224,21 @@ theorem span_E (V' : Set S) (E' : Set (Set S)) : (Γ.span V' E').E = E' ∩ Γ.E
 def interSet (T : Set S) : Drawing S :=
   Γ.span (Γ.V ∩ T) {e | e ∈ Γ.E ∧ e ⊆ T}
 
+/-- Restricting to a closed set keeps exactly the vertices in that set. -/
+theorem interSet_V_of_isClosed {T : Set S} (hT : IsClosed T) :
+    (Γ.interSet T).V = Γ.V ∩ T := by
+  rw [Drawing.interSet, Drawing.span_V, Drawing.spanV]
+  refine Subset.antisymm (union_subset inter_subset_left ?_)
+    (fun _ hx => Or.inl ⟨hx, hx.1⟩)
+  refine iUnion₂_subset fun e he _ hx => ⟨hx.2, ?_⟩
+  exact hT.closure_subset_iff.mpr he.1.2 hx.1
+
+/-- Restricting to a set keeps exactly the edges contained in the set. -/
+theorem interSet_E (T : Set S) : (Γ.interSet T).E = {e ∈ Γ.E | e ⊆ T} := by
+  rw [Drawing.interSet, Drawing.span_E]
+  ext e
+  exact ⟨fun h => h.1, fun h => ⟨h, h.1⟩⟩
+
 /-- `Γ \ e`, the subdrawing obtained by deleting the edge `e`
 (Graph Minors XI, Section 4, proof of (4.4), page 80). -/
 def deleteEdge (e : Set S) : Drawing S :=

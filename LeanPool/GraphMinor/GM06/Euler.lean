@@ -1059,6 +1059,31 @@ theorem exists_internal_leaf_of_no_redundant_edge {Γ : Drawing S} (hE : Γ.E.No
         have := hmax (N + 1) hPN1
         omega
 
+/-- Deleting an internal leaf removes one vertex and one edge and preserves boundary vertices. -/
+private theorem exists_internal_leaf_deletion {Γ : Drawing S} (hΓ : Γ.IsProper)
+    (hE : Γ.E.Nonempty)
+    (hno : ∀ e ∈ Γ.E, ∀ u v, Γ.toGraph.IsLink e u v →
+      ¬ Nonempty (GraphWalk (Γ.deleteEdge e).toGraph u v) ∧
+      ¬ ((∃ b₁ ∈ Γ.V ∩ bd S, Nonempty (GraphWalk (Γ.deleteEdge e).toGraph u b₁)) ∧
+         (∃ b₂ ∈ Γ.V ∩ bd S, Nonempty (GraphWalk (Γ.deleteEdge e).toGraph v b₂)))) :
+    ∃ e ∈ Γ.E, ∃ w u : S, w ≠ u ∧ w ∉ bd S ∧ Γ.toGraph.IsLink e w u ∧
+      (∀ f ∈ Γ.E, f ≠ e → w ∉ closure f) ∧
+      let Γ' := Γ.span (Γ.V \ {w}) (Γ.E \ {e})
+      Γ'.V = Γ.V \ {w} ∧ Γ'.IsProper ∧ Γ'.V.ncard + 1 = Γ.V.ncard ∧
+        Γ'.E.ncard + 1 = Γ.E.ncard ∧ Γ'.V ∩ bd S = Γ.V ∩ bd S := by
+  obtain ⟨e, he, w, u, hw_ne, ⟨hw_V, hw_bd⟩, hlink, hleaf⟩ :=
+    exists_internal_leaf_of_no_redundant_edge hE hno
+  obtain ⟨hV', hE', _, hΓ', _, _, _, _⟩ := deleteLeaf_props hΓ he hlink hw_ne hw_bd hleaf
+  refine ⟨e, he, w, u, hw_ne, hw_bd, hlink, hleaf, hV', hΓ', ?_, ?_, ?_⟩
+  · rw [hV']
+    exact ncard_sdiff_singleton_add_one hw_V Γ.finite_V
+  · rw [hE']
+    exact ncard_sdiff_singleton_add_one he Γ.finite_edges
+  · rw [hV']
+    ext x
+    simp only [mem_inter_iff, mem_sdiff, mem_singleton_iff]
+    exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, fun hxw => hw_bd (hxw ▸ h.2)⟩, h.2⟩⟩
+
 /-! ## 4. Region-Counting Bounds (Euler's Formula on a Disc) -/
 
 omit [T2Space S] in
@@ -1134,22 +1159,11 @@ theorem euler_lower_bound (hS : IsClosedDiscSpace S) {Γ : Drawing S} (hΓ : Γ.
           intro e he u v hl
           exact ⟨fun h1 => hred ⟨e, he, u, v, hl, Or.inl h1⟩,
             fun h2 => hred ⟨e, he, u, v, hl, Or.inr h2⟩⟩
-        obtain ⟨e, he, w, u, hw_ne, ⟨hw_V, hw_bd⟩, hlink, hleaf⟩ :=
-          exists_internal_leaf_of_no_redundant_edge hE_ne hno
+        obtain ⟨e, he, w, u, hw_ne, hw_bd, hlink, hleaf, hV', hΓ', hV_card, hE_card, hVbd_eq⟩ :=
+          exists_internal_leaf_deletion hΓ hE_ne hno
         let Γ' := Γ.span (Γ.V \ {w}) (Γ.E \ {e})
-        obtain ⟨hV', hE', _, hΓ', _, _, _, _⟩ :=
-          deleteLeaf_props hΓ he hlink hw_ne hw_bd hleaf
-        have hV_card : Γ'.V.ncard + 1 = Γ.V.ncard := by
-          rw [hV']
-          exact ncard_sdiff_singleton_add_one hw_V Γ.finite_V
-        have hE_card : Γ'.E.ncard + 1 = Γ.E.ncard := by
-          rw [hE']
-          exact ncard_sdiff_singleton_add_one he Γ.finite_edges
-        have hVbd_eq : Γ'.V ∩ bd S = Γ.V ∩ bd S := by
-          rw [hV']
-          ext x
-          simp only [mem_inter_iff, mem_sdiff, mem_singleton_iff]
-          exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, fun hxw => hw_bd (hxw ▸ h.2)⟩, h.2⟩⟩
+        change Γ'.V.ncard + 1 = Γ.V.ncard at hV_card
+        change Γ'.E.ncard + 1 = Γ.E.ncard at hE_card
         have hR_eq : Γ.R.ncard = Γ'.R.ncard :=
           deleteLeaf_R_ncard_eq hS hΓ he hlink hw_ne hw_bd hleaf
         have hlt : Γ'.E.ncard < n := by omega
@@ -1312,17 +1326,11 @@ theorem euler_upper_bound_of_bd_empty (hS : IsClosedDiscSpace S) {Γ : Drawing S
           intro e he u v hl
           exact ⟨fun h1 => hred ⟨e, he, u, v, hl, Or.inl h1⟩,
             fun h2 => hred ⟨e, he, u, v, hl, Or.inr h2⟩⟩
-        obtain ⟨e, he, w, u, hw_ne, ⟨hw_V, hw_bd⟩, hlink, hleaf⟩ :=
-          exists_internal_leaf_of_no_redundant_edge hE_ne hno
+        obtain ⟨e, he, w, u, hw_ne, hw_bd, hlink, hleaf, hV', hΓ', hV_card, hE_card, hVbd_eq⟩ :=
+          exists_internal_leaf_deletion hΓ hE_ne hno
         let Γ' := Γ.span (Γ.V \ {w}) (Γ.E \ {e})
-        obtain ⟨hV', hE', _, hΓ', _, _, _, _⟩ :=
-          deleteLeaf_props hΓ he hlink hw_ne hw_bd hleaf
-        have hV_card : Γ'.V.ncard + 1 = Γ.V.ncard := by
-          rw [hV']
-          exact ncard_sdiff_singleton_add_one hw_V Γ.finite_V
-        have hE_card : Γ'.E.ncard + 1 = Γ.E.ncard := by
-          rw [hE']
-          exact ncard_sdiff_singleton_add_one he Γ.finite_edges
+        change Γ'.V.ncard + 1 = Γ.V.ncard at hV_card
+        change Γ'.E.ncard + 1 = Γ.E.ncard at hE_card
         have hu_V' : u ∈ Γ'.V := by rw [hV']; exact ⟨hlink.right_mem, hw_ne.symm⟩
         have hConn' : IsGraphConnected Γ'.toGraph := by
           refine ⟨⟨u, hu_V'⟩, fun x hx y hy => ?_⟩
@@ -1331,9 +1339,7 @@ theorem euler_upper_bound_of_bd_empty (hS : IsClosedDiscSpace S) {Γ : Drawing S
           rw [hV'] at hx hy
           obtain ⟨W⟩ := hConn.2 x hx.1 y hy.1
           exact deleteLeaf_walk hΓ he hlink hw_ne hw_bd hleaf hx hy W
-        have hbd' : Γ'.V ∩ bd S = ∅ :=
-          subset_empty_iff.mp ((inter_subset_inter_left _ (hV' ▸ sdiff_subset)).trans
-            (subset_empty_iff.mpr hbd))
+        have hbd' : Γ'.V ∩ bd S = ∅ := by rwa [hVbd_eq]
         have hR_eq : Γ.R.ncard = Γ'.R.ncard :=
           deleteLeaf_R_ncard_eq hS hΓ he hlink hw_ne hw_bd hleaf
         have hlt : Γ'.E.ncard < n := by omega
@@ -1419,22 +1425,11 @@ theorem euler_upper_bound_of_reach_bd (hS : IsClosedDiscSpace S) {Γ : Drawing S
           intro e he u v hl
           exact ⟨fun h1 => hred ⟨e, he, u, v, hl, Or.inl h1⟩,
             fun h2 => hred ⟨e, he, u, v, hl, Or.inr h2⟩⟩
-        obtain ⟨e, he, w, u, hw_ne, ⟨hw_V, hw_bd⟩, hlink, hleaf⟩ :=
-          exists_internal_leaf_of_no_redundant_edge hE_ne hno
+        obtain ⟨e, he, w, u, hw_ne, hw_bd, hlink, hleaf, hV', hΓ', hV_card, hE_card, hVbd_eq⟩ :=
+          exists_internal_leaf_deletion hΓ hE_ne hno
         let Γ' := Γ.span (Γ.V \ {w}) (Γ.E \ {e})
-        obtain ⟨hV', hE', _, hΓ', _, _, _, _⟩ :=
-          deleteLeaf_props hΓ he hlink hw_ne hw_bd hleaf
-        have hV_card : Γ'.V.ncard + 1 = Γ.V.ncard := by
-          rw [hV']
-          exact ncard_sdiff_singleton_add_one hw_V Γ.finite_V
-        have hE_card : Γ'.E.ncard + 1 = Γ.E.ncard := by
-          rw [hE']
-          exact ncard_sdiff_singleton_add_one he Γ.finite_edges
-        have hVbd_eq : Γ'.V ∩ bd S = Γ.V ∩ bd S := by
-          rw [hV']
-          ext x
-          simp only [mem_inter_iff, mem_sdiff, mem_singleton_iff]
-          exact ⟨fun h => ⟨h.1.1, h.2⟩, fun h => ⟨⟨h.1, fun hxw => hw_bd (hxw ▸ h.2)⟩, h.2⟩⟩
+        change Γ'.V.ncard + 1 = Γ.V.ncard at hV_card
+        change Γ'.E.ncard + 1 = Γ.E.ncard at hE_card
         have hreach' : ∀ x ∈ Γ'.V, ∃ b ∈ Γ'.V ∩ bd S, Nonempty (GraphWalk Γ'.toGraph x b) := by
           intro x hx
           rw [hV'] at hx

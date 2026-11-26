@@ -190,7 +190,7 @@ theorem bd_subset_skU : bd S ⊆ Γ.skU := by
   by_cases hV : x ∈ Γ.V
   · exact Or.inl (Or.inl hV)
   have hm : x ∈ Γ.U \ Γ.V := ⟨Γ.bd_subset hx, hV⟩
-  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := GM20.mem_arcComponentsIn_pathComponentIn hm
+  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := Surface.mem_arcComponentsIn_of_mem hm
   have hxc : x ∈ pathComponentIn (Γ.U \ Γ.V) x := mem_pathComponentIn_self hm
   have h2 := size_two_of_border Γ hc ⟨x, hxc, hx⟩
   exact Or.inl (Or.inr (mem_iUnion₂.2 ⟨_, ⟨hc, h2⟩, hxc⟩))
@@ -385,7 +385,7 @@ theorem pieces_eq (hΔ : IsCore Γ Δ) : arcComponentsIn (thinU Γ Δ \ Γ.V) = 
   · ext x
     constructor
     · rintro ⟨hx | hx, hV⟩
-      · exact ⟨_, Or.inl (GM20.mem_arcComponentsIn_pathComponentIn ⟨hx, hV⟩),
+      · exact ⟨_, Or.inl (Surface.mem_arcComponentsIn_of_mem ⟨hx, hV⟩),
           mem_pathComponentIn_self ⟨hx, hV⟩⟩
       · obtain ⟨c, hc, hxc⟩ := mem_iUnion₂.mp hx
         exact ⟨_, Or.inr ⟨c, hc, rfl⟩, hxc, fun h ↦ hV (Γ.tilde_subset_V hc.1 h)⟩

@@ -152,9 +152,8 @@ theorem isOpenDisc_interior (hS : IsClosedSurface S) {D : Set S} (hD : IsClosedD
 /-- A point of a set lies in an arc-wise connected component of it. -/
 theorem exists_mem_arcComponent {F : Set S} {x : S} (hx : x ∈ F) :
     ∃ C ∈ arcComponentsIn F, x ∈ C := by
-  refine ⟨pathComponentIn F x, ⟨⟨x, mem_pathComponentIn_self hx⟩, pathComponentIn_subset,
-    isPathConnected_pathComponentIn hx, fun D hD hc hsub => ?_⟩, mem_pathComponentIn_self hx⟩
-  exact subset_antisymm (hc.subset_pathComponentIn (hsub (mem_pathComponentIn_self hx)) hD) hsub
+  exact ⟨pathComponentIn F x, GraphMinor.Surface.mem_arcComponentsIn_of_mem hx,
+    mem_pathComponentIn_self hx⟩
 
 /-- Two arc-wise connected components with a common point are equal. -/
 theorem arcComponent_eq {F C D : Set S} (hC : C ∈ arcComponentsIn F) (hD : D ∈ arcComponentsIn F)

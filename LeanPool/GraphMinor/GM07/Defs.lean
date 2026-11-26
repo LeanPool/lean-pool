@@ -82,11 +82,8 @@ variable {S : Type u} [TopologicalSpace S]
 
 /-- Every point `x ∈ F` belongs to `pathComponentIn F x ∈ arcComponentsIn F`. -/
 theorem pathComponentIn_mem_arcComponentsIn {F : Set S} {x : S} (hx : x ∈ F) :
-    pathComponentIn F x ∈ arcComponentsIn F := by
-  refine ⟨⟨x, mem_pathComponentIn_self hx⟩, pathComponentIn_subset,
-    isPathConnected_pathComponentIn hx, ?_⟩
-  intro D hDF hD hxD
-  exact Subset.antisymm (hD.subset_pathComponentIn (hxD (mem_pathComponentIn_self hx)) hDF) hxD
+    pathComponentIn F x ∈ arcComponentsIn F :=
+  GraphMinor.Surface.mem_arcComponentsIn_of_mem hx
 
 /-- Equivalence between `Drawing.IsNormal` (`X ∩ G.U ⊆ G.V`) and Graph Minors VII's definition
 (Section 2, page 214): "If $G$ is a graph in $\Sigma$, a subset $X \subseteq \Sigma$ is *$G$-normal*

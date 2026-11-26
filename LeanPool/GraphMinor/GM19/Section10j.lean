@@ -78,6 +78,24 @@ theorem IsAnchored.image {f : S ≃ₜ S} {Γ Γ' : Painting S} {K K' : Drawing 
     obtain ⟨w, hw, rfl⟩ := hzV
     rwa [f.symm_apply_apply]
 
+omit [T2Space S] in
+/-- Pulling back a feature preserves the intersection and anchoring conditions for placement and
+gives a list of the common vertices. -/
+theorem IsColouredImage.exists_feature_placement_data {f : S ≃ₜ S} {P Q : ColouredPainting χ}
+    {Kc K : Drawing S} (hQ : IsColouredImage f.symm P Q)
+    (hU : f '' Kc.U = K.U) (hV : f '' Kc.V = K.V)
+    (hinter : P.Γ.U ∩ K.U ⊆ P.Γ.V ∩ K.V) (hanc : IsAnchored P.Γ K) :
+    ∃ l : List S, Q.Γ.U ∩ Kc.U ⊆ Q.Γ.V ∩ Kc.V ∧ IsAnchored Q.Γ Kc ∧
+      ∀ v, v ∈ l ↔ v ∈ Kc.V ∩ Q.Γ.V := by
+  classical
+  have hfin : (Kc.V ∩ f ⁻¹' P.Γ.V).Finite := Kc.finite_V.subset inter_subset_left
+  refine ⟨hfin.toFinset.toList, hQ.feature_inter_subset hU hV hinter,
+    hanc.image hU hQ.symm.V, fun v => ?_⟩
+  rw [Finset.mem_toList, hfin.mem_toFinset, hQ.V]
+  refine ⟨fun h => ⟨h.1, _, h.2, f.symm_apply_apply v⟩, ?_⟩
+  rintro ⟨h₁, u, hu, rfl⟩
+  exact ⟨h₁, by simpa using hu⟩
+
 omit [T2Space S] [T2Space Shat] in
 /-- The shape moves to the cap twisted by a homeomorphism. -/
 theorem IsOuterShape.ofHomeo {K K' : Drawing S} {𝓓 : Set (Set Shat)}
@@ -190,7 +208,6 @@ theorem exists_class_outer (hS : IsSurface S) (hd : χ.IsDisjoint)
   rintro D hmem𝒮 hord 𝓓 K α hK hα hαU hαV
   obtain ⟨y, hy, hhat, hc, hO'⟩ := GraphMinor.GM19.outerSide S Shat (cap.ofHomeo α) Kc 𝓓 hS
     (hK.shape.ofHomeo α hαU) Y tY t2Y ψ hY hψ
-  have hfin : (Kc.V ∩ α ⁻¹' D.P.Γ.V).Finite := Kc.finite_V.subset inter_subset_left
   let Q : ColouredPainting χ := D.P.image α.symm hα.symm
   have hQ : IsColouredImage α.symm D.P Q := ColouredPainting.isImage_image _ _ _
   have I : IsColouredImage α Q D.P := hQ.symm
@@ -202,25 +219,7 @@ theorem exists_class_outer (hS : IsSurface S) (hd : χ.IsDisjoint)
     rw [this, hy, iInter_discPairs]
     ext x
     simp [IsCappedSurface.ofHomeo]
-  have hinter : Q.Γ.U ∩ Kc.U ⊆ Q.Γ.V ∩ Kc.V := by
-    rintro x ⟨hx₁, hx₂⟩
-    rw [hQ.U] at hx₁
-    obtain ⟨y', hy', rfl⟩ := hx₁
-    have hyK : y' ∈ K.U := by
-      rw [← hαU]
-      exact ⟨_, hx₂, α.apply_symm_apply y'⟩
-    obtain ⟨h₁, h₂⟩ := hK.inter ⟨hy', hyK⟩
-    refine ⟨?_, ?_⟩
-    · rw [hQ.V]
-      exact mem_image_of_mem _ h₁
-    · rw [← hαV] at h₂
-      obtain ⟨z, hz, rfl⟩ := h₂
-      rwa [α.symm_apply_apply]
-  have hl : ∀ v, v ∈ hfin.toFinset.toList ↔ v ∈ Kc.V ∩ Q.Γ.V := fun v ↦ by
-    rw [Finset.mem_toList, hfin.mem_toFinset, hQ.V]
-    refine ⟨fun h ↦ ⟨h.1, _, h.2, α.symm_apply_apply v⟩, ?_⟩
-    rintro ⟨h₁, u, hu, rfl⟩
-    exact ⟨h₁, by simpa using hu⟩
+  obtain ⟨_, hinter, hanc, hl⟩ := hQ.exists_feature_placement_data hαU hαV hK.inter hK.anchored
   have hr : ∀ v, v ∈ Kc.U → v ∈ range (fun x : connectedComponent y ↦ ψ x.1) := fun v hv ↦ by
     rw [hrange]
     have hvK : α v ∈ K.U := hαU ▸ mem_image_of_mem _ hv
@@ -233,7 +232,6 @@ theorem exists_class_outer (hS : IsSurface S) (hd : χ.IsDisjoint)
     obtain ⟨z, hz, rfl⟩ := this
     rwa [α.symm_apply_apply]
   have hm : (discPairs cap 𝓓).ncard ≤ 2 := le_trans (ncard_image_le hK.finite) hK.card
-  have hanc : IsAnchored Q.Γ Kc := hK.anchored.image hαU I.V
   obtain ⟨X, hXP, hX, hXim⟩ := hK.family.exists_place (K := Kc) hd hα I hrange hinter hanc hl hr hπ
     hm
   have hX𝒮 : X.P ∈ 𝒮 := hXP ▸ hcl.image_mem _ hmem𝒮 _ _ hα.symm hQ

@@ -707,6 +707,25 @@ private def discOutsideCells {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G) (Δ : Set π.S) : Set (Set π.S) :=
   {c ∈ π.Γ.C | c ⊆ univ \ Δ}
 
+/-- Restricting the node set preserves the border linkage axiom on the remaining nodes. -/
+private theorem p7_of_restricted_nodes {α : Type u} {β : Type v} {G : Hypergraph α β}
+    (π : Portrayal G) {N' : Set π.S} (hN' : N' ⊆ π.Γ.N) :
+    let plus (n : π.S) : Set α :=
+      {v | v ∈ π.borderSet n ∨ (n ∈ π.domγ ∩ N' ∧ v = π.nodeVertex n)}
+    ∀ Θ ∈ cuffs π.S, ∀ n₁ ∈ N' ∩ Θ, ∀ n₂ ∈ N' ∩ Θ, ∀ n₃ ∈ N' ∩ Θ, ∀ n₄ ∈ N' ∩ Θ,
+      GM19.InOrderOn Θ n₁ n₂ n₃ n₄ → ∀ v : α, v ∈ plus n₁ → v ∈ plus n₃ →
+        v ∈ plus n₂ ∨ v ∈ plus n₄ := by
+  intro plus Θ hΘ n₁ hn₁ n₂ hn₂ n₃ hn₃ n₄ hn₄ hord v hv₁ hv₃
+  have hplus : ∀ n ∈ N', plus n = π.borderPlus n := by
+    intro n hn
+    ext x
+    simp [plus, Portrayal.borderPlus, hn]
+  rw [hplus n₁ hn₁.1] at hv₁
+  rw [hplus n₃ hn₃.1] at hv₃
+  rw [hplus n₂ hn₂.1, hplus n₄ hn₄.1]
+  exact π.p7 Θ hΘ n₁ ⟨hN' hn₁.1, hn₁.2⟩ n₂ ⟨hN' hn₂.1, hn₂.2⟩
+    n₃ ⟨hN' hn₃.1, hn₃.2⟩ n₄ ⟨hN' hn₄.1, hn₄.2⟩ hord v hv₁ hv₃
+
 private noncomputable abbrev removeDiscPortrayal
     {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G)
@@ -727,6 +746,35 @@ private noncomputable abbrev removeDiscPortrayal
     : Portrayal G := open Classical in
   let cellG : Set π.S → Hypergraph α β := fun c =>
     if c = c' then π.cellGraph c' ∪ π.areaGraph Δ else π.cellGraph c
+  have common_cell_membership : ∀ c ∈ Γ'.C, ∀ v ∈ (cellG c).vertexSet,
+      (∃ d ∈ Γ'.C, d ≠ c ∧ v ∈ (cellG d).vertexSet) →
+      c ∈ π.Γ.C ∧ v ∈ (π.cellGraph c).vertexSet ∧
+        ∃ d ∈ π.Γ.C, d ≠ c ∧ v ∈ (π.cellGraph d).vertexSet := by
+    intro c hc v hv hex
+    rw [hC'] at hc
+    rcases hex with ⟨d, hd, hne, hvd⟩
+    rw [hC'] at hd
+    have hvc : v ∈ (π.cellGraph c).vertexSet := by
+      dsimp only [cellG] at hv hvd
+      split_ifs at hv with hcc'
+      · rcases hv with hvc' | hvΔ
+        · rwa [hcc']
+        · have hvd_d : v ∈ (π.cellGraph d).vertexSet := by
+            split_ifs at hvd with hdc'
+            · exact False.elim (hne (hdc'.trans hcc'.symm))
+            · exact hvd
+          rw [hcc']
+          exact hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨d, ⟨hd, hd.1⟩, hvd_d⟩⟩
+      · exact hv
+    have hvd' : ∃ d' ∈ π.Γ.C, d' ≠ c ∧ v ∈ (π.cellGraph d').vertexSet := by
+      dsimp only [cellG] at hvd
+      split_ifs at hvd with hdc'
+      · rcases hvd with hvc' | hvΔ
+        · exact ⟨d, hd.1, hne, hdc'.symm ▸ hvc'⟩
+        · exact ⟨d, hd.1, hne, hdc'.symm ▸ hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨c, ⟨hc,
+            hc.1⟩, hvc⟩⟩⟩
+      · exact ⟨d, hd.1, hne, hvd⟩
+    exact ⟨hc.1, hvc, hvd'⟩
   { S := π.S
     isSurface := π.isSurface
     connected := π.connected
@@ -814,74 +862,15 @@ private noncomputable abbrev removeDiscPortrayal
     p4_notMem := fun Θ hΘ n₁ hn₁ n₂ hn₂ hnot =>
       π.p4_notMem Θ hΘ n₁ ⟨(hN'_sub hn₁.1).1, hn₁.2⟩ n₂ hn₂.1 hnot
     p5 := fun c hc hbd v hv hex => by
-      rw [hC'] at hc
-      rcases hex with ⟨d, hd, hne, hvd⟩
-      rw [hC'] at hd
-      have hvc : v ∈ (π.cellGraph c).vertexSet := by
-        dsimp only [cellG] at hv hvd
-        split_ifs at hv with hcc'
-        · rcases hv with hvc' | hvΔ
-          · rwa [hcc']
-          · have hvd_d : v ∈ (π.cellGraph d).vertexSet := by
-              split_ifs at hvd with hdc'
-              · exact False.elim (hne (hdc'.trans hcc'.symm))
-              · exact hvd
-            rw [hcc']
-            exact hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨d, ⟨hd, hd.1⟩, hvd_d⟩⟩
-        · exact hv
-      have hvd' : ∃ d' ∈ π.Γ.C, d' ≠ c ∧ v ∈ (π.cellGraph d').vertexSet := by
-        dsimp only [cellG] at hvd
-        split_ifs at hvd with hdc'
-        · rcases hvd with hvc' | hvΔ
-          · exact ⟨d, hd.1, hne, hdc'.symm ▸ hvc'⟩
-          · exact ⟨d, hd.1, hne, hdc'.symm ▸ hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨c, ⟨hc,
-              hc.1⟩, hvc⟩⟩⟩
-        · exact ⟨d, hd.1, hne, hvd⟩
-      obtain ⟨n, ⟨hnt, hndom⟩, rfl⟩ := π.p5 c hc.1 hbd v hvc hvd'
-      exact ⟨n, ⟨hnt, hndom, htilde_sub_N' c (hC'.symm ▸ hc) hnt⟩, rfl⟩
+      obtain ⟨hc_old, hvc, hvd'⟩ := common_cell_membership c hc v hv hex
+      obtain ⟨n, ⟨hnt, hndom⟩, rfl⟩ := π.p5 c hc_old hbd v hvc hvd'
+      exact ⟨n, ⟨hnt, hndom, htilde_sub_N' c hc hnt⟩, rfl⟩
     p6 := fun c hc hbd v hv hex => by
-      rw [hC'] at hc
-      rcases hex with ⟨d, hd, hne, hvd⟩
-      rw [hC'] at hd
-      have hvc : v ∈ (π.cellGraph c).vertexSet := by
-        dsimp only [cellG] at hv hvd
-        split_ifs at hv with hcc'
-        · rcases hv with hvc' | hvΔ
-          · rwa [hcc']
-          · have hvd_d : v ∈ (π.cellGraph d).vertexSet := by
-              split_ifs at hvd with hdc'
-              · exact False.elim (hne (hdc'.trans hcc'.symm))
-              · exact hvd
-            rw [hcc']
-            exact hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨d, ⟨hd, hd.1⟩, hvd_d⟩⟩
-        · exact hv
-      have hvd' : ∃ d' ∈ π.Γ.C, d' ≠ c ∧ v ∈ (π.cellGraph d').vertexSet := by
-        dsimp only [cellG] at hvd
-        split_ifs at hvd with hdc'
-        · rcases hvd with hvc' | hvΔ
-          · exact ⟨d, hd.1, hne, hdc'.symm ▸ hvc'⟩
-          · exact ⟨d, hd.1, hne, hdc'.symm ▸ hinter_sub_c' ⟨hvΔ, mem_iUnion₂.mpr ⟨c, ⟨hc,
-              hc.1⟩, hvc⟩⟩⟩
-        · exact ⟨d, hd.1, hne, hvd⟩
-      obtain ⟨n, hnt, hmem | ⟨hndom, rfl⟩⟩ := π.p6 c hc.1 hbd v hvc hvd'
+      obtain ⟨hc_old, hvc, hvd'⟩ := common_cell_membership c hc v hv hex
+      obtain ⟨n, hnt, hmem | ⟨hndom, rfl⟩⟩ := π.p6 c hc_old hbd v hvc hvd'
       · exact ⟨n, hnt, Or.inl hmem⟩
-      · exact ⟨n, hnt, Or.inr ⟨⟨hndom, htilde_sub_N' c (hC'.symm ▸ hc) hnt⟩, rfl⟩⟩
-    p7 := fun Θ hΘ n₁ hn₁ n₂ hn₂ n₃ hn₃ n₄ hn₄ hord v hv₁ hv₃ => by
-      have hv₁' : v ∈ π.borderPlus n₁ := by
-        rcases hv₁ with h | ⟨h, rfl⟩
-        · exact Or.inl h
-        · exact Or.inr ⟨h.1, rfl⟩
-      have hv₃' : v ∈ π.borderPlus n₃ := by
-        rcases hv₃ with h | ⟨h, rfl⟩
-        · exact Or.inl h
-        · exact Or.inr ⟨h.1, rfl⟩
-      rcases π.p7 Θ hΘ n₁ ⟨(hN'_sub hn₁.1).1, hn₁.2⟩ n₂ ⟨(hN'_sub hn₂.1).1, hn₂.2⟩
-        n₃ ⟨(hN'_sub hn₃.1).1, hn₃.2⟩ n₄ ⟨(hN'_sub hn₄.1).1, hn₄.2⟩ hord v hv₁' hv₃' with
-        (h2 | ⟨h2, rfl⟩) | (h4 | ⟨h4, rfl⟩)
-      · exact Or.inl (Or.inl h2)
-      · exact Or.inl (Or.inr ⟨⟨h2, hn₂.1⟩, rfl⟩)
-      · exact Or.inr (Or.inl h4)
-      · exact Or.inr (Or.inr ⟨⟨h4, hn₄.1⟩, rfl⟩) }
+      · exact ⟨n, hnt, Or.inr ⟨⟨hndom, htilde_sub_N' c hc hnt⟩, rfl⟩⟩
+    p7 := p7_of_restricted_nodes π (fun _ hn => (hN'_sub hn).1) }
 
 /-- If an unchanged cell keeps the enlarged border sets of its ends, its warp bounds agree. -/
 private theorem cellWarpLE_iff_of_borderPlus_eq {α : Type u} {β : Type v} {G : Hypergraph α β}
@@ -1539,6 +1528,19 @@ private noncomputable abbrev replaceDiscPortrayal
   let A := replacementDiscGraph π Δ hI₁_le hW_bd_sub
   let cellG : Set π.S → Hypergraph α β := fun c =>
     if c = c' then A else π.cellGraph c
+  have common_cell_membership : ∀ c ∈ I₂, ∀ d' ∈ Γ'.C, d' ≠ c → ∀ v ∈ (cellG d').vertexSet,
+      (∃ d₀ ∈ π.Γ.C, d₀ ≠ c ∧ v ∈ (π.cellGraph d₀).vertexSet) ∨ v ∈ W_bd := by
+    intro c hc_I₂ d' hd' hne v hvd'
+    dsimp only [cellG] at hvd'
+    split_ifs at hvd' with hd'_eq
+    · rcases hvd' with hvΔ | hvW
+      · rcases mem_iUnion₂.mp hvΔ with ⟨c₀, hc₀, hvc₀⟩
+        have hc₀_ne : c₀ ≠ c := fun h =>
+          Set.disjoint_left.mp hdisj_I hc₀.1 (h ▸ hc_I₂)
+        exact Or.inl ⟨c₀, hc₀.2, hc₀_ne, hvc₀⟩
+      · exact Or.inr hvW
+    · have hd'_I₂ : d' ∈ I₂ := (hC' ▸ hd').resolve_left hd'_eq
+      exact Or.inl ⟨d', hd'_I₂.1, hne, hvd'⟩
   { S := π.S
     top := π.top
     isSurface := π.isSurface
@@ -1646,18 +1648,9 @@ private noncomputable abbrev replaceDiscPortrayal
           exact ⟨hn_bd, π.domγ_subset hnγ⟩
         exact ⟨n, ⟨hn_tilde, hnγ, htilde_sub_N' c' hc hn_tilde⟩, rfl⟩
       · have hc_I₂ : c ∈ I₂ := (hC' ▸ hc).resolve_left hcc'
-        dsimp only [cellG] at hvc hvd'
+        dsimp only [cellG] at hvc
         rw [ite_eq_right hcc'] at hvc
-        have hv_or : (∃ d₀ ∈ π.Γ.C, d₀ ≠ c ∧ v ∈ (π.cellGraph d₀).vertexSet) ∨ v ∈ W_bd := by
-          split_ifs at hvd' with hd'_eq
-          · rcases hvd' with hvΔ | hvW
-            · rcases mem_iUnion₂.mp hvΔ with ⟨c₀, hc₀, hvc₀⟩
-              have hc₀_ne : c₀ ≠ c := fun h =>
-                Set.disjoint_left.mp hdisj_I hc₀.1 (h ▸ hc_I₂)
-              exact Or.inl ⟨c₀, hc₀.2, hc₀_ne, hvc₀⟩
-            · exact Or.inr hvW
-          · have hd'_I₂ : d' ∈ I₂ := (hC' ▸ hd').resolve_left hd'_eq
-            exact Or.inl ⟨d', hd'_I₂.1, hne, hvd'⟩
+        have hv_or := common_cell_membership c hc_I₂ d' hd' hne v hvd'
         rcases hv_or with hv_o | ⟨n, ⟨hn_bd, hnγ⟩, rfl⟩
         · rcases π.p5 c hc_I₂.1 hint v hvc hv_o with ⟨n, ⟨hn_t, hnγ⟩, rfl⟩
           exact ⟨n, ⟨hn_t, hnγ, htilde_sub_N' c hc hn_t⟩, rfl⟩
@@ -1673,18 +1666,9 @@ private noncomputable abbrev replaceDiscPortrayal
       rcases hex with ⟨d', hd', hne, hvd'⟩
       have hne_c' : c ≠ c' := fun h => hc'_not_bd (h ▸ hbd)
       have hc_I₂ : c ∈ I₂ := (hC' ▸ hc).resolve_left hne_c'
-      dsimp only [cellG] at hvc hvd'
+      dsimp only [cellG] at hvc
       rw [ite_eq_right hne_c'] at hvc
-      have hv_or : (∃ d₀ ∈ π.Γ.C, d₀ ≠ c ∧ v ∈ (π.cellGraph d₀).vertexSet) ∨ v ∈ W_bd := by
-        split_ifs at hvd' with hd'_eq
-        · rcases hvd' with hvΔ | hvW
-          · rcases mem_iUnion₂.mp hvΔ with ⟨c₀, hc₀, hvc₀⟩
-            have hc₀_ne : c₀ ≠ c := fun h =>
-              Set.disjoint_left.mp hdisj_I hc₀.1 (h ▸ hc_I₂)
-            exact Or.inl ⟨c₀, hc₀.2, hc₀_ne, hvc₀⟩
-          · exact Or.inr hvW
-        · have hd'_I₂ : d' ∈ I₂ := (hC' ▸ hd').resolve_left hd'_eq
-          exact Or.inl ⟨d', hd'_I₂.1, hne, hvd'⟩
+      have hv_or := common_cell_membership c hc_I₂ d' hd' hne v hvd'
       have hv_in : ∃ n ∈ tilde c, v ∈ π.borderSet n ∨ (n ∈ π.domγ ∧ v = π.nodeVertex n) := by
         rcases hv_or with hv_o | ⟨n, ⟨hn_bd, hnγ⟩, rfl⟩
         · exact π.p6 c hc_I₂.1 hbd v hvc hv_o
@@ -1697,22 +1681,7 @@ private noncomputable abbrev replaceDiscPortrayal
       rcases hv_in with ⟨n, hn_tilde, hvn_bs | ⟨hnγ, rfl⟩⟩
       · exact ⟨n, hn_tilde, Or.inl hvn_bs⟩
       · exact ⟨n, hn_tilde, Or.inr ⟨⟨hnγ, htilde_sub_N' c hc hn_tilde⟩, rfl⟩⟩
-    p7 := fun Θ hΘ n₁ hn₁ n₂ hn₂ n₃ hn₃ n₄ hn₄ hord v hv₁ hv₃ => by
-      have hv₁' : v ∈ π.borderPlus n₁ := by
-        rcases hv₁ with h | ⟨h, rfl⟩
-        · exact Or.inl h
-        · exact Or.inr ⟨h.1, rfl⟩
-      have hv₃' : v ∈ π.borderPlus n₃ := by
-        rcases hv₃ with h | ⟨h, rfl⟩
-        · exact Or.inl h
-        · exact Or.inr ⟨h.1, rfl⟩
-      rcases π.p7 Θ hΘ n₁ ⟨(hN'_sub hn₁.1).1, hn₁.2⟩ n₂ ⟨(hN'_sub hn₂.1).1, hn₂.2⟩
-        n₃ ⟨(hN'_sub hn₃.1).1, hn₃.2⟩ n₄ ⟨(hN'_sub hn₄.1).1, hn₄.2⟩ hord v hv₁' hv₃' with
-        (h2 | ⟨h2, rfl⟩) | (h4 | ⟨h4, rfl⟩)
-      · exact Or.inl (Or.inl h2)
-      · exact Or.inl (Or.inr ⟨⟨h2, hn₂.1⟩, rfl⟩)
-      · exact Or.inr (Or.inl h4)
-      · exact Or.inr (Or.inr ⟨⟨h4, hn₄.1⟩, rfl⟩) }
+    p7 := p7_of_restricted_nodes π (fun _ hn => (hN'_sub hn).1) }
 
 private theorem replaceDiscWarpAt
     {α : Type u} {β : Type v} {G : Hypergraph α β}

@@ -154,8 +154,8 @@ theorem arc_comps_aux (hS : IsSurface Y) (L₀ : ArcLift ψ F a₀ ξ η) (hψc 
   obtain ⟨n, n1, n2⟩ := exists_lift (hatC φ₂) L'.cη hη'
   obtain ⟨σ, n', c', s', h3, h4⟩ := exists_dir n1 (lift_mono n1 (inj_of_lift n2 hie))
     (inj_of_lift n2 hie)
-  have hlt := lift_lt_add_one hmc hmm (inj_of_lift hmξ hix)
-  have hlt' := lift_lt_add_one c' s' h4
+  have hlt := lift_lt_add_one hmc (inj_of_lift hmξ hix)
+  have hlt' := lift_lt_add_one c' h4
   obtain ⟨hN₁, hL₁⟩ := erase_facts c₁ i
   obtain ⟨hN₂, hL₂⟩ := erase_facts c₂ j
   set L₁ := (List.range' 0 c₁).erase i

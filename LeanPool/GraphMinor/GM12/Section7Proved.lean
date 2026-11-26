@@ -441,11 +441,9 @@ then $k \ge 2$. Then there is a respectful tangle $\mathscr{T}'$ of order $\thet
 $\Gamma'$, with metric $d'$, such that $d'(a', b') \ge d(a, b) - 4k - 2$ for all $a, b \in
 A(\Gamma)$ and $a', b' \in A(\Gamma')$ with $a \subseteq a'$ and $b \subseteq b'$."
 
-Note on the paper: the printed statement of (7.8) writes "if `c ∈ E(Γ')` then `k ≥ 2`", which is a
-misprint for "if `c ∈ E(Γ) - E(Γ')` then `k ≥ 2`" (as used on page 269 line 806: "Since $e \in
-E(\Gamma) - E(\Gamma')$ ... and since $k \ge 2$ if $e = c$", and as printed in (7.10) on page 270).
-We
-state `theorem_7_8_proof` with the weaker, intended hypothesis `c ∈ Γ.E \ Γ'.E → 2 ≤ k`. -/
+The printed statement of (7.8) requires `k ≥ 2` if `c ∈ Γ'.E`. The corrected hypothesis is
+`c ∈ Γ.E \ Γ'.E → 2 ≤ k`, as in (7.10) on page 270. The proof uses the bound only for a
+deleted edge `e = c` (page 269). -/
 theorem theorem_7_8_proof
     (hS : IsClosedSurface S) [ConnectedSpace S]
     {Γ Γ' : Drawing S} {θ k : ℕ}

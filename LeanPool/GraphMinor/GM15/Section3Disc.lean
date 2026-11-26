@@ -653,28 +653,8 @@ theorem interSet_subBd_isCircuit_and_U_eq [T2Space S] [ConnectedSpace S]
     have hz_fr : z ∈ frontier Λ := subBd_eq_frontier Λ ▸ hz
     exact ((GM11.region_isOpen hΛ).interior_eq ▸ hz_fr.2) hzΛ
   have hcl_bd : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
-  obtain ⟨C_bd, hC_bd, hCH_bd, hCU_bd⟩ := exists_circuit_of_oArc hOArc hSubBd_U
-  have hEq_C : H.interSet (subBd Λ) = C_bd := by
-    refine Drawing.ext_of_V_E ?_ ?_
-    · rw [interSet_V_of_isClosed H hcl_bd]
-      ext x
-      simp only [mem_inter_iff]
-      refine ⟨fun ⟨hxV, hxbd⟩ => ?_, fun hxC => ⟨hCH_bd.1 hxC, hCU_bd ▸ C_bd.V_subset_U hxC⟩⟩
-      by_contra hxnot
-      obtain ⟨e, heC, hxe⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hxbd) hxnot
-      exact ((hCH_bd.2 heC).2.1 hxe).2 hxV
-    · rw [interSet_E H]
-      ext e
-      simp only [mem_ofPred_eq]
-      refine ⟨fun ⟨heH, hebd⟩ => ?_,
-        fun heC => ⟨hCH_bd.2 heC, hCU_bd ▸ subset_closure.trans (C_bd.closure_subset_U heC)⟩⟩
-      obtain ⟨x, hxe⟩ := heH.1
-      have hxnotV : x ∉ C_bd.V := fun hxC => (heH.2.1 hxe).2 (hCH_bd.1 hxC)
-      obtain ⟨f, hfC, hxf⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hebd hxe) hxnotV
-      have hef : e = f :=
-        atom_eq_of_mem (Or.inl (Or.inr heH)) (Or.inl (Or.inr (hCH_bd.2 hfC))) hxe hxf
-      exact hef ▸ hfC
-  exact ⟨hEq_C ▸ hC_bd, hEq_C ▸ hCU_bd, interSet_V_of_isClosed H hcl_bd⟩
+  obtain ⟨hC, hU⟩ := interSet_isCircuit_and_U_of_isOArc hOArc hcl_bd hSubBd_U
+  exact ⟨hC, hU, H.interSet_V_of_isClosed hcl_bd⟩
 
 /-- In Graph Minors XV, (3.5), if `Λ₁, Λ₂ ∈ H.R` are distinct regions with `O`-arc boundaries,
 `H.V ∩ subBd Λ₁` is nonempty, and no region of `H` has closure meeting both `H.V ∩ subBd Λ₁` and

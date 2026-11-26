@@ -60,56 +60,15 @@ theorem Net.exists_swap_subarc_model
   obtain ⟨C, A, B, ψ₀, φ₀, hA, hB, hAB, hI, hAd, hBd, hcover,
     hψ₀, hφ₀, hφA, hφB, hiA, hiB, hcross, hαbd, hβbd⟩ :=
     N.exists_swap_disc i u v hu huv hv hF hFbd
-  obtain ⟨e₀⟩ := isClosedDisc_closedBall.1
-  obtain ⟨eN⟩ := N.isClosedDisc_D
-  let e : closedBall (0 : ℂ) 1 ≃ₜ N.D :=
-    e₀.symm.trans (eN.trans (Homeomorph.Set.univ N.D))
+  obtain ⟨e, hcα, hcβ, hiα, hiβ, hT, hcross', hαbd', hβbd', hφ, hφA', hφB'⟩ :=
+    N.exists_transported_cut_maps hψ₀ hφ₀ hφA hφB hiA hiB hcross hαbd hβbd
   let α : A → N.D := e ∘ ψ₀ ∘ Sum.inl
   let β : B → N.D := e ∘ ψ₀ ∘ Sum.inr
   let φ : N.D → S := φ₀ ∘ e.symm
-  have hcα : Continuous α := e.continuous.comp (hψ₀.continuous.comp continuous_inl)
-  have hcβ : Continuous β := e.continuous.comp (hψ₀.continuous.comp continuous_inr)
-  have heBd : ∀ z, e z ∈ bd N.D ↔ z ∈ bd (closedBall (0 : ℂ) 1) := by
-    intro z
-    have he := image_bd_homeomorph e
-    constructor
-    · intro hz
-      obtain ⟨w, hw, hwz⟩ := he.symm ▸ hz
-      exact e.injective hwz ▸ hw
-    · intro hz
-      exact he ▸ mem_image_of_mem e hz
-  have hT : range α ∪ range β = univ := by
-    apply eq_univ_of_forall
-    intro z
-    obtain ⟨w, hw⟩ := hψ₀.surjective (e.symm z)
-    cases w with
-    | inl x => exact Or.inl ⟨x, (congrArg e hw).trans (e.apply_symm_apply z)⟩
-    | inr y => exact Or.inr ⟨y, (congrArg e hw).trans (e.apply_symm_apply z)⟩
-  have hcross' : ∀ (x : A) (y : B), α x = β y ↔
-      ∃ t, x.val = pieceA (N.f i) u.val v.val t ∧
-        y.val = pieceA (N.g i) u.val v.val t := by
-    intro x y
-    exact e.injective.eq_iff.trans (hcross x y)
-  have hαbd' : ∀ x : A, α x ∈ bd N.D ↔ x.val ∈ discBd A ∧
-      x.val ∉ pieceA (N.f i) u.val v.val '' Ioo (0 : unitInterval) 1 :=
-    fun x => (heBd _).trans (hαbd x)
-  have hβbd' : ∀ y : B, β y ∈ bd N.D ↔ y.val ∈ discBd B ∧
-      y.val ∉ pieceA (N.g i) u.val v.val '' Ioo (0 : unitInterval) 1 :=
-    fun y => (heBd _).trans (hβbd y)
-  have hφA' : ∀ x : A, φ (α x) = N.φ x.val := by
-    intro x
-    change φ₀ (e.symm (e (ψ₀ (Sum.inl x)))) = _
-    rw [e.symm_apply_apply]
-    exact hφA x
-  have hφB' : ∀ y : B, φ (β y) = N.φ y.val := by
-    intro y
-    change φ₀ (e.symm (e (ψ₀ (Sum.inr y)))) = _
-    rw [e.symm_apply_apply]
-    exact hφB y
   obtain ⟨M, eM, hr, hMap, hV⟩ := N.exists_swap_net_of_maps N.isSurface_D N.isClosedDisc_D
     i u v hu huv hv hF hFbd hAB hI hAd hcover hBd α β hcα hcβ
-    (e.injective.comp hiA) (e.injective.comp hiB) hT hcross' hαbd' hβbd'
-    φ (hφ₀.comp e.symm.isQuotientMap) hφA' hφB'
+    hiα hiβ hT hcross' hαbd' hβbd'
+    φ hφ hφA' hφB'
   let E := e.trans eM
   let ψ := E ∘ ψ₀
   have hEMap : ∀ z, M.φ (E z) = φ₀ z := by
@@ -117,15 +76,6 @@ theorem Net.exists_swap_subarc_model
     have h := congrFun hMap (e z)
     change M.φ (E z) = φ₀ (e.symm (e z)) at h
     exact h.trans (congrArg φ₀ (e.symm_apply_apply z))
-  have hEBd : ∀ z, E z ∈ bd M.D ↔ z ∈ bd (closedBall (0 : ℂ) 1) := by
-    intro z
-    have he := image_bd_homeomorph E
-    constructor
-    · intro hz
-      obtain ⟨w, hw, hwz⟩ := he.symm ▸ hz
-      exact E.injective hwz ▸ hw
-    · intro hz
-      exact he ▸ mem_image_of_mem E hz
   refine ⟨M, C, A, B, ψ, hr, hV, hA, hB, hAB, hI, hAd, hBd, hcover,
     E.isQuotientMap.comp hψ₀, ?_, ?_, E.injective.comp hiA, E.injective.comp hiB, ?_, ?_, ?_⟩
   · intro x
@@ -135,9 +85,9 @@ theorem Net.exists_swap_subarc_model
   · intro x y
     exact E.injective.eq_iff.trans (hcross x y)
   · intro x
-    exact (hEBd _).trans (hαbd x)
+    exact (mem_bd_homeomorph_iff E _).trans (hαbd x)
   · intro y
-    exact (hEBd _).trans (hβbd y)
+    exact (mem_bd_homeomorph_iff E _).trans (hβbd y)
 
 /-- Cutting and pasting the selected subarc produces a normal net
 when the original net and the proper cutting line are normal. The

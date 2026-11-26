@@ -1518,48 +1518,7 @@ theorem theorem_7_5_proof
         θ_star θ lam₁ T_star T T₁ d d₁ (r i)
         hFlat.isSpan hMetric hriA (by omega) (by omega) hRigid_Λ h2cell'
         hAtoms hV_rearr hE_rearr hComp₁
-    have hbd_disj : subBd Λ ⊆ univ \ Λ := by
-      intro x hx
-      have hcl : IsClosed (univ \ Λ) := isClosed_univ.sdiff hZone.isOpenDisc.1
-      exact hcl.closure_eq ▸ hx.2
-    have hcl_bd : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
-    have hInter_eq : H'.interSet (subBd Λ) = H.interSet (subBd Λ) := by
-      refine Drawing.ext_of_V_E ?_ ?_
-      · rw [interSet_V_of_isClosed H' hcl_bd, interSet_V_of_isClosed H hcl_bd, hV_H']
-        ext x
-        simp only [mem_inter_iff, mem_sdiff]
-        exact ⟨fun ⟨⟨hxV, _⟩, hxbd⟩ => ⟨hxV, hxbd⟩,
-          fun ⟨hxV, hxbd⟩ => ⟨⟨hxV, (hbd_disj hxbd).2⟩, hxbd⟩⟩
-      · rw [interSet_E, interSet_E, hE_H']
-        ext e
-        simp only [mem_ofPred_eq]
-        exact ⟨fun ⟨⟨heE, _⟩, hebd⟩ => ⟨heE, hebd⟩,
-          fun ⟨heE, hebd⟩ => ⟨⟨heE, hebd.trans hbd_disj⟩, hebd⟩⟩
-    have hCirc_bd : (H'.interSet (subBd Λ)).IsCircuit := by
-      rw [hInter_eq]
-      obtain ⟨C_bd, hC_bd, hCH_bd, hCU_bd⟩ :=
-        exists_circuit_of_oArc hZone.isOArc_bd hZone.bd_subset_U
-      have hEq_C : H.interSet (subBd Λ) = C_bd := by
-        refine Drawing.ext_of_V_E ?_ ?_
-        · rw [interSet_V_of_isClosed H hcl_bd]
-          ext x
-          simp only [mem_inter_iff]
-          refine ⟨fun ⟨hxV, hxbd⟩ => ?_, fun hxC => ⟨hCH_bd.1 hxC, hCU_bd ▸ C_bd.V_subset_U hxC⟩⟩
-          by_contra hxnot
-          obtain ⟨e, heC, hxe⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hxbd) hxnot
-          exact ((hCH_bd.2 heC).2.1 hxe).2 hxV
-        · rw [interSet_E]
-          ext e
-          simp only [mem_ofPred_eq]
-          refine ⟨fun ⟨heH, hebd⟩ => ?_,
-            fun heC => ⟨hCH_bd.2 heC, hCU_bd ▸ subset_closure.trans (C_bd.closure_subset_U heC)⟩⟩
-          obtain ⟨x, hxe⟩ := heH.1
-          have hxnotV : x ∉ C_bd.V := fun hxC => (heH.2.1 hxe).2 (hCH_bd.1 hxC)
-          obtain ⟨f, hfC, hxf⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hebd hxe) hxnotV
-          have hef : e = f :=
-            atom_eq_of_mem (Or.inl (Or.inr heH)) (Or.inl (Or.inr (hCH_bd.2 hfC))) hxe hxf
-          exact hef ▸ hfC
-      exact hEq_C ▸ hC_bd
+    obtain ⟨_, hCirc_bd, _⟩ := clearedSubdrawing_boundary hZone
     have hBridge_V : ∀ v ∈ H.V, η.vMap v ∈ V(J) → v ∈ Δ := fun v hvH hvJ =>
       (hSub_int {v} (.inl (.inl ⟨v, hvH, rfl⟩)) (hDist_J v hvH hvJ) (mem_singleton v)).1
     exact ⟨{
@@ -3811,6 +3770,32 @@ private abbrev SplitRegionOrder {S : Type w} [TopologicalSpace S] [T2Space S]
     c ∈ (H'.interSet (subBd r)).V ∧ d ∈ (H'.interSet (subBd r)).V ∧
     OccurInCircuitOrder (H'.interSet (subBd r)) a b c d
 
+/-- Distinct indices of an enumerated transaction give disjoint paths. -/
+private theorem transaction_paths_disjoint {α : Type u} {β : Type v} {society : Society α β}
+    {P : Set (Graph α β)} {τ : ℕ} {paths : Fin τ → Graph α β}
+    (hTrans : society.IsTransaction P) (hRange : range paths = P) (hInj : Injective paths)
+    {i j : Fin τ} (hne : i ≠ j) : Disjoint V(paths i) V(paths j) := by
+  rcases hTrans with ⟨_, _, ⟨_, hDisj⟩, _, _⟩
+  exact hDisj (hRange ▸ mem_range_self _) (hRange ▸ mem_range_self _) (fun he => hne (hInj he))
+
+/-- A selected end path remains an outside path after adding the middle paths to the base. -/
+private theorem isHPathWithEnds_of_outside_middle {α : Type u} {β : Type v}
+    {G H : Graph α β} (hH : H ≤ G) {society : Society α β}
+    {P : Set (Graph α β)} {τ : ℕ} {paths : Fin τ → Graph α β}
+    (hTrans : society.IsTransaction P) (hRange : range paths = P) (hInj : Injective paths)
+    (hτ : 12 ≤ τ) (hSub : ∀ Q ∈ range (doublecross_middle_paths paths hτ), Q ≤ G)
+    {index : Fin τ} (hout : index.1 < 2 ∨ τ - 2 ≤ index.1) {a b : α}
+    (hPath : IsHPathWithEnds G H (paths index) a b) :
+    IsHPathWithEnds G (subgraphUnion G H (subgraphSUnion G
+      (range (doublecross_middle_paths paths hτ)))) (paths index) a b := by
+  refine isHPathWithEnds_subgraphUnion_of_disjoint hH hSub hPath fun j => ?_
+  unfold doublecross_middle_paths
+  apply transaction_paths_disjoint hTrans hRange hInj
+  intro he
+  have hval := congrArg Fin.val he
+  dsimp only at hval
+  omega
+
 private theorem first_split_region_is_eye
     {S : Type w}
     [TopologicalSpace S]
@@ -3879,7 +3864,6 @@ private theorem first_split_region_is_eye
     ∀ (T' : Set (Hypergraph S (Set S) × Hypergraph S (Set S))),
     ∀ (d' : Set S → Set S → ℕ),
     ∀ (r₁ : Set S),
-    ∀ (r₂ : Set S),
     ∀ (hM' : HasTangleMetric H' (θ - (4 * (3 * beta + 3) + 2)) T' d'),
     ∀ (hr₁_R : r₁ ∈ H'.R),
     ∀ (hvMap : ∀ x ∈ (clearedSubdrawing H D_i.Λ).V, η'.vMap x = D_i.clearedEmbedding.vMap x),
@@ -3895,7 +3879,7 @@ private theorem first_split_region_is_eye
     (IsFreeSet H'.toHypergraph T' θ₁ X) →
     (IsClosed (subBd r₁)) →
     IsDrawingEye G H' η' θ₁ T' r₁ := by
-  intro w hw_α_ends hw_mem hw_vMap k_34 hk_34_ge f_34 v_34 P_sub H' η' T' d' r₁ r₂ hM' hr₁_R hvMap
+  intro w hw_α_ends hw_mem hw_vMap k_34 hk_34_ge f_34 v_34 P_sub H' η' T' d' r₁ hM' hr₁_R hvMap
     hImg
     hOArc_r₁ hCirc_r₁ hOrd_r₁ hSub_le_mem θ₁ hFreeX_T' hcl_bd_r₁
   let w₁ := w ⟨τ₂ - 4, by omega⟩
@@ -3957,45 +3941,32 @@ private theorem first_split_region_is_eye
     rintro x (rfl | rfl | rfl | rfl) <;> exact (hinv_mem_X _ (hw_α_ends _)).1
   let P₁_r₁ := P_idx ⟨1, by omega⟩
   let P₂_r₁ := P_idx ⟨0, by omega⟩
-  have hDisj_P₁₂_r₁ : Disjoint V(P₁_r₁) V(P₂_r₁) := by
-    rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-    exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-      (fun hEq => by
-        have hIndex := congrArg Fin.val (hP_inj hEq)
-        dsimp [P_sub, doublecross_middle_paths] at hIndex
-        omega)
+  have hDisj_P₁₂_r₁ : Disjoint V(P₁_r₁) V(P₂_r₁) :=
+    transaction_paths_disjoint hTransP hP_range hP_inj (by
+      intro he
+      have hval := congrArg Fin.val he
+      dsimp only at hval
+      omega)
   have hP₁_r₁_H' : IsHPathWithEnds G η'.imageGraph P₁_r₁ (η'.vMap w₁) (η'.vMap w₃) := by
     rw [hImg, hvMap w₁ (hw_mem _).1, hvMap w₃ (hw_mem _).1, hw_vMap, hw_vMap]
-    refine isHPathWithEnds_subgraphUnion_of_disjoint D_i.clearedEmbedding.imageGraph_le hSub_le_mem
-      ?_ ?_
+    refine isHPathWithEnds_of_outside_middle D_i.clearedEmbedding.imageGraph_le hTransP
+      hP_range hP_inj hτ₂_ge12 hSub_le_mem (index := ⟨1, by omega⟩)
+      (Or.inl (by dsimp; omega)) ?_
     · have hw₁_eq : w_α ⟨τ₂ - 4, by omega⟩ = a_idx ⟨1, by omega⟩ := by
         rw [hw_α_lt ⟨τ₂ - 4, by omega⟩ (by dsimp; omega)]
         congr 1; ext; dsimp; omega
       rw [hw₁_eq, hw_α_m2]
       exact hPathsP P₁_r₁ (hP_range ▸ mem_range_self _) _ _ (hEnds_idx ⟨1, by omega⟩).2.2
-    · intro j
-      rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-      exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-        (fun hEq => by
-          have hIndex := congrArg Fin.val (hP_inj hEq)
-          dsimp [P_sub, doublecross_middle_paths] at hIndex
-          omega)
   have hP₂_r₁_H' : IsHPathWithEnds G η'.imageGraph P₂_r₁ (η'.vMap w₂) (η'.vMap w₄) := by
     rw [hImg, hvMap w₂ (hw_mem _).1, hvMap w₄ (hw_mem _).1, hw_vMap, hw_vMap]
-    refine isHPathWithEnds_subgraphUnion_of_disjoint D_i.clearedEmbedding.imageGraph_le hSub_le_mem
-      ?_ ?_
+    refine isHPathWithEnds_of_outside_middle D_i.clearedEmbedding.imageGraph_le hTransP
+      hP_range hP_inj hτ₂_ge12 hSub_le_mem (index := ⟨0, by omega⟩)
+      (Or.inl (by dsimp; omega)) ?_
     · have hw₂_eq : w_α ⟨τ₂ - 3, by omega⟩ = a_idx ⟨0, by omega⟩ := by
         rw [hw_α_lt ⟨τ₂ - 3, by omega⟩ (by dsimp; omega)]
         congr 1; ext; dsimp; omega
       rw [hw₂_eq, hw_α_m1]
       exact hPathsP P₂_r₁ (hP_range ▸ mem_range_self _) _ _ (hEnds_idx ⟨0, by omega⟩).2.2
-    · intro j
-      rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-      exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-        (fun hEq => by
-          have hIndex := congrArg Fin.val (hP_inj hEq)
-          dsimp [P_sub, doublecross_middle_paths] at hIndex
-          omega)
   exact ⟨hr₁_R, H'.interSet (subBd r₁), w₁, w₂, w₃, w₄, P₁_r₁, P₂_r₁,
     hCirc_r₁, H'.span_isSubdrawing _ _,
     GM11.eq_of_oArc_subset (GM11.IsCircuit.isOArc_U hCirc_r₁) hOArc_r₁
@@ -4070,7 +4041,6 @@ private theorem last_split_region_is_eye
     ∀ (η' : SpanEmbedding H' G),
     ∀ (T' : Set (Hypergraph S (Set S) × Hypergraph S (Set S))),
     ∀ (d' : Set S → Set S → ℕ),
-    ∀ (r₁ : Set S),
     ∀ (r₂ : Set S),
     ∀ (hM' : HasTangleMetric H' (θ - (4 * (3 * beta + 3) + 2)) T' d'),
     ∀ (hr₂_R : r₂ ∈ H'.R),
@@ -4087,7 +4057,7 @@ private theorem last_split_region_is_eye
     (IsFreeSet H'.toHypergraph T' θ₁ X) →
     (IsClosed (subBd r₂)) →
     IsDrawingEye G H' η' θ₁ T' r₂ := by
-  intro w hw_α_ends hw_mem hw_vMap k_34 hk_34_ge f_34 v_34 P_sub H' η' T' d' r₁ r₂ hM' hr₂_R hvMap
+  intro w hw_α_ends hw_mem hw_vMap k_34 hk_34_ge f_34 v_34 P_sub H' η' T' d' r₂ hM' hr₂_R hvMap
     hImg
     hOArc_r₂ hCirc_r₂ hOrd_r₂ hSub_le_mem θ₁ hFreeX_T' hcl_bd_r₂
   let u₁ := w ⟨2 * τ₂ - 4, by omega⟩
@@ -4148,43 +4118,30 @@ private theorem last_split_region_is_eye
     rintro x (rfl | rfl | rfl | rfl) <;> exact (hinv_mem_X _ (hw_α_ends _)).1
   let P₁_r₂ := P_idx ⟨τ₂ - 1, by omega⟩
   let P₂_r₂ := P_idx ⟨τ₂ - 2, by omega⟩
-  have hDisj_P₁₂_r₂ : Disjoint V(P₁_r₂) V(P₂_r₂) := by
-    rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-    exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-      (fun hEq => by
-        have hIndex := congrArg Fin.val (hP_inj hEq)
-        dsimp [P_sub, doublecross_middle_paths] at hIndex
-        omega)
+  have hDisj_P₁₂_r₂ : Disjoint V(P₁_r₂) V(P₂_r₂) :=
+    transaction_paths_disjoint hTransP hP_range hP_inj (by
+      intro he
+      have hval := congrArg Fin.val he
+      dsimp only at hval
+      omega)
   have hP₁_r₂_H' : IsHPathWithEnds G η'.imageGraph P₁_r₂ (η'.vMap u₁) (η'.vMap u₃) := by
     rw [hImg, hvMap u₁ (hw_mem _).1, hvMap u₃ (hw_mem _).1, hw_vMap, hw_vMap]
-    refine isHPathWithEnds_subgraphUnion_of_disjoint D_i.clearedEmbedding.imageGraph_le hSub_le_mem
-      ?_ ?_
+    refine isHPathWithEnds_of_outside_middle D_i.clearedEmbedding.imageGraph_le hTransP
+      hP_range hP_inj hτ₂_ge12 hSub_le_mem (index := ⟨τ₂ - 1, by omega⟩)
+      (Or.inr (by dsimp; omega)) ?_
     · rw [hw_α_last4, hw_α_last2]
       have hP_end := (hEnds_idx ⟨τ₂ - 1, by omega⟩).2.2
       exact hPathsP P₁_r₂ (hP_range ▸ mem_range_self _) _ _
         ⟨hP_end.1.symm, hP_end.2.1.symm, hP_end.2.2.2, hP_end.2.2.1⟩
-    · intro j
-      rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-      exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-        (fun hEq => by
-          have hIndex := congrArg Fin.val (hP_inj hEq)
-          dsimp [P_sub, doublecross_middle_paths] at hIndex
-          omega)
   have hP₂_r₂_H' : IsHPathWithEnds G η'.imageGraph P₂_r₂ (η'.vMap u₂) (η'.vMap u₄) := by
     rw [hImg, hvMap u₂ (hw_mem _).1, hvMap u₄ (hw_mem _).1, hw_vMap, hw_vMap]
-    refine isHPathWithEnds_subgraphUnion_of_disjoint D_i.clearedEmbedding.imageGraph_le hSub_le_mem
-      ?_ ?_
+    refine isHPathWithEnds_of_outside_middle D_i.clearedEmbedding.imageGraph_le hTransP
+      hP_range hP_inj hτ₂_ge12 hSub_le_mem (index := ⟨τ₂ - 2, by omega⟩)
+      (Or.inr (by dsimp; omega)) ?_
     · rw [hw_α_last3, hw_α_last1]
       have hP_end := (hEnds_idx ⟨τ₂ - 2, by omega⟩).2.2
       exact hPathsP P₂_r₂ (hP_range ▸ mem_range_self _) _ _
         ⟨hP_end.1.symm, hP_end.2.1.symm, hP_end.2.2.2, hP_end.2.2.1⟩
-    · intro j
-      rcases hTransP with ⟨_, _, ⟨_, hDisjP⟩, _, _⟩
-      exact hDisjP (hP_range ▸ mem_range_self _) (hP_range ▸ mem_range_self _)
-        (fun hEq => by
-          have hIndex := congrArg Fin.val (hP_inj hEq)
-          dsimp [P_sub, doublecross_middle_paths] at hIndex
-          omega)
   exact ⟨hr₂_R, H'.interSet (subBd r₂), u₁, u₂, u₃, u₄, P₁_r₂, P₂_r₂,
     hCirc_r₂, H'.span_isSubdrawing _ _,
     GM11.eq_of_oArc_subset (GM11.IsCircuit.isOArc_U hCirc_r₂) hOArc_r₂
@@ -4709,14 +4666,14 @@ theorem theorem_7_11_proof : GM15Theorem711Statement.{u, v, w} := by
       τ₂ k T_star T d r S₀ α₀_disc α₀_pt i D_i P X hτ₂_eq hTransP
       hPathsP hCardτ₂ A_f B_f P_idx a_idx b_idx hP_inj hP_range hEnds_idx hτ₂_ge12 inv_v
       hinv_mem_X w_α hNodup_w hOrder_w hw_α_lt hw_α_m2 hw_α_m1 hw_α_ends hw_mem hw_vMap
-      hk_34_ge H' η' T' d' r₁ r₂ hM' hr₁_R hvMap hImg hOArc_r₁ hCirc_r₁ hOrd_r₁
+      hk_34_ge H' η' T' d' r₁ hM' hr₁_R hvMap hImg hOArc_r₁ hCirc_r₁ hOrd_r₁
       hSub_le_mem hFreeX_T' hcl_bd_r₁
   have hr₂_eye : IsDrawingEye G H' η' θ₁ T' r₂ := by
     exact last_split_region_is_eye (S := S) (α := α) (β := β) G H η θ_star θ θ' π beta μ
       τ₂ k T_star T d r S₀ α₀_disc α₀_pt i D_i P X hτ₂_eq hTransP
       hPathsP hCardτ₂ A_f B_f P_idx a_idx b_idx hP_inj hP_range hEnds_idx hτ₂_ge12 inv_v
       hinv_mem_X w_α hNodup_w hOrder_w hw_α_last4 hw_α_last3 hw_α_last2 hw_α_last1 hw_α_ends
-      hw_mem hw_vMap hk_34_ge H' η' T' d' r₁ r₂ hM' hr₂_R hvMap hImg hOArc_r₂
+      hw_mem hw_vMap hk_34_ge H' η' T' d' r₂ hM' hr₂_R hvMap hImg hOArc_r₂
       hCirc_r₂ hOrd_r₂ hSub_le_mem hFreeX_T' hcl_bd_r₂
   -- Claims (3) and (4): for `j ≠ i`, `r j` is an eye of `G, H', η', θ₁, T'`.
   have hFlat_beta : IsFlatSpan G H η θ_star θ (3 * beta + 3) μ T_star T := by

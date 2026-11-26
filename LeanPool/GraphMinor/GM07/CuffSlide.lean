@@ -31,22 +31,22 @@ open Set Topology Metric Complex GraphMinor.Surface GraphMinor.GM11
 
 variable {S : Type} [TopologicalSpace S]
 
-/-- **A slide along a piece of `bd(Σ)`.** If `g` is an arc in `bd(Σ)` that misses the closed set
-`Z`, there is a homeomorphism of `Σ`
-that fixes `Z` and moves `g m` to `g x`. -/
-theorem exists_bd_slide (hS : IsSurface S) {g : ℝ → S} {a x m b : ℝ} (hg : Continuous g)
-  (hax : a < x) (hxm : x < m) (hmb : m < b)
-    (hi : InjOn g (Icc a b)) (_hbd : ∀ u ∈ Icc a b, g u ∈ bd S) (hrest : IsClosed
-      (bd S \ g '' Ioo a b)) {Z : Set S} (hZ : IsClosed Z)
-    (hZg : ∀ u ∈ Icc a b, g u ∉ Z) : ∃ α : S ≃ₜ S, (∀ z ∈ Z, α z = z) ∧ α (g m) = g x := by
+/-- An injective arc on an interval has a strip chart in the surface obtained by capping. -/
+theorem exists_capped_strip_chart (hS : IsSurface S) {g : ℝ → S} {a b : ℝ}
+    (hg : Continuous g) (hab : a < b) (hi : InjOn g (Icc a b)) :
+    ∃ (T : Type) (_ : TopologicalSpace T) (j : S → T) (O : Set ℂ) (K : ℂ → T)
+      (θ : unitInterval → ℝ),
+      IsClosedSurface T ∧ IsClosedEmbedding j ∧ frontier (range j) = j '' bd S ∧
+      let par : unitInterval → ℝ := fun u => a + u.1 * (b - a)
+      (∀ u, par u ∈ Icc a b) ∧ StrictMono par ∧ (∀ r ∈ Icc a b, ∃ u, par u = r) ∧
+      StripChart O K ∧ Continuous θ ∧ StrictMono θ ∧
+      ∀ u, (θ u : ℂ) ∈ O ∧ K (θ u) = j (g (par u)) := by
   have ht2S : T2Space S := hS.2.1
   have hcS : CompactSpace S := hS.1
   obtain ⟨T, tT, j, K', hT, hj, hK', hu, hi', -⟩ := exists_capAll S hS
   have ht2 : T2Space T := hT.2.1
   have hcT : CompactSpace T := hT.1
-  have hab : a < b := by linarith
-  have hab' : 0 < b - a := by linarith
-  -- The arc in the capped surface.
+  have hab' : 0 < b - a := sub_pos.mpr hab
   let par : unitInterval → ℝ := fun u => a + u.1 * (b - a)
   have hpar : ∀ u, par u ∈ Icc a b := fun u => by
     have h0 := u.2.1
@@ -67,6 +67,29 @@ theorem exists_bd_slide (hS : IsSurface S) {g : ℝ → S} {a x m b : ℝ} (hg :
   have hA : IsArcMap A := ⟨hj.continuous.comp (hg.comp hparc), fun s t h => hparm.injective (hi
     (hpar s) (hpar t) (hj.injective h))⟩
   obtain ⟨O, K, θ, hK, hθc, hθm, hθ⟩ := exists_stripChart_of_arc hT hA
+  exact ⟨T, tT, j, O, K, θ, hT, hj, cap_frontier hT hj hK' hu hi',
+    hpar, hparm, hpars, hK, hθc, hθm, hθ⟩
+
+/-- **A slide along a piece of `bd(Σ)`.** If `g` is an arc in `bd(Σ)` that misses the closed set
+`Z`, there is a homeomorphism of `Σ`
+that fixes `Z` and moves `g m` to `g x`. -/
+theorem exists_bd_slide (hS : IsSurface S) {g : ℝ → S} {a x m b : ℝ} (hg : Continuous g)
+  (hax : a < x) (hxm : x < m) (hmb : m < b)
+    (hi : InjOn g (Icc a b)) (_hbd : ∀ u ∈ Icc a b, g u ∈ bd S) (hrest : IsClosed
+      (bd S \ g '' Ioo a b)) {Z : Set S} (hZ : IsClosed Z)
+    (hZg : ∀ u ∈ Icc a b, g u ∉ Z) : ∃ α : S ≃ₜ S, (∀ z ∈ Z, α z = z) ∧ α (g m) = g x := by
+  have ht2S : T2Space S := hS.2.1
+  have hcS : CompactSpace S := hS.1
+  have hab : a < b := by linarith
+  obtain ⟨T, tT, j, O, K, θ, hT, hj, hfr, hpar, hparm, hpars, hK, hθc, hθm, hθ⟩ :=
+    exists_capped_strip_chart hS hg hab hi
+  have ht2 : T2Space T := hT.2.1
+  have hcT : CompactSpace T := hT.1
+  let par : unitInterval → ℝ := fun u => a + u.1 * (b - a)
+  let A : unitInterval → T := fun u => j (g (par u))
+  change StrictMono par at hparm
+  change ∀ r ∈ Icc a b, ∃ u, par u = r at hpars
+  change ∀ u, (θ u : ℂ) ∈ O ∧ K (θ u) = A u at hθ
   -- The points in the chart.
   obtain ⟨ux, hux⟩ := hpars x ⟨hax.le, by linarith⟩
   obtain ⟨um, hum⟩ := hpars m ⟨by linarith, hmb.le⟩
@@ -132,7 +155,6 @@ theorem exists_bd_slide (hS : IsSurface S) {g : ℝ → S} {a x m b : ℝ} (hg :
   obtain ⟨e, he1, he2, he3⟩ := exists_slide hK (a := a') (b := b') (ε := δ)
     (by linarith) hδ hRO hψc hψm hψa hψb hψl
   -- The two sides of the rectangle.
-  have hfr : frontier (range j) = j '' bd S := cap_frontier hT hj hK' hu hi'
   have hbdaxis : ∀ w ∈ R, K w ∈ j '' bd S → w.im = 0 := fun w hw h => by
     obtain ⟨z, hz, e'⟩ := h
     have h2 : z ∈ g '' Ioo a b := by

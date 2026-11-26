@@ -368,7 +368,6 @@ theorem exists_class_free (hS : IsSurface S) (hd : χ.IsDisjoint)
   refine ⟨_, theorem_9_4_proof hB, ?_⟩
   rintro D hmem𝒮 hord Δ Z K α hK hα hαU hαV
   obtain ⟨y, hy, hgood⟩ := free_fragment hS (cap.ofHomeo α) (hK.shape.ofHomeo α hα hαU hαV) hY hψ
-  have hfin : (Kc.V ∩ α ⁻¹' D.P.Γ.V).Finite := Kc.finite_V.subset inter_subset_left
   let Q : ColouredPainting χ := D.P.image α.symm hα.symm
   have hQ : IsColouredImage α.symm D.P Q := ColouredPainting.isImage_image _ _ _
   have I : IsColouredImage α Q D.P := hQ.symm
@@ -385,25 +384,7 @@ theorem exists_class_free (hS : IsSurface S) (hd : χ.IsDisjoint)
       simpa using this
     simp only [mem_compl_iff, mem_iInter, mem_singleton_iff, forall_eq, mem_preimage, hclΔ]
     exact not_congr hint
-  have hinter : Q.Γ.U ∩ Kc.U ⊆ Q.Γ.V ∩ Kc.V := by
-    rintro x ⟨hx₁, hx₂⟩
-    rw [hQ.U] at hx₁
-    obtain ⟨y', hy', rfl⟩ := hx₁
-    have hyK : y' ∈ K.U := by
-      rw [← hαU]
-      exact ⟨_, hx₂, α.apply_symm_apply y'⟩
-    obtain ⟨h₁, h₂⟩ := hK.inter ⟨hy', hyK⟩
-    refine ⟨?_, ?_⟩
-    · rw [hQ.V]
-      exact mem_image_of_mem _ h₁
-    · rw [← hαV] at h₂
-      obtain ⟨z, hz, rfl⟩ := h₂
-      rwa [α.symm_apply_apply]
-  have hl : ∀ v, v ∈ hfin.toFinset.toList ↔ v ∈ Kc.V ∩ Q.Γ.V := fun v ↦ by
-    rw [Finset.mem_toList, hfin.mem_toFinset, hQ.V]
-    refine ⟨fun h ↦ ⟨h.1, _, h.2, α.symm_apply_apply v⟩, ?_⟩
-    rintro ⟨h₁, u, hu, rfl⟩
-    exact ⟨h₁, by simpa using hu⟩
+  obtain ⟨_, hinter, hanc, hl⟩ := hQ.exists_feature_placement_data hαU hαV hK.inter hK.anchored
   have hr : ∀ v, v ∈ Kc.U → v ∈ range (fun x : connectedComponent y ↦ ψ x.1) := fun v hv ↦ by
     rw [hrange]
     have hvK : α v ∈ K.U := hαU ▸ mem_image_of_mem _ hv
@@ -418,7 +399,6 @@ theorem exists_class_free (hS : IsSurface S) (hd : χ.IsDisjoint)
     rwa [α.symm_apply_apply]
   have hm : (discPairs cap {Δ}).ncard ≤ 2 := le_trans (ncard_image_le (finite_singleton _))
     (by simp)
-  have hanc : IsAnchored Q.Γ Kc := hK.anchored.image hαU I.V
   obtain ⟨X, hXP, hX, hXim⟩ := hK.family.exists_place (K := Kc) hd hα I hrange hinter hanc hl hr hπ
     hm
   have hX𝒮 : X.P ∈ 𝒮 := hXP ▸ hcl.image_mem _ hmem𝒮 _ _ hα.symm hQ

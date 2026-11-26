@@ -132,12 +132,7 @@ theorem controlsMinor_of_oneSkeleton {α' β' : Type} {G : Hypergraph α β} {H 
 
 theorem separationOrder_quotient {A B : Hypergraph α β} {Z : Set α} (hZ : Z ⊆ (A ∩ B).vertexSet) :
     separationOrder (quotientVertices A Z) (quotientVertices B Z) + Z.ncard = separationOrder A B
-      := by
-  change ((A.vertexSet \ Z) ∩ (B.vertexSet \ Z)).ncard + Z.ncard = (A.vertexSet ∩ B.vertexSet).ncard
-  have e : (A.vertexSet \ Z) ∩ (B.vertexSet \ Z) = (A.vertexSet ∩ B.vertexSet) \ Z := by
-    ext v; simp only [mem_inter_iff, mem_sdiff]; tauto
-  rw [e]
-  exact Set.ncard_sdiff_add_ncard_of_subset hZ (A.vertexSet_finite.inter_of_left _)
+      := separationOrder_deleteVertices hZ
 
 /-- A separation in `𝒯 / Z / Y` of small order is below a separation in `𝒯* \ Z / Y`. The paper
 leaves this step of (14.2) to the reader. -/

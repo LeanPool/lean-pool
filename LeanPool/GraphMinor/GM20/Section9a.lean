@@ -141,9 +141,7 @@ variable {S : Type} [TopologicalSpace S]
 
 theorem mem_arcComponentsIn_pathComponentIn {F : Set S} {x : S} (hx : x ∈ F) :
     pathComponentIn F x ∈ arcComponentsIn F :=
-  ⟨⟨x, mem_pathComponentIn_self hx⟩, pathComponentIn_subset, isPathConnected_pathComponentIn hx,
-    fun _ hDF hD hsub ↦ subset_antisymm
-      (hD.subset_pathComponentIn (hsub (mem_pathComponentIn_self hx)) hDF) hsub⟩
+  GraphMinor.Surface.mem_arcComponentsIn_of_mem hx
 
 theorem eq_pathComponentIn {F c : Set S} (hc : c ∈ arcComponentsIn F) {x : S} (hx : x ∈ c) :
     c = pathComponentIn F x := by

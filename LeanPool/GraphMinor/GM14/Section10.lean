@@ -287,23 +287,6 @@ private theorem occurInCircuitOrder_of_isClockwiseSeq {α : Type v}
     rw [← Circle.exp_add, add_sub_cancel]
     exact hpoint 3 (by simp)
 
-/-- For a closed subset `K`, the vertex set of `H.interSet K` is `H.V ∩ K`. -/
-private theorem interSet_V_of_isClosed (H : Drawing S) {K : Set S} (hK : IsClosed K) :
-    (H.interSet K).V = H.V ∩ K := by
-  rw [Drawing.interSet, Drawing.span_V, Drawing.spanV]
-  refine Subset.antisymm (union_subset inter_subset_left ?_)
-    (fun x hx => Or.inl ⟨hx, hx.1⟩)
-  refine iUnion₂_subset fun e he x hx => ⟨hx.2, ?_⟩
-  exact hK.closure_subset_iff.mpr he.1.2 hx.1
-
-/-- The edge set of `H.interSet K` is `{e ∈ H.E | e ⊆ K}`. -/
-private theorem interSet_E (H : Drawing S) (K : Set S) :
-    (H.interSet K).E = {e ∈ H.E | e ⊆ K} := by
-  rw [Drawing.interSet, Drawing.span_E]
-  ext e
-  simp only [mem_inter_iff, mem_ofPred_eq]
-  exact ⟨fun h => h.1, fun h => ⟨h, h.1⟩⟩
-
 /-- Outcome `(iv)(a)` of `(9.6)` with `π = 2` produces an eye `IsDrawingEye` of `clearedSubdrawing H
 Λ`
 in `G₀` with respect to `T₁`. -/
@@ -329,55 +312,10 @@ private theorem isDrawingEye_of_crookedTransaction [ConnectedSpace S] {α : Type
     IsDrawingEye G₀ (clearedSubdrawing H Λ) clearedEmbedding (θ - 4 * (3 * beta + 3) - 2) T₁ Λ := by
   let H' := clearedSubdrawing H Λ
   obtain ⟨hΛR, _⟩ := clearedSubdrawing_mem_R_and_atom hZone
-  obtain ⟨hV_H', hE_H'⟩ := clearedSubdrawing_V_and_E hZone
-  have hbd_disj : subBd Λ ⊆ univ \ Λ := fun _ hx =>
-    (isClosed_univ.sdiff hZone.isOpenDisc.1).closure_eq ▸ hx.2
   have hcl_bd : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
-  have hInter_eq : H'.interSet (subBd Λ) = H.interSet (subBd Λ) := by
-    refine Drawing.ext_VE ?_ ?_
-    · rw [interSet_V_of_isClosed H' hcl_bd, interSet_V_of_isClosed H hcl_bd, hV_H']
-      ext x
-      simp only [mem_inter_iff, mem_sdiff]
-      exact ⟨fun ⟨⟨hxV, _⟩, hxbd⟩ => ⟨hxV, hxbd⟩,
-        fun ⟨hxV, hxbd⟩ => ⟨⟨hxV, (hbd_disj hxbd).2⟩, hxbd⟩⟩
-    · rw [interSet_E, interSet_E, hE_H']
-      ext e
-      simp only [mem_ofPred_eq]
-      exact ⟨fun ⟨⟨heE, _⟩, hebd⟩ => ⟨heE, hebd⟩,
-        fun ⟨heE, hebd⟩ => ⟨⟨heE, hebd.trans hbd_disj⟩, hebd⟩⟩
   let C_bd := H'.interSet (subBd Λ)
-  have hCirc_bd : C_bd.IsCircuit := by
-    change (H'.interSet (subBd Λ)).IsCircuit
-    rw [hInter_eq]
-    obtain ⟨C₀, hC₀, hCH₀, hCU₀⟩ := exists_circuit_of_oArc hZone.isOArc_bd hZone.bd_subset_U
-    have hEq_C : H.interSet (subBd Λ) = C₀ := by
-      refine Drawing.ext_VE ?_ ?_
-      · rw [interSet_V_of_isClosed H hcl_bd]
-        ext x
-        simp only [mem_inter_iff]
-        refine ⟨fun ⟨hxV, hxbd⟩ => ?_, fun hxC => ⟨hCH₀.1 hxC, hCU₀ ▸ C₀.V_subset_U hxC⟩⟩
-        by_contra hxnot
-        obtain ⟨e, heC, hxe⟩ := C₀.exists_edge_of_mem (hCU₀.symm ▸ hxbd) hxnot
-        exact ((hCH₀.2 heC).2.1 hxe).2 hxV
-      · rw [interSet_E]
-        ext e
-        simp only [mem_ofPred_eq]
-        refine ⟨fun ⟨heH, hebd⟩ => ?_,
-          fun heC => ⟨hCH₀.2 heC, hCU₀ ▸ subset_closure.trans (C₀.closure_subset_U heC)⟩⟩
-        obtain ⟨x, hxe⟩ := heH.1
-        have hxnotV : x ∉ C₀.V := fun hxC => (heH.2.1 hxe).2 (hCH₀.1 hxC)
-        obtain ⟨f, hfC, hxf⟩ := C₀.exists_edge_of_mem (hCU₀.symm ▸ hebd hxe) hxnotV
-        have hef : e = f := arcComponent_eq heH (hCH₀.2 hfC) hxe hxf
-        exact hef ▸ hfC
-    exact hEq_C ▸ hC₀
+  obtain ⟨_, hCirc_bd, hC_U⟩ := clearedSubdrawing_boundary hZone
   have hC_sub : C_bd.IsSubdrawing H' := H'.span_isSubdrawing _ _
-  have hC_U : C_bd.U = subBd Λ := by
-    have hsub : C_bd.U ⊆ subBd Λ := by
-      change (H'.interSet (subBd Λ)).U ⊆ subBd Λ
-      rw [(H'.interSet (subBd Λ)).U_eq, interSet_V_of_isClosed H' hcl_bd, interSet_E]
-      refine union_subset inter_subset_right ?_
-      exact iUnion₂_subset fun e he => hcl_bd.closure_subset_iff.mpr he.2
-    exact eq_of_oArc_subset (IsCircuit.isOArc_U hCirc_bd) hZone.isOArc_bd hsub
   -- Extract a crossing pair `P₁, P₂ ∈ P_set` from `hCrooked` and `2 ≤ P_set.ncard`
   have hne_P : P_set.Nonempty := Set.nonempty_of_ncard_ne_zero (by omega)
   obtain ⟨P₁, hP₁_in, P₂, hP₂_in, hP12, hCrooked12⟩ :=
@@ -454,7 +392,7 @@ private theorem isDrawingEye_of_crookedTransaction [ConnectedSpace S] {α : Type
       clearedEmbedding.bijOn_v.injOn hinv_mem.1 (hX_sub hyX).1 (hinv_eq.trans hyx.symm)
     have hCV : inv_v x ∈ C_bd.V := by
       change inv_v x ∈ (H'.interSet (subBd Λ)).V
-      rw [interSet_V_of_isClosed H' hcl_bd]
+      rw [H'.interSet_V_of_isClosed hcl_bd]
       exact hinv_mem
     exact ⟨hy_eq ▸ hyX, hinv_eq, hCV⟩
   have ha₁_ends : a₁ ∈ clearedSociety.transactionEnds P_set :=
@@ -589,7 +527,8 @@ private theorem isRigidIn_of_normal_closedDisc {α : Type v} {β : Type w}
   have hcl_sub : closure (univ \ Δ) ⊆ Δ' := hΔ'.isClosed.closure_subset_iff.mpr hcompl_sub
   obtain ⟨C_out, hCout_cir, hCout_sub⟩ := hCout
   refine ⟨C_out, hCout_cir, hCout_sub.trans (H.span_isSubdrawing _ _), hCout_sub.U_subset.trans ?_⟩
-  rw [(H.interSet (closure (univ \ Δ))).U_eq, interSet_V_of_isClosed H isClosed_closure, interSet_E]
+  rw [(H.interSet (closure (univ \ Δ))).U_eq,
+    H.interSet_V_of_isClosed isClosed_closure, Drawing.interSet_E]
   exact (union_subset inter_subset_right
     (iUnion₂_subset fun e he => isClosed_closure.closure_subset_iff.mpr he.2)).trans hcl_sub
 
@@ -2992,7 +2931,7 @@ private theorem disc_replacement_gluing_10_1 {α : Type v} {β : Type w}
       S_seg α_disc α_pt Δ hS hSeg hArr hComp hΔ hNorm
   obtain ⟨hV_HΔ, hU_HΔ⟩ :=
     interSet_V_and_U_of_edges hΔ.isClosed (fun e he hne => (hEdges_Δ e he hne).choose_spec.2.2.2)
-  have hE_HΔ : (H.interSet Δ).E = {e ∈ H.E | e ⊆ Δ} := interSet_E H Δ
+  have hE_HΔ : (H.interSet Δ).E = {e ∈ H.E | e ⊆ Δ} := Drawing.interSet_E H Δ
   have hHV_Δ_mem_P : ∀ v ∈ H.V, v ∈ Δ → η₀.vMap v ∈ V(P_Δ) := by
     exact vertices_in_replacement_disc_belong_to_pullback (S := S) (α := α) (β := β) G₀ G' H η₀ η'
       S_seg α_disc α_pt Δ hS hη'_v hSeg hArr hComp hΔ hNorm

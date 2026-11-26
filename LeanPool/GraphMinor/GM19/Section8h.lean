@@ -36,33 +36,9 @@ theorem pair_in_side (hS : IsSurface S) (h3 : Γ.IsInternallyThreeConnected)
     rad.exists_full hS (h3.hatRegions_isOpenDisc hS cap) h3.1
   obtain ⟨v₀, w, hv₀, hw, hsetG, f₁, f₂, hne, h₁, h₂, ht₁, ht₂, hfr₁, hfr₂⟩ := hp
   have heG := hsub.2 he
-  obtain ⟨v', hv', r, hr, w', hw', hw'G, hset', her⟩ := spoke_ends hrad hT heG
-  have hvhat : cap.emb v₀ ∈ D.V := by
-    rw [hD.hV]
-    exact mem_image_of_mem _ hv₀
-  have hwD : w ∉ D.V := fun h ↦ hw.2 (by rwa [hD.hV] at h)
-  have hwc : w ∈ closure e ∩ G₃.V := by
-    have : w ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inr rfl
-    exact ⟨this.1, hsub.1 this.2⟩
-  have hvc : cap.emb v₀ ∈ closure e ∩ G₃.V := by
-    have : cap.emb v₀ ∈ closure e ∩ rad.G.V := by rw [hsetG]; exact Or.inl rfl
-    exact ⟨this.1, hsub.1 this.2⟩
-  rw [hset'] at hwc hvc
-  have hww : w = w' := by
-    rcases hwc with h | h
-    · exact absurd (h ▸ hv') hwD
-    · exact h
-  subst hww
-  have hvv : cap.emb v₀ = v' := by
-    rcases hvc with h | h
-    · exact h
-    · exact absurd (D.V_subset_U hvhat) (h ▸ region_subset hr hw')
-  subst hvv
-  obtain ⟨hrO, hwO⟩ := rad.regionOf_mem hw
-  have hrr : rad.regionOf w = r := region_eq_of_mem (hD.hatRegion_mem_R hrO) hr hwO hw'
-  rw [hrr] at hrO hfr₁ hfr₂
+  obtain ⟨hrO, hw', hw'G, hset', her⟩ := rad.pair_spoke_ends hD hrad hsub heG hv₀ hw hsetG
   have key : ∀ {f c : Set S} , Γ.IsSkEdgeIn f c → v₀ ∈ tilde f →
-      cap.emb '' f ⊆ frontier r → cap.emb '' c ⊆ Ω := by
+      cap.emb '' f ⊆ frontier (rad.regionOf w) → cap.emb '' c ⊆ Ω := by
     intro f c hfc htf hfr
     obtain ⟨p, hp, hep, hfp⟩ := pair_side hS hD h3 hrad hmax hfc.mem hv₀ htf hrO hfr heG her hw'
       hw'G hset'

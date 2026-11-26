@@ -146,7 +146,7 @@ theorem same_of_cuff (hψ : IsCutting ψ F) (hF : IsClosed F) (L : ArcLift ψ F 
     (hu : ψ ⁻¹' F = ξ '' Icc 0 1 ∪ η '' Icc 0 1) (h0 : a₀ 0 ∈ bd S) (h1 : a₀ 1 ∈ bd S) :
     connectedComponentIn (bd S) (a₀ 0) = connectedComponentIn (bd S) (a₀ 1) := by
   obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ hξ hiξ hiη
-  have hlt := lift_lt_add_one hmc hmm (inj_of_lift hmξ hix)
+  have hlt := lift_lt_add_one hmc (inj_of_lift hmξ hix)
   have m0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have m1 : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have hc : ContinuousOn (fun u => (φ (ee (lin (m 1) (m 0 + 1) u))).1) (Icc 0 1) := by
@@ -161,7 +161,7 @@ theorem same_of_cuff (hψ : IsCutting ψ F) (hF : IsClosed F) (L : ArcLift ψ F 
       exact key.symm
     · rw [← h2, ← h3]
       exact key
-  · have hv : lin (m 1) (m 0 + 1) u ∈ Ioo (m 1) (m 0 + 1) := lin_mem hlt.le hu' hlt
+  · have hv : lin (m 1) (m 0 + 1) u ∈ Ioo (m 1) (m 0 + 1) := lin_mem hu' hlt
     have hm' : (φ (ee (lin (m 1) (m 0 + 1) u))).1 ∈ ψ ⁻¹' F := hmem
     rw [hu, ← hxim, ← heim] at hm'
     rcases hm' with ⟨v, hv1, hv2⟩ | ⟨v, hv1, hv2⟩
@@ -194,7 +194,7 @@ theorem same_of_gap (hψ : IsCutting ψ F) (hF : IsClosed F) {C : Set Y} (hCb : 
     exact continuous_ee.comp_continuousOn (continuousOn_lin _ _)
   have key := same_cuff_of_curve (γ := fun u => (φ (ee (lin p q u))).1) hψ hF hc (fun u _ => hCb
     (φ _).2)
-    (fun u hu => hv _ (lin_mem hpq.le hu hpq)) (by simpa only [lin_zero] using h0)
+    (fun u hu => hv _ (lin_mem hu hpq)) (by simpa only [lin_zero] using h0)
       (by simpa only [lin_one] using h1)
   simpa only [lin_zero, lin_one] using key
 

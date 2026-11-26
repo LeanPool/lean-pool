@@ -435,7 +435,7 @@ theorem exists_feature_lines (hS : IsSurface S) [ConnectedSpace S] (Φ : Frame S
       rw [extI_of_mem _ hu.1]
       exact hnon _ (eqv i).2 hin (hr i ▸ mem_range_self _)
     have hx₀ : extI (b i) (1 / 2) ∈ extI (b i) '' J := ⟨1 / 2, ⟨h12, hoffE _ (by norm_num)⟩, rfl⟩
-    refine ⟨_, GM07.pathComponentIn_mem_arcComponentsIn (hsub hx₀), ?_⟩
+    refine ⟨_, Surface.mem_arcComponentsIn_of_mem (hsub hx₀), ?_⟩
     rintro _ ⟨⟨t, rfl⟩, hx⟩
     exact hpc.subset_pathComponentIn hx₀ hsub ⟨t, ⟨t.2, by rwa [extI_coe]⟩, extI_coe _ _⟩
 

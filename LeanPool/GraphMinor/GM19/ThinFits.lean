@@ -251,7 +251,7 @@ theorem exists_push (hS : IsSurface S) (hl : IsLensed Γ Δ L R) {F : Set S} (hF
   rintro x ⟨hxF, hxU⟩
   by_contra hn
   have hm : x ∈ Γ.U \ Γ.V := ⟨hxU, hn⟩
-  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := GM20.mem_arcComponentsIn_pathComponentIn hm
+  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := Surface.mem_arcComponentsIn_of_mem hm
   have hxc : x ∈ pathComponentIn (Γ.U \ Γ.V) x := mem_pathComponentIn_self hm
   rcases Γ.size_cases hc with h2 | h3
   · exact hn (hZ' ⟨hxF, Or.inl (Or.inr (mem_iUnion₂.2 ⟨_, ⟨hc, h2⟩, subset_closure hxc⟩))⟩)

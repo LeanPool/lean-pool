@@ -336,11 +336,8 @@ variable (Γ : Drawing S)
 /-- Every point of `U(Γ)` outside `V(Γ)` lies on an edge. -/
 theorem exists_edge_of_mem {x : S} (hx : x ∈ Γ.U) (hxV : x ∉ Γ.V) : ∃ e ∈ Γ.E, x ∈ e := by
   have hxF : x ∈ Γ.U \ Γ.V := ⟨hx, hxV⟩
-  refine ⟨pathComponentIn (Γ.U \ Γ.V) x, ⟨⟨x, mem_pathComponentIn_self hxF⟩,
-    pathComponentIn_subset, isPathConnected_pathComponentIn hxF, ?_⟩,
-    mem_pathComponentIn_self hxF⟩
-  intro D hD hconn hsub
-  exact subset_antisymm (hconn.subset_pathComponentIn (hsub (mem_pathComponentIn_self hxF)) hD) hsub
+  exact ⟨pathComponentIn (Γ.U \ Γ.V) x,
+    GraphMinor.Surface.mem_arcComponentsIn_of_mem hxF, mem_pathComponentIn_self hxF⟩
 
 /-- `U(Γ)` is the union of `V(Γ)` and the closures of the edges. -/
 theorem U_eq : Γ.U = Γ.V ∪ ⋃ e ∈ Γ.E, closure e := by

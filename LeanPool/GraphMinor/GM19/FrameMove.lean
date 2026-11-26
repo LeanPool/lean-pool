@@ -44,7 +44,7 @@ theorem exists_edge_on_cuff (Γ : Painting S) (C : cuffs S) (f : Circle ≃ₜ C
   have hxC : x ∈ C.1 := arcOf_subset f _ _ hx
   have hxb : x ∈ bd S := cuff_subset_bd C hxC
   have hm : x ∈ Γ.U \ Γ.V := ⟨Γ.bd_subset hxb, hxV⟩
-  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := GM20.mem_arcComponentsIn_pathComponentIn hm
+  have hc : pathComponentIn (Γ.U \ Γ.V) x ∈ Γ.E := Surface.mem_arcComponentsIn_of_mem hm
   have hxc : x ∈ pathComponentIn (Γ.U \ Γ.V) x := mem_pathComponentIn_self hm
   have hbo : Painting.IsBorder (pathComponentIn (Γ.U \ Γ.V) x) := ⟨x, hxc, hxb⟩
   refine ⟨_, hc, ?_, hbo⟩

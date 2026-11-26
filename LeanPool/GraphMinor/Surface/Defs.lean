@@ -91,6 +91,15 @@ def arcComponentsIn {S : Type u} [TopologicalSpace S] (F : Set S) : Set (Set S) 
   {C : Set S | C.Nonempty ∧ C ⊆ F ∧ IsPathConnected C ∧
     ∀ D : Set S, D ⊆ F → IsPathConnected D → C ⊆ D → D = C}
 
+/-- Every point `x ∈ F` belongs to `pathComponentIn F x ∈ arcComponentsIn F`. -/
+theorem mem_arcComponentsIn_of_mem {S : Type u} [TopologicalSpace S]
+    {F : Set S} {x : S} (hx : x ∈ F) :
+    pathComponentIn F x ∈ arcComponentsIn F := by
+  refine ⟨⟨x, mem_pathComponentIn_self hx⟩, pathComponentIn_subset,
+    isPathConnected_pathComponentIn hx, ?_⟩
+  intro D hDF hD hxD
+  exact Subset.antisymm (hD.subset_pathComponentIn (hxD (mem_pathComponentIn_self hx)) hDF) hxD
+
 /-! ## 2. Surfaces, Boundary, Cuffs, Discs, Lines, and $O$-Arcs -/
 
 /-- A point $x \in S$ is an *interior point* of a 2-manifold $S$ if it has an open

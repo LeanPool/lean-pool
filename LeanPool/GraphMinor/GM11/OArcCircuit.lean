@@ -454,4 +454,34 @@ theorem exists_circuit_of_oArc [T2Space S] [ConnectedSpace S] {N : Drawing S} {F
   exact ⟨C, hC, hCs.trans hHN, eq_of_oArc_subset (IsCircuit.isOArc_U hC) hF
     (hCs.U_subset.trans hHU)⟩
 
+/-- Restricting a drawing to a closed `O`-arc in its point set gives the corresponding circuit. -/
+theorem interSet_isCircuit_and_U_of_isOArc [T2Space S] [ConnectedSpace S]
+    {H : Drawing S} {F : Set S} (hF : IsOArc F) (hclosed : IsClosed F) (hsub : F ⊆ H.U) :
+    (H.interSet F).IsCircuit ∧ (H.interSet F).U = F := by
+  obtain ⟨C_bd, hC_bd, hCH_bd, hCU_bd⟩ := exists_circuit_of_oArc hF hsub
+  have hEq_C : H.interSet F = C_bd := by
+    refine Drawing.ext_of_V_E ?_ ?_
+    · rw [H.interSet_V_of_isClosed hclosed]
+      ext x
+      simp only [mem_inter_iff]
+      refine ⟨fun ⟨hxV, hxbd⟩ => ?_, fun hxC => ⟨hCH_bd.1 hxC, hCU_bd ▸ C_bd.V_subset_U hxC⟩⟩
+      by_contra hxnot
+      obtain ⟨e, heC, hxe⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hxbd) hxnot
+      exact ((hCH_bd.2 heC).2.1 hxe).2 hxV
+    · rw [Drawing.interSet_E]
+      ext e
+      simp only [mem_ofPred_eq]
+      refine ⟨fun ⟨heH, hebd⟩ => ?_,
+        fun heC => ⟨hCH_bd.2 heC, hCU_bd ▸ subset_closure.trans (C_bd.closure_subset_U heC)⟩⟩
+      obtain ⟨x, hxe⟩ := heH.1
+      have hxnotV : x ∉ C_bd.V := fun hxC => (heH.2.1 hxe).2 (hCH_bd.1 hxC)
+      obtain ⟨f, hfC, hxf⟩ := C_bd.exists_edge_of_mem (hCU_bd.symm ▸ hebd hxe) hxnotV
+      have hfH := hCH_bd.2 hfC
+      have hconn := heH.2.2.1.union hfH.2.2.1 ⟨x, hxe, hxf⟩
+      have hsub := union_subset heH.2.1 hfH.2.1
+      have hef : e = f := (heH.2.2.2 _ hsub hconn subset_union_left).symm.trans
+        (hfH.2.2.2 _ hsub hconn subset_union_right)
+      exact hef ▸ hfC
+  exact ⟨hEq_C ▸ hC_bd, hEq_C ▸ hCU_bd⟩
+
 end GraphMinor.GM11

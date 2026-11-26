@@ -121,11 +121,8 @@ theorem arcComponentsIn_disjoint {c₁ c₂ : Set S}
   exact hne (arcComponentsIn_eq_of_mem hc₁ hc₂ hx₁ hx₂)
 
 theorem pathComponentIn_mem_arcComponentsIn {x : S} (hx : x ∈ F) :
-    pathComponentIn F x ∈ arcComponentsIn F := by
-  refine ⟨⟨x, mem_pathComponentIn_self hx⟩, pathComponentIn_subset,
-    isPathConnected_pathComponentIn hx, ?_⟩
-  intro D hDF hD hxD
-  exact Subset.antisymm (hD.subset_pathComponentIn (hxD (mem_pathComponentIn_self hx)) hDF) hxD
+    pathComponentIn F x ∈ arcComponentsIn F :=
+  GraphMinor.Surface.mem_arcComponentsIn_of_mem hx
 
 /-- Every point of $F$ belongs to an arc-component of $F$. -/
 theorem exists_mem_arcComponentsIn {x : S} (hx : x ∈ F) :

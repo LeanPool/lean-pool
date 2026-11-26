@@ -227,6 +227,17 @@ theorem image_bd_homeomorph {X : Type u} {Y : Type v} [TopologicalSpace X]
     have := (isInteriorPoint_homeomorph_iff e (e.symm y)).mpr h
     simpa using this
 
+/-- A homeomorphism carries boundary points to boundary points. -/
+theorem mem_bd_homeomorph_iff {X : Type u} {Y : Type v} [TopologicalSpace X] [TopologicalSpace Y]
+    (e : X ≃ₜ Y) (x : X) : e x ∈ bd Y ↔ x ∈ bd X := by
+  have h := image_bd_homeomorph e
+  constructor
+  · intro hx
+    obtain ⟨w, hw, hwx⟩ := h.symm ▸ hx
+    exact e.injective hwx ▸ hw
+  · intro hx
+    exact h ▸ mem_image_of_mem e hx
+
 /-- The points of the closed disc in the open disc form a copy of the open disc. -/
 noncomputable def openPartHomeomorph :
     (Subtype.val ⁻¹' OpenUnitDisc : Set ClosedUnitDisc) ≃ₜ OpenUnitDisc where

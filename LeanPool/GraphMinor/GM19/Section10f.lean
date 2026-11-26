@@ -31,6 +31,26 @@ variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat
   {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourScheme S β}
 
 
+omit [T2Space S] in
+/-- A painting and a feature whose intersection consists of shared vertices keep that property
+when pulled back by a homeomorphism. -/
+theorem IsColouredImage.feature_inter_subset {f : S ≃ₜ S} {P Q : ColouredPainting χ}
+    {Kc K : Drawing S} (hQ : IsColouredImage f.symm P Q)
+    (hU : f '' Kc.U = K.U) (hV : f '' Kc.V = K.V)
+    (hinter : P.Γ.U ∩ K.U ⊆ P.Γ.V ∩ K.V) :
+    Q.Γ.U ∩ Kc.U ⊆ Q.Γ.V ∩ Kc.V := by
+  rintro x ⟨hx, hxK⟩
+  rw [hQ.U] at hx
+  obtain ⟨y, hy, rfl⟩ := hx
+  have hyK : y ∈ K.U := hU ▸ ⟨_, hxK, f.apply_symm_apply y⟩
+  obtain ⟨hyV, hyKV⟩ := hinter ⟨hy, hyK⟩
+  constructor
+  · rw [hQ.V]
+    exact mem_image_of_mem _ hyV
+  · rw [← hV] at hyKV
+    obtain ⟨z, hz, rfl⟩ := hyKV
+    rwa [f.symm_apply_apply]
+
 omit [T2Space S] [T2Space Shat] in
 theorem IsCutFormOf.image_subset {K : Drawing S} {F : Set Shat} (hf : IsCutFormOf cap K F) :
   cap.emb '' K.U ⊆ F := by
@@ -180,20 +200,7 @@ theorem exists_place [ConnectedSpace Shat] (hS : IsSurface S) {D : TangleDatum c
       exact ⟨u, hπ.superset hu, rfl⟩
   let A' : Arm Q.Γ := restrictArm Q.Γ B₁ B₂ hsep' (π.map α.symm)
     ((Finset.nodup_toList _).map α.symm.injective) hπ'
-  have hinter : Q.Γ.U ∩ Kc.U ⊆ Q.Γ.V ∩ Kc.V := by
-    rintro x ⟨hx₁, hx₂⟩
-    rw [hQ.U] at hx₁
-    obtain ⟨y, hy, rfl⟩ := hx₁
-    have hy' : y ∈ K.U := by
-      rw [← hαU]
-      exact ⟨_, hx₂, α.apply_symm_apply y⟩
-    obtain ⟨h₁, h₂⟩ := hpart.inter ⟨hy, hy'⟩
-    refine ⟨?_, ?_⟩
-    · rw [hQ.V]
-      exact mem_image_of_mem _ h₁
-    · rw [← hαV] at h₂
-      obtain ⟨z, hz, rfl⟩ := h₂
-      rwa [α.symm_apply_apply]
+  have hinter := hQ.feature_inter_subset hαU hαV hpart.inter
   have hclosed : IsClosed B₂ := by
     change IsClosed (α.symm '' _)
     rw [α.symm.image_eq_preimage_symm]

@@ -314,36 +314,9 @@ theorem exists_extending_drawing_of_threeSegregation [ConnectedSpace S]
     have hVS₀_card : V(S₀.G).ncard ≤ 3 := hVS₀_eq ▸ h3 S₀ hS₀
     obtain ⟨hd, hbarpt⟩ := harr.isClosedDisc S₀ hS₀
     have hbdd : subBd (α_disc S₀) = discBd (α_disc S₀) := IsClosedDisc.subBd_eq_discBd hS hd
-    have hcl : IsClosed (α_disc S₀) := hd.isClosed
-    have hbd : subBd (α_disc S₀) ∩ H.U ⊆ H.V := by
-      rintro x ⟨h₁, h₂⟩
-      have : x ∈ H.U ∩ subBd (α_disc S₀) := ⟨h₂, h₁⟩
-      rw [hcompat.bd_inter_eq S₀ hS₀] at this
-      exact this.1
-    obtain ⟨η₁, _, hv, he⟩ := exists_pieceEmbedding η hle₀ hcl hbd
-      (hcompat.inter_V_iff S₀ hS₀) (hcompat.inter_E_iff S₀ hS₀)
-    obtain ⟨hIV, hIU⟩ := interSet_V_and_U hcl hbd
+    obtain ⟨η₁, _, hv, he, hbd, hIV, hU, hn, hXH⟩ :=
+      exists_compatible_pieceEmbedding hS₀ hle₀ hd.isClosed hcompat
     have hrig₁ := isRigidIn_interSet_of_isRigid hS hns hrig hd hbd
-    have hU : (H.interSet (α_disc S₀)).U ⊆ α_disc S₀ := by
-      rw [hIU]
-      exact inter_subset_right
-    have hn : (H.interSet (α_disc S₀)).U ∩ subBd (α_disc S₀) ⊆ (H.interSet (α_disc S₀)).V := by
-      rw [hIU, hIV]
-      rintro x ⟨⟨h₁, h₂⟩, h₃⟩
-      exact ⟨hbd ⟨h₃, h₁⟩, h₂⟩
-    have hXH : ∀ v ∈ (H.interSet (α_disc S₀)).V, v ∈ subBd (α_disc S₀) ↔ η₁.vMap v ∈ S₀.Ω.bar := by
-      intro v hv'
-      rw [hIV] at hv'
-      rw [hv]
-      constructor
-      · intro h
-        have : v ∈ H.U ∩ subBd (α_disc S₀) := ⟨H.V_subset_U hv'.1, h⟩
-        rw [hcompat.bd_inter_eq S₀ hS₀] at this
-        exact this.2
-      · intro h
-        have : v ∈ {v ∈ H.V | η.vMap v ∈ S₀.Ω.bar} := ⟨hv'.1, h⟩
-        rw [← hcompat.bd_inter_eq S₀ hS₀] at this
-        exact this.2
     obtain ⟨Γ, h₁, h₂, h₃', h₄, h₅⟩ := exists_piece_drawing_of_ncard_le_three η₁
       S₀.finite_V S₀.finite_E hVS₀_card hd hbdd hU hn
       S₀.bar_subset (h3 S₀ hS₀)

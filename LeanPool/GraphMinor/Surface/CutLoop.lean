@@ -476,7 +476,7 @@ theorem loop_two_aux [T2Space S] (hS : IsSurface Y) (hψ : IsCutting ψ F) {C C'
   rw [e0] at p1 p2 p4
   obtain ⟨h5, h6⟩ := glue_word (p₁ := 4) L₀ hψ.1 hψ.2.1 (A := [tL a b j]) (q := (rL a b j).1) (p :=
     (rL a b i).1) (σ := σ) rfl (by simp)
-    (by ct) (by ct) (by simp [rL]; omega) p1 p4 (ζ := fun u => (φ' (ee (n' u))).1) p2
+    (by ct) (by ct) p1 p4 (ζ := fun u => (φ' (ee (n' u))).1) p2
     (fun u hu => by simp only [h4 _ (ofs_mem hu), ofs_ofs])
   exact ⟨σ, g₁, h5, h6⟩
 
@@ -549,7 +549,7 @@ theorem loop_one_aux (hS : IsSurface Y) {a₀ : ℝ → S} {ξ η : ℝ → Y} (
   obtain ⟨h5, h6⟩ := glue_word (p₁ := 1) L' hψc hsurj (A := [tL a b i, rL a b i]) (q := frL a b c)
     (p := (rL a b i).1)
     (B := linv (tL a b i) :: rW a b c L) (σ := true) rfl (by simp) (by ct) (by ct)
-      (by simp [rL, frL]; omega) p1 (p2.congr h2) p3
+    p1 (p2.congr h2) p3
     (fun u hu => by
       rw [ofs_true]
       exact h3 u hu)

@@ -332,4 +332,47 @@ theorem exists_pieceEmbedding {H : Drawing S} {G : Graph α β} (η : SpanEmbedd
         exact ⟨η.bijOn_e.mapsTo he', (hE e he').mp (hIE.subset he).2⟩
       exact ⟨z, ((pieceGraph_le_image η A).isLink_iff hm).mpr hz⟩
 
+/-- The restriction to a member's disc inherits its vertex and edge maps, and its boundary
+vertices correspond to the society's cyclic order. -/
+theorem exists_compatible_pieceEmbedding {H : Drawing S} {G : Graph α β}
+    {η : SpanEmbedding H G} {S_seg : Set (Society α β)} {α_disc : Society α β → Set S}
+    {α_pt : α → S} {S₀ : Society α β} (hS₀ : S₀ ∈ S_seg) (hle : S₀.G ≤ G)
+    (hcl : IsClosed (α_disc S₀)) (hcompat : IsCompatibleWith G H η S_seg α_disc α_pt) :
+    ∃ η₁ : SpanEmbedding (H.interSet (α_disc S₀)) S₀.G,
+      η₁.imageGraph = pieceGraph η S₀.G ∧ η₁.vMap = η.vMap ∧ η₁.eMap = η.eMap ∧
+      subBd (α_disc S₀) ∩ H.U ⊆ H.V ∧
+      (H.interSet (α_disc S₀)).V = H.V ∩ α_disc S₀ ∧
+      (H.interSet (α_disc S₀)).U ⊆ α_disc S₀ ∧
+      (H.interSet (α_disc S₀)).U ∩ subBd (α_disc S₀) ⊆ (H.interSet (α_disc S₀)).V ∧
+      ∀ v ∈ (H.interSet (α_disc S₀)).V, v ∈ subBd (α_disc S₀) ↔ η₁.vMap v ∈ S₀.Ω.bar := by
+  have hbd : subBd (α_disc S₀) ∩ H.U ⊆ H.V := by
+    rintro x ⟨h₁, h₂⟩
+    have : x ∈ H.U ∩ subBd (α_disc S₀) := ⟨h₂, h₁⟩
+    rw [hcompat.bd_inter_eq S₀ hS₀] at this
+    exact this.1
+  obtain ⟨η₁, him, hv, he⟩ := exists_pieceEmbedding η hle hcl hbd
+    (hcompat.inter_V_iff S₀ hS₀) (hcompat.inter_E_iff S₀ hS₀)
+  obtain ⟨hIV, hIU⟩ := interSet_V_and_U hcl hbd
+  have hU : (H.interSet (α_disc S₀)).U ⊆ α_disc S₀ := by
+    rw [hIU]
+    exact inter_subset_right
+  have hn : (H.interSet (α_disc S₀)).U ∩ subBd (α_disc S₀) ⊆ (H.interSet (α_disc S₀)).V := by
+    rw [hIU, hIV]
+    rintro x ⟨⟨h₁, h₂⟩, h₃⟩
+    exact ⟨hbd ⟨h₃, h₁⟩, h₂⟩
+  have hXH : ∀ v ∈ (H.interSet (α_disc S₀)).V, v ∈ subBd (α_disc S₀) ↔ η₁.vMap v ∈ S₀.Ω.bar := by
+    intro v hv'
+    rw [hIV] at hv'
+    rw [hv]
+    constructor
+    · intro h
+      have : v ∈ H.U ∩ subBd (α_disc S₀) := ⟨H.V_subset_U hv'.1, h⟩
+      rw [hcompat.bd_inter_eq S₀ hS₀] at this
+      exact this.2
+    · intro h
+      have : v ∈ {v ∈ H.V | η.vMap v ∈ S₀.Ω.bar} := ⟨hv'.1, h⟩
+      rw [← hcompat.bd_inter_eq S₀ hS₀] at this
+      exact this.2
+  exact ⟨η₁, him, hv, he, hbd, hIV, hU, hn, hXH⟩
+
 end GraphMinor.GM14

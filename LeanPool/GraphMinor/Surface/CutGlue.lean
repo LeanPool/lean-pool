@@ -129,8 +129,7 @@ theorem glue_word {S' S : Type*} [TopologicalSpace S'] [TopologicalSpace S] {ψ 
     {ξ η : ℝ → S'} (L : ArcLift ψ F a ξ η) (hψ : Continuous ψ) (hsurj : Surjective ψ) {A B : List
       Letter} {p q p₁ : ℕ} {σ : Bool}
     (hp1 : (A ++ (q, true) :: B)[p₁]? = some (p, true)) (hne : p₁ ≠ A.length)
-    (hc1 : cnt (A ++ (q, true) :: B) q = 1) (hc2 : cnt (A ++ (q, true) :: B) p = 1)
-      (_hpq : p ≠ q) {g : ℕ × ℂ → S'}
+    (hc1 : cnt (A ++ (q, true) :: B) q = 1) (hc2 : cnt (A ++ (q, true) :: B) p = 1) {g : ℕ × ℂ → S'}
     (hg : Presents (sW (A ++ (q, true) :: B)) g) (hsξ : SideVal (sW (A ++
       (q, true) :: B)) g p ξ) {ζ : ℝ → S'}
     (hsη : SideVal (sW (A ++ (q, true) :: B)) g q ζ) (hζ : ∀ u ∈ Icc (0 : ℝ) 1, ζ (ofs σ u) = η u) :
@@ -257,13 +256,13 @@ theorem lin_zero (p q : ℝ) : lin p q 0 = p := by simp [lin]
 
 theorem lin_one (p q : ℝ) : lin p q 1 = q := by simp [lin]
 
-theorem lin_mem {p q u : ℝ} (_h : p ≤ q) (hu : u ∈ Ioo (0 : ℝ) 1) (hlt : p < q) : lin p q u ∈ Ioo p
-  q := by
+theorem lin_mem {p q u : ℝ} (hu : u ∈ Ioo (0 : ℝ) 1) (hlt : p < q) :
+    lin p q u ∈ Ioo p q := by
   unfold lin
   constructor <;> nlinarith [hu.1, hu.2]
 
 /-- A lift of an injective path stays below a full turn. -/
-theorem lift_lt_add_one {m : ℝ → ℝ} (hc : ContinuousOn m (Icc 0 1)) (_hm : StrictMonoOn m (Icc 0 1))
+theorem lift_lt_add_one {m : ℝ → ℝ} (hc : ContinuousOn m (Icc 0 1))
     (hi : InjOn (fun u => ee (m u)) (Icc 0 1)) : m 1 < m 0 + 1 := by
   by_contra h
   push Not at h
@@ -279,8 +278,7 @@ theorem lift_lt_add_one {m : ℝ → ℝ} (hc : ContinuousOn m (Icc 0 1)) (_hm :
 
 /-- The two lifts of disjoint paths fit into one turn, after a shift by an integer. -/
 theorem exists_shift {m n : ℝ → ℝ} (hc : ContinuousOn m (Icc 0 1)) (hn : ContinuousOn n (Icc 0 1))
-  (_hm : m 0 ≤ m 1)
-    (_hmn : n 0 ≤ n 1) (hd : ∀ u ∈ Icc (0 : ℝ) 1, ∀ v ∈ Icc (0 : ℝ) 1, ee (m u) ≠ ee (n v)) :
+    (hd : ∀ u ∈ Icc (0 : ℝ) 1, ∀ v ∈ Icc (0 : ℝ) 1, ee (m u) ≠ ee (n v)) :
     ∃ k : ℤ, m 1 < n 0 + k ∧ n 1 + k < m 0 + 1 := by
   have h0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have h1 : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp

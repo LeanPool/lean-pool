@@ -10,6 +10,8 @@ module
 
 public import LeanPool.GraphMinor.GM14.Section7a
 
+import LeanPool.GraphMinor.GM11.OArcCircuit
+
 /-!
 # Graph Minors XIV, Section 7: Proof of (7.8)
 
@@ -159,6 +161,31 @@ theorem clearedSubdrawing_V_and_E [T2Space S] {H : Drawing S}
     exact ⟨hSub.1 hv, hvU.2⟩
   · rintro v ⟨hvV, hvΛ⟩
     exact Or.inl ⟨⟨hvV, mem_univ _, hvΛ⟩, hvV⟩
+
+/-- Clearing a zone preserves its boundary circuit. -/
+theorem clearedSubdrawing_boundary [T2Space S] [ConnectedSpace S] {H : Drawing S}
+    {d : Set S → Set S → ℕ} {lam : ℕ} {z Λ : Set S}
+    (hZone : IsLambdaZoneAround H d lam z Λ) :
+    let C := (clearedSubdrawing H Λ).interSet (subBd Λ)
+    C = H.interSet (subBd Λ) ∧ C.IsCircuit ∧ C.U = subBd Λ := by
+  obtain ⟨hV, hE⟩ := clearedSubdrawing_V_and_E hZone
+  have hbd : subBd Λ ⊆ univ \ Λ := fun _ hx =>
+    (isClosed_univ.sdiff hZone.isOpenDisc.1).closure_eq ▸ hx.2
+  have hclosed : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
+  have heq : (clearedSubdrawing H Λ).interSet (subBd Λ) = H.interSet (subBd Λ) := by
+    refine Drawing.ext_of_V_E ?_ ?_
+    · rw [Drawing.interSet_V_of_isClosed _ hclosed, Drawing.interSet_V_of_isClosed _ hclosed, hV]
+      ext x
+      simp only [mem_inter_iff, mem_sdiff]
+      exact ⟨fun ⟨⟨hxV, _⟩, hxbd⟩ => ⟨hxV, hxbd⟩,
+        fun ⟨hxV, hxbd⟩ => ⟨⟨hxV, (hbd hxbd).2⟩, hxbd⟩⟩
+    · rw [Drawing.interSet_E, Drawing.interSet_E, hE]
+      ext e
+      simp only [mem_ofPred_eq]
+      exact ⟨fun ⟨⟨heE, _⟩, hebd⟩ => ⟨heE, hebd⟩,
+        fun ⟨heE, hebd⟩ => ⟨⟨heE, hebd.trans hbd⟩, hebd⟩⟩
+  exact ⟨heq, heq.symm ▸
+    interSet_isCircuit_and_U_of_isOArc hZone.isOArc_bd hclosed hZone.bd_subset_U⟩
 
 /-- If `Γ` is a subdrawing of `H` and `Γ.U` is disjoint from a `λ`-zone `Λ`, then `Γ` is a
 subdrawing of `clearedSubdrawing H Λ`. -/

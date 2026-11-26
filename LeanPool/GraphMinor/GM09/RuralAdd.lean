@@ -365,11 +365,8 @@ variable {D : Drawing EuclideanPlane} {X X₀ : Set EuclideanPlane}
 theorem exists_edge_of_mem' {x : EuclideanPlane} (hx : x ∈ D.U) (hxV : x ∉ D.V) :
     ∃ e ∈ D.E, x ∈ e := by
   have hxF : x ∈ D.U \ D.V := ⟨hx, hxV⟩
-  refine ⟨pathComponentIn (D.U \ D.V) x, ⟨⟨x, mem_pathComponentIn_self hxF⟩,
-    pathComponentIn_subset, isPathConnected_pathComponentIn hxF, ?_⟩,
-    mem_pathComponentIn_self hxF⟩
-  intro C hC hconn hsub
-  exact subset_antisymm (hconn.subset_pathComponentIn (hsub (mem_pathComponentIn_self hxF)) hC) hsub
+  exact ⟨pathComponentIn (D.U \ D.V) x,
+    GraphMinor.Surface.mem_arcComponentsIn_of_mem hxF, mem_pathComponentIn_self hxF⟩
 
 /-- Beside a part `L` of an edge there is a thin disc whose part off the ends of `L` lies in the
 region between the two boundaries, and in it a line with the ends of `L` that is off the drawing. -/

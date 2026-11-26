@@ -184,7 +184,7 @@ private theorem theorem_5_5_zero :
     by_contra hxV
     have hm : x ∈ Kc.U \ Kc.V := ⟨hx,
       hxV⟩
-    exact disjoint_left.1 (hF.no_border_edges _ (GM20.mem_arcComponentsIn_pathComponentIn hm))
+    exact disjoint_left.1 (hF.no_border_edges _ (Surface.mem_arcComponentsIn_of_mem hm))
       (mem_pathComponentIn_self hm) hxb
   obtain ⟨Y, tY, t2Y, ψ, hY, hψ, hsheet, hsimple⟩ := GraphMinor.GM19.cutSimpler S Shat cap Kc hS
     hcross.lines hKne hKbd hcross.form

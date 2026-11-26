@@ -69,20 +69,14 @@ def GM15Theorem31Statement : Prop :=
 /-- For a closed subset `K`, the vertex set of `H.interSet K` is `H.V ∩ K`. -/
 theorem interSet_V_of_isClosed {S : Type w} [TopologicalSpace S] [T1Space S]
     (H : Drawing S) {K : Set S} (hK : IsClosed K) :
-    (H.interSet K).V = H.V ∩ K := by
-  rw [Drawing.interSet, Drawing.span_V, Drawing.spanV]
-  refine Subset.antisymm (union_subset inter_subset_left ?_)
-    (fun x hx => Or.inl ⟨hx, hx.1⟩)
-  refine iUnion₂_subset fun e he x hx => ⟨hx.2, ?_⟩
-  exact hK.closure_subset_iff.mpr he.1.2 hx.1
+    (H.interSet K).V = H.V ∩ K :=
+  H.interSet_V_of_isClosed hK
 
 /-- The edge set of `H.interSet K` is `{e ∈ H.E | e ⊆ K}`. -/
 theorem interSet_E {S : Type w} [TopologicalSpace S] [T1Space S]
     (H : Drawing S) (K : Set S) :
-    (H.interSet K).E = {e ∈ H.E | e ⊆ K} := by
-  rw [Drawing.interSet, Drawing.span_E]
-  ext e
-  exact ⟨fun h => h.1, fun h => ⟨h, h.1⟩⟩
+    (H.interSet K).E = {e ∈ H.E | e ⊆ K} :=
+  H.interSet_E K
 
 /-- In any drawing `Γ`, the ends of an edge `e ∈ Γ.E` in `Γ.toHypergraph` are `closure e ∩ Γ.V`. -/
 theorem toHypergraph_ends_eq {S : Type w} [TopologicalSpace S] (Γ : Drawing S)

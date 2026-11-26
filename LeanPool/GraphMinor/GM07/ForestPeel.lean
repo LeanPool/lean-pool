@@ -424,11 +424,8 @@ theorem U_eq_biUnion_closure {G : Drawing S} (hn : HasNoIsolatedVertices G) : G.
   · obtain ⟨e, he, hi⟩ := hn z hzV
     exact mem_iUnion₂.mpr ⟨e, he, hi.2.2⟩
   · have hzc : z ∈ G.U \ G.V := ⟨hz, hzV⟩
-    have hmem : pathComponentIn (G.U \ G.V) z ∈ G.E := by
-      refine ⟨⟨z, mem_pathComponentIn_self hzc⟩, pathComponentIn_subset,
-        isPathConnected_pathComponentIn hzc, fun D hD hc hsub => ?_⟩
-      exact Subset.antisymm (hc.subset_pathComponentIn (hsub (mem_pathComponentIn_self hzc)) hD)
-        hsub
+    have hmem : pathComponentIn (G.U \ G.V) z ∈ G.E :=
+      GraphMinor.Surface.mem_arcComponentsIn_of_mem hzc
     exact mem_iUnion₂.mpr ⟨_, hmem, subset_closure (mem_pathComponentIn_self hzc)⟩
 
 /-- **Cutting along a forest.** For a proper graph `L` with no isolated vertices, whose point set

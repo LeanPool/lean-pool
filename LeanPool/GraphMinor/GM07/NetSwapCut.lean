@@ -30,6 +30,57 @@ namespace GraphMinor.GM07
 
 open Set Topology Metric Surface
 
+/-- Cut maps into the closed unit disc transfer to the net's disc with their fibers and boundary
+conditions unchanged. -/
+theorem Net.exists_transported_cut_maps {S : Type*} [TopologicalSpace S] (N : Net S)
+    {A B : Set N.D} {ψ₀ : A ⊕ B → closedBall (0 : ℂ) 1} {φ₀ : closedBall (0 : ℂ) 1 → S}
+    {R : A → B → Prop} {P : A → Prop} {Q : B → Prop}
+    (hψ₀ : IsQuotientMap ψ₀) (hφ₀ : IsQuotientMap φ₀)
+    (hφA : ∀ x : A, φ₀ (ψ₀ (Sum.inl x)) = N.φ x.val)
+    (hφB : ∀ y : B, φ₀ (ψ₀ (Sum.inr y)) = N.φ y.val)
+    (hiA : Function.Injective (ψ₀ ∘ Sum.inl)) (hiB : Function.Injective (ψ₀ ∘ Sum.inr))
+    (hcross : ∀ x y, ψ₀ (Sum.inl x) = ψ₀ (Sum.inr y) ↔ R x y)
+    (hαbd : ∀ x, ψ₀ (Sum.inl x) ∈ bd (closedBall (0 : ℂ) 1) ↔ P x)
+    (hβbd : ∀ y, ψ₀ (Sum.inr y) ∈ bd (closedBall (0 : ℂ) 1) ↔ Q y) :
+    ∃ e : closedBall (0 : ℂ) 1 ≃ₜ N.D,
+      let α : A → N.D := e ∘ ψ₀ ∘ Sum.inl
+      let β : B → N.D := e ∘ ψ₀ ∘ Sum.inr
+      let φ : N.D → S := φ₀ ∘ e.symm
+      Continuous α ∧ Continuous β ∧ Function.Injective α ∧ Function.Injective β ∧
+        range α ∪ range β = univ ∧
+        (∀ x y, α x = β y ↔ R x y) ∧
+        (∀ x, α x ∈ bd N.D ↔ P x) ∧ (∀ y, β y ∈ bd N.D ↔ Q y) ∧
+        IsQuotientMap φ ∧ (∀ x, φ (α x) = N.φ x.val) ∧ (∀ y, φ (β y) = N.φ y.val) := by
+  obtain ⟨e₀⟩ := isClosedDisc_closedBall.1
+  obtain ⟨eN⟩ := N.isClosedDisc_D
+  let e : closedBall (0 : ℂ) 1 ≃ₜ N.D :=
+    e₀.symm.trans (eN.trans (Homeomorph.Set.univ N.D))
+  let α : A → N.D := e ∘ ψ₀ ∘ Sum.inl
+  let β : B → N.D := e ∘ ψ₀ ∘ Sum.inr
+  let φ : N.D → S := φ₀ ∘ e.symm
+  have hT : range α ∪ range β = univ := by
+    apply eq_univ_of_forall
+    intro z
+    obtain ⟨w, hw⟩ := hψ₀.surjective (e.symm z)
+    cases w with
+    | inl x => exact Or.inl ⟨x, (congrArg e hw).trans (e.apply_symm_apply z)⟩
+    | inr y => exact Or.inr ⟨y, (congrArg e hw).trans (e.apply_symm_apply z)⟩
+  refine ⟨e, e.continuous.comp (hψ₀.continuous.comp continuous_inl),
+    e.continuous.comp (hψ₀.continuous.comp continuous_inr),
+    e.injective.comp hiA, e.injective.comp hiB, hT,
+    fun x y => e.injective.eq_iff.trans (hcross x y),
+    fun x => (mem_bd_homeomorph_iff e _).trans (hαbd x),
+    fun y => (mem_bd_homeomorph_iff e _).trans (hβbd y),
+    hφ₀.comp e.symm.isQuotientMap, ?_, ?_⟩
+  · intro x
+    change φ₀ (e.symm (e (ψ₀ (Sum.inl x)))) = _
+    rw [e.symm_apply_apply]
+    exact hφA x
+  · intro y
+    change φ₀ (e.symm (e (ψ₀ (Sum.inr y)))) = _
+    rw [e.symm_apply_apply]
+    exact hφB y
+
 /-- Cutting along a proper line between two interior parameters
 of one paired side, then pasting that boundary subarc to its
 mate, produces a disc with an associated quotient surjection

@@ -216,31 +216,16 @@ theorem exists_bd_chart (hS : IsSurface S) {g : ℝ → S} {a b c d : ℝ} (hg :
   classical
   have ht2S : T2Space S := hS.2.1
   have hcS : CompactSpace S := hS.1
-  obtain ⟨T, tT, j, K', hT, hj, hK', hu, hi', -⟩ := exists_capAll S hS
+  have hab : a < b := by linarith
+  obtain ⟨T, tT, j, O, K, θ, hT, hj, hfr, hpar, hparm, hpars, hK, hθc, hθm, hθ⟩ :=
+    exists_capped_strip_chart hS hg hab hi
   have ht2 : T2Space T := hT.2.1
   have hcT : CompactSpace T := hT.1
-  have hab : a < b := by linarith
-  have hab' : 0 < b - a := by linarith
   let par : unitInterval → ℝ := fun u => a + u.1 * (b - a)
-  have hpar : ∀ u, par u ∈ Icc a b := fun u => by
-    have h0 := u.2.1
-    have h1 := u.2.2
-    exact ⟨by simp only [par]; nlinarith, by simp only [par]; nlinarith⟩
-  have hparc : Continuous par := by simp only [par]; fun_prop
-  have hparm : StrictMono par := fun s t h => by
-    have h' : s.1 < t.1 := h
-    simp only [par]
-    nlinarith
-  have hpars : ∀ r ∈ Icc a b, ∃ u, par u = r := fun r hr => by
-    refine ⟨⟨(r - a) / (b - a), div_nonneg (by linarith [hr.1]) hab'.le,
-      (div_le_one hab').mpr (by linarith [hr.2])⟩, ?_⟩
-    simp only [par]
-    field_simp
-    ring
   let A : unitInterval → T := fun u => j (g (par u))
-  have hA : IsArcMap A := ⟨hj.continuous.comp (hg.comp hparc), fun s t h => hparm.injective (hi
-    (hpar s) (hpar t) (hj.injective h))⟩
-  obtain ⟨O, K, θ, hK, hθc, hθm, hθ⟩ := exists_stripChart_of_arc hT hA
+  change StrictMono par at hparm
+  change ∀ r ∈ Icc a b, ∃ u, par u = r at hpars
+  change ∀ u, (θ u : ℂ) ∈ O ∧ K (θ u) = A u at hθ
   obtain ⟨uc, huc⟩ := hpars c ⟨hac.le, by linarith⟩
   obtain ⟨ud, hud⟩ := hpars d ⟨by linarith, hdb.le⟩
   have hucd : uc < ud := hparm.lt_iff_lt.mp (by rw [huc, hud]; exact hcd)
@@ -285,7 +270,6 @@ theorem exists_bd_chart (hS : IsSurface S) {g : ℝ → S} {a b c d : ℝ} (hg :
     simp only [δ] at this
     linarith
   have hRO : R ⊆ O := fun z hz => (hRΩ hz).1
-  have hfr : frontier (range j) = j '' bd S := cap_frontier hT hj hK' hu hi'
   have hbdaxis : ∀ w ∈ R, K w ∈ j '' bd S → w.im = 0 := fun w hw h => by
     obtain ⟨z, hz, e'⟩ := h
     have h2 : z ∈ g '' Ioo a b := by
