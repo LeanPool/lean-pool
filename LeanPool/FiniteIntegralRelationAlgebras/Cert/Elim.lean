@@ -14,7 +14,7 @@ public import LeanPool.FiniteIntegralRelationAlgebras.Cert.WPop
 # Eliminating independent variables
 
 Some variables never occur together in the associativity condition of a quadruple (for instance
-the variables `a ≤ a ; a` of the symmetric atoms `a`). Given the other variables, the conditions
+the variables `a ≤ a * a` of the symmetric atoms `a`). Given the other variables, the conditions
 on such variables are independent of each other, so the number of their admissible values is a
 product, and they need not be dimensions of the truth tables.
 

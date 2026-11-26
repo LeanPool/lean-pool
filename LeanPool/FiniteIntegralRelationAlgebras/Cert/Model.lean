@@ -75,7 +75,7 @@ theorem PeirceTbl.conv {X : ℕ → ℕ → ℕ → Bool} (h : PeirceTbl s n X) 
   rw [h.left b hb (cvN s c) (cvN_lt hc) (cvN s a) (cvN_lt ha),
     h.right (cvN s a) (cvN_lt ha) c hc b hb, h.left a ha b hb c hc]
 
-/-- `∃ q, X a b q ∧ X c d q`: the products `a ; b` and `c ; d` meet. -/
+/-- The products `a * b` and `c * d` meet when `∃ q, X a b q ∧ X c d q`. -/
 def dotB (k : ℕ) (X : ℕ → ℕ → ℕ → Bool) (a b c d : ℕ) : Bool :=
   (List.range k).any fun q => X a b q && X c d q
 
@@ -94,8 +94,8 @@ theorem dotB_symm {k : ℕ} {X : ℕ → ℕ → ℕ → Bool} (a b c d : ℕ) :
   rw [Bool.eq_iff_iff, dotB_iff, dotB_iff]
   constructor <;> rintro ⟨q, hq, h1, h2⟩ <;> exact ⟨q, hq, h2, h1⟩
 
-/-- The associativity condition for the quadruple `(r, u, t, p)`: `p ≤ r ; (u ; t)` iff
-`p ≤ (r ; u) ; t`. -/
+/-- The associativity condition for the quadruple `(r, u, t, p)` compares
+`p ≤ r * (u * t)` with `p ≤ (r * u) * t`. -/
 def quadB (s k : ℕ) (X : ℕ → ℕ → ℕ → Bool) (r u t p : ℕ) : Bool :=
   dotB k X (cvN s r) p u t == dotB k X r u p (cvN s t)
 
