@@ -22,8 +22,8 @@ vertex deletion is two-cell. All removed edges belong to the
 region containing that vertex: each edge together with the
 vertex is connected and misses the remaining drawing. Every old
 atom contained in this region is the deleted vertex, an incident
-edge, or an incident region. XI (9.1) bounds their old distance
-to the deleted vertex by two. These prove assertions (i) and
+edge, or an incident region. The metric's incidence bounds put their
+old distance to the deleted vertex at most two. This proves assertions (i) and
 (iv) in this base case.
 -/
 

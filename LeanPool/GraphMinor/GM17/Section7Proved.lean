@@ -999,7 +999,7 @@ theorem linkage_pairs_of_boundary_cut
 /-- **Graph Minors XVII, (7.3)** (pages 178–179):
 "Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a portrayal of a hypergraph $G$. Let
 $n_1, n_2$ be distinct nodes bordering a cuff $\Theta$, and let $F \subseteq \Sigma$ be a
-$\Gamma$-normal $1$-arc with ... ends $n_1, n_2$ and with $F \cap N(\Gamma) = \{n_1, n_2\}$. Let
+$\Gamma$-normal $I$-arc with ... ends $n_1, n_2$ and with $F \cap N(\Gamma) = \{n_1, n_2\}$. Let
 $\Delta \subseteq \Sigma$ be a disc with $F \subseteq bd(\Delta) \subseteq F \cup \Theta$,
 and for each $n \in N(\Gamma) \cap bd(\Delta)$ let
 $\beta(n_1+) \cap \beta(n_2+) \subseteq \beta(n+)$. Let $\pi$ have warp $\le p$ at $\Theta$, and
@@ -1503,7 +1503,7 @@ private theorem cells_partitioned_by_disc
 
 "Let $\pi = (\Sigma, \Gamma, \alpha, \beta, \gamma)$ be a $(2p+3)$-redundant $\mathcal{T}$-central
 portrayal of a hypergraph $G$, with warp $\le p$, and let $ord(\mathcal{T}) > 4p+5$. Let $F
-\subseteq \Sigma$ be a $\Gamma$-normal $1$-arc with $|F \cap N(\Gamma)| = 2$. Let $\Delta \subseteq
+\subseteq \Sigma$ be a $\Gamma$-normal $I$-arc with $|F \cap N(\Gamma)| = 2$. Let $\Delta \subseteq
 \Sigma$ be a disc with $F \subseteq bd(\Delta) \subseteq F \cup bd(\Sigma)$, such that
 $\alpha(\Delta)$ is small. Define $\Gamma' = (U(\Gamma) \cup \Delta, N(\Gamma) \cap \overline{\Sigma
 - \Delta})$ and let $c'$ be the cell $\Delta - (F \cap N(\Gamma))$. Define

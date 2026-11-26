@@ -187,7 +187,7 @@ theorem normal_line_between_cleared_boundaries
 
 /-- The region-incidence side condition of XV (3.5) in the proof of
 XVI (8.1), Claim (4), page 72. The constant eight uses the valid
-vertex-to-incident-region bound two from XI (9.1). -/
+vertex-to-incident-region bound two. -/
 theorem no_region_incident_two_cleared_boundaries
      (hS : IsClosedSurface S)
     {H : Drawing S} {Y : Set S} {Λ : S → Set S} {γ θ loss sep : ℕ}

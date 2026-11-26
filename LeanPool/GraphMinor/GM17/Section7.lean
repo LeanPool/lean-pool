@@ -2501,7 +2501,7 @@ $H$ in $\Delta$. -/
         (∃ c₂ ∈ Γ.C, c₂ ⊆ Δ ∧ (c₂ ∩ bd S).Nonempty ∧ n₂ ∈ tilde c₂)
 
 /-- Topological statement for Graph Minors XVII, (7.4) (pages 180–181):
-Given a painting $\Gamma$ on a surface $S$, a $\Gamma$-normal $1$-arc $F$ with ends
+Given a painting $\Gamma$ on a surface $S$, a $\Gamma$-normal $I$-arc $F$ with ends
 $n_1, n_2 \in \operatorname{bd}(S)$ and $F \cap \Gamma.N = \{n_1, n_2\}$, and a closed disc
 $\Delta \subseteq S$ with $F \subseteq \operatorname{bd}(\Delta) \subseteq F \cup
 \operatorname{bd}(S)$,

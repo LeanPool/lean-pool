@@ -33,7 +33,7 @@ Stated elsewhere, and reached through the imports:
 - `GM14.GM11Theorem63Statement` (XI (6.3), XIX page 379, proved as `GM11.theorem_6_3_proof`),
   `GM14.GM11Theorem810Statement` (XI (8.10), XIX page 345), `GM14.GM11Theorem812Statement` (XI
   (8.12), XIX pages 345 and 346).
-- `GM15.GM11Theorem91Statement` (XI (9.1), XIX page 344).
+- `GM15.GM11Theorem91Statement` packages metric facts, including XI (9.1) as used on XIX page 344.
 - `GM16.GM14Theorem92Statement` (XIV (9.2), which XIX generalizes on page 344).
 - XI (4.3) is proved: `GM11.theorem_4_3_i`, `GM11.theorem_4_3_ii`, `GM11.theorem_4_3_iii`.
 - XIV (5.2) is proved: `GM14.theorem_5_2_proof` (XIX pages 345 and 363).

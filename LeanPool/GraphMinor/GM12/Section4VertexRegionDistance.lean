@@ -16,7 +16,7 @@ import LeanPool.GraphMinor.GM11.CitedResults
 
 XII (4.4), page 251, uses the threshold from (3.2) plus two.
 Each selected vertex is at distance at most one from its incident
-region by XI (9.1). Two applications of the triangle inequality
+region. Two applications of the triangle inequality from XI (9.1)
 therefore leave the required distance between the regions.
 -/
 

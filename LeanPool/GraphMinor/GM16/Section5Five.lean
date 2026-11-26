@@ -33,7 +33,7 @@ open Set Function Graph GraphMinor.Surface GraphMinor.GM09 GraphMinor.GM11 Graph
 universe u v w
 
 /-- **Graph Minors XVI, (5.5)** (pages 57–58), by the paper's induction
-on disjoint paths and then (5.2). The metric laws are supplied by XI (9.1),
+on disjoint paths and then (5.2). The metric laws include the triangle inequality from XI (9.1),
 and (5.2) uses XII (4.4). No statement of XVI is assumed. -/
 theorem theorem_5_5_proof
      : GM16Theorem55Statement.{u, v, w} := by

@@ -18,8 +18,8 @@ import Mathlib.Data.List.Chain
 # Distances between successive path edges
 
 XII (4.3), claims (2)--(4), page 250, uses the bound four for
-two edges with a common end. XI (9.1) bounds each edge's distance
-from that end by two. The triangle inequality gives four. Applying
+two edges with a common end. Each edge is at distance at most two from
+that end. The triangle inequality from XI (9.1) gives four. Applying
 this at every vertex of a walk gives a chain of edge distances.
 -/
 

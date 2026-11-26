@@ -68,8 +68,8 @@ private theorem length_le_count {H D : Drawing S} (hrad : (PaintingOrDrawing.dra
 variable [ConnectedSpace S]
 
 /-- A vertex at an edge has distance at most `2` from the edge. This is a statement about the metric
-of
-a respectful tangle, and is the part of (9.1) as Graph Minors XV uses it. For `θ ≤ 2` it holds by
+of a respectful tangle and is one of the metric facts used in Graph Minors XV.
+For `θ ≤ 2` it holds by
 `d ≤ θ`. Otherwise the edge `e` with its ends is the small side of a separation of order at most
 `2`,
 and (7.2) of Graph Minors XIV gives a circuit `D` of the radial drawing around `e`, with at most two

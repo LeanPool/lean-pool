@@ -30,8 +30,8 @@ namespace GraphMinor.GM16
 open Set Graph GraphMinor.Surface GraphMinor.GM09 GraphMinor.GM11 GraphMinor.GM14 GraphMinor.GM15
 universe u v w
 
-/-- Graph Minors XVI, (8.3), pages 65–68. The proof uses the metric laws of
-XI (9.1) and the proved truncation, vertex-deletion, and rearrangement lemmas.
+/-- Graph Minors XVI, (8.3), pages 65–68. The proof uses the metric laws, including the
+triangle inequality from XI (9.1), and the truncation, vertex-deletion, and rearrangement lemmas.
 The larger constant term `31` provides the buffer in Claim (12). -/
 theorem theorem_8_3_with_bound :
   ∀ {S : Type w} [TopologicalSpace S] [T2Space S],

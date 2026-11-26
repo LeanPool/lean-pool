@@ -14,11 +14,10 @@ public import LeanPool.GraphMinor.GM19.Section7e
 /-!
 # Graph Minors XIX, Section 12: the metric, (12.2) and (12.3)
 
-Section 12 uses that `d` is a metric. Theorem (9.1) of XI says this for a tangle in a drawing. Here
-the radial drawing belongs to a painting, so we prove the triangle inequality directly: two
-restraints
-through a point of the middle atom have a union in a restraint, by the proof of (8.10) of XI
-(`exists_restraint_union`).
+Section 12 uses the triangle inequality, supplied by XI (9.1) for a tangle in a drawing.
+Here the radial drawing belongs to a painting. Two restraints through a point of the
+middle atom have a union in a restraint, by the restraint-union step in the proof of XI (9.1)
+(`exists_restraint_union`). This gives the triangle inequality in this setting.
 
 The results (12.2) and (12.3) then pick a small set of far apart vertices of `Γ*` near all edges
 with a large label. The results used later are `TangleDatum.dist_triangle`,
