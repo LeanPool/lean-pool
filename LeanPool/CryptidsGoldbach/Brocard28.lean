@@ -304,52 +304,50 @@ theorem advCfg_solid (n a r p : ℕ) :
 
 /-! ## Multiply (States `2`–`11`) -/
 
+/-- Starting at the separator, `R0` through `L1` append a cell to the output block and return to
+the template. -/
+private theorem copy_append (left : ListBlank (Fin 2)) (m : ℕ) :
+    ∃ s, nSteps brocard28 s ⟨6, Tape.mk' left ((ones m B0).cons 0)⟩ =
+      some ⟨9, mkL left ((ones (m + 1) B0).cons 0)⟩ := by
+  have enter : step brocard28 ⟨6, Tape.mk' left ((ones m B0).cons 0)⟩ =
+      some ⟨7, Tape.mk' (left.cons 0) (ones m B0)⟩ := by
+    rw [mk'_cons, sR0_0]
+  have advance := sweepR sR1_1 m (left.cons 0) B0
+  have append : step brocard28 ⟨7, Tape.mk' (ones m (left.cons 0)) B0⟩ =
+      some ⟨8, mkL (ones m (left.cons 0)) (B0.cons 1)⟩ := by
+    rw [mkRight_blank, sR1_0]
+  have back := sweepL sL0_1 m (left.cons 0) (B0.cons 1)
+  have exit : step brocard28 ⟨8, mkL (left.cons 0) (ones m (B0.cons 1))⟩ =
+      some ⟨9, mkL left ((ones (m + 1) B0).cons 0)⟩ := by
+    rw [mkL_cons, sL0_0, ones_succ' m]
+  exact ⟨_, step_nSteps enter (nSteps_bind_eq advance (step_nSteps append
+    (nSteps_bind_eq back (step_one exit))))⟩
+
 /-- One copy step: the cursor moves one cell right and `M` gains a cell. -/
 theorem copy_step (a b u v m : ℕ) :
     ∃ s, nSteps brocard28 s (copyCfg a b u (v + 1) m) = some (copyCfg a b (u + 1) v (m + 1)) := by
-  set W := (ones b ((ones a B0).cons 0)).cons 0 with hW
-  set Y := ones u W with hY
+  let W := (ones b ((ones a B0).cons 0)).cons 0
+  let Y := ones u W
   have h₁ := sweepR sR0_1 (v + 1) (Y.cons 0) ((ones m B0).cons 0)
-  have h₂ : step brocard28 ⟨6, Tape.mk' (ones (v + 1) (Y.cons 0)) ((ones m B0).cons 0)⟩ =
-      some ⟨7, Tape.mk' ((ones (v + 1) (Y.cons 0)).cons 0) (ones m B0)⟩ := by
-    rw [mk'_cons, sR0_0]
-  have h₃ := sweepR sR1_1 m ((ones (v + 1) (Y.cons 0)).cons 0) B0
-  have h₄ : step brocard28 ⟨7, Tape.mk' (ones m ((ones (v + 1) (Y.cons 0)).cons 0)) B0⟩ =
-      some ⟨8, mkL (ones m ((ones (v + 1) (Y.cons 0)).cons 0)) (B0.cons 1)⟩ := by
-    rw [mkRight_blank, sR1_0]
-  have h₅ := sweepL sL0_1 m ((ones (v + 1) (Y.cons 0)).cons 0) (B0.cons 1)
-  have h₆ : step brocard28 ⟨8, mkL ((ones (v + 1) (Y.cons 0)).cons 0) (ones m (B0.cons 1))⟩ =
-      some ⟨9, mkL (ones (v + 1) (Y.cons 0)) ((ones (m + 1) B0).cons 0)⟩ := by
-    rw [mkL_cons, sL0_0, ones_succ' m]
+  obtain ⟨_, append⟩ := copy_append (ones (v + 1) (Y.cons 0)) m
   have h₇ := sweepL sL1_1 (v + 1) (Y.cons 0) ((ones (m + 1) B0).cons 0)
   have h₈ : nSteps brocard28 2 ⟨9, mkL (Y.cons 0) (ones (v + 1) ((ones (m + 1) B0).cons 0))⟩ =
       some (copyCfg a b (u + 1) v (m + 1)) := by
     change nSteps brocard28 2 ⟨9, mkL (Y.cons 0) ((ones v ((ones (m + 1) B0).cons 0)).cons 1)⟩ =
       some ⟨6, Tape.mk' ((Y.cons 1).cons 0) (ones v ((ones (m + 1) B0).cons 0))⟩
     simp only [mkL_cons, nSteps_succ, sL1_0, mk'_cons, nSteps_zero, Option.bind_some, sEC_1]
-  exact ⟨_, nSteps_bind_eq h₁ (step_nSteps h₂ (nSteps_bind_eq h₃ (step_nSteps h₄
-    (nSteps_bind_eq h₅ (step_nSteps h₆ (nSteps_bind_eq h₇ h₈))))))⟩
+  exact ⟨_, nSteps_bind_eq h₁ (nSteps_bind_eq append (nSteps_bind_eq h₇ h₈))⟩
 
 /-- The last copy step: the cursor leaves the template, `LN0`/`LN1` return to the hole of `N`
 and fill it, and `EN` reads the next cell of `N`. -/
 theorem copy_done (a b u m : ℕ) :
     ∃ s, nSteps brocard28 s (copyCfg a b u 0 m) = some (enCfg (a + 1) b (u + 1) (m + 1)) := by
   set W := (ones b ((ones a B0).cons 0)).cons 0 with hW
-  set Y := ones u W with hY
-  have h₂ : step brocard28 (copyCfg a b u 0 m) =
-      some ⟨7, Tape.mk' ((Y.cons 0).cons 0) (ones m B0)⟩ := by
-    change step brocard28 ⟨6, Tape.mk' (Y.cons 0) ((ones m B0).cons 0)⟩ = _
-    rw [mk'_cons, sR0_0]
-  have h₃ := sweepR sR1_1 m ((Y.cons 0).cons 0) B0
-  have h₄ : step brocard28 ⟨7, Tape.mk' (ones m ((Y.cons 0).cons 0)) B0⟩ =
-      some ⟨8, mkL (ones m ((Y.cons 0).cons 0)) (B0.cons 1)⟩ := by
-    rw [mkRight_blank, sR1_0]
-  have h₅ := sweepL sL0_1 m ((Y.cons 0).cons 0) (B0.cons 1)
-  have h₆ : nSteps brocard28 3 ⟨8, mkL ((Y.cons 0).cons 0) (ones m (B0.cons 1))⟩ =
+  let Y := ones u W
+  obtain ⟨_, append⟩ := copy_append (Y.cons 0) m
+  have h₆ : nSteps brocard28 2 ⟨9, mkL (Y.cons 0) ((ones (m + 1) B0).cons 0)⟩ =
       some ⟨2, mkL (Y.cons 1) ((ones (m + 1) B0).cons 0)⟩ := by
-    rw [ones_succ' m]
-    simp only [mkL_cons, nSteps_succ, sL0_0, nSteps_zero, Option.bind_some, sL1_0, mk'_cons,
-      sEC_0]
+    simp only [mkL_cons, nSteps_succ, nSteps_zero, Option.bind_some, sL1_0, mk'_cons, sEC_0]
   have h₇ := sweepL sLN0_1 (u + 1) W ((ones (m + 1) B0).cons 0)
   have h₈ : step brocard28 ⟨2, mkL W (ones (u + 1) ((ones (m + 1) B0).cons 0))⟩ =
       some ⟨3, mkL (ones b ((ones a B0).cons 0))
@@ -364,9 +362,8 @@ theorem copy_done (a b u m : ℕ) :
     rfl
   have hY1 : Y.cons 1 = ones (u + 1) W := rfl
   rw [hY1] at h₆
-  exact ⟨_, step_nSteps h₂ (nSteps_bind_eq h₃ (step_nSteps h₄ (nSteps_bind_eq h₅
-    (nSteps_bind_eq h₆ (nSteps_bind_eq h₇ (step_nSteps h₈ (nSteps_bind_eq h₉
-    (step_one h₁₀))))))))⟩
+  exact ⟨_, nSteps_bind_eq append (nSteps_bind_eq h₆ (nSteps_bind_eq h₇
+    (step_nSteps h₈ (nSteps_bind_eq h₉ (step_one h₁₀)))))⟩
 
 /-- A whole copy of the template. -/
 theorem copy_loop (a b u : ℕ) : ∀ v m, ∃ s, nSteps brocard28 s (copyCfg a b u v m) =
@@ -546,25 +543,34 @@ theorem test_start (n r : ℕ) :
       B0_cons_zero]
   exact ⟨_, step_nSteps h₁ (t_to_adv n 0 r 0 0)⟩
 
+/-- Move the hole of `S` one cell left, returning to `TL1` at the right end of `B`. -/
+private theorem shift_chunk_hole (left : ListBlank (Fin 2)) (p q : ℕ) :
+    ∃ s, nSteps brocard28 s
+      ⟨13, Tape.mk' left ((ones (p + 1) ((ones q B0).cons 0)).cons 0)⟩ =
+      some ⟨18, mkL left ((ones p ((ones (q + 1) B0).cons 0)).cons 0)⟩ := by
+  have enter : step brocard28
+      ⟨13, Tape.mk' left ((ones (p + 1) ((ones q B0).cons 0)).cons 0)⟩ =
+      some ⟨14, Tape.mk' (left.cons 0) (ones (p + 1) ((ones q B0).cons 0))⟩ := by
+    rw [mk'_cons, sTR0_0]
+  have advance := sweepR sTR1_1 (p + 1) (left.cons 0) ((ones q B0).cons 0)
+  have shift : nSteps brocard28 2
+      ⟨14, Tape.mk' (ones (p + 1) (left.cons 0)) ((ones q B0).cons 0)⟩ =
+      some ⟨17, mkL (ones p (left.cons 0)) ((ones (q + 1) B0).cons 0)⟩ := by
+    change nSteps brocard28 2 ⟨14, Tape.mk' ((ones p (left.cons 0)).cons 1) ((ones q B0).cons 0)⟩ =
+      some ⟨17, mkL (ones p (left.cons 0)) (((ones q B0).cons 1).cons 0)⟩
+    simp only [mk'_cons, nSteps_succ, sTR1_0, mkL_cons, nSteps_zero, Option.bind_some, sSB_1]
+  have back := sweepL sTL0_1 p (left.cons 0) ((ones (q + 1) B0).cons 0)
+  have exit : step brocard28 ⟨17, mkL (left.cons 0) (ones p ((ones (q + 1) B0).cons 0))⟩ =
+      some ⟨18, mkL left ((ones p ((ones (q + 1) B0).cons 0)).cons 0)⟩ := by
+    rw [mkL_cons, sTL0_0]
+  exact ⟨_, step_nSteps enter (nSteps_bind_eq advance (nSteps_bind_eq shift
+    (nSteps_bind_eq back (step_one exit))))⟩
+
 /-- One unit: the hole of `S` moves one cell left and the hole of `B` one cell right. -/
 theorem adv_step (n a r p q : ℕ) :
     ∃ s, nSteps brocard28 s (advCfg n a (r + 1) (p + 1) q) = some (tCfg n (a + 1) r p (q + 1)) := by
-  set H := (ones a (NL n)).cons 0 with hH
-  set Lr := ones (r + 1) H with hLr
-  have h₁ : step brocard28 (advCfg n a (r + 1) (p + 1) q) =
-      some ⟨14, Tape.mk' (Lr.cons 0) (ones (p + 1) ((ones q B0).cons 0))⟩ := by
-    change step brocard28 ⟨13, Tape.mk' Lr ((ones (p + 1) ((ones q B0).cons 0)).cons 0)⟩ = _
-    rw [mk'_cons, sTR0_0]
-  have h₂ := sweepR sTR1_1 (p + 1) (Lr.cons 0) ((ones q B0).cons 0)
-  have h₃ : nSteps brocard28 2 ⟨14, Tape.mk' (ones (p + 1) (Lr.cons 0)) ((ones q B0).cons 0)⟩ =
-      some ⟨17, mkL (ones p (Lr.cons 0)) ((ones (q + 1) B0).cons 0)⟩ := by
-    change nSteps brocard28 2 ⟨14, Tape.mk' ((ones p (Lr.cons 0)).cons 1) ((ones q B0).cons 0)⟩ =
-      some ⟨17, mkL (ones p (Lr.cons 0)) (((ones q B0).cons 1).cons 0)⟩
-    simp only [mk'_cons, nSteps_succ, sTR1_0, mkL_cons, nSteps_zero, Option.bind_some, sSB_1]
-  have h₄ := sweepL sTL0_1 p (Lr.cons 0) ((ones (q + 1) B0).cons 0)
-  have h₅ : step brocard28 ⟨17, mkL (Lr.cons 0) (ones p ((ones (q + 1) B0).cons 0))⟩ =
-      some ⟨18, mkL Lr ((ones p ((ones (q + 1) B0).cons 0)).cons 0)⟩ := by
-    rw [mkL_cons, sTL0_0]
+  let H := (ones a (NL n)).cons 0
+  obtain ⟨_, shift⟩ := shift_chunk_hole (ones (r + 1) H) p q
   have h₆ := sweepL sTL1_1 (r + 1) H ((ones p ((ones (q + 1) B0).cons 0)).cons 0)
   have h₇ : nSteps brocard28 2
       ⟨18, mkL H (ones (r + 1) ((ones p ((ones (q + 1) B0).cons 0)).cons 0))⟩ =
@@ -574,8 +580,7 @@ theorem adv_step (n a r p q : ℕ) :
       some ⟨13, Tape.mk' (((ones a (NL n)).cons 1).cons 0)
         (ones r ((ones p ((ones (q + 1) B0).cons 0)).cons 0))⟩
     simp only [mkL_cons, nSteps_succ, sTL1_0, mk'_cons, nSteps_zero, Option.bind_some, sTE_1]
-  exact ⟨_, step_nSteps h₁ (nSteps_bind_eq h₂ (nSteps_bind_eq h₃ (nSteps_bind_eq h₄
-    (step_nSteps h₅ (nSteps_bind_eq h₆ h₇)))))⟩
+  exact ⟨_, nSteps_bind_eq shift (nSteps_bind_eq h₆ h₇)⟩
 
 /-- `p` units in a row, while `B` has enough cells. -/
 theorem adv_many (n : ℕ) : ∀ p a r p' q, ∃ s, nSteps brocard28 s (advCfg n a (r + p) (p + p') q) =
@@ -642,23 +647,12 @@ erasing the last cell of `B`, and the next round starts. -/
 theorem adv_fail (n a p q : ℕ) :
     ∃ s, nSteps brocard28 s (advCfg n (a + 1) 0 (p + 1) q) = some (roundCfg n a) := by
   set H := (ones (a + 1) (NL n)).cons 0 with hH
-  have h₁ : step brocard28 (advCfg n (a + 1) 0 (p + 1) q) =
-      some ⟨14, Tape.mk' (H.cons 0) (ones (p + 1) ((ones q B0).cons 0))⟩ := by
-    change step brocard28 ⟨13, Tape.mk' H ((ones (p + 1) ((ones q B0).cons 0)).cons 0)⟩ = _
-    rw [mk'_cons, sTR0_0]
-  have h₂ := sweepR sTR1_1 (p + 1) (H.cons 0) ((ones q B0).cons 0)
-  have h₃ : nSteps brocard28 2 ⟨14, Tape.mk' (ones (p + 1) (H.cons 0)) ((ones q B0).cons 0)⟩ =
-      some ⟨17, mkL (ones p (H.cons 0)) ((ones (q + 1) B0).cons 0)⟩ := by
-    change nSteps brocard28 2 ⟨14, Tape.mk' ((ones p (H.cons 0)).cons 1) ((ones q B0).cons 0)⟩ =
-      some ⟨17, mkL (ones p (H.cons 0)) (((ones q B0).cons 1).cons 0)⟩
-    simp only [mk'_cons, nSteps_succ, sTR1_0, mkL_cons, nSteps_zero, Option.bind_some, sSB_1]
-  have h₄ := sweepL sTL0_1 p (H.cons 0) ((ones (q + 1) B0).cons 0)
-  have h₅ : nSteps brocard28 3 ⟨17, mkL (H.cons 0) (ones p ((ones (q + 1) B0).cons 0))⟩ =
+  obtain ⟨_, shift⟩ := shift_chunk_hole H p q
+  have h₅ : nSteps brocard28 2 ⟨18, mkL H ((ones p ((ones (q + 1) B0).cons 0)).cons 0)⟩ =
       some ⟨20, Tape.mk' (((ones (a + 1) (NL n)).cons 1).cons 0)
         (ones p ((ones (q + 1) B0).cons 0))⟩ := by
     rw [hH]
-    simp only [mkL_cons, nSteps_succ, sTL0_0, nSteps_zero, Option.bind_some, sTL1_0, mk'_cons,
-      sTE_0]
+    simp only [mkL_cons, nSteps_succ, nSteps_zero, Option.bind_some, sTL1_0, mk'_cons, sTE_0]
   have h₆ := sweepR_erase sER_1 p (((ones (a + 1) (NL n)).cons 1).cons 0) ((ones (q + 1) B0).cons 0)
   let W := ((ones (a + 1) (NL n)).cons 1).cons 0
   have h₇ : step brocard28 ⟨20, Tape.mk' (zeros p W) ((ones (q + 1) B0).cons 0)⟩ =
@@ -667,8 +661,8 @@ theorem adv_fail (n a p q : ℕ) :
   obtain ⟨_, finish⟩ := cleanup_to_round n a (p + 1) (q + 1)
   rw [show zeros (p + 1) W = (zeros p W).cons 0 by
     simp only [zeros, List.replicate_succ, ListBlank.append]] at finish
-  exact ⟨_, step_nSteps h₁ (nSteps_bind_eq h₂ (nSteps_bind_eq h₃ (nSteps_bind_eq h₄
-    (nSteps_bind_eq h₅ (nSteps_bind_eq h₆ (step_nSteps h₇ finish))))))⟩
+  exact ⟨_, nSteps_bind_eq shift (nSteps_bind_eq h₅ (nSteps_bind_eq h₆
+    (step_nSteps h₇ finish)))⟩
 
 /-! ## Triangular Numbers and the Chunk Loop -/
 
