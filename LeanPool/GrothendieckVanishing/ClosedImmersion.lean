@@ -11,6 +11,7 @@ public import Mathlib.Topology.Sheaves.Functors
 public import Mathlib.Topology.Sheaves.LocallySurjective
 public import Mathlib.Algebra.Category.Grp.Abelian
 public import Mathlib.Algebra.Homology.ShortComplex.ShortExact
+public import LeanPool.GrothendieckVanishing.AbelianSheaves
 import Mathlib.Algebra.Category.Grp.EpiMono
 import Mathlib.Algebra.Category.Grp.Zero
 import Mathlib.CategoryTheory.Limits.Filtered
@@ -51,10 +52,6 @@ open CategoryTheory TopologicalSpace Opposite Limits
 universe u
 
 noncomputable section
-
-instance sheafAbelianAddCommGrp (X : TopCat.{u}) :
-    Abelian (TopCat.Sheaf AddCommGrpCat.{u} X) :=
-  inferInstanceAs (Abelian (CategoryTheory.Sheaf _ _))
 
 namespace TopCat
 
