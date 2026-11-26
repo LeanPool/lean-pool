@@ -8,7 +8,7 @@ Authors: Daniel Veljjanoski
 
 module
 
-public import LeanPool.CryptidsGoldbach.Goldbach21
+public import LeanPool.CryptidsGoldbach.MachineSupport
 public import Mathlib.Data.Nat.Factorial.Basic
 import Mathlib.Tactic.Ring
 
@@ -898,13 +898,10 @@ theorem seed₄ : nSteps brocard28 10
     ⟨1, Tape.mk' (ListBlank.cons 0
       ((((((((B0.cons 1).cons 1).cons 1).cons 1).cons 0).cons 1).cons 1).cons 1)) B0⟩ =
     some ⟨3, mkL B0 (ones 4 ((ones 3 B0).cons 0))⟩ := by
-  -- The computed right half includes two trailing blanks.
-  have run : nSteps brocard28 10
-      ⟨1, Tape.mk' (ListBlank.mk [0, 1, 1, 1, 0, 1, 1, 1, 1]) B0⟩ =
-      some ⟨3, ⟨0, B0, ListBlank.mk ([1, 1, 1, 1, 0, 1, 1, 1] ++ List.replicate 2 0)⟩⟩ := rfl
-  change nSteps brocard28 10 ⟨1, Tape.mk' (ListBlank.mk [0, 1, 1, 1, 0, 1, 1, 1, 1]) B0⟩ = _
-  rw [run, Goldbach21.mk_append_replicate_zero]
-  rfl
+  change _ = some (⟨3, mkL B0 (ListBlank.cons 1
+    (((((((B0.cons 1).cons 1).cons 1).cons 0).cons 1).cons 1).cons 1))⟩ : Cfg 28 2)
+  simp only [mkRight_blank, nSteps_succ, sTLx_0, B0_cons_zero, mkL_cons, nSteps_zero,
+    Option.bind_some, sEC_0, sLN0_1, sLN0_0, sLN1_1, mkL_B0]
 
 /-- The start writes `1111 0 111` in `46` steps and ends in `LN1` on the blank left of `N`, the
 configuration every round passes through (`ln_exit`). -/

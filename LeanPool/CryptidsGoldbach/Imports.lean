@@ -10,6 +10,7 @@ public import LeanPool.CryptidsGoldbach
 public import LeanPool.CryptidsGoldbach.Brocard28
 public import LeanPool.CryptidsGoldbach.BrocardSemantics
 public import LeanPool.CryptidsGoldbach.Goldbach21
+public import LeanPool.CryptidsGoldbach.MachineSupport
 public import LeanPool.CryptidsGoldbach.Machines
 public import LeanPool.CryptidsGoldbach.Propositions
 public import LeanPool.CryptidsGoldbach.Semantics
