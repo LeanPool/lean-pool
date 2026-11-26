@@ -86,7 +86,7 @@ theorem countParts_eq_zero_of_widthLE (D : TreeDecomp G V₀ ι) {w h : ℕ}
   unfold countParts
   rw [Finset.card_eq_zero, Finset.filter_eq_empty_iff]
   intro t _
-  have hle := hw t
+  have hle := (Set.encard_le_coe_iff_finite_ncard_le.mp (hw t)).2
   omega
 
 /-- If $\mathcal{D}$ has fatness at most that of $\mathcal{D}_0$ and $\mathcal{D}_0$ has width
@@ -94,6 +94,7 @@ $\le w$, then $\mathcal{D}$ also has width $\le w$. -/
 theorem widthLE_of_fatness_le (D : TreeDecomp G V₀ ι) {ι₀ : Type*} [Fintype ι₀]
     (D₀ : TreeDecomp G V₀ ι₀) (hV₀ : V₀.Finite) {w : ℕ}
     (hw : D₀.WidthLE w) (hle : D.fatness ≤ D₀.fatness) : D.WidthLE w := by
+  apply (D.widthLE_iff_ncard_le hV₀).mpr
   intro t
   by_contra! hgt
   set h := (D.bag t).ncard

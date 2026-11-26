@@ -8,7 +8,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import LeanPool.GraphMinor.TreePath
 public import Mathlib.Combinatorics.SimpleGraph.DegreeSum
 public import Mathlib.Order.Lattice.Nat
 public import LeanPool.GraphMinor.Hypergraph.Basic
@@ -379,8 +379,8 @@ def completeGraph (n : ℕ) : Hypergraph (Fin n) (Sym2 (Fin n)) where
 
 /-- `t'` lies on the path of `T` between `t` and `t''`: every path in `T` from `t` to `t''`
 contains `t'`. In a tree there is a unique such path (`SimpleGraph.IsTree.existsUnique_path`). -/
-def OnTreePath (T : SimpleGraph ι) (t t'' t' : ι) : Prop :=
-  ∀ p : T.Walk t t'', p.IsPath → t' ∈ p.support
+abbrev OnTreePath (T : SimpleGraph ι) (t t'' t' : ι) : Prop :=
+  GraphMinor.TreePath.OnTreePath T t t'' t'
 
 /-- `(T, τ)` is a tree-decomposition of a hypergraph `G` (Graph Minors X, Section 5, page 168):
 "A tree-decomposition of a hypergraph $G$ is a pair $(T, \tau)$, where $T$ is a tree and for

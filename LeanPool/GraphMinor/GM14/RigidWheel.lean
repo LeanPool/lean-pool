@@ -55,31 +55,13 @@ theorem line_end {L : Set S} {u v : S} (h : IsLineWithEnds L u v) : v ∈ L := b
   exact h1 ▸ (f 1).2
 
 omit [T2Space S] in
-theorem line_preconn {L : Set S} {u v : S} (h : IsLineWithEnds L u v) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := h
-  have hr : range (fun c : unitInterval => (f c).1) = L := by
-    ext z
-    constructor
-    · rintro ⟨c, rfl⟩
-      exact (f c).2
-    · intro hz
-      exact ⟨f.symm ⟨z, hz⟩, by simp⟩
-  rw [← hr]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+theorem line_preconn {L : Set S} {u v : S} (h : IsLineWithEnds L u v) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 omit [T2Space S] in
 /-- An O-arc is preconnected. -/
-theorem isPreconnected_of_oArc {F : Set S} (hF : IsOArc F) : IsPreconnected F := by
-  obtain ⟨f⟩ := hF
-  have hr : range (fun c : Circle => (f c).1) = F := by
-    ext z
-    constructor
-    · rintro ⟨c, rfl⟩
-      exact (f c).2
-    · intro hz
-      exact ⟨f.symm ⟨z, hz⟩, by simp⟩
-  rw [← hr]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+theorem isPreconnected_of_oArc {F : Set S} (hF : IsOArc F) : IsPreconnected F :=
+  GraphMinor.Surface.IsOArc.isPreconnected hF
 
 /-- Lines from `a` that meet only in `a` form a drawing. -/
 theorem exists_star {a : S} {L : S → Set S} {R : Set S} (hR : R.Finite) :

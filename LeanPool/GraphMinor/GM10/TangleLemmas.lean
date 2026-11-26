@@ -486,6 +486,21 @@ theorem theorem_2_3_proof {G : Hypergraph α β} {θ : ℕ}
   have := hle_max (K ∪ A₁') ((G.deleteVertices {v}) ∩ B₁') hKA_mem hKA_edge
   omega
 
+/-- Any hypergraph admitting a tangle of order `θ ≥ 2` has at least one edge. -/
+theorem IsTangle.edgeSet_nonempty_of_two_le {α β : Type*} {G : Hypergraph α β} {θ : ℕ}
+    {T : Set (Hypergraph α β × Hypergraph α β)} (hT : IsTangle G θ T) (hθ : 2 ≤ θ) :
+    G.edgeSet.Nonempty := by
+  have hsep : G.IsSeparation ⊥ G := by
+    rw [isSeparation_iff_of_le bot_le le_rfl]
+    simp
+  have hord : separationOrder (⊥ : Hypergraph α β) G < θ := by
+    simpa [separationOrder] using (show 0 < θ by omega)
+  have hbot : (⊥, G) ∈ T :=
+    (hT.axiom1 hsep hord).resolve_right fun hG => hT.axiom3 hG rfl
+  have hne := GM10.theorem_2_3_proof hT hθ hbot hbot hbot
+  rw [GM10.union_self, GM10.union_self, bot_edgeSet] at hne
+  exact Set.nonempty_iff_ne_empty.mpr hne.symm
+
 /-- **Graph Minors X, (2.4)** (page 156):
 "Let $\theta \ge 1$, and let $e$ be an edge of $G$ with size $\ge \theta$. Let $\mathscr{T}$
 be the set of all separations $(A, B)$ of $G$ of order $< \theta$ with $e \in E(B)$. Then

@@ -452,7 +452,7 @@ theorem exists_clique_discs (T : IsTidyPresentation P) {F : Set (Set α)}
   obtain ⟨s, h₁, hp₁⟩ := exists_vertex_discs T hAfin hAV (fun v hv => C.off₀ v hv) hZc hAZ
   have hcases : ∀ K ∈ F, K.ncard = 3 ∨ K.ncard = 2 ∨ ∃ v, K = {v} := by
     intro K hK
-    have h3 := (C.clique K hK).2.1
+    have h3 := (C.clique K hK).finite_ncard_le.2
     have h0 : K.ncard ≠ 0 := (ncard_ne_zero_of_mem (C.nonempty K hK).some_mem (hfin K hK))
     have : K.ncard = 3 ∨ K.ncard = 2 ∨ K.ncard = 1 := by omega
     rcases this with h | h | h

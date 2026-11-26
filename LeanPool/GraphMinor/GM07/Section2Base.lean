@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM07.Open
+import LeanPool.GraphMinor.GM07.MinimalNet
 import LeanPool.GraphMinor.GM07.Section11
 import LeanPool.GraphMinor.GM11.EdgeSides
 import LeanPool.GraphMinor.GM11.Section4b
@@ -355,47 +356,8 @@ theorem finite_preimage_seamV (N : Net S) : (N.φ ⁻¹' N.seamV).Finite := by
   exact ((finite_singleton _).insert _).insert _ |>.insert _
 
 /-- Every fiber `N.φ ⁻¹' {z}` of a net surjection `N.φ` is finite. -/
-theorem finite_preimage_singleton (N : Net S) (z : S) : (N.φ ⁻¹' {z}).Finite := by
-  by_cases hzV : z ∈ N.seamV
-  · refine N.finite_preimage_seamV.subset fun x hx => ?_
-    rw [mem_preimage, mem_singleton_iff] at hx
-    simpa [hx] using hzV
-  · by_cases hIoo : ∃ (i : Fin N.r) (t : unitInterval),
-      t ∈ Ioo (0 : unitInterval) 1 ∧ N.φ (N.f i t) = z
-    · rcases hIoo with ⟨i, t, ht, rfl⟩
-      refine ((finite_singleton (N.g i t)).insert (N.f i t)).subset fun y hy => ?_
-      exact N.eq_f_or_g_of_φ_eq_of_mem_Ioo i ht (mem_singleton_iff.mp hy).symm
-    · refine Set.Subsingleton.finite fun x hx y hy => ?_
-      have hxy : N.φ x = N.φ y := by
-        rw [mem_preimage, mem_singleton_iff] at hx hy
-        exact hx.trans hy.symm
-      let R : N.D → N.D → Prop := fun a b =>
-        ∃ (j : Fin N.r) (s : unitInterval), a = N.f j s ∧ b = N.g j s
-      have hrel : Relation.EqvGen R x y := (N.bd_eq_iff x y).mp hxy
-      have hno_step : ∀ a b : N.D, R a b → N.φ a ≠ z := by
-        rintro a b ⟨j, s, rfl, rfl⟩ hφ
-        rcases unitInterval_eq_zero_or_one_or_mem_Ioo s with rfl | rfl | hs
-        · exact hzV ⟨j, Or.inl hφ⟩
-        · exact hzV ⟨j, Or.inr hφ⟩
-        · exact hIoo ⟨j, s, hs, hφ⟩
-      have heq_of_rel : ∀ a b : N.D, Relation.EqvGen R a b → (N.φ a = z → a = b) := by
-        intro a b hab
-        induction hab with
-        | rel u v huv =>
-          intro hu
-          exact False.elim (hno_step u v huv hu)
-        | refl u =>
-          intro _
-          rfl
-        | symm u v huv ih =>
-          intro hv
-          have huv_φ : N.φ u = N.φ v := (N.bd_eq_iff u v).mpr huv
-          exact (ih (huv_φ.trans hv)).symm
-        | trans u w v huw _ ih1 ih2 =>
-          intro hu
-          have huw_φ : N.φ u = N.φ w := (N.bd_eq_iff u w).mpr huw
-          exact (ih1 hu).trans (ih2 (huw_φ.symm.trans hu))
-      exact heq_of_rel x y hrel (mem_singleton_iff.mp hx)
+theorem finite_preimage_singleton (N : Net S) (z : S) : (N.φ ⁻¹' {z}).Finite :=
+  N.finite_fiber z
 
 /-- The preimage under `N.φ` of any finite subset of `S` is finite. -/
 theorem finite_preimage (N : Net S) {A : Set S} (hA : A.Finite) : (N.φ ⁻¹' A).Finite := by

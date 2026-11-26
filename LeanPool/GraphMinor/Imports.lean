@@ -2231,3 +2231,4 @@ public import LeanPool.GraphMinor.Thomas.LeanDecomp
 public import LeanPool.GraphMinor.Thomas.RootedTree
 public import LeanPool.GraphMinor.Thomas.Separator
 public import LeanPool.GraphMinor.Thomas.Translate
+public import LeanPool.GraphMinor.TreePath

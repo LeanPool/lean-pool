@@ -336,7 +336,12 @@ theorem no_crooked_transaction_consolidationCoreSociety {S : Society α β}
 /-- A subset `K ⊆ V(G)` of a simple graph `G : Graph α (Sym2 α)` is a `≤ 3`-clique if `|K| ≤ 3` and
 every two distinct vertices of `K` are adjacent in `G` (Graph Minors IX, (11.11), page 76). -/
 def IsLeThreeClique (G : Graph α (Sym2 α)) (K : Set α) : Prop :=
-  K ⊆ V(G) ∧ K.ncard ≤ 3 ∧ ∀ u ∈ K, ∀ v ∈ K, u ≠ v → G.IsLink s(u, v) u v
+  K ⊆ V(G) ∧ K.encard ≤ 3 ∧ ∀ u ∈ K, ∀ v ∈ K, u ≠ v → G.IsLink s(u, v) u v
+
+/-- A clique of size at most three is finite and has natural cardinality at most three. -/
+theorem IsLeThreeClique.finite_ncard_le {G : Graph α (Sym2 α)} {K : Set α}
+    (h : IsLeThreeClique G K) : K.Finite ∧ K.ncard ≤ 3 :=
+  Set.encard_le_coe_iff_finite_ncard_le.mp h.2.1
 
 /-- A 3-element clique `{x, y, z}` in `C : Graph α (Sym2 α)` forms a triangle `T ≤ C` with
 `IsTriangle C T` and `V(T) = {x, y, z}`. -/
@@ -424,11 +429,12 @@ theorem eq_empty_or_singleton_or_pair_or_triple_of_ncard_le_three {X : Set α}
 theorem isLeThreeClique_left_or_right {C C₁ C₂ : Graph α (Sym2 α)}
     (hC₁ : C₁ ≤ C) (hC₂ : C₂ ≤ C) (hC_union : subgraphUnion C C₁ C₂ = C)
     (htri : ∀ T : Graph α (Sym2 α), IsTriangle C T → T ≤ C₁ ∨ T ≤ C₂)
-    {K : Set α} (hfin : K.Finite) (hK : IsLeThreeClique C K) :
+    {K : Set α} (hK : IsLeThreeClique C K) :
     IsLeThreeClique C₁ K ∨ IsLeThreeClique C₂ K := by
   have hV_union : V(C₁) ∪ V(C₂) = V(C) := by
     have h := congrArg Graph.vertexSet hC_union; rwa [vertexSet_subgraphUnion] at h
-  rcases eq_empty_or_singleton_or_pair_or_triple_of_ncard_le_three hfin hK.2.1 with
+  obtain ⟨hfin, hcard⟩ := hK.finite_ncard_le
+  rcases eq_empty_or_singleton_or_pair_or_triple_of_ncard_le_three hfin hcard with
     rfl | ⟨x, rfl⟩ | ⟨x, y, hxy, rfl⟩ | ⟨x, y, z, hxy, hyz, hzx, rfl⟩
   · exact Or.inl ⟨empty_subset _, by simp, fun _ hu => hu.elim⟩
   · have hxC : x ∈ V(C₁) ∪ V(C₂) := hV_union.symm ▸ hK.1 (mem_singleton x)

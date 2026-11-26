@@ -597,7 +597,8 @@ tangle in `H` of order `θ` with metric `d`, let `z ∈ A(H)` and let `λ ≥ 0`
 `z ∈ E(H) → 2 ≤ λ`. Let `Γ'` be the subdrawing of `H` formed by the edges `e` of `H` with
 `d(z, e) > λ` and their ends. Suppose that `E(Γ') ≠ ∅`. Then `Γ'` is a 2-cell drawing in `S`.
 
-The paper omits the hypothesis `z ∈ E(H) → 2 ≤ λ`, which (7.8) and (7.10) include. -/
+The paper omits `z ∈ E(H) → 2 ≤ λ`. A central edge belongs to the deleted neighborhood because
+`d(z, z) = 0`. This is the deleted-edge bound in the corrected (7.8) and the printed (7.10). -/
 theorem theorem_7_11_proof (hS : IsClosedSurface S) [ConnectedSpace S]
     {H : Drawing S} {θ lam : ℕ}
     {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}

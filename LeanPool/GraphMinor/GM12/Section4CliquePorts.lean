@@ -26,16 +26,6 @@ public section
 
 namespace GraphMinor.GM12
 
-private theorem sorted_pair_ends_injective {p : ℕ} :
-    Function.Injective (fun e : Σ j : Fin p, Fin j.val => (cliquePairLower e, e.1)) := by
-  rintro ⟨j, i⟩ ⟨k, l⟩ heq
-  have hupper : j = k := congrArg Prod.snd heq
-  subst k
-  have hlower := congrArg (fun q : Fin p × Fin p => q.1.val) heq
-  have hil : i = l := Fin.ext hlower
-  subst l
-  rfl
-
 /-- The clique edge ports are in bijection with ordered pairs of
 distinct vertices, and changing the chosen end reverses the pair.
 This is the port labelling for XII (4.5), page 252. -/
@@ -49,7 +39,7 @@ theorem exists_clique_port_bijection (p : ℕ) :
     rintro ⟨e, b⟩ ⟨e', b'⟩ heq
     have hpair := congrArg Subtype.val heq
     cases b <;> cases b'
-    · exact Prod.ext (sorted_pair_ends_injective hpair) rfl
+    · exact Prod.ext (cliquePair_ends_injective hpair) rfl
     · have hlow := cliquePairLower_lt e
       have hhigh := cliquePairLower_lt e'
       have h1 := congrArg Prod.fst hpair
@@ -68,7 +58,7 @@ theorem exists_clique_port_bijection (p : ℕ) :
       exact False.elim (lt_asymm hlow hhigh)
     · have hends : (cliquePairLower e, e.1) = (cliquePairLower e', e'.1) :=
         Prod.ext (congrArg Prod.snd hpair) (congrArg Prod.fst hpair)
-      exact Prod.ext (sorted_pair_ends_injective hends) rfl
+      exact Prod.ext (cliquePair_ends_injective hends) rfl
   have hs : Function.Surjective f := by
     rintro ⟨⟨v, w⟩, hvw⟩
     rcases lt_or_gt_of_ne hvw with hlt | hgt

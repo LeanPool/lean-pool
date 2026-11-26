@@ -79,13 +79,8 @@ theorem IsOpenDisc.nonempty {D : Set S} (hD : IsOpenDisc D) : D.Nonempty := by
 
 omit [T1Space S] in
 /-- An `O`-arc is preconnected. -/
-theorem IsOArc.isPreconnected {F : Set S} (hF : IsOArc F) : IsPreconnected F := by
-  obtain ⟨φ⟩ := hF
-  have h : F = range (fun z : Circle => (φ z).1) := by
-    ext x
-    exact ⟨fun hx => ⟨φ.symm ⟨x, hx⟩, by simp⟩, fun ⟨z, hz⟩ => hz ▸ (φ z).2⟩
-  rw [h]
-  exact isPreconnected_range (continuous_subtype_val.comp φ.continuous)
+theorem IsOArc.isPreconnected {F : Set S} (hF : IsOArc F) : IsPreconnected F :=
+  GraphMinor.Surface.IsOArc.isPreconnected hF
 
 omit [T1Space S] in
 /-- An `O`-arc minus one of its points is path-connected. -/

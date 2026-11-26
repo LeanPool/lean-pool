@@ -31,18 +31,7 @@ Apply X (2.3) to three copies of the empty small side. -/
 theorem edges_nonempty_of_tangle_order_two
     {α β : Type*} {G : Hypergraph α β} {θ : ℕ}
     {T : Set (Hypergraph α β × Hypergraph α β)}
-    (hT : IsTangle G θ T) (hθ : 2 ≤ θ) : G.edgeSet.Nonempty := by
-  have hsep : G.IsSeparation ⊥ G := by
-    rw [isSeparation_iff_of_le bot_le le_rfl]
-    simp
-  have hord : separationOrder (⊥ : Hypergraph α β) G < θ := by
-    simpa [separationOrder] using (show 0 < θ by omega)
-  have hm : (⊥, G) ∈ T :=
-    (hT.axiom1 hsep hord).resolve_right (fun h => hT.axiom3 h rfl)
-  have hne := GM10.theorem_2_3_proof hT hθ hm hm hm
-  by_contra hn
-  have hempty : G.edgeSet = ∅ := not_nonempty_iff_eq_empty.mp hn
-  apply hne
-  simp only [GM10.union_self, bot_edgeSet, hempty]
+    (hT : IsTangle G θ T) (hθ : 2 ≤ θ) : G.edgeSet.Nonempty :=
+  GM10.IsTangle.edgeSet_nonempty_of_two_le hT hθ
 
 end GraphMinor.GM12

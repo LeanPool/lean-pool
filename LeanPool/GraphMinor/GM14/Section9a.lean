@@ -201,21 +201,8 @@ theorem theorem_9_1_proof
 /-- If `T` is a tangle of order `θ ≥ 2` in a hypergraph `G`, then `E(G)` is nonempty. -/
 theorem edgeSet_nonempty_of_isTangle {α β : Type*} {G : Hypergraph α β} {θ : ℕ}
     {T : Set (Hypergraph α β × Hypergraph α β)} (hT : IsTangle G θ T) (hθ : 2 ≤ θ) :
-    G.edgeSet.Nonempty := by
-  have hsep : G.IsSeparation ⊥ G := by
-    rw [isSeparation_iff_of_le bot_le le_rfl]
-    simp
-  have hord : separationOrder (⊥ : Hypergraph α β) G < θ := by
-    have : ((⊥ : Hypergraph α β) ∩ G).vertexSet = ∅ := by simp
-    rw [separationOrder, this, ncard_empty]
-    omega
-  have hbot : (⊥, G) ∈ T :=
-    (hT.axiom1 hsep hord).resolve_right fun h => hT.axiom3 h rfl
-  have hne := GM10.theorem_2_3_proof hT hθ hbot hbot hbot
-  by_contra hemp
-  rw [not_nonempty_iff_eq_empty] at hemp
-  apply hne
-  simp [hemp]
+    G.edgeSet.Nonempty :=
+  GM10.IsTangle.edgeSet_nonempty_of_two_le hT hθ
 
 /-- If `r ∈ H.R` and `r' ∈ K.R` have nonempty intersection `(r ∩ r').Nonempty`, and `w ∈ K.V ∩ r`
 is the hub of `r` in `K`, then `w ∈ closure r'`. -/

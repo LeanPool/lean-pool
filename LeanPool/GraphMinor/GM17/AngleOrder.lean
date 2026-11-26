@@ -47,31 +47,13 @@ theorem isClockwise3_of_ofFn {α : Type u} {Ω : CyclicPerm α} {k : ℕ} {t : F
     have h2 : b.1 < c.1 := hbc
     interval_cases j <;> interval_cases i <;> simp <;> omega
 
-theorem exp_inj_Ico {b x y : ℝ} (hx : x ∈ Ico b (b + 2 * Real.pi)) (hy : y ∈ Ico b
-  (b + 2 * Real.pi)) (h : Circle.exp x = Circle.exp y) : x = y := by
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.mp h
-  have hpi := Real.pi_pos
-  have h1 : (m : ℝ) * (2 * Real.pi) < 2 * Real.pi := by linarith [hx.2, hy.1]
-  have h2 : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith [hx.1, hy.2]
-  have h3 : (m : ℝ) < 1 := by nlinarith
-  have h4 : (-1 : ℝ) < m := by nlinarith
-  have h5 : m < 1 := by exact_mod_cast h3
-  have h6 : -1 < m := by exact_mod_cast h4
-  have h7 : m = 0 := by omega
-  rw [hm, h7]
-  simp
+theorem exp_inj_Ico {b x y : ℝ} (hx : x ∈ Ico b (b + 2 * Real.pi))
+    (hy : y ∈ Ico b (b + 2 * Real.pi)) (h : Circle.exp x = Circle.exp y) : x = y :=
+  Circle.exp_injOn_Ico (a := b) (b := b + 2 * Real.pi) (by simp) hx hy h
 
-theorem exists_angle_mem (b : ℝ) (w : Circle) : ∃ x ∈ Ico b (b + 2 * Real.pi), Circle.exp x = w
-  := by
-  have hpi : (0 : ℝ) < 2 * Real.pi := by positivity
-  obtain ⟨m, hm, -⟩ := existsUnique_add_zsmul_mem_Ico hpi (Complex.arg (w : ℂ)) b
-  refine ⟨_, hm, ?_⟩
-  have : Circle.exp (Complex.arg (w : ℂ) + m • (2 * Real.pi)) = Circle.exp (Complex.arg (w : ℂ))
-    := by
-    rw [zsmul_eq_mul, mul_comm]
-    exact Circle_exp_add_int _ _
-  rw [this]
-  exact Circle.exp_arg w
+theorem exists_angle_mem (b : ℝ) (w : Circle) :
+    ∃ t ∈ Ico b (b + 2 * Real.pi), Circle.exp t = w :=
+  GraphMinor.Surface.exists_circleExp_mem_Ico b w
 
 /-- **Increasing angles for a clockwise enumeration.** -/
 theorem exists_angles {S : Type*} [TopologicalSpace S] {α : Type u} {Ω : CyclicPerm α} {k : ℕ}

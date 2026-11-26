@@ -473,8 +473,8 @@ theorem thin_of_edge_tangle [ConnectedSpace S] {J Γ' : Drawing S} {θ : ℕ}
       obtain ⟨W₀, -, hV₀, -⟩ := id hpath
       rw [hV₀]
       exact end_mem_support W₀
-    have hX₂ : (V(G₂) ∩ V(G₁)).ncard = 2 := by
-      rw [Set.inter_comm, ← hX, hXeq, ncard_pair hxy]
+    have hX₂ : (V(G₂) ∩ V(G₁)).encard = 2 := by
+      rw [Set.inter_comm, ← hX, hXeq, encard_pair hxy]
     have hPinV : ∀ {v}, v ∈ P.V → v ≠ x → v ≠ y → v ∈ V(G₂) \ V(G₁) := by
       intro v hv h₁ h₂
       have hedgeP : ∃ g ∈ P.E, P.toGraph.Inc g v := by
@@ -510,15 +510,19 @@ theorem thin_of_edge_tangle [ConnectedSpace S] {J Γ' : Drawing S} {θ : ℕ}
           exact inc_of_mem_closure hgP (mem_closure_of_inc hi) hvP
         · intro hi
           exact inc_of_mem_closure (hPs.2 hi.edge_mem) (mem_closure_of_inc hi) (hPs.1 hvP)
-      change {g | J.toGraph.Inc g v}.ncard = 2
-      rw [hset]
-      exact path_two hpath hvP h₁ h₂
+      change {g | J.toGraph.Inc g v}.encard = 2
+      have hfin : {g | P.toGraph.Inc g v}.Finite :=
+        P.finite_edges.subset fun _ hg => hg.edge_mem
+      rw [hset, ← hfin.cast_ncard_eq]
+      exact_mod_cast path_two hpath hvP h₁ h₂
     · rw [hE₂]
       have hsub : P.V \ {x, y} ⊆ V(G₂) \ V(G₁) := fun v hv =>
         hPinV hv.1 (fun h₃ => hv.2 (Or.inl h₃)) (fun h₃ => hv.2 (Or.inr h₃))
       have hfinV : (V(G₂) \ V(G₁)).Finite :=
         J.finite_V.subset fun z hz => hl₂.vertexSet_mono hz.1
-      exact (path_count hpath hxy hxP hyP).trans (by
+      have hfinE : P.E.Finite := P.finite_edges
+      rw [← hfinE.cast_ncard_eq, ← hfinV.cast_ncard_eq]
+      exact_mod_cast (path_count hpath hxy hxP hyP).trans (by
         have := ncard_le_ncard hsub hfinV
         omega)
 
@@ -603,8 +607,9 @@ theorem mem_deg_ne_two_of_mem_bdry_circuit {J C : Drawing S} (hC : C.IsCircuit)
     rw [ncard_insert_of_notMem (by simp [hne₁₂, hne₁₃]), ncard_pair hne₂₃]
   have hle := ncard_le_ncard hsub hfin
   rw [hcard3] at hle
-  change {g | J.toGraph.Inc g v}.ncard ≠ 2
-  omega
+  change {g | J.toGraph.Inc g v}.encard ≠ 2
+  rw [← hfin.cast_ncard_eq]
+  exact_mod_cast (show {g | J.toGraph.Inc g v}.ncard ≠ 2 by omega)
 
 /-- Part 6(i) of the Section 10 translation: if a 39-zone `Λ₀` around `z` is an eye of
 `H' = clearedSubdrawing H Λ₀` with respect to the cleared tangle `T'` of order `51` and `H'` is

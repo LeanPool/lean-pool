@@ -347,9 +347,11 @@ def GM12Theorem77Statement : Prop :=
         a ⊆ a' → b ⊆ b' → d' a' b' ≤ d a b)
 
 /-- Statement of Graph Minors XII, (7.11) (page 271), used in (4.3) of Graph Minors XV (page 125),
-with the hypothesis "if `z ∈ E(H)` then `λ ≥ 2`" that XII states in (7.8) and (7.10) and omits here.
-Without it the statement is false, for a path of three edges on the sphere with `θ = 2`, `z` the
-middle edge and `λ ≤ 1` (see the correction to (7.11) in `corrections/GM12.md`):
+with the added hypothesis "if `z ∈ E(H)` then `λ ≥ 2`". A central edge has distance zero from
+itself and belongs to the deleted neighborhood. This is the deleted-edge bound in the corrected
+(7.8) and the printed (7.10). Without it the statement is false for a path of three edges on the
+sphere with `θ = 2`, `z` the middle edge and `λ ≤ 1` (see the correction to (7.11) in
+`corrections/GM12.md`):
 Let `H` be a 2-cell drawing with `E(H) ≠ ∅` in a connected surface `Σ`, with a respectful tangle
 `T` of order `θ` with metric `d`. Let `z ∈ A(H)` and let `λ ≥ 0` be an integer with `λ < θ`, such
 that if `z ∈ E(H)` then `λ ≥ 2`. Then `H - z^λ` is 2-cell. -/

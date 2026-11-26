@@ -40,17 +40,8 @@ variable {D : TangleDatum cap χ} {W : Set Shat} {H : Drawing Shat} {ρ : ℕ} {
 /-- A line is preconnected. -/
 theorem isPreconnected_of_isLineWithEnds {X : Type*} [TopologicalSpace X] {L : Set X} {a b : X}
   (h : IsLineWithEnds L a b) :
-    IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := h
-  have : L = range (fun t ↦ (f t).1) := by
-    ext x
-    constructor
-    · intro hx
-      exact ⟨f.symm ⟨x, hx⟩, by simp⟩
-    · rintro ⟨t, rfl⟩
-      exact (f t).2
-  rw [this]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+    IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 omit [T2Space S] in
 omit [T2Space Shat] in

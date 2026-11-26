@@ -34,7 +34,8 @@ open Set Graph
 theorem cliquePairLower_lt {p : ℕ} (e : Σ j : Fin p, Fin j.val) :
     cliquePairLower e < e.1 := e.2.isLt
 
-private theorem cliquePair_ends_injective {p : ℕ} :
+/-- The lower and upper endpoints determine the sorted clique edge. -/
+theorem cliquePair_ends_injective {p : ℕ} :
     Function.Injective (fun e : Σ j : Fin p, Fin j.val => (cliquePairLower e, e.1)) := by
   rintro ⟨j, i⟩ ⟨k, l⟩ heq
   have hupper : j = k := congrArg Prod.snd heq

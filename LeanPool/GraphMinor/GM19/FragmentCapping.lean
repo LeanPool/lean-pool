@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.GM19.CutFragment
 public import LeanPool.GraphMinor.Surface.DiscMerge
 public import Mathlib.Topology.ExtendFrom
 public import Mathlib.Analysis.Normed.Module.Connected
+import LeanPool.GraphMinor.Surface.TriLocal
 
 /-!
 # The capping of a surface depends only on its interior
@@ -92,35 +93,9 @@ section Punctures
 
 variable {T : Type*} [TopologicalSpace T]
 
-theorem isPreconnected_ball_sdiff : IsPreconnected (ball (0 : ℂ) 1 \ {0}) := by
-  have hs : IsPreconnected (sphere (0 : ℂ) 1) := isPreconnected_sphere
-    (by simp [Complex.rank_real_complex]) 0 1
-  have h := (isPreconnected_Ioo (a := (0 : ℝ)) (b := 1)).prod hs
-  have hc : Continuous fun x : ℝ × ℂ ↦ (x.1 : ℂ) * x.2 := by fun_prop
-  convert h.image _ hc.continuousOn using 1
-  ext z
-  constructor
-  · rintro ⟨h₁, h₂⟩
-    have hz : z ≠ 0 := h₂
-    have hz' : ‖z‖ ≠ 0 := norm_ne_zero_iff.2 hz
-    refine ⟨(‖z‖, z / ‖z‖), ⟨⟨norm_pos_iff.2 hz, by simpa using h₁⟩, ?_⟩, ?_⟩
-    · simp [hz]
-    · have : (‖z‖ : ℂ) ≠ 0 := by exact_mod_cast hz'
-      field_simp
-  · rintro ⟨⟨r, w⟩, ⟨⟨h₁, h₂⟩, hw⟩, rfl⟩
-    have h₁' : 0 < r := h₁
-    have h₂' : r < 1 := h₂
-    have hw' : ‖w‖ = 1 := by simpa using hw
-    have hr : ‖(r : ℂ)‖ = r := by rw [Complex.norm_real, Real.norm_of_nonneg h₁'.le]
-    refine ⟨?_, ?_⟩
-    · change (r : ℂ) * w ∈ ball (0 : ℂ) 1
-      rw [mem_ball_zero_iff, norm_mul, hr, hw', mul_one]
-      exact h₂'
-    · intro h0
-      have h0' : (r : ℂ) * w = 0 := h0
-      have := congrArg norm h0'
-      rw [norm_mul, hr, hw', mul_one, norm_zero] at this
-      linarith
+/-- The punctured complex unit disc is preconnected. -/
+theorem isPreconnected_ball_sdiff : IsPreconnected (ball (0 : ℂ) 1 \ {0}) :=
+  Surface.punctured_unit_ball
 
 /-- An interior point has small neighbourhoods that stay connected when the point is removed. -/
 theorem exists_punctured {x : T} (hx : IsInteriorPoint x) {W : Set T} (hW : W ∈ 𝓝 x) :

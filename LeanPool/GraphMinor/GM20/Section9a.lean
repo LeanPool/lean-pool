@@ -88,15 +88,8 @@ theorem exists_angle_seq (s : Finset ℝ) (hs : s.Nonempty)
     exact hmem _
 
 theorem exists_exp_eq_Ico (a : ℝ) (x : Circle) :
-    ∃ t ∈ Ico a (a + 2 * Real.pi), Circle.exp t = x := by
-  have hpi : 0 < 2 * Real.pi := by positivity
-  refine ⟨toIcoMod hpi a (Complex.arg x), toIcoMod_mem_Ico hpi a _, ?_⟩
-  have h₁ : toIcoMod hpi a (Complex.arg x) =
-      Complex.arg x - toIcoDiv hpi a (Complex.arg x) • (2 * Real.pi) := rfl
-  have h₂ : Circle.exp (toIcoMod hpi a (Complex.arg x)) = Circle.exp (Complex.arg x) := by
-    rw [h₁, zsmul_eq_mul]
-    exact Circle.exp_eq_exp.2 ⟨-toIcoDiv hpi a (Complex.arg x), by push_cast; ring⟩
-  exact h₂.trans (Circle.exp_arg x)
+    ∃ t ∈ Ico a (a + 2 * Real.pi), Circle.exp t = x :=
+  GraphMinor.Surface.exists_circleExp_mem_Ico a x
 
 /-- Two angles less than a full turn apart with the same image are equal. -/
 theorem eq_of_exp_eq {s t : ℝ} (h : Circle.exp s = Circle.exp t) (h₁ : s ≤ t)

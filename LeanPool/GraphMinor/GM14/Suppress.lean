@@ -40,16 +40,16 @@ universe u v
 
 variable {α : Type u} {β : Type v}
 
-/-- The number of edges at `v`. For a graph with no loops this is the valency of `v`. -/
-noncomputable def deg (G : Graph α β) (v : α) : ℕ := {e | G.Inc e v}.ncard
+/-- The extended number of edges at `v`. For a loopless graph this is the valency of `v`. -/
+noncomputable def deg (G : Graph α β) (v : α) : ℕ∞ := {e | G.Inc e v}.encard
 
 /-- The side `G₁` of a separation `(G₁, G₂)` of `G` has nothing beyond `G₂`, or it has two common
 vertices with `G₂`, its other vertices have valency 2, and it has at most one more edge than it has
 other vertices. -/
 def Thin (G G₁ G₂ : Graph α β) : Prop :=
   (V(G₁) ⊆ V(G₂) ∧ E(G₁) = ∅) ∨
-    ((V(G₁) ∩ V(G₂)).ncard = 2 ∧ (∀ v ∈ V(G₁) \ V(G₂), deg G v = 2) ∧
-      E(G₁).ncard ≤ (V(G₁) \ V(G₂)).ncard + 1)
+    ((V(G₁) ∩ V(G₂)).encard = 2 ∧ (∀ v ∈ V(G₁) \ V(G₂), deg G v = 2) ∧
+      E(G₁).encard ≤ (V(G₁) \ V(G₂)).encard + 1)
 
 /-- A graph that we can show to be a subdivision of a simple 3-connected graph. -/
 structure Good (G : Graph α β) : Prop where
@@ -191,11 +191,10 @@ theorem inc_of_ne (h : Susp G w x y e f) {g : β} {v : α} (hv : v ≠ w) :
     · exact ⟨w, h.lf.symm⟩
 
 /-- Suppressing `w` does not change the number of edges at another vertex. -/
-theorem deg_susp (h : Susp G w x y e f) (hfin : E(G).Finite) {v : α} (hv : v ≠ w) :
+theorem deg_susp (h : Susp G w x y e f) {v : α} (hv : v ≠ w) :
     deg (susp G w x y e f h) v = deg G v := by
   classical
   let T : Set β := {g | g ≠ e ∧ g ≠ f ∧ G.Inc g v}
-  have hT : T.Finite := hfin.subset fun g hg => hg.2.2.edge_mem
   have heT : e ∉ T := fun hh => hh.1 rfl
   have hfT : f ∉ T := fun hh => hh.2.1 rfl
   by_cases hx : v = x
@@ -248,7 +247,7 @@ theorem deg_susp (h : Susp G w x y e f) (hfin : E(G).Finite) {v : α} (hv : v �
         · exact Or.inr (Or.inr ⟨a, hy⟩)
         · exact Or.inl a
     simp only [deg, h₁, h₂]
-    rw [ncard_insert_of_notMem heT hT, ncard_insert_of_notMem hfT hT]
+    rw [encard_insert_of_notMem heT, encard_insert_of_notMem hfT]
   · have h₁ : {g | (susp G w x y e f h).Inc g v} = T := by
       ext g
       rw [mem_ofPred_eq, susp_inc]
@@ -388,7 +387,7 @@ theorem thin_of_lift (hG : Good G) (h : Susp G w x y e f) (hw2 : deg G w = 2) {G
       rintro g (hg | rfl) hg'
       · exact disjoint_left.mp hdis hg hg'
       · exact hf₂ hg'
-  have hdeg : ∀ z, z ≠ w → deg G' z = deg G z := fun z hz => deg_susp h hG.finE hz
+  have hdeg : ∀ z, z ≠ w → deg G' z = deg G z := fun z hz => deg_susp h hz
   have hdiff₂ : V(B) \ V(A) = V(G₂) \ V(G₁) := by
     rw [hVA, hVB]
     ext z
@@ -421,9 +420,12 @@ theorem thin_of_lift (hG : Good G) (h : Susp G w x y e f) (hw2 : deg G w = 2) {G
       · have hzw : z ≠ w := fun hh => hw₁ (hh ▸ hz.1)
         rw [hdeg z hzw]
         exact hd z (hdiff₁ ▸ Or.inr hz)
-      · rw [hEA, hdiff₁, union_singleton, ncard_insert_of_notMem hf₁ hfinE₁,
-          ncard_insert_of_notMem hw_not hfinV₁] at hn
-        omega
+      · rw [hEA, hdiff₁, union_singleton, encard_insert_of_notMem hf₁,
+          encard_insert_of_notMem hw_not, ← hfinE₁.cast_ncard_eq, ← hfinV₁.cast_ncard_eq] at hn
+        rw [← hfinE₁.cast_ncard_eq, ← hfinV₁.cast_ncard_eq]
+        exact_mod_cast (show E(G₁).ncard ≤ (V(G₁) \ V(G₂)).ncard + 1 from by
+          have hle : E(G₁).ncard + 1 ≤ (V(G₁) \ V(G₂)).ncard + 1 + 1 := by exact_mod_cast hn
+          omega)
   · rcases ht with ⟨hsub, hemp⟩ | ⟨hc, hd, hn⟩
     · refine Or.inr (Or.inl ⟨fun z hz => ?_, by rw [← hEB]; exact hemp⟩)
       have hz' : z ∈ V(B) := hVB ▸ hz
@@ -457,10 +459,10 @@ theorem Good.susp (hG : Good G) (h : Susp G w x y e f) (hw2 : deg G w = 2) :
       simp only [mem_ofPred_eq, hV']
       constructor
       · rintro ⟨⟨hz, hzw⟩, hd⟩
-        exact ⟨hz, by rwa [deg_susp h hG.finE hzw] at hd⟩
+        exact ⟨hz, by rwa [deg_susp h hzw] at hd⟩
       · rintro ⟨hz, hd⟩
         have hzw : z ≠ w := fun hh => hd (hh ▸ hw2)
-        exact ⟨⟨hz, hzw⟩, by rwa [deg_susp h hG.finE hzw]⟩
+        exact ⟨⟨hz, hzw⟩, by rwa [deg_susp h hzw]⟩
     rw [heq]
     exact hG.four
   · intro G₁ G₂ hs hord
@@ -780,8 +782,7 @@ theorem simple_of_good (hG : Good G) (h2 : ∀ v ∈ V(G), deg G v ≠ 2) :
       · have hd : V(A) \ V(B) = ∅ := by
           rw [hVA, hVB]
           exact eq_empty_of_forall_notMem fun z hz => hz.2 (hsub hz.1)
-        rw [hd, ncard_empty, hEA, ncard_pair hne] at hn
-        omega
+        simp [hd, hEA, encard_pair hne] at hn
     · have hemp : ∀ z ∈ V(B) \ V(A), False := by
         rcases ht with ⟨hs', -⟩ | ⟨-, hd, -⟩
         · exact fun z hz => hz.2 (hs' hz.1)
@@ -869,7 +870,7 @@ theorem isSubdivisionOf_self (hl : ∀ e v, ¬ G.IsLink e v v) : IsSubdivisionOf
 theorem exists_susp (hG : Good G) {w : α} (hw : w ∈ V(G)) (h2 : deg G w = 2) :
     ∃ x y e f, Susp G w x y e f := by
   classical
-  obtain ⟨e, f, hne, hset⟩ := ncard_eq_two.mp h2
+  obtain ⟨e, f, hne, hset⟩ := encard_eq_two.mp h2
   have hIe : G.Inc e w := by
     have : e ∈ {g | G.Inc g w} := hset ▸ Or.inl rfl
     exact this
@@ -943,13 +944,14 @@ theorem exists_susp (hG : Good G) {w : α} (hw : w ∈ V(G)) (h2 : deg G w = 2) 
     · rw [hEA, hEB]
       exact disjoint_sdiff_right
   have hc1 : (V(A) ∩ V(B)).ncard = 1 := by rw [hcap, ncard_singleton]
-  have hc1' : (V(B) ∩ V(A)).ncard = 1 := by rw [inter_comm]; exact hc1
+  have hc1_extended : (V(A) ∩ V(B)).encard = 1 := by simp [hcap]
+  have hc1' : (V(B) ∩ V(A)).encard = 1 := by simpa only [inter_comm] using hc1_extended
   have hfour : 4 ≤ V(G).ncard := hG.four.trans (ncard_le_ncard (fun _ hv => hv.1) hG.finV)
   rcases hG.sep A B hsep (by omega) with ht | ht
   · rcases ht with ⟨hs', -⟩ | ⟨hc, -, -⟩
     · have : w ∈ V(B) := hs' (hVA ▸ Or.inl rfl)
       exact (hVB ▸ this : w ∈ V(G) \ {w}).2 rfl
-    · omega
+    · exact (by decide : (1 : ℕ∞) ≠ 2) (hc1_extended.symm.trans hc)
   · rcases ht with ⟨hs', -⟩ | ⟨hc, -, -⟩
     · have hsub : V(G) ⊆ {w, x} := by
         intro z hz
@@ -960,7 +962,7 @@ theorem exists_susp (hG : Good G) {w : α} (hw : w ∈ V(G)) (h2 : deg G w = 2) 
       have h2' := ncard_insert_le w ({x} : Set α)
       rw [ncard_singleton] at h2'
       omega
-    · omega
+    · exact (by decide : (1 : ℕ∞) ≠ 2) (hc1'.symm.trans hc)
 
 /-- **A good graph is a subdivision of a simple 3-connected graph.** -/
 theorem good_sub (hG : Good G) : IsSubdivisionOfSimpleThreeConnected G := by
@@ -989,9 +991,9 @@ theorem good_sub (hG : Good G) : IsSubdivisionOfSimpleThreeConnected G := by
       simp only [V_susp]
       constructor
       · rintro ⟨⟨hz, hzw⟩, hd⟩
-        exact ⟨⟨hz, by rwa [deg_susp h hG.finE hzw] at hd⟩, hzw⟩
+        exact ⟨⟨hz, by rwa [deg_susp h hzw] at hd⟩, hzw⟩
       · rintro ⟨⟨hz, hd⟩, hzw⟩
-        exact ⟨⟨hz, hzw⟩, by rwa [deg_susp h hG.finE hzw]⟩
+        exact ⟨⟨hz, hzw⟩, by rwa [deg_susp h hzw]⟩
     have hc : {v | v ∈ V(susp G w x y e f h) ∧ deg (susp G w x y e f h) v = 2}.ncard = n := by
       rw [hset, ncard_sdiff_singleton_of_mem hw]
       omega

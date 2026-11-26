@@ -42,9 +42,9 @@ This matches `GraphMinor.Surface.Drawing S` from `GraphMinor/Surface/Defs.lean`:
 ## Sections covered
 
 - **Section 2 (Surfaces and Nets, pages 213–218):** `deleteBd` (`J - bd(Σ)`), `IsBoundaryIArc`,
-  `AreInternallyDisjointLines`, `IsIsolatedVertex`, `HasNoIsolatedVertices`, `pullbackDrawing`
+  `IsIsolatedVertex`, `HasNoIsolatedVertices`, `pullbackDrawing`
   (`φ⁻¹(G)`), `imageDrawing` (`φ(H)`), `Net`, `Net.seamU`, `Net.seamV`, `Net.IsSeamGraphFor`,
-  `IsSeamGraph`, `Net.IsNormalFor`, `Net.IsMinimalFor`, and the four edge types of `J'`.
+  `IsSeamGraph`, `Net.IsNormalFor`, `Net.IsMinimalFor`, and edge types (iii) and (iv) of `J'`.
 - **Section 3 (Matchings and Forests, pages 218–221):** `AreSimilarIArcs`, `AreParallelIArcs`,
   `IsMatching`, `IsXMatching`, `AreCongruentMatchings`, `IsSurfaceForest`, `IsYForest`,
   `Drawing.mapHomeo`, `ForestsHomoplastic`, `MatchingSurroundsForest`, `IsW36Bound`, `wSurface`
@@ -128,11 +128,6 @@ noncomputable def deleteBd [T1Space S] (J : Drawing S) : Drawing S :=
 (Graph Minors VII, Section 2, page 214). -/
 def IsBoundaryIArc (F : Set S) : Prop :=
   IsIArc F ∧ F ⊆ bd S
-
-/-- "Two $I$-arcs $F_1, F_2$ are *internally disjoint* if every point in $F_1 \cap F_2$ is an end
-of both of them." (Graph Minors VII, Section 2, page 214). -/
-def AreInternallyDisjointLines (F₁ F₂ : Set S) : Prop :=
-  ∀ x ∈ F₁ ∩ F₂, x ∈ lineEnds F₁ ∧ x ∈ lineEnds F₂
 
 /-- A vertex `v ∈ V(G)` is an *isolated vertex* of `G` if no edge of `G` is incident with `v`. -/
 def IsIsolatedVertex (G : Drawing S) (v : S) : Prop :=
@@ -278,16 +273,6 @@ end Net
 /-- `J` is a *seam graph for some net* for `Σ` (Graph Minors VII, Section 2, (2.1), page 215). -/
 def IsSeamGraph (J : Drawing S) : Prop :=
   ∃ N : Net S, N.IsSeamGraphFor J
-
-/-- Type (i) edge of `J' = (U(J), V(J) ∪ {φ(s), φ(t)})` (Graph Minors VII, Section 2, page 217):
-"edges `e` with `e ⊆ bd(Σ)`". -/
-def IsNetEdgeType1 (e : Set S) : Prop :=
-  e ⊆ bd S
-
-/-- Type (ii) edge of `J'` (Graph Minors VII, Section 2, page 217):
-"edges $e$ such that for all $z \in e$, $\phi^{-1}(z) \cap C_i \ne \emptyset$ $(i = 1, 2)$". -/
-def IsNetEdgeType2 (N : Net S) (C₁ C₂ : Set N.D) (e : Set S) : Prop :=
-  ∀ z ∈ e, (N.φ ⁻¹' {z} ∩ C₁).Nonempty ∧ (N.φ ⁻¹' {z} ∩ C₂).Nonempty
 
 /-- Type (iii) edge of `J'` (Graph Minors VII, Section 2, page 217):
 "edges $e$ such that $e \cap bd(\Sigma) = \emptyset$ and for all $z \in e$, $\phi^{-1}(z)

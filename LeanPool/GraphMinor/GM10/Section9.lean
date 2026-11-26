@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM10.Defs2
 public import Mathlib.Order.Prod.Lex.Basic
 import LeanPool.GraphMinor.GM10.TangleLemmas
 import LeanPool.GraphMinor.GM10.Section8
+import LeanPool.GraphMinor.GM10.TreeWidthBasic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 import Mathlib.Combinatorics.SimpleGraph.Walk.Maps
 
@@ -486,31 +487,6 @@ private theorem union_inter_eq_tau_of_sink [Fintype ι] {G : Hypergraph α β}
     · exact Or.inl heA
     · exact Or.inr ⟨heu, heB⟩
 
-/-- Extending a graph `T` on `ι` by attaching a new leaf `none` adjacent only to `some u₀`. -/
-private def leafGraph (T : SimpleGraph ι) (u₀ : ι) : SimpleGraph (Option ι) where
-  Adj a b :=
-    match a, b with
-    | none, some x => x = u₀
-    | some x, none => x = u₀
-    | some x, some y => T.Adj x y
-    | none, none => False
-  symm := ⟨fun a b ↦ by cases a <;> cases b <;> simp [adj_comm]⟩
-  loopless := ⟨fun a ↦ by cases a <;> simp⟩
-
-/-- Projection `Option ι → ι` mapping the new leaf `none` to `u₀`. -/
-@[simp]
-private abbrev leafProj (u₀ : ι) : Option ι → ι
-  | none => u₀
-  | some t => t
-
-private abbrev someHom (T : SimpleGraph ι) (u₀ : ι) : T →g leafGraph T u₀ where
-  toFun := some
-  map_rel' h := h
-
-@[simp]
-private theorem someHom_apply (T : SimpleGraph ι) (u₀ x : ι) :
-    someHom T u₀ x = some x := rfl
-
 open Classical in
 /-- Bag assignment on `Option ι` splitting `τ u₀` into `A₀` at `none` and `τ u₀ ∩ B₀` at `some u₀`.
 -/
@@ -518,136 +494,6 @@ private noncomputable def leafBag (τ : ι → Hypergraph α β) (u₀ : ι)
     (A₀ B₀ : Hypergraph α β) : Option ι → Hypergraph α β
   | none => A₀
   | some t => if t = u₀ then τ u₀ ∩ B₀ else τ t
-
-private theorem leafGraph_deleteEdges_new_walk_none {T : SimpleGraph ι} {u₀ : ι}
-    {a b : Option ι} (p : ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Walk a b)
-    (ha : a = none) : b = none := by
-  induction p with
-  | nil => exact ha
-  | @cons x y w hxy _ _ =>
-    subst ha
-    rcases y with _ | t
-    · exact (deleteEdges_adj.1 hxy).1.elim
-    · have htu : t = u₀ := (deleteEdges_adj.1 hxy).1
-      subst htu
-      exact ((deleteEdges_adj.1 hxy).2 rfl).elim
-
-private theorem leafGraph_deleteEdges_new_reachable_none {T : SimpleGraph ι} {u₀ : ι}
-    {z : Option ι} :
-    ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Reachable none z ↔ z = none := by
-  constructor
-  · rintro ⟨p⟩
-    exact leafGraph_deleteEdges_new_walk_none p rfl
-  · rintro rfl
-    exact Reachable.refl _
-
-private theorem leafGraph_deleteEdges_new_reachable_some {T : SimpleGraph ι} (hT : T.Connected)
-    {u₀ : ι} {z : Option ι} :
-    ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Reachable (some u₀) z ↔
-      ∃ t : ι, z = some t := by
-  constructor
-  · intro hr
-    rcases z with _ | t
-    · exfalso
-      have := leafGraph_deleteEdges_new_reachable_none.1 hr.symm
-      simp at this
-    · exact ⟨t, rfl⟩
-  · rintro ⟨t, rfl⟩
-    obtain ⟨w⟩ := hT u₀ t
-    have hwalk : ∀ {a b : ι}, T.Walk a b →
-        ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Reachable (some a) (some b) := by
-      intro a b p
-      induction p with
-      | nil => exact Reachable.refl _
-      | @cons x y c hxy _ ih =>
-        have hne : s(some x, some y) ≠ s(none, some u₀) := by simp
-        have hadj : ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Adj (some x) (some y) :=
-          deleteEdges_adj.mpr ⟨hxy, hne⟩
-        exact hadj.reachable.trans ih
-    exact hwalk w
-
-private theorem leafGraph_deleteEdges_old_reachable_iff {T : SimpleGraph ι} {u₀ x y : ι}
-    {a b : Option ι} :
-    ((leafGraph T u₀).deleteEdges {s(some x, some y)}).Reachable a b ↔
-      (T.deleteEdges {s(x, y)}).Reachable (leafProj u₀ a) (leafProj u₀ b) := by
-  have hproj : ∀ z : Option ι,
-      ((leafGraph T u₀).deleteEdges {s(some x, some y)}).Reachable z (some (leafProj u₀ z)) := by
-    rintro (_ | t)
-    · have hne : s(none, some u₀) ≠ s(some x, some y) := by simp
-      have hadj : ((leafGraph T u₀).deleteEdges {s(some x, some y)}).Adj none (some u₀) :=
-        deleteEdges_adj.mpr ⟨rfl, hne⟩
-      exact hadj.reachable
-    · exact Reachable.refl _
-  constructor
-  · rintro ⟨p⟩
-    induction p with
-    | nil => exact Reachable.refl _
-    | @cons c d w hcd _ ih =>
-      obtain ⟨hadj, hne⟩ := deleteEdges_adj.1 hcd
-      rcases c with _ | c <;> rcases d with _ | d
-      · exact ih
-      · change d = u₀ at hadj
-        rcases hadj with rfl
-        exact ih
-      · change c = u₀ at hadj
-        rcases hadj with rfl
-        exact ih
-      · change T.Adj c d at hadj
-        have hne' : s(c, d) ≠ s(x, y) := by
-          intro heq
-          exact hne (by simpa [Sym2.eq_iff] using Sym2.eq_iff.1 heq)
-        have hadj' : (T.deleteEdges {s(x, y)}).Adj c d := deleteEdges_adj.mpr ⟨hadj, hne'⟩
-        exact hadj'.reachable.trans ih
-  · rintro ⟨q⟩
-    have hlift : ∀ {c d : ι}, (T.deleteEdges {s(x, y)}).Walk c d →
-        ((leafGraph T u₀).deleteEdges {s(some x, some y)}).Reachable (some c) (some d) := by
-      intro c d p
-      induction p with
-      | nil => exact Reachable.refl _
-      | @cons c₁ c₂ c₃ hc₁₂ _ ih =>
-        obtain ⟨hadj, hne⟩ := deleteEdges_adj.1 hc₁₂
-        have hne' : s(some c₁, some c₂) ≠ s(some x, some y) := by
-          intro heq
-          exact hne (by simpa [Sym2.eq_iff] using Sym2.eq_iff.1 heq)
-        have hadj' : ((leafGraph T u₀).deleteEdges {s(some x, some y)}).Adj (some c₁) (some c₂) :=
-          deleteEdges_adj.mpr ⟨hadj, hne'⟩
-        exact hadj'.reachable.trans ih
-    exact (hproj a).trans ((hlift q).trans (hproj b).symm)
-
-private theorem isTree_leafGraph {T : SimpleGraph ι} (hT : T.IsTree) (u₀ : ι) :
-    (leafGraph T u₀).IsTree where
-  connected := by
-    refine Connected.mk (fun a b ↦ ?_)
-    have ha : (leafGraph T u₀).Reachable a (some (leafProj u₀ a)) := by
-      rcases a with _ | t
-      · exact Walk.reachable (Walk.cons (by simp [leafGraph, leafProj]) .nil)
-      · exact Reachable.refl _
-    have hb : (leafGraph T u₀).Reachable b (some (leafProj u₀ b)) := by
-      rcases b with _ | t
-      · exact Walk.reachable (Walk.cons (by simp [leafGraph, leafProj]) .nil)
-      · exact Reachable.refl _
-    obtain ⟨w⟩ := hT.connected (leafProj u₀ a) (leafProj u₀ b)
-    exact ha.trans ((Walk.reachable (w.map (someHom T u₀))).trans hb.symm)
-  isAcyclic := by
-    rw [isAcyclic_iff_forall_adj_isBridge]
-    rintro (_ | x) (_ | y) hadj
-    · exact hadj.elim
-    · change y = u₀ at hadj
-      subst y
-      intro hr
-      have := leafGraph_deleteEdges_new_reachable_none.1 hr
-      simp at this
-    · change x = u₀ at hadj
-      subst x
-      intro hr
-      have hr' : ((leafGraph T u₀).deleteEdges {s(none, some u₀)}).Reachable none (some u₀) := by
-        simpa [Sym2.eq_swap] using hr.symm
-      have := leafGraph_deleteEdges_new_reachable_none.1 hr'
-      simp at this
-    · change T.Adj x y at hadj
-      intro hr
-      have hr' := leafGraph_deleteEdges_old_reachable_iff.1 hr
-      exact not_reachable_deleteEdges hT hadj hr'
 
 private theorem leafBag_le [Fintype ι] {G : Hypergraph α β}
     {T : SimpleGraph ι} {τ : ι → Hypergraph α β} (hTD : IsTreeDecomposition G T τ)
@@ -667,11 +513,11 @@ private theorem leafBag_le_proj [Fintype ι] {G : Hypergraph α β}
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀)
     (a : Option ι) :
-    leafBag τ u₀ A₀ B₀ a ≤ τ (leafProj u₀ a) := by
+    leafBag τ u₀ A₀ B₀ a ≤ τ (projAttach u₀ a) := by
   classical
   rcases a with _ | t
   · exact left_le_tau_of_sink hTD hAB hu₀
-  · simp only [leafBag, leafProj]
+  · simp only [leafBag, projAttach]
     split_ifs with htu
     · subst t
       exact inter_le_left (hTD.le u₀) hAB.right_le
@@ -690,53 +536,13 @@ private theorem leafBag_some_le_right [Fintype ι] {G : Hypergraph α β}
   · exact inter_le_right (hTD.le u₀) hAB.right_le
   · exact tau_le_right_of_sink hTD hu₀ htu
 
-private theorem onTreePath_leafGraph_some {T : SimpleGraph ι} {u₀ : ι}
-    {a₁ a₃ : Option ι} {w : ι}
-    (hon : OnTreePath (leafGraph T u₀) a₁ a₃ (some w)) (hne : a₁ ≠ a₃) :
-    OnTreePath T (leafProj u₀ a₁) (leafProj u₀ a₃) w := by
-  rcases a₁ with _ | x₁ <;> rcases a₃ with _ | x₃
-  · exact (hne rfl).elim
-  · simp only [leafProj]
-    intro q hq
-    have hq_map : (q.map (someHom T u₀)).IsPath := hq.map (Option.some_injective ι)
-    have hnot_none : none ∉ (q.map (someHom T u₀)).support := by
-      simp [Walk.support_map]
-    have hadj : (leafGraph T u₀).Adj none (some u₀) := rfl
-    have hp : (Walk.cons hadj (q.map (someHom T u₀))).IsPath :=
-      (Walk.cons_isPath_iff hadj _).2 ⟨hq_map, hnot_none⟩
-    have hmem := hon _ hp
-    simp only [Walk.support_cons, Walk.support_map, List.mem_cons, List.mem_map,
-      someHom_apply, reduceCtorEq, false_or, Option.some.injEq, exists_eq_right] at hmem
-    exact hmem
-  · simp only [leafProj]
-    intro q hq
-    have hq_rev : q.reverse.IsPath := hq.reverse
-    have hq_map : (q.reverse.map (someHom T u₀)).IsPath := hq_rev.map (Option.some_injective ι)
-    have hnot_none : none ∉ (q.reverse.map (someHom T u₀)).support := by
-      simp [Walk.support_map]
-    have hadj : (leafGraph T u₀).Adj none (some u₀) := rfl
-    have hp : (Walk.cons hadj (q.reverse.map (someHom T u₀))).reverse.IsPath :=
-      ((Walk.cons_isPath_iff hadj _).2 ⟨hq_map, hnot_none⟩).reverse
-    have hmem := hon _ hp
-    simp only [Walk.support_reverse, Walk.support_cons, Walk.support_map, List.mem_reverse,
-      List.mem_cons, List.mem_map, someHom_apply, reduceCtorEq, false_or, Option.some.injEq,
-      exists_eq_right] at hmem
-    exact hmem
-  · simp only [leafProj]
-    intro q hq
-    have hq_map : (q.map (someHom T u₀)).IsPath := hq.map (Option.some_injective ι)
-    have hmem := hon _ hq_map
-    simp only [Walk.support_map, List.mem_map, someHom_apply, Option.some.injEq,
-      exists_eq_right] at hmem
-    exact hmem
-
 private theorem isTreeDecomposition_leafGraph [Fintype ι] {G : Hypergraph α β}
     {T : SimpleGraph ι} {τ : ι → Hypergraph α β} (hTD : IsTreeDecomposition G T τ)
     {A₀ B₀ : Hypergraph α β} (hAB : G.IsSeparation A₀ B₀) {u₀ : ι}
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀) :
-    IsTreeDecomposition G (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) where
-  isTree := isTree_leafGraph hTD.isTree u₀
+    IsTreeDecomposition G (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) where
+  isTree := isTree_attachLeaf hTD.isTree u₀
   le := leafBag_le hTD hAB u₀
   biUnion_eq := by
     classical
@@ -749,7 +555,7 @@ private theorem isTreeDecomposition_leafGraph [Fintype ι] {G : Hypergraph α β
       simp only [biUnion, Set.mem_iUnion, Finset.mem_univ, true_and, exists_true_left]
       constructor
       · rintro ⟨a, hva⟩
-        exact ⟨leafProj u₀ a, (leafBag_le_proj hTD hAB hu₀ a).vertexSet_subset hva⟩
+        exact ⟨projAttach u₀ a, (leafBag_le_proj hTD hAB hu₀ a).vertexSet_subset hva⟩
       · rintro ⟨t, hvt⟩
         by_cases htu : t = u₀
         · subst t
@@ -765,7 +571,7 @@ private theorem isTreeDecomposition_leafGraph [Fintype ι] {G : Hypergraph α β
       simp only [biUnion, Set.mem_iUnion, Finset.mem_univ, true_and, exists_true_left]
       constructor
       · rintro ⟨a, hea⟩
-        exact ⟨leafProj u₀ a, (leafBag_le_proj hTD hAB hu₀ a).edgeSet_subset hea⟩
+        exact ⟨projAttach u₀ a, (leafBag_le_proj hTD hAB hu₀ a).edgeSet_subset hea⟩
       · rintro ⟨t, het⟩
         by_cases htu : t = u₀
         · subst t
@@ -806,17 +612,20 @@ private theorem isTreeDecomposition_leafGraph [Fintype ι] {G : Hypergraph α β
           · exact inter_le_right (leafBag_le hTD hAB u₀ (some x₁)) (leafBag_le hTD hAB u₀ none)
           · exfalso
             obtain ⟨q, hq, _⟩ := hTD.isTree.existsUnique_path x₁ x₃
-            have hq_map : (q.map (someHom T u₀)).IsPath := hq.map (Option.some_injective ι)
-            have hmem := hon _ hq_map
-            simp only [Walk.support_map, List.mem_map, someHom_apply, reduceCtorEq,
-              and_false, exists_false] at hmem
-      · have hon' : OnTreePath T (leafProj u₀ a₁) (leafProj u₀ a₃) w :=
-          onTreePath_leafGraph_some hon h13
+            have hq_map : (q.map (attachLeafSomeHom T u₀)).IsPath :=
+              hq.map (Option.some_injective ι)
+            have hmem : none ∈ (q.map (attachLeafSomeHom T u₀)).support := hon _ hq_map
+            rw [Walk.support_map, List.mem_map] at hmem
+            obtain ⟨w, -, hw⟩ := hmem
+            change some w = none at hw
+            cases hw
+      · have hon' : OnTreePath T (projAttach u₀ a₁) (projAttach u₀ a₃) w :=
+          onTreePath_projAttach_of_some hon
         have hle_w : leafBag τ u₀ A₀ B₀ a₁ ∩ leafBag τ u₀ A₀ B₀ a₃ ≤ τ w := by
           have h1 := leafBag_le_proj hTD hAB hu₀ a₁
           have h3 := leafBag_le_proj hTD hAB hu₀ a₃
           have h13_le : leafBag τ u₀ A₀ B₀ a₁ ∩ leafBag τ u₀ A₀ B₀ a₃ ≤
-              τ (leafProj u₀ a₁) ∩ τ (leafProj u₀ a₃) := by
+              τ (projAttach u₀ a₁) ∩ τ (projAttach u₀ a₃) := by
             rw [le_iff_of_le
               (inter_le (leafBag_le hTD hAB u₀ a₁) (leafBag_le hTD hAB u₀ a₃))
               (inter_le (hTD.le _) (hTD.le _))]
@@ -847,28 +656,28 @@ private theorem isTreeDecomposition_leafGraph [Fintype ι] {G : Hypergraph α β
 private theorem treeDecompSide_leafGraph_new_none [Fintype ι] {G : Hypergraph α β}
     {T : SimpleGraph ι} {τ : ι → Hypergraph α β} (hTD : IsTreeDecomposition G T τ)
     {A₀ B₀ : Hypergraph α β} (hAB : G.IsSeparation A₀ B₀) (u₀ : ι) :
-    treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) none = A₀ := by
+    treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) none = A₀ := by
   classical
-  have hle1 : treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) none ≤ G :=
+  have hle1 : treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) none ≤ G :=
     biUnion_le_of_le fun a _ ↦ leafBag_le hTD hAB u₀ a
   refine eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle1 hAB.left_le ?_ ?_ <;>
   · ext x
-    simp [treeDecompSide, biUnion, leafGraph_deleteEdges_new_reachable_none, leafBag]
+    simp [treeDecompSide, biUnion, attachLeaf_delete_new_reachable_none, leafBag]
 
 private theorem treeDecompSide_leafGraph_new_some [Fintype ι] {G : Hypergraph α β}
     {T : SimpleGraph ι} {τ : ι → Hypergraph α β} (hTD : IsTreeDecomposition G T τ)
     {A₀ B₀ : Hypergraph α β} (hAB : G.IsSeparation A₀ B₀) {u₀ : ι}
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀) :
-    treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) (some u₀) = B₀ := by
+    treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) (some u₀) = B₀ := by
   classical
   have hle1 :
-      treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) (some u₀) ≤ G :=
+      treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) (some u₀) ≤ G :=
     biUnion_le_of_le fun a _ ↦ leafBag_le hTD hAB u₀ a
   refine eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle1 hAB.right_le ?_ ?_
   · ext v
     simp only [treeDecompSide, biUnion, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ,
-      true_and, leafGraph_deleteEdges_new_reachable_some hTD.isTree.connected]
+      true_and, attachLeaf_delete_new_reachable_some hTD.isTree.connected]
     constructor
     · rintro ⟨a, ⟨t, rfl⟩, hva⟩
       exact (leafBag_some_le_right hTD hAB hu₀ t).vertexSet_subset hva
@@ -884,7 +693,7 @@ private theorem treeDecompSide_leafGraph_new_some [Fintype ι] {G : Hypergraph �
       · simp [leafBag, htu, hvt]
   · ext e
     simp only [treeDecompSide, biUnion, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ,
-      true_and, leafGraph_deleteEdges_new_reachable_some hTD.isTree.connected]
+      true_and, attachLeaf_delete_new_reachable_some hTD.isTree.connected]
     constructor
     · rintro ⟨a, ⟨t, rfl⟩, hea⟩
       exact (leafBag_some_le_right hTD hAB hu₀ t).edgeSet_subset hea
@@ -905,21 +714,21 @@ private theorem treeDecompSide_leafGraph_old [Fintype ι] {G : Hypergraph α β}
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀)
     (x y : ι) (z : Option ι) :
-    treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) z =
-      treeDecompSide T τ s(x, y) (leafProj u₀ z) := by
+    treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) z =
+      treeDecompSide T τ s(x, y) (projAttach u₀ z) := by
   classical
   have hu₀_eq := union_inter_eq_tau_of_sink hTD hAB hu₀
-  have hle1 : treeDecompSide (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) z ≤ G :=
+  have hle1 : treeDecompSide (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) z ≤ G :=
     biUnion_le_of_le fun a _ ↦ leafBag_le hTD hAB u₀ a
-  have hle2 : treeDecompSide T τ s(x, y) (leafProj u₀ z) ≤ G :=
+  have hle2 : treeDecompSide T τ s(x, y) (projAttach u₀ z) ≤ G :=
     biUnion_le_of_le fun t _ ↦ hTD.le t
   refine eq_of_le_of_vertexSet_eq_of_edgeSet_eq hle1 hle2 ?_ ?_
   · ext v
     simp only [treeDecompSide, biUnion, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ,
-      true_and, leafGraph_deleteEdges_old_reachable_iff]
+      true_and, attachLeaf_delete_old_reachable_iff]
     constructor
     · rintro ⟨a, hr, hva⟩
-      exact ⟨leafProj u₀ a, hr, (leafBag_le_proj hTD hAB hu₀ a).vertexSet_subset hva⟩
+      exact ⟨projAttach u₀ a, hr, (leafBag_le_proj hTD hAB hu₀ a).vertexSet_subset hva⟩
     · rintro ⟨t, hr, hvt⟩
       by_cases htu : t = u₀
       · subst t
@@ -932,10 +741,10 @@ private theorem treeDecompSide_leafGraph_old [Fintype ι] {G : Hypergraph α β}
         simp [leafBag, htu, hvt]
   · ext e
     simp only [treeDecompSide, biUnion, Set.mem_iUnion, Finset.mem_filter, Finset.mem_univ,
-      true_and, leafGraph_deleteEdges_old_reachable_iff]
+      true_and, attachLeaf_delete_old_reachable_iff]
     constructor
     · rintro ⟨a, hr, hea⟩
-      exact ⟨leafProj u₀ a, hr, (leafBag_le_proj hTD hAB hu₀ a).edgeSet_subset hea⟩
+      exact ⟨projAttach u₀ a, hr, (leafBag_le_proj hTD hAB hu₀ a).edgeSet_subset hea⟩
     · rintro ⟨t, hr, het⟩
       by_cases htu : t = u₀
       · subst t
@@ -953,7 +762,7 @@ private theorem makesSeparation_leafGraph_new_iff [Fintype ι] {G : Hypergraph �
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀)
     {C D : Hypergraph α β} :
-    MakesSeparation (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) C D ↔
+    MakesSeparation (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(none, some u₀) C D ↔
       (C = A₀ ∧ D = B₀) ∨ (C = B₀ ∧ D = A₀) := by
   have hnone := treeDecompSide_leafGraph_new_none hTD hAB u₀
   have hsome := treeDecompSide_leafGraph_new_some hTD hAB hu₀
@@ -976,7 +785,7 @@ private theorem makesSeparation_leafGraph_old_iff [Fintype ι] {G : Hypergraph �
     (hu₀ : ∀ w : ι, T.Adj u₀ w →
       A₀ ≤ treeDecompSide T τ s(u₀, w) u₀ ∧ treeDecompSide T τ s(u₀, w) w ≤ B₀)
     {x y : ι} {C D : Hypergraph α β} :
-    MakesSeparation (leafGraph T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) C D ↔
+    MakesSeparation (attachLeaf T u₀) (leafBag τ u₀ A₀ B₀) s(some x, some y) C D ↔
       MakesSeparation T τ s(x, y) C D := by
   constructor
   · rintro ⟨a, b, hadj, heq, rfl, rfl⟩
@@ -1200,11 +1009,11 @@ theorem finite_of_forall_isSeparation {G : Hypergraph α β}
   exact Set.toFinite 𝒮
 
 private theorem mem_leafGraph_edgeSet_iff {T : SimpleGraph ι} {u₀ : ι} {e : Sym2 (Option ι)} :
-    e ∈ (leafGraph T u₀).edgeSet ↔
+    e ∈ (attachLeaf T u₀).edgeSet ↔
       e = s(none, some u₀) ∨ ∃ x y : ι, T.Adj x y ∧ e = s(some x, some y) := by
   induction e using Sym2.ind with | _ a b =>
   rcases a with _ | x <;> rcases b with _ | y
-  · simp [leafGraph]
+  · simp [attachLeaf]
   · constructor
     · intro h
       have hy : y = u₀ := h
@@ -1315,7 +1124,7 @@ private theorem exists_treeDecomposition_of_symm_laminar (G : Hypergraph α β) 
         · right
           simpa [Sym2.eq_swap] using h2
       obtain ⟨u₀, hu₀⟩ := exists_sink_of_adj_or hTD'.isTree hR
-      let T := leafGraph T' u₀
+      let T := attachLeaf T' u₀
       let τ := leafBag τ' u₀ A₀ B₀
       have hTD : IsTreeDecomposition G T τ := isTreeDecomposition_leafGraph hTD' hAB₀ hu₀
       have hmade : separationsMadeBy T τ = (𝒮 : Set (Hypergraph α β × Hypergraph α β)) := by
@@ -1334,11 +1143,12 @@ private theorem exists_treeDecomposition_of_symm_laminar (G : Hypergraph α β) 
             exact hsub hmem'
         · intro hCD
           by_cases h1 : (C, D) = (A₀, B₀) ∨ (C, D) = (B₀, A₀)
-          · refine ⟨s(none, some u₀), show (leafGraph T' u₀).Adj none (some u₀) by simp [leafGraph],
+          · refine ⟨s(none, some u₀), ?_,
               (makesSeparation_leafGraph_new_iff hTD' hAB₀ hu₀).2 ?_⟩
-            rcases h1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
-            · exact Or.inl ⟨rfl, rfl⟩
-            · exact Or.inr ⟨rfl, rfl⟩
+            · rfl
+            · rcases h1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
+              · exact Or.inl ⟨rfl, rfl⟩
+              · exact Or.inr ⟨rfl, rfl⟩
           · have hCD' : (C, D) ∈ 𝒮' := by
               simp only [𝒮', Finset.mem_erase]
               exact ⟨fun h ↦ h1 (Or.inr h), fun h ↦ h1 (Or.inl h), hCD⟩
@@ -1355,7 +1165,7 @@ private theorem exists_treeDecomposition_of_symm_laminar (G : Hypergraph α β) 
       rintro ⟨C, D⟩ hCD
       by_cases h1 : (C, D) = (A₀, B₀) ∨ (C, D) = (B₀, A₀)
       · refine ⟨s(none, some u₀),
-          ⟨show (leafGraph T' u₀).Adj none (some u₀) by simp [leafGraph], ?_⟩, ?_⟩
+          ⟨show (attachLeaf T' u₀).Adj none (some u₀) by simp [attachLeaf], ?_⟩, ?_⟩
         · refine (makesSeparation_leafGraph_new_iff hTD' hAB₀ hu₀).2 ?_
           rcases h1 with ⟨rfl, rfl⟩ | ⟨rfl, rfl⟩
           · exact Or.inl ⟨rfl, rfl⟩

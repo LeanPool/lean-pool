@@ -123,15 +123,10 @@ variable {X : Type} [TopologicalSpace X]
 
 variable [T2Space X]
 
-omit [TopologicalSpace X] [T2Space X] in
-theorem ncard_val_preimage (V A : Set X) : ({v : V | v.1 ∈ A}).ncard = (A ∩ V).ncard := by
-  have h1 : Subtype.val '' {v : V | v.1 ∈ A} = A ∩ V := by
-    ext x
-    constructor
-    · rintro ⟨v, hv, rfl⟩
-      exact ⟨hv, v.2⟩
-    · exact fun h => ⟨⟨x, h.2⟩, h.1, rfl⟩
-  rw [← h1, ncard_image_of_injective _ Subtype.val_injective]
+/-- Pull back a set to a subtype and count the elements in the intersection. -/
+theorem ncard_val_preimage {α : Type*} (V A : Set α) :
+    ({v : V | v.1 ∈ A}).ncard = (A ∩ V).ncard :=
+  Set.ncard_subtype (· ∈ V) A
 
 namespace IsTriang
 

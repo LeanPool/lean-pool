@@ -25,18 +25,8 @@ open Set Topology Surface
 
 /-- The point set of a line is preconnected. -/
 theorem isPreconnected_of_isLineWithEnds {S : Type*} [TopologicalSpace S]
-    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : IsPreconnected L := by
-  obtain ⟨e, _, _⟩ := hL
-  have h := isPreconnected_univ.image (fun t : unitInterval => (e t).val)
-    (continuous_subtype_val.comp e.continuous).continuousOn
-  have he : (fun t : unitInterval => (e t).val) '' univ = L := by
-    ext x
-    constructor
-    · rintro ⟨t, _, rfl⟩
-      exact (e t).property
-    · intro hx
-      exact ⟨e.symm ⟨x, hx⟩, mem_univ _, congrArg Subtype.val (e.apply_symm_apply _)⟩
-  exact he ▸ h
+    {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected hL
 
 /-- A preconnected subset containing both ends of a line is the whole line. -/
 theorem eq_line_of_preconnected_subset {S : Type*} [TopologicalSpace S]

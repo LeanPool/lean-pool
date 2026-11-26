@@ -99,14 +99,13 @@ variable {A' B' D : Hypergraph α β} {n : ℕ} {P : Fin n → PathFromTo D.skel
 /-- One side of the construction of `J'` in (5) (page 333). The set `I` holds the indices of the
 paths that start in `S`, and
 `i₀` is the index of the path that starts at `v`. -/
-theorem exists_extended_side (hA : A ≤ A') (hB' : B' ≤ B) (hD : D ≤ A') (_hDB : D ≤ B)
+theorem exists_extended_side (hA : A ≤ A') (hB' : B' ≤ B) (hD : D ≤ A')
     (hZD : (A ∩ B).vertexSet ⊆ D.vertexSet)
     (hP : Pairwise fun i j => Disjoint (pathV (P i)) (pathV (P j)))
-    (_hfirst : ∀ i, ∀ x ∈ pathV (P i), x ∈ (A ∩ B).vertexSet → x = (P i).first)
     (hlast : ∀ i, ∀ x ∈ pathV (P i), x ∈ (A' ∩ B').vertexSet → x = (P i).last)
     {J S : Set α} {v : α} (hJ : Conn A J) (hJA : J ⊆ A.vertexSet) (hv : v ∈ J)
       (heq : ∀ x ∈ J, x ∈ B.vertexSet → x = v)
-    (hadj : ∀ x ∈ S, x ≠ v → ∃ y ∈ J, A.skeleton.Adj x y) (_hS : S ⊆ (A ∩ B).vertexSet)
+    (hadj : ∀ x ∈ S, x ≠ v → ∃ y ∈ J, A.skeleton.Adj x y)
       (i₀ : Fin n) (hi₀ : (P i₀).first = v) :
     ∃ J' : Set α, Conn A' J' ∧ J ⊆ J' ∧ J' ⊆ A'.vertexSet ∧ (P i₀).last ∈ J' ∧
       (∀ x ∈ J', x ∈ B'.vertexSet → x = (P i₀).last) ∧
@@ -271,12 +270,12 @@ theorem no_same_order (hT : IsTangle G θ T) {S R J K : Set α} {v w : α}
   have hVZ : ∀ {y}, y ∈ S ∪ R → y ∈ (A ∩ B).vertexSet := fun hy => h.union_eq ▸ hy
   obtain ⟨i₁, hi₁⟩ := hidx₁ (hVZ (Or.inl h.vS))
   obtain ⟨i₂, hi₂⟩ := hidx₁ (hVZ (Or.inr h.wR))
-  obtain ⟨J', hconnJ, hJJ', hJA, hvJ, heqJ, hadjJ, hsubJ⟩ := exists_extended_side hA hB hDA' hDB
-    hZD hdis hfirst hlast h.connJ
-    h.subJ h.v_mem h.eqJ h.adjS (fun x hx => hVZ (Or.inl hx)) i₁ hi₁
-  obtain ⟨K', hconnK, hKK', hKA, hwK, heqK, hadjK, hsubK⟩ := exists_extended_side hA hB hDA' hDB
-    hZD hdis hfirst hlast h.connK
-    h.subK h.w_mem h.eqK h.adjR (fun x hx => hVZ (Or.inr hx)) i₂ hi₂
+  obtain ⟨J', hconnJ, hJJ', hJA, hvJ, heqJ, hadjJ, hsubJ⟩ := exists_extended_side hA hB hDA'
+    hZD hdis hlast h.connJ
+    h.subJ h.v_mem h.eqJ h.adjS i₁ hi₁
+  obtain ⟨K', hconnK, hKK', hKA, hwK, heqK, hadjK, hsubK⟩ := exists_extended_side hA hB hDA'
+    hZD hdis hlast h.connK
+    h.subK h.w_mem h.eqK h.adjR i₂ hi₂
   let I : Set (Fin n) := {i | (P i).first ∈ S}
   let I' : Set (Fin n) := {i | (P i).first ∈ R}
   have hdisII' : ∀ i, i ∈ I → i ∉ I' := fun i h₁ h₂ => disjoint_left.1 h.disj h₁ h₂

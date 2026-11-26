@@ -114,19 +114,8 @@ theorem existsUnique_correspondingAtom' {H K : Drawing S}
 /-- Any hypergraph admitting a tangle of order `θ ≥ 2` has at least one edge. -/
 theorem edgeSet_nonempty_of_isTangle_of_two_le {α β : Type*} {G : Hypergraph α β} {θ : ℕ}
     {T : Set (Hypergraph α β × Hypergraph α β)} (hT : IsTangle G θ T) (hθ : 2 ≤ θ) :
-    G.edgeSet.Nonempty := by
-  have hsep : G.IsSeparation ⊥ G := by
-    rw [isSeparation_iff_of_le bot_le le_rfl]
-    simp
-  have hord : separationOrder (⊥ : Hypergraph α β) G < θ := by
-    have : ((⊥ : Hypergraph α β) ∩ G).vertexSet = ∅ := by simp
-    rw [separationOrder, this, ncard_empty]
-    omega
-  have hbot : (⊥, G) ∈ T :=
-    (hT.axiom1 hsep hord).resolve_right fun hG => hT.axiom3 hG rfl
-  have hne := GM10.theorem_2_3_proof hT hθ hbot hbot hbot
-  rw [GM10.union_self, GM10.union_self, bot_edgeSet] at hne
-  exact nonempty_iff_ne_empty.mpr hne.symm
+    G.edgeSet.Nonempty :=
+  GM10.IsTangle.edgeSet_nonempty_of_two_le hT hθ
 
 /-- Unconditional version of `exists_edge_dist_eq_theta`, using the proved theorems
 `GM11.gm14_theorem_8_12` and `GM11.gm12_theorem_8_5`. -/

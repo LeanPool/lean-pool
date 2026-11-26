@@ -994,18 +994,8 @@ private theorem IsLineWithEnds.isPreconnected_sdiff_left {L : Set EuclideanPlane
   exact isPreconnected_Ioc.image _ (by fun_prop)
 
 private theorem IsLineWithEnds.isPreconnected {L : Set EuclideanPlane} {a b : EuclideanPlane}
-    (h : IsLineWithEnds L a b) : IsPreconnected L := by
-  obtain ⟨f, _, _⟩ := h
-  have hEq : L = (fun t => (f t).1) '' univ := by
-    ext x
-    constructor
-    · intro hxL
-      obtain ⟨t, ht⟩ := f.surjective ⟨x, hxL⟩
-      exact ⟨t, mem_univ t, congrArg Subtype.val ht⟩
-    · rintro ⟨t, _, rfl⟩
-      exact (f t).2
-  rw [hEq]
-  exact isPreconnected_univ.image _ (by fun_prop)
+    (h : IsLineWithEnds L a b) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 private theorem disc_mono_of_subset {Y D₁ D₂ : Set EuclideanPlane}
     (hY : IsClosedDisc Y) (hD₁Y : D₁ ⊆ Y) (hD₂Y : D₂ ⊆ Y)

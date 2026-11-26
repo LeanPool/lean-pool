@@ -214,31 +214,12 @@ theorem exists_separation_of_sides {G Q : Graph α β} (Γ : GraphDrawing G Eucl
   · exact fun v hv h => ⟨hv, Or.inr h⟩
 
 theorem eq_of_circleExp_eq {c x y : ℝ} (hx : x ∈ Ico c (c + 2 * Real.pi))
-    (hy : y ∈ Ico c (c + 2 * Real.pi)) (h : Circle.exp x = Circle.exp y) : x = y := by
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.mp h
-  have hpi := Real.pi_pos
-  have h1 : (m : ℝ) * (2 * Real.pi) < 2 * Real.pi := by nlinarith [hx.1, hx.2, hy.1, hy.2]
-  have h2 : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by nlinarith [hx.1, hx.2, hy.1, hy.2]
-  have h3 : (m : ℝ) < 1 := by nlinarith
-  have h4 : -1 < (m : ℝ) := by nlinarith
-  have h5 : m = 0 := by
-    have : m < 1 := by exact_mod_cast h3
-    have : -1 < m := by exact_mod_cast h4
-    omega
-  simpa [h5] using hm
+    (hy : y ∈ Ico c (c + 2 * Real.pi)) (h : Circle.exp x = Circle.exp y) : x = y :=
+  Circle.exp_injOn_Ico (a := c) (b := c + 2 * Real.pi) (by simp) hx hy h
 
 theorem exists_mem_Ico_circleExp (c : ℝ) (z : Circle) :
-    ∃ t ∈ Ico c (c + 2 * Real.pi), Circle.exp t = z := by
-  have hp : (0 : ℝ) < 2 * Real.pi := by positivity
-  refine ⟨toIcoMod hp c (Complex.arg z), toIcoMod_mem_Ico hp c _, ?_⟩
-  rw [← self_sub_toIcoDiv_zsmul hp c (Complex.arg z)]
-  have : Circle.exp (Complex.arg z - toIcoDiv hp c (Complex.arg z) • (2 * Real.pi)) =
-      Circle.exp (Complex.arg z) := by
-    rw [Circle.exp_eq_exp]
-    refine ⟨-toIcoDiv hp c (Complex.arg z), ?_⟩
-    simp only [zsmul_eq_mul, Int.cast_neg]
-    ring
-  rw [this, Circle.exp_arg]
+    ∃ t ∈ Ico c (c + 2 * Real.pi), Circle.exp t = z :=
+  GraphMinor.Surface.exists_circleExp_mem_Ico c z
 
 /-- The two open arcs of an `O`-arc `C` between two distinct points `a, b`, read off from a
 parametrisation `φ`. A point between `a` and `b` in the sense of `φ` lies in `I₁`, and a point

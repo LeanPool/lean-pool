@@ -12,7 +12,6 @@ public import LeanPool.GraphMinor.Minor.CompleteGraph
 
 public import LeanPool.GraphMinor.GM15.Defs
 public import LeanPool.GraphMinor.GM16.ProperArrangementDefs
-public import LeanPool.GraphMinor.GM05.Defs
 
 /-!
 # Definitions for Graph Minors XVI: Excluding a non-planar graph

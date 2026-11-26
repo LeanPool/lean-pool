@@ -34,14 +34,8 @@ universe u
 variable {S : Type u} [TopologicalSpace S] [T2Space S]
 
 omit [T2Space S] in
-private theorem preconnected_oArc {F : Set S} (hF : IsOArc F) : IsPreconnected F := by
-  obtain ⟨f⟩ := hF
-  have heq : F = range (fun z : Circle => (f z).val) := by
-    ext x
-    exact ⟨fun hx => ⟨f.symm ⟨x, hx⟩, by simp⟩,
-      fun ⟨z, hz⟩ => hz ▸ (f z).property⟩
-  rw [heq]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+private theorem preconnected_oArc {F : Set S} (hF : IsOArc F) : IsPreconnected F :=
+  GraphMinor.Surface.IsOArc.isPreconnected hF
 
 omit [T2Space S] in
 /-- A point of a subdrawing that is an ambient vertex is a vertex of the

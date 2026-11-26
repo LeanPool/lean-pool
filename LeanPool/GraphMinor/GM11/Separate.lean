@@ -14,6 +14,7 @@ public import LeanPool.GraphMinor.GM11.ForestRegions
 public import LeanPool.GraphMinor.Surface.SphereDisc
 public import LeanPool.GraphMinor.Surface.DiscGrow
 public import LeanPool.GraphMinor.GM11.RadialBasics
+public import LeanPool.GraphMinor.GM11.DrawingTopology
 
 /-!
 # Points that a drawing in a sphere does not separate
@@ -36,80 +37,6 @@ open Set Topology GraphMinor.Surface unitInterval
 universe u
 
 variable {S : Type u} [TopologicalSpace S] [T2Space S]
-
-/-- **The point set of a circuit is an `O`-arc.** -/
-theorem IsCircuit.isOArc_U {C : Drawing S} (hC : C.IsCircuit) : IsOArc C.U := by
-  classical
-  obtain ⟨u₀, W₀, -, hpos₀, hV₀, hE₀⟩ := id hC
-  have hu : u₀ ∈ C.V := by
-    rw [hV₀]
-    cases W₀ <;> simp [GraphWalk.support]
-  by_cases hone : ∃ b ∈ C.V, b ≠ u₀
-  · obtain ⟨b, hb, hne⟩ := hone
-    obtain ⟨P, Q, hP, hQ, hPs, hQs, -, -, hVc, hEd, hsup⟩ := Drawing.IsCircuit.exists_two_paths hC
-      hu hb hne.symm
-    have hl₁ := isLine_of_isPathBetween hP hne.symm
-    have hl₂ := isLine_of_isPathBetween hQ hne.symm
-    have hU : C.U = P.U ∪ Q.U := by
-      apply subset_antisymm
-      · rw [C.U_eq]
-        rintro x (hx | hx)
-        · rw [← hsup, Drawing.sup_V hPs hQs] at hx
-          rcases hx with h | h
-          · exact Or.inl (P.V_subset_U h)
-          · exact Or.inr (Q.V_subset_U h)
-        · obtain ⟨e, he, hxe⟩ := mem_iUnion₂.mp hx
-          rw [← hsup, Drawing.sup_E hPs hQs] at he
-          rcases he with h | h
-          · exact Or.inl (P.closure_subset_U h hxe)
-          · exact Or.inr (Q.closure_subset_U h hxe)
-      · exact union_subset hPs.U_subset hQs.U_subset
-    rw [hU]
-    refine isOArc_union hl₁ hl₂ ?_
-    rintro x ⟨hxP, hxQ⟩
-    -- A point on both paths is a vertex of both.
-    have hV : x ∈ C.V := by
-      by_contra hx
-      have hxPV : x ∉ P.V := fun h => hx (hPs.1 h)
-      have hxQV : x ∉ Q.V := fun h => hx (hQs.1 h)
-      rw [P.U_eq] at hxP
-      rw [Q.U_eq] at hxQ
-      obtain ⟨f, hf, hxf⟩ := mem_iUnion₂.mp (hxP.resolve_left hxPV)
-      obtain ⟨g, hg, hxg⟩ := mem_iUnion₂.mp (hxQ.resolve_left hxQV)
-      have h₁ : x ∈ f := (P.closure_diff_V hf).subset ⟨hxf, hxPV⟩
-      have h₂ : x ∈ g := (Q.closure_diff_V hg).subset ⟨hxg, hxQV⟩
-      have := C.edge_eq_of_mem (hPs.2 hf) (hQs.2 hg) h₁ h₂
-      exact disjoint_left.mp hEd hf (this ▸ hg)
-    have hmem : ∀ {R : Drawing S}, R.IsSubdrawing C → x ∈ R.U → x ∈ R.V := by
-      intro R hR hx
-      by_contra hxV
-      rw [R.U_eq] at hx
-      obtain ⟨f, hf, hxf⟩ := mem_iUnion₂.mp (hx.resolve_left hxV)
-      exact ((C.closure_diff_V (hR.2 hf)).superset ((R.closure_diff_V hf).subset ⟨hxf, hxV⟩)).2 hV
-    exact hVc ▸ (⟨hmem hPs hxP, hmem hQs hxQ⟩ : x ∈ P.V ∩ Q.V)
-  · push Not at hone
-    have hVs : C.V = {u₀} := subset_antisymm (fun x hx => hone x hx) (singleton_subset_iff.mpr hu)
-    obtain ⟨f, hf⟩ := IsCircuit.E_nonempty hC
-    have hl : closure f ∩ C.V = {u₀} := by
-      rcases C.edge_cond f hf with ⟨x, y, hxy, hcap, -⟩ | ⟨x, hcap, -⟩
-      · have hx : x ∈ closure f ∩ C.V := by rw [hcap]; simp
-        have hy : y ∈ closure f ∩ C.V := by rw [hcap]; simp
-        exact (hxy ((hone x hx.2).trans (hone y hy.2).symm)).elim
-      · have hx : x ∈ closure f ∩ C.V := by rw [hcap]; simp
-        rw [hcap, hone x hx.2]
-    have hEs := IsCircuit.E_eq_of_loop hC hf hl
-    have hU : C.U = closure f := by
-      rw [C.U_eq, hEs]
-      simp only [mem_singleton_iff, iUnion_iUnion_eq_left]
-      exact union_eq_right.mpr (by
-        rw [hVs, singleton_subset_iff]
-        exact (hl.ge rfl).1)
-    rw [hU]
-    rcases C.edge_cond f hf with ⟨x, y, hxy, hcap, -⟩ | ⟨x, hcap, hF⟩
-    · have hx : x ∈ closure f ∩ C.V := by rw [hcap]; simp
-      have hy : y ∈ closure f ∩ C.V := by rw [hcap]; simp
-      exact (hxy ((hone x hx.2).trans (hone y hy.2).symm)).elim
-    · exact hF
 
 variable [ConnectedSpace S]
 

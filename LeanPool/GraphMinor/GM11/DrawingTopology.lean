@@ -15,6 +15,7 @@ public import LeanPool.GraphMinor.Surface.DiscUnion
 public import LeanPool.GraphMinor.Surface.SphereDisc
 import LeanPool.GraphMinor.GM11.PlaneFacts
 import LeanPool.GraphMinor.GM11.Section3
+import LeanPool.GraphMinor.GM11.Section4c
 import LeanPool.GraphMinor.GM11.Fan
 import LeanPool.GraphMinor.GM11.Forest
 
@@ -783,5 +784,41 @@ theorem isOArc_union [T2Space S] {L₁ L₂ : Set S} {a b : S} (h₁ : IsLineWit
   have hemb := hG.isClosedEmbedding hGi
   rw [← hrange]
   exact ⟨hemb.isEmbedding.toHomeomorph⟩
+
+/-- The point set `U(C)` of any circuit `C` in a Hausdorff space is an `O`-arc. -/
+theorem IsCircuit.isOArc_U [T2Space S] {C : Drawing S} (hC : C.IsCircuit) : IsOArc C.U := by
+  obtain ⟨e, he⟩ := IsCircuit.E_nonempty hC
+  rcases C.edge_cond e he with ⟨a, b, hab, hcap, hL⟩ | ⟨u, hcap, hO⟩
+  · have ha : a ∈ C.V := by
+      have : a ∈ closure e ∩ C.V := by rw [hcap]; simp
+      exact this.2
+    have hb : b ∈ C.V := by
+      have : b ∈ closure e ∩ C.V := by rw [hcap]; simp
+      exact this.2
+    obtain ⟨P, Q, hP, hQ, hPs, hQs, -, -, hV, hE, hsup⟩ := hC.exists_two_paths ha hb hab
+    have hU : C.U = P.U ∪ Q.U := by
+      rw [← hsup, Drawing.U_eq, Drawing.sup_V hPs hQs, Drawing.sup_E hPs hQs, P.U_eq, Q.U_eq,
+        biUnion_union]
+      ext x
+      simp only [mem_union]
+      tauto
+    rw [hU]
+    exact isOArc_union (isLine_of_isPathBetween hP hab) (isLine_of_isPathBetween hQ hab)
+      (by rw [U_inter_of_disjoint hPs hQs hE, hV])
+  · have hE : C.E = {e} := IsCircuit.E_eq_of_loop hC he hcap
+    have hU : C.U = closure e := by
+      rw [C.U_eq, hE]
+      refine subset_antisymm (union_subset ?_ (iUnion₂_subset fun f hf => ?_))
+        (subset_union_of_subset_right (subset_biUnion_of_mem (mem_singleton e)) _)
+      · intro v hv
+        obtain ⟨W, -, hpos, -, -⟩ := exists_walk_at hC hv
+        cases W with
+        | nil _ => simp at hpos
+        | @cons _ w _ f h r =>
+          have hfe : f = e := mem_singleton_iff.mp (hE ▸ h.1)
+          have : v ∈ closure f ∩ C.V := by rw [h.2.2.2]; simp
+          exact hfe ▸ this.1
+      · rw [mem_singleton_iff.mp hf]
+    rwa [hU]
 
 end GraphMinor.GM11

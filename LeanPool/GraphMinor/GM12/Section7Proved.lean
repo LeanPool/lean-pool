@@ -442,8 +442,10 @@ $\Gamma'$, with metric $d'$, such that $d'(a', b') \ge d(a, b) - 4k - 2$ for all
 A(\Gamma)$ and $a', b' \in A(\Gamma')$ with $a \subseteq a'$ and $b \subseteq b'$."
 
 The printed statement of (7.8) requires `k ≥ 2` if `c ∈ Γ'.E`. The corrected hypothesis is
-`c ∈ Γ.E \ Γ'.E → 2 ≤ k`, as in (7.10) on page 270. The proof uses the bound only for a
-deleted edge `e = c` (page 269). -/
+`c ∈ Γ.E \ Γ'.E → 2 ≤ k`, as in (7.10) on page 270. On page 269 the printed proof uses the
+bound when the radial atom of the center is a region, and again for a deleted edge `e = c`.
+The Lean proof starts with a deleted edge within distance `k` of the center. Its initial-walk
+construction requires `2 ≤ k` when that edge equals `c`. -/
 theorem theorem_7_8_proof
     (hS : IsClosedSurface S) [ConnectedSpace S]
     {Γ Γ' : Drawing S} {θ k : ℕ}

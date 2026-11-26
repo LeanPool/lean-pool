@@ -29,10 +29,8 @@ variable {X : Type} [TopologicalSpace X] [T2Space X]
 
 omit [T2Space X] in
 theorem IsLineWithEnds.isPreconnected_self {L : Set X} {u v : X} (hl : IsLineWithEnds L u v) :
-  IsPreconnected L := by
-  obtain ⟨a, ha, hr, -, -⟩ := hl.exists_arc
-  rw [← hr]
-  exact isPreconnected_range ha.1
+  IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected hl
 
 /-- A line in a graph, with its two ends the only vertices on it, is an edge. -/
 theorem IsGraph.line_mem {V : Set X} {E : Set (Set X)} (hg : IsGraph V E) {L : Set X} {u v : X}

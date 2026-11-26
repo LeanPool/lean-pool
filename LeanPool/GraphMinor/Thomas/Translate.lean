@@ -140,7 +140,8 @@ theorem widthLE_treeDecompOfGM04 {ι : Type*} {G : Hypergraph α β} {T : Rooted
     {τ : ι → RootedHypergraph α β} (hD : IsTreeDecomposition G.toRooted T τ)
     {w : ℕ} (hw : GM04.WidthLE T τ w) :
     (treeDecompOfGM04 hD).WidthLE w :=
-  fun t ↦ hw t.1 t.2
+  ((treeDecompOfGM04 hD).widthLE_iff_ncard_le G.vertexSet_finite).mpr
+    (fun t ↦ hw t.1 t.2)
 
 /-! ## Step 4B: From `TreeDecomp` on `Fin m` to Graph Minors IV `IsTreeDecomposition` -/
 
@@ -400,7 +401,7 @@ theorem widthLE_gm04Bags (hG : G.IsGraph) {w : ℕ} (hw : D.WidthLE w) :
   intro t ht
   have ht_lt : t < m := Finset.mem_range.1 ht
   rw [gm04Bags_vertexSet_of_lt D hG ht_lt]
-  exact hw ⟨t, ht_lt⟩
+  exact (D.widthLE_iff_ncard_le G.vertexSet_finite).mp hw ⟨t, ht_lt⟩
 
 end ToGM04
 

@@ -392,18 +392,6 @@ theorem IsOArc.isCompact {F : Set S} (hF : IsOArc F) : IsCompact F := by
   rw [← h]
   exact isCompact_range (continuous_subtype_val.comp φ.continuous)
 
-theorem IsOArc.isPreconnected {F : Set S} (hF : IsOArc F) : IsPreconnected F := by
-  obtain ⟨φ⟩ := hF
-  have h : range (fun w : Circle => (φ w).1) = F := by
-    ext z
-    constructor
-    · rintro ⟨w, rfl⟩
-      exact (φ w).2
-    · intro hz
-      exact ⟨φ.symm ⟨z, hz⟩, by simp⟩
-  rw [← h]
-  exact isPreconnected_range (continuous_subtype_val.comp φ.continuous)
-
 /-- The inclusion of an open set of a space into a subspace that contains it. -/
 theorem isOpenEmbedding_inclusion_of_isOpen {Δ V : Set S} (hV : IsOpen V) (hsub : V ⊆ Δ) :
     IsOpenEmbedding (fun v : V => (⟨v.1, hsub v.2⟩ : Δ)) := by

@@ -327,8 +327,8 @@ theorem thin_of_side [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hw
         · exact hvX
       exact (eq_of_subset_of_ncard_le hsub (by rw [ncard_pair hne]; exact hord) hXfin).symm
     have hgW := hE₂split hg (by rw [hA]; exact notMem_empty _)
-    have hX₂ : (V(G₂) ∩ V(G₁)).ncard = 2 := by
-      rw [inter_comm, ← hX, hXeq, ncard_pair hne]
+    have hX₂ : (V(G₂) ∩ V(G₁)).encard = 2 := by
+      rw [inter_comm, ← hX, hXeq, encard_pair hne]
     refine Or.inr ⟨hX₂, fun z hz => absurd (hV₂ hz.1) hz.2, ?_⟩
     have hsing : E(G₂) ⊆ {g} := by
       intro g' hg'
@@ -346,9 +346,7 @@ theorem thin_of_side [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hw
       · exact hw.simple _ _ _ _ hlk₂ hlk₁
       · exact hw.simple _ _ _ _ hlk₂.symm hlk₁
       · exact absurd rfl hcdne
-    have := ncard_le_ncard hsing (toFinite _)
-    rw [ncard_singleton] at this
-    omega
+    simpa using (encard_mono hsing).trans (by simp : ({g} : Set (Set S)).encard ≤ _)
   -- Some edges of `H` are on the side of `G₂`, and they form a path.
   obtain ⟨x, y, P, hxy, hbd, hPs, hpath, hPE, hin⟩ :=
     exists_thread f r hS hsph hAH hbc hbfin (nonempty_iff_ne_empty.mpr hA)
@@ -401,8 +399,8 @@ theorem thin_of_side [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hw
     obtain ⟨W₀, -, hV₀, -⟩ := id hpath
     rw [hV₀]
     exact end_mem_support W₀
-  have hX₂ : (V(G₂) ∩ V(G₁)).ncard = 2 := by
-    rw [inter_comm, ← hX, hXeq, ncard_pair hxy]
+  have hX₂ : (V(G₂) ∩ V(G₁)).encard = 2 := by
+    rw [inter_comm, ← hX, hXeq, encard_pair hxy]
   -- A vertex on the path is on the side of `G₂`.
   have hPinV : ∀ {v}, v ∈ P.V → v ≠ x → v ≠ y → v ∈ V(G₂) \ V(G₁) := by
     intro v hv h₁ h₂
@@ -441,15 +439,19 @@ theorem thin_of_side [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (hw
         exact inc_of_mem_closure hgP (mem_closure_of_inc hi) hvP
       · intro hi
         exact inc_of_mem_closure (hPJ.2 hi.edge_mem) (mem_closure_of_inc hi) (hPJ.1 hvP)
-    change {g | J.toGraph.Inc g v}.ncard = 2
-    rw [hset]
-    exact path_two hpath hvP h₁ h₂
+    change {g | J.toGraph.Inc g v}.encard = 2
+    have hfin : {g | P.toGraph.Inc g v}.Finite :=
+      P.finite_edges.subset fun _ hg => hg.edge_mem
+    rw [hset, ← hfin.cast_ncard_eq]
+    exact_mod_cast path_two hpath hvP h₁ h₂
   · rw [hE₂]
     have hsub : P.V \ {x, y} ⊆ V(G₂) \ V(G₁) := fun v hv =>
       hPinV hv.1 (fun h₃ => hv.2 (Or.inl h₃)) (fun h₃ => hv.2 (Or.inr h₃))
     have hfinV : (V(G₂) \ V(G₁)).Finite :=
       J.finite_V.subset fun z hz => hl₂.vertexSet_mono hz.1
-    exact (path_count hpath hxy hxP hyP).trans (by
+    have hfinE : P.E.Finite := P.finite_edges
+    rw [← hfinE.cast_ncard_eq, ← hfinV.cast_ncard_eq]
+    exact_mod_cast (path_count hpath hxy hxP hyP).trans (by
       have := ncard_le_ncard hsub hfinV
       omega)
 
@@ -488,7 +490,9 @@ theorem good_of_wheel [ConnectedSpace S] (f : Frame H J Δ a) (r : Rad J Γ') (h
       have hfin : {e | J.toGraph.Inc e v}.Finite := J.finite_edges.subset fun e he => he.edge_mem
       have h₁ := ncard_le_ncard hmono hfin
       have h₂ := hT3 v hv
-      change {e | J.toGraph.Inc e v}.ncard = 2 at hd
+      change {e | J.toGraph.Inc e v}.encard = 2 at hd
+      rw [← hfin.cast_ncard_eq] at hd
+      have hcard : {e | J.toGraph.Inc e v}.ncard = 2 := by exact_mod_cast hd
       omega
     exact hT4.trans (ncard_le_ncard hsub (J.finite_V.subset fun _ hz => hz.1))
   · intro G₁ G₂ hs hord

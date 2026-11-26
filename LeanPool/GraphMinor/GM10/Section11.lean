@@ -469,12 +469,6 @@ private theorem onTreePath_of_mem_support {V : Type*} {G : SimpleGraph V} (hG : 
   obtain ⟨_, _, huniq⟩ := hG.existsUnique_path x y
   rwa [(huniq q hq).trans (huniq p hp).symm]
 
-private theorem onTreePath_symm {V : Type*} {G : SimpleGraph V} {x y z : V}
-    (h : OnTreePath G x y z) : OnTreePath G y x z := by
-  intro p hp
-  have := h p.reverse hp.reverse
-  rwa [Walk.support_reverse, List.mem_reverse] at this
-
 private theorem onTreePath_star_some_some {k : ℕ} {ι : Fin k → Type*}
     {T : ∀ i, SimpleGraph (ι i)} {r : ∀ i, ι i} (hT : ∀ i, (T i).IsTree)
     {i : Fin k} {u₁ u₂ : ι i} {t : Option (Σ j, ι j)}
@@ -640,7 +634,7 @@ private theorem isTreeDecomposition_starTree {k : ℕ} {ι : Fin k → Type*} [�
         · exact (htt'' rfl).elim
         · exact hnone_some j u₂ t' hon
         · rw [inter_vertexSet, Set.inter_comm]
-          exact hnone_some i u₁ t' (onTreePath_symm hon)
+          exact hnone_some i u₁ t' (GraphMinor.TreePath.symm hon)
         · by_cases hij : i = j
           · subst hij
             obtain ⟨w, rfl, hon_w⟩ :=
@@ -658,7 +652,7 @@ private theorem isTreeDecomposition_starTree {k : ℕ} {ι : Fin k → Type*} [�
             rcases List.mem_append.1 ht'_mem with ht'1 | ht'2
             · have hon1 : OnTreePath (StarTree T r) (some ⟨i, u₁⟩) none t' :=
                 onTreePath_of_mem_support hTree (hp.takeUntil hnone) ht'1
-              exact hnone_some i u₁ t' (onTreePath_symm hon1) ⟨hx0, hx1⟩
+              exact hnone_some i u₁ t' (GraphMinor.TreePath.symm hon1) ⟨hx0, hx1⟩
             · have hon2 : OnTreePath (StarTree T r) none (some ⟨j, u₂⟩) t' :=
                 onTreePath_of_mem_support hTree (hp.dropUntil hnone)
                   (List.tail_subset _ ht'2)

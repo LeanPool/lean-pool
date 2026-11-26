@@ -37,36 +37,26 @@ variable {α β ι ι' : Type*}
 
 /-- The start vertex `t₁` lies on every path from `t₁` to `t₂`. -/
 theorem onTreePath_refl_left (T : SimpleGraph ι) (t₁ t₂ : ι) : OnTreePath T t₁ t₂ t₁ :=
-  fun p _ ↦ p.start_mem_support
+  GraphMinor.TreePath.left T t₁ t₂
 
 /-- The end vertex `t₂` lies on every path from `t₁` to `t₂`. -/
 theorem onTreePath_refl_right (T : SimpleGraph ι) (t₁ t₂ : ι) : OnTreePath T t₁ t₂ t₂ :=
-  fun p _ ↦ p.end_mem_support
+  GraphMinor.TreePath.right T t₁ t₂
 
 /-- `OnTreePath T t₁ t₂ t` is symmetric in `t₁` and `t₂`. -/
 theorem onTreePath_comm {T : SimpleGraph ι} {t₁ t₂ t : ι} :
-    OnTreePath T t₁ t₂ t ↔ OnTreePath T t₂ t₁ t := by
-  constructor <;> intro h p hp
-  · have hm := h p.reverse ((Walk.isPath_reverse_iff p).2 hp)
-    rwa [Walk.support_reverse, List.mem_reverse] at hm
-  · have hm := h p.reverse ((Walk.isPath_reverse_iff p).2 hp)
-    rwa [Walk.support_reverse, List.mem_reverse] at hm
+    OnTreePath T t₁ t₂ t ↔ OnTreePath T t₂ t₁ t :=
+  ⟨GraphMinor.TreePath.symm, GraphMinor.TreePath.symm⟩
 
 /-- Only `t` lies on the path from `t` to `t`. -/
 theorem onTreePath_self_iff {T : SimpleGraph ι} {t t' : ι} :
-    OnTreePath T t t t' ↔ t' = t := by
-  constructor
-  · intro h
-    have hm := h Walk.nil Walk.IsPath.nil
-    simpa using hm
-  · rintro rfl
-    exact onTreePath_refl_left T t' t'
+    OnTreePath T t t t' ↔ t' = t :=
+  GraphMinor.TreePath.self_iff
 
 /-- If `OnTreePath T t₁ t₂ t`, then `t` belongs to the support of every walk from `t₁` to `t₂`. -/
 theorem mem_support_of_onTreePath {T : SimpleGraph ι} {t₁ t₂ t : ι}
-    (h : OnTreePath T t₁ t₂ t) (w : T.Walk t₁ t₂) : t ∈ w.support := by
-  classical
-  exact Walk.support_bypass_subset_support w (h w.bypass (Walk.bypass_isPath w))
+    (h : OnTreePath T t₁ t₂ t) (w : T.Walk t₁ t₂) : t ∈ w.support :=
+  GraphMinor.TreePath.mem_support h w
 
 /-- In a tree `T`, `OnTreePath T t₁ t₂ t` holds if and only if `t ∈ p.support` for a given path `p`
 from `t₁` to `t₂`. -/
@@ -390,73 +380,139 @@ theorem adj_attachLeaf_none_iff {T : SimpleGraph ι} {t₀ : ι} {w : Option ι}
     (attachLeaf T t₀).Adj none w ↔ w = some t₀ := by
   cases w <;> simp [attachLeaf]
 
+private theorem attachLeaf_delete_new_walk_none {T : SimpleGraph ι} {u₀ : ι}
+    {a b : Option ι} (p : ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Walk a b)
+    (ha : a = none) : b = none := by
+  induction p with
+  | nil => exact ha
+  | @cons x y w hxy _ _ =>
+    subst ha
+    rcases y with _ | t
+    · exact (deleteEdges_adj.1 hxy).1.elim
+    · have htu : t = u₀ := (deleteEdges_adj.1 hxy).1
+      subst htu
+      exact ((deleteEdges_adj.1 hxy).2 rfl).elim
+
+/-- Deleting the new edge isolates the attached leaf. -/
+theorem attachLeaf_delete_new_reachable_none {T : SimpleGraph ι} {u₀ : ι}
+    {z : Option ι} :
+    ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Reachable none z ↔ z = none := by
+  constructor
+  · rintro ⟨p⟩
+    exact attachLeaf_delete_new_walk_none p rfl
+  · rintro rfl
+    exact Reachable.refl _
+
+/-- After deleting the new edge, the original vertices remain mutually reachable. -/
+theorem attachLeaf_delete_new_reachable_some {T : SimpleGraph ι} (hT : T.Connected)
+    {u₀ : ι} {z : Option ι} :
+    ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Reachable (some u₀) z ↔
+      ∃ t : ι, z = some t := by
+  constructor
+  · intro hr
+    rcases z with _ | t
+    · exfalso
+      have := attachLeaf_delete_new_reachable_none.1 hr.symm
+      simp at this
+    · exact ⟨t, rfl⟩
+  · rintro ⟨t, rfl⟩
+    obtain ⟨w⟩ := hT u₀ t
+    have hwalk : ∀ {a b : ι}, T.Walk a b →
+        ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Reachable (some a) (some b) := by
+      intro a b p
+      induction p with
+      | nil => exact Reachable.refl _
+      | @cons x y c hxy _ ih =>
+        have hne : s(some x, some y) ≠ s(none, some u₀) := by simp
+        have hadj : ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Adj (some x) (some y) :=
+          deleteEdges_adj.mpr ⟨hxy, hne⟩
+        exact hadj.reachable.trans ih
+    exact hwalk w
+
+/-- Deleting an original edge preserves reachability exactly on the corresponding sides. -/
+theorem attachLeaf_delete_old_reachable_iff {T : SimpleGraph ι} {u₀ x y : ι}
+    {a b : Option ι} :
+    ((attachLeaf T u₀).deleteEdges {s(some x, some y)}).Reachable a b ↔
+      (T.deleteEdges {s(x, y)}).Reachable (projAttach u₀ a) (projAttach u₀ b) := by
+  have hproj : ∀ z : Option ι,
+      ((attachLeaf T u₀).deleteEdges {s(some x, some y)}).Reachable z (some (projAttach u₀ z)) := by
+    rintro (_ | t)
+    · have hne : s(none, some u₀) ≠ s(some x, some y) := by simp
+      have hadj : ((attachLeaf T u₀).deleteEdges {s(some x, some y)}).Adj none (some u₀) :=
+        deleteEdges_adj.mpr ⟨rfl, hne⟩
+      exact hadj.reachable
+    · exact Reachable.refl _
+  constructor
+  · rintro ⟨p⟩
+    induction p with
+    | nil => exact Reachable.refl _
+    | @cons c d w hcd _ ih =>
+      obtain ⟨hadj, hne⟩ := deleteEdges_adj.1 hcd
+      rcases c with _ | c <;> rcases d with _ | d
+      · exact ih
+      · change d = u₀ at hadj
+        rcases hadj with rfl
+        exact ih
+      · change c = u₀ at hadj
+        rcases hadj with rfl
+        exact ih
+      · change T.Adj c d at hadj
+        have hne' : s(c, d) ≠ s(x, y) := by
+          intro heq
+          exact hne (by simpa [Sym2.eq_iff] using Sym2.eq_iff.1 heq)
+        have hadj' : (T.deleteEdges {s(x, y)}).Adj c d := deleteEdges_adj.mpr ⟨hadj, hne'⟩
+        exact hadj'.reachable.trans ih
+  · rintro ⟨q⟩
+    have hlift : ∀ {c d : ι}, (T.deleteEdges {s(x, y)}).Walk c d →
+        ((attachLeaf T u₀).deleteEdges {s(some x, some y)}).Reachable (some c) (some d) := by
+      intro c d p
+      induction p with
+      | nil => exact Reachable.refl _
+      | @cons c₁ c₂ c₃ hc₁₂ _ ih =>
+        obtain ⟨hadj, hne⟩ := deleteEdges_adj.1 hc₁₂
+        have hne' : s(some c₁, some c₂) ≠ s(some x, some y) := by
+          intro heq
+          exact hne (by simpa [Sym2.eq_iff] using Sym2.eq_iff.1 heq)
+        have hadj' : ((attachLeaf T u₀).deleteEdges {s(some x, some y)}).Adj (some c₁) (some c₂) :=
+          deleteEdges_adj.mpr ⟨hadj, hne'⟩
+        exact hadj'.reachable.trans ih
+    exact (hproj a).trans ((hlift q).trans (hproj b).symm)
+
 /-- Attaching a leaf to a tree yields a tree. -/
-theorem isTree_attachLeaf [Finite ι] {T : SimpleGraph ι} (hT : T.IsTree) (t₀ : ι) :
-    (attachLeaf T t₀).IsTree := by
-  classical
-  let := Fintype.ofFinite ι
-  have hconn : (attachLeaf T t₀).Connected := by
-    refine Connected.mk fun a b ↦ ?_
-    have hreach : ∀ x : Option ι, (attachLeaf T t₀).Reachable (some t₀) x := by
-      rintro (_ | x)
-      · exact Adj.reachable (show (attachLeaf T t₀).Adj (some t₀) none from rfl)
-      · obtain ⟨w⟩ := hT.connected t₀ x
-        exact ⟨w.map (attachLeafSomeHom T t₀)⟩
-    exact (hreach a).symm.trans (hreach b)
-  let equivEdge : (attachLeaf T t₀).edgeSet ≃ Option T.edgeSet :=
-    { toFun := fun e ↦
-        if h : none ∈ e.1 then none
-        else some ⟨e.1.map (fun x ↦ x.getD t₀), by
-          rcases e with ⟨e, he⟩
-          induction e using Sym2.ind with | _ a b =>
-          cases a with
-          | none => exact (h (Sym2.mem_mk_left _ _)).elim
-          | some x =>
-            cases b with
-            | none => exact (h (Sym2.mem_mk_right _ _)).elim
-            | some y => exact he⟩
-      invFun := fun o ↦
-        match o with
-        | none => ⟨s(some t₀, none), show (attachLeaf T t₀).Adj (some t₀) none from rfl⟩
-        | some e => ⟨e.1.map Option.some, by
-            rcases e with ⟨e, he⟩
-            induction e using Sym2.ind with | _ x y =>
-            exact he⟩
-      left_inv := by
-        rintro ⟨e, he⟩
-        ext
-        induction e using Sym2.ind with | _ a b =>
-        cases a with
-        | none =>
-          cases b with
-          | none => exact he.elim
-          | some y =>
-            have hy : y = t₀ := he
-            subst hy
-            simp [Sym2.eq_swap]
-        | some x =>
-          cases b with
-          | none =>
-            have hx : x = t₀ := he
-            subst hx
-            simp
-          | some y =>
-            have hnot : ¬ (none : Option ι) ∈ s(some x, some y) := by simp
-            simp [hnot]
-      right_inv := by
-        rintro (_ | ⟨e, he⟩)
-        · simp
-        · ext
-          induction e using Sym2.ind with | _ x y =>
-          have hnot : ¬ (none : Option ι) ∈ s(some x, some y) := by simp
-          simp [hnot] }
-  have hedge : Nat.card (attachLeaf T t₀).edgeSet = Nat.card T.edgeSet + 1 := by
-    rw [Nat.card_congr equivEdge, Nat.card_eq_fintype_card, Fintype.card_option,
-      ← Nat.card_eq_fintype_card]
-  have hcardT : Nat.card T.edgeSet + 1 = Nat.card ι :=
-    (isTree_iff_connected_and_card.1 hT).2
-  refine isTree_iff_connected_and_card.2 ⟨hconn, ?_⟩
-  rw [hedge, hcardT, Nat.card_eq_fintype_card, Nat.card_eq_fintype_card, Fintype.card_option]
+theorem isTree_attachLeaf {T : SimpleGraph ι} (hT : T.IsTree) (u₀ : ι) :
+    (attachLeaf T u₀).IsTree where
+  connected := by
+    refine Connected.mk (fun a b ↦ ?_)
+    have ha : (attachLeaf T u₀).Reachable a (some (projAttach u₀ a)) := by
+      rcases a with _ | t
+      · exact Walk.reachable (Walk.cons (by simp [attachLeaf, projAttach]) .nil)
+      · exact Reachable.refl _
+    have hb : (attachLeaf T u₀).Reachable b (some (projAttach u₀ b)) := by
+      rcases b with _ | t
+      · exact Walk.reachable (Walk.cons (by simp [attachLeaf, projAttach]) .nil)
+      · exact Reachable.refl _
+    obtain ⟨w⟩ := hT.connected (projAttach u₀ a) (projAttach u₀ b)
+    exact ha.trans ((Walk.reachable (w.map (attachLeafSomeHom T u₀))).trans hb.symm)
+  isAcyclic := by
+    rw [isAcyclic_iff_forall_adj_isBridge]
+    rintro (_ | x) (_ | y) hadj
+    · exact hadj.elim
+    · change y = u₀ at hadj
+      subst y
+      intro hr
+      have := attachLeaf_delete_new_reachable_none.1 hr
+      simp at this
+    · change x = u₀ at hadj
+      subst x
+      intro hr
+      have hr' : ((attachLeaf T u₀).deleteEdges {s(none, some u₀)}).Reachable none (some u₀) := by
+        simpa [Sym2.eq_swap] using hr.symm
+      have := attachLeaf_delete_new_reachable_none.1 hr'
+      simp at this
+    · change T.Adj x y at hadj
+      intro hr
+      have hr' := attachLeaf_delete_old_reachable_iff.1 hr
+      exact (isAcyclic_iff_forall_adj_isBridge.1 hT.isAcyclic hadj) hr'
 
 /-- A short walk in `attachLeaf T t₀` from `a` to `some (projAttach t₀ a)` whose support maps into
 `{projAttach t₀ a}`. -/

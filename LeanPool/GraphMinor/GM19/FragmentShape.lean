@@ -141,17 +141,8 @@ theorem IsCappedSurface.preimage_compl_discInt (cap : IsCappedSurface S Shat) {�
   exact ⟨fun h ↦ h.1, fun h ↦ ⟨h, fun h' ↦ cap.notMem_range hΘ h' (mem_range_self z)⟩⟩
 
 theorem isPreconnected_of_line {T : Type} [TopologicalSpace T] {L : Set T} {a b : T}
-  (hl : IsLineWithEnds L a b) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := hl
-  have : L = range fun t ↦ (f t).1 := by
-    ext x
-    constructor
-    · intro hx
-      exact ⟨f.symm ⟨x, hx⟩, by simp⟩
-    · rintro ⟨t, rfl⟩
-      exact (f t).2
-  rw [this]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+  (hl : IsLineWithEnds L a b) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected hl
 
 theorem ends_of_line {T : Type} [TopologicalSpace T] {L : Set T} {a b : T}
   (hl : IsLineWithEnds L a b) : a ∈ L ∧ b ∈ L ∧ a ≠ b := by

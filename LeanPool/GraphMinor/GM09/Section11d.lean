@@ -324,7 +324,8 @@ theorem exists_emptyRegion {q : ℕ} {CS S₁ : Society α (Sym2 α)}
         intro v hv
         have hv₁ : v ∈ V(S₁.G) := S₁.bar_subset (D.Ω₀_eq ▸ hv)
         exact hkey hv₁ (hsubV (Or.inl hv₁))
-      refine hΔ₀.elim (fun h => ?_) fun hn => hn ⟨hsubK.trans hK.1, hcard hsubK, ?_⟩
+      refine hΔ₀.elim (fun h => ?_) fun hn =>
+        hn ⟨hsubK.trans hK.1, (encard_mono hsubK).trans hK.2.1, ?_⟩
       · have hne := h₀.nonempty_discInt.mono (discInt_subset _)
         rw [h] at hne
         exact hne.ne_empty rfl
@@ -496,7 +497,8 @@ theorem exists_core_decomposition {CS : Society α (Sym2 α)} (hc : CS.IsKConnec
   have hsN := hs.mono hC₂
   by_cases hcl : IsLeThreeClique N₂.G N₂.Ω₀.bar
   · have hVsub : V(S₁.G) ⊆ V(N₂.G) := CS.vertexSet_subset_of_isFourConnected hc hC₁ hC₂
-      D.vertexSet_union D.edgeSet_union (by rw [D.inter_eq_bar₀, ← hΩ₀]; exact hcl.2.1)
+      D.vertexSet_union D.edgeSet_union
+      (by rw [D.inter_eq_bar₀, ← hΩ₀]; exact hcl.finite_ncard_le.2)
       (hΩ ▸ N₂.bar_subset)
     have hbar : ∀ v ∈ V(S₁.G), v ∈ N₂.Ω₀.bar := by
       intro v hv
@@ -645,10 +647,11 @@ theorem exists_feasible_of_core_decomposition (S : Society α β)
     have hfin_AB : (V(A) ∩ V(B)).Finite :=
       S.finite_V.subset (inter_subset_left.trans (hD.left_le hAB).vertexSet_mono)
     have hclique_C : IsLeThreeClique CS.G (V(A) ∩ V(B)) :=
-      ⟨hD.inter_subset_consolidationCore hAB, hD.order_le_three hAB,
+      ⟨hD.inter_subset_consolidationCore hAB,
+        Set.encard_le_coe_iff_finite_ncard_le.mpr ⟨hfin_AB, hD.order_le_three hAB⟩,
         fun u hu v hv huv => hD.consolidationCore_isLink_of_mem_inter hAB hu hv huv⟩
     exact isLeThreeClique_left_or_right hdecomp.C₁_le hdecomp.C₂_le hdecomp.union_eq
-      hdecomp.triangle_in_left_or_right hfin_AB hclique_C
+      hdecomp.triangle_in_left_or_right hclique_C
   let D₁ : Set (Graph α β × Graph α β) := {q ∈ D_set | IsLeThreeClique S₁.G (V(q.1) ∩ V(q.2))}
   let D₂ : Set (Graph α β × Graph α β) := D_set \ D₁
   have hD_union : D₁ ∪ D₂ = D_set := union_sdiff_cancel (fun _ h => h.1)
@@ -768,7 +771,7 @@ theorem exists_feasible_of_core_decomposition (S : Society α β)
   refine ⟨k, S₀, S_fam, ⟨hseg, Δ, Δ₀, _, α_pt, harr⟩, rfl, fun i => ?_, hno_large_S₀⟩
   change (Ω_clique (V((p_idx i).1) ∩ V((p_idx i).2))).bar.ncard ≤ 3
   rw [hbar_clique _ (hF i)]
-  exact (hp_clique i).2.1
+  exact (hp_clique i).finite_ncard_le.2
 
 /-- **Graph Minors IX, (11.11)** (pages 74–77):
 "Let $p \ge 2$, with $p \neq 3$. Let $(G, \Omega)$ be a society with no crooked transaction

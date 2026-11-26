@@ -224,19 +224,8 @@ theorem circle_exp_eq_iff_sub_eq_int_mul {x y : ℝ} :
 /-- Two angles in `[θ₀, θ₀ + 2π)` with the same `Circle.exp` are equal. -/
 theorem eq_of_circle_exp_eq_of_mem_Ico {θ₀ x y : ℝ}
     (hx : x ∈ Ico θ₀ (θ₀ + 2 * Real.pi)) (hy : y ∈ Ico θ₀ (θ₀ + 2 * Real.pi))
-    (h : Circle.exp x = Circle.exp y) : x = y := by
-  obtain ⟨k, hk⟩ := circle_exp_eq_iff_sub_eq_int_mul.mp h
-  have hpi : 0 < 2 * Real.pi := by positivity
-  have hk_gt : (-1 : ℝ) * (2 * Real.pi) < k * (2 * Real.pi) := by linarith [hx.1, hy.2]
-  have hk_lt : (k : ℝ) * (2 * Real.pi) < 1 * (2 * Real.pi) := by linarith [hx.2, hy.1]
-  have hk1 : (-1 : ℝ) < k := lt_of_mul_lt_mul_right hk_gt hpi.le
-  have hk2 : (k : ℝ) < 1 := lt_of_mul_lt_mul_right hk_lt hpi.le
-  have hk0 : k = 0 := by
-    exact_mod_cast (by omega : -1 < k ∧ k < 1 → k = 0) ⟨by exact_mod_cast hk1, by exact_mod_cast
-      hk2⟩
-  subst hk0
-  norm_num at hk
-  linarith
+    (h : Circle.exp x = Circle.exp y) : x = y :=
+  Circle.exp_injOn_Ico (a := θ₀) (b := θ₀ + 2 * Real.pi) (by simp) hx hy h
 
 private theorem angle_lt_full_turn_of_injective_lift
     {θ₀ : ℝ}

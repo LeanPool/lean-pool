@@ -56,14 +56,8 @@ theorem GraphWalk.edges_eq_of_ends {G : Drawing Shat} {a b : Shat} (K : GraphWal
 
 /-- The image of a line is connected. -/
 theorem IsLineWithEnds.isPreconnected' {T : Type} [TopologicalSpace T] {L : Set T} {u v : T}
-  (h : IsLineWithEnds L u v) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := h
-  have hL : L = range fun t ↦ (f t).1 := by
-    refine Subset.antisymm (fun x hx ↦ ⟨f.symm ⟨x, hx⟩, by simp⟩) ?_
-    rintro _ ⟨t, rfl⟩
-    exact (f t).2
-  rw [hL]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+  (h : IsLineWithEnds L u v) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 namespace TangleDatum
 

@@ -73,17 +73,8 @@ theorem subset_side {X Y Z : Set S} (hX : IsClosed X) (hY : IsClosed Y) (hZ : Is
 
 omit [T2Space S] in
 /-- A line is connected. -/
-theorem line_conn {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := h
-  have : L = range fun t => (f t).1 := by
-    ext x
-    constructor
-    · intro hx
-      exact ⟨f.symm ⟨x, hx⟩, by simp⟩
-    · rintro ⟨t, rfl⟩
-      exact (f t).2
-  rw [this]
-  exact isPreconnected_range (by fun_prop)
+theorem line_conn {L : Set S} {a b : S} (h : IsLineWithEnds L a b) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 omit [T2Space S] in
 /-- A line with ends `a, b` has a point other than its ends. -/

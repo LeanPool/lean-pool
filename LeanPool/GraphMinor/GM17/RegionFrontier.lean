@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM17.Sides
+import LeanPool.GraphMinor.GM11.PaintingRegions
 
 /-!
 # The frontier of a region
@@ -170,102 +171,13 @@ theorem SideOf.unique [CompactSpace S] [ConnectedSpace S] (hS : IsSurface S)
 end Painting
 
 /-- The ring between a radius and the unit circle in the plane is connected. -/
-theorem isPreconnected_ring {ρ : ℝ} (hρ : 0 ≤ ρ) : IsPreconnected {z : EuclideanPlane | ρ < ‖z‖
-  ∧ ‖z‖ < 1} := by
-  have hrank : 1 < Module.rank ℝ EuclideanPlane := by
-    rw [← Module.finrank_eq_rank]
-    simp [EuclideanPlane]
-  have h1 : IsPreconnected (Ioo ρ 1 ×ˢ Metric.sphere (0 : EuclideanPlane) 1)
-    := isPreconnected_Ioo.prod (isPreconnected_sphere hrank 0 1)
-  have h2 := h1.image (fun q : ℝ × EuclideanPlane => q.1 • q.2) (by fun_prop)
-  convert h2 using 1
-  ext z
-  constructor
-  · rintro ⟨h3, h4⟩
-    have hz : ‖z‖ ≠ 0 := by linarith
-    refine ⟨(‖z‖, ‖z‖⁻¹ • z), ⟨⟨h3, h4⟩, ?_⟩, ?_⟩
-    · simp [norm_smul, hz]
-    · simp [smul_smul, hz]
-  · rintro ⟨⟨t, w⟩, ⟨⟨h3, h4⟩, h5⟩, rfl⟩
-    have h6 : ‖w‖ = 1 := by simpa using h5
-    have h7 : ‖t • w‖ = t := by
-      rw [norm_smul, h6, mul_one, Real.norm_of_nonneg (by linarith)]
-    change ρ < ‖t • w‖ ∧ ‖t • w‖ < 1
-    rw [h7]
-    exact ⟨h3, h4⟩
+theorem isPreconnected_ring {ρ : ℝ} (hρ : 0 ≤ ρ) :
+    IsPreconnected {z : EuclideanPlane | ρ < ‖z‖ ∧ ‖z‖ < 1} :=
+  GM11.isPreconnected_annulus hρ
 
 /-- The frontier of an open disc in a compact space is connected. -/
 theorem isPreconnected_frontier [T2Space S] [CompactSpace S] {r : Set S}
-  (hr : IsOpenDisc r) : IsPreconnected (closure r \ r) := by
-  obtain ⟨hro, ⟨φ⟩⟩ := hr
-  have hF : IsClosed (closure r \ r) := isClosed_closure.sdiff hro
-  rw [isPreconnected_closed_iff]
-  intro A B hA hB hcov ⟨x₁, hx₁, hx₁A⟩ ⟨x₂, hx₂, hx₂B⟩
-  by_contra hem
-  have hdisj : Disjoint ((closure r \ r) ∩ A) ((closure r \ r) ∩ B) := disjoint_left.mpr fun x hx
-    hx' => hem ⟨x, hx.1, hx.2, hx'.2⟩
-  obtain ⟨V₁, V₂, hV₁, hV₂, h₁, h₂, hd⟩ := SeparatedNhds.of_isCompact_isCompact
-    (hF.inter hA).isCompact (hF.inter hB).isCompact hdisj
-  let K : Set S := closure r \ (V₁ ∪ V₂)
-  have hK : IsClosed K := isClosed_closure.sdiff (hV₁.union hV₂)
-  have hKr : K ⊆ r := fun x hx => by
-    by_contra hn
-    rcases hcov ⟨hx.1, hn⟩ with h | h
-    · exact hx.2 (.inl (h₁ ⟨⟨hx.1, hn⟩, h⟩))
-    · exact hx.2 (.inr (h₂ ⟨⟨hx.1, hn⟩, h⟩))
-  let K₁ : Set r := Subtype.val ⁻¹' K
-  have hK₁ : IsCompact K₁ := by
-    rw [Topology.IsEmbedding.subtypeVal.isCompact_iff, Subtype.image_preimage_coe,
-      inter_eq_right.mpr hKr]
-    exact hK.isCompact
-  have hK₂ : IsCompact (φ.symm '' K₁) := hK₁.image φ.symm.continuous
-  obtain ⟨ρ, hρ0, hρ1, hρ⟩ : ∃ ρ : ℝ, 0 ≤ ρ ∧ ρ < 1 ∧ ∀ z ∈ φ.symm '' K₁, ‖z.1‖ ≤ ρ := by
-    by_cases hne : (φ.symm '' K₁).Nonempty
-    · obtain ⟨z, hz, hmax⟩ := hK₂.exists_isMaxOn hne (continuous_norm.comp
-      continuous_subtype_val).continuousOn
-      refine ⟨‖z.1‖, norm_nonneg _, ?_, fun y hy => hmax hy⟩
-      simpa [OpenUnitDisc] using z.2
-    · refine ⟨0, le_rfl, one_pos, fun z hz => absurd ⟨z, hz⟩ hne⟩
-  have hbsub : Metric.closedBall (0 : EuclideanPlane) ρ ⊆ OpenUnitDisc
-    := Metric.closedBall_subset_ball hρ1
-  let Cb : Set OpenUnitDisc := Subtype.val ⁻¹' Metric.closedBall (0 : EuclideanPlane) ρ
-  have hCb : IsCompact Cb := by
-    rw [Topology.IsEmbedding.subtypeVal.isCompact_iff, Subtype.image_preimage_coe,
-      inter_eq_right.mpr hbsub]
-    exact isCompact_closedBall _ _
-  let C : Set S := Subtype.val '' (φ '' Cb)
-  have hC : IsClosed C := ((hCb.image φ.continuous).image continuous_subtype_val).isClosed
-  let 𝔸 : Set OpenUnitDisc := Subtype.val ⁻¹' {z : EuclideanPlane | ρ < ‖z‖ ∧ ‖z‖ < 1}
-  have h𝔸 : IsPreconnected 𝔸 := by
-    rw [← Topology.IsInducing.subtypeVal.isPreconnected_image, Subtype.image_preimage_coe]
-    have he : OpenUnitDisc ∩ {z : EuclideanPlane | ρ < ‖z‖ ∧ ‖z‖ < 1}
-      = {z : EuclideanPlane | ρ < ‖z‖ ∧ ‖z‖ < 1} :=
-      inter_eq_right.mpr fun z hz => by simpa [OpenUnitDisc] using hz.2
-    rw [he]
-    exact isPreconnected_ring hρ0
-  let P : Set S := Subtype.val '' (φ '' 𝔸)
-  have hP : IsPreconnected P := (h𝔸.image _ φ.continuous.continuousOn).image _
-    continuous_subtype_val.continuousOn
-  have hPV : P ⊆ V₁ ∪ V₂ := by
-    rintro _ ⟨_, ⟨z, hz, rfl⟩, rfl⟩
-    by_contra hn
-    have h1 : (φ z).1 ∈ K := ⟨subset_closure (φ z).2, hn⟩
-    have h2 := hρ z ⟨φ z, h1, φ.symm_apply_apply z⟩
-    exact absurd hz.1 (not_lt.mpr h2)
-  have hmeet : ∀ {V x}, IsOpen V → x ∈ V → x ∈ closure r → x ∉ r → (P ∩ V).Nonempty
-    := fun {V x} hV hxV hxc hxr => by
-    have hxC : x ∉ C := by
-      rintro ⟨y, -, rfl⟩
-      exact hxr y.2
-    obtain ⟨y, hy, hyr⟩ := mem_closure_iff.mp hxc (V ∩ Cᶜ) (hV.inter hC.isOpen_compl) ⟨hxV, hxC⟩
-    let z := φ.symm ⟨y, hyr⟩
-    have hz : (φ z).1 = y := by simp [z]
-    refine ⟨y, ⟨_, ⟨z, ⟨?_, ?_⟩, rfl⟩, hz⟩, hy.1⟩
-    · by_contra hn
-      exact hy.2 ⟨φ z, ⟨z, by simpa [Cb] using hn, rfl⟩, hz⟩
-    · simpa [OpenUnitDisc] using z.2
-  have h1 := hmeet hV₁ (h₁ ⟨hx₁, hx₁A⟩) hx₁.1 hx₁.2
-  obtain ⟨y, hy, hy₂⟩ := hmeet hV₂ (h₂ ⟨hx₂, hx₂B⟩) hx₂.1 hx₂.2
-  exact disjoint_left.mp hd (hP.subset_left_of_subset_union hV₁ hV₂ hd hPV h1 hy) hy₂
+    (hr : IsOpenDisc r) : IsPreconnected (closure r \ r) := by
+  simpa only [frontier, hr.1.interior_eq] using GM11.isPreconnected_frontier hr
 
 end GraphMinor.GM17

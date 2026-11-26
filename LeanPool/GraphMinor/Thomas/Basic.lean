@@ -8,7 +8,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
-public import Mathlib.Combinatorics.SimpleGraph.Acyclic
+public import LeanPool.GraphMinor.TreePath
 public import Mathlib.Data.Finset.Card
 public import Mathlib.Data.Set.Card
 public import LeanPool.GraphMinor.Hypergraph.Basic
@@ -47,8 +47,8 @@ variable {α ι : Type*}
 
 /-- `t` lies on the path of `T` between `t₁` and `t₂`: every path in `T` from `t₁` to `t₂` contains
 `t`. In a tree there is a unique such path (`IsTree.existsUnique_path`). -/
-def OnTreePath (T : SimpleGraph ι) (t₁ t₂ t : ι) : Prop :=
-  ∀ p : T.Walk t₁ t₂, p.IsPath → t ∈ p.support
+abbrev OnTreePath (T : SimpleGraph ι) (t₁ t₂ t : ι) : Prop :=
+  GraphMinor.TreePath.OnTreePath T t₁ t₂ t
 
 /-- The edge `t t'` lies on the path of `T` between `t₁` and `t₂`: `t` and `t'` are adjacent in `T`
 and every path in `T` from `t₁` to `t₂` traverses the edge `s(t, t')`. -/
@@ -79,17 +79,15 @@ theorem onTreePathEdge_iff_mem_treePath {T : SimpleGraph ι} (hT : T.IsTree) {t�
 
 @[simp]
 theorem onTreePath_left (T : SimpleGraph ι) (t₁ t₂ : ι) : OnTreePath T t₁ t₂ t₁ :=
-  fun p _ ↦ p.start_mem_support
+  GraphMinor.TreePath.left T t₁ t₂
 
 @[simp]
 theorem onTreePath_right (T : SimpleGraph ι) (t₁ t₂ : ι) : OnTreePath T t₁ t₂ t₂ :=
-  fun p _ ↦ p.end_mem_support
+  GraphMinor.TreePath.right T t₁ t₂
 
 theorem onTreePath_symm {T : SimpleGraph ι} {t₁ t₂ t : ι} (h : OnTreePath T t₁ t₂ t) :
-    OnTreePath T t₂ t₁ t := by
-  intro p hp
-  have := h p.reverse hp.reverse
-  rwa [Walk.support_reverse, List.mem_reverse] at this
+    OnTreePath T t₂ t₁ t :=
+  GraphMinor.TreePath.symm h
 
 theorem onTreePath_comm (T : SimpleGraph ι) (t₁ t₂ t : ι) :
     OnTreePath T t₁ t₂ t ↔ OnTreePath T t₂ t₁ t :=
@@ -97,13 +95,8 @@ theorem onTreePath_comm (T : SimpleGraph ι) (t₁ t₂ t : ι) :
 
 @[simp]
 theorem onTreePath_self (T : SimpleGraph ι) (t₁ t : ι) :
-    OnTreePath T t₁ t₁ t ↔ t = t₁ := by
-  constructor
-  · intro h
-    have := h Walk.nil Walk.IsPath.nil
-    simpa using this
-  · rintro rfl
-    exact onTreePath_left T t t
+    OnTreePath T t₁ t₁ t ↔ t = t₁ :=
+  GraphMinor.TreePath.self_iff
 
 theorem onTreePathEdge_symm_endpoints {T : SimpleGraph ι} {t₁ t₂ t t' : ι}
     (h : OnTreePathEdge T t₁ t₂ t t') : OnTreePathEdge T t₂ t₁ t t' := by
@@ -140,13 +133,8 @@ theorem onTreePath_iff_exists_append {T : SimpleGraph ι} (hT : T.IsTree) {t₁ 
 /-- `t` lies on `t₁ T t₂` if and only if every walk (not necessarily a path) from `t₁` to `t₂`
 contains `t`. -/
 theorem onTreePath_iff_forall_walk {T : SimpleGraph ι} {t₁ t₂ t : ι} :
-    OnTreePath T t₁ t₂ t ↔ ∀ w : T.Walk t₁ t₂, t ∈ w.support := by
-  classical
-  constructor
-  · intro h w
-    exact w.support_bypass_subset_support (h w.bypass w.bypass_isPath)
-  · intro h p _
-    exact h p
+    OnTreePath T t₁ t₂ t ↔ ∀ w : T.Walk t₁ t₂, t ∈ w.support :=
+  ⟨GraphMinor.TreePath.mem_support, fun h p _ ↦ h p⟩
 
 /-- `t t'` is an edge of `t₁ T t₂` if and only if `T.Adj t t'` and `t₁, t₂` are not
 reachable in `T - t t'`, that is, every walk in `T` from `t₁` to `t₂` uses the edge `s(t, t')`. -/
@@ -338,7 +326,14 @@ theorem mem_bag_of_onTreePath {t₁ t₂ t₃ : ι} {x : α} (ht : OnTreePath D.
 
 /-- The width of `D` is at most `w`: `|V_t| ≤ w + 1` for all `t ∈ T`. -/
 def WidthLE (w : ℕ) : Prop :=
-  ∀ t : ι, (D.bag t).ncard ≤ w + 1
+  ∀ t : ι, (D.bag t).encard ≤ (w + 1 : ℕ)
+
+/-- For a finite vertex set the width bound can be checked with natural cardinalities. -/
+theorem widthLE_iff_ncard_le (hV₀ : V₀.Finite) {w : ℕ} :
+    D.WidthLE w ↔ ∀ t, (D.bag t).ncard ≤ w + 1 := by
+  constructor
+  · exact fun h t ↦ (Set.encard_le_coe_iff_finite_ncard_le.mp (h t)).2
+  · exact fun h t ↦ Set.encard_le_coe_iff_finite_ncard_le.mpr ⟨D.bag_finite hV₀ t, h t⟩
 
 /-- **Lemma 1** of Bellenbaum and Diestel (page 2), edge-removal form:
 Let `(V_t)_{t ∈ T}` be a tree-decomposition of a graph `G`, let `t₁ t₂` be an edge of `T`, and let

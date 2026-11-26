@@ -329,7 +329,7 @@ theorem exists_shadow [Fintype ι] (hG : G.IsGraph) {T : Set (Hypergraph α β �
     have h₂ : (leaves S).ncard ≤ {v | deg S v ≠ 2}.ncard := ncard_le_ncard (fun v (hv : deg S v
       = 1) => by
       change deg S v ≠ 2
-      omega) (toFinite _)
+      exact fun h => (by decide : (1 : ℕ∞) ≠ 2) (hv.symm.trans h)) (toFinite _)
     omega
   | succ d ih =>
     obtain ⟨G', T', θ', z', S, D, hR, hb, hS, hs, hL⟩ := ih (by omega)

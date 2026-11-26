@@ -33,24 +33,10 @@ variable {X : Type*} [TopologicalSpace X] [T2Space X]
 /-- Two parameters at distance less than a full turn have different images on the circle. -/
 theorem exp_inj_of_lt {x y : ℝ} (hxy : x < y) (hlt : y < x + 2 * Real.pi) :
     Circle.exp x ≠ Circle.exp y := by
-  intro h
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.mp h
-  have hp := Real.pi_pos
-  have h1 : (m : ℝ) * (2 * Real.pi) < 0 := by linarith
-  have h2 : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith
-  have hm0 : (m : ℝ) < 0 := by
-    by_contra hc
-    push Not at hc
-    have := mul_nonneg hc (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
-    linarith
-  have hm1 : (-1 : ℝ) < m := by
-    by_contra hc
-    push Not at hc
-    have := mul_le_mul_of_nonneg_right hc (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
-    linarith
-  have h3 : m < 0 := by exact_mod_cast hm0
-  have h4 : -1 < m := by exact_mod_cast hm1
-  omega
+  have hmem : x ∈ Ico x (x + 2 * Real.pi) := ⟨le_rfl, by linarith [Real.pi_pos]⟩
+  exact fun h => hxy.ne
+    (Circle.exp_injOn_Ico (a := x) (b := x + 2 * Real.pi) (by simp)
+      hmem ⟨hxy.le, hlt⟩ h)
 
 /-- The arc of the circle from `x` to `y`, pushed into `F`, is a line, when `y - x < 2π`. -/
 theorem isLine_arc {F : Set X} (f : Circle ≃ₜ F) {x y : ℝ} (hxy : x < y)
@@ -125,18 +111,9 @@ theorem isLine_arc {F : Set X} (f : Circle ≃ₜ F) {x y : ℝ} (hxy : x < y)
   rwa [h0, h1] at hl
 
 /-- Every point of the circle has a parameter in a given window of one full turn. -/
-theorem exists_param (u : ℝ) (z : Circle) : ∃ w ∈ Ico u (u + 2 * Real.pi), Circle.exp w = z := by
-  have hp : 0 < 2 * Real.pi := by positivity
-  have hm := toIcoMod_mem_Ico hp u (Complex.arg (z : ℂ))
-  refine ⟨toIcoMod hp u (Complex.arg z), hm, ?_⟩
-  have h1 := toIcoMod_add_toIcoDiv_zsmul hp u (Complex.arg (z : ℂ))
-  have h2 : Circle.exp (toIcoMod hp u (Complex.arg (z : ℂ))) = Circle.exp (Complex.arg (z : ℂ))
-    := by
-    refine Circle.exp_eq_exp.mpr ⟨-toIcoDiv hp u (Complex.arg (z : ℂ)), ?_⟩
-    rw [zsmul_eq_mul] at h1
-    push_cast
-    linarith
-  rw [h2, Circle.exp_arg]
+theorem exists_param (u : ℝ) (z : Circle) :
+    ∃ t ∈ Ico u (u + 2 * Real.pi), Circle.exp t = z :=
+  GraphMinor.Surface.exists_circleExp_mem_Ico u z
 
 /-- Two parameters `u < v` less than a turn apart cut `F` into two lines. -/
 theorem exists_two_lines {F : Set X} (f : Circle ≃ₜ F) {u v : ℝ} (huv : u < v)

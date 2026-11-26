@@ -78,9 +78,9 @@ for `w : ℕ` when `|X_t| ≤ w + 1` for every `t ∈ V(T)`. -/
 def WidthLE (χ : ι → Set V) (w : ℕ) : Prop :=
   ∀ t : ι, (χ t).encard ≤ (w + 1 : ℕ)
 
-/-- The supremum of `|X_t| - 1` over the bags of a tree-decomposition. For finite graphs this is
-the width of Graph Minors V, Section 1, page 93. The Lean extension to arbitrary bags gives width
-`⊤` if a bag is infinite. -/
+/-- The supremum of `|X_t| - 1` over the bags of a tree-decomposition. For finitely many finite bags
+with at least one nonempty bag, this agrees with the width in Graph Minors V, Section 1, page 93.
+Subtraction in `ℕ∞` gives width zero when every bag is empty. An infinite bag gives width `⊤`. -/
 noncomputable def decompWidth (χ : ι → Set V) : ℕ∞ :=
   ⨆ t, (χ t).encard - 1
 

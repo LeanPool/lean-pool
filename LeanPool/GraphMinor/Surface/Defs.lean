@@ -14,6 +14,7 @@ public import Mathlib.Analysis.Complex.Circle
 public import Mathlib.Geometry.Manifold.Instances.Real
 public import Mathlib.Topology.Connected.PathConnected
 public import Mathlib.Topology.Homotopy.Path
+import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 
 /-!
 # Topological Surfaces, Curves, Discs, Drawings, and Paintings
@@ -198,6 +199,23 @@ Graph Minors VII, Section 2 (page 214); Graph Minors XI, Section 3 (page 74). -/
 def IsLineWithEnds {S : Type u} [TopologicalSpace S] (L : Set S) (u v : S) : Prop :=
   ∃ f : unitInterval ≃ₜ L, (f 0).1 = u ∧ (f 1).1 = v
 
+/-- A line with specified ends is preconnected. -/
+theorem IsLineWithEnds.isPreconnected {S : Type*} [TopologicalSpace S] {L : Set S} {a b : S}
+    (h : IsLineWithEnds L a b) : IsPreconnected L := by
+  obtain ⟨f, -, -⟩ := h
+  have hL : range (fun t => (f t).1) = L :=
+    subset_antisymm (by rintro _ ⟨t, rfl⟩; exact (f t).2)
+      (fun x hx => ⟨f.symm ⟨x, hx⟩, by simp⟩)
+  rw [← hL]
+  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+
+/-- The circle has a representative in each half-open interval of length one full turn. -/
+theorem exists_circleExp_mem_Ico (a : ℝ) (z : Circle) :
+    ∃ t ∈ Ico a (a + 2 * Real.pi), Circle.exp t = z := by
+  obtain ⟨t, ht⟩ := Circle.exp_surjective z
+  obtain ⟨s, hs, h⟩ := Circle.periodic_exp.exists_mem_Ico (by positivity) t a
+  exact ⟨s, hs, h.symm.trans ht⟩
+
 /-- A map continuous and injective on a line carries it to a line with the image endpoints. -/
 theorem IsLineWithEnds.image_under_injOn {S T : Type*} [TopologicalSpace S] [TopologicalSpace T]
     [T2Space T] {L : Set S} {u v : S} (hl : IsLineWithEnds L u v) {g : S → T}
@@ -318,6 +336,16 @@ Graph Minors VII, Section 2 (page 214); Graph Minors XI, Section 3 (page 74):
 "An *O-arc* is a subset homeomorphic to a circle." -/
 def IsOArc {S : Type u} [TopologicalSpace S] (F : Set S) : Prop :=
   Nonempty (Circle ≃ₜ F)
+
+/-- A subset homeomorphic to the circle is preconnected. -/
+theorem IsOArc.isPreconnected {S : Type*} [TopologicalSpace S] {F : Set S}
+    (h : IsOArc F) : IsPreconnected F := by
+  obtain ⟨f⟩ := h
+  have hF : range (fun t => (f t).1) = F :=
+    subset_antisymm (by rintro _ ⟨t, rfl⟩; exact (f t).2)
+      (fun x hx => ⟨f.symm ⟨x, hx⟩, by simp⟩)
+  rw [← hF]
+  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
 
 /-- An *$I$-arc* in $\Sigma$ is a subset $F \subseteq \Sigma$ homeomorphic to $[0, 1]$ with both
 ends in $\operatorname{bd}(\Sigma)$.

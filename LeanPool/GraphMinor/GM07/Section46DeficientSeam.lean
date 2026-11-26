@@ -50,9 +50,8 @@ universe u
 variable {S : Type u} [TopologicalSpace S]
 
 /-- A line is connected. -/
-theorem line_preconnected {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) : IsPreconnected L := by
-  obtain ⟨k, hk, rfl, -, -⟩ := hL.exists_arc
-  exact isPreconnected_range hk.1
+theorem line_preconnected {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected hL
 
 /-- No circle of the seam lies in a closed disc of `Σ`, because `Σ - U(J)` is connected and dense.
 This is the use of "`J'` has only one region" on page 228. -/

@@ -32,17 +32,8 @@ variable {α : Type u} [Nonempty α] {β : Type v} {S : Type} [TopologicalSpace 
   {V : ∀ m : Maj Seg, VortexCut m.1 (D m.1) ν ρ}
 
 theorem IsLineWithEnds.isPreconnected {T : Type*} [TopologicalSpace T] {L : Set T} {u v : T}
-  (h : IsLineWithEnds L u v) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := h
-  have : L = range (fun t => (f t).1) := by
-    ext x
-    constructor
-    · intro hx
-      exact ⟨f.symm ⟨x, hx⟩, by simp⟩
-    · rintro ⟨t, rfl⟩
-      exact (f t).2
-  rw [this]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+  (h : IsLineWithEnds L u v) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected h
 
 variable (harr : IsProperArrangement Seg D ν) (hS : IsClosedSurface S) (hfin : Seg.Finite)
 include harr hS hfin

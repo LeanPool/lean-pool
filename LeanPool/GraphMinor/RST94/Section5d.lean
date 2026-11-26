@@ -62,7 +62,8 @@ theorem conn_nonleaf [Fintype ι] {S : SimpleGraph ι} (hS : S.IsTree) (hcard : 
   classical
   have hnb : ∀ l, ∃ n, l ∈ L → S.neighborSet l = {n} := fun l => by
     by_cases hl : l ∈ L
-    · obtain ⟨n, hn⟩ := ncard_eq_one.1 (show (S.neighborSet l).ncard = 1 from hL hl)
+    · have hdeg : (S.neighborSet l).encard = 1 := hL hl
+      obtain ⟨n, hn⟩ := encard_eq_one.mp hdeg
       exact ⟨n, fun _ => hn⟩
     · exact ⟨l, fun h => absurd h hl⟩
   choose nb hnb using hnb

@@ -198,6 +198,22 @@ def section7G0 {S : Type w} [TopologicalSpace S]
     (d : Set S → Set S → ℕ) {k : ℕ} (θ' μ : ℕ) (r : Fin k → Set S) : Graph α β :=
   subgraphSUnion G {η.imageGraph, remainingBridgeUnion G H η d θ' μ r}
 
+/-- Both members of the union defining `section7G0` lie in the ambient graph. -/
+private theorem section7G0_members_le {S : Type w} [TopologicalSpace S]
+    (G : Graph α β) (H : Drawing S) (η : SpanEmbedding H G)
+    (d : Set S → Set S → ℕ) {k : ℕ} (θ' μ : ℕ) (r : Fin k → Set S) :
+    ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)), Q ≤ G := by
+  rintro Q (rfl | rfl)
+  · exact η.imageGraph_le
+  · exact subgraphSUnion_le fun _ hB => hB.1.2.1
+
+/-- The union defining `section7G0` is a subgraph of the ambient graph. -/
+theorem section7G0_le {S : Type w} [TopologicalSpace S]
+    (G : Graph α β) (H : Drawing S) (η : SpanEmbedding H G)
+    (d : Set S → Set S → ℕ) {k : ℕ} (θ' μ : ℕ) (r : Fin k → Set S) :
+    section7G0 G H η d θ' μ r ≤ G :=
+  subgraphSUnion_le (section7G0_members_le G H η d θ' μ r)
+
 /-! ## Statements and Proofs of `(7.1)`–`(7.11)` -/
 
 /-- Statement of Graph Minors XV, (7.1) (page 135):
@@ -725,13 +741,7 @@ private theorem exists_cleared_vertex_outside_eye_zones
   have hE_im_eq : E(η₀.imageGraph) = E(η.imageGraph) := by
     rw [← η₀.bijOn_e.image_eq, ← η.bijOn_e.image_eq]
     exact image_congr hη₀_e
-  have hJ₀_le_G : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ₀_le_G
+  have hPair_le := section7G0_members_le G H η d θ' μ r
   have he_G₀ : e ∈ E(G₀) := hlink_e.edge_mem
   have he_J₀ : e ∈ E(remainingBridgeUnion G H η d θ' μ r) := by
     change e ∈ E(subgraphSUnion G {η.imageGraph, remainingBridgeUnion G H η d θ' μ r}) at he_G₀
@@ -740,7 +750,7 @@ private theorem exists_cleared_vertex_outside_eye_zones
     rcases hQ with rfl | rfl
     · exact False.elim (he_not_im₀ (hE_im_eq.symm ▸ heQ))
     · exact heQ
-  have hG₀_le_G : G₀ ≤ G := subgraphSUnion_le hPair_le
+  have hG₀_le_G : G₀ ≤ G := section7G0_le G H η d θ' μ r
   have hJ₀_le_G₀ : remainingBridgeUnion G H η d θ' μ r ≤ G₀ :=
     le_subgraphSUnion hPair_le (Or.inr rfl)
   have hlink_J₀ : (remainingBridgeUnion G H η d θ' μ r).IsLink e (η₀.vMap v) x :=
@@ -1026,14 +1036,7 @@ theorem theorem_7_3_proof
       Λ T₁ d₁ hr_eye hZone hClear hS hd_symm hd_tri hd_inc hΛA hSubH' v₀ hv₀H hv₀_cl hv₀A hrv₀
       hri_H' hE_ne
   -- Construct the lifted embedding `η'_G : SpanEmbedding H' G`.
-  have hJ₀_le_G : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ₀_le_G
-  have hG₀_le_G : G₀ ≤ G := subgraphSUnion_le hPair_le
+  have hG₀_le_G : G₀ ≤ G := section7G0_le G H η d θ' μ r
   let η'_G : SpanEmbedding H' G :=
     { imageGraph := η'.imageGraph
       vMap := η'.vMap
@@ -1197,14 +1200,7 @@ theorem theorem_7_4_proof
   have h12μ : θ' + 12 * μ + 14 ≤ θ := by
     have : θ' + 12 * μ + 14 ≤ θ' + 16 * μ + 17 := by omega
     exact this.trans hθ
-  have hJ₀_le : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ₀_le
-  have hG₀_le : section7G0 G H η d θ' μ r ≤ G := subgraphSUnion_le hPair_le
+  have hG₀_le : section7G0 G H η d θ' μ r ≤ G := section7G0_le G H η d θ' μ r
   have hfinV₀ : V(section7G0 G H η d θ' μ r).Finite :=
     hFlat.isSpan.isControlling.isTangle_star.finite_V.subset hG₀_le.vertexSet_mono
   have hfinE₀ : E(section7G0 G H η d θ' μ r).Finite :=
@@ -1455,14 +1451,7 @@ theorem theorem_7_5_proof
         hπ1 hπ3 hbeta_ge hbeta_even h16beta
         (fun _ hB => hB.1) (fun _ hB => hB.1) hDisj_B
         rfl rfl rfl hη₀_v hη₀_e hDist_J hThree hLocal hArr₀ hCompat₀
-    have hJ₀_le : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-      subgraphSUnion_le (fun _ hB => hB.1.2.1)
-    have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-        Q ≤ G := by
-      rintro Q (rfl | rfl)
-      · exact η.imageGraph_le
-      · exact hJ₀_le
-    have hG₀_le : G₀ ≤ G := subgraphSUnion_le hPair_le
+    have hG₀_le : G₀ ≤ G := section7G0_le G H η d θ' μ r
     have hJ_le : J ≤ G := subgraphSUnion_le (fun _ hB => hB.1.2.1)
     have hsoc_Λ_le : clearedSociety.G ≤ G := by
       rw [hsoc_Λ_G]
@@ -1740,14 +1729,8 @@ theorem theorem_7_7_claim_1
   let P_i := arrangementPullbackGraph G₀ S₀ α₀_disc α₀_pt D_i.Δ
   have hA_le : A.G ≤ G₀ := hThree.1.le A hA
   have hJ_le : J_i ≤ G := subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hJ₀_le : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ₀_le
-  have hG₀_le : G₀ ≤ G := subgraphSUnion_le hPair_le
+  have hPair_le := section7G0_members_le G H η d θ' μ r
+  have hG₀_le : G₀ ≤ G := section7G0_le G H η d θ' μ r
   have hP_le : P_i ≤ G₀ := restrict_le.trans (G₀.induce_le inter_subset_right)
   have hseg_in_bar : ∀ {v' : α}, v' ∈ V(A.G) → v' ∈ segregationVertices S₀ → v' ∈ A.Ω.bar := by
     intro v' hv'A hv'seg
@@ -2564,14 +2547,8 @@ theorem assemble_eye_arrangement :
     theorem_7_6_proof G H η θ_star θ θ' lam π beta μ k T_star T d r η₀ S₀ α₀_disc α₀_pt D
       hFlat hMetric hμ1 hθ_bound hr_inj hr_eye hr_dist hη₀_v hThree hArr₀ hCompat₀ hDisj_Δ
   let G₀ := section7G0 G H η d θ' μ r
-  have hJ₀_le : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ₀_le
-  have hG₀_le : G₀ ≤ G := subgraphSUnion_le hPair_le
+  have hPair_le := section7G0_members_le G H η d θ' μ r
+  have hG₀_le : G₀ ≤ G := section7G0_le G H η d θ' μ r
   have hJi_le : ∀ i : Fin k, eyeBridgeUnion G H η d θ' μ (r i) ≤ G :=
     fun _ => subgraphSUnion_le (fun _ hB => hB.1.2.1)
   have hPi_le : ∀ i : Fin k, arrangementPullbackGraph G₀ S₀ α₀_disc α₀_pt (D i).Δ ≤ G :=
@@ -4741,14 +4718,8 @@ theorem exists_section7G0_embedding
       (∀ v ∈ H.V, η₀.vMap v = η.vMap v) ∧
       (∀ e ∈ H.E, η₀.eMap e = η.eMap e) ∧
       ¬ IsMuSteppedSpan (section7G0 G H η d θ' μ r) H η₀ d μ := by
-  have hJ0_le : remainingBridgeUnion G H η d θ' μ r ≤ G :=
-    subgraphSUnion_le (fun _ hB => hB.1.2.1)
-  have hPair_le : ∀ Q ∈ ({η.imageGraph, remainingBridgeUnion G H η d θ' μ r} : Set (Graph α β)),
-      Q ≤ G := by
-    rintro Q (rfl | rfl)
-    · exact η.imageGraph_le
-    · exact hJ0_le
-  have hG0_le : section7G0 G H η d θ' μ r ≤ G := subgraphSUnion_le hPair_le
+  have hPair_le := section7G0_members_le G H η d θ' μ r
+  have hG0_le : section7G0 G H η d θ' μ r ≤ G := section7G0_le G H η d θ' μ r
   have hImg_le : η.imageGraph ≤ section7G0 G H η d θ' μ r :=
     le_subgraphSUnion hPair_le (mem_insert _ _)
   let η₀ : SpanEmbedding H (section7G0 G H η d θ' μ r) :=

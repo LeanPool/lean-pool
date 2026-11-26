@@ -29,20 +29,26 @@ open Set
 
 variable {ι : Type*} {S : SimpleGraph ι}
 
-/-- The valency of a vertex. -/
-noncomputable def deg (S : SimpleGraph ι) (v : ι) : ℕ := (S.neighborSet v).ncard
+/-- The extended valency of a vertex. -/
+noncomputable def deg (S : SimpleGraph ι) (v : ι) : ℕ∞ := (S.neighborSet v).encard
+
+/-- On a finite neighbor set, extended valency agrees with Mathlib's natural valency. -/
+theorem deg_eq_degree (S : SimpleGraph ι) (v : ι) [Fintype (S.neighborSet v)] :
+    deg S v = S.degree v := by
+  rw [deg, ← S.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card, Nat.card_coe_set_eq,
+    Set.coe_ncard_eq_encard]
 
 /-- The leaves of a graph: vertices of valency 1 (page 341). -/
 def leaves (S : SimpleGraph ι) : Set ι := {v | deg S v = 1}
 
 /-- The two neighbours of a vertex of valency 2. -/
-theorem neighborSet_eq [Finite ι] {x y z : ι} (h : deg S x = 2) (hy : S.Adj x y) (hz : S.Adj x z)
-  (hne : y ≠ z) : S.neighborSet x = {y, z} := by
-  refine (eq_of_subset_of_ncard_le ?_ ?_ (toFinite _)).symm
+theorem neighborSet_eq {x y z : ι} (h : deg S x = 2) (hy : S.Adj x y) (hz : S.Adj x z)
+    (hne : y ≠ z) : S.neighborSet x = {y, z} := by
+  refine (((finite_singleton z).insert y).eq_of_subset_of_encard_le ?_ ?_).symm
   · rintro w (rfl | rfl)
     · exact hy
     · exact hz
-  · rw [ncard_pair hne]
+  · rw [encard_pair hne]
     exact h.le
 
 /-- A vertex closer to the root has only one neighbour closer to the root. -/
@@ -62,25 +68,22 @@ theorem closer_unique (hS : S.IsTree) {ρ v w w' : ι} (h : S.Adj w v) (h' : S.A
   have he := (hS.existsUnique_path ρ v).unique hq hq'
   exact (SimpleGraph.Walk.concat_inj he).1
 
-/-- Valency is at least 1 in a tree with two vertices. -/
-theorem one_le_deg [Finite ι] [Nontrivial ι] (hS : S.IsTree) (v : ι) : 1 ≤ deg S v := by
+/-- Valency is at least 1 in a tree with at least two vertices. -/
+theorem one_le_deg [Nontrivial ι] (hS : S.IsTree) (v : ι) : 1 ≤ deg S v := by
   obtain ⟨w, hw⟩ := exists_ne v
   obtain ⟨q⟩ := hS.connected v w
   cases q with
   | nil => exact absurd rfl hw
-  | cons h _ => exact (ncard_pos (toFinite _)).2 ⟨_, h⟩
+  | cons h _ => exact one_le_encard_iff_nonempty.2 ⟨_, h⟩
 
 /-- The count of vertices of valency other than 2. -/
 theorem card_not_two_add_two [Finite ι] [Nontrivial ι] (hS : S.IsTree) :
     (leaves S).ncard * 2 ≥ {v | deg S v ≠ 2}.ncard + 2 := by
   classical
   let := Fintype.ofFinite ι
-  have hdeg : ∀ v, S.degree v = deg S v := fun v => by
-    rw [deg, ← S.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card, Nat.card_coe_set_eq]
-  have hsum : ∑ v, deg S v + 2 = 2 * Fintype.card ι := by
+  have hsum : ∑ v, S.degree v + 2 = 2 * Fintype.card ι := by
     have h₁ := S.sum_degrees_eq_twice_card_edges
     have h₂ := hS.card_edgeFinset
-    simp only [hdeg] at h₁
     omega
   have hL : (leaves S).ncard = ∑ v, if deg S v = 1 then 1 else 0 := by
     rw [← Finset.card_filter, ← ncard_coe_finset]
@@ -92,10 +95,26 @@ theorem card_not_two_add_two [Finite ι] [Nontrivial ι] (hS : S.IsTree) :
     congr 1
     ext v
     simp
-  have hH : ∀ v, (if deg S v ≠ 2 then 1 else 0) + 2 ≤ deg S v + 2 * (if deg S v = 1 then 1 else 0)
-    := fun v => by
-    have := one_le_deg hS v
-    split_ifs <;> omega
+  have hH (v : ι) :
+      (if deg S v ≠ 2 then 1 else 0) + 2 ≤ S.degree v + 2 * (if deg S v = 1 then 1 else 0) := by
+    have hpos := one_le_deg hS v
+    rw [deg_eq_degree] at hpos
+    have hpos' : 1 ≤ S.degree v := ENat.natCast_le_natCast.mp hpos
+    have h₁ : deg S v = 1 ↔ S.degree v = 1 := by
+      rw [deg_eq_degree]
+      exact ENat.natCast_inj (b := 1)
+    have h₂ : deg S v = 2 ↔ S.degree v = 2 := by
+      rw [deg_eq_degree]
+      exact ENat.natCast_inj (b := 2)
+    by_cases htwo : S.degree v = 2
+    · have hne₁ : deg S v ≠ 1 := fun h => by have := h₁.mp h; omega
+      rw [ite_eq_right (fun h => h (h₂.mpr htwo)), ite_eq_right hne₁]
+      omega
+    · rw [ite_eq_left (fun h => htwo (h₂.mp h))]
+      by_cases hone : S.degree v = 1
+      · rw [ite_eq_left (h₁.mpr hone), hone]
+      · rw [ite_eq_right (fun h => hone (h₁.mp h))]
+        omega
   have h₃ := Finset.sum_le_sum fun v (_ : v ∈ Finset.univ) => hH v
   rw [Finset.sum_add_distrib, Finset.sum_add_distrib, ← Finset.mul_sum] at h₃
   simp only [Finset.sum_const, Finset.card_univ, smul_eq_mul] at h₃
@@ -113,7 +132,7 @@ theorem exists_long_run [Fintype ι] [Nontrivial ι] (hS : S.IsTree) {g : ℕ} (
   obtain ⟨ρ, hρ⟩ : ∃ ρ, deg S ρ = 1 := by
     obtain ⟨v, hv⟩ := hS.exists_vert_degree_one_of_nontrivial
     refine ⟨v, ?_⟩
-    rw [deg, ← hv, ← S.card_neighborSet_eq_degree, ← Nat.card_eq_fintype_card, Nat.card_coe_set_eq]
+    simp [deg_eq_degree, hv]
   have hpar : ∀ v, ∃ w, v ≠ ρ → S.Adj v w ∧ S.dist ρ w + 1 = S.dist ρ v := fun v => by
     by_cases hv : v = ρ
     · exact ⟨v, fun h => absurd hv h⟩
@@ -137,16 +156,17 @@ theorem exists_long_run [Fintype ι] [Nontrivial ι] (hS : S.IsTree) {g : ℕ} (
     obtain ⟨h₁, h₂⟩ := hp w hw
     exact closer_unique hS h₁.symm h h₂ hd.symm
   have hne : ∀ {v}, deg S v = 2 → v ≠ ρ := fun {v} h e => by
-    rw [e] at h
-    omega
+    rw [e, hρ] at h
+    exact (by decide : (1 : ℕ∞) ≠ 2) h
   obtain ⟨N, hN⟩ : ∃ N, ∀ v, S.dist ρ v ≤ N := ⟨Finset.univ.sup fun v => S.dist ρ v, fun v
     => Finset.le_sup (Finset.mem_univ v)⟩
   have hchild : ∀ {v}, deg S v = 2 → ∃ w, S.Adj v w ∧ S.dist ρ w = S.dist ρ v + 1 := fun {v} hv
     => by
     obtain ⟨h₁, h₂⟩ := hp v (hne hv)
-    obtain ⟨w, hw, hwn⟩ := exists_ne_of_one_lt_ncard (s := S.neighborSet v) (by
+    obtain ⟨w, hw, hwn⟩ := exists_ne_of_one_lt_encard (s := S.neighborSet v) (by
       change 1 < deg S v
-      omega) (p v)
+      rw [hv]
+      decide) (p v)
     refine ⟨w, hw, (hS.dist_eq_dist_add_one_of_adj ρ hw).resolve_left fun h₃ => hwn ?_⟩
     exact closer_unique hS hw.symm h₁.symm h₃.symm h₂
   have hcover : ∀ k v, N - S.dist ρ v ≤ k → deg S v = 2 → ∃ b e, deg S b ≠ 2 ∧ b ≠ ρ ∧ 1 ≤ e
@@ -346,11 +366,10 @@ theorem exists_more_leaves_side [Finite ι] (hS : S.IsTree) {a₀ u v t : ι} (h
         rcases Sym2.eq_iff.1 e with ⟨-, h₄⟩ | ⟨h₄, -⟩
         · exact hva h₄.symm
         · exact huv h₄
-    rw [deg, this, ncard_singleton]
+    rw [deg, this, encard_singleton]
   have hLf : (leaves S).Finite := toFinite _
   have hnl : ∀ {w}, deg S w = 2 → w ∉ leaves S := fun {w} h h' => by
-    change deg S w = 1 at h'
-    omega
+    exact (by decide : (2 : ℕ∞) ≠ 1) (h.symm.trans h')
   by_cases htv : t = v
   · have hsub : insert u (leaves S) ⊆ leaves S' := by
       rintro w (rfl | hw)
@@ -358,8 +377,7 @@ theorem exists_more_leaves_side [Finite ι] (hS : S.IsTree) {a₀ u v t : ι} (h
       · have hw' : deg S w = 1 := hw
         have := hsame w (fun e => hnl (e ▸ hd₀) hw) (fun e => hnl (e ▸ htv ▸ hdv) hw) (fun e => hnl
           (e ▸ hdu) hw) (fun e => hnl (e ▸ hdv) hw)
-        change deg S' w = 1
-        omega
+        exact this.trans hw'
     have h₃ := ncard_le_ncard hsub (toFinite _)
     rw [ncard_insert_of_notMem (hnl hdu) hLf] at h₃
     exact h₃
@@ -380,9 +398,11 @@ theorem exists_more_leaves_side [Finite ι] (hS : S.IsTree) {a₀ u v t : ι} (h
           rcases Sym2.eq_iff.1 e with ⟨-, h₄⟩ | ⟨-, h₄⟩
           · exact h.ne h₄.symm
           · exact h' h₄
-      rw [deg, this, ncard_sdiff_singleton_of_mem (show u ∈ S.neighborSet v from h₂.symm)]
-      change deg S v - 1 = 1
-      omega
+      have hcard := encard_sdiff_singleton_add_one (show u ∈ S.neighborSet v from h₂.symm)
+      change (S.neighborSet v \ {u}).encard + 1 = deg S v at hcard
+      rw [hdv] at hcard
+      rw [deg, this]
+      exact (ENat.addLECancellable_of_ne_top ENat.one_ne_top).inj_left.mp hcard
     have hsub : insert u (insert v (leaves S \ {t})) ⊆ leaves S' := by
       rintro w (rfl | rfl | ⟨hw, hwt⟩)
       · exact hdeg_u
@@ -390,8 +410,7 @@ theorem exists_more_leaves_side [Finite ι] (hS : S.IsTree) {a₀ u v t : ι} (h
       · have hw' : deg S w = 1 := hw
         have := hsame w (fun e => hnl (e ▸ hd₀) hw) hwt (fun e => hnl (e ▸ hdu) hw) (fun e => hnl
           (e ▸ hdv) hw)
-        change deg S' w = 1
-        omega
+        exact this.trans hw'
     have h₃ := ncard_le_ncard hsub (toFinite _)
     have hv : v ∉ leaves S \ {t} := fun h => hnl hdv h.1
     have hu : u ∉ insert v (leaves S \ {t}) := by

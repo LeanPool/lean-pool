@@ -31,35 +31,14 @@ variable {α : Type u} {β : Type v}
 
 theorem circle_exp_ne {s t : ℝ} (h₁ : s < t) (h₂ : t < s + 2 * Real.pi) :
     Circle.exp s ≠ Circle.exp t := by
-  intro h
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.mp h
-  have hpi := Real.pi_pos
-  have hneg : (m : ℝ) * (2 * Real.pi) < 0 := by linarith
-  have hgt : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith
-  have h₃ : (m : ℝ) < 0 := by
-    by_contra hn
-    push Not at hn
-    have := mul_nonneg hn (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
-    linarith
-  have h₄ : (-1 : ℝ) < m := by
-    by_contra hn
-    push Not at hn
-    have := mul_le_mul_of_nonneg_right hn (by positivity : (0 : ℝ) ≤ 2 * Real.pi)
-    linarith
-  have h₅ : m < 0 := by exact_mod_cast h₃
-  have h₆ : (-1 : ℤ) < m := by exact_mod_cast h₄
-  omega
+  have hmem : s ∈ Ico s (s + 2 * Real.pi) := ⟨le_rfl, by linarith [Real.pi_pos]⟩
+  exact fun h => h₁.ne
+    (Circle.exp_injOn_Ico (a := s) (b := s + 2 * Real.pi) (by simp)
+      hmem ⟨h₁.le, h₂⟩ h)
 
 theorem exists_angle_mem_Ico (u : ℝ) (z : Circle) :
-    ∃ t ∈ Ico u (u + 2 * Real.pi), Circle.exp t = z := by
-  have hp : 0 < 2 * Real.pi := by positivity
-  refine ⟨toIcoMod hp u (Complex.arg z), toIcoMod_mem_Ico hp u _, ?_⟩
-  refine (Circle.exp_eq_exp.mpr ⟨-toIcoDiv hp u (Complex.arg z), ?_⟩).trans (Circle.exp_arg z)
-  have := self_sub_toIcoDiv_zsmul hp u (Complex.arg z)
-  rw [zsmul_eq_mul] at this
-  rw [← this]
-  push_cast
-  ring
+    ∃ t ∈ Ico u (u + 2 * Real.pi), Circle.exp t = z :=
+  GraphMinor.Surface.exists_circleExp_mem_Ico u z
 
 /-- Finitely many points of an `O`-arc, listed in the order of their angles. -/
 theorem exists_sorted_list {C : Set EuclideanPlane} (φ : Circle ≃ₜ C) {K : Set α} (hK : K.Finite)

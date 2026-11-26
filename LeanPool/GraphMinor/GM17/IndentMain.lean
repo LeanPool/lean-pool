@@ -48,13 +48,8 @@ theorem cell_disjoint_closure {Γ : Painting S} {c d : Set S} (hc : c ∈ Γ.C)
     · exact disjoint_left.mp (arcComponentsIn_disjoint hc hd hne) hx h
     · exact disjoint_left.mp (Γ.cell_disjoint_N hc) hx (Γ.tilde_subset_N hd ⟨hx', h⟩)
 
-theorem line_preconnected {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : IsPreconnected L := by
-  obtain ⟨f, -, -⟩ := hL
-  have h : L = range fun t => (f t).1 := by
-    ext x
-    exact ⟨fun hx => ⟨f.symm ⟨x, hx⟩, by simp⟩, by rintro ⟨t, rfl⟩; exact (f t).2⟩
-  rw [h]
-  exact isPreconnected_range (continuous_subtype_val.comp f.continuous)
+theorem line_preconnected {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) : IsPreconnected L :=
+  GraphMinor.Surface.IsLineWithEnds.isPreconnected hL
 
 /-- What a border cell looks like. -/
 theorem border_data [T2Space S] (hS : IsSurface S) {Γ : Painting S} {Θ c₀ : Set S} {n₁ n₂ : S}
