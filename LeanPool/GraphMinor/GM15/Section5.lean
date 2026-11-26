@@ -2817,7 +2817,6 @@ private theorem combined_drawing_vertex_map_is_injective
     (Z₂ : Set S)
     (hZoneEqZ₂ : Z₂ = atomZone H' d' z₂ lam₂)
     (hd_refl : ∀ a ∈ H.A, d a a = 0)
-    (_z₃ : Set S)
     (H''' : Drawing S)
     (hH'''_V : ∀ (v : S), v ∈ H'''.V ↔ v ∈ H.V ∧ v ∉ Z₂ ∨ v ∈ H''.V ∧ v ∈ Z₂)
     (vMap''' : S → α)
@@ -3011,7 +3010,6 @@ private theorem combined_drawing_edge_map_is_injective
     (hS : IsClosedSurface S)
     [hConn : ConnectedSpace S]
     (hMetric : HasTangleMetric H θ T d)
-    (_z₃ : Set S)
     (hDisj_cl : Disjoint (closure (atomZone H d z₁ lam₁)) (closure (atomZone H' d' z₂ lam₂)))
     (H''' : Drawing S)
     (hH'''_V : ∀ (v : S), v ∈ H'''.V ↔ v ∈ H.V ∧ v ∉ Z₂ ∨ v ∈ H''.V ∧ v ∈ Z₂)
@@ -3783,7 +3781,7 @@ theorem exists_rearranged_H'''_η'''
       (H' := H') (H'' := H'') (η := η) (η' := η') (η'' := η'') (θ_star := θ_star) (θ := θ) (lam :=
       lam) (lam₁ := lam₁) (lam₂ := lam₂) (μ := μ) (T_star := T_star) (T := T) (T' := T') (T'' :=
       T'') (d := d) (d' := d') (d'' := d'') (z₁ := z₁) (z₂ := z₂) hFlat hθ_lt hlam₁ hlam₂ hlam
-      hRearr₁ hRearr₂ hStep Z₁ rfl Z₂ rfl hd_refl z₃ H''' hH'''_V vMap''' hvMap'''_Z₂
+      hRearr₁ hRearr₂ hStep Z₁ rfl Z₂ rfl hd_refl H''' hH'''_V vMap''' hvMap'''_Z₂
       hvMap'''_notZ₂ hV_notZ₁
   -- Every `e ∈ H'''.E` either has `e ∈ H.E ∧ ¬ e ⊆ Z₂ ∧ Disjoint (closure e) Z₂` or `e ∈ H''.E ∧
   -- Disjoint (closure e) Z₁`
@@ -3804,7 +3802,7 @@ theorem exists_rearranged_H'''_η'''
     exact combined_drawing_edge_map_is_injective (α := α) (β := β) (S := S) (G := G) (H := H) (H'
       := H') (H'' := H'') (η := η) (η' := η') (η'' := η'') (θ_star := θ_star) (θ := θ) (lam₁
         := lam₁) (lam₂ := lam₂) (T_star := T_star) (T := T) (T' := T') (d := d)
-      (d' := d') (z₁ := z₁) (z₂ := z₂) hlam₁ hRearr₁ Z₁ rfl Z₂ rfl hS hMetric z₃ hDisj_cl H'''
+      (d' := d') (z₁ := z₁) (z₂ := z₂) hlam₁ hRearr₁ Z₁ rfl Z₂ rfl hS hMetric hDisj_cl H'''
       hH'''_V vMap''' eMap''' heMap'''_notZ₂ hE_notZ₁ hE'''_cases hE_inc_G
   -- Construct `η''' : SpanEmbedding H''' G`
   let imageGraph''' := (G.induce (vMap''' '' H'''.V)).restrict (eMap''' '' H'''.E)
@@ -4719,7 +4717,6 @@ private theorem short_path_meets_second_extended_zone
     (hMetric'' : HasTangleMetric H'' (θ - (4 * lam₁ + 2) - (4 * lam₂ + 2)) T'' d'')
     (τ : S)
     (hτ_z₂ : τ ∈ z₂)
-    (_z₃ : Set S)
     (hClaim4 : ∀ σ₁ ∈ atomZone H d z₁ lam₁, lam - 2 * lam₁ < pointDist H d τ σ₁ ∧ lam - 6 * lam₁ -
       2 < pointDist H' d' τ σ₁)
     (hClaim6 : ∀ σ₁ ∈ atomZone H d z₁ lam₁, ∀ σ₂ ∈ atomZone H' d' z₂ lam₂, lam - 2 * lam₁ - lam₂ <
@@ -4963,7 +4960,7 @@ theorem not_isMuSteppedSpan_of_rearranged_twice
       := H') (H'' := H'') (η := η) (η' := η') (η'' := η'') (θ_star := θ_star) (θ := θ) (lam :=
       lam) (lam₁ := lam₁) (lam₂ := lam₂) (μ := μ) (T_star := T_star) (T := T) (T' := T') (T'' :=
       T'') (d := d) (d' := d') (d'' := d'') (z₁ := z₁) (z₂ := z₂) hFlat hθ_lt hlam₁ hlam₂ hlam
-      hRearr₁ hRearr₂ hS hMetric hMetric' hMetric'' τ hτ_z₂ z₃ hClaim4 hClaim6 hDisj_Z H''' η'''
+      hRearr₁ hRearr₂ hS hMetric hMetric' hMetric'' τ hτ_z₂ hClaim4 hClaim6 hDisj_Z H''' η'''
       hnotZ₂_V hnotZ₁_V hd'_symm hd'_tri P u v hu hv hP hdist hS₂_sub_X₂ hord_ge
   -- Claim (14): `(V(P) ∩ X₁).Nonempty`
   have hMeet_X₁ : (V(P) ∩ X₁).Nonempty := by

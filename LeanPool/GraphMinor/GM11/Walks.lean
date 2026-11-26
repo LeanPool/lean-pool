@@ -302,6 +302,31 @@ theorem isSimpleClosed_append_of_lifts {H K : Graph α β} {a b : α}
     rw [he₂, edges_reverse, List.mem_reverse] at he₂'
     exact Set.disjoint_left.mp hE he₁' he₂'
 
+/-- Each part of a simple concatenation is a simple walk. -/
+theorem simple_parts_of_append {a x b : α} {W₁ : GraphWalk G a x}
+    {W₂ : GraphWalk G x b} (h : (W₁.append W₂).IsSimple) :
+    W₁.IsSimple ∧ W₂.IsSimple := by
+  have hs : (W₁.support ++ W₂.support.tail).Nodup := by
+    have h' : (W₁.append W₂).support.Nodup := h
+    rwa [GraphWalk.support_append] at h'
+  have hd := List.nodup_append.mp hs
+  refine ⟨hd.1, ?_⟩
+  unfold GraphWalk.IsSimple
+  rw [W₂.support_eq_cons]
+  exact List.nodup_cons.mpr ⟨fun hx => hd.2.2 x W₁.end_mem_support x hx rfl, hd.2.1⟩
+
+/-- An occurrence of an edge splits the walk at that edge. -/
+theorem split_at_edge {a b : α} (W : GraphWalk G a b) {e : β} (he : e ∈ W.edges) :
+    ∃ (x y : α) (h : G.IsLink e x y) (W₁ : GraphWalk G a x) (W₂ : GraphWalk G y b),
+      W = W₁.append (.cons h W₂) := by
+  induction W with
+  | nil h => simp at he
+  | cons h r ih =>
+    rcases List.mem_cons.mp he with rfl | he
+    · exact ⟨_, _, h, .nil h.left_mem, r, rfl⟩
+    · obtain ⟨x, y, h', W₁, W₂, rfl⟩ := ih he
+      exact ⟨x, y, h', .cons h W₁, W₂, rfl⟩
+
 end GraphWalk
 
 namespace Drawing

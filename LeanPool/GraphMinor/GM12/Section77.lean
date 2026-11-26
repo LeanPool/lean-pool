@@ -137,50 +137,7 @@ theorem exists_edge_dist_eq_theta_uncond (hS : IsClosedSurface S) [ConnectedSpac
     (hMetric : HasTangleMetric H θ T d) (hE : H.E.Nonempty)
     {z : Set S} (hz : z ∈ H.A) (hzE : 2 ≤ H.E.ncard ∨ z ∉ H.E) :
     ∃ e ∈ H.E, d z e = θ := by
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  obtain ⟨hResp, K, ins, hK, hd, hd_eq⟩ := hMetric
-  have hsl : IsSlope K (2 * θ) ins :=
-    GM11.isSlope_of_derived (Γ := PaintingOrDrawing.drawing H) hS
-      (⟨hResp.2.1.one_le, hResp.2.1.isSeparation, hResp.2.1.order_lt,
-        hResp.2.1.axiom1, hResp.2.1.axiom2⟩ : IsPretangle H.toHypergraph θ T) hK.2.1.1 hd
-  have hrf := GM11.regionFacts_of_radial ⟨hK.1, hK.2.1⟩ hS hK.2.2 hE
-  obtain ⟨z', hz', hz'_uniq⟩ := existsUnique_correspondingAtom' hK hz
-  obtain ⟨c, hc⟩ := atom_nonempty' hz'.2.1
-  obtain ⟨r₁, hr₁, hno₁⟩ := GM11.gm14_theorem_8_12 S hS inferInstance K (2 * θ) ins hsl c
-  obtain ⟨e₁, he₁, he₁r₁⟩ := hrf.1 r₁ hr₁
-  have he₁_corr : IsCorrespondingAtom H K e₁ r₁ :=
-    ⟨Or.inl (Or.inr he₁), Or.inr hr₁, Or.inr (Or.inl ⟨he₁, hr₁, he₁r₁⟩)⟩
-  by_cases he₁z : e₁ = z
-  · subst he₁z
-    have hzE' : 2 ≤ H.E.ncard := hzE.resolve_right (not_not.mpr he₁)
-    obtain ⟨e₂, he₂, he₂ne⟩ := exists_ne_of_one_lt_ncard (s := H.E) (by omega) e₁
-    have hz'_eq_r₁ : z' = r₁ := (hz'_uniq r₁ he₁_corr).symm
-    refine ⟨e₂, he₂, ?_⟩
-    rw [hd_eq e₁ hz e₂ (Or.inl (Or.inr he₂))]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact absurd h1 (Ne.symm he₂ne)
-    · exfalso
-      obtain ⟨u, W, z₁', r₂', hz₁', -, hW, hzW, -⟩ := h2
-      have hz₁_eq : z₁' = r₁ := (hz'_uniq z₁' hz₁').trans hz'_eq_r₁
-      subst hz₁_eq
-      have hrest := (GM11.gm12_theorem_8_5 S hS inferInstance K (2 * θ) ins hsl u W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW (hz'_eq_r₁ ▸ hc), hzW⟩
-    · rfl
-  · refine ⟨e₁, he₁, ?_⟩
-    rw [hd_eq z hz e₁ (Or.inl (Or.inr he₁))]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact absurd h1 (Ne.symm he₁z)
-    · exfalso
-      obtain ⟨u, W, z₁', r₁', hz₁', hr₁', hW, hzW, hrW⟩ := h2
-      have hz₁_eq : z₁' = z' := hz'_uniq z₁' hz₁'
-      have hr₁_eq : r₁' = r₁ :=
-        (existsUnique_correspondingAtom' hK (Or.inl (Or.inr he₁))).unique hr₁' he₁_corr
-      subst hz₁_eq hr₁_eq
-      have hrest := (GM11.gm12_theorem_8_5 S hS inferInstance K (2 * θ) ins hsl u W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW hc, hrW⟩
-    · rfl
+  exact exists_edge_dist_eq_theta_of_metric hS inferInstance hMetric hE hz hzE
 
 /-- A walk of length `0` has `insWalk ins K W = {u}`. -/
 theorem insWalk_eq_singleton_of_length_zero {K : Drawing S}

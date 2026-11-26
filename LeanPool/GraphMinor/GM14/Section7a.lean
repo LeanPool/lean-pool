@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM14.RadialAtoms
+import LeanPool.GraphMinor.GM12.Section1b
 import LeanPool.GraphMinor.GM12.Section4WalkMetric
 
 public import LeanPool.GraphMinor.GM14.Section3
@@ -234,19 +235,10 @@ theorem two_mul_tangleMetric_le_walk_length {H K : Drawing S}
     {u : S} (W : GraphWalk K.toGraph u u) (hW : W.length < 2 * θ)
     (hxW : x' ⊆ insWalk ins K W) (hyW : y' ⊆ insWalk ins K W) :
     2 * tangleMetric H K ins θ x y ≤ W.length := by
-  classical
-  unfold tangleMetric
-  split_ifs with hxy hex
-  · omega
-  · set k₀ := W.support.tail.countP (· ∈ H.V)
-    have heven : W.length = 2 * k₀ := closed_walk_length_eq_two_mul hK.2.1 W
-    have hmem : k₀ ∈ {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-        IsCorrespondingAtom H K x x' ∧ IsCorrespondingAtom H K y y' ∧
-        W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W} :=
-      ⟨u, W, x', y', hx, hy, hW, heven, hxW, hyW⟩
-    have hle := Nat.sInf_le hmem
-    omega
-  · exact absurd ⟨u, W, x', y', hx, hy, hW, hxW, hyW⟩ hex
+  obtain ⟨k, hk⟩ := GM11.even_length_of_closed hK.2.1 W
+  have heven : W.length = 2 * k := by omega
+  have hle := GM11.tangleMetric_le_of_walk W hx hy hW heven hxW hyW
+  omega
 
 /-- When `E(H) ≠ ∅`, `1 ≤ θ`, and `x, y ∈ A(H)` with `x ≠ y`, we have `1 ≤ d(x, y)`. -/
 theorem one_le_tangleMetric_of_ne [ConnectedSpace S] (hS : IsClosedSurface S) {H K : Drawing S}
@@ -256,32 +248,38 @@ theorem one_le_tangleMetric_of_ne [ConnectedSpace S] (hS : IsClosedSurface S) {H
     1 ≤ tangleMetric H K ins θ x y := by
   have : T2Space S := hS.2.1
   have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  classical
-  unfold tangleMetric
-  split_ifs with h1 hex
-  · exact absurd h1 hne
-  · obtain ⟨u₀, W₀, x₀', y₀', hx₀, hy₀, hW₀, hxW₀, hyW₀⟩ := hex
-    set S_set := {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-      IsCorrespondingAtom H K x x' ∧ IsCorrespondingAtom H K y y' ∧
-      W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W}
-    have hneS : S_set.Nonempty := ⟨W₀.support.tail.countP (· ∈ H.V), u₀, W₀, x₀', y₀', hx₀, hy₀,
-      hW₀, closed_walk_length_eq_two_mul hK.2.1 W₀, hxW₀, hyW₀⟩
-    obtain ⟨u, W, x', y', hx', hy', -, hlen, hxW, hyW⟩ := Nat.sInf_mem hneS
-    by_contra hlt
-    have hk0 : sInf S_set = 0 := by omega
-    have hW0 : W.length = 0 := by omega
-    have hins0 := insWalk_of_length_zero ins K W hW0
-    rw [hins0] at hxW hyW
-    obtain ⟨p, hp⟩ := atom_nonempty hx'.2.1
-    obtain ⟨q, hq⟩ := atom_nonempty hy'.2.1
-    have hpu : p = u := mem_singleton_iff.mp (hxW hp)
-    have hqu : q = u := mem_singleton_iff.mp (hyW hq)
-    have hxy' : x' = y' := by
-      by_contra hne'
-      exact disjoint_left.mp (disjoint_of_mem_A_ne hx'.2.1 hy'.2.1 hne') hp
-        (hpu.trans hqu.symm ▸ hq)
-    exact hne (correspondingAtom_inj hS hK hE hx' (hxy' ▸ hy'))
-  · exact hθ
+  rcases GM11.tangleMetric_cases (ins := ins) (θ := θ) hK.2.1 hne with h | ⟨_, hw⟩
+  · rw [h]
+    exact hθ
+  obtain ⟨u, W, x', y', hx', hy', _, hlen, hxW, hyW⟩ := hw
+  by_contra hlt
+  have hW0 : W.length = 0 := by omega
+  rw [insWalk_of_length_zero ins K W hW0] at hxW hyW
+  obtain ⟨p, hp⟩ := atom_nonempty hx'.2.1
+  obtain ⟨q, hq⟩ := atom_nonempty hy'.2.1
+  have hpu : p = u := mem_singleton_iff.mp (hxW hp)
+  have hqu : q = u := mem_singleton_iff.mp (hyW hq)
+  have hxy' : x' = y' := by
+    by_contra hne'
+    exact disjoint_left.mp (disjoint_of_mem_A_ne hx'.2.1 hy'.2.1 hne') hp
+      (hpu.trans hqu.symm ▸ hq)
+  exact hne (correspondingAtom_inj hS hK hE hx' (hxy' ▸ hy'))
+
+private theorem singleton_subset_insWalk_of_edge_atom (hS : IsClosedSurface S)
+    {H K : Drawing S} {θ : ℕ} {T : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}
+    {ins : Drawing S → Set S} (hd : IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins)
+    {f f' : Set S} {v u : S} (hf : f ∈ H.E) (hvf : v ∈ closure f)
+    (hf' : IsCorrespondingAtom H K f f') (W : GraphWalk K.toGraph u u)
+    (hW : W.length < 2 * θ) (hfW : f' ⊆ insWalk ins K W) :
+    ({v} : Set S) ⊆ insWalk ins K W := by
+  have hf_sub : f ⊆ f' := by
+    rcases hf'.2.2 with ⟨w, hw, hfw, -⟩ | ⟨-, -, hsub⟩ | ⟨hr, -⟩
+    · exact absurd hw (hf.2.1 (hfw ▸ mem_singleton w)).2
+    · exact hsub
+    · obtain ⟨p, hp⟩ := hf.1
+      exact absurd (hf.2.1 hp).1 (region_subset hr hp)
+  rw [singleton_subset_iff]
+  exact (isClosed_insWalk hS hd W hW).closure_subset_iff.mpr (hf_sub.trans hfW) hvf
 
 /-- If `f ∈ E(H)`, `v ∈ V(H)`, `v ∈ closure f`, and `z ∈ A(H)` with `z ≠ f`, then
 `d(z, {v}) ≤ d(z, f)`. -/
@@ -293,49 +291,16 @@ theorem tangleMetric_le_of_vertex_mem_closure_edge (hS : IsClosedSurface S)
     (hzf : z ≠ f) :
     tangleMetric H K ins θ z {v} ≤ tangleMetric H K ins θ z f := by
   have : T2Space S := hS.2.1
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have hvA : ({v} : Set S) ∈ H.A := Or.inl (Or.inl ⟨v, hv, rfl⟩)
   have hv_corr : IsCorrespondingAtom H K {v} {v} :=
-    ⟨hvA, Or.inl (Or.inl ⟨v, hK.2.1.2.1 hv, rfl⟩), Or.inl ⟨v, hv, rfl, rfl⟩⟩
-  by_cases hzv : z = {v}
-  · subst hzv
-    have h0 : tangleMetric H K ins θ {v} {v} = 0 := by simp [tangleMetric]
-    rw [h0]
-    exact Nat.zero_le _
-  · classical
-    conv_rhs => unfold tangleMetric
-    split_ifs with h1 hex
-    · exact absurd h1 hzf
-    · obtain ⟨u₀, W₀, z₀', f₀', hz₀, hf₀, hW₀, hzW₀, hfW₀⟩ := hex
-      set S_set := {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-        IsCorrespondingAtom H K z x' ∧ IsCorrespondingAtom H K f y' ∧
-        W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W}
-      have hneS : S_set.Nonempty := ⟨W₀.support.tail.countP (· ∈ H.V), u₀, W₀, z₀', f₀', hz₀, hf₀,
-        hW₀, closed_walk_length_eq_two_mul hK.2.1 W₀, hzW₀, hfW₀⟩
-      obtain ⟨u, W, z', f', hz', hf', hW, hlen, hzW, hfW⟩ := Nat.sInf_mem hneS
-      have hf_sub : f ⊆ f' := by
-        rcases hf'.2.2 with ⟨w, hw, hfw, -⟩ | ⟨-, -, hsub⟩ | ⟨hr, -⟩
-        · exact absurd hw (hf.2.1 (hfw ▸ mem_singleton w)).2
-        · exact hsub
-        · obtain ⟨p, hp⟩ := hf.1
-          exact absurd (hf.2.1 hp).1 (region_subset hr hp)
-      have hvW : ({v} : Set S) ⊆ insWalk ins K W := by
-        rw [singleton_subset_iff]
-        exact (isClosed_insWalk hS hd W hW).closure_subset_iff.mpr (hf_sub.trans hfW) hvf
-      have hle := two_mul_tangleMetric_le_walk_length hK hz' hv_corr W hW hzW hvW
-      omega
-    · unfold tangleMetric
-      split_ifs with h2
-      · obtain ⟨u₀, W₀, z₀', v₀', hz₀, hv₀, hW₀, hzW₀, hvW₀⟩ := h2
-        set S_set := {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-          IsCorrespondingAtom H K z x' ∧ IsCorrespondingAtom H K {v} y' ∧
-          W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W}
-        have hmem₀ : W₀.support.tail.countP (· ∈ H.V) ∈ S_set :=
-          ⟨u₀, W₀, z₀', v₀', hz₀, hv₀, hW₀, closed_walk_length_eq_two_mul hK.2.1 W₀, hzW₀, hvW₀⟩
-        have hle := Nat.sInf_le hmem₀
-        have heven := closed_walk_length_eq_two_mul hK.2.1 W₀
-        omega
-      · exact le_rfl
+    ⟨Or.inl (Or.inl ⟨v, hv, rfl⟩), Or.inl (Or.inl ⟨v, hK.2.1.2.1 hv, rfl⟩),
+      Or.inl ⟨v, hv, rfl, rfl⟩⟩
+  rcases GM11.tangleMetric_cases (ins := ins) (θ := θ) hK.2.1 hzf with h | ⟨_, hw⟩
+  · rw [h]
+    exact GM11.tangleMetric_le_order hK.2.1 z {v}
+  obtain ⟨u, W, z', f', hz', hf', hW, hlen, hzW, hfW⟩ := hw
+  exact GM11.tangleMetric_le
+    ⟨u, W, z', {v}, ⟨hz, hz'.2⟩, hv_corr, hW, hlen, hzW,
+      singleton_subset_insWalk_of_edge_atom hS hd hf hvf hf' W hW hfW⟩
 
 /-- If `v` is an end of the edge `f` and `y ≠ f`, then `d(f, v) ≤ d(f, y)`. The inside of a closed
 walk
@@ -348,49 +313,16 @@ theorem tangleMetric_edge_vertex_le (hS : IsClosedSurface S)
     {f y : Set S} {v : S} (hf : f ∈ H.E) (hv : v ∈ H.V) (hvf : v ∈ closure f) (hfy : f ≠ y) :
     tangleMetric H K ins θ f {v} ≤ tangleMetric H K ins θ f y := by
   have : T2Space S := hS.2.1
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have hvA : ({v} : Set S) ∈ H.A := Or.inl (Or.inl ⟨v, hv, rfl⟩)
   have hv_corr : IsCorrespondingAtom H K {v} {v} :=
-    ⟨hvA, Or.inl (Or.inl ⟨v, hK.2.1.2.1 hv, rfl⟩), Or.inl ⟨v, hv, rfl, rfl⟩⟩
-  have hfv : f ≠ {v} := by
-    rintro rfl
-    obtain ⟨p, hp⟩ := hf.1
-    exact (hf.2.1 hp).2 (by rw [mem_singleton_iff.mp hp]; exact hv)
-  classical
-  conv_rhs => unfold tangleMetric
-  split_ifs with h1 hex
-  · exact absurd h1 hfy
-  · obtain ⟨u₀, W₀, f₀', y₀', hf₀, hy₀, hW₀, hfW₀, hyW₀⟩ := hex
-    set S_set := {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-      IsCorrespondingAtom H K f x' ∧ IsCorrespondingAtom H K y y' ∧
-      W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W}
-    have hneS : S_set.Nonempty := ⟨W₀.support.tail.countP (· ∈ H.V), u₀, W₀, f₀', y₀', hf₀, hy₀,
-      hW₀, closed_walk_length_eq_two_mul hK.2.1 W₀, hfW₀, hyW₀⟩
-    obtain ⟨u, W, f', y', hf', -, hW, hlen, hfW, -⟩ := Nat.sInf_mem hneS
-    have hf_sub : f ⊆ f' := by
-      rcases hf'.2.2 with ⟨w, hw, hfw, -⟩ | ⟨-, -, hsub⟩ | ⟨hr, -⟩
-      · exact absurd hw (hf.2.1 (hfw ▸ mem_singleton w)).2
-      · exact hsub
-      · obtain ⟨p, hp⟩ := hf.1
-        exact absurd (hf.2.1 hp).1 (region_subset hr hp)
-    have hvW : ({v} : Set S) ⊆ insWalk ins K W := by
-      rw [singleton_subset_iff]
-      exact (isClosed_insWalk hS hd W hW).closure_subset_iff.mpr (hf_sub.trans hfW) hvf
-    have hle := two_mul_tangleMetric_le_walk_length hK hf' hv_corr W hW hfW hvW
-    omega
-  · unfold tangleMetric
-    simp only [hfv, ↓reduceIte]
-    split_ifs with h2
-    · obtain ⟨u₀, W₀, f₀', v₀', hf₀, hv₀, hW₀, hfW₀, hvW₀⟩ := h2
-      set S_set := {k : ℕ | ∃ (u : S) (W : GraphWalk K.toGraph u u) (x' y' : Set S),
-        IsCorrespondingAtom H K f x' ∧ IsCorrespondingAtom H K {v} y' ∧
-        W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins K W ∧ y' ⊆ insWalk ins K W}
-      have hmem₀ : W₀.support.tail.countP (· ∈ H.V) ∈ S_set :=
-        ⟨u₀, W₀, f₀', v₀', hf₀, hv₀, hW₀, closed_walk_length_eq_two_mul hK.2.1 W₀, hfW₀, hvW₀⟩
-      have hle := Nat.sInf_le hmem₀
-      have heven := closed_walk_length_eq_two_mul hK.2.1 W₀
-      omega
-    · exact le_rfl
+    ⟨Or.inl (Or.inl ⟨v, hv, rfl⟩), Or.inl (Or.inl ⟨v, hK.2.1.2.1 hv, rfl⟩),
+      Or.inl ⟨v, hv, rfl, rfl⟩⟩
+  rcases GM11.tangleMetric_cases (ins := ins) (θ := θ) hK.2.1 hfy with h | ⟨_, hw⟩
+  · rw [h]
+    exact GM11.tangleMetric_le_order hK.2.1 f {v}
+  obtain ⟨u, W, f', _, hf', _, hW, hlen, hfW, _⟩ := hw
+  exact GM11.tangleMetric_le
+    ⟨u, W, f', {v}, hf', hv_corr, hW, hlen, hfW,
+      singleton_subset_insWalk_of_edge_atom hS hd hf hvf hf' W hW hfW⟩
 
 /-- If `D` is a circuit of `K` with `D.length < 2 * θ`, `v ∈ V(D) ∩ V(H)`, and `x ∈ A(H)` meets
 `ins(D)`, then `2 * d({v}, x) ≤ D.length` and `d({v}, x) ≤ |V(D) ∩ V(H)|`. -/
@@ -452,50 +384,7 @@ theorem exists_edge_dist_eq_theta
     (hMetric : HasTangleMetric H θ T d) (hE : H.E.Nonempty)
     {z : Set S} (hz : z ∈ H.A) (hzE : 2 ≤ H.E.ncard ∨ z ∉ H.E) :
     ∃ e ∈ H.E, d z e = θ := by
-  have : T2Space S := hS.2.1
-  have : ConnectedSpace S := hConn
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  obtain ⟨hResp, K, ins, hK, hd, hd_eq⟩ := hMetric
-  have hsl : IsSlope K (2 * θ) ins :=
-    GM11.isSlope_of_derived (Γ := PaintingOrDrawing.drawing H) hS hResp.2.1.isPretangle hK.2.1.1 hd
-  have hrf := GM11.regionFacts_of_radial ⟨hK.1, hK.2.1⟩ hS hK.2.2 hE
-  obtain ⟨z', hz', hz'_uniq⟩ := existsUnique_correspondingAtom hK hz
-  obtain ⟨c, hc⟩ := atom_nonempty hz'.2.1
-  obtain ⟨r₁, hr₁, hno₁⟩ := GM11.theorem_8_12_proof hS hsl c
-  obtain ⟨e₁, he₁, he₁r₁⟩ := hrf.1 r₁ hr₁
-  have he₁_corr : IsCorrespondingAtom H K e₁ r₁ :=
-    ⟨Or.inl (Or.inr he₁), Or.inr hr₁, Or.inr (Or.inl ⟨he₁, hr₁, he₁r₁⟩)⟩
-  by_cases he₁z : e₁ = z
-  · subst he₁z
-    have hzE' : 2 ≤ H.E.ncard := hzE.resolve_right (not_not.mpr he₁)
-    obtain ⟨e₂, he₂, he₂ne⟩ := exists_ne_of_one_lt_ncard (s := H.E) (by omega) e₁
-    have hz'_eq_r₁ : z' = r₁ := (hz'_uniq r₁ he₁_corr).symm
-    refine ⟨e₂, he₂, ?_⟩
-    rw [hd_eq e₁ hz e₂ (Or.inl (Or.inr he₂))]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact absurd h1 (Ne.symm he₂ne)
-    · exfalso
-      obtain ⟨u, W, z₁', r₂', hz₁', -, hW, hzW, -⟩ := h2
-      have hz₁_eq : z₁' = r₁ := (hz'_uniq z₁' hz₁').trans hz'_eq_r₁
-      subst hz₁_eq
-      have hrest := (GM11.theorem_8_5_proof hS hsl W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW (hz'_eq_r₁ ▸ hc), hzW⟩
-    · rfl
-  · refine ⟨e₁, he₁, ?_⟩
-    rw [hd_eq z hz e₁ (Or.inl (Or.inr he₁))]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact absurd h1 (Ne.symm he₁z)
-    · exfalso
-      obtain ⟨u, W, z₁', r₁', hz₁', hr₁', hW, hzW, hrW⟩ := h2
-      have hz₁_eq : z₁' = z' := hz'_uniq z₁' hz₁'
-      have hr₁_eq : r₁' = r₁ :=
-        (existsUnique_correspondingAtom hK (Or.inl (Or.inr he₁))).unique hr₁' he₁_corr
-      subst hz₁_eq hr₁_eq
-      have hrest := (GM11.theorem_8_5_proof hS hsl W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW hc, hrW⟩
-    · rfl
+  exact GM12.exists_edge_dist_eq_theta_of_metric hS hConn hMetric hE hz hzE
 
 /-- Graph Minors XIV, (7.1) (page 35):
 "Let $H$ be a 2-cell drawing with $|E(H)| \ge 2$ in a surface $\Sigma$, and let $\mathscr{T}$

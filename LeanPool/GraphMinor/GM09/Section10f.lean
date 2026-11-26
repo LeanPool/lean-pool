@@ -134,41 +134,8 @@ given parametrization of the circle. -/
 theorem exists_cyclicPerm_agrees_of_injOn {S : Type*} [TopologicalSpace S] {F : Set S}
     (φ : Circle ≃ₜ F) (ν : α → S) {Y : Set α} (hY : Y.Finite) (hNe : Y.Nonempty)
     (hinj : InjOn ν Y) (hYF : ∀ v ∈ Y, ν v ∈ F) :
-    ∃ Ω : CyclicPerm α, Ω.bar = Y ∧ AgreesWithOArcHomeo ν Ω F φ := by
-  classical
-  let : Fintype Y := hY.fintype
-  have hCard : Fintype.card Y = Y.ncard := by
-    rw [← Nat.card_eq_fintype_card, Nat.card_coe_set_eq]
-  let e₀ : Fin Y.ncard ≃ Y := (finCongr hCard.symm).trans (Fintype.equivFin Y).symm
-  let ν₀ : Fin Y.ncard → S := fun i => ν (e₀ i).val
-  have hν₀ : Function.Injective ν₀ := fun i j h =>
-    e₀.injective (Subtype.ext (hinj (e₀ i).2 (e₀ j).2 h))
-  obtain ⟨perm, τ, hPerm, hτ, hBounds, hEq⟩ := exists_increasing_circle_angles φ ν₀ hν₀
-    (fun i => hYF _ (e₀ i).property)
-  let e : Fin Y.ncard ≃ Y := (Equiv.ofBijective perm hPerm).trans e₀
-  let Ω := cyclicPermOnSet hY e
-  have hNeCard : 0 < Y.ncard := (Set.ncard_pos hY).mpr hNe
-  have hEq' : ∀ i, (φ (Circle.exp (τ i))).val = ν (e i).val := hEq
-  have hTurn : ∀ i, τ i < τ ⟨0, hNeCard⟩ + 2 * Real.pi := by
-    intro i
-    have hi := hBounds i
-    have hzero := hBounds ⟨0, hNeCard⟩
-    linarith
-  have hAgreeFin := finCyclicPerm_agrees_of_angles φ hNeCard (fun i => ν (e i).val) τ hτ hTurn hEq'
-  refine ⟨Ω, rfl, fun x hx => hYF x hx, ?_⟩
-  intro x y z hCW
-  have hMem := CyclicPerm.isClockwise3_iff.mp hCW
-  let i := e.symm ⟨x, hMem.2.2.2.1⟩
-  let j := e.symm ⟨y, hMem.2.2.2.2.1⟩
-  let k := e.symm ⟨z, hMem.2.2.2.2.2.1⟩
-  have hi : (e i).val = x := congrArg Subtype.val (e.apply_symm_apply ⟨x, hMem.2.2.2.1⟩)
-  have hj : (e j).val = y := congrArg Subtype.val (e.apply_symm_apply ⟨y, hMem.2.2.2.2.1⟩)
-  have hk : (e k).val = z := congrArg Subtype.val (e.apply_symm_apply ⟨z, hMem.2.2.2.2.2.1⟩)
-  have hCW' : (cyclicPermOnSet hY e).IsClockwise3 (e i).val (e j).val (e k).val := by
-    rw [hi, hj, hk]
-    exact hCW
-  have hFin := (cyclicPermOnSet_clockwise3_iff hY e i j k).mp hCW'
-  simpa only [hi, hj, hk] using hAgreeFin.2 i j k hFin
+    ∃ Ω : CyclicPerm α, Ω.bar = Y ∧ AgreesWithOArcHomeo ν Ω F φ :=
+  GM16.exists_cyclicPerm_from_circle φ ν hY hNe hinj hYF
 
 /-- A closed disc whose boundary is the drawing of `K` splits the drawn graph at `V(K)`. -/
 theorem exists_separation_of_disc {G K : Graph α β} (Γ : GraphDrawing G EuclideanPlane)

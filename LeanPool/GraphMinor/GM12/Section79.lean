@@ -263,58 +263,20 @@ theorem exists_atom_dist_eq_theta (hS : IsClosedSurface S) [ConnectedSpace S]
     {d : Set S → Set S → ℕ} (hMetric : HasTangleMetric H θ T d) (hθ : 2 ≤ θ)
     {z : Set S} (hz : z ∈ H.A) :
     ∃ b ∈ H.A, d z b = θ := by
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
   have hE : H.E.Nonempty := edgeSet_nonempty_of_isTangle_of_two_le hMetric.1.2.1 hθ
-  obtain ⟨hResp, K, ins, hK, hd, hd_eq⟩ := hMetric
-  have hsl : IsSlope K (2 * θ) ins :=
-    GM11.isSlope_of_derived (Γ := PaintingOrDrawing.drawing H) hS
-      ⟨hResp.2.1.one_le, hResp.2.1.isSeparation, hResp.2.1.order_lt,
-        hResp.2.1.axiom1, hResp.2.1.axiom2⟩ hK.2.1.1 hd
-  have hrf := GM11.regionFacts_of_radial ⟨hK.1, hK.2.1⟩ hS hK.2.2 hE
-  obtain ⟨z', hz', hz'_uniq⟩ := existsUnique_correspondingAtom' hK hz
-  obtain ⟨c, hc⟩ := atom_nonempty' hz'.2.1
-  obtain ⟨r₁, hr₁, hno₁⟩ := GM11.gm14_theorem_8_12 S hS inferInstance K (2 * θ) ins hsl c
-  obtain ⟨e₁, he₁, he₁r₁⟩ := hrf.1 r₁ hr₁
-  have he₁A : e₁ ∈ H.A := Or.inl (Or.inr he₁)
-  have he₁_corr : IsCorrespondingAtom H K e₁ r₁ :=
-    ⟨he₁A, Or.inr hr₁, Or.inr (Or.inl ⟨he₁, hr₁, he₁r₁⟩)⟩
-  by_cases he₁z : e₁ = z
-  · subst he₁z
-    have hcl_ne : (closure e₁ ∩ H.V).Nonempty := by
-      rcases H.edge_cond e₁ he₁ with ⟨u, v, _, hcl, _⟩ | ⟨u, hcl, _⟩
+  obtain ⟨e, he, hDist⟩ := exists_edge_for_metric_eq_order hS inferInstance hMetric hE hz
+  by_cases hze : z = e
+  · have hEnds : (closure e ∩ H.V).Nonempty := by
+      rcases H.edge_cond e he with ⟨u, v, _, hcl, _⟩ | ⟨u, hcl, _⟩
       · exact ⟨u, by rw [hcl]; simp⟩
       · exact ⟨u, by rw [hcl]; simp⟩
-    obtain ⟨u₀, hu₀⟩ := hcl_ne
-    have hu₀A : ({u₀} : Set S) ∈ H.A := Or.inl (Or.inl ⟨u₀, hu₀.2, rfl⟩)
-    have hu₀_ne : ({u₀} : Set S) ≠ e₁ := fun h =>
-      (he₁.2.1 (h ▸ mem_singleton u₀)).2 hu₀.2
-    have hz'_eq_r₁ : z' = r₁ := (hz'_uniq r₁ he₁_corr).symm
-    refine ⟨{u₀}, hu₀A, ?_⟩
-    rw [hd_eq e₁ hz {u₀} hu₀A]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact (hu₀_ne h1.symm).elim
-    · exfalso
-      obtain ⟨u, W, z₁', _, hz₁', _, hW, hzW, _⟩ := h2
-      have hz₁_eq : z₁' = r₁ := (hz'_uniq z₁' hz₁').trans hz'_eq_r₁
-      subst hz₁_eq
-      have hrest := (GM11.gm12_theorem_8_5 S hS inferInstance K (2 * θ) ins hsl u W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW (hz'_eq_r₁ ▸ hc), hzW⟩
-    · rfl
-  · refine ⟨e₁, he₁A, ?_⟩
-    rw [hd_eq z hz e₁ he₁A]
-    unfold tangleMetric
-    split_ifs with h1 h2
-    · exact (he₁z h1.symm).elim
-    · exfalso
-      obtain ⟨u, W, z₁', r₁', hz₁', hr₁', hW, hzW, hrW⟩ := h2
-      have hz₁_eq : z₁' = z' := hz'_uniq z₁' hz₁'
-      have hr₁_eq : r₁' = r₁ :=
-        (existsUnique_correspondingAtom' hK he₁A).unique hr₁' he₁_corr
-      subst hz₁_eq hr₁_eq
-      have hrest := (GM11.gm12_theorem_8_5 S hS inferInstance K (2 * θ) ins hsl u W hW).1
-      exact hno₁ (insWalk ins K W) hrest ⟨hzW hc, hrW⟩
-    · rfl
+    obtain ⟨u, hu⟩ := hEnds
+    have huA : ({u} : Set S) ∈ H.A := Or.inl (Or.inl ⟨u, hu.2, rfl⟩)
+    have hne : z ≠ {u} := fun h =>
+      (he.2.1 ((hze.symm.trans h).symm ▸ mem_singleton u)).2 hu.2
+    exact ⟨{u}, huA, hDist _ huA hne (Or.inr hze)⟩
+  · have heA : e ∈ H.A := Or.inl (Or.inr he)
+    exact ⟨e, heA, hDist _ heA hze (Or.inl rfl)⟩
 
 /-- By `(2.1)`, if `F` is a `Γ'`-normal `O`-arc with `(F ∩ Γ'.V).ncard < θ'` and `Δ` is its inside
 disc with respect to `(T', d')`, then any two atoms `a', b' ∈ Γ'.A` meeting `Δ` have

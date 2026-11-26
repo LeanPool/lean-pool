@@ -62,10 +62,7 @@ arc with the image endpoints. -/
 theorem isLineWithEnds_image_injective {X Y : Type*} [TopologicalSpace X]
     [TopologicalSpace Y] [T2Space Y] (f : X → Y) (hf : Continuous f)
     (hinj : Function.Injective f) {L : Set X} {a b : X} (hL : IsLineWithEnds L a b) :
-    IsLineWithEnds (f '' L) (f a) (f b) := by
-  obtain ⟨g, hg, hgr, hg0, hg1⟩ := hL.exists_arc
-  have hfg : IsArcMap (f ∘ g) := ⟨hf.comp hg.1, hinj.comp hg.2⟩
-  have h := hfg.isLineWithEnds
-  simpa only [range_comp, hgr, Function.comp_apply, hg0, hg1] using h
+    IsLineWithEnds (f '' L) (f a) (f b) :=
+  hL.image_under_injOn hf.continuousOn hinj.injOn
 
 end GraphMinor.GM12

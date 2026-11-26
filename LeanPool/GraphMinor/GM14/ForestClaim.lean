@@ -144,15 +144,8 @@ theorem no_circuit_mono {G₁ G₂ : Graph α β} (hle : G₁ ≤ G₂) (hno : �
 theorem exists_split_edge {C : Graph α β} {a b : α} (W : GraphWalk C a b) {g : β}
     (hg : g ∈ W.edges) : ∃ p q, C.IsLink g p q ∧ ∃ (W₁ : GraphWalk C a p) (W₂ : GraphWalk C q b),
       W.edges = W₁.edges ++ g :: W₂.edges := by
-  induction W with
-  | nil _ => simp [GraphWalk.edges] at hg
-  | @cons u t c e hl rest ih =>
-    by_cases hge : g = e
-    · subst hge
-      exact ⟨u, t, hl, .nil hl.left_mem, rest, rfl⟩
-    · have hg' : g ∈ rest.edges := (List.mem_cons.mp hg).resolve_left hge
-      obtain ⟨p, q, h₁, W₁, W₂, h₂⟩ := ih hg'
-      exact ⟨p, q, h₁, .cons hl W₁, W₂, by simp [GraphWalk.edges, h₂]⟩
+  obtain ⟨p, q, h, W₁, W₂, heq⟩ := W.split_at_edge hg
+  exact ⟨p, q, h, W₁, W₂, by rw [heq, GraphWalk.edges_append, GraphWalk.edges_cons]⟩
 
 /-- Adding an edge between two parts of a forest gives a forest. -/
 theorem no_circuit_insert {A : Graph α β} {Z : Set β} {g : β} {x y : α}

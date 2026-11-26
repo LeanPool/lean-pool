@@ -189,6 +189,30 @@ Graph Minors VII, Section 2 (page 214); Graph Minors XI, Section 3 (page 74). -/
 def IsLineWithEnds {S : Type u} [TopologicalSpace S] (L : Set S) (u v : S) : Prop :=
   ∃ f : unitInterval ≃ₜ L, (f 0).1 = u ∧ (f 1).1 = v
 
+/-- A map continuous and injective on a line carries it to a line with the image endpoints. -/
+theorem IsLineWithEnds.image_under_injOn {S T : Type*} [TopologicalSpace S] [TopologicalSpace T]
+    [T2Space T] {L : Set S} {u v : S} (hl : IsLineWithEnds L u v) {g : S → T}
+    (hc : ContinuousOn g L) (hi : InjOn g L) : IsLineWithEnds (g '' L) (g u) (g v) := by
+  obtain ⟨f, h0, h1⟩ := hl
+  let e : unitInterval → T := fun t => g (f t).1
+  have hec : Continuous e :=
+    hc.comp_continuous (continuous_subtype_val.comp f.continuous) fun t => (f t).2
+  have hei : Function.Injective e := fun x y he =>
+    f.injective (Subtype.ext (hi (f x).2 (f y).2 he))
+  have hr : range e = g '' L := by
+    ext y
+    constructor
+    · rintro ⟨t, rfl⟩
+      exact ⟨_, (f t).2, rfl⟩
+    · rintro ⟨z, hz, rfl⟩
+      exact ⟨f.symm ⟨z, hz⟩, by simp [e]⟩
+  have hem := hec.isClosedEmbedding hei
+  refine ⟨hem.isEmbedding.toHomeomorph.trans (Homeomorph.setCongr hr), ?_, ?_⟩
+  · change e 0 = g u
+    simp [e, h0]
+  · change e 1 = g v
+    simp [e, h1]
+
 /-- The points of a line other than its two endpoints are parameterized by `(0, 1)`. -/
 theorem line_interior_eq_image {S : Type u} [TopologicalSpace S] {L : Set S} {a b : S}
     (f : unitInterval ≃ₜ L) (ha : (f 0).1 = a) (hb : (f 1).1 = b) :

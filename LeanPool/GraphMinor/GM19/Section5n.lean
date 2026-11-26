@@ -48,14 +48,8 @@ theorem append_assoc' {u v w x : α} (A : Surface.GraphWalk G u v) (B : Surface.
     rw [ih]
 
 theorem IsSimple.of_append {u v w : α} {A : Surface.GraphWalk G u v} {B : Surface.GraphWalk G v w}
-    (h : (A.append B).IsSimple) : A.IsSimple ∧ B.IsSimple := by
-  unfold Surface.GraphWalk.IsSimple at h ⊢
-  rw [support_append] at h
-  have h₁ := (List.nodup_append.mp h)
-  refine ⟨h₁.1, ?_⟩
-  rw [B.support_eq_cons]
-  refine List.nodup_cons.mpr ⟨fun hv ↦ ?_, h₁.2.1⟩
-  exact h₁.2.2 v A.end_mem_support v hv rfl
+    (h : (A.append B).IsSimple) : A.IsSimple ∧ B.IsSimple :=
+  Surface.GraphWalk.simple_parts_of_append h
 
 variable {γ : Type} (ℓ : α → Option γ)
 

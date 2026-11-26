@@ -47,6 +47,61 @@ theorem distanceFlaw {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourSc
   · exact TangleDatum.exists_outer_of_pair hS h3 hn hd hNP
   · exact TangleDatum.outer_of_flaw hS h3 hn₁ hn hd hNP h₁ h₂ hne hdist
 
+omit [T2Space Shat] in
+/-- A class of places for each admissible feature yields one class for all bounded features.
+The finite list of representatives comes from (5.2), and their frame-preserving equivalences
+transport the data for each place. -/
+theorem exists_wellBehavedPlaces_of_bounded_features
+    {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourScheme S β} (hd : χ.IsDisjoint)
+    {𝒮 : Set (ColouredPainting χ)} (bound order : ℕ)
+    (Data : TangleDatum cap χ → Drawing S → Prop)
+    (hClass : ∀ Kc : Drawing S, (∃ D, Data D Kc) →
+      ∃ B : Set (Place χ), IsWellBehavedPlaces B ∧
+        ∀ D : TangleDatum cap χ, D.P ∈ 𝒮 → order ≤ D.ord →
+          ∀ K : Drawing S, Data D K → FeatureEquiv χ.Φ Kc K →
+            ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb order D.ord D.𝒯 ∧
+              (⟨hd, D.P, L⟩ : Place χ) ∈ B) :
+    ∃ B : Set (Place χ), IsWellBehavedPlaces B ∧
+      ∀ D : TangleDatum cap χ, D.P ∈ 𝒮 → order ≤ D.ord →
+        ∀ K : Drawing S, Data D K → IsFeature χ.Φ K → K.V.ncard + K.E.ncard ≤ bound →
+          ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb order D.ord D.𝒯 ∧
+            (⟨hd, D.P, L⟩ : Place χ) ∈ B := by
+  classical
+  obtain ⟨𝓕, hf, h𝓕⟩ := theorem_5_2_proof S χ.isSurface χ.connected χ.Φ bound
+  let Good : Drawing S → Prop := fun K => ∃ D, Data D K
+  have hpick : ∀ K₀, ∃ K', ∀ K, Good K → FeatureEquiv χ.Φ K₀ K →
+      Good K' ∧ FeatureEquiv χ.Φ K₀ K' := by
+    intro K₀
+    by_cases h : ∃ K, Good K ∧ FeatureEquiv χ.Φ K₀ K
+    · obtain ⟨K, hGood, hEq⟩ := h
+      exact ⟨K, fun _ _ _ => ⟨hGood, hEq⟩⟩
+    · exact ⟨K₀, fun K hGood hEq => absurd ⟨K, hGood, hEq⟩ h⟩
+  choose p hp using hpick
+  have hB : ∀ Kc, ∃ B : Set (Place χ), IsWellBehavedPlaces B ∧
+      (Good Kc → ∀ D : TangleDatum cap χ, D.P ∈ 𝒮 → order ≤ D.ord →
+        ∀ K : Drawing S, Data D K → FeatureEquiv χ.Φ Kc K →
+          ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb order D.ord D.𝒯 ∧
+            (⟨hd, D.P, L⟩ : Place χ) ∈ B) := by
+    intro Kc
+    by_cases hGood : Good Kc
+    · obtain ⟨B, hB, hMem⟩ := hClass Kc hGood
+      exact ⟨B, hB, fun _ => hMem⟩
+    · exact ⟨∅, fun Ω hΩ seq hseq => absurd (hseq 0) (notMem_empty _),
+        fun h => absurd h hGood⟩
+  choose B hBw hBm using hB
+  have : Finite 𝓕 := hf
+  refine ⟨⋃ K₀ : 𝓕, B (p K₀.1), IsWellBehavedPlaces.iUnion fun _ => hBw _, ?_⟩
+  intro D hm hord K hData hFeature hSize
+  obtain ⟨K₀, hK₀, f, hfp, hfU, hfV⟩ := h𝓕 K hFeature hSize
+  obtain ⟨hGood, g, hgp, hgU, hgV⟩ := hp K₀ K ⟨D, hData⟩ ⟨f, hfp, hfU, hfV⟩
+  have hImage {A B C : Set S} (hg : g '' A = B) (hf : f '' A = C) :
+      (g.symm.trans f) '' B = C := by
+    rw [show (g.symm.trans f) '' B = f '' (g.symm '' B) by rw [image_image]; rfl,
+      ← hg, symm_image_image', hf]
+  obtain ⟨L, hL, hmem⟩ := hBm (p K₀) hGood D hm hord K hData
+    ⟨g.symm.trans f, hgp.symm.trans hfp, hImage hgU hfU, hImage hgV hfV⟩
+  exact ⟨L, hL, mem_iUnion.2 ⟨⟨K₀, hK₀⟩, hmem⟩⟩
+
 /-- **Graph Minors XIX, (10.4)** (page 356), from (5.2), the orientation of a fragment and the
 fragment outside a distance flaw. -/
 theorem theorem_10_4_proof : Theorem104Statement.{w} := by
@@ -54,51 +109,20 @@ theorem theorem_10_4_proof : Theorem104Statement.{w} := by
   classical
   have hS := χ.isSurface
   let a₀ : β := Classical.arbitrary β
-  obtain ⟨𝓕, hf, h𝓕⟩ := GraphMinor.GM19.theorem_5_2_proof S hS χ.connected χ.Φ (8 * n)
-  let Good : Drawing S → Prop := fun K ↦ ∃ (D : TangleDatum cap χ) (𝓓 : Set
-    (Set Shat)), IsOuterData D n 𝓓 K
-  have hpick : ∀ K₀, ∃ K', ∀ K, Good K → FeatureEquiv χ.Φ K₀ K → Good K' ∧ FeatureEquiv χ.Φ K₀ K'
-    := fun K₀ ↦ by
-    by_cases h : ∃ K, Good K ∧ FeatureEquiv χ.Φ K₀ K
-    · obtain ⟨K, h₁, h₂⟩ := h
-      exact ⟨K, fun _ _ _ ↦ ⟨h₁, h₂⟩⟩
-    · exact ⟨K₀, fun K h₁ h₂ ↦ absurd ⟨K, h₁, h₂⟩ h⟩
-  choose p hp using hpick
-  have hB : ∀ Kc, ∃ B : Set (Place χ), IsWellBehavedPlaces B ∧ (Good Kc
-    → ∀ D : TangleDatum cap χ, D.P ∈ 𝒮 → n + 1 ≤ D.ord →
-      ∀ (𝓓 : Set (Set Shat)) (K : Drawing S) (α : S ≃ₜ S), IsOuterData D n 𝓓 K
-        → IsFramePreservingHomeo χ.Φ α →
-      α '' Kc.U = K.U → α '' Kc.V = K.V →
-      ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb (n + 1) D.ord D.𝒯 ∧ (⟨hd, D.P, L⟩ : Place χ) ∈ B)
-        := fun Kc ↦ by
-    by_cases hg : Good Kc
-    · obtain ⟨B, h₁, h₂⟩ := exists_class_outer hS hd hcl n a₀ hS3 hg
-      exact ⟨B, h₁, fun _ ↦ h₂⟩
-    · exact ⟨∅, fun Ω hΩ seq hseq ↦ absurd (hseq 0) (notMem_empty _), fun h ↦ absurd h hg⟩
-  choose B hBw hBm using hB
-  have : Finite 𝓕 := hf
-  refine ⟨⋃ K₀ : 𝓕, B (p K₀.1), IsWellBehavedPlaces.iUnion fun _ ↦ hBw _, ?_⟩
-  intro D hm hfl
+  let Data : TangleDatum cap χ → Drawing S → Prop :=
+    fun D K => ∃ 𝓓 : Set (Set Shat), IsOuterData D n 𝓓 K
+  obtain ⟨B, hB, hMem⟩ := exists_wellBehavedPlaces_of_bounded_features hd (𝒮 := 𝒮)
+    (8 * n) (n + 1) Data (fun Kc hGood => by
+      obtain ⟨B, hB, hMem⟩ := exists_class_outer hS hd hcl n a₀ hS3 (Kc := Kc) hGood
+      refine ⟨B, hB, ?_⟩
+      rintro D hm hord K ⟨𝓓, hData⟩ ⟨f, hfp, hfU, hfV⟩
+      exact hMem D hm hord 𝓓 K f hData hfp hfU hfV)
+  refine ⟨B, hB, fun D hm hfl => ?_⟩
   obtain ⟨𝓓, K, hK⟩ := distanceFlaw D hn hfl
   have hord : n + 1 ≤ D.ord := by
     have h₁ := hfl.1
     have h₂ : D.rep ≤ D.ord := (tangleRep_spec D.rad D.ord D.𝒯).1
     omega
-  obtain ⟨K₀, hK₀, f, hfp, hfU, hfV⟩ := h𝓕 K hK.feature hK.size
-  have hg : Good K := ⟨D, 𝓓, hK⟩
-  obtain ⟨hg', g, hgp, hgU, hgV⟩ := hp K₀ K hg ⟨f, hfp, hfU, hfV⟩
-  have hU : (g.symm.trans f) '' (p K₀).U = K.U := by
-    have : (g.symm.trans f) '' (p K₀).U = f '' (g.symm '' (p K₀).U) := by
-      rw [image_image]
-      rfl
-    rw [this, ← hgU, symm_image_image', hfU]
-  have hV' : (g.symm.trans f) '' (p K₀).V = K.V := by
-    have : (g.symm.trans f) '' (p K₀).V = f '' (g.symm '' (p K₀).V) := by
-      rw [image_image]
-      rfl
-    rw [this, ← hgV, symm_image_image', hfV]
-  obtain ⟨L, hL, hmem⟩ := hBm (p K₀) hg' D hm hord 𝓓 K (g.symm.trans f) hK
-    (hgp.symm.trans hfp) hU hV'
-  exact ⟨L, hL, mem_iUnion.2 ⟨⟨K₀, hK₀⟩, hmem⟩⟩
+  exact hMem D hm hord K ⟨𝓓, hK⟩ hK.feature hK.size
 
 end GraphMinor.GM19

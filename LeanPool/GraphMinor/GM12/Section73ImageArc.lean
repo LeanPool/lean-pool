@@ -34,22 +34,8 @@ theorem lineWithEnds_image_of_injOn
     {S T : Type*} [TopologicalSpace S] [TopologicalSpace T] [T2Space T]
     {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) {f : S → T}
     (hf : ContinuousOn f L) (hinj : InjOn f L) :
-    IsLineWithEnds (f '' L) (f u) (f v) := by
-  obtain ⟨p, hp0, hp1⟩ := hL
-  let q : unitInterval → T := fun t => f (p t).val
-  have hqc : Continuous q := hf.comp_continuous
-    (continuous_subtype_val.comp p.continuous) (fun t => (p t).property)
-  have hqi : Function.Injective q := by
-    intro s t hst
-    exact p.injective (Subtype.ext (hinj (p s).property (p t).property hst))
-  have hrange : range q = f '' L := by
-    ext y
-    constructor
-    · rintro ⟨t, rfl⟩
-      exact ⟨(p t).val, (p t).property, rfl⟩
-    · rintro ⟨z, hz, rfl⟩
-      exact ⟨p.symm ⟨z, hz⟩, congrArg f (congrArg Subtype.val (p.apply_symm_apply ⟨z, hz⟩))⟩
-  simpa only [q, hp0, hp1, hrange] using isLine_range hqc hqi
+    IsLineWithEnds (f '' L) (f u) (f v) :=
+  hL.image_under_injOn hf hinj
 
 /-- The two specified ends of a line are distinct. -/
 theorem lineWithEnds_ends_ne {S : Type*} [TopologicalSpace S]

@@ -107,14 +107,8 @@ theorem GraphWalk.exists_split_edge {α' β : Type*} {G : Graph α' β} {a b : �
   (K : GraphWalk G a b) {e : β}
     (he : e ∈ K.edges) : ∃ (x y : α') (hl : G.IsLink e x y) (A : GraphWalk G a x)
       (B : GraphWalk G y b),
-      K = A.append (GraphWalk.cons hl B) := by
-  induction K with
-  | nil h => simp at he
-  | @cons a c b g h r ih =>
-    rcases List.mem_cons.mp he with rfl | he'
-    · exact ⟨a, c, h, .nil h.left_mem, r, rfl⟩
-    · obtain ⟨x, y, hl, A, B, rfl⟩ := ih he'
-      exact ⟨x, y, hl, .cons h A, B, rfl⟩
+      K = A.append (GraphWalk.cons hl B) :=
+  K.split_at_edge he
 
 namespace TangleDatum
 

@@ -158,15 +158,24 @@ def MetricWitness (H D : Drawing S) (ins : Drawing S → Set S) (θ : ℕ) (x y 
     IsCorrespondingAtom H D x x' ∧ IsCorrespondingAtom H D y y' ∧
       W.length < 2 * θ ∧ W.length = 2 * k ∧ x' ⊆ insWalk ins D W ∧ y' ⊆ insWalk ins D W
 
-omit [ConnectedSpace S] in
-theorem tangleMetric_le (hk : MetricWitness H D ins θ x y k) : tangleMetric H D ins θ x y ≤ k := by
+omit [T2Space S] [ConnectedSpace S] in
+/-- A short closed walk whose interior contains both radial atoms bounds their distance. -/
+theorem tangleMetric_le_of_walk [T1Space S] {u : S} (W : GraphWalk D.toGraph u u)
+    {x' y' : Set S} (hx : IsCorrespondingAtom H D x x') (hy : IsCorrespondingAtom H D y y')
+    (hl : W.length < 2 * θ) (hk : W.length = 2 * k)
+    (hxW : x' ⊆ insWalk ins D W) (hyW : y' ⊆ insWalk ins D W) :
+    tangleMetric H D ins θ x y ≤ k := by
   classical
   unfold tangleMetric
-  split_ifs with h₁ h₂
+  split_ifs with hxy hw
   · exact Nat.zero_le _
-  · exact Nat.sInf_le hk
-  · obtain ⟨u, W, x', y', hx, hy, hl, hk', h₃, h₄⟩ := hk
-    exact (h₂ ⟨u, W, x', y', hx, hy, hl, h₃, h₄⟩).elim
+  · exact Nat.sInf_le ⟨u, W, x', y', hx, hy, hl, hk, hxW, hyW⟩
+  · exact (hw ⟨u, W, x', y', hx, hy, hl, hxW, hyW⟩).elim
+
+omit [ConnectedSpace S] in
+theorem tangleMetric_le (hk : MetricWitness H D ins θ x y k) : tangleMetric H D ins θ x y ≤ k := by
+  obtain ⟨u, W, x', y', hx, hy, hl, heven, hxW, hyW⟩ := hk
+  exact tangleMetric_le_of_walk W hx hy hl heven hxW hyW
 
 omit [ConnectedSpace S] in
 /-- The metric is `θ`, or it comes from a closed walk. -/

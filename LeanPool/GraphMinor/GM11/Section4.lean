@@ -92,28 +92,16 @@ theorem IsSlope.U_subset_ins {Γ : Drawing S} {k : ℕ} {ins : Drawing S → Set
 omit [T2Space S] in
 theorem isSimple_of_append {Γ : Drawing S} {a x b : S} {W₁ : GraphWalk Γ.toGraph a x}
     {W₂ : GraphWalk Γ.toGraph x b} (h : (W₁.append W₂).IsSimple) :
-    W₁.IsSimple ∧ W₂.IsSimple := by
-  have hs : (W₁.support ++ W₂.support.tail).Nodup := by
-    have h' : (W₁.append W₂).support.Nodup := h
-    rwa [GraphWalk.support_append] at h'
-  have hd := List.nodup_append.mp hs
-  refine ⟨hd.1, ?_⟩
-  unfold GraphWalk.IsSimple
-  rw [W₂.support_eq_cons]
-  exact List.nodup_cons.mpr ⟨fun hx => hd.2.2 x W₁.end_mem_support x hx rfl, hd.2.1⟩
+    W₁.IsSimple ∧ W₂.IsSimple :=
+  GraphWalk.simple_parts_of_append h
 
 omit [T2Space S] in
 theorem exists_split_edge {Γ : Drawing S} {a b : S} (W : GraphWalk Γ.toGraph a b) {e : Set S}
     (he : e ∈ W.edges) :
     ∃ (x y : S) (W₁ : GraphWalk Γ.toGraph a x) (h : Γ.toGraph.IsLink e x y)
       (W₂ : GraphWalk Γ.toGraph y b), W = W₁.append (.cons h W₂) := by
-  induction W with
-  | nil h => simp at he
-  | cons h r ih =>
-    rcases List.mem_cons.mp he with rfl | he
-    · exact ⟨_, _, .nil h.left_mem, h, r, rfl⟩
-    · obtain ⟨x, y, W₁, h', W₂, rfl⟩ := ih he
-      exact ⟨x, y, .cons h W₁, h', W₂, rfl⟩
+  obtain ⟨x, y, h, W₁, W₂, heq⟩ := W.split_at_edge he
+  exact ⟨x, y, W₁, h, W₂, heq⟩
 
 omit [TopologicalSpace S] [T2Space S] in
 theorem support_of_length_zero {G : Graph S (Set S)} {a b : S} {W : GraphWalk G a b}

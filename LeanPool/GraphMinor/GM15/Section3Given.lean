@@ -65,21 +65,8 @@ theorem exists_chart_3_4 {S : Type w} [TopologicalSpace S] {Λ : Set S} {k : ℕ
 /-- The image of a line under a continuous map that is injective on it is a line. -/
 theorem isLineWithEnds_image {S T : Type*} [TopologicalSpace S] [TopologicalSpace T] [T2Space T]
     {L : Set S} {a b : S} (hL : IsLineWithEnds L a b) {φ : S → T} (hc : ContinuousOn φ L)
-    (hi : InjOn φ L) : IsLineWithEnds (φ '' L) (φ a) (φ b) := by
-  obtain ⟨f, hf0, hf1⟩ := hL
-  let e : unitInterval → T := fun t => φ (f t).1
-  have he : Continuous e :=
-    hc.comp_continuous (continuous_subtype_val.comp f.continuous) fun t => (f t).2
-  have hei : Injective e := fun s t hst => f.injective (Subtype.ext (hi (f s).2 (f t).2 hst))
-  have hr : range e = φ '' L := by
-    ext y
-    constructor
-    · rintro ⟨t, rfl⟩
-      exact ⟨_, (f t).2, rfl⟩
-    · rintro ⟨x, hx, rfl⟩
-      exact ⟨f.symm ⟨x, hx⟩, by simp [e]⟩
-  have h := GM11.isLine_range he hei
-  rwa [hr, show e 0 = φ a by simp [e, hf0], show e 1 = φ b by simp [e, hf1]] at h
+    (hi : InjOn φ L) : IsLineWithEnds (φ '' L) (φ a) (φ b) :=
+  hL.image_under_injOn hc hi
 
 /-- Replacing the chart `g` by `g ∘ Φ` for a homeomorphism `Φ` of the unit disc that fixes the
 circle gives a chart that agrees with `g` on the circle. -/

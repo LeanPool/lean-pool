@@ -129,27 +129,8 @@ theorem arcComponentsIn_PH (h : PH A B f f') {F : Set X} (hF : F ⊆ A) :
 omit [T2Space X] in
 /-- The image of a line is a line. -/
 theorem PH.line_image (h : PH A B f f') {L : Set X} {u v : X} (hL : L ⊆ A)
-    (hl : IsLineWithEnds L u v) : IsLineWithEnds (f '' L) (f u) (f v) := by
-  obtain ⟨g, h0, h1⟩ := hl
-  let e : unitInterval → Y := fun t => f (g t).1
-  have hec : Continuous e :=
-    (h.2.2.2.2.1.mono hL).comp_continuous (continuous_subtype_val.comp g.continuous) fun t =>
-      (g t).2
-  have hei : Function.Injective e := fun x y he =>
-    g.injective (Subtype.ext (h.injOn (hL (g x).2) (hL (g y).2) he))
-  have hr : range e = f '' L := by
-    ext y
-    constructor
-    · rintro ⟨t, rfl⟩
-      exact ⟨_, (g t).2, rfl⟩
-    · rintro ⟨z, hz, rfl⟩
-      exact ⟨g.symm ⟨z, hz⟩, by simp [e]⟩
-  have hem := hec.isClosedEmbedding hei
-  refine ⟨hem.isEmbedding.toHomeomorph.trans (Homeomorph.setCongr hr), ?_, ?_⟩
-  · change e 0 = f u
-    simp [e, h0]
-  · change e 1 = f v
-    simp [e, h1]
+    (hl : IsLineWithEnds L u v) : IsLineWithEnds (f '' L) (f u) (f v) :=
+  hl.image_under_injOn (h.2.2.2.2.1.mono hL) (h.injOn.mono hL)
 
 omit [T2Space X] in
 /-- The image of an `O`-arc is an `O`-arc. -/

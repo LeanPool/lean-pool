@@ -193,6 +193,51 @@ theorem shW_eW (M a b c : ℕ) : shW M (eW a b c) = [(2 * a + b + 2 * c + M, tru
 theorem winv_shW_eW (M a b c : ℕ) : winv (shW M (eW a b c)) = shW M (eW a b c) := by
   simp [shW_eW, winv, linv]
 
+private theorem cut_words_setup (hi : i < c₁) (hN₁ : L₁.Nodup) (hN₂ : L₂.Nodup)
+    (hL₁ : ∀ m ∈ L₁, m < c₁ ∧ m ≠ i) :
+    BC (hH a₁ b₁ L₁) a₁ b₁ L₁.length ∧
+      BC (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂)) a₂ b₂ L₂.length ∧
+      DisjL (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂)) (hH a₁ b₁ L₁) ∧
+      cnt (rW a₁ b₁ c₁ L₁) (rL a₁ b₁ i).1 = 0 ∧
+      cnt (shW (frL a₁ b₁ c₁ + 1) (rW a₂ b₂ c₂ L₂)) (rL a₁ b₁ i).1 = 0 := by
+  refine ⟨bc_hH a₁ b₁ hN₁, (bc_hH a₂ b₂ hN₂).shift _, ?_, ?_, ?_⟩
+  · exact disj_hH (fun m hm => (hL₁ m hm).1) (by simp only [frL]; omega)
+  · simp only [rL]
+    refine cnt_rW_zero (by omega) (by omega) fun m hm => ?_
+    have := hL₁ m hm
+    omega
+  · exact noLab_iff_cnt.mp (noLab_shW_of fun k' he => by simp only [rL, frL] at he; omega)
+
+private theorem cut_word_extra_labels (hi : i < c₁) (hj : j < c₂)
+    (hL₁ : ∀ m ∈ L₁, m < c₁ ∧ m ≠ i) (hL₂ : ∀ m ∈ L₂, m < c₂ ∧ m ≠ j)
+    {k : ℕ} (hk : k ∈ [(tL a₁ b₁ i).1, 2 * a₁ + b₁ + 2 * c₁, frL a₁ b₁ c₁,
+      (tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1),
+      2 * a₂ + b₂ + 2 * c₂ + (frL a₁ b₁ c₁ + 1),
+      frL a₂ b₂ c₂ + (frL a₁ b₁ c₁ + 1)]) :
+    NoLab (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂) ++ hH a₁ b₁ L₁) k ∧
+      NoLab (winv (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂)) ++ hH a₁ b₁ L₁) k := by
+  have h : NoLab (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂) ++ hH a₁ b₁ L₁) k := by
+    simp only [tL, frL, List.mem_cons, List.not_mem_nil, or_false] at hk
+    rcases hk with rfl | rfl | rfl | rfl | rfl | rfl <;>
+      · refine noLab_two (M := frL a₁ b₁ c₁ + 1) (by omega) (fun m hm => ?_) (fun k' he => ?_)
+        · have := hL₁ m hm
+          omega
+        · simp only [frL] at he
+          exact ⟨by omega, fun m hm => by have := hL₂ m hm; omega⟩
+  exact ⟨h, by simpa only [noLab_append, noLab_winv] using h⟩
+
+private theorem good_cut_word (hi : i < c₁) (hj : j < c₂) :
+    Good [tL a₁ b₁ i, linv (tL a₁ b₁ i), (2 * a₁ + b₁ + 2 * c₁, true),
+      (2 * a₁ + b₁ + 2 * c₁, false), (frL a₁ b₁ c₁, true),
+      ((tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1), true),
+      ((tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1), false),
+      (2 * a₂ + b₂ + 2 * c₂ + (frL a₁ b₁ c₁ + 1), true),
+      (2 * a₂ + b₂ + 2 * c₂ + (frL a₁ b₁ c₁ + 1), false),
+      (frL a₂ b₂ c₂ + (frL a₁ b₁ c₁ + 1), true)] := by
+  intro k
+  simp only [tL, frL, linv, cnt_cons, cnt_nil]
+  split_ifs <;> omega
+
 /-- The letters of the second word, read in the order of the first word. -/
 theorem homeo_of_two_arc (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (hN₂ : L₂.Nodup)
   (hL₁ : ∀ m ∈ L₁, m < c₁ ∧ m ≠ i)
@@ -200,16 +245,13 @@ theorem homeo_of_two_arc (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (h
     (hf : Presents (dW (wArc₁ a₁ b₁ c₁ i L₁) (wArc₂ a₂ b₂ c₂ j L₂ (frL a₁ b₁ c₁ + 1)
       ((rL a₁ b₁ i).1, σ))) f) :
     Nonempty (T ≃ₜ SurfaceModel (a₂ + a₁) (b₂ + b₁) (L₂.length + L₁.length + 1)) := by
-  have bc₁ := bc_hH a₁ b₁ hN₁
-  have bc₂ := (bc_hH a₂ b₂ hN₂).shift (frL a₁ b₁ c₁ + 1)
-  have hd : DisjL (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂)) (hH a₁ b₁ L₁) :=
-    disj_hH (fun m hm => (hL₁ m hm).1) (by simp only [frL]; omega)
-  have c1 : cnt (rW a₁ b₁ c₁ L₁) (2 * a₁ + b₁ + 2 * i + 1) = 0 := cnt_rW_zero (by omega)
-    (by omega) fun m hm => by
-    have := hL₁ m hm
-    omega
-  have c2 : cnt (shW (frL a₁ b₁ c₁ + 1) (rW a₂ b₂ c₂ L₂)) (2 * a₁ + b₁ + 2 * i + 1) = 0 :=
-    noLab_iff_cnt.mp (noLab_shW_of fun k' he => by simp only [frL] at he; omega)
+  obtain ⟨bc₁, bc₂, hd, c1, c2⟩ :=
+    cut_words_setup (c₂ := c₂) (a₂ := a₂) (b₂ := b₂) (L₂ := L₂) hi hN₁ hN₂ hL₁
+  change cnt (rW a₁ b₁ c₁ L₁) (2 * a₁ + b₁ + 2 * i + 1) = 0 at c1
+  change cnt (shW (frL a₁ b₁ c₁ + 1) (rW a₂ b₂ c₂ L₂)) (2 * a₁ + b₁ + 2 * i + 1) = 0 at c2
+  have hLabels {k : ℕ} :=
+    cut_word_extra_labels (a₁ := a₁) (b₁ := b₁) (a₂ := a₂) (b₂ := b₂) hi hj hL₁ hL₂ (k := k)
+  have hGood := good_cut_word (a₁ := a₁) (b₁ := b₁) (a₂ := a₂) (b₂ := b₂) hi hj
   obtain ⟨h1, h2⟩ := two_to_one (T := T) (A₁ := [tL a₁ b₁ i]) (B₁ := (frL a₁ b₁ c₁, true) :: linv
     (tL a₁ b₁ i) :: rW a₁ b₁ c₁ L₁)
     (A₂ := [((tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1), true)])
@@ -229,23 +271,17 @@ theorem homeo_of_two_arc (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (h
         (frL a₁ b₁ c₁, true), linv (tL a₁ b₁ i)])
       (Q' := eW a₁ b₁ c₁ ++ [tL a₁ b₁ i]) (DisjL.symm (by
         intro l hl
+        refine (hLabels (k := l.1) ?_).1
         simp only [shW_eW] at hl
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          List.mem_cons, List.not_mem_nil, or_false] at hl
-        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-          · dsimp only
-            exact noLab_two (M := frL a₁ b₁ c₁ + 1) (by omega)
-              (fun m hm => by
-                have := hL₁ m hm
-                omega)
-              (fun k' he => by
-                simp only [frL] at he
-                exact ⟨by omega, fun m hm => by have := hL₂ m hm; omega⟩))) (by
+          List.mem_cons, List.not_mem_nil, or_false] at hl ⊢
+        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp)) (by
         intro k
+        have hCount := hGood k
         simp only [shW_eW]
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          cnt_cons, cnt_nil]
-        split_ifs <;> omega)
+          cnt_cons, cnt_nil] at hCount ⊢
+        omega)
     obtain ⟨w, h5, h6⟩ := nf_caseC_neg.{uu} (x₁ := (2 * a₁ + b₁ + 2 * c₁, true)) (x₂ :=
       (2 * a₂ + b₂ + 2 * c₂ + (frL a₁ b₁ c₁ + 1), true))
       (g₂ := (frL a₂ b₂ c₂ + (frL a₁ b₁ c₁ + 1), true)) (g₁ := (frL a₁ b₁ c₁, true)) (t₂ :=
@@ -262,23 +298,17 @@ theorem homeo_of_two_arc (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (h
         (frL a₁ b₁ c₁ + 1), false), (frL a₁ b₁ c₁, true), linv (tL a₁ b₁ i)])
       (Q' := eW a₁ b₁ c₁ ++ [tL a₁ b₁ i]) (DisjL.symm (by
         intro l hl
+        refine (hLabels (k := l.1) ?_).2
         simp only [shW_eW] at hl
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          List.mem_cons, List.not_mem_nil, or_false] at hl
-        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-          · dsimp only
-            exact noLab_two' (M := frL a₁ b₁ c₁ + 1) (by omega)
-              (fun m hm => by
-                have := hL₁ m hm
-                omega)
-              (fun k' he => by
-                simp only [frL] at he
-                exact ⟨by omega, fun m hm => by have := hL₂ m hm; omega⟩))) (by
+          List.mem_cons, List.not_mem_nil, or_false] at hl ⊢
+        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp)) (by
         intro k
+        have hCount := hGood k
         simp only [shW_eW]
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          cnt_cons, cnt_nil]
-        split_ifs <;> omega)
+          cnt_cons, cnt_nil] at hCount ⊢
+        omega)
     obtain ⟨w, h5, h6⟩ := nf_caseC_pos.{uu} (x₁ := (2 * a₁ + b₁ + 2 * c₁, true)) (x₂ :=
       (2 * a₂ + b₂ + 2 * c₂ + (frL a₁ b₁ c₁ + 1), true))
       (g₂ := (frL a₂ b₂ c₂ + (frL a₁ b₁ c₁ + 1), false)) (g₁ := (frL a₁ b₁ c₁, true)) (t₂ :=
@@ -295,16 +325,13 @@ theorem homeo_of_two_loop (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (
     (hf : Presents (dW (wLoop₁ a₁ b₁ c₁ i L₁) (wLoop₂ a₂ b₂ c₂ j L₂ (frL a₁ b₁ c₁ + 1)
       ((rL a₁ b₁ i).1, σ))) f) :
     Nonempty (T ≃ₜ SurfaceModel (a₂ + a₁) (b₂ + b₁) (L₂.length + L₁.length)) := by
-  have bc₁ := bc_hH a₁ b₁ hN₁
-  have bc₂ := (bc_hH a₂ b₂ hN₂).shift (frL a₁ b₁ c₁ + 1)
-  have hd : DisjL (shW (frL a₁ b₁ c₁ + 1) (hH a₂ b₂ L₂)) (hH a₁ b₁ L₁) :=
-    disj_hH (fun m hm => (hL₁ m hm).1) (by simp only [frL]; omega)
-  have c1 : cnt (rW a₁ b₁ c₁ L₁) (2 * a₁ + b₁ + 2 * i + 1) = 0 := cnt_rW_zero (by omega)
-    (by omega) fun m hm => by
-    have := hL₁ m hm
-    omega
-  have c2 : cnt (shW (frL a₁ b₁ c₁ + 1) (rW a₂ b₂ c₂ L₂)) (2 * a₁ + b₁ + 2 * i + 1) = 0 :=
-    noLab_iff_cnt.mp (noLab_shW_of fun k' he => by simp only [frL] at he; omega)
+  obtain ⟨bc₁, bc₂, hd, c1, c2⟩ :=
+    cut_words_setup (c₂ := c₂) (a₂ := a₂) (b₂ := b₂) (L₂ := L₂) hi hN₁ hN₂ hL₁
+  change cnt (rW a₁ b₁ c₁ L₁) (2 * a₁ + b₁ + 2 * i + 1) = 0 at c1
+  change cnt (shW (frL a₁ b₁ c₁ + 1) (rW a₂ b₂ c₂ L₂)) (2 * a₁ + b₁ + 2 * i + 1) = 0 at c2
+  have hLabels {k : ℕ} :=
+    cut_word_extra_labels (a₁ := a₁) (b₁ := b₁) (a₂ := a₂) (b₂ := b₂) hi hj hL₁ hL₂ (k := k)
+  have hGood := good_cut_word (a₁ := a₁) (b₁ := b₁) (a₂ := a₂) (b₂ := b₂) hi hj
   obtain ⟨h1, h2⟩ := two_to_one (T := T) (A₁ := [tL a₁ b₁ i]) (B₁ := linv
     (tL a₁ b₁ i) :: rW a₁ b₁ c₁ L₁)
     (A₂ := [((tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1), true)])
@@ -343,23 +370,17 @@ theorem homeo_of_two_loop (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (
         (frL a₁ b₁ c₁ + 1), true), linv (tL a₁ b₁ i)])
       (Q' := eW a₁ b₁ c₁ ++ [tL a₁ b₁ i]) (DisjL.symm (by
         intro l hl
+        refine (hLabels (k := l.1) ?_).1
         simp only [shW_eW] at hl
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          List.mem_cons, List.not_mem_nil, or_false] at hl
-        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-          · dsimp only
-            exact noLab_two (M := frL a₁ b₁ c₁ + 1) (by omega)
-              (fun m hm => by
-                have := hL₁ m hm
-                omega)
-              (fun k' he => by
-                simp only [frL] at he
-                exact ⟨by omega, fun m hm => by have := hL₂ m hm; omega⟩))) (by
+          List.mem_cons, List.not_mem_nil, or_false] at hl ⊢
+        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp)) (by
         intro k
+        have hCount := hGood k
         simp only [shW_eW]
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          cnt_cons, cnt_nil]
-        split_ifs <;> omega)
+          cnt_cons, cnt_nil] at hCount ⊢
+        omega)
     refine key (f' := f') ?_ h3 h4
     convert hf' using 2
     simp [rW_eq, shW_append]
@@ -370,23 +391,17 @@ theorem homeo_of_two_loop (hi : i < c₁) (hj : j < c₂) (hN₁ : L₁.Nodup) (
       (Q := [((tL a₂ b₂ j).1 + (frL a₁ b₁ c₁ + 1), true), linv (tL a₁ b₁ i)])
       (Q' := eW a₁ b₁ c₁ ++ [tL a₁ b₁ i]) (DisjL.symm (by
         intro l hl
+        refine (hLabels (k := l.1) ?_).2
         simp only [shW_eW] at hl
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          List.mem_cons, List.not_mem_nil, or_false] at hl
-        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
-          · dsimp only
-            exact noLab_two' (M := frL a₁ b₁ c₁ + 1) (by omega)
-              (fun m hm => by
-                have := hL₁ m hm
-                omega)
-              (fun k' he => by
-                simp only [frL] at he
-                exact ⟨by omega, fun m hm => by have := hL₂ m hm; omega⟩))) (by
+          List.mem_cons, List.not_mem_nil, or_false] at hl ⊢
+        rcases hl with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> simp)) (by
         intro k
+        have hCount := hGood k
         simp only [shW_eW]
         simp only [eW, tL, frL, linv, List.cons_append, List.nil_append,
-          cnt_cons, cnt_nil]
-        split_ifs <;> omega)
+          cnt_cons, cnt_nil] at hCount ⊢
+        omega)
     refine key (f' := f') ?_ h3 h4
     convert hf' using 2
     simp [rW_eq, shW_append, winv_append, winv_cons, winv_shW_eW, winv_nil, linv]

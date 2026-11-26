@@ -13,7 +13,7 @@ public import LeanPool.GraphMinor.GM18.Section5Part1
 /-!
 # Graph Minors XVIII, Section 5 (Part 2): Place Hearts and Enlargements by Tree-Width (5.5)
 
-This file formalizes (5.5) (pages 95–98) of Robertson and Seymour,
+This file formalizes the partial-label form of (5.5) (pages 95–98) of Robertson and Seymour,
 *Graph Minors. XVIII. Tree-decompositions and well-quasi-ordering*, J. Combin. Theory Ser. B 89
 (2003) 77–108, together with its six claims `lemma_5_5_claim_1`–`lemma_5_5_claim_6` and general
 constructions for hearts of partial `Ω`-places (`mkPlaceHeart`).
@@ -1353,7 +1353,10 @@ theorem lemma_5_5_claim_6 {P P' P_star : PartialPatchwork Ω α β}
 "Let $P = (G, \mu, \Delta, \phi)$ be an $\Omega$-patchwork, let $w \ge 0$, and let
 $\mathscr{L}, \mathscr{L}^*$ be rooted locations in $G$, such that $\mathscr{L}^{*-}$ is an
 enlargement of $\mathscr{L}^-$ by tree-width $\le w$. Then $P | \mathscr{L}^*$ is an
-enlargement of $P | \mathscr{L}$ by tree-width $\le w$." -/
+enlargement of $P | \mathscr{L}$ by tree-width $\le w$."
+
+The Lean version starts with a partial `Ω`-patchwork. The input and the two hearts may contain
+unlabelled edges, represented by the bottom element of `WithBot Ω`. -/
 theorem theorem_5_5_proof {P P' P_star : PartialPatchwork Ω α β}
     {ℒ ℒ_star : Set (RootedHypergraph α β)} {w : ℕ}
     (hP' : HasPlaceHeart P ℒ P')

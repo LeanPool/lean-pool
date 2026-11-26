@@ -47,51 +47,20 @@ theorem theorem_10_5_proof : Theorem105Statement.{w} := by
   classical
   have hS := χ.isSurface
   let a₀ : β := Classical.arbitrary β
-  obtain ⟨𝓕, hf, h𝓕⟩ := theorem_5_2_proof S hS χ.connected χ.Φ (8 * n)
-  let Good : Drawing S → Prop := fun K ↦ ∃ (D : TangleDatum cap χ) (Δ Z : Set Shat), IsFreeData D n
-    Δ Z K
-  have hpick : ∀ K₀, ∃ K', ∀ K, Good K → FeatureEquiv χ.Φ K₀ K → Good K' ∧ FeatureEquiv χ.Φ K₀ K'
-    := fun K₀ ↦ by
-    by_cases h : ∃ K, Good K ∧ FeatureEquiv χ.Φ K₀ K
-    · obtain ⟨K, h₁, h₂⟩ := h
-      exact ⟨K, fun _ _ _ ↦ ⟨h₁, h₂⟩⟩
-    · exact ⟨K₀, fun K h₁ h₂ ↦ absurd ⟨K, h₁, h₂⟩ h⟩
-  choose p hp using hpick
-  have hB : ∀ Kc, ∃ B : Set (Place χ), IsWellBehavedPlaces B ∧ (Good Kc
-    → ∀ D : TangleDatum cap χ, D.P ∈ 𝒮 → n + 1 ≤ D.ord →
-      ∀ (Δ Z : Set Shat) (K : Drawing S) (α : S ≃ₜ S), IsFreeData D n Δ Z K
-        → IsFramePreservingHomeo χ.Φ α →
-      α '' Kc.U = K.U → α '' Kc.V = K.V →
-      ∃ L : RootedLocation D.P.Γ, L.Isolates D.tb (n + 1) D.ord D.𝒯 ∧ (⟨hd, D.P, L⟩ : Place χ) ∈ B)
-        := fun Kc ↦ by
-    by_cases hg : Good Kc
-    · obtain ⟨B, h₁, h₂⟩ := exists_class_free hS hd hcl n a₀ hS3 hS4 hg
-      exact ⟨B, h₁, fun _ ↦ h₂⟩
-    · exact ⟨∅, fun Ω hΩ seq hseq ↦ absurd (hseq 0) (notMem_empty _), fun h ↦ absurd h hg⟩
-  choose B hBw hBm using hB
-  have : Finite 𝓕 := hf
-  refine ⟨⋃ K₀ : 𝓕, B (p K₀.1), IsWellBehavedPlaces.iUnion fun _ ↦ hBw _, ?_⟩
-  intro D hm hfl
+  let Data : TangleDatum cap χ → Drawing S → Prop :=
+    fun D K => ∃ Δ Z : Set Shat, IsFreeData D n Δ Z K
+  obtain ⟨B, hB, hMem⟩ := exists_wellBehavedPlaces_of_bounded_features hd (𝒮 := 𝒮)
+    (8 * n) (n + 1) Data (fun Kc hGood => by
+      obtain ⟨B, hB, hMem⟩ := exists_class_free hS hd hcl n a₀ hS3 hS4 (Kc := Kc) hGood
+      refine ⟨B, hB, ?_⟩
+      rintro D hm hord K ⟨Δ, Z, hData⟩ ⟨f, hfp, hfU, hfV⟩
+      exact hMem D hm hord Δ Z K f hData hfp hfU hfV)
+  refine ⟨B, hB, fun D hm hfl => ?_⟩
   obtain ⟨Δ, Z, K, hK⟩ := freedomFlaw D hfl
   have hord : n + 1 ≤ D.ord := by
     have h₁ := hfl.1
     have h₂ : D.rep ≤ D.ord := (tangleRep_spec D.rad D.ord D.𝒯).1
     omega
-  obtain ⟨K₀, hK₀, f, hfp, hfU, hfV⟩ := h𝓕 K hK.feature hK.size
-  have hg : Good K := ⟨D, Δ, Z, hK⟩
-  obtain ⟨hg', g, hgp, hgU, hgV⟩ := hp K₀ K hg ⟨f, hfp, hfU, hfV⟩
-  have hU : (g.symm.trans f) '' (p K₀).U = K.U := by
-    have : (g.symm.trans f) '' (p K₀).U = f '' (g.symm '' (p K₀).U) := by
-      rw [image_image]
-      rfl
-    rw [this, ← hgU, symm_image_image', hfU]
-  have hV' : (g.symm.trans f) '' (p K₀).V = K.V := by
-    have : (g.symm.trans f) '' (p K₀).V = f '' (g.symm '' (p K₀).V) := by
-      rw [image_image]
-      rfl
-    rw [this, ← hgV, symm_image_image', hfV]
-  obtain ⟨L, hL, hmem⟩ := hBm (p K₀) hg' D hm hord Δ Z K (g.symm.trans f) hK
-    (hgp.symm.trans hfp) hU hV'
-  exact ⟨L, hL, mem_iUnion.2 ⟨⟨K₀, hK₀⟩, hmem⟩⟩
+  exact hMem D hm hord K ⟨Δ, Z, hK⟩ hK.feature hK.size
 
 end GraphMinor.GM19

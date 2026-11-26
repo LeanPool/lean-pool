@@ -41,26 +41,8 @@ variable {S : Type u} [TopologicalSpace S] [T2Space S]
 
 /-- A line in `ℂ` has a line as its image under a map that is continuous and injective on it. -/
 theorem line_image {Z : Set ℂ} {a b : ℂ} (hl : IsLineWithEnds Z a b) {g : ℂ → S}
-    (hc : ContinuousOn g Z) (hi : InjOn g Z) : IsLineWithEnds (g '' Z) (g a) (g b) := by
-  obtain ⟨f, h0, h1⟩ := hl
-  let e : unitInterval → S := fun t => g (f t).1
-  have hec : Continuous e :=
-    hc.comp_continuous (continuous_subtype_val.comp f.continuous) fun t => (f t).2
-  have hei : Function.Injective e := fun x y he =>
-    f.injective (Subtype.ext (hi (f x).2 (f y).2 he))
-  have hr : range e = g '' Z := by
-    ext y
-    constructor
-    · rintro ⟨t, rfl⟩
-      exact ⟨_, (f t).2, rfl⟩
-    · rintro ⟨z, hz, rfl⟩
-      exact ⟨f.symm ⟨z, hz⟩, by simp [e]⟩
-  have hem := hec.isClosedEmbedding hei
-  refine ⟨hem.isEmbedding.toHomeomorph.trans (Homeomorph.setCongr hr), ?_, ?_⟩
-  · change e 0 = g a
-    simp [e, h0]
-  · change e 1 = g b
-    simp [e, h1]
+    (hc : ContinuousOn g Z) (hi : InjOn g Z) : IsLineWithEnds (g '' Z) (g a) (g b) :=
+  hl.image_under_injOn hc hi
 
 omit [T2Space S] in
 theorem line_start {L : Set S} {u v : S} (h : IsLineWithEnds L u v) : u ∈ L := by

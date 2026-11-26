@@ -22,7 +22,7 @@ J. Combin. Theory Ser. B 89 (2003), 77–108:
 
 - `theorem_5_6` (5.6, page 98): gluing realizable expansions of partial `Ω`-patchworks across
   separations `(A₁, B₁)` and `(A₂, B₂)`.
-- `theorem_5_7` (5.7, pages 99–100): simulation between partial `Ω`-patchworks `P₁, P₂` from a
+- `theorem_5_7_proof` (5.7, pages 99–100): simulation between partial `Ω`-patchworks `P₁, P₂` from a
   realizable expansion between the hearts `Q₁, Q₂` of places `(P₁, ℒ₁), (P₂, ℒ₂)` that maps new
   edges to new edges and simulates the corresponding restrictions `P₁ | A₁` in `P₂ | A₂`.
 -/
@@ -1212,7 +1212,10 @@ elements $e_i(A)$ ($A \in \mathcal{L}_i$). Suppose that $\eta$ is a realizable e
 $Q_1$ in $Q_2$ such that* - *if $e \in E(Q_1)$ and $\eta(e) = e_2(A_2)$ for some $A_2 \in
 \mathcal{L}_2$ then $e = e_1(A_1)$ for some $A_1 \in \mathcal{L}_1$,* - *for each $A_1 \in
 \mathcal{L}_1$ there exists $A_2 \in \mathcal{L}_2$ such that $\eta(e_1(A_1)) = e_2(A_2)$
-and $P_1|A_1$ is simulated in $P_2|A_2$.* *Then $P_1$ is simulated in $P_2$." -/
+and $P_1|A_1$ is simulated in $P_2|A_2$.* *Then $P_1$ is simulated in $P_2$."
+
+The Lean version accepts partial `Ω`-places. The input patchworks and their hearts may have
+unlabelled edges, with their labels represented by the bottom element of `WithBot Ω`. -/
 theorem theorem_5_7_proof [Preorder Ω] {α₁ β₁ α₂ β₂ : Type*}
     {P₁ Q₁ : PartialPatchwork Ω α₁ β₁} {P₂ Q₂ : PartialPatchwork Ω α₂ β₂}
     {ℒ₁ : Set (RootedHypergraph α₁ β₁)} {ℒ₂ : Set (RootedHypergraph α₂ β₂)}

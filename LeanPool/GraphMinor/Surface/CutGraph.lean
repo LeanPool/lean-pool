@@ -125,13 +125,14 @@ end pull
 
 variable {S : Type u} [TopologicalSpace S]
 
-/-- A dissection of a connected surface whose graph contains the union of some `O`-arcs and possibly
-one line. -/
-theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set S} {E₀ 𝓐 : Set
-  (Set S)} (hg : IsGraph V₀ E₀)
-    (hV₀ : V₀ ⊆ ⋃₀ E₀) (h𝓐 : 𝓐.Finite) (hO𝓐 : ∀ C ∈ 𝓐, IsOArc C) (hcu : cuffs S ⊆ 𝓐)
-    (hcase : ⋃₀ E₀ = ⋃₀ 𝓐 ∨ ∃ L s t, ⋃₀ E₀ = ⋃₀ 𝓐 ∪ L ∧ IsLineWithEnds L s t ∧ s ≠ t ∧ s ∈ ⋃₀ 𝓐
-      ∧ t ∈ ⋃₀ 𝓐) :
+/-- A dissection containing a graph whose edges cover a finite family of circles and lines.
+The circles contain the cuffs, and each line has two distinct endpoints on the circles. -/
+theorem exists_dissection_with_lines (hS : IsSurface S) [ConnectedSpace S]
+    {V₀ : Set S} {E₀ 𝓐 𝓛 : Set (Set S)} (hg : IsGraph V₀ E₀)
+    (hV₀ : V₀ ⊆ ⋃₀ E₀) (h𝓐 : 𝓐.Finite) (h𝓛 : 𝓛.Finite)
+    (hO𝓐 : ∀ C ∈ 𝓐, IsOArc C) (hcu : cuffs S ⊆ 𝓐)
+    (hline : ∀ L ∈ 𝓛, ∃ s t, s ≠ t ∧ IsLineWithEnds L s t ∧ s ∈ ⋃₀ 𝓐 ∧ t ∈ ⋃₀ 𝓐)
+    (hc : ⋃₀ E₀ = ⋃₀ 𝓐 ∪ ⋃₀ 𝓛) :
     ∃ (V : Set S) (E 𝓕 : Set (Set S)), IsDissection V E 𝓕 ∧ V₀ ⊆ V ∧ ⋃₀ E₀ ⊆ gr V E := by
   classical
   obtain ⟨hcpt, ht2, hman⟩ := id hS
@@ -150,7 +151,8 @@ theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set
       (fun x _ => hl (mem_univ x))
   obtain ⟨V, E, 𝓕, hVV, hsub, hd⟩ := exists_dissection hT hgT (image_mono hV₀ |>.trans (by
       rintro _ ⟨y, ⟨e, he, hy⟩, rfl⟩
-      exact ⟨_, ⟨e, he, rfl⟩, mem_image_of_mem j hy⟩)) (𝓒c := (fun C => j '' C) '' 𝓐) (h𝓐.image _)
+      exact ⟨_, ⟨e, he, rfl⟩, mem_image_of_mem j hy⟩)) (𝓒c := (fun C => j '' C) '' 𝓐)
+    (h𝓐.image _)
     (by
       rintro _ ⟨C, hC, rfl⟩
       exact (hOT C hC).twoConn)
@@ -164,17 +166,30 @@ theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set
         exact (hOT C hC).twoConn) hm
       rw [hsU]
       rw [hsA] at h1
-      rcases hcase with hc | ⟨L, s, t, hc, hl, hne, hs, ht⟩
-      · rwa [hc]
-      · rw [hc, image_union, ← union_assoc]
-        exact h1.add_line (hl.map_of_embedding hj.isEmbedding) (.inr (mem_image_of_mem j hs))
-          (.inr (mem_image_of_mem j ht)) (fun he => hne (hj.injective he)))
+      have key : ∀ 𝓛' : Set (Set S), 𝓛'.Finite → 𝓛' ⊆ 𝓛 → TwoConn (G ∪ j '' ⋃₀ 𝓐 ∪ j '' ⋃₀ 𝓛') := by
+        intro 𝓛' h𝓛'
+        induction 𝓛', h𝓛' using Set.Finite.induction_on with
+        | empty =>
+          intro _
+          simpa using h1
+        | @insert L 𝓛' hL hfin ih =>
+          intro hsub
+          obtain ⟨s, t, hne, hl, hs, ht⟩ := hline L (hsub (mem_insert _ _))
+          have h2 := (ih ((subset_insert _ _).trans hsub)).add_line (hl.map_of_embedding
+            hj.isEmbedding)
+            (.inl (.inr (mem_image_of_mem j hs))) (.inl (.inr (mem_image_of_mem j ht)))
+            (fun he => hne (hj.injective he))
+          rw [sUnion_insert, union_comm L, image_union, ← union_assoc]
+          exact h2
+      have h3 := key 𝓛 h𝓛 subset_rfl
+      rw [hc, image_union, ← union_assoc]
+      exact h3)
   rw [hsU] at hsub
   have hbd : bd S ⊆ ⋃₀ 𝓐 := by
     rw [← sUnion_cuffs]
     exact sUnion_mono hcu
   have hsub2 : ⋃₀ 𝓐 ⊆ ⋃₀ E₀ := by
-    rcases hcase with hc | ⟨L, s, t, hc, -⟩ <;> rw [hc]
+    rw [hc]
     exact subset_union_left
   have hb0 : j '' bd S ⊆ ⋃₀ E := (image_mono (hbd.trans hsub2)).trans hsub
   have hb1 : j '' bd S ⊆ ⋃₀ {e ∈ E | e ⊆ range j} := by
@@ -183,8 +198,8 @@ theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set
     obtain ⟨C, hC, hxC⟩ := hx'
     have hne : Nonempty T := ⟨j x⟩
     have hC' := hOT C (hcu hC)
-    have hsubC : j '' C ⊆ ⋃₀ E := (image_mono (subset_sUnion_of_mem (hcu hC) |>.trans hsub2)).trans
-      hsub
+    have hsubC : j '' C ⊆ ⋃₀ E :=
+      (image_mono (subset_sUnion_of_mem (hcu hC) |>.trans hsub2)).trans hsub
     obtain ⟨e, he, hxe⟩ := hd.graph.subset_edges hC' hsubC (mem_image_of_mem j hxC)
     exact ⟨e, ⟨he.1, he.2.trans (image_subset_range _ _)⟩, hxe⟩
   refine ⟨_, _, _, pull_dissection hman hj hK hu hi hd hb0, ?_, ?_⟩
@@ -192,5 +207,23 @@ theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set
     exact hVV (mem_image_of_mem j hx)
   · intro x hx
     exact mem_pull_gr hj hK hu hi hd hb1 (.inr (hsub (mem_image_of_mem j hx)))
+
+/-- A dissection of a connected surface whose graph contains the union of some `O`-arcs and possibly
+one line. -/
+theorem exists_dissection_with (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set S} {E₀ 𝓐 : Set
+  (Set S)} (hg : IsGraph V₀ E₀)
+    (hV₀ : V₀ ⊆ ⋃₀ E₀) (h𝓐 : 𝓐.Finite) (hO𝓐 : ∀ C ∈ 𝓐, IsOArc C) (hcu : cuffs S ⊆ 𝓐)
+    (hcase : ⋃₀ E₀ = ⋃₀ 𝓐 ∨ ∃ L s t, ⋃₀ E₀ = ⋃₀ 𝓐 ∪ L ∧ IsLineWithEnds L s t ∧ s ≠ t ∧ s ∈ ⋃₀ 𝓐
+      ∧ t ∈ ⋃₀ 𝓐) :
+    ∃ (V : Set S) (E 𝓕 : Set (Set S)), IsDissection V E 𝓕 ∧ V₀ ⊆ V ∧ ⋃₀ E₀ ⊆ gr V E := by
+  rcases hcase with hE | ⟨L, s, t, hE, hline, hne, hs, ht⟩
+  · refine exists_dissection_with_lines (𝓛 := ∅) hS hg hV₀ h𝓐 finite_empty hO𝓐 hcu ?_ ?_
+    · exact fun _ h => h.elim
+    · simpa using hE
+  · refine exists_dissection_with_lines (𝓛 := {L}) hS hg hV₀ h𝓐 (finite_singleton L) hO𝓐 hcu ?_ ?_
+    · intro M hM
+      obtain rfl := mem_singleton_iff.mp hM
+      exact ⟨s, t, hne, hline, hs, ht⟩
+    · simpa using hE
 
 end GraphMinor.Surface

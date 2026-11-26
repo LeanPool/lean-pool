@@ -109,12 +109,8 @@ theorem exists_two_lines [T2Space Y] {ψ : Y → T} {Z₁ Z₂ : Set T} {u c : T
   · exact hmid subset_union_right (exists_pair_line h2 hy) hc hu
 
 theorem line_image [T2Space T] {L : Set Y} {u v : Y} {f : Y → T} (hc : Continuous f)
-  (hi : InjOn f L) (hL : IsLineWithEnds L u v) : IsLineWithEnds (f '' L) (f u) (f v) := by
-  obtain ⟨a, ha, rfl, rfl, rfl⟩ := hL.exists_arc
-  have harc : IsArcMap (f ∘ a) := ⟨hc.comp ha.1, fun s t he => ha.2 (hi (mem_range_self s)
-    (mem_range_self t) he)⟩
-  have h := harc.isLineWithEnds
-  rwa [range_comp] at h
+  (hi : InjOn f L) (hL : IsLineWithEnds L u v) : IsLineWithEnds (f '' L) (f u) (f v) :=
+  hL.image_under_injOn hc.continuousOn hi
 
 /-- At a node on a normal curve there is a thin disc with a line of the curve around the node on its
 boundary, which meets the paint only at the node. -/

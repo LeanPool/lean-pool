@@ -19,15 +19,14 @@ This file formalizes the first part of Section 5 (pages 89–95) of Robertson an
 *Graph Minors. XVIII. Tree-decompositions and well-quasi-ordering*, J. Combin. Theory Ser. B 89
 (2003) 77–108:
 
-* `theorem_5_1` (5.1, page 91, with Claim (1) `lemma_5_1_claim_1`): gluing realizations across a
-  common separation `(Gᵢ', G₀)` preserves connectivity on `V(G₀)` when connectivity on
-  `πBar(G₁') = πBar(G₂')` agrees.
-* `theorem_5_2` (5.2, page 92): if `gr(P₁ | G₁') ⊆ gr(P₂ | G₂')` and `P₁ | G₀ = P₂ | G₀`, then
-  every realization `H₁` of `P₁` has a matching realization `H₂` of `P₂` with the same connectivity
-  on `V(G₀)`.
-* `theorem_5_3` (5.3, page 92): under the hypotheses of (5.2), a realizable expansion `η₁` of `P`
-  in `P₁` whose edges lie in `E(G₀)` and whose vertex sets meet `V(G₀)` yields a realizable
-  expansion `η₂` of `P` in `P₂` with the same edge map and the same intersection with `V(G₀)`.
+* `theorem_5_1_proof` (5.1, page 91, with Claim (1) `lemma_5_1_claim_1`): gluing realizations
+  across a common separation `(Gᵢ', G₀)` preserves connectivity on `V(G₀)` when connectivity on
+  `πBar(G₁') = πBar(G₂')` agrees and the patches on `G₀` agree.
+* `theorem_5_2_proof` (5.2, page 92): inclusion of feasible groupings and agreement on the patches
+  of `G₀` transport realizations while preserving connectivity on `V(G₀)`.
+* `theorem_5_3_proof` (5.3, page 92): a realizable labelled expansion into `P₁` with edge images
+  in `G₀` and vertex images meeting `V(G₀)` gives an expansion into `P₂` with the same edge
+  map and the same intersection with `V(G₀)`. The shared edge labels satisfy a pointwise bound.
 * `theorem_5_4` (5.4, page 93, with Claim (1) `lemma_5_4_claim_1`): for a patchwork `P`, rooted
   location `ℒ`, and heart `P' = P | ℒ`,
   `V(G) \ πBar(G) = (V(G') \ πBar(G')) ∪ ⋃_{A ∈ ℒ} (V(A) \ πBar(A))` and `gr(P) = gr(P')`.
@@ -285,7 +284,10 @@ separation of $G_i$. Let $\pi(G_1') = \pi(G_2')$, and let $P_1|G_0 = P_2|G_0$. F
 \bar{\pi}(G_2')$, $x$ and $y$ are connected in $H_1'$ if and only if they are connected in
 $H_2'$. Let $H_0$ be a realization of $P_1|G_0 = P_2|G_0$, and let $H_i = H_0 \cup H_i'$ ($i
 = 1, 2$). Then for $i = 1, 2, H_i$ is a realization of $P_i$, and for $x, y \in V(G_0)$, $x$
-and $y$ are connected in $H_1$ if and only if they are connected in $H_2$." -/
+and $y$ are connected in $H_1$ if and only if they are connected in $H_2$."
+
+The Lean version assumes equality of the patches `Δ e` on each edge of the common piece `G₀`.
+The printed statement assumes equality of the entire restricted patchworks there. -/
 theorem theorem_5_1_proof {P₁ P₂ : GM04.Patchwork Ω α β}
     {G₁' G₂' G₀ : RootedHypergraph α β}
     (hsep₁ : P₁.G.IsSeparation G₁' G₀)
@@ -342,7 +344,10 @@ theorem exists_isFeasibleGrouping_of_isRealization {P : GM04.Patchwork Ω α β}
 separation of $G_i$, such that $\pi(G_1') = \pi(G_2')$, $P_1|G_0 = P_2|G_0$, and
 $gr(P_1|G_1') \subseteq gr(P_2|G_2')$. Then for every realization $H_1$ of $P_1$ there is a
 realization $H_2$ of $P_2$ such that for $x, y \in V(G_0)$, $x$ and $y$ are connected in
-$H_1$ if and only if they are connected in $H_2$." -/
+$H_1$ if and only if they are connected in $H_2$."
+
+As in the Lean version of (5.1), the common-piece hypothesis compares the patches `Δ e` on
+each edge of `G₀`. -/
 theorem theorem_5_2_proof {P₁ P₂ : GM04.Patchwork Ω α β}
     {G₁' G₂' G₀ : RootedHypergraph α β}
     (hsep₁ : P₁.G.IsSeparation G₁' G₀)
@@ -440,7 +445,11 @@ $gr(P_1|G_1') \subseteq gr(P_2|G_2')$. Let $\eta_1$ be a realizable expansion of
 patchwork $P = (G, \mu, \Delta)$ in $P_1$ such that $\eta_1(e) \in E(G_0)$ for every $e \in
 E(G)$ and $\eta_1(v) \cap V(G_0) \ne \emptyset$ for each $v \in V(G)$. Then there is a
 realizable expansion $\eta_2$ of $P$ in $P_2$ such that $\eta_2(e) = \eta_1(e)$ for each $e
-\in E(G)$, and $\eta_2(v) \cap V(G_0) = \eta_1(v) \cap V(G_0)$ for each $v \in V(G)$." -/
+\in E(G)$, and $\eta_2(v) \cap V(G_0) = \eta_1(v) \cap V(G_0)$ for each $v \in V(G)$."
+
+The Lean version permits labels from a preorder. On the common piece `G₀`, the marked-edge
+domains agree, the markings `μ` agree at each marked edge, and the patches `Δ` agree at each
+edge. For each edge of `G₀`, the label in `P₁` is bounded above by the label in `P₂`. -/
 theorem theorem_5_3_proof [Preorder Ω] {α₀ β₀ : Type*}
     {P : GM04.Patchwork Ω α₀ β₀} {P₁ P₂ : GM04.Patchwork Ω α β}
     {G₁' G₂' G₀ : RootedHypergraph α β}

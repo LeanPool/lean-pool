@@ -397,24 +397,8 @@ structure IsArcSides {S : Type u} [TopologicalSpace S] (Δ Q I₁ I₂ Y₁ Y₂
 
 theorem IsLineWithEnds.image_of_injOn {S T : Type*} [TopologicalSpace S] [TopologicalSpace T]
     [T2Space T] {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) {f : S → T}
-    (hc : ContinuousOn f L) (hi : InjOn f L) : IsLineWithEnds (f '' L) (f u) (f v) := by
-  obtain ⟨a, ha, hr, h0, h1⟩ := hL.exists_arc
-  have hm : ∀ t, a t ∈ L := fun t => hr ▸ mem_range_self t
-  let b : C(unitInterval, T) :=
-    ⟨fun t => f (a t), hc.comp_continuous ha.1 hm⟩
-  have hb : Injective b := fun s t h => ha.2 (hi (hm s) (hm t) h)
-  have hl := GraphMinor.GM11.isLineWithEnds_range b hb
-  have hr' : range b = f '' L := by
-    rw [← hr, ← range_comp]
-    rfl
-  rw [hr'] at hl
-  have e0 : b 0 = f u := by
-    change f (a 0) = f u
-    rw [h0]
-  have e1 : b 1 = f v := by
-    change f (a 1) = f v
-    rw [h1]
-  rwa [e0, e1] at hl
+    (hc : ContinuousOn f L) (hi : InjOn f L) : IsLineWithEnds (f '' L) (f u) (f v) :=
+  hL.image_under_injOn hc hi
 
 /-- Sides of an arc read off from the sides of its image in the plane. -/
 theorem IsExtSplit.arcSides {S : Type u} [TopologicalSpace S] {Δ Q I₁ I₂ : Set S} {w : S → ℂ}

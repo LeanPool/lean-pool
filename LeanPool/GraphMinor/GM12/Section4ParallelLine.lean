@@ -32,10 +32,8 @@ open Set Topology Surface
 private theorem line_image {S U : Type*} [TopologicalSpace S] [TopologicalSpace U] [T2Space U]
     {j : S → U} (hc : Continuous j) (hi : Function.Injective j)
     {L : Set S} {u v : S} (hL : IsLineWithEnds L u v) :
-    IsLineWithEnds (j '' L) (j u) (j v) := by
-  obtain ⟨a, ha, hr, ha0, ha1⟩ := hL.exists_arc
-  have ha' : IsArcMap (j ∘ a) := ⟨hc.comp ha.1, hi.comp ha.2⟩
-  simpa only [range_comp, hr, Function.comp_apply, ha0, ha1] using ha'.isLineWithEnds
+    IsLineWithEnds (j '' L) (j u) (j v) :=
+  hL.image_under_injOn hc.continuousOn hi.injOn
 
 private theorem parallel_line_small
     {S : Type} [TopologicalSpace S] [T2Space S] (hS : IsClosedSurface S)

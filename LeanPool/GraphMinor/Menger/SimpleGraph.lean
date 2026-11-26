@@ -15,10 +15,10 @@ import Mathlib.Combinatorics.SimpleGraph.DeleteEdges
 # Menger's theorem for finite simple graphs
 
 This file proves Menger's theorem for finite simple graphs
-(`GraphMinor.Menger.exists_disjointPaths`),
-following Göring's short proof by induction on the number of edges
-(F. Göring, *Short proof of Menger's theorem*, Discrete Math. 219 (2000) 295–296; see also the
-first proof of Theorem 3.3.1 in R. Diestel, *Graph Theory*).
+(`GraphMinor.Menger.exists_disjointPaths`). The induction follows F. Göring,
+[*A proof of Menger's theorem by contraction*](https://doi.org/10.7151/dmgt.1161),
+Discuss. Math. Graph Theory 22 (2002), 111–112. It tries contracting an edge and uses deletion
+when the contraction admits a separator below the size bound.
 -/
 
 public section

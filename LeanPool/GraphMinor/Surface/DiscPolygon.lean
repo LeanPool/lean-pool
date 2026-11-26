@@ -144,25 +144,8 @@ theorem exists_chart_extending {D : Set S} (hD : IsClosedDisc D) (φ : Circle �
 
 theorem IsLineWithEnds.image_injOn [T2Space S] {Z : Set ℂ} {a b : ℂ} (hl : IsLineWithEnds Z a b) {g
   : ℂ → S} (hc : ContinuousOn g Z) (hi : InjOn g Z) :
-    IsLineWithEnds (g '' Z) (g a) (g b) := by
-  obtain ⟨f, h0, h1⟩ := hl
-  let e : unitInterval → S := fun t => g (f t).1
-  have hec : Continuous e := hc.comp_continuous (continuous_subtype_val.comp f.continuous) fun t =>
-    (f t).2
-  have hei : Function.Injective e := fun x y he => f.injective (Subtype.ext (hi (f x).2 (f y).2 he))
-  have hr : range e = g '' Z := by
-    ext y
-    constructor
-    · rintro ⟨t, rfl⟩
-      exact ⟨_, (f t).2, rfl⟩
-    · rintro ⟨z, hz, rfl⟩
-      exact ⟨f.symm ⟨z, hz⟩, by simp [e]⟩
-  have hem := hec.isClosedEmbedding hei
-  refine ⟨hem.isEmbedding.toHomeomorph.trans (Homeomorph.setCongr hr), ?_, ?_⟩
-  · change e 0 = g a
-    simp [e, h0]
-  · change e 1 = g b
-    simp [e, h1]
+    IsLineWithEnds (g '' Z) (g a) (g b) :=
+  hl.image_under_injOn hc hi
 
 /-- **The polygon and the lunes in a closed disc.** Take at least three points on the boundary of a
 closed disc, in order. Then the disc splits

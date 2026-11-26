@@ -4251,8 +4251,6 @@ private theorem other_eye_survives_split
     ∀ (η' : SpanEmbedding H' G),
     ∀ (T' : Set (Hypergraph S (Set S) × Hypergraph S (Set S))),
     ∀ (d' : Set S → Set S → ℕ),
-    (Set S) →
-    (Set S) →
     ((clearedSubdrawing H D_i.Λ).IsSubdrawing H') →
     (∀ x ∈ (clearedSubdrawing H D_i.Λ).V, η'.vMap x = D_i.clearedEmbedding.vMap x) →
     (η'.imageGraph = subgraphUnion G D_i.clearedEmbedding.imageGraph (subgraphSUnion G (range
@@ -4269,7 +4267,7 @@ private theorem other_eye_survives_split
     (E(D_i.clearedEmbedding.imageGraph) ⊆ E(η.imageGraph)) →
     (H.E.Nonempty) →
     ∀ (j : Fin k), j ≠ i → IsDrawingEye G H' η' θ₁ T' (r j) := by
-  intro k_34 hk_34_ge v_34 hv34_mem P_sub hP_sub_paths H' η' T' d' r₁ r₂ hSub hvMap hImg hInd
+  intro k_34 hk_34_ge v_34 hv34_mem P_sub hP_sub_paths H' η' T' d' hSub hvMap hImg hInd
     hRearr' hSub_le_mem θ₁ hT₁_tangle hFlat_beta hSub_cleared hImg_sub_V hImg_sub_E hE_ne j hj_ne
   have hd_ij : d (r i) (r j) = θ := hr_dist i j hj_ne.symm
   rcases hr_eye j with ⟨hrj_R, C, a, b, c, d_v, P₁, P₂, hC_circ, hC_sub, hC_U,
@@ -4744,7 +4742,7 @@ theorem theorem_7_11_proof : GM15Theorem711Statement.{u, v, w} := by
     exact other_eye_survives_split (S := S) (α := α) (β := β) G H η θ_star θ θ' lam' π beta μ
       τ₂ k T_star T d r S₀ α₀_disc α₀_pt i D_i P hMetric hμ2 hlam'4 hθ'_ge hτ₂_eq hbeta_ge hθ_ge
       hr_eye hr_dist hCardτ₂ hS hd_symm hd_tri hd_inc hτ₂_ge12 hk_34_ge v_34
-      hv34_mem P_sub hP_sub_paths H' η' T' d' r₁ r₂ hSub hvMap hImg hInd hRearr' hSub_le_mem
+      hv34_mem P_sub hP_sub_paths H' η' T' d' hSub hvMap hImg hInd hRearr' hSub_le_mem
       hT₁_tangle hFlat_beta hSub_cleared hImg_sub_V hImg_sub_E hE_ne
   -- Claims (5) and (6): distances in `d'` between `r₁, r₂` and `r j` (`j ≠ i`), and between
   -- `r j₁, r j₂` (`j₁ ≠ j₂`, `j₁, j₂ ≠ i`), are all `≥ θ'`.

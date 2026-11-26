@@ -267,15 +267,8 @@ theorem walkSubgraph_isLink {G : Graph α β} {a b : α} (W : GraphWalk G a b)
 
 theorem isSimple_of_append {G : Graph α β} {a x b : α} {W₁ : GraphWalk G a x}
     {W₂ : GraphWalk G x b} (h : (W₁.append W₂).IsSimple) :
-    W₁.IsSimple ∧ W₂.IsSimple := by
-  have hs : (W₁.support ++ W₂.support.tail).Nodup := by
-    have h' : (W₁.append W₂).support.Nodup := h
-    rwa [GraphWalk.support_append] at h'
-  have hd := List.nodup_append.mp hs
-  refine ⟨hd.1, ?_⟩
-  unfold GraphWalk.IsSimple
-  rw [W₂.support_eq_cons]
-  exact List.nodup_cons.mpr ⟨fun hx => hd.2.2 x W₁.end_mem_support x hx rfl, hd.2.1⟩
+    W₁.IsSimple ∧ W₂.IsSimple :=
+  GraphWalk.simple_parts_of_append h
 
 /-- Every walk `W` in `G` transfers to a walk with the same support and edges in `walkSubgraph W`.
 -/

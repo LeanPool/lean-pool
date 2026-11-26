@@ -46,80 +46,9 @@ omit [T2Space S] in
 theorem exists_dissection_lines (hS : IsSurface S) [ConnectedSpace S] {V₀ : Set S} {E₀ 𝓐 𝓛 : Set
   (Set S)}
     (hg : IsGraph V₀ E₀) (hV₀ : V₀ ⊆ ⋃₀ E₀) (hF : IsCutFrame S 𝓐 𝓛) (hc : ⋃₀ E₀ = ⋃₀ 𝓐 ∪ ⋃₀ 𝓛) :
-    ∃ (V : Set S) (E 𝓕 : Set (Set S)), IsDissection V E 𝓕 ∧ V₀ ⊆ V ∧ ⋃₀ E₀ ⊆ gr V E := by
-  classical
-  obtain ⟨hcpt, ht2, hman⟩ := id hS
-  obtain ⟨T, _, j, K, hT, hj, hK, hu, hi, hconn⟩ := exists_capAll S hS
-  have := hconn inferInstance
-  have : T2Space T := hT.2.1
-  have hgT := hg.map hj.isEmbedding
-  have hsU : ⋃₀ ((fun e => j '' e) '' E₀) = j '' ⋃₀ E₀ := by
-    rw [sUnion_image, sUnion_eq_biUnion, image_iUnion₂]
-  have hsA : ⋃₀ ((fun C => j '' C) '' 𝓐) = j '' ⋃₀ 𝓐 := by
-    rw [sUnion_image, sUnion_eq_biUnion, image_iUnion₂]
-  obtain ⟨ρ, hρ, hl⟩ := exists_inv_of_compactOn (isCompact_univ (X := S)) hj.continuous.continuousOn
-    hj.injective.injOn
-  have hOT : ∀ C ∈ 𝓐, IsOArc (j '' C) := fun C hC =>
-    (hF.isOArc C hC).image hj.continuous.continuousOn (hρ.mono (image_mono (subset_univ _)))
-      (fun x _ => hl (mem_univ x))
-  obtain ⟨V, E, 𝓕, hVV, hsub, hd⟩ := exists_dissection hT hgT (image_mono hV₀ |>.trans (by
-      rintro _ ⟨y, ⟨e, he, hy⟩, rfl⟩
-      exact ⟨_, ⟨e, he, rfl⟩, mem_image_of_mem j hy⟩)) (𝓒c := (fun C => j '' C) '' 𝓐)
-    (hF.finite_arcs.image _)
-    (by
-      rintro _ ⟨C, hC, rfl⟩
-      exact (hOT C hC).twoConn)
-    (by
-      rintro _ ⟨C, hC, rfl⟩
-      exact (hOT C hC).exists_three)
-    (by
-      intro G hG hm
-      have h1 := hG.sUnion_add (hF.finite_arcs.image _) (by
-        rintro _ ⟨C, hC, rfl⟩
-        exact (hOT C hC).twoConn) hm
-      rw [hsU]
-      rw [hsA] at h1
-      have key : ∀ 𝓛' : Set (Set S), 𝓛'.Finite → 𝓛' ⊆ 𝓛 → TwoConn (G ∪ j '' ⋃₀ 𝓐 ∪ j '' ⋃₀ 𝓛') := by
-        intro 𝓛' h𝓛'
-        induction 𝓛', h𝓛' using Set.Finite.induction_on with
-        | empty =>
-          intro _
-          simpa using h1
-        | @insert L 𝓛' hL hfin ih =>
-          intro hsub
-          obtain ⟨s, t, hne, hl, hs, ht⟩ := hF.line L (hsub (mem_insert _ _))
-          have h2 := (ih ((subset_insert _ _).trans hsub)).add_line (hl.map_of_embedding
-            hj.isEmbedding)
-            (.inl (.inr (mem_image_of_mem j hs))) (.inl (.inr (mem_image_of_mem j ht)))
-            (fun he => hne (hj.injective he))
-          rw [sUnion_insert, union_comm L, image_union, ← union_assoc]
-          exact h2
-      have h3 := key 𝓛 hF.finite_lines subset_rfl
-      rw [hc, image_union, ← union_assoc]
-      exact h3)
-  rw [hsU] at hsub
-  have hbd : bd S ⊆ ⋃₀ 𝓐 := by
-    rw [← sUnion_cuffs]
-    exact sUnion_mono hF.cuffs_subset
-  have hsub2 : ⋃₀ 𝓐 ⊆ ⋃₀ E₀ := by
-    rw [hc]
-    exact subset_union_left
-  have hb0 : j '' bd S ⊆ ⋃₀ E := (image_mono (hbd.trans hsub2)).trans hsub
-  have hb1 : j '' bd S ⊆ ⋃₀ {e ∈ E | e ⊆ range j} := by
-    rintro _ ⟨x, hx, rfl⟩
-    have hx' : x ∈ ⋃₀ cuffs S := sUnion_cuffs (S := S) ▸ hx
-    obtain ⟨C, hC, hxC⟩ := hx'
-    have hne : Nonempty T := ⟨j x⟩
-    have hC' := hOT C (hF.cuffs_subset hC)
-    have hsubC : j '' C ⊆ ⋃₀ E :=
-      (image_mono (subset_sUnion_of_mem (hF.cuffs_subset hC) |>.trans hsub2)).trans hsub
-    obtain ⟨e, he, hxe⟩ := hd.graph.subset_edges hC' hsubC (mem_image_of_mem j hxC)
-    exact ⟨e, ⟨he.1, he.2.trans (image_subset_range _ _)⟩, hxe⟩
-  refine ⟨_, _, _, pull_dissection hman hj hK hu hi hd hb0, ?_, ?_⟩
-  · intro x hx
-    exact hVV (mem_image_of_mem j hx)
-  · intro x hx
-    exact mem_pull_gr hj hK hu hi hd hb1 (.inr (hsub (mem_image_of_mem j hx)))
+    ∃ (V : Set S) (E 𝓕 : Set (Set S)), IsDissection V E 𝓕 ∧ V₀ ⊆ V ∧ ⋃₀ E₀ ⊆ gr V E :=
+  exists_dissection_with_lines hS hg hV₀ hF.finite_arcs hF.finite_lines hF.isOArc
+    hF.cuffs_subset hF.line hc
 
 /-- A graph containing the cuffs and a finite family of lines, with a uniform bound on its
 edge count and the added edges lying in the boundary. -/
