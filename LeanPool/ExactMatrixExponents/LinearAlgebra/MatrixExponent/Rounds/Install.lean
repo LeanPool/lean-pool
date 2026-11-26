@@ -166,20 +166,24 @@ theorem Levels.stage_of_installations {n c T₀ S : ℕ} {a b ξ : ℝ}
   exact ⟨v.batch, t, I.u, hpos, hbatch, hnet, (Nat.cast_le.mpr ht).trans (hsize.trans hc),
     hwidth.trans hw⟩
 
-/-- An encoding must supply *one* diagram after summing all branches.
-The bound on short labels is shared with the next compression stage. -/
-def Installable (F : Type) [Field F] : Prop :=
+/-- The installation contract fixes its field and scales before choosing the dictionary index.
+The level bound may depend on that index. -/
+def InstallableFor {Index : Type} (F : Type) [Field F] (dictionary : Index → ℕ → ℕ) : Prop :=
   ∀ δ β : ℝ, 0 < δ → δ ≤ 1 / 10 → 0 < β → β ≤ 1 / 2 →
     ∃ (p : Design δ) (A T₀ c : ℕ) (L : Type) (_ : Field L) (_ : Finite L) (_ : Algebra F L),
       ∀ a b ξ : ℝ, 0 < a → (p.groupRate + c + 1 : ℕ) * a < β → β ≤ b → b ≤ 1 / 2 → 0 < ξ →
-      ∃ M : ℕ, ∀ᶠ n : ℕ in atTop, ∃ v : Levels p M, v.Suits n T₀ a b ξ ∧
+      ∀ index, ∃ M : ℕ, ∀ᶠ n : ℕ in atTop, ∃ v : Levels p M, v.Suits n T₀ a b ξ ∧
         ∀ (K : Type) [Field K] [Fintype K] [Algebra L K] [Algebra F K] [IsScalarTower F L K],
           let h := Nat.clog 2 n
           A * (1 + h ^ 4) ^ A ≤ Fintype.card K → Fintype.card K ≤ h ^ (5 * A + 2) →
           ∀ (x y : Wire) (G : Diagram K x y) (m u : ℕ) (labels : Finset (Table K)),
             n ≤ m → (m : ℝ) ≤ (n : ℝ) ^ (11 / 10 : ℝ) → G.cost ≤ m →
-            G.Admits u labels → labels.card ≤ Shaving.dictionary n → (u : ℝ) ≤ (h : ℝ) ^ b →
+            G.Admits u labels → labels.card ≤ dictionary index n → (u : ℝ) ≤ (h : ℝ) ^ b →
             ((wd x + wd y : ℕ) : ℝ) ≤ m * (h : ℝ) ^ (-(2 * a)) → v.Installed n m c a G.eval
+
+/-- Installation with the fixed label bound used by arity reduction. -/
+def Installable (F : Type) [Field F] : Prop :=
+  InstallableFor F (fun _ : Unit => Shaving.dictionary)
 
 theorem Installable.reduction {F : Type} [Field F] (install : Installable F) : ArityReduction F
     := by
@@ -193,7 +197,7 @@ theorem Installable.reduction {F : Type} [Field F] (install : Installable F) : A
   have small : (q : ℝ) * a < β := by rwa [lt_div_iff₀ (by positivity), mul_comm] at ha'
   have ha1 : a ≤ 1 := by nlinarith
   have hτ : 0 < a * δ / 6 := by positivity
-  obtain ⟨M, hm⟩ := go a b ξ ha small hb hb' hξ
+  obtain ⟨M, hm⟩ := go a b ξ ha small hb hb' hξ ()
   have hc := p.costs (M := M) (T₀ := T₀) (ξ := ξ) (b := b) hτ ha1 (by linarith)
   have grow := (tendsto_rpow_atTop hτ).comp Shaving.tendsto_height
   filter_upwards [hm, hc, grow.eventually_ge_atTop 3] with n hn hc hg K _ _ _ _ _

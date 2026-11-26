@@ -21,7 +21,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Prices.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] (U : Type) [Fintype U]
+variable {K S : Type} [CommSemiring K] [Fintype S] (U : Type) [Fintype U]
 
 /-- The new sites have one trivial coordinate. -/
 def pad (A : Raw K S) : Raw K (S ⊕ U) where
@@ -65,25 +65,50 @@ theorem close_action (A : Raw K (S ⊕ U)) (v : A.Covectors)
   simp only [← mul_assoc, ← Finset.sum_mul, Finset.prod_mul_distrib]
   simp [weight]
 
+/-- One local matrix at each site, from the source legs to the target legs. -/
+abbrev RestrictionMaps {S : Type} (A B : Raw K S) := (s : S) → B.leg s → A.leg s → K
+
+/-- The local maps to the padded legs are covectors because those legs have one coordinate. -/
+def padCovectors {A : Raw K (S ⊕ U)} {B : Raw K S}
+    (L : RestrictionMaps A (pad U B)) : A.Covectors :=
+  fun u => L (.inr u) ()
+
+/-- Extend the original-site maps with the covectors at the extra sites. -/
+def padMaps {A : Raw K (S ⊕ U)} {B : Raw K S} (v : A.Covectors)
+    (L : RestrictionMaps (A.close v) B) : RestrictionMaps A (pad U B) :=
+  Sum.rec L fun u _ => v u
+
+/-- The padded coefficient equation is the original-site equation after closing the extra legs. -/
+theorem pad_coefficients_iff (A : Raw K (S ⊕ U)) (B : Raw K S)
+    (L : RestrictionMaps A (pad U B)) :
+    let v := padCovectors (B := B) L
+    (∀ x, (pad U B).coeff x = ∑ i : A.term, ∏ s, ∑ y, L s (x s) y * A.factor i s y) ↔
+      ∀ x, B.coeff x = ∑ i : (A.close v).term, ∏ s,
+        ∑ y, L (.inl s) (x s) y * (A.close v).factor i s y := by
+  dsimp only
+  constructor
+  · intro coefficients x
+    let padded : ∀ s, (pad U B).leg s := Sum.rec x (fun _ => ())
+    refine Eq.trans ?_ (close_action A _ (fun s => L (.inl s) (x s))).symm
+    have eq := coefficients padded
+    rw [pad_coeff] at eq
+    simp only [Fintype.prod_sum_type] at eq
+    exact eq
+  · intro coefficients x
+    refine (pad_coeff B x).trans ((coefficients (fun s => x (.inl s))).trans
+      ((close_action A _ (fun s => L (.inl s) (x (.inl s)))).trans ?_))
+    have unitCoordinate (u : U) : x (.inr u) = () :=
+      @Subsingleton.elim Unit inferInstance (x (.inr u)) ()
+    simp only [Fintype.prod_sum_type, scalar, padCovectors, unitCoordinate]
+
 /-- A restriction to a padded tensor uses one covector per extra site. -/
 theorem restricts_pad_iff (A : Raw K (S ⊕ U)) (B : Raw K S) :
     A.Restricts (pad U B) ↔ ∃ v : A.Covectors, (A.close v).Restricts B := by
   constructor
   · rintro ⟨L, h⟩
-    let v : A.Covectors := fun u => L (.inr u) ()
-    refine ⟨v, fun s => L (.inl s), fun x => ?_⟩
-    let x' : ∀ s, (pad U B).leg s := Sum.rec x (fun _ => ())
-    refine Eq.trans ?_ (close_action A v (fun s => L (.inl s) (x s))).symm
-    have hx := h x'
-    rw [pad_coeff] at hx
-    simp only [Fintype.prod_sum_type] at hx
-    exact hx
+    exact ⟨padCovectors (B := B) L, fun s => L (.inl s), (pad_coefficients_iff A B L).mp h⟩
   · rintro ⟨v, L, h⟩
-    refine ⟨Sum.rec L (fun u _ => v u), fun x => ?_⟩
-    refine (pad_coeff B x).trans ((h _).trans ((close_action A v
-      (fun s => L s (x (.inl s)))).trans ?_))
-    simp only [Fintype.prod_sum_type]
-    rfl
+    exact ⟨padMaps v L, (pad_coefficients_iff A B (padMaps v L)).mpr h⟩
 
 omit [Fintype S] [Nonempty S] in
 theorem pad_scalar (A : Raw K S) (v : (pad U A).Covectors) (i : A.term) :
@@ -92,25 +117,38 @@ theorem pad_scalar (A : Raw K S) (v : (pad U A).Covectors) (i : A.term) :
   change (∏ u, ∑ y : Unit, v u y * 1) = _
   simp
 
+open Classical in
+/-- Distribute the scalar from closing unit legs at one original site. -/
+def closePadMap (A : Raw K S) (v : (pad U A).Covectors) : RestrictionMaps A ((pad U A).close v) :=
+  fun s x y => if y = x then weight (∏ u, v u ()) s else 0
+
+theorem close_pad_coefficients (A : Raw K S) (v : (pad U A).Covectors)
+    (x : ∀ s, ((pad U A).close v).leg s) :
+    ((pad U A).close v).coeff x =
+      ∑ i : A.term, ∏ s, ∑ y, closePadMap A v s (x s) y * A.factor i s y := by
+  classical
+  change (∀ s, A.leg s) at x
+  change (∑ i : A.term, ∏ s, A.factor i s (x s) * weight ((pad U A).scalar v i) s) = _
+  simp [closePadMap, pad_scalar, mul_comm]
+
+omit [Fintype S] in
+theorem close_pad_one_relabels (A : Raw K S) :
+    Relabels ((pad U A).close (fun _ _ => 1)) A := by
+  refine ⟨Equiv.refl _, fun _ => Equiv.refl _, ?_⟩
+  intro i s x
+  change A.term at i
+  change A.factor i s x * weight ((pad U A).scalar (fun _ _ => 1) i) s = A.factor i s x
+  simp [pad_scalar, weight]
+
 theorem pad_restricts_iff (A B : Raw K S) :
     (pad U A).Restricts (pad U B) ↔ A.Restricts B := by
-  classical
   rw [restricts_pad_iff]
   constructor
   · rintro ⟨v, h⟩
-    suffices A.Restricts ((pad U A).close v) from this.trans h
-    refine ⟨fun s x y => if y = x then weight (∏ u, v u ()) s else 0, fun x => ?_⟩
-    change (∀ s, A.leg s) at x
-    change (∑ i : A.term, ∏ s, A.factor i s (x s) * weight ((pad U A).scalar v i) s) = _
-    simp [pad_scalar, mul_comm]
+    exact (show A.Restricts ((pad U A).close v) from
+      ⟨closePadMap A v, close_pad_coefficients A v⟩).trans h
   · intro h
-    let v : (pad U A).Covectors := fun _ _ => 1
-    have he : ((pad U A).close v) ≈ A := by
-      refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) fun i s x => ?_
-      change A.term at i
-      change A.factor i s x * weight ((pad U A).scalar v i) s = A.factor i s x
-      simp [pad_scalar, weight, v]
-    exact ⟨v, he.1.trans h⟩
+    exact ⟨fun _ _ => 1, (relabel_of_relabels (close_pad_one_relabels (U := U) A)).1.trans h⟩
 
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 end
@@ -125,7 +163,7 @@ For sums, one can erase the summand label at every new site.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] (U : Type) [Fintype U]
+variable {K S : Type} [CommSemiring K] [Fintype S] (U : Type) [Fintype U]
 
 theorem empty_terms_restriction {A B : Raw K S} [IsEmpty A.term] [IsEmpty B.term]
     (maps : ∀ s, B.leg s → A.leg s → K) (x : ∀ s, B.leg s) :
@@ -206,7 +244,7 @@ end
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable (K S : Type) [Field K] [Fintype S]
+variable (K S : Type) [CommSemiring K] [Fintype S]
 
 /-- One copy of the scalar unit for each possible value of a common label. -/
 def diag (X : Type) [Fintype X] [DecidableEq X] : Raw K S :=
@@ -265,9 +303,9 @@ restriction factors the slice through the source label space.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] [Nontrivial S]
+variable {K S : Type} [CommSemiring K] [Fintype S] [Nontrivial S]
 
-theorem diag_restricts_le {m n : ℕ}
+theorem diag_restricts_le [StrongRankCondition K] {m n : ℕ}
     (h : (diag K S (Fin n)).Restricts (diag K S (Fin m))) : m ≤ n := by
   classical
   obtain ⟨u, v, huv⟩ := exists_pair_ne S
@@ -318,7 +356,7 @@ product with a padded tensor only the other tensor is contracted.
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S U : Type} [Field K] [Fintype U] [Nonempty S]
+variable {K S U : Type} [CommSemiring K] [Fintype U] [Nonempty S]
 
 theorem close_add_relabels (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
     Relabels ((A + B).close v)
@@ -382,7 +420,10 @@ Reflection of the natural order requires at least two sites.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Tensor
 
-variable {K S : Type} [Field K] [Fintype S]
+variable {K S : Type} [Fintype S]
+
+section
+variable [CommSemiring K]
 
 theorem diag_fin (n : ℕ) : ofRaw (Raw.diag K S (Fin n)) = n := by
   induction n with
@@ -422,11 +463,7 @@ theorem ofRaw_eq_zero (A : Raw K S) : ofRaw A = 0 ↔ ∀ x, A.coeff x = 0 := by
   rw [← Raw.zero_restricts_iff, ← ofRaw_le]
   exact ⟨le_of_eq, fun h => le_antisymm h (zero_le _)⟩
 
-theorem one_le (A : Tensor K S) : A ≠ 0 → 1 ≤ A := by
-  refine Quotient.inductionOn A fun a ha => Raw.restricts_one a ?_
-  exact not_forall.mp (fun h => ha ((ofRaw_eq_zero _).mpr h))
-
-instance : Nontrivial (Tensor K S) := by
+instance [Nontrivial K] : Nontrivial (Tensor K S) := by
   refine ⟨1, 0, fun h => ?_⟩
   have he := (ofRaw_eq_zero (1 : Raw K S)).mp h (fun _ => ())
   change (∑ _ : Unit, ∏ _ : S, (1 : K)) = 0 at he
@@ -437,7 +474,8 @@ theorem natCast_le {m n : ℕ} (h : m ≤ n) : (m : Tensor K S) ≤ n := by
   simpa [Nat.cast_add, add_comm] using
     add_le_add_right 0 (d : Tensor K S) m (zero_le _)
 
-theorem natCast_le_iff [Nontrivial S] (m n : ℕ) : (m : Tensor K S) ≤ n ↔ m ≤ n := by
+theorem natCast_le_iff [StrongRankCondition K] [Nontrivial S] (m n : ℕ) :
+    (m : Tensor K S) ≤ n ↔ m ≤ n := by
   refine ⟨?_, natCast_le⟩
   rw [← diag_fin, ← diag_fin, ofRaw_le]
   exact Raw.diag_restricts_le
@@ -451,6 +489,12 @@ theorem le_dimension (A : Raw K S) : ofRaw A ≤ (∏ s, Fintype.card (A.leg s) 
   rw [ofRaw_eq he, ← Fintype.card_pi]
   exact le_term_count B
 
+end
+
+theorem one_le [Field K] [Nonempty S] (A : Tensor K S) : A ≠ 0 → 1 ≤ A := by
+  refine Quotient.inductionOn A fun a ha => Raw.restricts_one a ?_
+  exact not_forall.mp (fun h => ha ((ofRaw_eq_zero _).mpr h))
+
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Tensor
 end
 
@@ -461,7 +505,7 @@ end
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Tensor
 
-variable {K S : Type} [Field K] [Fintype S] [Nonempty S] (U : Type) [Fintype U]
+variable {K S : Type} [CommSemiring K] [Fintype S] [Nonempty S] (U : Type) [Fintype U]
 
 /-- Applies the operation on representatives under the induced quotient relation. -/
 def pad : Tensor K S → Tensor K (S ⊕ U) :=

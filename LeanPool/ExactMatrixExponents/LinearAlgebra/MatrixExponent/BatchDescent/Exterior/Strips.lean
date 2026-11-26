@@ -497,28 +497,6 @@ theorem limits (v B : ℕ) :
     _ ≤ 2 * 2 ^ (h + 2) * (2 * 2 ^ (2 * B * j)) := Nat.mul_le_mul_left _ (by omega)
     _ = _ := by simp only [pow_add]; ring
 
-/-- Apply both caps to the height and bundle width chosen by the batch recipe. -/
-theorem recipe_limits {F : Type} [Field F] (P : Recipe F) (R Q B : ℕ) (hB : 6 + Q ≤ B) :
-    ∀ᶠ j : ℕ in atTop, ∀ z w : ℕ, 2 ^ (B * j) ≤ w → w ≤ 2 ^ (2 * B * j) →
-      16 * (2 ^ (Q * j) * P.b ^ j) * z ≤ w → w ≤ 32 * (2 ^ (Q * j) * P.b ^ j) * z →
-      let h := P.blocks R j
-      let p := P.b ^ j * z
-      h + 4 ≤ p ∧ 2 * 2 ^ (h + 2) * (h + 1 + p + 2) ≤ min (2 ^ ((Nat.clog 2 w) ^ 3)) (2 ^ (w / 2))
-        := by
-  filter_upwards [eventually_ge_atTop 1, limits (R + P.n * (P.H + 5)) B]
-    with j hj ht z w hl hu hlo hup
-  apply ht _ _ w _ _ _ hu
-  · unfold Recipe.blocks Recipe.group
-    nlinarith only [Nat.mul_le_mul_left R (show j ≤ j ^ 2 by nlinarith)]
-  · have hd : 32 * 2 ^ (Q * j) * 2 ^ j ≤ 32 * 2 ^ (Q * j) * (P.b ^ j * z) := calc
-      _ = 2 ^ (5 + Q * j + j) := by simp [pow_add]
-      _ ≤ 2 ^ (B * j) := Nat.pow_le_pow_right (by decide) (by nlinarith)
-      _ ≤ w := hl
-      _ ≤ _ := by simpa [mul_assoc] using hup
-    exact Nat.le_of_mul_le_mul_left hd (by positivity)
-  · exact (Nat.le_mul_of_pos_left _ (by positivity : 0 < 16 * 2 ^ (Q * j))).trans
-      (by simpa [mul_assoc] using hlo)
-
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Exterior
 end
 

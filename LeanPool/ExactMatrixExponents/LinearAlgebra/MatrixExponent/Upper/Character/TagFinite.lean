@@ -9,7 +9,6 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.ChargedSeparation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.DotsPower
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagTensorWords
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagFiberBounds
 
 /-!

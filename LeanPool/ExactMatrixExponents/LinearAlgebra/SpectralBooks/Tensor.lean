@@ -6,7 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
-public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorFlattening
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor
 public import Mathlib.Data.Fintype.EquivFin
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 

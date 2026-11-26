@@ -8,7 +8,6 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.Degeneration
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.DirectSum
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Separation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialCharacterBounds
 

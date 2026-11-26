@@ -166,24 +166,14 @@ def inputDictionary (e n : ℕ) := 2 ^ ((Nat.clog 2 (Nat.clog 2 n)) ^ e)
 
 /-- All scale and field constants are fixed before the label exponent. -/
 def PolyInstallable (F : Type) [Field F] : Prop :=
-  ∀ δ β : ℝ, 0 < δ → δ ≤ 1 / 10 → 0 < β → β ≤ 1 / 2 →
-    ∃ (p : Design δ) (A T₀ c : ℕ) (L : Type) (_ : Field L) (_ : Finite L) (_ : Algebra F L),
-      ∀ a b ξ : ℝ, 0 < a → (p.groupRate + c + 1 : ℕ) * a < β → β ≤ b → b ≤ 1 / 2 → 0 < ξ →
-      ∀ e : ℕ, ∃ M : ℕ, ∀ᶠ n : ℕ in atTop, ∃ v : Levels p M, v.Suits n T₀ a b ξ ∧
-        ∀ (K : Type) [Field K] [Fintype K] [Algebra L K] [Algebra F K] [IsScalarTower F L K],
-          let h := Nat.clog 2 n
-          A * (1 + h ^ 4) ^ A ≤ Fintype.card K → Fintype.card K ≤ h ^ (5 * A + 2) →
-          ∀ (x y : Wire) (G : Diagram K x y) (m u : ℕ) (labels : Finset (Table K)),
-            n ≤ m → (m : ℝ) ≤ (n : ℝ) ^ (11 / 10 : ℝ) → G.cost ≤ m →
-            G.Admits u labels → labels.card ≤ inputDictionary e n → (u : ℝ) ≤ (h : ℝ) ^ b →
-            ((wd x + wd y : ℕ) : ℝ) ≤ m * (h : ℝ) ^ (-(2 * a)) → v.Installed n m c a G.eval
+  InstallableFor F inputDictionary
 
 theorem PolyInstallable.installable {F : Type} [Field F] (h : PolyInstallable F) : Installable F
     := by
   intro δ β hd hd' hb hb'
   obtain ⟨p, A, T₀, c, L, _, _, _, go⟩ := h δ β hd hd' hb hb'
   exact ⟨p, A, T₀, c, L, inferInstance, inferInstance, inferInstance, fun a b ξ ha ha' hb hb' hξ =>
-    go a b ξ ha ha' hb hb' hξ 2⟩
+    fun _ => go a b ξ ha ha' hb hb' hξ 2⟩
 
 namespace Levels
 variable {δ a : ℝ}

@@ -132,23 +132,13 @@ theorem restricts_pad (A : Raw K (S ⊕ U)) (B : Raw K S) :
     Restricts O A (pad U B) ↔ ∃ v : A.Covectors, Integral O v ∧ Restricts O (A.close v) B := by
   constructor
   · rintro ⟨L, hl, h⟩
-    let v : A.Covectors := fun u => L (.inr u) ()
-    refine ⟨v, fun u y => hl _ _ _, fun s => L (.inl s), fun s => hl (.inl s), fun x => ?_⟩
-    let x' : ∀ s, (pad U B).leg s := Sum.rec x (fun _ => ())
-    refine Eq.trans ?_ (close_action A v (fun s => L (.inl s) (x s))).symm
-    have hx := h x'
-    rw [pad_coeff] at hx
-    simp only [Fintype.prod_sum_type] at hx
-    exact hx
+    exact ⟨Raw.padCovectors (B := B) L, fun u y => hl (.inr u) () y,
+      fun s => L (.inl s), fun s => hl (.inl s), (Raw.pad_coefficients_iff A B L).mp h⟩
   · rintro ⟨v, hv, L, hl, h⟩
-    refine ⟨Sum.rec L (fun u _ => v u), ?_, fun x => ?_⟩
-    · rintro (s | u) x y
-      · exact hl s x y
-      · exact hv u y
-    · refine (pad_coeff B x).trans ((h _).trans ((close_action A v
-        (fun s => L s (x (.inl s)))).trans ?_))
-      simp only [Fintype.prod_sum_type]
-      rfl
+    refine ⟨Raw.padMaps v L, ?_, (Raw.pad_coefficients_iff A B (Raw.padMaps v L)).mpr h⟩
+    rintro (s | u) x y
+    · exact hl s x y
+    · exact hv u y
 
 theorem pad_restricts (A B : Raw K S) :
     Restricts O (pad U A) (pad U B) ↔ Restricts O A B := by
@@ -157,22 +147,15 @@ theorem pad_restricts (A B : Raw K S) :
   constructor
   · rintro ⟨v, hv, h⟩
     suffices Restricts O A ((pad U A).close v) from this.trans h
-    refine ⟨fun s x y => if y = x then weight (∏ u, v u ()) s else 0, ?_, fun x => ?_⟩
-    · intro s x y
-      have H : (∏ u, v u ()) ∈ O := O.prod_mem fun u _ => hv u ()
-      dsimp only [weight]
-      split_ifs <;> simp [H]
-    · change (∀ s, A.leg s) at x
-      change (∑ i : A.term, ∏ s, A.factor i s (x s) * weight ((pad U A).scalar v i) s) = _
-      simp [pad_scalar, mul_comm]
+    refine ⟨Raw.closePadMap A v, ?_, Raw.close_pad_coefficients A v⟩
+    intro s x y
+    have product_mem : (∏ u, v u ()) ∈ O := O.prod_mem fun u _ => hv u ()
+    unfold Raw.closePadMap Raw.weight
+    split_ifs <;> simp [product_mem]
   · intro h
-    let v : (pad U A).Covectors := fun _ _ => 1
-    have he : (equiv O).r ((pad U A).close v) A := by
-      refine relabel (Equiv.refl _) (fun _ => Equiv.refl _) fun i s x => ?_
-      change A.term at i
-      change A.factor i s x * weight ((pad U A).scalar v i) s = A.factor i s x
-      simp [pad_scalar, weight, v]
-    exact ⟨v, fun _ _ => O.one_mem, he.1.trans h⟩
+    have eq : (equiv O).r ((pad U A).close (fun _ _ => 1)) A :=
+      relabel_of_relabels (Raw.close_pad_one_relabels (U := U) A)
+    exact ⟨fun _ _ => 1, fun _ _ => O.one_mem, eq.1.trans h⟩
 
 theorem close_add (A B : Raw K (S ⊕ U)) (v : (A + B).Covectors) :
     (equiv O).r ((A + B).close v)

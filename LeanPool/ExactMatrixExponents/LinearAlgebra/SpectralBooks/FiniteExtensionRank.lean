@@ -7,8 +7,9 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.RankLimit
-public import Mathlib.LinearAlgebra.Dimension.Free
+public import Mathlib.LinearAlgebra.Dimension.Finite
 public import Mathlib.Analysis.SpecialFunctions.Pow.Continuity
+public import Mathlib.LinearAlgebra.FiniteDimensional.Defs
 
 /-! # Tensor rank under finite scalar extension
 

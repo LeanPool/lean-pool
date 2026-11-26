@@ -7,7 +7,6 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Shows
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Ledger.Quota
 
 /-! # Uniform bounds for a printer with one physical state -/
 

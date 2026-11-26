@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.FormalBlockFamily
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.Tensor
+public import Mathlib.RingTheory.Localization.FractionRing
 
 /-! # Formal correctness of one rank-based block recursion -/
 

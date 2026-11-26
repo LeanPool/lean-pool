@@ -7,7 +7,6 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Matrix
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.RankOrder
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassDots
 

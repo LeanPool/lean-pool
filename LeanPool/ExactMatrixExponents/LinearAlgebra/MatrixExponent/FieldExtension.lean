@@ -21,9 +21,7 @@ tensor powers there, then pay the degree-squared overhead just once.
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 open Filter
 
-variable {F K : Type*} [Field F] [Field K] {a b c s : ℝ}
-
-theorem RankLE.cut {i j k i' j' k' r : ℕ} (h : RankLE F i j k r)
+theorem RankLE.cut {F : Type*} [CommSemiring F] {i j k i' j' k' r : ℕ} (h : RankLE F i j k r)
     (hi : i' ≤ i) (hj : j' ≤ j) (hk : k' ≤ k) : RankLE F i' j' k' r := by
   obtain ⟨A, B, C, h⟩ := h
   let e {i j i' j' : ℕ} (hi : i' ≤ i) (hj : j' ≤ j) (x : Pos i' j') : Pos i j :=
@@ -32,6 +30,8 @@ theorem RankLE.cut {i j k i' j' k' r : ℕ} (h : RankLE F i j k r)
     fun l z => C l (e hi hj z), ?_⟩
   intro x y z
   simpa [e, Fin.ext_iff] using h (e hi hk x) (e hk hj y) (e hi hj z)
+
+variable {F K : Type*} [Field F] [Field K] {a b c s : ℝ}
 
 theorem exponent_le_of_rank {n i j k r : ℕ} (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
     (hn : 2 ≤ n) (hi : side n a ≤ i) (hj : side n b ≤ j) (hk : side n c ≤ k)

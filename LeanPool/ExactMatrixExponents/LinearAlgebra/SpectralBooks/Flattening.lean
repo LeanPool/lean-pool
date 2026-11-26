@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.Tensor
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.MatrixMinors
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorFlattening
 
 /-! # Flattening lower bounds in finite rectangular formats
 
