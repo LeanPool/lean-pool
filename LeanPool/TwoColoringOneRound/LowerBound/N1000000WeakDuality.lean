@@ -127,8 +127,9 @@ private theorem frobInner_toMat3Scaled (A B : Array (Array Int)) :
       = ((innerNum A B : Q) / ((D : Q) * (D : Q))) := by
   classical
   -- Expand `trace (A * Bᵀ)`; for `3×3` this is the entrywise Frobenius sum.
-  simp [frobInner, innerNum, toMat3Scaled, matGet, Matrix.trace, Matrix.diag, Matrix.mul_apply,
-    Matrix.transpose, div_eq_mul_inv, mul_assoc, mul_left_comm, mul_comm, Finset.mul_sum]
+  simp only [frobInner, Matrix.trace, Matrix.diag, Matrix.mul_apply, Matrix.transpose_apply,
+    toMat3Scaled, innerNum, matGet, Int.cast_sum, Int.cast_mul, div_mul_div_comm]
+  simp only [div_eq_mul_inv, Finset.sum_mul]
 
 private def muCoeff (i : Var) : Q :=
   ∑ k : Mu, (muVal k) * (aCoeff k i)
@@ -151,8 +152,23 @@ private theorem muCoeff_eq_num (i : Var) :
     mul_comm,
     Finset.mul_sum]
 
+private theorem sum_array_entries {α : Type} (entries : Array α) (f : α → Int) :
+    (∑ i : Fin entries.size, f entries[i.1]) =
+      entries.foldl (fun acc entry => acc + f entry) 0 := by
+  rw [← List.sum_ofFn]
+  change (List.ofFn (f ∘ (fun i : Fin entries.size => entries[i.1]))).sum = _
+  rw [← List.map_ofFn, ← Array.toList_ofFn, Array.ofFn_getElem,
+    List.sum_eq_foldl, List.foldl_map, Array.foldl_toList]
+
 private theorem muCoeffNumD_eq_linNumD (i : Var) : muCoeffNumD i = linNumD i.1 := by
-  fin_cases i <;> decide
+  unfold muCoeffNumD linNumD
+  rw [← sum_array_entries]
+  apply Finset.sum_congr rfl
+  intro k _
+  delta muNumD aCoeffInt aVec
+  simp only [Array.getD_eq_getD_getElem?,
+    Array.getElem?_eq_getElem k.isLt, Option.getD_some]
+  exact mul_comm _ _
 
 private theorem muCoeff_eq_lin (i : Var) :
     muCoeff i = (linNumD i.1 : Q) / (D : Q) := by
@@ -226,7 +242,14 @@ private theorem muSum_eq_num :
 private def muSumD_fold : Int :=
   muSupport.foldl (fun acc t => acc + t.2.2) 0
 
-private theorem muSumNumD_eq_muSumD_fold : muSumNumD = muSumD_fold := by decide
+private theorem muSumNumD_eq_muSumD_fold : muSumNumD = muSumD_fold := by
+  unfold muSumNumD muSumD_fold
+  rw [← sum_array_entries]
+  apply Finset.sum_congr rfl
+  intro k _
+  delta muNumD
+  simp only [Array.getD_eq_getD_getElem?, Array.getElem?_eq_getElem k.isLt,
+    Option.getD_some]
 
 private theorem dualObjective_eq_expression :
     dualObjective = -muSum - zSum0 := by
@@ -249,9 +272,11 @@ private theorem dualObjective_eq_expression :
 private theorem stationarity (i : Var) :
     (if i.1 = edgeVar then (1 : Q) else 0) + muCoeff i - zCoeff i = 0 := by
   classical
-  -- Integer stationarity is checked coordinatewise; convert and rewrite the coefficients.
+  -- Read the coordinate from the integer stationarity certificate.
   have hInt : stationarityLHSD2 i.1 = -(c i.1) * ((D : Int) * (D : Int)) := by
-    fin_cases i <;> decide
+    have certificate := stationarityOK_true
+    unfold stationarityOK at certificate
+    exact of_decide_eq_true (List.all_eq_true.mp certificate i.1 (List.mem_range.mpr i.isLt))
   have hDne : (D : Q) ≠ 0 := by exact_mod_cast (show (D : Nat) ≠ 0 by decide)
   have hD2ne : ((D : Q) * (D : Q)) ≠ 0 := by simp [hDne]
   have hQ :
