@@ -6,22 +6,25 @@ Authors: Maxence Faldor, Moritz Firsching
 module
 
 public import LeanPool.CryptidsGoldbach.Semantics
+public import LeanPool.CryptidsGoldbach.BrocardSemantics
 
 /-!
-# A 21-state Turing machine for Goldbach's conjecture
+# Finite-state Turing machines for Goldbach and Brocard
 
 Source: url:https://github.com/google-deepmind/cryptids/tree/f873434871b2301d5c8c91ba6fa224f92c93c1e1
-Authors: Maxence Faldor, Moritz Firsching
+Authors: Maxence Faldor, Moritz Firsching, Daniel Veljjanoski
 Status: verified
-Main declarations: `ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach`
-Tags: computability, turing-machines, goldbach-conjecture, machine-simulation
+Main declarations: `ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach`,
+  `ConjectureMachines.Brocard28.halts_brocard28_iff_exists_square`
+Tags: computability, turing-machines, goldbach-conjecture, machine-simulation, brocard-problem
 MSC: 03D10, 11P32
 -/
 
 /-!
-# A 21-state Goldbach Turing machine
+# Goldbach and Brocard Turing machines
 
 Adapted from google-deepmind/cryptids at f873434871b2301d5c8c91ba6fa224f92c93c1e1.
-The imported scope is the complete Goldbach proof and its finite-machine infrastructure.
-The Riemann, ZF and Busy Beaver developments are outside this project.
+The 21-state machine uses the Goldbach proof and its finite-machine infrastructure.
+The 28-state Brocard machine and its halting equivalence come from the same upstream repository
+at 481f4e3e39907304dbcad33e508bf21d80c6d5a6.
 -/
