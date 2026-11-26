@@ -109,20 +109,16 @@ private lemma sum_rpow_three_halves_le {ι : Type*} (s : Finset ι) (f : ι → 
     have hfi : 0 ≤ f i := hf i hi
     have hfi_le : f i ≤ S := Finset.single_le_sum hf hi
     have hsplit : (f i) ^ ((3 : ℝ) / 2) = f i * (f i) ^ ((1 : ℝ) / 2) := by
-      by_cases h0 : f i = 0
-      · rw [h0, Real.zero_rpow (by norm_num), zero_mul]
-      · have hpos : 0 < f i := lt_of_le_of_ne hfi (Ne.symm h0)
-        rw [show ((3 : ℝ) / 2) = 1 + ((1 : ℝ) / 2) by norm_num, Real.rpow_add hpos, Real.rpow_one]
+      rw [show ((3 : ℝ) / 2) = 1 + ((1 : ℝ) / 2) by norm_num,
+        Real.rpow_add_of_nonneg hfi (by norm_num) (by norm_num), Real.rpow_one]
     rw [hsplit]
     exact mul_le_mul_of_nonneg_left (Real.rpow_le_rpow hfi hfi_le (by norm_num)) hfi
   calc ∑ i ∈ s, (f i) ^ ((3 : ℝ) / 2)
       ≤ ∑ i ∈ s, f i * S ^ ((1 : ℝ) / 2) := Finset.sum_le_sum hpt
     _ = S * S ^ ((1 : ℝ) / 2) := by rw [← Finset.sum_mul]
     _ = S ^ ((3 : ℝ) / 2) := by
-        by_cases h0 : S = 0
-        · rw [h0, zero_mul, Real.zero_rpow (by norm_num)]
-        · have hpos : 0 < S := lt_of_le_of_ne hS (Ne.symm h0)
-          rw [show ((3 : ℝ) / 2) = 1 + ((1 : ℝ) / 2) by norm_num, Real.rpow_add hpos, Real.rpow_one]
+        rw [show ((3 : ℝ) / 2) = 1 + ((1 : ℝ) / 2) by norm_num,
+          Real.rpow_add_of_nonneg hS (by norm_num) (by norm_num), Real.rpow_one]
 
 /-- Subadditivity of nonnegative sums over `Finset.biUnion`. -/
 private lemma finset_sum_biUnion_le {ι α : Type*} [DecidableEq α] (idx : Finset ι)
@@ -939,20 +935,13 @@ private lemma randomTilt_card_le (N H d : ℕ) :
     _ = N := by simp
 
 
-private lemma randomTilt_w_sum :
-    ∀ (N J : ℕ),
-      let H : ℕ := ⌊(↑N : ℝ) ^ (4 / 3 : ℝ)⌋₊;
-      (0 : ℝ) < (↑N : ℝ) →
-          let P : Finset ℕ := P_win J;
-          let Y : ℝ := (↑((2 : ℕ) ^ J) : ℝ);
-          let q : ℕ → ℝ := fun p => Y / (↑p : ℝ);
-            let μ := bernoulliMass P q;
-            (∀ S ∈ P.powerset, (0 : ℝ) ≤ μ S) →
-              let Tmax : ℕ := ⌊(↑N : ℝ) ^ (1 / 3 : ℝ)⌋₊;
-              let GoodS := tiltSupport P Tmax;
-              let w := tiltWeight N GoodS μ;
-              ∑ t ∈ Finset.Icc (1 : ℕ) H, w t ≤ (1 : ℝ) := by
-  intro N J H hN_pos P Y q μ hμ_nn Tmax GoodS w
+private lemma randomTilt_w_sum (N H : ℕ) (hN_pos : 0 < (N : ℝ))
+    (P : Finset ℕ) (q : ℕ → ℝ) (GoodS : Finset (Finset ℕ))
+    (hGoodS : GoodS ⊆ P.powerset) (hμ_nn : ∀ S ∈ P.powerset, 0 ≤ bernoulliMass P q S) :
+    let μ := bernoulliMass P q
+    let w := tiltWeight N GoodS μ
+    ∑ t ∈ Finset.Icc 1 H, w t ≤ 1 := by
+  intro μ w
   classical
   have hswap : ∑ t ∈ Finset.Icc 1 H, w t =
       ((N : ℝ))⁻¹ * ∑ S ∈ GoodS,
@@ -968,9 +957,9 @@ private lemma randomTilt_w_sum :
         refine mul_le_mul_of_nonneg_left (Finset.sum_le_sum fun S hS => ?_) (by positivity)
         have hcount := randomTilt_card_le N H (∏ p ∈ S, p)
         exact mul_le_mul_of_nonneg_right (by exact_mod_cast hcount)
-          (hμ_nn S (Finset.mem_filter.mp hS).1)
+          (hμ_nn S (hGoodS hS))
     _ = ∑ S ∈ GoodS, μ S := by rw [← Finset.mul_sum, inv_mul_cancel_left₀ (ne_of_gt hN_pos)]
-    _ ≤ ∑ S ∈ P.powerset, μ S := Finset.sum_le_sum_of_subset_of_nonneg (Finset.filter_subset _ _)
+    _ ≤ ∑ S ∈ P.powerset, μ S := Finset.sum_le_sum_of_subset_of_nonneg hGoodS
       fun S hS _ => hμ_nn S hS
     _ = 1 := powerset_prod_bernoulli_sum_eq_one P q
 
@@ -1427,14 +1416,8 @@ private lemma unified_random_tilt_lower (N J : ℕ) (α : ℝ)
   classical
   intro H
   have hα1 : α < 1 := by linarith
-  have hN_pos : (0 : ℝ) < (N : ℝ) := by
-    have : 1 < (N : ℝ) := by
-      have := Real.exp_lt_exp.mpr (show (0 : ℝ) < Real.log (N : ℝ) by linarith)
-      rw [Real.exp_zero] at this
-      by_contra hle; push Not at hle
-      have : Real.log (N : ℝ) ≤ 0 := Real.log_nonpos (Nat.cast_nonneg N) hle
-      linarith
-    linarith
+  have hN_pos : (0 : ℝ) < (N : ℝ) :=
+    zero_lt_one.trans ((Real.log_pos_iff (Nat.cast_nonneg N)).mp (by linarith))
   let P := P_win J
   let Y : ℝ := ((2 ^ J : ℕ) : ℝ)
   let q : ℕ → ℝ := fun p => Y / (p : ℝ)
@@ -1464,7 +1447,7 @@ private lemma unified_random_tilt_lower (N J : ℕ) (α : ℝ)
       exact mul_le_mul_of_nonneg_right h1 (le_of_lt hN_pos)
     exact Nat.le_floor h2
   have hw_sum : ∑ t ∈ Finset.Icc 1 H, w t ≤ 1 := by
-    exact @randomTilt_w_sum N J hN_pos hμ_nn
+    exact randomTilt_w_sum N H hN_pos P q GoodS (Finset.filter_subset _ _) hμ_nn
   -- Now bound ∑_{d ∈ Ioc (N/2) N} p_w(d)^α from below!
   refine ⟨w, hw_nn, hw_sum, ?_⟩
   let L := Real.log (N : ℝ)
@@ -1708,7 +1691,7 @@ private lemma exists_primeWindow_scale (N : ℕ) (L LL : ℝ)
 private lemma barrier_log_absorption {L : ℝ} (hL_pos : 0 < L) (hLL : 200 ≤ Real.log L)
     (hLL8 : Real.log L ^ 8 ≤ L / 160) :
     128 * L ≤ Real.exp (2 * Real.log L) ∧
-      Real.log L ^ 3 ≤ (L / Real.log L) ^ ((1 : ℝ) / 2) := by
+      2 * Real.log L ≤ (1 : ℝ) / 20000 * (L / Real.log L) ^ ((1 : ℝ) / 2) := by
   let LL := Real.log L
   change 200 ≤ LL at hLL
   change LL ^ 8 ≤ L / 160 at hLL8
@@ -1727,7 +1710,19 @@ private lemma barrier_log_absorption {L : ℝ} (hL_pos : 0 < L) (hLL : 200 ≤ R
     have h1 := Real.rpow_le_rpow (by positivity) hsq (by norm_num : (0 : ℝ) ≤ 1 / 2)
     rw [← Real.rpow_natCast (LL ^ 3) 2, ← Real.rpow_mul (by positivity)] at h1
     norm_num at h1; exact h1
-  exact ⟨h128L, hLL3⟩
+  have hLL2 : (200 : ℝ) ^ 2 ≤ LL ^ 2 := pow_le_pow_left₀ (by norm_num) hLL 2
+  refine ⟨h128L, ?_⟩
+  nlinarith [show LL ^ 3 = LL * LL ^ 2 by ring]
+
+/-- Convert the prime-window scale bound to a lower bound for a power of that scale. -/
+private lemma window_rpow_lower {x y power scale : ℝ} (hx : 0 ≤ x)
+    (hwindow : x / 640 ≤ y) (hpower : 0 ≤ power)
+    (h640 : (640 : ℝ) ^ power ≤ scale) :
+    (1 : ℝ) / scale * x ^ power ≤ y ^ power := by
+  have h := Real.rpow_le_rpow (div_nonneg hx (by norm_num)) hwindow hpower
+  rw [Real.div_rpow hx (by norm_num)] at h
+  rw [div_mul_eq_mul_div, one_mul]
+  exact (div_le_div_of_nonneg_left (Real.rpow_nonneg hx _) (by positivity) h640).trans h
 
 /-- Absorb a prefactor bounded by an exponential into the exponent. -/
 private lemma absorb_exp_prefactor {a x y b : ℝ} (ha : 0 ≤ a) (hb : b ≤ Real.exp y) :
@@ -1774,31 +1769,19 @@ theorem barrier1_unabsorbed_two_thirds :
   refine le_trans ?_ (le_trans hw_lb hpart)
   -- Show (N^(1/3) / (128 * L)) * exp ((1/32) * (2^J)^(2/3)) ≥ N^(1/3) * exp ((1/4000) *
   -- (L/LL)^(2/3))
-  have h2J_23 : (1 : ℝ) / 75 * (L / LL) ^ ((2 : ℝ) / 3) ≤ ((2 ^ J : ℕ) : ℝ) ^ ((2 : ℝ) / 3) := by
-    have h1 := Real.rpow_le_rpow (by positivity) h2J_ge (by norm_num : (0 : ℝ) ≤ 2 / 3)
-    rw [Real.div_rpow (by positivity) (by norm_num)] at h1
-    have h640 : (640 : ℝ) ^ ((2 : ℝ) / 3) ≤ 75 := by
-      have hpow3 : ((640 : ℝ) ^ ((2 : ℝ) / 3)) ^ (3 : ℕ) ≤ (75 : ℝ) ^ (3 : ℕ) := by
-        rw [← Real.rpow_natCast ((640 : ℝ) ^ ((2 : ℝ) / 3)) 3, ← Real.rpow_mul (by norm_num)];
-          norm_num
-      by_contra hgt; push Not at hgt
-      have : (75 : ℝ) ^ (3 : ℕ) < ((640 : ℝ) ^ ((2 : ℝ) / 3)) ^ (3 : ℕ) :=
-        pow_lt_pow_left₀ hgt (by norm_num) (by norm_num)
-      linarith
-    have hdiv : (L / LL) ^ ((2 : ℝ) / 3) / 75 ≤ (L / LL) ^ ((2 : ℝ) / 3) / (640 : ℝ) ^ ((2 : ℝ) /
-      3) :=
-      div_le_div_of_nonneg_left (by positivity) (by positivity) h640
-    linarith
-  obtain ⟨h128L, hLL3⟩ := barrier_log_absorption hL_pos hLL hLL8
-  have hE23_ge : LL ^ 3 ≤ (L / LL) ^ ((2 : ℝ) / 3) := by
-    have hratio : 1 ≤ L / LL := by
-      rw [one_le_div hLL_pos]
-      nlinarith [pow_le_pow_left₀ (by norm_num) hLL 7]
-    exact le_trans hLL3 (Real.rpow_le_rpow_of_exponent_le hratio (by norm_num))
-  have h2LL_le : 2 * LL ≤ (1 : ℝ) / 20000 * (L / LL) ^ ((2 : ℝ) / 3) := by
-    have hLL2 : (200 : ℝ) ^ 2 ≤ LL ^ 2 := pow_le_pow_left₀ (by norm_num) hLL 2
-    have h3 : LL ^ 3 = LL * LL ^ 2 := by ring
-    nlinarith
+  have h640 : (640 : ℝ) ^ ((2 : ℝ) / 3) ≤ 75 := by
+    apply (pow_le_pow_iff_left₀ (by positivity) (by norm_num) (by decide : (3 : ℕ) ≠ 0)).mp
+    rw [← Real.rpow_natCast ((640 : ℝ) ^ ((2 : ℝ) / 3)) 3, ← Real.rpow_mul (by norm_num)]
+    norm_num
+  have h2J_23 := window_rpow_lower (div_nonneg hL_pos.le hLL_pos.le) h2J_ge
+    (by norm_num : (0 : ℝ) ≤ 2 / 3) h640
+  obtain ⟨h128L, h2LL_half⟩ := barrier_log_absorption hL_pos hLL hLL8
+  have hratio : 1 ≤ L / LL := by
+    rw [one_le_div hLL_pos]
+    nlinarith [pow_le_pow_left₀ (by norm_num) hLL 7]
+  have h2LL_le : 2 * LL ≤ (1 : ℝ) / 20000 * (L / LL) ^ ((2 : ℝ) / 3) :=
+    h2LL_half.trans (mul_le_mul_of_nonneg_left (Real.rpow_le_rpow_of_exponent_le hratio
+      (by norm_num)) (by norm_num))
   have hexp_diff : 2 * LL + (1 : ℝ) / 4000 * (L / LL) ^ ((2 : ℝ) / 3) ≤
       (1 : ℝ) / 32 * ((2 ^ J : ℕ) : ℝ) ^ ((2 : ℝ) / 3) := by
     nlinarith
@@ -1850,16 +1833,12 @@ theorem barrier2a_absorbed_half :
   have hpart := partition_lower_half (Finset.Ioc (N / 2) N) H w hw_nn hw_sum idx S hcover
   have hw_lb23 := Real.rpow_le_rpow (by positivity) hw_lb (by norm_num : (0 : ℝ) ≤ 2 / 3)
   refine le_trans ?_ (le_trans hw_lb23 hpart)
-  have h2J_12 : (1 : ℝ) / 26 * (L / LL) ^ ((1 : ℝ) / 2) ≤ ((2 ^ J : ℕ) : ℝ) ^ ((1 : ℝ) / 2) := by
-    have h1 := Real.rpow_le_rpow (by positivity) h2J_ge (by norm_num : (0 : ℝ) ≤ 1 / 2)
-    rw [Real.div_rpow (by positivity) (by norm_num)] at h1
-    have h640 : (640 : ℝ) ^ ((1 : ℝ) / 2) ≤ 26 := by
-      rw [← Real.sqrt_eq_rpow, Real.sqrt_le_left (by norm_num)]; norm_num
-    have hdiv : (L / LL) ^ ((1 : ℝ) / 2) / 26 ≤ (L / LL) ^ ((1 : ℝ) / 2) / (640 : ℝ) ^ ((1 : ℝ) /
-      2) :=
-      div_le_div_of_nonneg_left (by positivity) (by positivity) h640
-    linarith
-  obtain ⟨h128L, hLL3⟩ := barrier_log_absorption hL_pos hLL hLL8
+  have h640 : (640 : ℝ) ^ ((1 : ℝ) / 2) ≤ 26 := by
+    rw [← Real.sqrt_eq_rpow, Real.sqrt_le_left (by norm_num)]
+    norm_num
+  have h2J_12 := window_rpow_lower (by positivity) h2J_ge
+    (by norm_num : (0 : ℝ) ≤ 1 / 2) h640
+  obtain ⟨h128L, h2LL_le⟩ := barrier_log_absorption hL_pos hLL hLL8
   have h1m : (1 : ℝ) - (1 : ℝ) / 2 = (1 : ℝ) / 2 := by norm_num
   rw [h1m]
   have hstep : (N : ℝ) ^ ((1 : ℝ) / 2) * Real.exp ((3 : ℝ) / 4000 * (L / LL) ^ ((1 : ℝ) / 2)) ≤
@@ -1868,9 +1847,6 @@ theorem barrier2a_absorbed_half :
     rw [div_mul_eq_mul_div (a := (N : ℝ) ^ ((1 : ℝ) / 2)), le_div_iff₀ (by positivity)]
     have hexp_diff : 2 * LL + (3 : ℝ) / 4000 * (L / LL) ^ ((1 : ℝ) / 2) ≤
         (1 : ℝ) / 32 * ((2 ^ J : ℕ) : ℝ) ^ ((1 : ℝ) / 2) := by
-      have hLL2 : (200 : ℝ) ^ 2 ≤ LL ^ 2 := pow_le_pow_left₀ (by norm_num) hLL 2
-      have h3 : LL ^ 3 = LL * LL ^ 2 := by ring
-      have h2LL_le : 2 * LL ≤ (1 : ℝ) / 20000 * (L / LL) ^ ((1 : ℝ) / 2) := by nlinarith
       nlinarith
     calc (N : ℝ) ^ ((1 : ℝ) / 2) * Real.exp ((3 : ℝ) / 4000 * (L / LL) ^ ((1 : ℝ) / 2)) * (128 * L)
         ≤ (N : ℝ) ^ ((1 : ℝ) / 2) * Real.exp (2 * LL + (3 : ℝ) / 4000 * (L / LL) ^ ((1 : ℝ) / 2)) :=
