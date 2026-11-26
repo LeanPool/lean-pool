@@ -7,9 +7,13 @@ module  -- shake: keep-all --deprecated_module: ignore
 
 -- Generated project imports; run `lake exe mk_all`.
 public import LeanPool.GrothendieckVanishing
+public import LeanPool.GrothendieckVanishing.AbelianSheaves
 public import LeanPool.GrothendieckVanishing.ClosedImmersion
 public import LeanPool.GrothendieckVanishing.ClosedImmersionCohomology
 public import LeanPool.GrothendieckVanishing.CohomologyAPI
+public import LeanPool.GrothendieckVanishing.CohomologyCalculus
+public import LeanPool.GrothendieckVanishing.CohomologyFoundations
+public import LeanPool.GrothendieckVanishing.CohomologyVanishing
 public import LeanPool.GrothendieckVanishing.ConstantSheafFlasque
 public import LeanPool.GrothendieckVanishing.FinitelyGeneratedDiagrams
 public import LeanPool.GrothendieckVanishing.FinitelyGeneratedVanishing
@@ -21,7 +25,10 @@ public import LeanPool.GrothendieckVanishing.IrreducibleStep
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimit
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitBase
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitCore
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitDegreeOne
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitDiagrams
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitGeneral
+public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitVanishing
 public import LeanPool.GrothendieckVanishing.PresheafFilteredColimitZero
 public import LeanPool.GrothendieckVanishing.TopologicalKrullDim
 public import LeanPool.GrothendieckVanishing.ZeroOutside
