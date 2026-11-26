@@ -315,6 +315,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectang
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Threshold.Square
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Gaps
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Cuts
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Energy
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Jacobian
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Ray
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.SimpleLift
@@ -435,6 +436,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Plant.Decoded
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Price.Allowance
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Price.Run
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Capacity
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Children.Correct
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Children.Traces
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Pins

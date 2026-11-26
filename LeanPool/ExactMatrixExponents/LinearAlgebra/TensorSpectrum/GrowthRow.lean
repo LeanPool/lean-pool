@@ -6,7 +6,9 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Growth
+import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Positivity
+import Mathlib.Tactic.Ring
 public import Mathlib.Algebra.Order.Archimedean.Real.Basic
 public import Mathlib.Order.ConditionallyCompleteLattice.Basic
 

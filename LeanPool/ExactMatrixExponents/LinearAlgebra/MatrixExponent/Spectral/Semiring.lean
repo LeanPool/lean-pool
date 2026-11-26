@@ -462,24 +462,11 @@ instance : CommSemiring (Tensor K S) := by
     Raw.quotientSemiring (inferInstance : Setoid (Raw K S))
       (fun h g => ⟨h.1.add g.1, h.2.add g.2⟩)
       (fun h g => ⟨h.1.mul g.1, h.2.mul g.2⟩) Raw.relabel_of_relabels
-  exact {
+  exact { laws with
     add := (· + ·)
     mul := (· * ·)
     zero := 0
-    one := 1
-    nsmul := nsmulRec
-    add_assoc := laws.add_assoc
-    add_comm := laws.add_comm
-    zero_add := laws.zero_add
-    add_zero := laws.add_zero
-    mul_assoc := laws.mul_assoc
-    mul_comm := laws.mul_comm
-    one_mul := laws.one_mul
-    mul_one := laws.mul_one
-    zero_mul := laws.zero_mul
-    mul_zero := laws.mul_zero
-    left_distrib := laws.left_distrib
-    right_distrib := laws.right_distrib }
+    one := 1 }
 
 theorem comm_add (A B : Tensor K S) : A + B = B + A := add_comm A B
 

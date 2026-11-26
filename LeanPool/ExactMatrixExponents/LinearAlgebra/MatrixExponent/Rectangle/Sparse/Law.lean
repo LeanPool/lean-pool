@@ -159,7 +159,7 @@ theorem RankLE.pow [CommSemiring F] (h : RankLE F i j k r) (p : ℕ) :
   | succ p ih => simpa only [pow_succ] using ih.tensor h
 
 /-- Tensoring the three cyclic arrangements makes all sides equal to the volume. -/
-theorem RankLE.symmetrize [Field F] (h : RankLE F i j k r) :
+theorem RankLE.symmetrize [CommSemiring F] (h : RankLE F i j k r) :
     MatrixExponent.RankLE F (i * j * k) (r ^ 3) := by
   change RankLE F (i * j * k) (i * j * k) (i * j * k) (r ^ 3)
   simpa only [pow_succ, pow_zero, mul_one, one_mul, mul_assoc, mul_comm, mul_left_comm] using
@@ -213,7 +213,8 @@ private theorem sum_words {n d : ℕ} (f : Fin n → Fin d → ℕ) :
   simp only [Equiv.symm_apply_apply]
 
 open Classical in
-private theorem indicator_prod [Field F] {n : ℕ} (f : Fin n → F) :
+private theorem indicator_prod [CommMonoidWithZero F] [Nontrivial F] [NoZeroDivisors F]
+    {n : ℕ} (f : Fin n → F) :
     (if ∏ l, f l = 0 then 0 else 1) = ∏ l, if f l = 0 then (0 : ℕ) else 1 := by
   by_cases h : ∃ l, f l = 0
   · obtain ⟨l, hl⟩ := h
@@ -222,7 +223,8 @@ private theorem indicator_prod [Field F] {n : ℕ} (f : Fin n → F) :
   · push Not at h
     simp [h, Finset.prod_ne_zero_iff]
 
-theorem supportSize_power [Field F] (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
+theorem supportSize_power [CommMonoidWithZero F] [Nontrivial F] [NoZeroDivisors F]
+    (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
     supportSize (WPower w n) = (supportSize w) ^ n := by
   classical
   unfold supportSize WPower
@@ -369,7 +371,7 @@ section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Sparse
 open Finset
 
-variable {F : Type*} [Field F] {i j k n : ℕ}
+variable {F : Type*} {i j k n : ℕ}
 
 /-- The indexed operation `(finFunctionFinEquiv (fun l => (p l).1), finFunctionFinEquiv (fun l
 => (p l).2.1), finFunctionFinEquiv (fun l => (p l).2.2))`. -/
@@ -388,12 +390,14 @@ theorem pack_injective : Function.Injective (@pack i j k n) := by
 
 variable (w : Fin i → Fin j → Fin k → F) (p : Fin n → Cell i j k)
 
-theorem card_support : (support w).card = supportSize w := by
+theorem card_support [Zero F] : (support w).card = supportSize w := by
   classical
   rw [support, card_filter, Fintype.sum_prod_type]
   simp_rw [Fintype.sum_prod_type, ite_not]
   rw [sum_comm]
   rfl
+
+variable [CommMonoidWithZero F] [Nontrivial F] [NoZeroDivisors F]
 
 theorem mem_pack : pack p ∈ support (WPower w n) ↔ ∀ l, p l ∈ support w := by
   simp only [support, mem_filter, mem_univ, true_and]
@@ -443,7 +447,7 @@ open MatrixMultiplicationAllFields.TensorSpectrum
 
 /-- A type of independent supported triples gives as many distinct
 triples in the power, all with the same three completion counts. -/
-theorem fiber {F : Type*} [Field F] {i j k m : ℕ}
+theorem fiber {F : Type*} [CommMonoidWithZero F] [Nontrivial F] [NoZeroDivisors F] {i j k m : ℕ}
     (w : Fin i → Fin j → Fin k → F) (e : Fin m ≃ support w) (n : ℕ) (t : TagWords.CountVector m n) :
     ∃ U : Finset (Cell (i ^ n) (j ^ n) (k ^ n)), U ⊆ support (WPower w n) ∧
       U.card = (TagWords.fiber t).card ∧ ∀ p ∈ U,
@@ -648,10 +652,10 @@ end
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F : Type*} [Field F] {i j k : ℕ}
+variable {F : Type*} {i j k : ℕ}
   {w : Fin i → Fin j → Fin k → F} {u : Finset (Pos i j)}
 
-private theorem size_cells (hw : ∀ x y z, w x y z ≠ 0 ↔ (x, y) ∈ u) :
+private theorem size_cells [Zero F] (hw : ∀ x y z, w x y z ≠ 0 ↔ (x, y) ∈ u) :
     supportSize w = u.card * k := by
   classical
   have he x y z : (if w x y z = 0 then 0 else 1) = (if (x, y) ∈ u then 1 else 0 : ℕ) := by
@@ -663,7 +667,8 @@ private theorem size_cells (hw : ∀ x y z, w x y z ≠ 0 ↔ (x, y) ∈ u) :
   rw [Finset.sum_comm, ← Fintype.sum_prod_type (fun p : Pos i j => k * if p ∈ u then 1 else 0)]
   simp [mul_ite]
 
-theorem power_cells (hw : ∀ x y z, w x y z ≠ 0 ↔ (x, y) ∈ u) (hk : 0 < k) (n : ℕ) :
+theorem power_cells [CommMonoidWithZero F] [Nontrivial F] [NoZeroDivisors F]
+    (hw : ∀ x y z, w x y z ≠ 0 ↔ (x, y) ∈ u) (hk : 0 < k) (n : ℕ) :
     ∃ v : Finset (Pos (i ^ n) (j ^ n)), v.card = u.card ^ n ∧
       ∀ x y z, WPower w n x y z ≠ 0 ↔ (x, y) ∈ v := by
   classical

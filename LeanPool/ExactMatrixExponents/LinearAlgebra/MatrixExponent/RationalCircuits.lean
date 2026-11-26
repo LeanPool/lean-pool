@@ -68,7 +68,7 @@ def Admissible (F : Type*) [Field F] (s : ℝ) : Prop :=
 def omega (F : Type*) [Field F] : ℝ := sInf {s | Admissible F s}
 
 /-- Coefficient rank for square matrix multiplication. -/
-abbrev RankLE (F : Type*) [Field F] (n r : ℕ) : Prop :=
+abbrev RankLE (F : Type*) [CommSemiring F] (n r : ℕ) : Prop :=
   TensorSpectrum.MatrixRank F n n n r
 
 end MatrixMultiplicationAllFields.MatrixExponent

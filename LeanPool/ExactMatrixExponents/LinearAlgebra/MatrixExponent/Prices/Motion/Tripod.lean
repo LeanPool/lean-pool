@@ -12,7 +12,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Prices.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Face.Contact
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Prices.Motion.Rigidity
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Arms
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Ray
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Energy
 
 /-!
 # Parameters for private products

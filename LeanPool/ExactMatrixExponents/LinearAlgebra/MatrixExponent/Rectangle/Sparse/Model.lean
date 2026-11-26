@@ -17,11 +17,11 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Sparse
 
 /-- Indexes the cell by the coordinates of `Fin i × Fin j × Fin k`. -/
 abbrev Cell (i j k : ℕ) := Fin i × Fin j × Fin k
-variable {F : Type*} [Field F] {i j k : ℕ}
+variable {F : Type*} {i j k : ℕ}
 
 open Classical in
 /-- The subset of all indices on which the defining predicate holds. -/
-def support (w : Fin i → Fin j → Fin k → F) : Finset (Cell i j k) :=
+def support [Zero F] (w : Fin i → Fin j → Fin k → F) : Finset (Cell i j k) :=
   Finset.univ.filter fun t => w t.1 t.2.1 t.2.2 ≠ 0
 
 /-- The subset of all indices on which the defining predicate holds. -/

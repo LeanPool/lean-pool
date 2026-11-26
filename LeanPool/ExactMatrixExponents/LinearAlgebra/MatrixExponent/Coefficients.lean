@@ -9,7 +9,6 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Sparse.Law
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Mask
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Pairing
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Additive.RankAnalysis
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.LocalTensor
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexMatrixTensor
 public import Mathlib.FieldTheory.IsAlgClosed.AlgebraicClosure

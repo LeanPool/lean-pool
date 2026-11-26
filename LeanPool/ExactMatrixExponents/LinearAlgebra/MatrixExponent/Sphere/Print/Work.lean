@@ -9,7 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Children.Correct
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Reset.Child.Follow
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Reset.Child.Headers
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Decoding
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Capacity
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Shows
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.AppendAddress
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Contraction.Access
