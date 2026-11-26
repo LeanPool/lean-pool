@@ -65,9 +65,6 @@ theorem close_action (A : Raw K (S ⊕ U)) (v : A.Covectors)
   simp only [← mul_assoc, ← Finset.sum_mul, Finset.prod_mul_distrib]
   simp [weight]
 
-/-- One local matrix at each site, from the source legs to the target legs. -/
-abbrev RestrictionMaps {S : Type} (A B : Raw K S) := (s : S) → B.leg s → A.leg s → K
-
 /-- The local maps to the padded legs are covectors because those legs have one coordinate. -/
 def padCovectors {A : Raw K (S ⊕ U)} {B : Raw K S}
     (L : RestrictionMaps A (pad U B)) : A.Covectors :=

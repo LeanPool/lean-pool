@@ -22,7 +22,7 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Valued
 open Spectral
 
-variable {K S : Type} [Field K] [Fintype S] (O : Subring K)
+variable {K S : Type} [CommRing K] [Fintype S] (O : Subring K)
 variable {A B C D : Raw K S}
 
 /-- The defining condition `∃ L : (s : S) → B.leg s → A.leg s → K, (∀ s x y, L s x y ∈ O) ∧ ∀ x,
@@ -50,30 +50,19 @@ theorem Restricts.forget (h : Restricts O A B) : A.Restricts B := by
 theorem Restricts.pullback (f : ∀ s, B.leg s → A.leg s)
     (h : ∀ x, B.coeff x = A.coeff (fun s => f s (x s))) : Restricts O A B := by
   classical
-  refine ⟨fun s x y => if y = f s x then 1 else 0, ?_, fun x => ?_⟩
-  · intro s x y
-    by_cases h : y = f s x <;> simp [h]
-  · rw [h]
-    simp [Raw.coeff, ite_mul]
+  refine ⟨Raw.pullbackMap f, ?_, Raw.coeff_pullbackMap f h⟩
+  intro s x y
+  by_cases equal : y = f s x <;> simp [Raw.pullbackMap, equal]
 
 theorem Restricts.refl (A : Raw K S) : Restricts O A A :=
   Restricts.pullback (fun _ x => x) (fun _ => rfl)
 
 theorem Restricts.trans (h : Restricts O A B) (g : Restricts O B C) : Restricts O A C := by
-  classical
-  obtain ⟨L, hl, h⟩ := h
-  obtain ⟨M, hm, g⟩ := g
-  refine ⟨fun s x z => ∑ y, M s x y * L s y z,
-    fun s x z => O.sum_mem (fun y _ => O.mul_mem (hm s x y) (hl s y z)), fun x => ?_⟩
-  rw [g, B.expand]
-  simp only [h, Finset.mul_sum]
-  rw [Finset.sum_comm]
-  refine Finset.sum_congr rfl fun i _ => ?_
-  simp only [← Finset.prod_mul_distrib]
-  rw [← Fintype.prod_sum (fun s y => M s (x s) y * ∑ z, L s y z * A.factor i s z)]
-  refine Finset.prod_congr rfl fun s _ => ?_
-  simp only [Finset.mul_sum, Finset.sum_mul, mul_assoc]
-  rw [Finset.sum_comm]
+  obtain ⟨L, hl, hL⟩ := h
+  obtain ⟨M, hm, hM⟩ := g
+  exact ⟨Raw.composeRestrictionMaps L M,
+    fun s x z => O.sum_mem (fun y _ => O.mul_mem (hm s x y) (hl s y z)),
+    Raw.coeff_composeRestrictionMaps L M hL hM⟩
 
 /-- The equiv of type `Setoid (Raw K S) where r A B` for the given inputs. -/
 def equiv (O : Subring K) : Setoid (Raw K S) where

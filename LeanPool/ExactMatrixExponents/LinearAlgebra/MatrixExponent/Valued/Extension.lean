@@ -24,7 +24,7 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Valued
 open Spectral
 
 section
-variable {K S : Type} [Field K] [Fintype S] {O : Subring K} (A B C : Raw K S)
+variable {K S : Type} [CommRing K] [Fintype S] {O : Subring K} (A B C : Raw K S)
 
 theorem comm_add : (equiv O).r (A + B) (B + A) :=
   relabel_of_relabels (Raw.comm_add_relabels A B)
@@ -53,12 +53,12 @@ theorem distrib_left : (equiv O).r (A * (B + C)) (A * B + A * C) :=
 end
 
 /-- Coefficient tensors modulo mutual local linear restriction. -/
-def ITensor {K : Type} [Field K] (O : Subring K) (S : Type) [Fintype S] :=
+def ITensor {K : Type} [CommRing K] (O : Subring K) (S : Type) [Fintype S] :=
   Quotient (equiv O (S := S))
 
 namespace ITensor
 
-variable {K S : Type} [Field K] [Fintype S] {O : Subring K}
+variable {K S : Type} [CommRing K] [Fintype S] {O : Subring K}
 
 /-- Sends the representative to its class in the quotient. -/
 def ofRaw (A : Raw K S) : ITensor O S := Quotient.mk _ A
@@ -122,7 +122,7 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Valued
 open Spectral Raw
 
-variable {K S U : Type} [Field K] [Fintype S] [Fintype U] [Nonempty S] {O : Subring K}
+variable {K S U : Type} [CommRing K] [Fintype S] [Fintype U] [Nonempty S] {O : Subring K}
 
 /-- The condition `∀ u y, v u y ∈ O` on the specified data. -/
 def Integral {A : Raw K (S ⊕ U)} (O : Subring K) (v : A.Covectors) : Prop :=
@@ -175,7 +175,7 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Valued
 open Spectral Raw
 
-variable {K S : Type} [Field K] [Fintype S] (U : Type) [Fintype U] {O : Subring K}
+variable {K S : Type} [CommRing K] [Fintype S] (U : Type) [Fintype U] {O : Subring K}
 
 theorem pad_zero : (equiv O).r (pad U (0 : Raw K S)) 0 := by
   let : IsEmpty (pad U (0 : Raw K S)).term := inferInstanceAs (IsEmpty Empty)
@@ -246,7 +246,10 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Valued.ITensor
 open Spectral
 
-variable {K S U : Type} [Field K] [Fintype S] [Nonempty S] [Fintype U] {O : Subring K}
+variable {K S U : Type} [Fintype S] [Nonempty S] [Fintype U]
+
+section
+variable [CommRing K] {O : Subring K}
 
 theorem zero_le (A : ITensor O S) : 0 ≤ A := by
   refine Quotient.inductionOn A fun a => ?_
@@ -290,6 +293,10 @@ theorem pad_scalar (c : K) : pad U (scalar O S c) = scalar O (S ⊕ U) c := by
 theorem scalar_coeff (A : Raw K S) (x : ∀ s, A.leg s) :
     scalar O S (A.coeff x) ≤ ofRaw A :=
   Restricts.pullback (fun s _ => x s) (fun y => Raw.coeff_ofTable _ _ y)
+
+end
+
+variable [Field K] {O : Subring K}
 
 theorem positive_scalar (f : ITensor O S →+* ℝ) (hf : Monotone f) (c : K) (h : c ≠ 0) :
     0 < f (scalar O S c) := by

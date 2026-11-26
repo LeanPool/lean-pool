@@ -9,7 +9,6 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.Tag
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PolynomialDegeneration
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PolynomialValues
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagHeterogeneous
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagPolynomialBranches
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PermutationPowers
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Weighted
@@ -26,7 +25,7 @@ degenerations for each leg permutation separately.
 
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
-open Upper Upper.TensorClass Upper.TagHeterogeneous
+open Upper Upper.TensorClass
 
 /-- The character value of convolution with positive input lengths. -/
 abbrev poly (f : Character) (m n : ℕ) : ℝ :=

@@ -8,7 +8,6 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Semiring
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Rank
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassRankOrder
 
 /-!
@@ -39,7 +38,7 @@ namespace Character
 theorem map_natCast (f : Character) (n : ℕ) : f n = n :=
   TensorSpectrum.TensorClass.Character.map_natCast f n
 
-theorem le_rank (f : Character) (A : TensorClass) : f A ≤ rank A :=
+theorem le_rank (f : Character) (A : TensorClass) : f A ≤ TensorSpectrum.TensorClass.rank A :=
   TensorSpectrum.TensorClass.Character.le_rank f A
 
 end Character

@@ -105,24 +105,8 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Integral
 variable {i j k r : ℕ}
 
 private theorem Rank.pow {A : Type*} [CommRing A] (h : Rank A i j k r) (n : ℕ) :
-    Rank A (i ^ n) (j ^ n) (k ^ n) (r ^ n) := by
-  classical
-  let T (x : Pos i k) (y : Pos k j) (z : Pos i j) :=
-    if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then (1 : A) else 0
-  have ht : MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor.RankAtMost T r
-    := by
-    obtain ⟨a, b, c, he⟩ := h
-    exact ⟨a, b, c, funext fun x => funext fun y => funext fun z => (he x y z).symm⟩
-  let digit {a b : ℕ} (x : Pos (a ^ n) (b ^ n)) (l : Fin n) : Pos a b :=
-    (finFunctionFinEquiv.symm x.1 l, finFunctionFinEquiv.symm x.2 l)
-  obtain ⟨a, b, c, he⟩ := ht.power n
-  refine ⟨fun l x => a l (digit x), fun l y => b l (digit y), fun l z => c l (digit z), ?_⟩
-  intro x y z
-  have hh := congrFun (congrFun (congrFun he (digit x)) (digit y)) (digit z)
-  refine hh.symm.trans ?_
-  simp only [MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor.power, T, digit,
-    Fintype.prod_ite_zero,
-    forall_and, ← funext_iff, Equiv.symm_apply_eq, Equiv.apply_symm_apply, Finset.prod_const_one]
+    Rank A (i ^ n) (j ^ n) (k ^ n) (r ^ n) :=
+  Rectangle.RankLE.pow h n
 
 /-- Put every coefficient in a single finite torsion-free ℤ-algebra. -/
 private theorem in_order (h : Rank O i j k r) :
@@ -261,10 +245,8 @@ open Rectangle Integral.Upper Integral.Upper.TensorClass
 
 variable {A B : Type*} [CommRing A] [CommRing B] {i j k r : ℕ}
 
-theorem Rank.map (h : Rank A i j k r) (f : A →+* B) : Rank B i j k r := by
-  obtain ⟨a, b, c, he⟩ := h
-  refine ⟨fun l x => f (a l x), fun l y => f (b l y), fun l z => f (c l z), fun x y z => ?_⟩
-  simpa only [map_sum, map_mul, apply_ite f, map_one, map_zero] using congrArg f (he x y z)
+theorem Rank.map (h : Rank A i j k r) (f : A →+* B) : Rank B i j k r :=
+  Rectangle.RankLE.map h f
 
 theorem Rank.areas {F : Type*} [Field F] (f : A →+* F) (h : Rank A i j k r)
     (hi : 0 < i) (hj : 0 < j) (hk : 0 < k) : max (i * j) (max (i * k) (j * k)) ≤ r := by
@@ -292,7 +274,8 @@ private theorem comparison (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
   have hy : 1 ≤ (r : TensorClass) := by
     rw [← Nat.cast_one (R := TensorClass), natCast_eq_ofTensor_natTensor,
       natCast_eq_ofTensor_natTensor]
-    exact ofTensor_le (CoefficientTensor.natTensor_restricts_of_le (by exact_mod_cast hr))
+    exact ofTensor_le
+      (TensorSpectrum.CoefficientTensor.natTensor_restricts_of_le (by exact_mod_cast hr))
   have hp (g : TensorClass →+* NNReal) (hg : Monotone g) : g M < g (r : TensorClass) := by
     let f : Character := ⟨g, hg⟩
     have h := shape_bound ha hb hc f.pY_nonneg f.pX_nonneg f.pZ_nonneg
@@ -306,7 +289,7 @@ private theorem comparison (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
       _ < r := hlo
   obtain ⟨C, hC⟩ := strictComparison
     (fun _ _ _ h => add_mono h le_rfl) (fun _ _ _ h => mul_mono le_rfl h)
-    TensorClass.zero_le (fun A => ⟨rank A, le_rank_natCast A⟩) hx hy hp
+    TensorClass.zero_le (fun A => ⟨TensorSpectrum.TensorClass.rank A, le_rank_natCast A⟩) hx hy hp
   refine ⟨C, fun p => rank_of_dots ?_⟩
   rw [dots_power, Nat.cast_mul, Nat.cast_pow, mul_comm]
   exact hC p

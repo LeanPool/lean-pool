@@ -574,6 +574,24 @@ theorem two : 2 ≤ i.short := by unfold short; omega
 theorem le_long : i.short ≤ i.long := by unfold long; omega
 theorem two_long : 2 ≤ i.long := i.two.trans i.le_long
 
+private def workCharges : List (ℕ × ℕ) := [(i.links, i.long), (i.slots, i.short)]
+
+private def heavyCharges : List (ℕ × ℕ) := i.workCharges ++ [(i.volume, i.outer)]
+
+private theorem workCharges_short (charge : ℕ × ℕ) (h : charge ∈ i.workCharges) :
+    i.short ≤ charge.2 := by
+  simp only [workCharges, List.mem_cons, List.not_mem_nil, or_false] at h
+  rcases h with rfl | rfl
+  · exact i.le_long
+  · exact le_rfl
+
+private theorem heavyCharges_outer (charge : ℕ × ℕ) (h : charge ∈ i.heavyCharges) :
+    i.outer ≤ charge.2 := by
+  rw [heavyCharges, List.mem_append, List.mem_singleton] at h
+  rcases h with h | rfl
+  · exact i.outer_le.trans (i.workCharges_short charge h)
+  · exact le_rfl
+
 end Size
 
 /-- Computes the short by the application `Poly Size.short`. -/
@@ -602,27 +620,19 @@ theorem v : Long Size.v := Poly.of_le Size.two_long (fun i => by unfold Size.lon
 
 namespace Work
 
+private theorem weighted_iff : Work f ↔ WeightedCost Size.workCharges f := by
+  simp only [Work, WeightedCost, Size.workCharges, Size.bound, weightedPower, List.map_cons,
+    List.map_nil, List.sum_cons, List.sum_nil, Nat.add_zero]
+
 theorem mono (hf : Work f) (h : ∀ i, g i ≤ f i) : Work g :=
-  let ⟨s, hs⟩ := hf
-  ⟨s, fun i => (h i).trans (hs i)⟩
+  weighted_iff.mpr ((weighted_iff.mp hf).mono h)
 
-theorem add (hf : Work f) (hg : Work g) : Work (fun i => f i + g i) := by
-  obtain ⟨s, hs⟩ := hf
-  obtain ⟨t, ht⟩ := hg
-  refine ⟨max s t + 1, fun i => (Nat.add_le_add (hs i) (ht i)).trans ?_⟩
-  unfold Size.bound
-  rw [add_add_add_comm, ← mul_add, ← mul_add]
-  exact Nat.add_le_add (Nat.mul_le_mul_left _ (Poly.pow_sum i.two_long ..))
-    (Nat.mul_le_mul_left _ (Poly.pow_sum i.two ..))
+theorem add (hf : Work f) (hg : Work g) : Work (fun i => f i + g i) :=
+  weighted_iff.mpr ((weighted_iff.mp hf).add (weighted_iff.mp hg)
+    fun i charge h => i.two.trans (i.workCharges_short charge h))
 
-theorem mul (hf : Work f) (hg : Short g) : Work (fun i => f i * g i) := by
-  obtain ⟨s, hs⟩ := hf
-  obtain ⟨t, ht⟩ := hg.bound
-  refine ⟨s + t, fun i => (Nat.mul_le_mul (hs i) (ht i)).trans ?_⟩
-  unfold Size.bound
-  rw [add_mul, mul_assoc i.links, mul_assoc i.slots, pow_add, pow_add]
-  gcongr
-  exact i.le_long
+theorem mul (hf : Work f) (hg : Short g) : Work (fun i => f i * g i) :=
+  weighted_iff.mpr ((weighted_iff.mp hf).mul hg Size.workCharges_short)
 
 theorem scale (hf : Work f) (hg : Short g) : Work (fun i => g i * f i) :=
   (hf.mul hg).mono fun _ => (mul_comm ..).le
@@ -654,30 +664,21 @@ theorem Work.heavy (h : Work f) : Heavy f :=
   ⟨s, fun i => (hs i).trans (Nat.le_add_right ..)⟩
 
 namespace Heavy
+
+private theorem weighted_iff : Heavy f ↔ WeightedCost Size.heavyCharges f := by
+  simp only [Heavy, WeightedCost, Size.heavyCharges, Size.workCharges, Size.bound, weightedPower,
+    List.cons_append, List.nil_append, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+    Nat.add_zero, Nat.add_assoc]
+
 theorem mono (hf : Heavy f) (h : ∀ i, g i ≤ f i) : Heavy g :=
-  let ⟨s, hs⟩ := hf
-  ⟨s, fun i => (h i).trans (hs i)⟩
+  weighted_iff.mpr ((weighted_iff.mp hf).mono h)
 
-theorem add (hf : Heavy f) (hg : Heavy g) : Heavy (fun i => f i + g i) := by
-  obtain ⟨s, hs⟩ := hf
-  obtain ⟨t, ht⟩ := hg
-  refine ⟨max s t + 1, fun i => (Nat.add_le_add (hs i) (ht i)).trans ?_⟩
-  unfold Size.bound
-  rw [add_add_add_comm, add_add_add_comm (i.links * _ ^ s), ← mul_add, ← mul_add, ← mul_add]
-  exact Nat.add_le_add (Nat.add_le_add (Nat.mul_le_mul_left _ (Poly.pow_sum i.two_long ..))
-    (Nat.mul_le_mul_left _ (Poly.pow_sum i.two ..)))
-    (Nat.mul_le_mul_left _ (Poly.pow_sum i.outer_two ..))
+theorem add (hf : Heavy f) (hg : Heavy g) : Heavy (fun i => f i + g i) :=
+  weighted_iff.mpr ((weighted_iff.mp hf).add (weighted_iff.mp hg)
+    fun i charge h => i.outer_two.trans (i.heavyCharges_outer charge h))
 
-theorem mul (hf : Heavy f) (hg : Outer g) : Heavy (fun i => f i * g i) := by
-  obtain ⟨s, hs⟩ := hf
-  obtain ⟨t, ht⟩ := hg.bound
-  refine ⟨s + t, fun i => (Nat.mul_le_mul (hs i) (ht i)).trans ?_⟩
-  unfold Size.bound
-  rw [add_mul, add_mul]
-  simp only [mul_assoc, pow_add]
-  gcongr
-  · exact i.outer_le.trans i.le_long
-  · exact i.outer_le
+theorem mul (hf : Heavy f) (hg : Outer g) : Heavy (fun i => f i * g i) :=
+  weighted_iff.mpr ((weighted_iff.mp hf).mul hg Size.heavyCharges_outer)
 
 theorem scale (hf : Heavy f) (hg : Outer g) : Heavy (fun i => g i * f i) :=
   (hf.mul hg).mono fun _ => (mul_comm ..).le

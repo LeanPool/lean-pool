@@ -70,15 +70,27 @@ instance : Mul (Raw K S) where
   mul A B := ⟨fun s => A.leg s × B.leg s, A.term × B.term,
     fun i s x => A.factor i.1 s x.1 * B.factor i.2 s x.2⟩
 
+/-- One local matrix at each site, from the source legs to the target legs. -/
+abbrev RestrictionMaps (A B : Raw K S) := (s : S) → B.leg s → A.leg s → K
+
 variable {A B C : Raw K S}
+
+open Classical in
+/-- The local matrix that copies or selects a source coordinate. -/
+def pullbackMap (f : ∀ s, B.leg s → A.leg s) : RestrictionMaps A B :=
+  fun s x y => if y = f s x then 1 else 0
+
+theorem coeff_pullbackMap (f : ∀ s, B.leg s → A.leg s)
+    (h : ∀ x, B.coeff x = A.coeff (fun s => f s (x s))) (x : ∀ s, B.leg s) :
+    B.coeff x = ∑ i : A.term, ∏ s, ∑ y, pullbackMap f s (x s) y * A.factor i s y := by
+  classical
+  rw [h]
+  simp [pullbackMap, coeff, ite_mul]
 
 /-- Copying or selecting local coordinates is a restriction. -/
 theorem Restricts.pullback (f : ∀ s, B.leg s → A.leg s)
-    (h : ∀ x, B.coeff x = A.coeff (fun s => f s (x s))) : A.Restricts B := by
-  classical
-  refine ⟨fun s x y => if y = f s x then 1 else 0, fun x => ?_⟩
-  rw [h]
-  simp [coeff, ite_mul]
+    (h : ∀ x, B.coeff x = A.coeff (fun s => f s (x s))) : A.Restricts B :=
+  ⟨pullbackMap f, coeff_pullbackMap f h⟩
 
 theorem Restricts.refl (A : Raw K S) : A.Restricts A :=
   Restricts.pullback (fun _ x => x) (fun _ => rfl)
@@ -96,21 +108,30 @@ theorem restricts_iff [DecidableEq S] (A B : Raw K S) :
         B.coeff x = ∑ y : ∀ s, A.leg s, (∏ s, L s (x s) (y s)) * A.coeff y := by
   simp only [Restricts, expand]
 
-theorem Restricts.trans (h : A.Restricts B) (g : B.Restricts C) : A.Restricts C := by
+/-- Compose the local restriction maps by matrix multiplication at each site. -/
+def composeRestrictionMaps (L : RestrictionMaps A B) (M : RestrictionMaps B C) :
+    RestrictionMaps A C := fun s x z => ∑ y, M s x y * L s y z
+
+theorem coeff_composeRestrictionMaps (L : RestrictionMaps A B) (M : RestrictionMaps B C)
+    (hL : ∀ x, B.coeff x = ∑ i : A.term, ∏ s, ∑ y, L s (x s) y * A.factor i s y)
+    (hM : ∀ x, C.coeff x = ∑ j : B.term, ∏ s, ∑ y, M s (x s) y * B.factor j s y)
+    (x : ∀ s, C.leg s) :
+    C.coeff x = ∑ i : A.term, ∏ s, ∑ y, composeRestrictionMaps L M s (x s) y * A.factor i s y := by
   classical
+  rw [hM, B.expand]
+  simp only [hL, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun i _ => ?_
+  simp only [← Finset.prod_mul_distrib]
+  rw [← Fintype.prod_sum (fun s y => M s (x s) y * ∑ z, L s y z * A.factor i s z)]
+  refine Finset.prod_congr rfl fun s _ => ?_
+  simp only [composeRestrictionMaps, Finset.mul_sum, Finset.sum_mul, mul_assoc]
+  rw [Finset.sum_comm]
+
+theorem Restricts.trans (h : A.Restricts B) (g : B.Restricts C) : A.Restricts C := by
   obtain ⟨L, hL⟩ := h
-  obtain ⟨P, hP⟩ := (restricts_iff B C).mp g
-  refine ⟨fun s x z => ∑ y, P s x y * L s y z, fun x => ?_⟩
-  rw [hP]
-  simp only [hL, Finset.mul_sum, ← Finset.prod_mul_distrib]
-  rw [Finset.sum_comm]
-  apply Finset.sum_congr rfl
-  intro i _
-  rw [← Fintype.prod_sum (fun s y => ∑ z, P s (x s) y * (L s y z * A.factor i s z))]
-  apply Finset.prod_congr rfl
-  intro s _
-  simp only [Finset.sum_mul, mul_assoc]
-  rw [Finset.sum_comm]
+  obtain ⟨M, hM⟩ := g
+  exact ⟨composeRestrictionMaps L M, coeff_composeRestrictionMaps L M hL hM⟩
 
 instance : Setoid (Raw K S) where
   r A B := A.Restricts B ∧ B.Restricts A

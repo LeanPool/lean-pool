@@ -90,6 +90,64 @@ theorem exp_clog (h : Poly s f) : Poly s (fun i => 2 ^ Nat.clog 2 (f i)) := by
 
 end Poly
 
+/-- Sum charges with a common degree. Each charge gives a weight and its base. -/
+def weightedPower (charges : List (ℕ × ℕ)) (degree : ℕ) : ℕ :=
+  (charges.map fun charge => charge.1 * charge.2 ^ degree).sum
+
+theorem weightedPower_add (charges : List (ℕ × ℕ)) (s t : ℕ)
+    (bases : ∀ charge ∈ charges, 2 ≤ charge.2) :
+    weightedPower charges s + weightedPower charges t ≤ weightedPower charges (max s t + 1) := by
+  induction charges with
+  | nil => simp [weightedPower]
+  | cons charge charges ih =>
+    have tail := ih fun c hc => bases c (List.mem_cons_of_mem _ hc)
+    simp only [weightedPower, List.map_cons, List.sum_cons] at tail ⊢
+    rw [add_add_add_comm, ← mul_add]
+    exact Nat.add_le_add
+      (Nat.mul_le_mul_left _ (Poly.pow_sum (bases charge (List.mem_cons_self ..)) s t)) tail
+
+theorem weightedPower_mul (charges : List (ℕ × ℕ)) (base s t : ℕ)
+    (bases : ∀ charge ∈ charges, base ≤ charge.2) :
+    weightedPower charges s * base ^ t ≤ weightedPower charges (s + t) := by
+  induction charges with
+  | nil => simp [weightedPower]
+  | cons charge charges ih =>
+    have tail := ih fun c hc => bases c (List.mem_cons_of_mem _ hc)
+    simp only [weightedPower, List.map_cons, List.sum_cons] at tail ⊢
+    rw [add_mul, mul_assoc, pow_add]
+    exact Nat.add_le_add (Nat.mul_le_mul_left _ (Nat.mul_le_mul_left _
+      (Nat.pow_le_pow_left (bases charge (List.mem_cons_self ..)) t))) tail
+
+/-- A uniform polynomial degree controls a sum of separately weighted charges. -/
+def WeightedCost {I : Type*} (charges : I → List (ℕ × ℕ)) (f : I → ℕ) : Prop :=
+  ∃ degree, ∀ i, f i ≤ weightedPower (charges i) degree
+
+namespace WeightedCost
+
+variable {I : Type*} {charges : I → List (ℕ × ℕ)} {f g scale : I → ℕ}
+
+theorem mono (hf : WeightedCost charges f) (h : ∀ i, g i ≤ f i) : WeightedCost charges g :=
+  let ⟨s, hs⟩ := hf
+  ⟨s, fun i => (h i).trans (hs i)⟩
+
+theorem add (hf : WeightedCost charges f) (hg : WeightedCost charges g)
+    (bases : ∀ i charge, charge ∈ charges i → 2 ≤ charge.2) :
+    WeightedCost charges (fun i => f i + g i) := by
+  obtain ⟨s, hs⟩ := hf
+  obtain ⟨t, ht⟩ := hg
+  exact ⟨max s t + 1, fun i => (Nat.add_le_add (hs i) (ht i)).trans
+    (weightedPower_add (charges i) s t (bases i))⟩
+
+theorem mul (hf : WeightedCost charges f) (hg : Poly scale g)
+    (bases : ∀ i charge, charge ∈ charges i → scale i ≤ charge.2) :
+    WeightedCost charges (fun i => f i * g i) := by
+  obtain ⟨s, hs⟩ := hf
+  obtain ⟨t, ht⟩ := hg.bound
+  exact ⟨s + t, fun i => (Nat.mul_le_mul (hs i) (ht i)).trans
+    (weightedPower_mul (charges i) (scale i) s t (bases i))⟩
+
+end WeightedCost
+
 /-- A common-degree polynomial budget with a host term and a smaller block term. -/
 def MixedCost {I : Type*} (long short height j f : I → ℕ) : Prop :=
   ∃ k : ℕ, ∀ i, f i ≤ 2 ^ (j i) * long i ^ k + 2 ^ (j i + height i) * short i ^ k
@@ -98,10 +156,17 @@ namespace MixedCost
 
 variable {I : Type*} {large small height j f g : I → ℕ}
 
+private def charges (large small height j : I → ℕ) (i : I) : List (ℕ × ℕ) :=
+  [(2 ^ (j i), large i), (2 ^ (j i + height i), small i)]
+
+private theorem weighted_iff :
+    MixedCost large small height j f ↔ WeightedCost (charges large small height j) f := by
+  simp only [MixedCost, WeightedCost, charges, weightedPower, List.map_cons, List.map_nil,
+    List.sum_cons, List.sum_nil, Nat.add_zero]
+
 theorem mono (h : MixedCost large small height j f) (hg : ∀ i, g i ≤ f i) :
     MixedCost large small height j g :=
-  let ⟨k, hk⟩ := h
-  ⟨k, fun i => (hg i).trans (hk i)⟩
+  weighted_iff.mpr ((weighted_iff.mp h).mono hg)
 
 theorem exp_mul_mono {actual upper : I → ℕ}
     (h : MixedCost large small height j (fun i => 2 ^ upper i * f i))
@@ -112,22 +177,20 @@ theorem exp_mul_mono {actual upper : I → ℕ}
 theorem add (h : MixedCost large small height j f) (h' : MixedCost large small height j g)
     (largeTwo : ∀ i, 2 ≤ large i) (smallTwo : ∀ i, 2 ≤ small i) :
     MixedCost large small height j (fun i => f i + g i) := by
-  obtain ⟨l, hl⟩ := h
-  obtain ⟨k, hk⟩ := h'
-  refine ⟨max l k + 1, fun i => (Nat.add_le_add (hl i) (hk i)).trans ?_⟩
-  rw [add_add_add_comm, ← mul_add, ← mul_add]
-  exact Nat.add_le_add (Nat.mul_le_mul_left _ (Poly.pow_sum (largeTwo i) ..))
-    (Nat.mul_le_mul_left _ (Poly.pow_sum (smallTwo i) ..))
+  refine weighted_iff.mpr ((weighted_iff.mp h).add (weighted_iff.mp h') fun i charge member => ?_)
+  simp only [charges, List.mem_cons, List.not_mem_nil, or_false] at member
+  rcases member with rfl | rfl
+  · exact largeTwo i
+  · exact smallTwo i
 
 theorem mul (h : MixedCost large small height j f) (h' : Poly small g)
     (smallLeLarge : ∀ i, small i ≤ large i) :
     MixedCost large small height j (fun i => f i * g i) := by
-  obtain ⟨l, hl⟩ := h
-  obtain ⟨k, hk⟩ := h'.bound
-  refine ⟨l + k, fun i => (Nat.mul_le_mul (hl i) (hk i)).trans ?_⟩
-  simp only [add_mul, mul_assoc, pow_add]
-  gcongr
-  exact smallLeLarge i
+  refine weighted_iff.mpr ((weighted_iff.mp h).mul h' fun i charge member => ?_)
+  simp only [charges, List.mem_cons, List.not_mem_nil, or_false] at member
+  rcases member with rfl | rfl
+  · exact smallLeLarge i
+  · exact le_rfl
 
 theorem long (j : I → ℕ) (h : Poly large f) :
     MixedCost large small height j (fun i => 2 ^ (j i) * f i) :=

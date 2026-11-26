@@ -106,7 +106,8 @@ theorem RankLE.transpose [CommSemiring F] (h : RankLE F i j k r) : RankLE F j i 
     eq_comm] using h y.swap x.swap z.swap
 
 /-- Fixing the inner index gives an identity submatrix of the output flattening. -/
-theorem RankLE.area [Field F] (h : RankLE F i j k r) (hk : 0 < k) : i * j ≤ r := by
+theorem RankLE.area [CommSemiring F] [StrongRankCondition F] (h : RankLE F i j k r)
+    (hk : 0 < k) : i * j ≤ r := by
   obtain ⟨a, b, c, h⟩ := h
   let v : Fin k := ⟨0, hk⟩
   let A : Matrix (Pos i j) (Fin r) F := fun x l => a l (x.1, v) * b l (v, x.2)
