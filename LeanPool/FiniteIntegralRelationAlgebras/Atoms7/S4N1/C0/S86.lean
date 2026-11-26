@@ -19,7 +19,7 @@ open RACert RACert.Problem
 namespace S86
 
 /-- Orbit minima `(α, orbit size)`, part 0. -/
-def seg0 : List (ℕ × ℕ) :=
+private noncomputable def seg0 : List (ℕ × ℕ) :=
   [(3407582, 48), (3407583, 48), (3407590, 48), (3407591, 48), (3407598, 48), (3407599, 48),
     (3407606, 48), (3407607, 48), (3407610, 24), (3407611, 24), (3407612, 24), (3407613, 24),
     (3407614, 48), (3407615, 48), (3407750, 12), (3407751, 12), (3407758, 48), (3407759, 48),
@@ -273,7 +273,8 @@ def seg0 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev0 : List ℕ := [0, 0, 0, 0, 0, 0, 0, 0, 62, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+private noncomputable def ev0 : List ℕ :=
+  [0, 0, 0, 0, 0, 0, 0, 0, 62, 62, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
   95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
   95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95, 95,
@@ -341,11 +342,11 @@ private def checkedCount0 :
     { total : ℕ // P.sumEvE 20 4 qt ow qmFlat seg0 ev0 0 total = true } :=
   ⟨224425416, by decide +kernel⟩
 
-theorem sumOK0 :
+private theorem sumOK0 :
     P.sumEvE 20 4 qt ow qmFlat seg0 ev0 0 224425416 = true := checkedCount0.property
 
 /-- Orbit minima `(α, orbit size)`, part 1. -/
-def seg1 : List (ℕ × ℕ) :=
+private noncomputable def seg1 : List (ℕ × ℕ) :=
   [(3491264, 48), (3491265, 48), (3491266, 48), (3491267, 48), (3491268, 48), (3491269, 48),
     (3491270, 48), (3491271, 48), (3491272, 48), (3491273, 48), (3491274, 48), (3491275, 48),
     (3491276, 48), (3491277, 48), (3491278, 48), (3491279, 48), (3491280, 48), (3491281, 48),
@@ -599,7 +600,8 @@ def seg1 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev1 : List ℕ := [63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
+private noncomputable def ev1 : List ℕ :=
+  [63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
   63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 84, 98, 108, 91, 84, 98, 103, 102, 64, 64, 64, 64,
   103, 102, 103, 102, 64, 98, 103, 102, 64, 98, 103, 102, 103, 102, 103, 102, 103, 102, 103, 102,
   53, 53, 53, 53, 63, 63, 63, 63, 53, 53, 53, 53, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
@@ -668,11 +670,11 @@ private def checkedCount1 :
     { total : ℕ // P.sumEvE 20 4 qt ow qmFlat seg1 ev1 0 total = true } :=
   ⟨0, by decide +kernel⟩
 
-theorem sumOK1 :
+private theorem sumOK1 :
     P.sumEvE 20 4 qt ow qmFlat seg1 ev1 0 0 = true := checkedCount1.property
 
 /-- Orbit minima `(α, orbit size)`, part 2. -/
-def seg2 : List (ℕ × ℕ) :=
+private noncomputable def seg2 : List (ℕ × ℕ) :=
   [(3492764, 48), (3492765, 48), (3492766, 48), (3492767, 48), (3492768, 48), (3492769, 48),
     (3492770, 48), (3492771, 48), (3492772, 48), (3492773, 48), (3492774, 48), (3492775, 48),
     (3492776, 48), (3492777, 48), (3492778, 48), (3492779, 48), (3492780, 48), (3492781, 48),
@@ -926,7 +928,8 @@ def seg2 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev2 : List ℕ := [63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
+private noncomputable def ev2 : List ℕ :=
+  [63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
   63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
   63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
   63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63, 63,
@@ -995,11 +998,11 @@ private def checkedCount2 :
     { total : ℕ // P.sumEvE 20 4 qt ow qmFlat seg2 ev2 0 total = true } :=
   ⟨0, by decide +kernel⟩
 
-theorem sumOK2 :
+private theorem sumOK2 :
     P.sumEvE 20 4 qt ow qmFlat seg2 ev2 0 0 = true := checkedCount2.property
 
 /-- Orbit minima `(α, orbit size)`, part 3. -/
-def seg3 : List (ℕ × ℕ) :=
+private noncomputable def seg3 : List (ℕ × ℕ) :=
   [(3494264, 48), (3494265, 48), (3494266, 48), (3494267, 48), (3494268, 48), (3494269, 48),
     (3494270, 48), (3494271, 48), (3494272, 48), (3494273, 48), (3494274, 48), (3494275, 48),
     (3494276, 48), (3494277, 48), (3494278, 48), (3494279, 48), (3494280, 48), (3494281, 48),
@@ -1253,7 +1256,8 @@ def seg3 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev3 : List ℕ := [63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62,
+private noncomputable def ev3 : List ℕ :=
+  [63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62,
   63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62,
   63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62,
   63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62, 63, 63, 62, 62,
@@ -1321,13 +1325,13 @@ private def checkedCount3 :
     { total : ℕ // P.sumEvE 20 4 qt ow qmFlat seg3 ev3 0 total = true } :=
   ⟨0, by decide +kernel⟩
 
-theorem sumOK3 :
+private theorem sumOK3 :
     P.sumEvE 20 4 qt ow qmFlat seg3 ev3 0 0 = true := checkedCount3.property
 
 /-- All orbit minima of this file. -/
-def seg : List (ℕ × ℕ) := seg0 ++ (seg1 ++ (seg2 ++ (seg3)))
+private noncomputable def seg : List (ℕ × ℕ) := seg0 ++ (seg1 ++ (seg2 ++ (seg3)))
 
-theorem segOK : checkSeg 26 perms 3407582 3495764 seg = true :=
+private theorem segOK : checkSeg 26 perms 3407582 3495764 seg = true :=
   checkSeg_of_columns orbitGroupSize orbitColumnsChecked (by decide +kernel)
 
 theorem total : OrbitSeg 26 perms (P.leaf (20 + 4)) 3407582 3495764 287616 224425416 :=

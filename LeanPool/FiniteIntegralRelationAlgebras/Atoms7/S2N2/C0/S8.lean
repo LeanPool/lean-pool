@@ -19,7 +19,7 @@ open RACert RACert.Problem
 namespace S8
 
 /-- Orbit minima `(α, orbit size)`, part 0. -/
-def seg0 : List (ℕ × ℕ) :=
+private noncomputable def seg0 : List (ℕ × ℕ) :=
   [(300550, 16), (300551, 16), (300552, 16), (300553, 16), (300554, 16), (300555, 16), (300556, 16),
     (300557, 16), (300558, 16), (300559, 16), (300560, 16), (300561, 16), (300562, 16), (300563,
     16), (300564, 16), (300565, 16), (300566, 16), (300567, 16), (300568, 16), (300569, 16),
@@ -254,7 +254,8 @@ def seg0 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev0 : List ℕ := [140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140,
+private noncomputable def ev0 : List ℕ :=
+  [140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140,
   69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140,
   69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 140, 69, 62, 62, 62,
   62, 69, 69, 69, 69, 79, 79, 79, 79, 69, 69, 69, 69, 62, 62, 62, 62, 69, 69, 69, 69, 79, 79, 79,
@@ -331,11 +332,11 @@ private def checkedCount0 :
     { total : ℕ // P.sumEvE 20 2 qt ow qmFlat seg0 ev0 0 total = true } :=
   ⟨501472, by decide +kernel⟩
 
-theorem sumOK0 :
+private theorem sumOK0 :
     P.sumEvE 20 2 qt ow qmFlat seg0 ev0 0 501472 = true := checkedCount0.property
 
 /-- Orbit minima `(α, orbit size)`, part 1. -/
-def seg1 : List (ℕ × ℕ) :=
+private noncomputable def seg1 : List (ℕ × ℕ) :=
   [(302050, 16), (302051, 16), (302052, 16), (302053, 16), (302054, 16), (302055, 16), (302056, 16),
     (302057, 16), (302058, 16), (302059, 16), (302060, 16), (302061, 16), (302062, 16), (302063,
     16), (302064, 16), (302065, 16), (302066, 16), (302067, 16), (302068, 16), (302069, 16),
@@ -569,7 +570,8 @@ def seg1 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev1 : List ℕ := [63, 63, 101, 101, 101, 101, 63, 63, 63, 63, 101, 101, 101, 101, 128, 128, 128,
+private noncomputable def ev1 : List ℕ :=
+  [63, 63, 101, 101, 101, 101, 63, 63, 63, 63, 101, 101, 101, 101, 128, 128, 128,
   128, 127, 126, 127, 126, 70, 70, 70, 70, 127, 126, 127, 126, 140, 101, 140, 101, 140, 101, 140,
   101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101,
   140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140, 101, 140,
@@ -643,11 +645,11 @@ private def checkedCount1 :
     { total : ℕ // P.sumEvE 20 2 qt ow qmFlat seg1 ev1 0 total = true } :=
   ⟨3897920, by decide +kernel⟩
 
-theorem sumOK1 :
+private theorem sumOK1 :
     P.sumEvE 20 2 qt ow qmFlat seg1 ev1 0 3897920 = true := checkedCount1.property
 
 /-- Orbit minima `(α, orbit size)`, part 2. -/
-def seg2 : List (ℕ × ℕ) :=
+private noncomputable def seg2 : List (ℕ × ℕ) :=
   [(307870, 16), (307871, 16), (307888, 8), (307889, 8), (307890, 8), (307891, 8), (307892, 8),
     (307893, 8), (307894, 8), (307895, 8), (307896, 8), (307897, 8), (307898, 8), (307899, 8),
     (307900, 8), (307901, 8), (307902, 8), (307903, 8), (307904, 16), (307905, 16), (307906, 16),
@@ -865,7 +867,8 @@ def seg2 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev2 : List ℕ := [139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
+private noncomputable def ev2 : List ℕ :=
+  [139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139, 139,
   139, 139, 131, 128, 131, 128, 131, 119, 131, 119, 79, 79, 79, 79, 131, 119, 131, 119, 131, 128,
   131, 128, 131, 119, 131, 119, 79, 79, 79, 79, 131, 119, 131, 119, 131, 128, 131, 128, 131, 119,
   131, 119, 131, 128, 131, 128, 131, 119, 131, 119, 131, 128, 131, 128, 131, 119, 131, 119, 131,
@@ -936,11 +939,11 @@ private def checkedCount2 :
     { total : ℕ // P.sumEvE 20 2 qt ow qmFlat seg2 ev2 0 total = true } :=
   ⟨5305808, by decide +kernel⟩
 
-theorem sumOK2 :
+private theorem sumOK2 :
     P.sumEvE 20 2 qt ow qmFlat seg2 ev2 0 5305808 = true := checkedCount2.property
 
 /-- Orbit minima `(α, orbit size)`, part 3. -/
-def seg3 : List (ℕ × ℕ) :=
+private noncomputable def seg3 : List (ℕ × ℕ) :=
   [(310527, 16), (310592, 8), (310593, 8), (310594, 8), (310595, 8), (310596, 8), (310597, 8),
     (310598, 8), (310599, 8), (310600, 8), (310601, 8), (310602, 8), (310603, 8), (310604, 8),
     (310605, 8), (310606, 8), (310607, 8), (310608, 16), (310609, 16), (310610, 16), (310611, 16),
@@ -990,7 +993,8 @@ def seg3 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev3 : List ℕ := [0, 112, 112, 68, 68, 112, 112, 0, 0, 112, 112, 68, 68, 112, 112, 0, 0, 112,
+private noncomputable def ev3 : List ℕ :=
+  [0, 112, 112, 68, 68, 112, 112, 0, 0, 112, 112, 68, 68, 112, 112, 0, 0, 112,
   112, 84, 84, 112, 112, 0, 0, 112, 112, 84, 84, 112, 112, 0, 0, 112, 112, 0, 0, 112, 112, 0, 0,
   112, 112, 0, 0, 112, 112, 0, 0, 84, 84, 84, 84, 0, 0, 0, 0, 84, 84, 84, 84, 0, 0, 0, 0, 84, 84,
   84, 84, 0, 0, 0, 0, 84, 84, 84, 84, 0, 0, 0, 0, 72, 72, 72, 72, 0, 0, 0, 0, 72, 72, 72, 72, 0, 0,
@@ -1007,13 +1011,13 @@ private def checkedCount3 :
     { total : ℕ // P.sumEvE 20 2 qt ow qmFlat seg3 ev3 0 total = true } :=
   ⟨8726872, by decide +kernel⟩
 
-theorem sumOK3 :
+private theorem sumOK3 :
     P.sumEvE 20 2 qt ow qmFlat seg3 ev3 0 8726872 = true := checkedCount3.property
 
 /-- All orbit minima of this file. -/
-def seg : List (ℕ × ℕ) := seg0 ++ (seg1 ++ (seg2 ++ (seg3)))
+private noncomputable def seg : List (ℕ × ℕ) := seg0 ++ (seg1 ++ (seg2 ++ (seg3)))
 
-theorem segOK : checkSeg 22 perms 300550 311247 seg = true :=
+private theorem segOK : checkSeg 22 perms 300550 311247 seg = true :=
   checkSeg_of_columns orbitGroupSize orbitColumnsChecked (by decide +kernel)
 
 theorem total : OrbitSeg 22 perms (P.leaf (20 + 2)) 300550 311247 73240 18432072 :=

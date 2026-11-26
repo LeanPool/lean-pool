@@ -19,7 +19,7 @@ open RACert RACert.Problem
 namespace S0
 
 /-- Orbit minima `(α, orbit size)`, part 0. -/
-def seg0 : List (ℕ × ℕ) :=
+private noncomputable def seg0 : List (ℕ × ℕ) :=
   [(0, 1), (1, 2), (3, 1), (4, 2), (5, 4), (7, 2), (12, 1), (13, 2), (15, 1), (16, 1), (17, 2), (19,
     1), (20, 2), (21, 4), (23, 2), (28, 1), (29, 2), (31, 1), (32, 4), (33, 4), (34, 4), (35, 4),
     (36, 4), (37, 4), (38, 4), (39, 4), (40, 4), (41, 4), (42, 4), (43, 4), (44, 4), (45, 4), (46,
@@ -37,17 +37,17 @@ def seg0 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev0 : List ℕ := []
+private noncomputable def ev0 : List ℕ := []
 
 private def checkedCount0 :
     { total : ℕ // P.sumEvE 20 3 qt ow qmFlat seg0 ev0 0 total = true } :=
   ⟨39888835, by decide +kernel⟩
 
-theorem sumOK0 :
+private theorem sumOK0 :
     P.sumEvE 20 3 qt ow qmFlat seg0 ev0 0 39888835 = true := checkedCount0.property
 
 /-- Orbit minima `(α, orbit size)`, part 1. -/
-def seg1 : List (ℕ × ℕ) :=
+private noncomputable def seg1 : List (ℕ × ℕ) :=
   [(243, 4), (244, 4), (245, 4), (246, 4), (247, 4), (248, 4), (249, 4), (250, 4), (251, 4), (252,
     4), (253, 4), (254, 4), (255, 4), (480, 1), (481, 2), (483, 1), (484, 2), (485, 4), (487, 2),
     (492, 1), (493, 2), (495, 1), (496, 1), (497, 2), (499, 1), (500, 2), (501, 4), (503, 2), (508,
@@ -55,19 +55,19 @@ def seg1 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev1 : List ℕ := []
+private noncomputable def ev1 : List ℕ := []
 
 private def checkedCount1 :
     { total : ℕ // P.sumEvE 20 3 qt ow qmFlat seg1 ev1 0 total = true } :=
   ⟨51388427, by decide +kernel⟩
 
-theorem sumOK1 :
+private theorem sumOK1 :
     P.sumEvE 20 3 qt ow qmFlat seg1 ev1 0 51388427 = true := checkedCount1.property
 
 /-- All orbit minima of this file. -/
-def seg : List (ℕ × ℕ) := seg0 ++ (seg1)
+private noncomputable def seg : List (ℕ × ℕ) := seg0 ++ (seg1)
 
-theorem segOK : checkSeg 9 perms 0 512 seg = true := by decide +kernel
+private theorem segOK : checkSeg 9 perms 0 512 seg = true := by decide +kernel
 
 theorem total : OrbitSeg 9 perms (P.leaf (20 + 3)) 0 512 512 91277262 :=
   OrbitSeg.of_checkSum segOK (by decide +kernel)

@@ -19,7 +19,7 @@ open RACert RACert.Problem
 namespace S0
 
 /-- Orbit minima `(α, orbit size)`, part 0. -/
-def seg0 : List (ℕ × ℕ) :=
+private noncomputable def seg0 : List (ℕ × ℕ) :=
   [(0, 1), (1, 1), (2, 2), (3, 2), (6, 1), (7, 1), (8, 4), (9, 4), (10, 8), (11, 8), (14, 4), (15,
     4), (24, 4), (25, 4), (26, 4), (27, 4), (28, 4), (29, 4), (30, 4), (31, 4), (48, 2), (49, 2),
     (50, 4), (51, 4), (54, 2), (55, 2), (56, 4), (57, 4), (58, 8), (59, 8), (62, 4), (63, 4), (120,
@@ -27,19 +27,19 @@ def seg0 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev0 : List ℕ := []
+private noncomputable def ev0 : List ℕ := []
 
 private def checkedCount0 :
     { total : ℕ // P.sumEvE 20 1 qt ow qmFlat seg0 ev0 0 total = true } :=
   ⟨3604496, by decide +kernel⟩
 
-theorem sumOK0 :
+private theorem sumOK0 :
     P.sumEvE 20 1 qt ow qmFlat seg0 ev0 0 3604496 = true := checkedCount0.property
 
 /-- All orbit minima of this file. -/
-def seg : List (ℕ × ℕ) := seg0
+private noncomputable def seg : List (ℕ × ℕ) := seg0
 
-theorem segOK : checkSeg 7 perms 0 128 seg = true := by decide +kernel
+private theorem segOK : checkSeg 7 perms 0 128 seg = true := by decide +kernel
 
 theorem total : OrbitSeg 7 perms (P.leaf (20 + 1)) 0 128 128 3604496 :=
   OrbitSeg.of_checkSum segOK (by decide +kernel)

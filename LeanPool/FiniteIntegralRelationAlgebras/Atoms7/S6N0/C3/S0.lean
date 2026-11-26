@@ -19,7 +19,7 @@ open RACert RACert.Problem
 namespace S0
 
 /-- Orbit minima `(α, orbit size)`, part 0. -/
-def seg0 : List (ℕ × ℕ) :=
+private noncomputable def seg0 : List (ℕ × ℕ) :=
   [(0, 1), (1, 4), (3, 2), (5, 2), (6, 2), (7, 4), (15, 1), (16, 4), (17, 8), (18, 8), (19, 8), (21,
     4), (22, 8), (23, 8), (26, 4), (27, 8), (31, 4), (48, 2), (49, 8), (51, 4), (53, 4), (54, 4),
     (55, 8), (63, 2), (80, 2), (81, 4), (82, 4), (83, 4), (85, 2), (86, 4), (87, 4), (90, 2), (91,
@@ -29,20 +29,21 @@ def seg0 : List (ℕ × ℕ) :=
 
 /-- Evidence: `i + 1` for a leaf killed by the `i`-th quadruple of `qmFlat`, `0` (or nothing) for an
 evaluated leaf. -/
-def ev0 : List ℕ := [0, 0, 0, 0, 0, 0, 0, 26, 26, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26,
+private noncomputable def ev0 : List ℕ :=
+  [0, 0, 0, 0, 0, 0, 0, 26, 26, 0, 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 26,
   26, 0, 0, 26]
 
 private def checkedCount0 :
     { total : ℕ // P.sumEvE 20 4 qt ow qmFlat seg0 ev0 0 total = true } :=
   ⟨93632936, by decide +kernel⟩
 
-theorem sumOK0 :
+private theorem sumOK0 :
     P.sumEvE 20 4 qt ow qmFlat seg0 ev0 0 93632936 = true := checkedCount0.property
 
 /-- All orbit minima of this file. -/
-def seg : List (ℕ × ℕ) := seg0
+private noncomputable def seg : List (ℕ × ℕ) := seg0
 
-theorem segOK : checkSeg 8 perms 0 256 seg = true := by decide +kernel
+private theorem segOK : checkSeg 8 perms 0 256 seg = true := by decide +kernel
 
 theorem total : OrbitSeg 8 perms (P.leaf (20 + 4)) 0 256 256 93632936 :=
   OrbitSeg.of_checkSum segOK (by decide +kernel)
