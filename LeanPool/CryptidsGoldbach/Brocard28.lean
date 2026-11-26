@@ -122,14 +122,14 @@ theorem mkL_B0 (R : ListBlank (Fin 2)) : mkL B0 R = ⟨0, B0, R⟩ := rfl
 theorem stepR {q q' : Fin 28} {a b : Fin 2}
     (h : brocard28.transition q a = some (b, .right, q'))
     (L R : ListBlank (Fin 2)) :
-    step brocard28 ⟨q, ⟨a, L, R⟩⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ := by
-  simp only [step, h, Option.map_some]; rfl
+    step brocard28 ⟨q, ⟨a, L, R⟩⟩ = some ⟨q', Tape.mk' (L.cons b) R⟩ :=
+  Goldbach21.step_right h L R
 
 theorem stepL {q q' : Fin 28} {a b : Fin 2}
     (h : brocard28.transition q a = some (b, .left, q'))
     (L R : ListBlank (Fin 2)) :
     step brocard28 ⟨q, ⟨a, L, R⟩⟩ = some ⟨q', mkL L (R.cons b)⟩ := by
-  simp only [step, h, Option.map_some]; rfl
+  simpa only [mk'_cons] using Goldbach21.step_mk'_left h L R
 
 /-! ## Transition Table
 
@@ -614,6 +614,29 @@ theorem adv_success (n a q : ℕ) :
   simp only [mk'_cons, nSteps_succ, sTR0_0, nSteps_zero, Option.bind_some, sTR1_0, mkL_cons,
     sSB_0, sSC_0]
 
+/-- `ER2` erases the remaining ones of `S`. Then `ER3` returns over the entire erased block and
+removes the last cell of `B` to start the next round. -/
+private theorem cleanup_to_round (n a erased remaining : ℕ) :
+    ∃ s, nSteps brocard28 s
+      ⟨21, Tape.mk' (zeros erased (((ones (a + 1) (NL n)).cons 1).cons 0)) (ones remaining B0)⟩ =
+      some (roundCfg n a) := by
+  let left := ((ones (a + 1) (NL n)).cons 1).cons 0
+  have erase := sweepR_erase sER2_1 remaining (zeros erased left) B0
+  have combine : zeros remaining (zeros erased left) = zeros (remaining + erased) left :=
+    Goldbach21.append_replicate_add remaining erased 0 left
+  rw [combine] at erase
+  have turn : step brocard28 ⟨21, Tape.mk' (zeros (remaining + erased) left) B0⟩ =
+      some ⟨22, mkL (zeros (remaining + erased) left) B0⟩ := by
+    rw [mkRight_blank, sER2_0, B0_cons_zero]
+  have back := sweepL_zeros sER3_0 (remaining + erased) left B0
+  rw [zeros_B0] at back
+  have finish : nSteps brocard28 2 ⟨22, mkL left B0⟩ = some (roundCfg n a) := by
+    change nSteps brocard28 2 ⟨22, mkL ((((ones a (NL n)).cons 1).cons 1).cons 0) B0⟩ =
+      some ⟨2, Tape.mk' (ones a (NL n)) (B0.cons 1)⟩
+    simp only [mkL_cons, nSteps_succ, sER3_0, B0_cons_zero, nSteps_zero, Option.bind_some, sER3_1,
+      mk'_cons]
+  exact ⟨_, nSteps_bind_eq erase (step_nSteps turn (nSteps_bind_eq back finish))⟩
+
 /-- A unit with `B` exhausted: `TE` finds the separator, `ER`/`ER2` erase `S`, `ER3` returns,
 erasing the last cell of `B`, and the next round starts. -/
 theorem adv_fail (n a p q : ℕ) :
@@ -637,29 +660,15 @@ theorem adv_fail (n a p q : ℕ) :
     simp only [mkL_cons, nSteps_succ, sTL0_0, nSteps_zero, Option.bind_some, sTL1_0, mk'_cons,
       sTE_0]
   have h₆ := sweepR_erase sER_1 p (((ones (a + 1) (NL n)).cons 1).cons 0) ((ones (q + 1) B0).cons 0)
-  set W := ((ones (a + 1) (NL n)).cons 1).cons 0 with hW
+  let W := ((ones (a + 1) (NL n)).cons 1).cons 0
   have h₇ : step brocard28 ⟨20, Tape.mk' (zeros p W) ((ones (q + 1) B0).cons 0)⟩ =
       some ⟨21, Tape.mk' ((zeros p W).cons 0) (ones (q + 1) B0)⟩ := by
     rw [mk'_cons, sER_0]
-  have h₈ := sweepR_erase sER2_1 (q + 1) ((zeros p W).cons 0) B0
-  have h₉ : step brocard28 ⟨21, Tape.mk' (zeros (q + 1) ((zeros p W).cons 0)) B0⟩ =
-      some ⟨22, mkL (zeros (q + 1) ((zeros p W).cons 0)) B0⟩ := by
-    rw [mkRight_blank, sER2_0, B0_cons_zero]
-  have h₁₀ := sweepL_zeros sER3_0 (q + 1) ((zeros p W).cons 0) B0
-  rw [zeros_B0] at h₁₀
-  have h₁₁ : step brocard28 ⟨22, mkL ((zeros p W).cons 0) B0⟩ = some ⟨22, mkL (zeros p W) B0⟩ := by
-    rw [mkL_cons, sER3_0, B0_cons_zero]
-  have h₁₂ := sweepL_zeros sER3_0 p W B0
-  rw [zeros_B0] at h₁₂
-  have h₁₃ : nSteps brocard28 2 ⟨22, mkL W B0⟩ = some (roundCfg n a) := by
-    rw [hW]
-    change nSteps brocard28 2 ⟨22, mkL ((((ones a (NL n)).cons 1).cons 1).cons 0) B0⟩ =
-      some ⟨2, Tape.mk' (ones a (NL n)) (B0.cons 1)⟩
-    simp only [mkL_cons, nSteps_succ, sER3_0, B0_cons_zero, nSteps_zero, Option.bind_some, sER3_1,
-      mk'_cons]
+  obtain ⟨_, finish⟩ := cleanup_to_round n a (p + 1) (q + 1)
+  rw [show zeros (p + 1) W = (zeros p W).cons 0 by
+    simp only [zeros, List.replicate_succ, ListBlank.append]] at finish
   exact ⟨_, step_nSteps h₁ (nSteps_bind_eq h₂ (nSteps_bind_eq h₃ (nSteps_bind_eq h₄
-    (nSteps_bind_eq h₅ (nSteps_bind_eq h₆ (step_nSteps h₇ (nSteps_bind_eq h₈ (step_nSteps h₉
-    (nSteps_bind_eq h₁₀ (step_nSteps h₁₁ (nSteps_bind_eq h₁₂ h₁₃)))))))))))⟩
+    (nSteps_bind_eq h₅ (nSteps_bind_eq h₆ (step_nSteps h₇ finish))))))⟩
 
 /-! ## Triangular Numbers and the Chunk Loop -/
 
@@ -831,20 +840,8 @@ theorem gate_back (n a S : ℕ) :
       some ⟨21, Tape.mk' (((ones (a + 1) (NL n)).cons 1).cons 0) (ones S B0)⟩ := by
     rw [hR]
     simp only [mk'_cons, nSteps_succ, sBs_0, nSteps_zero, Option.bind_some, sER_0]
-  set W := ((ones (a + 1) (NL n)).cons 1).cons 0 with hW
-  have h₅ := sweepR_erase sER2_1 S W B0
-  have h₆ : step brocard28 ⟨21, Tape.mk' (zeros S W) B0⟩ = some ⟨22, mkL (zeros S W) B0⟩ := by
-    rw [mkRight_blank, sER2_0, B0_cons_zero]
-  have h₇ := sweepL_zeros sER3_0 S W B0
-  rw [zeros_B0] at h₇
-  have h₈ : nSteps brocard28 2 ⟨22, mkL W B0⟩ = some (roundCfg n a) := by
-    rw [hW]
-    change nSteps brocard28 2 ⟨22, mkL ((((ones a (NL n)).cons 1).cons 1).cons 0) B0⟩ =
-      some ⟨2, Tape.mk' (ones a (NL n)) (B0.cons 1)⟩
-    simp only [mkL_cons, nSteps_succ, sER3_0, B0_cons_zero, nSteps_zero, Option.bind_some, sER3_1,
-      mk'_cons]
-  exact ⟨_, nSteps_bind_eq h₃ (nSteps_bind_eq h₄ (nSteps_bind_eq h₅ (step_nSteps h₆
-    (nSteps_bind_eq h₇ h₈))))⟩
+  obtain ⟨_, finish⟩ := cleanup_to_round n a 0 S
+  exact ⟨_, nSteps_bind_eq h₃ (nSteps_bind_eq h₄ finish)⟩
 
 /-- A success whose `B` has `a + 1 ≡ 2` or `3 (mod 4)` ones is suppressed: the next round
 starts. -/
