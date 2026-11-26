@@ -19,6 +19,7 @@ public import LeanPool.SplitCliqueGap.GapExtremal.Geometry
 public import LeanPool.SplitCliqueGap.GapExtremal.Global
 public import LeanPool.SplitCliqueGap.GapExtremal.Global2
 public import LeanPool.SplitCliqueGap.GapExtremal.GlobalLemmas
+public import LeanPool.SplitCliqueGap.GapExtremal.GraphPadding
 public import LeanPool.SplitCliqueGap.GapExtremal.Hosts
 public import LeanPool.SplitCliqueGap.GapExtremal.Layered
 public import LeanPool.SplitCliqueGap.GapExtremal.LayeredExponent

@@ -65,8 +65,6 @@ theorem midpoint_total {ε : ℝ} {x y z : Point} (hε : 0 < ε)
   have hxs := total_bounds hε hx
   have hys := total_bounds hε hy
   have hzs := total_bounds hε hz
-  have hmax₁ : 2 * y.1 ≤ x.1 + z.1 + 1 := by
-    rcases h₁ with h | h | h <;> linarith only [h]
   have hmax₂ : 2 * y.2 ≤ x.2 + z.2 + 1 := by
     rcases h₂ with h | h | h <;> linarith only [h]
   have hnotup : ¬ (total x + total z + 1 ≤ 2 * total y) := by

@@ -72,6 +72,49 @@ theorem pow_rpow_alpha {a M : ℕ} (ha : 1 ≤ a) (hM : 2 ≤ M) (j : ℕ) :
     show (j : ℝ) * (1 + Real.log a / Real.log M) = j + j * Real.log a / Real.log M by ring,
     Real.rpow_add hM0, Real.rpow_natCast, key, mul_comm]
 
+/-- Select the largest admissible power of the base and bound its associated gap scale. -/
+theorem exponent_budget {M a K n : ℕ} (hM : 2 ≤ M) (ha : 1 ≤ a) (hK : 0 < K)
+    (hn : K * M ≤ n) :
+    ∃ j : ℕ, K * M ^ j ≤ n ∧
+      ((K : ℝ) * M) ^ (-(1 + Real.log a / Real.log M)) / 3 *
+        (n : ℝ) ^ (1 + Real.log a / Real.log M) ≤ (a : ℝ) ^ j * (M : ℝ) ^ j / 3 := by
+  set α := 1 + Real.log a / Real.log M
+  have hM0 : (0 : ℝ) < M := by exact_mod_cast (show 0 < M by omega)
+  have hα : 0 ≤ α := by
+    have h1 : 0 ≤ Real.log a := Real.log_nonneg (by exact_mod_cast ha)
+    have h2 : 0 ≤ Real.log M := Real.log_nonneg (by exact_mod_cast (show 1 ≤ M by omega))
+    positivity
+  set j := Nat.log M (n / K) with hj
+  have hMj : M ^ j ≤ n / K := Nat.pow_log_le_self M (by
+    have : 1 ≤ n / K := (Nat.le_div_iff_mul_le hK).mpr (by
+      have := Nat.mul_le_mul_left K (show 1 ≤ M by omega); nlinarith)
+    omega)
+  have hlt : n / K < M ^ (j + 1) := Nat.lt_pow_succ_log_self (by omega) _
+  refine ⟨j, (Nat.mul_le_mul_left K hMj).trans (Nat.mul_div_le n K), ?_⟩
+  have hn' : (n : ℝ) / (K * M) ≤ (M : ℝ) ^ j := by
+    have h1 : n < K * (n / K) + K := by
+      have := Nat.div_add_mod n K
+      have := Nat.mod_lt n hK
+      omega
+    have h2 : n < K * M ^ (j + 1) := by
+      calc n < K * (n / K) + K := h1
+        _ = K * (n / K + 1) := by ring
+        _ ≤ K * M ^ (j + 1) := Nat.mul_le_mul_left K hlt
+    rw [div_le_iff₀ (by positivity)]
+    have : (n : ℝ) < K * M ^ (j + 1) := by exact_mod_cast h2
+    rw [pow_succ] at this
+    nlinarith
+  have hpow := pow_rpow_alpha ha hM j
+  have hmono : ((n : ℝ) / (K * M)) ^ α ≤ ((M : ℝ) ^ j) ^ α :=
+    Real.rpow_le_rpow (by positivity) hn' hα
+  have hsplit' : ((n : ℝ) / (K * M)) ^ α = ((K : ℝ) * M) ^ (-α) * (n : ℝ) ^ α := by
+    rw [Real.div_rpow (by positivity) (by positivity), Real.rpow_neg (by positivity)]
+    ring
+  calc ((K : ℝ) * M) ^ (-α) / 3 * (n : ℝ) ^ α = ((n : ℝ) / (K * M)) ^ α / 3 := by
+        rw [hsplit']; ring
+    _ ≤ ((M : ℝ) ^ j) ^ α / 3 := by linarith
+    _ = (a : ℝ) ^ j * (M : ℝ) ^ j / 3 := by rw [hpow]
+
 omit [DecidableEq F] [DecidableEq U] in
 /-- **TP-cond.** -/
 theorem tp_cond (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hS : IsSep F (A : Set U))
@@ -83,20 +126,10 @@ theorem tp_cond (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hS
   classical
   set M := Fintype.card U
   set K := 3 * Fintype.card F ^ 3
-  set α := 1 + Real.log A.card / Real.log M
   have hK : 0 < K := by positivity
-  have hM0 : (0 : ℝ) < M := by exact_mod_cast (show 0 < M by omega)
-  have hα : 0 ≤ α := by
-    have h1 : 0 ≤ Real.log A.card := Real.log_nonneg (by exact_mod_cast ha)
-    have h2 : 0 ≤ Real.log M := Real.log_nonneg (by exact_mod_cast (show 1 ≤ M by omega))
-    positivity
-  refine ⟨((K : ℝ) * M) ^ (-α) / 3, by positivity, fun n hn => ?_⟩
-  set j := Nat.log M (n / K) with hj
-  have hMj : M ^ j ≤ n / K := Nat.pow_log_le_self M (by
-    have : 1 ≤ n / K := (Nat.le_div_iff_mul_le hK).mpr (by
-      have := Nat.mul_le_mul_left K (show 1 ≤ M by omega); nlinarith)
-    omega)
-  have hlt : n / K < M ^ (j + 1) := Nat.lt_pow_succ_log_self (by omega) _
+  refine ⟨((K : ℝ) * M) ^ (-(1 + Real.log A.card / Real.log M)) / 3, by positivity,
+    fun n hn => ?_⟩
+  obtain ⟨j, hsize, hscale⟩ := exponent_budget hM ha hK hn
   -- the graph
   refine ⟨(F × (Fin j → U)) ⊕ HostIdx F (Fin j → U), inferInstance, instDecidableEqSum,
     hostGraph (palette (capPow A j) σ (isSep_capPow hS j)), ?_, isSplit_hostGraph _, ?_⟩
@@ -104,36 +137,11 @@ theorem tp_cond (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hS
     have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
     rw [hW] at this
     calc _ ≤ K * M ^ j := this
-      _ ≤ K * (n / K) := Nat.mul_le_mul_left K hMj
-      _ ≤ n := Nat.mul_div_le n K
+      _ ≤ n := hsize
   · have hgap := gap_ge_third (W := Fin j → U) σ (isCap_capPow hA j) (isSep_capPow hS j)
     have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
     rw [card_capPow, hW] at hgap
-    -- n < K M^{j+1}, so n/(K M) < M^j
-    have hn' : (n : ℝ) / (K * M) ≤ (M : ℝ) ^ j := by
-      have h1 : n < K * (n / K) + K := by
-        have := Nat.div_add_mod n K
-        have := Nat.mod_lt n hK
-        omega
-      have h2 : n < K * M ^ (j + 1) := by
-        calc n < K * (n / K) + K := h1
-          _ = K * (n / K + 1) := by ring
-          _ ≤ K * M ^ (j + 1) := Nat.mul_le_mul_left K hlt
-      rw [div_le_iff₀ (by positivity)]
-      have : (n : ℝ) < K * M ^ (j + 1) := by exact_mod_cast h2
-      rw [pow_succ] at this
-      nlinarith
-    have hpow := pow_rpow_alpha ha hM j
-    have hmono : ((n : ℝ) / (K * M)) ^ α ≤ ((M : ℝ) ^ j) ^ α :=
-      Real.rpow_le_rpow (by positivity) hn' hα
-    have hsplit : ((n : ℝ) / (K * M)) ^ α = ((K : ℝ) * M) ^ (-α) * (n : ℝ) ^ α := by
-      rw [Real.div_rpow (by positivity) (by positivity), Real.rpow_neg (by positivity)]
-      ring
     push_cast at hgap
-    refine le_trans ?_ hgap
-    calc ((K : ℝ) * M) ^ (-α) / 3 * (n : ℝ) ^ α = ((n : ℝ) / (K * M)) ^ α / 3 := by
-          rw [hsplit]; ring
-      _ ≤ ((M : ℝ) ^ j) ^ α / 3 := div_le_div_of_nonneg_right hmono (by norm_num)
-      _ = (A.card : ℝ) ^ j * (M : ℝ) ^ j / 3 := by rw [hpow]
+    exact hscale.trans hgap
 
 end GapExtremal

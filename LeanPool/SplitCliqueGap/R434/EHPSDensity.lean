@@ -16,6 +16,7 @@ import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Push
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.WLOG
+import Mathlib.Algebra.BigOperators.Fin
 
 /-! A lattice count of the seven vertical strips of the EHPS region. -/
 

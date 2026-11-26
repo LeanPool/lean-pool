@@ -61,43 +61,33 @@ theorem card_adj_add_j (S : Finset V) :
 
 theorem e_eq_card_adjPairs (S : Finset V) : e B S = (adjPairs B S).card := by
   unfold e adjPairs
-  refine Finset.card_bij (fun s _ => Sym2.lift ⟨fun u v => ({u, v} : Finset V),
-    fun u v => Finset.pair_comm u v⟩ s) ?_ ?_ ?_
+  refine Finset.card_bij (fun s _ => s.toFinset) ?_ ?_ ?_
   · intro s hs
     induction s using Sym2.ind with
     | h u v =>
       rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hs
-      simp only [Sym2.lift_mk, Finset.mem_filter, Finset.mem_powersetCard]
+      simp only [Sym2.toFinset_mk_eq, Finset.mem_filter, Finset.mem_powersetCard]
       refine ⟨⟨?_, Finset.card_pair hs.1.ne⟩, u, by simp, v, by simp, hs.1⟩
       intro x hx
       simp only [mem_insert, mem_singleton] at hx
       rcases hx with rfl | rfl
       exacts [hs.2.1, hs.2.2]
-  · intro s hs t ht hst
+  · intro s hs t _ hst
     induction s using Sym2.ind with
     | h a b =>
-    induction t using Sym2.ind with
-    | h c d =>
-      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hs ht
-      simp only [Sym2.lift_mk] at hst
-      have hab := hs.1.ne
-      have hcd := ht.1.ne
-      have hc : c ∈ ({a, b} : Finset V) := hst ▸ (by simp)
-      have hd : d ∈ ({a, b} : Finset V) := hst ▸ (by simp)
-      simp only [mem_insert, mem_singleton] at hc hd
-      rw [Sym2.eq_iff]
-      rcases hc with rfl | rfl <;> rcases hd with rfl | rfl
-      · exact absurd rfl hcd
-      · exact Or.inl ⟨rfl, rfl⟩
-      · exact Or.inr ⟨rfl, rfl⟩
-      · exact absurd rfl hcd
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hs
+      have hab := hs.1
+      have ha : a ∈ t.toFinset := hst ▸ (by simp)
+      have hb : b ∈ t.toFinset := hst ▸ (by simp)
+      rw [Sym2.mem_toFinset] at ha hb
+      exact ((Sym2.mem_and_mem_iff hab.ne).mp ⟨ha, hb⟩).symm
   · intro p hp
     simp only [Finset.mem_filter, Finset.mem_powersetCard] at hp
     obtain ⟨⟨hpS, h2⟩, x, hx, y, hy, hxy⟩ := hp
     refine ⟨s(x, y), ?_, ?_⟩
     · rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]
       exact ⟨hxy, hpS hx, hpS hy⟩
-    · simp only [Sym2.lift_mk]
+    · simp only [Sym2.toFinset_mk_eq]
       exact Finset.eq_of_subset_of_card_le (fun z hz => by
         simp only [mem_insert, mem_singleton] at hz
         rcases hz with rfl | rfl <;> assumption) (by rw [h2, card_pair hxy.ne])

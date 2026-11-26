@@ -6,7 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 /- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
-public import LeanPool.SplitCliqueGap.GapExtremal.Global
+public import LeanPool.SplitCliqueGap.GapExtremal.GlobalLemmas
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Choose
@@ -77,8 +77,6 @@ theorem what_union {A Z : Finset V} (h : Disjoint A Z) :
   have hc := card_union_choose_two h
   have he := e_union (B := B) A Z h
   unfold what w
-  have hD : D B (A ∪ Z) (A ∪ Z) = D B A A + D B A Z + (D B Z A + D B Z Z) := by
-    rw [D_union_left B h, D_union_right B h, D_union_right B h]
   rw [he, hc]
   ring
 

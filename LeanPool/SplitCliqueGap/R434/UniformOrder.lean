@@ -38,9 +38,9 @@ theorem odd_floor_close {x : ℝ} (hx : 1 ≤ x) :
     dsimp only [y] at hk
     linarith
 
-theorem log_linear_error (A B d : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B) (hd : 0 < d) :
+theorem log_linear_error (A B d : ℝ) (hA : 0 ≤ A) (hd : 0 < d) :
     ∃ T : ℝ, 1 ≤ T ∧ ∀ t : ℝ, T ≤ t → A * log t + B ≤ d * t := by
-  obtain ⟨T,hT,h⟩ := R417.log_error_absorption A B d hA hB hd
+  obtain ⟨T,hT,h⟩ := R417.log_error_absorption A B d hA hd
   refine ⟨T,hT,fun t ht => ?_⟩
   have ht₀ : 0 < t := by linarith
   apply (mul_le_mul_iff_left₀ ht₀).mp
@@ -56,8 +56,7 @@ theorem rounded_order_witness (H : ℕ → ℕ) (A c : ℝ) (hA : 1 ≤ A)
       (m₀ : ℝ) + 2 ≤ t ∧ (j : ℝ) ≤ t ∧ log n = c * t^2 ∧
       2 * (log n - 2 * (j : ℝ) * log (m : ℝ)) ≤ 2 * (log A + log t + 1) ∧
       2 * log (m : ℝ) ≤ c * (t + 2) := by
-  have hAl : 0 ≤ log A := log_nonneg hA
-  obtain ⟨T₁,hT₁,h₁⟩ := log_linear_error 1 (log A) (c/2) (by norm_num) hAl (by positivity)
+  obtain ⟨T₁,hT₁,h₁⟩ := log_linear_error 1 (log A) (c/2) (by norm_num) (by positivity)
   have hWpos : 0 < W := by linarith
   let T := 2 + T₁ + 32 * W / c ^ 2 + (m₀ : ℝ) + 2
   refine ⟨⌈exp (c * T ^ 2)⌉₊, fun n hn => ?_⟩
@@ -186,11 +185,9 @@ theorem uniform_order_parameters (H : ℕ → ℕ) (A K c η : ℝ) (hA : 1 ≤ 
   let C := 27 * (1 + K)
   have hC : 1 ≤ C := by dsimp [C]; linarith
   have hC₀ : 0 < C := by linarith
-  have hAl : 0 ≤ log A := log_nonneg hA
-  have hCl : 0 ≤ log C := log_nonneg hC
   let b := 2 * log A + 2 + 2 * c + log C
   obtain ⟨T₂,hT₂,h₂⟩ := log_linear_error 3 b (η * sqrt c) (by norm_num)
-    (by dsimp [b]; linarith) (mul_pos hη (sqrt_pos.mpr hc))
+    (mul_pos hη (sqrt_pos.mpr hc))
   let M := max m₀ ⌈T₂⌉₊
   obtain ⟨N,hN⟩ := rounded_order_witness H A c hA hc 10 (by norm_num) M hH
   refine ⟨N, fun n hn => ?_⟩

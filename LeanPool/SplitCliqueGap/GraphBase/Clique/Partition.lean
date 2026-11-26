@@ -95,40 +95,50 @@ section Integral
 
 variable [DecidableEq V]
 
+omit [DecidableEq V] in
+/-- The edges, as two-element sets, form a clique partition with `|E(G)|` members. -/
+theorem exists_isCliquePartition_card_eq_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj] :
+    ∃ P, G.IsCliquePartition P ∧ P.card = G.edgeFinset.card := by
+  classical
+  refine ⟨G.edgeFinset.image Sym2.toFinset, ⟨?_, ?_, ?_⟩, ?_⟩
+  · simp only [Finset.mem_image, mem_edgeFinset]
+    rintro s ⟨e, he, rfl⟩
+    induction e using Sym2.ind with
+    | h a b =>
+      rw [mem_edgeSet] at he
+      rw [Sym2.toFinset_mk_eq, Finset.card_pair he.ne]
+  · simp only [Finset.mem_image, mem_edgeFinset]
+    rintro s ⟨e, he, rfl⟩
+    induction e using Sym2.ind with
+    | h a b =>
+      rw [mem_edgeSet] at he
+      rw [Sym2.toFinset_mk_eq, Finset.coe_pair]
+      exact isClique_pair.mpr (fun _ => he)
+  · intro u v huv
+    refine ⟨s(u, v).toFinset,
+      ⟨Finset.mem_image.mpr ⟨s(u, v), by simpa using huv, rfl⟩, by simp, by simp⟩, ?_⟩
+    rintro s ⟨hs, hu, hv⟩
+    obtain ⟨e, -, rfl⟩ := Finset.mem_image.mp hs
+    rw [Sym2.mem_toFinset] at hu hv
+    rw [(Sym2.mem_and_mem_iff huv.ne).mp ⟨hu, hv⟩]
+  · apply Finset.card_image_of_injOn
+    intro e he e' _ h
+    simp only [mem_edgeFinset, Finset.mem_coe] at he
+    induction e using Sym2.ind with
+    | h a b =>
+      have hab := (mem_edgeSet G).mp he
+      have ha : a ∈ e'.toFinset := by rw [← h]; simp
+      have hb : b ∈ e'.toFinset := by rw [← h]; simp
+      rw [Sym2.mem_toFinset] at ha hb
+      exact ((Sym2.mem_and_mem_iff hab.ne).mp ⟨ha, hb⟩).symm
+
 omit [Fintype V] [DecidableEq V] in
 /-- The edges, as pairs, form a clique partition. -/
 theorem exists_isCliquePartition [Finite V] (G : SimpleGraph V) : ∃ P, G.IsCliquePartition P := by
   classical
   let _ := Fintype.ofFinite V
-  refine ⟨(univ.filter (fun p : V × V => G.Adj p.1 p.2)).image (fun p => {p.1, p.2}), ?_, ?_, ?_⟩
-  · intro Q hQ
-    simp only [mem_image, mem_filter, mem_univ, true_and] at hQ
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := hQ
-    rw [card_pair hab.ne]
-  · intro Q hQ
-    simp only [mem_image, mem_filter, mem_univ, true_and] at hQ
-    obtain ⟨⟨a, b⟩, hab, rfl⟩ := hQ
-    intro u hu v hv huv
-    simp only [coe_insert, coe_singleton, Set.mem_insert_iff, Set.mem_singleton_iff] at hu hv
-    rcases hu with rfl | rfl <;> rcases hv with rfl | rfl
-    · exact absurd rfl huv
-    · exact hab
-    · exact hab.symm
-    · exact absurd rfl huv
-  · intro u v huv
-    refine ⟨{u, v}, ⟨?_, by simp, by simp⟩, ?_⟩
-    · simp only [mem_image, mem_filter, mem_univ, true_and]
-      exact ⟨(u, v), huv, rfl⟩
-    · rintro Q ⟨hQ, huQ, hvQ⟩
-      simp only [mem_image, mem_filter, mem_univ, true_and] at hQ
-      obtain ⟨⟨a, b⟩, hab, rfl⟩ := hQ
-      simp only [mem_insert, mem_singleton] at huQ hvQ
-      have hne := huv.ne
-      rcases huQ with rfl | rfl <;> rcases hvQ with rfl | rfl
-      · exact absurd rfl hne
-      · rfl
-      · exact pair_comm _ _
-      · exact absurd rfl hne
+  obtain ⟨P, hP, _⟩ := exists_isCliquePartition_card_eq_edgeFinset G
+  exact ⟨P, hP⟩
 
 omit [Fintype V] [DecidableEq V] in
 theorem cliquePartitionNumber_le {P : Finset (Finset V)} (hP : G.IsCliquePartition P) :
@@ -169,43 +179,6 @@ theorem cliquePartitionNumber_le_iff [Finite V] (G : SimpleGraph V) {m : ℕ} :
     exact ⟨P, hP, hc.le.trans h⟩
   · rintro ⟨P, hP, hc⟩
     exact (cliquePartitionNumber_le hP).trans hc
-
-omit [DecidableEq V] in
-/-- The edges, as two-element sets, form a clique partition with `|E(G)|` members. -/
-theorem exists_isCliquePartition_card_eq_edgeFinset (G : SimpleGraph V) [DecidableRel G.Adj] :
-    ∃ P, G.IsCliquePartition P ∧ P.card = G.edgeFinset.card := by
-  classical
-  refine ⟨G.edgeFinset.image Sym2.toFinset, ⟨?_, ?_, ?_⟩, ?_⟩
-  · simp only [Finset.mem_image, mem_edgeFinset]
-    rintro s ⟨e, he, rfl⟩
-    induction e using Sym2.ind with
-    | h a b =>
-      rw [mem_edgeSet] at he
-      rw [Sym2.toFinset_mk_eq, Finset.card_pair he.ne]
-  · simp only [Finset.mem_image, mem_edgeFinset]
-    rintro s ⟨e, he, rfl⟩
-    induction e using Sym2.ind with
-    | h a b =>
-      rw [mem_edgeSet] at he
-      rw [Sym2.toFinset_mk_eq, Finset.coe_pair]
-      exact isClique_pair.mpr (fun _ => he)
-  · intro u v huv
-    refine ⟨s(u, v).toFinset,
-      ⟨Finset.mem_image.mpr ⟨s(u, v), by simpa using huv, rfl⟩, by simp, by simp⟩, ?_⟩
-    rintro s ⟨hs, hu, hv⟩
-    obtain ⟨e, -, rfl⟩ := Finset.mem_image.mp hs
-    rw [Sym2.mem_toFinset] at hu hv
-    rw [(Sym2.mem_and_mem_iff huv.ne).mp ⟨hu, hv⟩]
-  · apply Finset.card_image_of_injOn
-    intro e he e' _ h
-    simp only [mem_edgeFinset, Finset.mem_coe] at he
-    induction e using Sym2.ind with
-    | h a b =>
-      have hab := (mem_edgeSet G).mp he
-      have ha : a ∈ e'.toFinset := by rw [← h]; simp
-      have hb : b ∈ e'.toFinset := by rw [← h]; simp
-      rw [Sym2.mem_toFinset] at ha hb
-      exact ((Sym2.mem_and_mem_iff hab.ne).mp ⟨ha, hb⟩).symm
 
 omit [DecidableEq V] in
 /-- The members of a clique partition are cliques of order at least two. -/

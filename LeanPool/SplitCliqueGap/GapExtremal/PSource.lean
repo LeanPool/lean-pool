@@ -121,18 +121,9 @@ theorem presPack : ResPack (pysrc D C) where
     · exact absurd rfl h
   load a b hab := by
     classical
-    set T := (ppieces D C).filter (fun S => a ∈ S ∧ b ∈ S) with hT
-    have hsum : ∑ S, (if a ∈ S ∧ b ∈ S then pysrc D C S else 0) = T.card * (1 / 3 : ℝ) := by
-      rw [hT, Finset.card_filter, Nat.cast_sum, Finset.sum_mul]
-      rw [← Finset.sum_subset (Finset.subset_univ (ppieces D C))]
-      · refine Finset.sum_congr rfl fun S hS => ?_
-        unfold pysrc
-        rw [ite_eq_left hS]
-        split_ifs <;> simp
-      · intro S _ hS
-        unfold pysrc
-        rw [ite_eq_right hS]
-        simp
+    set T := (ppieces D C).filter (fun S => a ∈ S ∧ b ∈ S)
+    have hsum : ∑ S, (if a ∈ S ∧ b ∈ S then pysrc D C S else 0) = T.card * (1 / 3 : ℝ) :=
+      by simpa only [pysrc, T] using source_pair_weight (ppieces D C) a b
     rw [hsum]
     have hT3 : T.card ≤ 3 := by
       rcases T.eq_empty_or_nonempty with h0 | ⟨S0, hS0⟩
@@ -190,16 +181,6 @@ omit [DecidableEq F] [DecidableEq P] [DecidableEq W] [Fintype F] in
 theorem pvalue :
     (25 / 3 : ℝ) * (C.card * Fintype.card W) ≤ ∑ S, pysrc D C S * (w (PB D C) S : ℝ) := by
   classical
-  have h1 : ∑ S, pysrc D C S * (w (PB D C) S : ℝ) =
-      ∑ x ∈ pidx C, (1 / 3 : ℝ) * (w (PB D C) (ppiece D x) : ℝ) := by
-    rw [← Finset.sum_image (f := fun S => (1 / 3 : ℝ) * (w (PB D C) S : ℝ)) (ppiece_injOn D)]
-    rw [← Finset.sum_subset (Finset.subset_univ (ppieces D C))]
-    · refine Finset.sum_congr rfl fun S hS => ?_
-      unfold pysrc
-      rw [ite_eq_left (show S ∈ ppieces D C from hS)]
-    · intro S _ hS
-      unfold pysrc
-      rw [ite_eq_right (show S ∉ ppieces D C from hS), zero_mul]
   have h2 : ∀ x ∈ pidx C, ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) ≤
       (w (PB D C) (ppiece D x) : ℝ) := by
     rintro ⟨⟨c, w0⟩, K⟩ hx
@@ -213,20 +194,11 @@ theorem pvalue :
     have : (H12.eH K : ℝ) ≤ (e (PB D C) (ppiece D ((c, w0), K)) : ℝ) := by exact_mod_cast he
     push_cast
     linarith
-  rw [h1]
-  calc (25 / 3 : ℝ) * (C.card * Fintype.card W)
-      = ∑ x ∈ pidx C, (1 / 3 : ℝ) *
-          ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) := by
-        rw [← Finset.mul_sum, pidx, Finset.sum_product]
-        simp only
-        have hv : ∑ K ∈ src, ((2 * (H12.eH K : ℤ) - (K.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) = 25 := by
-          exact_mod_cast src_value
-        rw [Finset.sum_congr rfl fun _ _ => hv, Finset.sum_const, Finset.card_product,
-          Finset.card_univ, nsmul_eq_mul]
-        push_cast
-        ring
-    _ ≤ _ := Finset.sum_le_sum fun x hx => by
-        have := h2 x hx
-        linarith
+  have bound := source_score_bound C (ppiece D) (fun S => (w (PB D C) S : ℝ)) (ppiece_injOn D) h2
+  refine bound.trans (le_of_eq ?_)
+  apply Finset.sum_congr rfl
+  intro S _
+  unfold pysrc ppieces
+  by_cases hS : S ∈ (pidx C).image (ppiece D) <;> simp [hS]
 
 end GapExtremal

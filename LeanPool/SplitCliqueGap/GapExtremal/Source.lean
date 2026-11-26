@@ -176,6 +176,21 @@ omit [Fintype F] [Fintype W] in
 theorem mem_piece_iff {x : (W × W) × Finset (Fin 6)} {p : F × W} :
     p ∈ piece σ x ↔ ∃ i ∈ x.2, ptc σ x.1.2 x.1.1 i = p := Finset.mem_image
 
+open Classical in
+/-- The pair load of a uniform one-third source counts the pieces containing the pair. -/
+theorem source_pair_weight {α : Type*} [Fintype α] [DecidableEq α]
+    (P : Finset (Finset α)) (a b : α) :
+    (∑ S, if a ∈ S ∧ b ∈ S then (if S ∈ P then (1 : ℝ) / 3 else 0) else 0) =
+      ((P.filter (fun S => a ∈ S ∧ b ∈ S)).card : ℝ) * (1 / 3) := by
+  rw [Finset.card_filter, Nat.cast_sum, Finset.sum_mul]
+  rw [← Finset.sum_subset (Finset.subset_univ P)]
+  · refine Finset.sum_congr rfl fun S hS => ?_
+    rw [ite_eq_left hS]
+    split_ifs <;> simp
+  · intro S _ hS
+    rw [ite_eq_right hS]
+    simp
+
 theorem resPack_ysrc : ResPack (ysrc C σ) where
   nonneg S := by unfold ysrc; split_ifs <;> norm_num
   two S h := by
@@ -188,18 +203,9 @@ theorem resPack_ysrc : ResPack (ysrc C σ) where
     · exact absurd rfl h
   load a b hab := by
     classical
-    set T := (pieces C σ).filter (fun S => a ∈ S ∧ b ∈ S) with hT
-    have hsum : ∑ S, (if a ∈ S ∧ b ∈ S then ysrc C σ S else 0) = T.card * (1 / 3 : ℝ) := by
-      rw [hT, Finset.card_filter, Nat.cast_sum, Finset.sum_mul]
-      rw [← Finset.sum_subset (Finset.subset_univ (pieces C σ))]
-      · refine Finset.sum_congr rfl fun S hS => ?_
-        unfold ysrc
-        rw [ite_eq_left hS]
-        split_ifs <;> simp
-      · intro S _ hS
-        unfold ysrc
-        rw [ite_eq_right hS]
-        simp
+    set T := (pieces C σ).filter (fun S => a ∈ S ∧ b ∈ S)
+    have hsum : ∑ S, (if a ∈ S ∧ b ∈ S then ysrc C σ S else 0) = T.card * (1 / 3 : ℝ) :=
+      by simpa only [ysrc, T] using source_pair_weight (pieces C σ) a b
     rw [hsum]
     have hT3 : T.card ≤ 3 := by
       rcases T.eq_empty_or_nonempty with h0 | ⟨S0, hS0⟩
@@ -228,20 +234,41 @@ theorem resPack_ysrc : ResPack (ysrc C σ) where
     have : (T.card : ℝ) ≤ 3 := by exact_mod_cast hT3
     linarith
 
+open Classical in
+/-- Sum the template score over an injectively indexed family of source pieces. -/
+theorem source_score_bound {α U : Type*} [Fintype α] [DecidableEq α] [Fintype U] (C : Finset U)
+    (piece : (U × U) × Finset (Fin 6) → Finset α) (score : Finset α → ℝ)
+    (hinj : Set.InjOn piece (pidx C : Set _))
+    (hscore : ∀ x ∈ pidx C,
+      ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) ≤ score (piece x)) :
+    (25 / 3 : ℝ) * (C.card * Fintype.card U) ≤
+      ∑ S, (if S ∈ (pidx C).image piece then (1 : ℝ) / 3 else 0) * score S := by
+  have h1 : (∑ S, (if S ∈ (pidx C).image piece then (1 : ℝ) / 3 else 0) * score S) =
+      ∑ x ∈ pidx C, (1 / 3 : ℝ) * score (piece x) := by
+    rw [← Finset.sum_image (f := fun S => (1 / 3 : ℝ) * score S) hinj]
+    rw [← Finset.sum_subset (Finset.subset_univ ((pidx C).image piece))]
+    · exact Finset.sum_congr rfl fun S hS => by rw [ite_eq_left hS]
+    · intro S _ hS
+      rw [ite_eq_right hS, zero_mul]
+  rw [h1]
+  calc (25 / 3 : ℝ) * (C.card * Fintype.card U)
+      = ∑ x ∈ pidx C, (1 / 3 : ℝ) *
+          ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) := by
+        rw [← Finset.mul_sum, pidx, Finset.sum_product]
+        simp only
+        have hv : ∑ K ∈ src, ((2 * (H12.eH K : ℤ) - (K.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) = 25 := by
+          exact_mod_cast src_value
+        rw [Finset.sum_congr rfl fun _ _ => hv, Finset.sum_const, Finset.card_product,
+          Finset.card_univ, nsmul_eq_mul]
+        push_cast
+        ring
+    _ ≤ _ := Finset.sum_le_sum fun x hx =>
+      mul_le_mul_of_nonneg_left (hscore x hx) (by norm_num)
+
 /-- **L7.4.** The source has value at least `25/3` per block. -/
 theorem value_ysrc :
     (25 / 3 : ℝ) * (C.card * Fintype.card W) ≤ ∑ S, ysrc C σ S * (w (Bgr C σ) S : ℝ) := by
   classical
-  have h1 : ∑ S, ysrc C σ S * (w (Bgr C σ) S : ℝ) =
-      ∑ x ∈ pidx C, (1 / 3 : ℝ) * (w (Bgr C σ) (piece σ x) : ℝ) := by
-    rw [← Finset.sum_image (f := fun S => (1 / 3 : ℝ) * (w (Bgr C σ) S : ℝ)) piece_injOn]
-    rw [← Finset.sum_subset (Finset.subset_univ (pieces C σ))]
-    · refine Finset.sum_congr rfl fun S hS => ?_
-      unfold ysrc
-      rw [ite_eq_left (show S ∈ pieces C σ from hS)]
-    · intro S _ hS
-      unfold ysrc
-      rw [ite_eq_right (show S ∉ pieces C σ from hS), zero_mul]
   have h2 : ∀ x ∈ pidx C, ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) ≤
       (w (Bgr C σ) (piece σ x) : ℝ) := by
     rintro ⟨⟨c, w0⟩, K⟩ hx
@@ -255,20 +282,11 @@ theorem value_ysrc :
     have : (H12.eH K : ℝ) ≤ (e (Bgr C σ) (piece σ ((c, w0), K)) : ℝ) := by exact_mod_cast he
     push_cast
     linarith
-  rw [h1]
-  calc (25 / 3 : ℝ) * (C.card * Fintype.card W)
-      = ∑ x ∈ pidx C, (1 / 3 : ℝ) *
-          ((2 * (H12.eH x.2 : ℤ) - (x.2.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) := by
-        rw [← Finset.mul_sum, pidx, Finset.sum_product]
-        simp only
-        have hv : ∑ K ∈ src, ((2 * (H12.eH K : ℤ) - (K.card.choose 2 : ℕ) - 1 : ℤ) : ℝ) = 25 := by
-          exact_mod_cast src_value
-        rw [Finset.sum_congr rfl fun _ _ => hv, Finset.sum_const, Finset.card_product,
-          Finset.card_univ, nsmul_eq_mul]
-        push_cast
-        ring
-    _ ≤ _ := Finset.sum_le_sum fun x hx => by
-        have := h2 x hx
-        linarith
+  have bound := source_score_bound C (piece σ) (fun S => (w (Bgr C σ) S : ℝ)) piece_injOn h2
+  refine bound.trans (le_of_eq ?_)
+  apply Finset.sum_congr rfl
+  intro S _
+  unfold ysrc pieces
+  by_cases hS : S ∈ (pidx C).image (piece σ) <;> simp [hS]
 
 end GapExtremal

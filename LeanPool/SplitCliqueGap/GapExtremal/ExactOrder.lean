@@ -7,7 +7,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.SplitCliqueGap.GapExtremal.Sphere
-public import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
+public import LeanPool.SplitCliqueGap.GapExtremal.GraphPadding
 import Mathlib.Tactic.Choose
 import Mathlib.Tactic.FieldSimp
 import Mathlib.Tactic.Linarith
@@ -18,20 +18,10 @@ import Mathlib.Tactic.Ring
 import Mathlib.Tactic.SplitIfs
 
 /-!
-# Exact order and connectivity (ledger L1.2)
+# Exact-order exponent estimates for split graphs
 
-Hosts whose palette is a single core vertex are pendant leaves. Padding a host family (`padN`):
-* gives every empty palette the vertex `x₀`;
-* adds `k` new hosts with palette `{x₀}`.
+The cap construction combines the host padding theorem with a quantitative choice of seed.
 
-The bridge hypotheses `HostHyp` survive (`HostHyp.pad`), so the lower bound of `gap_ge` is
-unchanged. The graph
-stays split, becomes connected (`connected_hostGraph`), and its order grows by exactly `k`. With
-`exponent_of_family_exact` this gives the final statements for split **connected** graphs of order
-**exactly**
-`n`:
-* `tp_single_s_exact`;
-* **`exponent_two_exact`**.
 -/
 
 @[expose] public section
@@ -39,75 +29,6 @@ stays split, becomes connected (`connected_hostGraph`), and its order grows by e
 namespace GapExtremal
 
 open Finset
-
-/-! ### Padding a host family -/
-
-section Pad
-
-variable {V : Type*} [Fintype V] [DecidableEq V] {H : Type*} [Fintype H] [DecidableEq H]
-
-/-- Padded palettes: empty palettes become `{x₀}`, and `k` new hosts with palette `{x₀}`. -/
-def padN (N : H → Finset V) (x0 : V) (k : ℕ) : H ⊕ Fin k → Finset V
-  | .inl h => if N h = ∅ then {x0} else N h
-  | .inr _ => {x0}
-
-omit [DecidableEq H] [Fintype H] [Fintype V] in
-theorem padN_nonempty (N : H → Finset V) (x0 : V) (k : ℕ) (h : H ⊕ Fin k) : (padN N x0 k
-  h).Nonempty := by
-  rcases h with h | i
-  · simp only [padN]
-    split_ifs with h0
-    · exact Finset.singleton_nonempty _
-    · exact Finset.nonempty_iff_ne_empty.mpr h0
-  · exact Finset.singleton_nonempty _
-
-omit [DecidableEq H] [Fintype H] [Fintype V] in
-theorem HostHyp.pad {B : SimpleGraph V} {N : H → Finset V} {φ : V → V → H}
-    (hH : HostHyp B N φ) (x0 : V) (k : ℕ) :
-    HostHyp B (padN N x0 k) (fun x y => Sum.inl (φ x y)) where
-  indep := by
-    rintro (h | i) x hx y hy hxy
-    · simp only [padN] at hx hy
-      split_ifs at hx hy with h0
-      · rw [Finset.mem_singleton] at hx hy
-        subst hx; subst hy
-        exact B.loopless.irrefl _ hxy
-      · exact hH.indep h x hx y hy hxy
-    · simp only [padN, Finset.mem_singleton] at hx hy
-      subst hx; subst hy
-      exact B.loopless.irrefl _ hxy
-  cover := by
-    intro x y hne hadj
-    obtain ⟨hx, hy⟩ := hH.cover x y hne hadj
-    have h0 : N (φ x y) ≠ ∅ := Finset.ne_empty_of_mem hx
-    simp only [padN, ite_eq_right h0]
-    exact ⟨hx, hy⟩
-  symm := fun x y => by rw [hH.symm x y]
-  inj := fun x y y' h1 h2 h3 h4 h => hH.inj x y y' h1 h2 h3 h4 (Sum.inl_injective h)
-
-omit [DecidableEq H] [DecidableEq V] in
-theorem card_pad (k : ℕ) :
-    Fintype.card (V ⊕ (H ⊕ Fin k)) = Fintype.card (V ⊕ H) + k := by
-  simp only [Fintype.card_sum, Fintype.card_fin]
-  ring
-
-omit [DecidableEq V] [Fintype V] in
-/-- A host graph with a nonempty core and nonempty palettes is connected. -/
-theorem connected_hostGraph {H' : Type*} (N : H' → Finset V) (x0 : V)
-    (hN : ∀ h, (N h).Nonempty) :
-    (hostGraph N).Connected := by
-  rw [SimpleGraph.connected_iff_exists_forall_reachable]
-  have hcore : ∀ y : V, (hostGraph N).Reachable (.inl x0) (.inl y) := fun y => by
-    by_cases hy : x0 = y
-    · rw [hy]
-    · exact SimpleGraph.Adj.reachable ((hostGraph_inl_inl N _ _).mpr hy)
-  refine ⟨.inl x0, ?_⟩
-  rintro (y | h)
-  · exact hcore y
-  · obtain ⟨y, hy⟩ := hN h
-    exact (hcore y).trans (SimpleGraph.Adj.reachable ((hostGraph_inl_inr N _ _).mpr hy))
-
-end Pad
 
 /-! ### From a padded family to every order -/
 
@@ -122,49 +43,13 @@ theorem exponent_of_family_exact {M a K : ℕ} (hM : 2 ≤ M) (ha : 1 ≤ a) (hK
       ∃ (V' : Type) (_ : Fintype V') (_ : DecidableEq V') (G' : SimpleGraph V'),
         Fintype.card V' = n ∧ IsSplit G' ∧ G'.Connected ∧
         c * (n : ℝ) ^ (1 + Real.log a / Real.log M) ≤ gap G' := by
-  set α := 1 + Real.log a / Real.log M
-  have hM0 : (0 : ℝ) < M := by exact_mod_cast (show 0 < M by omega)
-  have hα : 0 ≤ α := by
-    have h1 : 0 ≤ Real.log a := Real.log_nonneg (by exact_mod_cast ha)
-    have h2 : 0 ≤ Real.log M := Real.log_nonneg (by exact_mod_cast (show 1 ≤ M by omega))
-    positivity
-  refine ⟨((K : ℝ) * M) ^ (-α) / 3, by positivity, fun n hn => ?_⟩
-  set j := Nat.log M (n / K) with hj
-  have hMj : M ^ j ≤ n / K := Nat.pow_log_le_self M (by
-    have : 1 ≤ n / K := (Nat.le_div_iff_mul_le hK).mpr (by
-      have := Nat.mul_le_mul_left K (show 1 ≤ M by omega); nlinarith)
-    omega)
-  have hlt : n / K < M ^ (j + 1) := Nat.lt_pow_succ_log_self (by omega) _
-  have hbn : b j ≤ n := by
-    calc b j ≤ K * M ^ j := hb j
-      _ ≤ K * (n / K) := Nat.mul_le_mul_left K hMj
-      _ ≤ n := Nat.mul_div_le n K
-  refine ⟨V j (n - b j), inferInstance, inferInstance, G j (n - b j), ?_, hsplit _ _, hconn _ _, ?_⟩
-  · rw [hcard]; omega
-  · have hn' : (n : ℝ) / (K * M) ≤ (M : ℝ) ^ j := by
-      have h1 : n < K * (n / K) + K := by
-        have := Nat.div_add_mod n K
-        have := Nat.mod_lt n hK
-        omega
-      have h2 : n < K * M ^ (j + 1) := by
-        calc n < K * (n / K) + K := h1
-          _ = K * (n / K + 1) := by ring
-          _ ≤ K * M ^ (j + 1) := Nat.mul_le_mul_left K hlt
-      rw [div_le_iff₀ (by positivity)]
-      have : (n : ℝ) < K * M ^ (j + 1) := by exact_mod_cast h2
-      rw [pow_succ] at this
-      nlinarith
-    have hpow := pow_rpow_alpha ha hM j
-    have hmono : ((n : ℝ) / (K * M)) ^ α ≤ ((M : ℝ) ^ j) ^ α :=
-      Real.rpow_le_rpow (by positivity) hn' hα
-    have hsplit' : ((n : ℝ) / (K * M)) ^ α = ((K : ℝ) * M) ^ (-α) * (n : ℝ) ^ α := by
-      rw [Real.div_rpow (by positivity) (by positivity), Real.rpow_neg (by positivity)]
-      ring
-    refine le_trans ?_ (hgap j _)
-    calc ((K : ℝ) * M) ^ (-α) / 3 * (n : ℝ) ^ α = ((n : ℝ) / (K * M)) ^ α / 3 := by
-          rw [hsplit']; ring
-      _ ≤ ((M : ℝ) ^ j) ^ α / 3 := by linarith
-      _ = (a : ℝ) ^ j * (M : ℝ) ^ j / 3 := by rw [hpow]
+  refine ⟨((K : ℝ) * M) ^ (-(1 + Real.log a / Real.log M)) / 3, by positivity, fun n hn => ?_⟩
+  obtain ⟨j, hsize, hscale⟩ := exponent_budget hM ha hK hn
+  have hbn : b j ≤ n := (hb j).trans hsize
+  refine ⟨V j (n - b j), inferInstance, inferInstance, G j (n - b j), ?_, hsplit _ _, hconn _ _,
+    hscale.trans (hgap j _)⟩
+  rw [hcard]
+  omega
 
 /-! ### The padded positioned construction -/
 

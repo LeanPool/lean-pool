@@ -7,6 +7,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.SplitCliqueGap.GapExtremal.Hosts
+public import LeanPool.SplitCliqueGap.GapExtremal.GraphPadding
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Push
@@ -27,21 +28,6 @@ the split graph `G(C) = hostGraph (palette C σ hS)` on `(F × W) ⊕ HostIdx F 
 namespace GapExtremal
 
 open Finset
-
-/-- Split graphs: a clique and an independent set covering all vertices. -/
-def IsSplit {V : Type*} (G : SimpleGraph V) : Prop :=
-  ∃ K : Set V, (∀ x ∈ K, ∀ y ∈ K, x ≠ y → G.Adj x y) ∧ (∀ x ∉ K, ∀ y ∉ K, ¬ G.Adj x y)
-
-theorem isSplit_hostGraph {V H : Type*}
-    (N : H → Finset V) : IsSplit (hostGraph N) := by
-  refine ⟨Set.range Sum.inl, ?_, ?_⟩
-  · rintro _ ⟨x, rfl⟩ _ ⟨y, rfl⟩ h
-    exact fun e => h (by rw [e])
-  · rintro (x | h) hx (y | h') hy
-    · exact absurd ⟨x, rfl⟩ hx
-    · exact absurd ⟨x, rfl⟩ hx
-    · exact absurd ⟨y, rfl⟩ hy
-    · exact hostGraph_inr_inr N h h'
 
 variable {F : Type*} [Field F] [Fintype F] [DecidableEq F]
 variable {W : Type*} [AddCommGroup W] [Module F W] [Fintype W] [DecidableEq W]

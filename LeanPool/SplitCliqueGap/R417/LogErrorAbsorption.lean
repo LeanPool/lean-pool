@@ -6,12 +6,12 @@ Authors: Juan Pablo Traverso Gianini
 /- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
-public import LeanPool.SplitCliqueGap.R417.OptimalCoefficient
 public import Mathlib.Analysis.Real.Sqrt
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
+public import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-! C3: an explicit, uniform threshold absorbs t log t and t errors into eta t². -/
 
@@ -58,7 +58,7 @@ theorem log_le_two_sqrt {t : ℝ} (ht : 1 ≤ t) : Real.log t ≤ 2 * Real.sqrt 
     _ = 2 * Real.log (Real.sqrt t) := by rw [Real.log_pow]; norm_num
     _ ≤ 2 * Real.sqrt t := by linarith
 
-theorem log_error_absorption (A B η : ℝ) (hA : 0 ≤ A) (_hB : 0 ≤ B) (hη : 0 < η) :
+theorem log_error_absorption (A B η : ℝ) (hA : 0 ≤ A) (hη : 0 < η) :
     ∃ T : ℝ, 1 ≤ T ∧ ∀ t : ℝ, T ≤ t →
       A * t * Real.log t + B * t ≤ η * t ^ 2 := by
   let T := max 1 (max ((4 * A / η) ^ 2) (2 * B / η))
@@ -86,10 +86,10 @@ theorem log_error_absorption (A B η : ℝ) (hA : 0 ≤ A) (_hB : 0 ≤ B) (hη 
     _ ≤ t * (η * t) := mul_le_mul_of_nonneg_left hcoef ht0
     _ = η * t ^ 2 := by ring
 
-theorem coefficient_absorption (C A B η : ℝ) (hA : 0 ≤ A) (hB : 0 ≤ B) (hη : 0 < η) :
+theorem coefficient_absorption (C A B η : ℝ) (hA : 0 ≤ A) (hη : 0 < η) :
     ∃ T : ℝ, 1 ≤ T ∧ ∀ (t E : ℝ), T ≤ t →
       E ≤ C * t ^ 2 + A * t * Real.log t + B * t → E ≤ (C + η) * t ^ 2 := by
-  obtain ⟨T, hT, hbound⟩ := log_error_absorption A B η hA hB hη
+  obtain ⟨T, hT, hbound⟩ := log_error_absorption A B η hA hη
   refine ⟨T, hT, fun t E ht hE => ?_⟩
   have hh := hbound t ht
   nlinarith

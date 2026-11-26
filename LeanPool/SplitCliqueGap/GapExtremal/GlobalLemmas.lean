@@ -109,4 +109,54 @@ theorem frag_le {A Z : Finset V} (hAZ : Disjoint A Z) (hA : 3 ≤ A.card) (hZ : 
   rw [hAZ']
   nlinarith
 
+/-- A packing of columns: two distinct members share at most one vertex. -/
+def IsPack (T : Finset (Finset V)) : Prop := ∀ Q ∈ T, ∀ Q' ∈ T, Q ≠ Q' → (Q ∩ Q').card ≤ 1
+
+variable {B}
+
+omit [Fintype V] [DecidableEq V] [DecidableRel B.Adj] in
+theorem triFree_of_card_le_one {p : Finset V} (h : p.card ≤ 1) : TriFree B p := by
+  intro u hu v hv _ _ huv _ _
+  exact huv.ne (Finset.card_le_one.mp h u hu v hv)
+
+/-- The edges of a column are covered by its parts in the blocks. -/
+theorem e_le_sum_blocks {blocks : Finset (Finset V)}
+    (hedge : ∀ u v, B.Adj u v → ∃ ℓ ∈ blocks, u ∈ ℓ ∧ v ∈ ℓ) (p : Finset V) :
+    e B p ≤ ∑ ℓ ∈ blocks, e B (p ∩ ℓ) := by
+  unfold e
+  refine (Finset.card_le_card ?_).trans Finset.card_biUnion_le
+  intro s hs
+  induction s using Sym2.ind with
+  | h u v =>
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hs
+    obtain ⟨huv, hu, hv⟩ := hs
+    obtain ⟨ℓ, hℓ, huℓ, hvℓ⟩ := hedge u v huv
+    refine Finset.mem_biUnion.mpr ⟨ℓ, hℓ, ?_⟩
+    rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet]
+    exact ⟨huv, Finset.mem_inter.mpr ⟨hu, huℓ⟩, Finset.mem_inter.mpr ⟨hv, hvℓ⟩⟩
+
+/-- Pieces sharing at most one vertex use disjoint edges of a block. -/
+theorem sum_e_inter_le {ι : Type*} (S : Finset ι) (f : ι → Finset V)
+    (hf : ∀ x ∈ S, ∀ y ∈ S, x ≠ y → (f x ∩ f y).card ≤ 1) (ℓ : Finset V) :
+    ∑ x ∈ S, e B (f x ∩ ℓ) ≤ e B ℓ := by
+  unfold e
+  rw [← Finset.card_biUnion]
+  · refine Finset.card_le_card fun s hs => ?_
+    obtain ⟨x, -, hx⟩ := Finset.mem_biUnion.mp hs
+    induction s using Sym2.ind with
+    | h u v =>
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hx ⊢
+      exact ⟨hx.1, (Finset.mem_inter.mp hx.2.1).2, (Finset.mem_inter.mp hx.2.2).2⟩
+  · intro x hx y hy hxy
+    rw [Function.onFun, Finset.disjoint_left]
+    intro s hsx hsy
+    induction s using Sym2.ind with
+    | h u v =>
+      rw [SimpleGraph.mem_edgeFinset, SimpleGraph.mem_edgeSet] at hsx hsy
+      have hu : u ∈ f x ∩ f y :=
+        Finset.mem_inter.mpr ⟨(Finset.mem_inter.mp hsx.2.1).1, (Finset.mem_inter.mp hsy.2.1).1⟩
+      have hv : v ∈ f x ∩ f y :=
+        Finset.mem_inter.mpr ⟨(Finset.mem_inter.mp hsx.2.2).1, (Finset.mem_inter.mp hsy.2.2).1⟩
+      exact hsx.1.ne (Finset.card_le_one.mp (hf x hx y hy hxy) u hu v hv)
+
 end GapExtremal

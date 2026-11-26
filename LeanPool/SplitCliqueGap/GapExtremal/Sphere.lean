@@ -94,8 +94,6 @@ theorem sphere_rel {N : ℕ} (X Y Z : Fin N → ℤ) {α β : ℤ} (hα : α ≠
 
 variable {p : ℕ} [hp : Fact p.Prime]
 
-/-- Pin the additive group of `ZMod p` to the ring structure (avoids an exotic instance path). -/
-instance (priority := 10000) addCommGroupZModP : AddCommGroup (ZMod p) := Ring.toAddCommGroup
 
 /-- The colours `0, …, 5` in `ZMod p` (`p > 5`). -/
 def colσ (hp5 : 5 < p) : Fin 6 ↪ ZMod p where

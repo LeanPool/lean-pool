@@ -113,17 +113,19 @@ theorem core_fractional_score_small (h : R) (hh : 2 * h = 1) (A : Finset R) :
   have hp (k : R × R × Triangle) (hk : k ∈ D) :
       k.1 ∈ A ∧ k.2.2 ∈ triangles := by
     exact ⟨(mem_product.mp hk).1, support_valid (mem_product.mp (mem_product.mp hk).2).2⟩
-  refine ⟨y,⟨?_,?_,?_⟩,?_,?_⟩
-  · intro S
-    exact sum_nonneg fun k _ => by split <;> norm_num
-  · intro S hs
-    by_contra! hsmall
+  have supportCard (S : Finset (Role × R)) (hs : y S ≠ 0) : S.card = 3 := by
+    by_contra hcard
     apply hs
     apply sum_eq_zero
     intro k _
-    have hcard : (Q k).card = 3 := blockTriangle_vertices_card _ _ _
-    have hne : Q k ≠ S := fun he => by rw [he] at hcard; omega
+    have hne : Q k ≠ S := fun he => hcard (he ▸ blockTriangle_vertices_card _ _ _)
     simp [hne]
+  refine ⟨y, ⟨?_, ?_, ?_⟩, fun S hs => (supportCard S hs).le, ?_⟩
+  · intro S
+    exact sum_nonneg fun k _ => by split <;> norm_num
+  · intro S hs
+    rw [supportCard S hs]
+    norm_num
   · intro u v huv
     have hsum : ∑ S, (if u ∈ S ∧ v ∈ S then y S else 0) =
         ∑ k ∈ D, (if s(u,v) ∈ triangleEdges (blockTriangle k.1 k.2.1 k.2.2) then (1 : ℝ) / 2 else
@@ -168,14 +170,6 @@ theorem core_fractional_score_small (h : R) (hh : 2 * h = 1) (A : Finset R) :
         simp [hne]
       rw [hzero]
       norm_num
-  · intro S hs
-    by_contra! hlarge
-    apply hs
-    apply sum_eq_zero
-    intro k _
-    have hc : (Q k).card = 3 := blockTriangle_vertices_card _ _ _
-    have hne : Q k ≠ S := fun he => by rw [he] at hc; omega
-    simp [hne]
   · simp only [y, sum_mul, ite_mul, zero_mul]
     rw [sum_comm]
     have hval : ∑ k ∈ D, ∑ S, (if Q k = S then (1 : ℝ) / 2 * (w B S : ℝ) else 0) =

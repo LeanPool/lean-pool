@@ -99,9 +99,9 @@ abbrev F5 := ZMod 5
 
 instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
 
-/-- Pin the additive group of `ZMod 5` to the ring structure (otherwise instance search may pick the
-`IsSimpleAddGroup` route, which is not reducibly compatible with the module instances). -/
-instance (priority := 10000) addCommGroupF5 : AddCommGroup (ZMod 5) := Ring.toAddCommGroup
+/-- The ring parent keeps the additive-group and module instances definitionally compatible. -/
+scoped instance (priority := 10000) addCommGroupZModRing (p : ℕ) :
+    AddCommGroup (ZMod p) := Ring.toAddCommGroup
 
 /-- Label positions: `0 ↦ 0, 1 ↦ 1, 2 ↦ twin, 3 ↦ 2, 4 ↦ 3, 5 ↦ 4`. -/
 def σL : Fin 6 ↪ Option F5 :=

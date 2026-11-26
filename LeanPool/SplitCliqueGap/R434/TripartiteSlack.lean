@@ -13,6 +13,7 @@ import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Positivity
 import Mathlib.Tactic.Ring
 import Mathlib.Tactic.Tauto
+import Mathlib.Algebra.BigOperators.Fin
 
 /-! Edge counts and the zero-slack cases for tripartite pieces. -/
 
