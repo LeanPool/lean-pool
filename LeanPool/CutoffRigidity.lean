@@ -3,12 +3,12 @@ Copyright (c) 2026 Djalil Chafaï. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Djalil Chafaï
 -/
-
 module
 
 public import LeanPool.CutoffRigidity.ConvexInteractionTheorem
 public import LeanPool.CutoffRigidity.EuclideanGaussianSplitting
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionPositivity
 public import LeanPool.CutoffRigidity.GaussianTransport.RiemannianLowerBound
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
 
@@ -28,7 +28,10 @@ Main declarations: `CutoffRigidity.normalized_convexInteraction_theorem`,
   `CutoffRigidity.Riemann.Diff.FormData.tendsto_euler`,
   `CutoffRigidity.Riemann.Diff.FormData.semigroup_integral_D`,
   `CutoffRigidity.Riemann.Diff.FormData.contraction_energy`,
-  `CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison`
+  `CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison`,
+  `CutoffRigidity.Riemann.Diff.diffFormData`,
+  `CutoffRigidity.Riemann.Diff.diffusion_resolvent_nonneg`,
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg`
 Tags: curvature, spectral-gap, gaussian-factorization, gibbs-measures
 MSC: 60J60, 47D07, 53C21
 -/
