@@ -31,6 +31,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/AbstractLinearControl     https://github.com/frederic-marbach/alcs
   LeanPool/AharoniKorman             https://github.com/b-mehta/AharoniKorman
   LeanPool/AiyagariEquilibrium       https://github.com/LeanEconomics/LeanEconomics
+  LeanPool/AlmostInvariantSubspaces  https://github.com/jackryan225/almost-invariant-subspaces
   LeanPool/AndersonConjecture        https://github.com/frenzymath/Anderson-Conjecture
   LeanPool/AnomalousDiffusion        https://github.com/scottnarmstrong/AVAnomalousDiffusion
   LeanPool/ApollonianSuperharmonic   https://github.com/wpegden/superharmonic
@@ -98,6 +99,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/DFT                       https://github.com/hyllios/lean_dft
   LeanPool/DavisKahan                https://github.com/aiq-kitware/aiq-davis-kahan-1970-rotation-eigenvectgors-perturbation-formalization
   LeanPool/DeciSigma1                https://github.com/noti0na1/deci-sigma1
+  LeanPool/DehnInvariant             https://github.com/DICTOR-Master/dehn-canon-lean
   LeanPool/DemazureOperatorsLean     https://github.com/bolito2/DemazureOperatorsLean
   LeanPool/DemazureProduct           https://github.com/npflueger/demazure
   LeanPool/DensityHalesJewett        https://github.com/gdahia/densityhalesjewett
@@ -110,6 +112,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/DrossFractionalTriangleDecomposition
                                      https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/Duality                   https://github.com/madvorak/duality
+  LeanPool/DynamicMcs                https://github.com/thonmay/mcs-lean
   LeanPool/ECRuntime                 https://github.com/UAI-VUT-Brno/Runtime-analysis-of-evolutionary-computation-algorithms
   LeanPool/EcTateLean                https://github.com/KisaraBlue/ec-tate-lean
   LeanPool/Egrs75                    https://github.com/lyfar/egrs75-lean
@@ -269,6 +272,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Nikodym                   https://github.com/shengtongzhang-alt/nikodym
   LeanPool/NonSoficGroup             https://github.com/openai/ten-proofs
   LeanPool/NoncommutativeAMGM        https://github.com/lowrank/noncommutative-amgm-lean
+  LeanPool/NonpluripolarProducts     https://github.com/MingchenXia/SGPT-lean
   LeanPool/OSforGFF                  https://github.com/mrdouglasny/OSforGFF
   LeanPool/OddPrimeValuationDistribution
                                      https://github.com/lyfar/gkp-carry-lean
@@ -284,6 +288,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/ParallelPostulate         https://github.com/Richiesutie/ParallelPostulate
   LeanPool/ParameterFreeGradient     https://github.com/yuningyang19/parameter_free_gradient_p
   LeanPool/Parikh                    https://github.com/focs-lab/parikh-theorem
+  LeanPool/PatternPosetNotSperner    https://github.com/mathdiscoveries/pattern-poset-not-sperner
   LeanPool/PebblingLean              https://github.com/pachterlab/P_2026_2
   LeanPool/PentagonalNumberTheorem   https://github.com/wwylele/PentagonalNumberTheorem
   LeanPool/PentagonalNumberTheoremAnalytic
@@ -350,6 +355,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Siegel                    https://github.com/jtraverso/siegel-theorem
   LeanPool/SingularModuli            https://github.com/ElodinLaarz/lean-thesis
   LeanPool/SixExponentials           https://github.com/carlok/six-exponentials-lean
+  LeanPool/SophieGermainArchives     https://github.com/mycaule/lean-pool
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
