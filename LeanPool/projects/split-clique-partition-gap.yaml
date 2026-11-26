@@ -1,0 +1,41 @@
+slug: split-clique-partition-gap
+title: Nearly quadratic additive gaps for edge-clique partitions of split graphs
+summary: Constructs connected split graphs of every sufficiently large order with a nearly
+  quadratic difference between the integral and fractional edge-clique partition numbers.
+  The strongest construction also withstands deletion of any set of fewer than one fifth
+  of the vertices. The development includes host assignments that transfer residual
+  triangle-packings to clique partitions, and quantitative product constructions.
+branch: graph theory
+entry_module: LeanPool.SplitCliqueGap
+authors:
+- Juan Pablo Traverso Gianini
+source:
+  doi: 10.5281/zenodo.24408988
+  url: https://github.com/jtraverso/split-clique-partition-gap/tree/e96952eb38aaac532e5714be66a80535ebfd547a/preprints/SPLITGAP
+  github_repo: jtraverso/split-clique-partition-gap
+  commit: e96952eb38aaac532e5714be66a80535ebfd547a
+  announcement_url: https://github.com/jtraverso/split-clique-partition-gap/commit/e96952eb38aaac532e5714be66a80535ebfd547a
+  announcement_date: '2026-11-22'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- GapExtremal.R434.universal_R434_linear
+- GapExtremal.R434.universal_R434_linear_mixed
+- GapExtremal.R434.universal_R434_polylog
+main_results:
+- declaration: GapExtremal.R434.universal_R434_linear
+  informal: Constructs a connected split graph of each sufficiently large order with a nearly quadratic gap and a linear cut guarantee.
+- declaration: GapExtremal.R434.universal_R434_linear_mixed
+  informal: Obtains the same gap and cut guarantee with fractional clique sizes restricted to at most four.
+- declaration: GapExtremal.R434.universal_R434_polylog
+  informal: Proves the uniform nearly quadratic lower bound on the split-graph gap.
+tags:
+- graph-theory
+- split-graphs
+- clique-partitions
+- combinatorial-optimization
+msc:
+- 05C70
+- 05C35
+- 90C27
