@@ -1,26 +1,37 @@
 slug: cryptids-goldbach
-title: A 21-state Turing machine for Goldbach's conjecture
+title: Finite-state Turing machines for Goldbach and Brocard
 summary: A concrete 21-state binary Turing machine halts on the blank tape exactly when
   Goldbach's conjecture is false. The proof connects it to the earlier 25-state machine,
   verifies both machines' prime-search semantics, and preserves finite-machine execution,
-  tape-scanning and reachability infrastructure. This imports only the Goldbach dependency
-  closure of Cryptids, excluding its Riemann, ZF and Busy Beaver developments.
+  tape-scanning and reachability infrastructure. A second machine with 28 states
+  halts on the blank tape exactly when there exists a natural number n > 7
+  for which n! + 1 is a square.
 branch: computability and number theory
 entry_module: LeanPool.CryptidsGoldbach
 authors:
 - Maxence Faldor
 - Moritz Firsching
+- Daniel Veljjanoski
 source:
-  url: https://github.com/google-deepmind/cryptids/tree/f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  url: https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6
   github_repo: google-deepmind/cryptids
-  commit: f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  commit: 481f4e3e39907304dbcad33e508bf21d80c6d5a6
+  goldbach_commit: f873434871b2301d5c8c91ba6fa224f92c93c1e1
   announcement_url: https://leanprover.zulipchat.com/#narrow/channel/579630-Project-announcements/topic/Cryptids/near/632199475
   announcement_date: '2026-10-16'
+  brocard_url: https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6/artifacts/brocard_28
+  brocard_announcement_url: https://github.com/google-deepmind/cryptids/commit/ab177608e88ce30697d1e705e1cd9531bef9cb8e
+  brocard_announcement_date: '2026-11-09'
 license: Apache-2.0
 status: verified
-provenance: AI
+provenance: mix
+provenance_evidence: >-
+  The Goldbach development was AI-authored. Daniel Veljjanoski designed the
+  Brocard machine and developed its proof, with assistance from Claude as
+  documented by upstream.
 main_declarations:
 - ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach
+- ConjectureMachines.Brocard28.halts_brocard28_iff_exists_square
 main_results:
 - declaration: ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach
   informal: The explicit 21-state binary Turing machine halts from the blank tape if and
@@ -33,11 +44,18 @@ main_results:
 - declaration: ConjectureMachines.Goldbach21.Semantics.halts_reference_iff_not_goldbach
   informal: The 25-state reference machine halts from the blank tape exactly when
     Goldbach's conjecture is false.
+- declaration: ConjectureMachines.Brocard28.halts_brocard28_iff_exists_square
+  informal: The explicit 28-state binary Turing machine halts on the blank tape
+    exactly when n! + 1 is a square for some natural number n greater than seven.
+- declaration: ConjectureMachines.Brocard28.isSquare_iff_isTri
+  informal: For every natural number n at least four, n! + 1 is a square
+    exactly when n! / 8 is a triangular number.
 tags:
 - computability
 - turing-machines
 - goldbach-conjecture
 - machine-simulation
+- brocard-problem
 msc:
 - 03D10
 - 11P32
