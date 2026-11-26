@@ -751,23 +751,18 @@ private theorem previous_span (hp : ∀ w, parent (A.host w) = p.host (q.origin 
   rw [hp, q.origin_owner, p.vertex_eq]
 
 open scoped Classical in
-private theorem boundary_val {x y : Wire} {G : Diagram F x y} {S : Scheme F}
-    {r : S.format.obj} (p : S.Presentation r G) (i : slots x ⊕ slots y) :
-    (p.boundary i).val = p.toSeating.ends (boundaryEnd G i) := by cases i <;> rfl
-
-open scoped Classical in
 theorem move_agrees {out : U.format.obj} (l : A.Lengths out) (H : A.Agrees l)
     (parent : B U.m → B S.m) (hp : ∀ w, parent (A.host w) = p.host (q.origin w)) :
     (A.move parent).Agrees p.toPresentation (A.posting l H).toPresentation := by
   have he (j : p.toPresentation.BorderBit) :
       ((A.posting l H).toPresentation.boundary (p.toPresentation.exteriorBits j)).val =
         ⟨A.span (.inl j.1), j.2.cast (l.used (.inl j.1)).symm⟩ := by
-    rw [boundary_val]
+    rw [Scheme.Presentation.boundary_val]
     exact A.exposed_pin l H j
   constructor
   · intro i
     obtain ⟨j, rfl⟩ := p.toPresentation.exteriorBits.surjective i
-    rw [he, boundary_val, p.toPresentation.border_pin]
+    rw [he, Scheme.Presentation.boundary_val, p.toPresentation.border_pin]
     exact ⟨A.previous_span parent hp _, l.used (.inl j.1), rfl⟩
   · intro s hs
     by_cases h : s ∈ Set.range A.span

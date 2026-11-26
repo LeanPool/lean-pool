@@ -309,8 +309,8 @@ private theorem groups_budget : Cost (fun i : I => (Mixing.Groups i.height i.a (
 theorem packet_bound : Cost (fun i : I => Tile.packetCost i.T i.a (keys i)) := by
   have h₁ := pair_budget d (height_budget (F := F) d) (data_budget d)
   have h₂ := window_groups d (row_bound (F := F) d)
-  exact (((((pair_bound d).scale 10).add (h₁.scale 2)).add (groups_budget d)).add (h₂.scale 2)).add
-    (apply_bound d)
+  exact MixedCost.resetPacket (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (pair_bound d) h₁ (groups_budget d) h₂ (apply_bound d)
 
 theorem maskCost_bound : Cost (fun i : I => Tile.maskCost i.T (walk i)) := by
   have h : Long (fun i : I => (100 + (i.m + 2 ^ ((i.T.scheme.d + 1) * walk i))) ^ 50) :=
@@ -337,14 +337,14 @@ theorem windowCost_bound : Cost (fun i : I =>
   have hc : Cost (fun i : I => (Tile.gathered i.T (dest i) (keys i) (walk i)).width) :=
     pair_budget d (pair_bound d) (pair_budget d (vec_budget d (mask_bound d).long.row)
       (window_groups d (history_bound d)))
-  have hpre := (((pair_bound d).add (packet_bound d)).add (maskCost_bound d)).add hc
   have hquery := carry_blocks P Δ t d (sample_bound P Δ d)
   have hv : Phase.Case.Row (fun i : I => Tile.volume i.T (dest i) (keys i) (walk i)) :=
     (history_bound d).groups
   have hread := Beat.read_bound 1 d Case.slots.rate.short hv
   have hsteps : Short (fun i : I => walk i + 1) :=
     (tiles.rate.short.of_exp.add (short_const 8)).add (short_const 1)
-  exact ((hpre.scale 100).add (hquery.scale 136)).add (hread.left hsteps)
+  exact MixedCost.resetWindow (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (pair_bound d) (packet_bound d) (maskCost_bound d) hc hquery (hread.left hsteps)
 
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Restore
 end
@@ -496,15 +496,6 @@ open Packing Assembly Assembly.History.Reset Phase Phase.Case Coloring
 
 variable {F : Type}
 
-private theorem graph_le (D : Template F) : (Tile.graph D).width ≤ D.format.width := by
-  rw [Template.width]
-  simp only [Tile.graph, Neighborhood.Rows, Group.Flags, Format.width_pair, Format.width_vec,
-    Format.width_addr]
-  rw [Format.width_bit, ← mul_add]
-  apply Nat.mul_le_mul_left
-  ring_nf
-  omega
-
 variable [Field F] [Fintype F] {Y l : ℕ} (P : Rotor F Y l) (Δ t d : ℕ)
 local notation "I" => Case F 1 d
 local notation "keys" => keyBits d
@@ -513,7 +504,7 @@ local notation "dest" => child P Δ t d
 local notation "shift" => expansion P Δ d
 
 theorem graph_bound : Cost (fun i : I => (Tile.graph (dest i)).width) :=
-  (child_bound P Δ t d).format.mono (fun i => graph_le (dest i))
+  (child_bound P Δ t d).format.mono (fun i => Tile.graph_width_le (dest i))
 
 theorem whole_bound : Cost (fun i : I => (Tile.whole i.T (dest i)).width) := by
   have H := child_bound P Δ t d
@@ -523,10 +514,10 @@ theorem printCost_bound {H : I → ℕ} (hs : Cost H) : Cost (fun i : I =>
     Tile.printCost i.T (dest i) (keys i) (walk i) (shift i) (readCost P Δ t d i) (H i)) := by
   have hd := child_bound P Δ t d
   have hbody := carry_blocks P Δ t d (answer_bound P Δ t d)
-  have hj := (pair_budget d (graph_bound P Δ t d) hbody).add ((whole_bound P Δ t d).scale 2)
   have hg := hd.cost (hd.layer ((short_const 1).add (printWidth_bound P Δ t d)))
-  have hw := (((pair_bound d).scale 20).add hs).add (windowCost_bound P Δ t d)
-  exact (hw.add hg).add (hj.scale 4)
+  exact MixedCost.resetPrint (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (pair_bound d) hs (windowCost_bound P Δ t d) hg
+    (pair_budget d (graph_bound P Δ t d) hbody) (whole_bound P Δ t d)
 
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Restore
 end

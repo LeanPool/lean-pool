@@ -39,19 +39,6 @@ theorem Character.shared_branch_le (f : Character)
     f (ofTensor (A i)) ≤ f (ofTensor (Separation.shared A)) := by
   exact TensorSpectrum.TensorClass.Character.shared_branch_le f A i
 
-theorem Character.one_le_of_tensor_unit (f : Character)
-    {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
-    (T : Tensor O X Y Z) (hT : ∃ x y z, T x y z = 1) : 1 ≤ f (ofTensor T) := by
-  have h := f.monotone' (ofTensor_le
-    (CoefficientTensor.unit_restricts_natTensor_one hT))
-  have hunit : ofTensor (CoefficientTensor.natTensor 1) = (1 : TensorClass) := by
-    simpa only [Nat.cast_one] using (natCast_eq_ofTensor_natTensor 1).symm
-  calc
-    1 = f.toHom (ofTensor (CoefficientTensor.natTensor 1)) := by
-      rw [hunit]
-      exact f.toHom.map_one.symm
-    _ ≤ f.toHom (ofTensor T) := h
-
 /-- The original word-fiber cost, including the fixed factor six.  The
 polynomial number of possible count vectors has not yet been removed. -/
 theorem Character.tag_count_fiber (f : Character)

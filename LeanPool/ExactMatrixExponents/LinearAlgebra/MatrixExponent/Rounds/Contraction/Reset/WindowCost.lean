@@ -918,8 +918,9 @@ private theorem groups_budget : Cost (fun i : I => (Mixing.Groups i.height i.a (
 theorem packet_bound : Cost (fun i : I => Tile.packetCost i.T i.a (keys i)) := by
   have h₁ := pair_budget d B (height_budget (F := F) d B) (data_budget d B)
   have h₂ := window_groups d B (row_bound (F := F) d B)
-  exact (((((pair_bound d B).scale 10).add (h₁.scale 2)).add (groups_budget d B)).add (h₂.scale
-    2)).add (apply_bound d B)
+  exact BatchDescent.Phase.MixedCost.resetPacket
+    (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (pair_bound d B) h₁ (groups_budget d B) h₂ (apply_bound d B)
 
 theorem maskCost_bound : Cost (fun i : I => Tile.maskCost i.T (walk i)) := by
   have h : Long (fun i : I => (100 + (i.m + 2 ^ ((i.T.scheme.d + 1) * walk i))) ^ 50) :=
@@ -944,14 +945,15 @@ theorem windowCost_bound : Cost (fun i : I =>
   have hc : Cost (fun i : I => (Tile.gathered i.T (dest i) (keys i) (walk i)).width) :=
     pair_budget d B (pair_bound d B) (pair_budget d B (vec_budget d B (mask_bound d B).long.row)
       (window_groups d B (history_bound d B)))
-  have hpre := (((pair_bound d B).add (packet_bound d B)).add (maskCost_bound d B)).add hc
   have hquery := carry_blocks P Δ C t d B (sample_bound P Δ d B)
   have hv : Row (fun i : I => Tile.volume i.T (dest i) (keys i) (walk i)) :=
     (history_bound d B).block.groups
   have hread := Case.Child.parent.read Case.slots.short hv
   have hsteps : Short (fun i : I => walk i + 1) :=
     (tiles.short.of_exp.add (short_const 8)).add (short_const 1)
-  exact ((hpre.scale 100).add (hquery.scale 136)).add (hread.left hsteps.block)
+  exact BatchDescent.Phase.MixedCost.resetWindow
+    (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (pair_bound d B) (packet_bound d B) (maskCost_bound d B) hc hquery (hread.left hsteps.block)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Contraction.Reset
 end

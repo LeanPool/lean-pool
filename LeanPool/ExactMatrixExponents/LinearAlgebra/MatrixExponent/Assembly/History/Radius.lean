@@ -549,28 +549,10 @@ local notation "W" => PortMap.width g m P (HostNet.units H) i p.toPresentation v
 
 omit [Fintype T] in
 open scoped Classical in
-private theorem span_end (j : S.Span) (hj : 0 < S.width r j) (hp : S.peer r j ≠ none) :
-    ∃ e t, p.span e t = j := by
-  obtain ⟨q, hq⟩ := p.toSeating.ends.surjective ⟨j, ⟨0, hj⟩⟩
-  have he : (p.toSeating.ends q).1 = j := congrArg Sigma.fst hq
-  rcases q with (t|e)|(t|e)
-  · exact (hp (he ▸ p.input t)).elim
-  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
-    exact ⟨e, false, (p.ordered e false n).1.symm.trans he⟩
-  · exact (hp (he ▸ p.output t)).elim
-  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
-    exact ⟨e, true, (p.ordered e true n).1.symm.trans he⟩
-
-omit [Fintype T] in
-open scoped Classical in
 theorem station_place {j : B S.e} {e : G.E} {t : Bool} (he : p.span e t = (p.vertex w, j)) :
     (H).units.place w = (side H e t, (H).ix e) := by
-  rw [p.vertex_eq] at he
-  have h₁ := p.host.injective (congrArg (fun i : S.Span => i.1.1) he)
-  have h₂ := p.block.injective (congrArg (fun i : S.Span => i.1.2.1) he)
-  have h : G.units.place w = (side G e t, G.ix e) := Prod.ext h₁.symm h₂.symm
   change splitAddr G.V a ha (G.units.place w) = _
-  rw [h]
+  rw [p.place_of_span he]
   cases t <;> rfl
 
 include hw in
@@ -634,18 +616,14 @@ theorem origin_address {s : V} (hs : p.Origin a ha g m i v w j s)
     rcases q with ⟨⟨u, l⟩, h⟩
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq
     let q : p.toPresentation.BorderSpan := ⟨(u, l), h⟩
-    have eq := p.toPresentation.border_pin (⟨q, b⟩ : p.toPresentation.BorderBit)
     have hh : p.toSeating.ends.symm ⟨(p.vertex u, l), b⟩ =
-        boundaryEnd _ (p.toPresentation.exteriorBits ⟨q, b⟩)
-          := p.toSeating.ends.symm_apply_eq.mpr eq.symm
+        boundaryEnd _ (p.toPresentation.exteriorBits ⟨q, b⟩) :=
+      p.toPresentation.ends_symm_borderPin ⟨q, b⟩
     rw [hh]
     exact PortMap.address_exterior g m P (H).units i p.toPresentation v hz q he b
   | inside e t he hm =>
     let c := b.cast ((congrArg (S.width r) he.symm).trans (p.length e t))
-    have hh : p.toSeating.ends (endBit G e t c) = ⟨(p.vertex w, j), b⟩ := by
-      have he' := (p.ordered e t c).1.trans he
-      exact Sigma.ext he' ((Fin.heq_ext_iff (congrArg (S.width r) he')).mpr (p.ordered e t c).2)
-    rw [p.toSeating.ends.symm_apply_eq.mpr hh.symm]
+    rw [p.ends_symm_span he b]
     exact PortMap.address_demand_old g m P (H).units i p.toPresentation v hz e t hm c
 
 open scoped Classical in

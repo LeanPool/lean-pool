@@ -113,6 +113,15 @@ theorem border_pin (b : p.BorderBit) :
   p.side_bijection.choose_spec b
 
 open scoped Classical in
+theorem boundary_val (i : slots x ⊕ slots y) :
+    (p.boundary i).val = p.toSeating.ends (boundaryEnd G i) := by cases i <;> rfl
+
+open scoped Classical in
+theorem ends_symm_borderPin (b : p.BorderBit) :
+    p.toSeating.ends.symm (p.borderPin b) = boundaryEnd G (p.exteriorBits b) :=
+  p.toSeating.ends.symm_apply_eq.mpr (p.border_pin b).symm
+
+open scoped Classical in
 theorem border_station (b : p.BorderBit) : portEnd G (p.exteriorBits b) = b.1.val.1 := by
   have he (i : G.End) : p.vertex (G.station i) = (p.toSeating.ends i).1.1 := by
     obtain ⟨⟨v, j⟩, rfl⟩ := G.portEquiv.surjective i

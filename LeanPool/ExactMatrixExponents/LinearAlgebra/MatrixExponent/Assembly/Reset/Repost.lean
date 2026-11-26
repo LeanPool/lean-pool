@@ -699,30 +699,12 @@ structure AtomMap (m : Atom F) (w : (before q).V) where
 
 variable (w : G.diagram.V) (hw : q.owner (G.units.place w) = v)
 
-omit [Fintype T] in
-open scoped Classical in
-private theorem span_end (j : S.Span) (hj : 0 < S.width r j) (hp : S.peer r j ≠ none) :
-    ∃ e t, p.span e t = j := by
-  obtain ⟨q, hq⟩ := p.toSeating.ends.surjective ⟨j, ⟨0, hj⟩⟩
-  have he : (p.toSeating.ends q).1 = j := congrArg Sigma.fst hq
-  rcases q with (t|e)|(t|e)
-  · exact (hp (he ▸ p.input t)).elim
-  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
-    exact ⟨e, false, (p.ordered e false n).1.symm.trans he⟩
-  · exact (hp (he ▸ p.output t)).elim
-  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
-    exact ⟨e, true, (p.ordered e true n).1.symm.trans he⟩
-
 include hw in
 open scoped Classical in
 private theorem station_location {j : B S.e} {e : G.E} {t : Bool} (he : p.span e t = (p.vertex w,
     j)) :
     demandSite q e t = v := by
-  rw [p.vertex_eq] at he
-  have h₁ := p.host.injective (congrArg (fun i : S.Span => i.1.1) he)
-  have h₂ := p.block.injective (congrArg (fun i : S.Span => i.1.2.1) he)
-  have h : G.units.place w = (side G e t, G.ix e) := Prod.ext h₁.symm h₂.symm
-  rw [h] at hw
+  rw [p.place_of_span he] at hw
   exact hw
 
 variable (j : B S.e) (hj : 0 < S.width r (p.vertex w, j))
@@ -740,7 +722,7 @@ open scoped Classical in
 theorem exists_origin : ∃ f, Origin p q v w j f := by
   by_cases h : S.peer r (p.vertex w, j) = none
   · exact ⟨_, .outside ⟨(w, j), hj, h⟩ rfl hw⟩
-  · obtain ⟨e, t, he⟩ := span_end p _ hj h
+  · obtain ⟨e, t, he⟩ := p.span_end _ hj h
     exact ⟨_, .inside e t he (station_location p q v w hw he)⟩
 
 open scoped Classical in
@@ -773,18 +755,14 @@ theorem origin_address {s : Port p q v} (hs : Origin p q v w j s)
     rcases f with ⟨⟨u, l⟩, h⟩
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj hq
     let f : p.toPresentation.BorderSpan := ⟨(u, l), h⟩
-    have eq := p.toPresentation.border_pin (⟨f, b⟩ : p.toPresentation.BorderBit)
     have hh : p.toSeating.ends.symm ⟨(p.vertex u, l), b⟩ =
-        boundaryEnd _ (p.toPresentation.exteriorBits ⟨f, b⟩)
-          := p.toSeating.ends.symm_apply_eq.mpr eq.symm
+        boundaryEnd _ (p.toPresentation.exteriorBits ⟨f, b⟩) :=
+      p.toPresentation.ends_symm_borderPin ⟨f, b⟩
     rw [hh]
     exact address_exterior p q v f he b
   | inside e t he hm =>
     let c := b.cast ((congrArg (S.width r) he.symm).trans (p.length e t))
-    have hh : p.toSeating.ends (endBit G e t c) = ⟨(p.vertex w, j), b⟩ := by
-      have he' := (p.ordered e t c).1.trans he
-      exact Sigma.ext he' ((Fin.heq_ext_iff (congrArg (S.width r) he')).mpr (p.ordered e t c).2)
-    rw [p.toSeating.ends.symm_apply_eq.mpr hh.symm]
+    rw [p.ends_symm_span he b]
     exact address_demand_old p q v e t hm c
 
 open scoped Classical in

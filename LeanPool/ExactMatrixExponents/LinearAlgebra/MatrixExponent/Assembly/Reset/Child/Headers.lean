@@ -810,6 +810,15 @@ variable {F : Type} (A D : Template F)
 abbrev graph := Format.pair (Neighborhood.Rows D.scheme.m D.scheme.d)
   (.vec D.scheme.m (.pair (.pair .bit .bit) (Group.Flags D.scheme.d)))
 
+theorem graph_width_le : (graph D).width ≤ D.format.width := by
+  rw [Template.width]
+  simp only [graph, Neighborhood.Rows, Group.Flags, Format.width_pair, Format.width_vec,
+    Format.width_addr]
+  rw [Format.width_bit, ← mul_add]
+  apply Nat.mul_le_mul_left
+  ring_nf
+  omega
+
 /-- The indexed operation `(D.nav r, fun v => ((D.live r v, D.frozen r v), D.flags r v))`. -/
 def header (r : D.format.obj) : (graph D).obj :=
   (D.nav r, fun v => ((D.live r v, D.frozen r v), D.flags r v))

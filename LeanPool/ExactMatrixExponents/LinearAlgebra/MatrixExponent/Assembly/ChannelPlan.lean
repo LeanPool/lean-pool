@@ -95,36 +95,6 @@ def origin (f : D.pins → Option A.pins) : Option (A.pins ⊕ D.pins) → Optio
   | some (.inl i) => some i
   | some (.inr i) => f i
 
-/-- Check the controls independently of the data values. Unused
-destinations are pinned, and every other destination has a source. -/
-structure Covers (q : S.control.obj) (f : D.pins → Option A.pins) : Prop where
-  pad : ∀ i, q.2.2 i = true ↔ f i = none
-  bij : ∀ k, Function.Bijective (q.2.1 k)
-  pair : ∀ k i b, origin f (S.atPort q k i b) = origin f (S.atPort q k (q.2.1 k i) b)
-  covers : ∀ i j, f i = some j → ∃ k a b,
-    S.atPort q k a b = some (.inr i) ∧ S.atPort q k (q.2.1 k a) b = some (.inl j)
-
-theorem carries_iff {q : S.control.obj} {f : D.pins → Option A.pins} (h : S.Covers q f)
-    (x : A.obj) (y : D.obj) : S.Carries q x y ↔ y = copy f x := by
-  constructor
-  · intro hh
-    apply D.code.injective
-    simp only [copy, Equiv.apply_symm_apply]
-    funext i
-    cases he : f i with
-    | none => exact hh.1 i ((h.pad i).mpr he)
-    | some j =>
-      obtain ⟨k, a, b, hd, hs⟩ := h.covers i j he
-      have := (hh.2 k).2 a b
-      rwa [hd, hs] at this
-  · rintro rfl
-    have he (v : Option (A.pins ⊕ D.pins)) :
-        value x (copy f x) v = (origin f v).elim false (A.code x) := by
-      rcases v with _ | (i | i) <;> simp [value, origin, copy]
-    refine ⟨?_, fun k => ⟨h.bij k, fun i b => by rw [he, he, h.pair]⟩⟩
-    intro i hi
-    simp [copy, (h.pad i).mp hi]
-
 end Channels
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly
 end

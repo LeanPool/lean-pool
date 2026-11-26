@@ -263,11 +263,6 @@ private theorem previous_span (hp : ∀ w, parent (α.vertex w).1 = u.p.host w.1
   rfl
 
 open scoped Classical in
-private theorem boundary_val {x y : Wire} {G : Diagram F x y} {S : Scheme F}
-    {r : S.format.obj} (p : S.Presentation r G) (i : slots x ⊕ slots y) :
-    (p.boundary i).val = p.toSeating.ends (boundaryEnd G i) := by cases i <;> rfl
-
-open scoped Classical in
 theorem subround_agrees (hp : ∀ w, parent (α.vertex w).1 = u.p.host w.1.1)
     {out : Z.format.obj} (l : α.Lengths out) (ha : α.Agrees l u.hz) :
     (u.subround α parent).Agrees u.p.toPresentation (α.presentation l u.hz ha) := by
@@ -275,12 +270,12 @@ theorem subround_agrees (hp : ∀ w, parent (α.vertex w).1 = u.p.host w.1.1)
   have eq (j : p.BorderBit) :
       ((α.presentation l u.hz ha).boundary (p.exteriorBits j)).val =
         ⟨α.span (.inl j.1), j.2.cast (l.used (.inl j.1)).symm⟩ := by
-    rw [boundary_val]
+    rw [Scheme.Presentation.boundary_val]
     exact α.exposed_pin l u.hz ha j
   constructor
   · intro i
     obtain ⟨j, rfl⟩ := p.exteriorBits.surjective i
-    rw [eq, boundary_val, p.border_pin]
+    rw [eq, Scheme.Presentation.boundary_val, p.border_pin]
     exact ⟨u.previous_span α parent hp _, l.used (.inl j.1), rfl⟩
   · intro w hw
     obtain ⟨j, rfl⟩ := u.read_live α parent hw

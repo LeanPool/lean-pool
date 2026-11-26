@@ -635,6 +635,38 @@ open scoped Classical in
 /-- Computes the span by the application `S.spanAt G p.host p.block p.stub`. -/
 abbrev span := S.spanAt G p.host p.block p.stub
 
+open scoped Classical in
+theorem span_end (j : S.Span) (hj : 0 < S.width r j) (hp : S.peer r j ≠ none) :
+    ∃ e t, p.span e t = j := by
+  obtain ⟨q, hq⟩ := p.toSeating.ends.surjective ⟨j, ⟨0, hj⟩⟩
+  have he : (p.toSeating.ends q).1 = j := congrArg Sigma.fst hq
+  rcases q with (t|e)|(t|e)
+  · exact (hp (he ▸ p.input t)).elim
+  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
+    exact ⟨e, false, (p.ordered e false n).1.symm.trans he⟩
+  · exact (hp (he ▸ p.output t)).elim
+  · obtain ⟨⟨e, n⟩, rfl⟩ := G.units.bits.symm.surjective e
+    exact ⟨e, true, (p.ordered e true n).1.symm.trans he⟩
+
+open scoped Classical in
+theorem place_of_span {w : G.diagram.V} {j : B S.e} {e : G.E} {t : Bool}
+    (he : p.span e t = (p.vertex w, j)) : G.units.place w = (side G e t, G.ix e) := by
+  rw [p.vertex_eq] at he
+  have h₁ := p.host.injective (congrArg (fun i : S.Span => i.1.1) he)
+  have h₂ := p.block.injective (congrArg (fun i : S.Span => i.1.2.1) he)
+  exact Prod.ext h₁.symm h₂.symm
+
+open scoped Classical in
+theorem ends_symm_span {s : S.Span} {e : G.E} {t : Bool}
+    (he : p.span e t = s) (b : Fin (S.width r s)) :
+    p.toSeating.ends.symm ⟨s, b⟩ =
+      endBit G e t (b.cast ((congrArg (S.width r) he.symm).trans (p.length e t))) := by
+  let c := b.cast ((congrArg (S.width r) he.symm).trans (p.length e t))
+  apply p.toSeating.ends.symm_apply_eq.mpr
+  symm
+  have he' := (p.ordered e t c).1.trans he
+  exact Sigma.ext he' ((Fin.heq_ext_iff (congrArg (S.width r) he')).mpr (p.ordered e t c).2)
+
 include hu in
 open scoped Classical in
 theorem target (i : G.E) :
@@ -663,18 +695,10 @@ open scoped Classical in
 theorem enumerates (w : S.Span) : S.outgoing r w ↔ ∃ i, p.span i false = w := by
   constructor
   · rintro ⟨hl, hd, hp⟩
-    obtain ⟨q, hq⟩ := p.toSeating.ends.surjective ⟨w, ⟨0, hl⟩⟩
-    have he : (p.toSeating.ends q).1 = w := congrArg Sigma.fst hq
-    rcases q with (i|e)|(i|e)
-    · rw [← he, p.input] at hp
-      cases hp
-    · obtain ⟨⟨i, j⟩, rfl⟩ := G.units.bits.symm.surjective e
-      exact ⟨i, (p.ordered i false j).1.symm.trans he⟩
-    · rw [← he, p.output] at hp
-      cases hp
-    · obtain ⟨⟨i, j⟩, rfl⟩ := G.units.bits.symm.surjective e
-      have : p.span i true = w := (p.ordered i true j).1.symm.trans he
-      rw [← this, p.dir] at hd
+    obtain ⟨i, t, he⟩ := p.span_end w hl (by intro h; simp [h] at hp)
+    cases t
+    · exact ⟨i, he⟩
+    · rw [← he, p.dir] at hd
       cases hd
   · rintro ⟨i, rfl⟩
     unfold outgoing span

@@ -127,6 +127,61 @@ theorem short (j : I → ℕ) (h : Poly small f) :
   let ⟨k, hk⟩ := h.bound
   ⟨k, fun i => (Nat.mul_le_mul_left _ (hk i)).trans (Nat.le_add_left ..)⟩
 
+theorem scale (h : MixedCost large small height j f) (k : ℕ)
+    (smallTwo : ∀ i, 2 ≤ small i) (smallLeLarge : ∀ i, small i ≤ large i) :
+    MixedCost large small height j (fun i => k * f i) :=
+  (h.mul (Poly.const smallTwo k) smallLeLarge).mono fun _ => le_of_eq (mul_comm ..)
+
+variable (largeTwo : ∀ i, 2 ≤ large i) (smallTwo : ∀ i, 2 ≤ small i)
+  (smallLeLarge : ∀ i, small i ≤ large i)
+
+include largeTwo smallTwo smallLeLarge in
+/-- Combine the five charges in the reset packet. -/
+theorem resetPacket {input data groups bank applyCost : I → ℕ}
+    (hInput : MixedCost large small height j input) (hData : MixedCost large small height j data)
+    (hGroups : MixedCost large small height j groups) (hBank : MixedCost large small height j bank)
+    (hApply : MixedCost large small height j applyCost) :
+    MixedCost large small height j
+      (fun i => 10 * input i + 2 * data i + groups i + 2 * bank i + applyCost i) := by
+  have h := (hInput.scale 10 smallTwo smallLeLarge).add (hData.scale 2 smallTwo smallLeLarge)
+    largeTwo smallTwo
+  have h := (h.add hGroups largeTwo smallTwo).add (hBank.scale 2 smallTwo smallLeLarge)
+    largeTwo smallTwo
+  exact h.add hApply largeTwo smallTwo
+
+include largeTwo smallTwo smallLeLarge in
+/-- Charge preparation and queries at fixed rates and add the model's read charge. -/
+theorem resetWindow {input packet mask gathered queries reads : I → ℕ}
+    (hInput : MixedCost large small height j input)
+    (hPacket : MixedCost large small height j packet)
+    (hMask : MixedCost large small height j mask)
+    (hGathered : MixedCost large small height j gathered)
+    (hQueries : MixedCost large small height j queries)
+    (hReads : MixedCost large small height j reads) :
+    MixedCost large small height j (fun i =>
+      100 * (input i + packet i + mask i + gathered i) + 136 * queries i + reads i) := by
+  have h := (((hInput.add hPacket largeTwo smallTwo).add hMask largeTwo smallTwo).add hGathered
+    largeTwo smallTwo).scale 100 smallTwo smallLeLarge
+  exact (h.add (hQueries.scale 136 smallTwo smallLeLarge) largeTwo smallTwo).add
+    hReads largeTwo smallTwo
+
+include largeTwo smallTwo smallLeLarge in
+/-- Combine the window, output and assembly charges for printing a reset. -/
+theorem resetPrint {input extra window output pieces assembled : I → ℕ}
+    (hInput : MixedCost large small height j input) (hExtra : MixedCost large small height j extra)
+    (hWindow : MixedCost large small height j window)
+    (hOutput : MixedCost large small height j output)
+    (hPieces : MixedCost large small height j pieces)
+    (hAssembled : MixedCost large small height j assembled) :
+    MixedCost large small height j
+      (fun i => 20 * input i + extra i + window i + output i +
+        4 * (pieces i + 2 * assembled i)) := by
+  have hPrep := ((hInput.scale 20 smallTwo smallLeLarge).add hExtra largeTwo smallTwo).add hWindow
+    largeTwo smallTwo
+  have hAssemble := hPieces.add (hAssembled.scale 2 smallTwo smallLeLarge) largeTwo smallTwo
+  exact (hPrep.add hOutput largeTwo smallTwo).add (hAssemble.scale 4 smallTwo smallLeLarge)
+    largeTwo smallTwo
+
 theorem hosts (m : I → ℕ) (h : MixedCost large small height (fun _ => 0) f) :
     MixedCost large small height m (fun i => 2 ^ m i * f i) := by
   obtain ⟨k, hk⟩ := h

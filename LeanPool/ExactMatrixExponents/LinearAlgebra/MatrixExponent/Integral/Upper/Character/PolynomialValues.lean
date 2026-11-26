@@ -29,24 +29,12 @@ open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
 
-theorem polynomialTensor_ne_zero {a b : ℕ} (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    polynomialTensor a b ≠ 0 := by
-  intro heq
-  let i : Fin a := ⟨0, by omega⟩
-  let j : Fin b := ⟨0, by omega⟩
-  let k : Fin (a + b - 1) := ⟨0, by omega⟩
-  have h := congrFun (congrFun (congrFun heq i) j) k
-  norm_num [polynomialTensor, i, j, k] at h
-
 namespace TensorClass
 
 theorem Character.polynomial_value_pos (f : Character) (a b : ℕ)
     (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    0 < (f (ofTensor (polynomialTensor a b)) : ℝ) := by
-  have h := f.one_le_of_tensor_unit (polynomialTensor a b)
-    ⟨⟨0, by omega⟩, ⟨0, by omega⟩, ⟨0, by omega⟩, by simp [polynomialTensor]⟩
-  have hr : (1 : ℝ) ≤ f (ofTensor (polynomialTensor a b)) := by exact_mod_cast h
-  linarith
+    0 < (f (ofTensor (polynomialTensor a b)) : ℝ) :=
+  TensorSpectrum.TensorClass.Character.polynomial_value_pos f a b ha hb
 
 theorem Character.polynomial_value_le (f : Character) (a b : ℕ)
     (ha : 1 ≤ a) (hb : 1 ≤ b) :

@@ -431,39 +431,10 @@ theorem Local.slot_congr {i : W} {j : K} (e : LinkFiber good edge i ≃ LinkFibe
 variable {x : X} {y : Z} {e : Base leaf x ≃ Base leaf' y}
   {f : GoodEnd leaf point good x ≃ GoodEnd leaf' point' good' y}
 
-open Classical in
-/-- The data for the aligned construction, including `terminal`, `layers`, `config`, `lane`. -/
-structure Aligned (m : Delivery leaf point good edge outLeaf cap Y w out l u)
-    (m' : Delivery leaf' point' good' edge' outLeaf' cap' Y w out' l' u)
-    (e : Base leaf x ≃ Base leaf' y) (f : GoodEnd leaf point good x ≃ GoodEnd leaf' point' good' y)
-      :
-    Prop where
-  terminal : ∀ p : Base leaf x, m.terminal p.val = m'.terminal (e p).val
-  layers : m.layers x = m'.layers y
-  config : ∀ (i : Fin (m.layers x)) (j : Fin (m'.layers y)), i.val = j.val → m.config x i
-    = m'.config y j
-  lane : ∀ q, ((m.lane x q).1.val, (m.lane x q).2) = ((m'.lane y (f q)).1.val, (m'.lane y (f q)).2)
-
 omit [Fintype U] [Fintype V] in
 open Classical in
 theorem schedule_eq (h : Match (site m on en x) (site m' on' en' y) e f) :
     schedule m on en x = schedule m' on' en' y := route_eq h u
-
-include hm hm' in
-open Classical in
-theorem Local.compare (h : Match (site m on en x) (site m' on' en' y) e f) :
-    Aligned m m' e f := by
-  have hh := schedule_eq h
-  constructor
-  · intro p
-    have he : on' (e p).val = on p.val := h.occurrence p
-    rw [hm.terminal_eq x p, hm'.terminal_eq y (e p), hh, he]
-  · rw [hm.layers_eq, hm'.layers_eq, hh]
-  · intro i j he
-    rw [hm.config_eq, hm'.config_eq, hh, he]
-  · intro q
-    have he : en' (f q).val.1.val (f q).val.2 = en q.val.1.val q.val.2 := h.contact q
-    rw [hm.lane_eq, hm'.lane_eq, hh, he]
 
 open Classical in
 /-- Identify two sets of objects by common injective keys. -/
