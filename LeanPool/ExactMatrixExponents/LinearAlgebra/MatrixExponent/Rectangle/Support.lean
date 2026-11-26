@@ -85,13 +85,26 @@ theorem price_gap {s t : ℝ} (hs : 0 ≤ s) (hlt : s < t) :
     _ < (n : ℝ) ^ (t - s) * (n : ℝ) ^ s := mul_lt_mul_of_pos_right hp (by positivity)
     _ = _ := by rw [← Real.rpow_add (by positivity), sub_add_cancel]
 
-private theorem exponent_le_of_scores (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hs : 0 ≤ s)
-    (h : ∀ f : Point F, Monotone f → score f a b c ≤ s) : exponent F a b c ≤ s := by
+/-- A uniform rank bound on tensor powers absorbs its fixed overhead in the exponent. -/
+theorem exponent_le_of_rank_powers (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hs : 0 ≤ s)
+    (rankForPowers : ∀ (n r : ℕ), 2 ≤ n → 8 * (n : ℝ) ^ s < r → 0 < (r : ℝ) →
+      ∃ C : ℕ, ∀ p : ℕ,
+        RankLE F ((side n a) ^ p) ((side n b) ^ p) ((side n c) ^ p) (r ^ p * C)) :
+    exponent F a b c ≤ s := by
   by_contra! hlt
   obtain ⟨n, r, hn, hlo, hhi⟩ := price_gap hs hlt
+  have hr : 0 < (r : ℝ) := (by positivity : 0 ≤ 8 * (n : ℝ) ^ s).trans_lt hlo
+  obtain ⟨C, hC⟩ := rankForPowers n r hn hlo hr
+  obtain ⟨p, hp, hsave⟩ := absorb_overhead (D := C) hn hr hhi
+  exact lt_irrefl _ (exponent_lt_of_rank ha hb hc hp
+    ((hC p).cut (side_pow le_rfl p) (side_pow le_rfl p) (side_pow le_rfl p)) hsave)
+
+private theorem exponent_le_of_scores (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) (hs : 0 ≤ s)
+    (h : ∀ f : Point F, Monotone f → score f a b c ≤ s) : exponent F a b c ≤ s := by
+  refine exponent_le_of_rank_powers ha hb hc hs ?_
+  intro n r hn hlo hr
   have hn₀ : 0 < n := by omega
   have hn₁ : 1 ≤ (n : ℝ) := by exact_mod_cast hn₀
-  have hr : 0 < (r : ℝ) := (by positivity : 0 ≤ 8 * (n : ℝ) ^ s).trans_lt hlo
   have hne : (r : Tensor F (Fin 3)) ≠ 0 := by
     intro he
     have hh : r ≤ 0 := (Tensor.natCast_le_iff (K := F) (S := Fin 3) r 0).mp (by simp [he])
@@ -107,14 +120,11 @@ private theorem exponent_le_of_scores (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ 
       _ < _ := hlo
   obtain ⟨C, hC⟩ := Spectrum.strictComparison Tensor.add_le_add_right Tensor.mul_le_mul_left
     Tensor.zero_le Tensor.one_le Tensor.exists_bound hne hp
-  obtain ⟨p, hp', hsave⟩ := absorb_overhead (D := C) hn hr hhi
-  have hR : RankLE F ((side n a) ^ p) ((side n b) ^ p) ((side n c) ^ p) (r ^ p * C) := by
-    apply (tensor_le_iff (pow_pos (side_pos hn₀ a) p) (pow_pos (side_pos hn₀ b) p)
-      (pow_pos (side_pos hn₀ c) p)).mp
-    rw [tensor_power, Nat.cast_mul, Nat.cast_pow, mul_comm]
-    exact hC p
-  exact lt_irrefl _ (exponent_lt_of_rank ha hb hc hp'
-    (hR.cut (side_pow le_rfl p) (side_pow le_rfl p) (side_pow le_rfl p)) hsave)
+  refine ⟨C, fun p => ?_⟩
+  apply (tensor_le_iff (pow_pos (side_pos hn₀ a) p) (pow_pos (side_pos hn₀ b) p)
+    (pow_pos (side_pos hn₀ c) p)).mp
+  rw [tensor_power, Nat.cast_mul, Nat.cast_pow, mul_comm]
+  exact hC p
 
 /-- The exponent is a maximum, with no limit or closure in the set of prices. -/
 theorem support (F : Type) [Field F] : Support F (Prices F) := by

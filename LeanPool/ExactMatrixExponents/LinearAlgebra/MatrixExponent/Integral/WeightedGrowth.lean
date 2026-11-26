@@ -11,7 +11,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Character.PolynomialValues
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.TagHeterogeneous
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagPolynomialBranches
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Character.PermutationPowers
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Character.Permutations
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Weighted
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialGrowth
 

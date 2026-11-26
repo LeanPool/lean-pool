@@ -13,17 +13,17 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectang
 @[expose] public section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
-variable {F : Type*} [Field F] {i j k : ℕ}
+variable {F : Type*} {i j k : ℕ}
 
 /-- The weighted rank le of type `Prop` for the given inputs. -/
-def WeightedRankLE (w : Fin i → Fin j → Fin k → F) (r : ℕ) : Prop :=
+def WeightedRankLE [CommSemiring F] (w : Fin i → Fin j → Fin k → F) (r : ℕ) : Prop :=
   ∃ (a : Fin r → Pos i k → F) (b : Fin r → Pos k j → F) (c : Fin r → Pos i j → F),
     ∀ x y z, ∑ l : Fin r, a l x * b l y * c l z =
       if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then w x.1 y.2 x.2 else 0
 
 open Classical in
 /-- The value specified by `∑ c, ∑ a, ∑ b, if w a c b = 0 then 0 else 1`. -/
-noncomputable def supportSize (w : Fin i → Fin j → Fin k → F) : ℕ :=
+noncomputable def supportSize [Zero F] (w : Fin i → Fin j → Fin k → F) : ℕ :=
   ∑ c, ∑ a, ∑ b, if w a c b = 0 then 0 else 1
 
 /-- Density times the ordinary asymptotic rank bounds the cost of

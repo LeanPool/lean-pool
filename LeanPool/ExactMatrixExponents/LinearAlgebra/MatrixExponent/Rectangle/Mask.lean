@@ -14,10 +14,10 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectang
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F : Type*} [Field F] {i j k : ℕ}
+variable {F : Type*} {i j k : ℕ}
 
 /-- Returns `w x y z` when `(x, y) ∈ u` holds, and `0` otherwise. -/
-def mask (w : Fin i → Fin j → Fin k → F) (u : Finset (Pos i j))
+def mask [Zero F] (w : Fin i → Fin j → Fin k → F) (u : Finset (Pos i j))
     (x : Fin i) (y : Fin j) (z : Fin k) : F := if (x, y) ∈ u then w x y z else 0
 
 /-- Logarithm of the short side of the most nearly square rectangle

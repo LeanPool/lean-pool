@@ -16,7 +16,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Children.Correct
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Compute
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Matching
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Ballot
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Prepare.Parcel
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Shows
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Prepare.Status
@@ -214,52 +213,16 @@ end
 
 /- # Address widths for ordered input dictionaries -/
 
-noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-open Assembly Coloring Sphere Finset
 
-open scoped Classical in
-/-- The least binary width whose power of two reaches the stated size. -/
+/-- The least binary width whose power of two reaches `100 * D + 1`. -/
 abbrev stationBits (D : ℕ) := Nat.clog 2 (100 * D + 1)
-open scoped Classical in
-/-- The least binary width whose power of two reaches the stated size. -/
+
+/-- The least binary width whose power of two reaches `g + 1`. -/
 abbrev channelBits (g : ℕ) := Nat.clog 2 (g + 1)
 
-end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-end
-
-/- # From an ordered input dictionary to a canonical local presentation -/
-
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-open Assembly Coloring Packing Sphere
-
-open scoped Classical in
-/-- The least binary width whose power of two reaches the stated size. -/
+/-- The least binary width whose power of two reaches `100 * D * T + 1`. -/
 abbrev widthBits (D T : ℕ) := Nat.clog 2 (100 * D * T + 1)
-
-variable {F : Type} [Field F] {a e : ℕ}
-
-open scoped Classical in
-/-- Computes the bundle scheme by the application `BundleOrder.scheme read m h (channelBits g)
-(stationBits D) (widthBits D T)`. -/
-abbrev bundleScheme (read : BundleReader F a e) (m h g D T : ℕ) :=
-  BundleOrder.scheme read m h (channelBits g) (stationBits D) (widthBits D T)
-
-open scoped Classical in
-/-- Computes the mobility by the application `BundleOrder.mobile a e (channelBits g)
-(stationBits D) (widthBits D T)`. -/
-abbrev mobility (a e g D T : ℕ) := BundleOrder.mobile a e (channelBits g) (stationBits D)
-    (widthBits D T)
-
-end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-end
-
-section
-/- # Linear label and logarithmic width bounds for ordered inputs -/
-
-namespace MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-open Assembly
 
 theorem widthBits_le (D T : ℕ) : widthBits D T ≤ stationBits D + Nat.clog 2 (T + 1) := by
   apply Nat.clog_le_of_le_pow
@@ -267,40 +230,7 @@ theorem widthBits_le (D T : ℕ) : widthBits D T ≤ stationBits D + Nat.clog 2 
   exact (show 100 * D * T + 1 ≤ (100 * D + 1) * (T + 1) by ring_nf; omega).trans
     (Nat.mul_le_mul (Nat.le_pow_clog (by decide) _) (Nat.le_pow_clog (by decide) _))
 
-/-- The construction uses `inputBits g D` for its intermediate `e`. -/
-def rowFactor (g D : ℕ) :=
-  let e := inputBits g D
-  2 ^ stationBits D * (3 + 2 ^ e * (2 * stationBits D + 3 + channelBits g + e))
-
-private theorem linear (d k t e a : ℕ) :
-    (2 + a + 2 ^ e * (k + t + 2 + d + k + e)) ≤ (3 + 2 ^ e * (2 * k + 3 + d + e)) * (1 + a + t)
-      := by
-  let n := 1 + a + t
-  have h₁ : 2 + a ≤ 3 * n := by unfold n; omega
-  have h₂ : k + t + 2 + d + k + e ≤ (2 * k + 3 + d + e) * n := by
-    unfold n
-    ring_nf
-    omega
-  exact (Nat.add_le_add h₁ (Nat.mul_le_mul_left (2 ^ e) h₂)).trans_eq (by unfold n; ring)
-
-theorem bundleBits {F : Type} [Field F] {a e : ℕ} (read : BundleReader F a e)
-    (m h g D T : ℕ) (he : e ≤ inputBits g D) :
-    (bundleScheme read m h g D T).ℓ ≤ rowFactor g D * (1 + a + Nat.clog 2 (T + 1)) := by
-  let k := stationBits D
-  let d := channelBits g
-  let z := inputBits g D
-  let t := Nat.clog 2 (T + 1)
-  change (BundleOrder.row a e d k (widthBits D T)).width ≤ _
-  rw [BundleOrder.row_width]
-  have hq := widthBits_le D T
-  calc
-    _ ≤ 2 ^ k * (2 + a + 2 ^ z * (k + t + 2 + d + k + z)) := by gcongr
-    _ ≤ 2 ^ k * ((3 + 2 ^ z * (2 * k + 3 + d + z)) * (1 + a + t))
-      := Nat.mul_le_mul_left _ (linear ..)
-    _ = _ := (mul_assoc ..).symm
-
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-end
 
 /- # Dyadic and packet scales of the binary controller -/
 

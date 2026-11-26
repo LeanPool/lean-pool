@@ -45,10 +45,9 @@ theorem exponent_le_of_characters {a b c s : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
     (hc : 0 ≤ c) (hs : 0 ≤ s)
     (h : ∀ f : Character, b * f.pX + a * f.pY + c * f.pZ ≤ s) :
     exponent Coeff a b c ≤ s := by
-  by_contra! hlt
-  obtain ⟨n, r, hn, hlo, hhi⟩ := price_gap hs hlt
+  refine exponent_le_of_rank_powers ha hb hc hs ?_
+  intro n r hn hlo hr
   have hn₁ : 1 ≤ (n : ℝ) := by exact_mod_cast (show 1 ≤ n by omega)
-  have hr : 0 < (r : ℝ) := (by positivity : 0 ≤ 8 * (n : ℝ) ^ s).trans_lt hlo
   have hne : (r : TensorClass) ≠ 0 := by
     intro he
     have he' := (rank_eq_zero_iff _).mpr he
@@ -68,13 +67,9 @@ theorem exponent_le_of_characters {a b c s : ℝ} (ha : 0 ≤ a) (hb : 0 ≤ b)
   obtain ⟨C, hC⟩ := Spectrum.strictComparison
     (fun _ _ _ h => add_mono h le_rfl) (fun _ _ _ h => mul_mono le_rfl h)
     TensorClass.zero_le (fun _ => one_le_of_ne_zero) (fun A => ⟨rank A, le_rank_natCast A⟩) hne hp
-  obtain ⟨p, hp', hsave⟩ := absorb_overhead (D := C) hn hr hhi
-  have hR : RankLE Coeff ((side n a) ^ p) ((side n b) ^ p) ((side n c) ^ p) (r ^ p * C) := by
-    apply rank_of_dots
-    rw [dots_power, Nat.cast_mul, Nat.cast_pow, mul_comm]
-    exact hC p
-  exact lt_irrefl _ (exponent_lt_of_rank ha hb hc hp'
-    (hR.cut (side_pow le_rfl p) (side_pow le_rfl p) (side_pow le_rfl p)) hsave)
+  refine ⟨C, fun p => rank_of_dots ?_⟩
+  rw [dots_power, Nat.cast_mul, Nat.cast_pow, mul_comm]
+  exact hC p
 
 theorem coeff_discrete
     (h : ∀ (f : Character) (A B C : ℕ), 0 < A → 0 < B → 0 < C →

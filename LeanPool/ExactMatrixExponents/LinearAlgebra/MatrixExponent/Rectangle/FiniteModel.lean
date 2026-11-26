@@ -22,28 +22,29 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 open Filter
 
-variable {F : Type*} [Field F] {i j k : ℕ}
+variable {F : Type*} {i j k : ℕ}
 
 /-- The indexed operation `fun a b c => ∏ l : Fin n, w (finFunctionFinEquiv.symm a l)
 (finFunctionFinEquiv.symm b l) (finFunctionFinEquiv.symm c l)`. -/
-def WPower (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
+def WPower [CommMonoid F] (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
     Fin (i ^ n) → Fin (j ^ n) → Fin (k ^ n) → F := fun a b c =>
   ∏ l : Fin n, w (finFunctionFinEquiv.symm a l)
     (finFunctionFinEquiv.symm b l) (finFunctionFinEquiv.symm c l)
 
 /-- The infimum of `{r : ℕ | WeightedRankLE w r}`. -/
-def rankW (w : Fin i → Fin j → Fin k → F) : ℕ := sInf {r : ℕ | WeightedRankLE w r}
+def rankW [CommSemiring F] (w : Fin i → Fin j → Fin k → F) : ℕ :=
+  sInf {r : ℕ | WeightedRankLE w r}
 
 /-- The quantity computed by `limUnder atTop fun n : ℕ => (rankW (WPower w n) : ℝ) ^ (n : ℝ)⁻¹`. -/
-def asymptoticRank (w : Fin i → Fin j → Fin k → F) : ℝ :=
+def asymptoticRank [CommSemiring F] (w : Fin i → Fin j → Fin k → F) : ℝ :=
   limUnder atTop fun n : ℕ => (rankW (WPower w n) : ℝ) ^ (n : ℝ)⁻¹
 
 /-- Evaluates `1` at the input `_ _ _`. -/
-def ordinary (F : Type*) [Field F] (i j k : ℕ) : Fin i → Fin j → Fin k → F :=
+def ordinary (F : Type*) [One F] (i j k : ℕ) : Fin i → Fin j → Fin k → F :=
   fun _ _ _ => 1
 
 /-- The quantity computed by `supportSize w / ((i : ℝ) * j * k)`. -/
-def density (w : Fin i → Fin j → Fin k → F) : ℝ := supportSize w / ((i : ℝ) * j * k)
+def density [Zero F] (w : Fin i → Fin j → Fin k → F) : ℝ := supportSize w / ((i : ℝ) * j * k)
 
 /-- Normalize the surplus by the output area divided by its natural logarithm. -/
 noncomputable def normalized (x y : ℝ) (r : ℕ → ℕ) (n : ℕ) : ℝ :=

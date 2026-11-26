@@ -790,7 +790,7 @@ theorem canonical_linked (hp : (L).scheme.Proper y.1)
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
-/- # Locating and measuring every live station of a canonical plan -/
+/- # Linking every live station of a canonical plan -/
 
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer.Physical
@@ -814,31 +814,6 @@ variable {F K X Z J I : Type} [Field F] [Finite K]
   (p : Layout.Profile s.scene.cell s.scene.level)
 
 local notation "A" => U.canonical S tape (B.record p)
-
-open scoped Classical in
-theorem displayed : B.Displayed p A where
-  live i := by
-    change (U.localAt S A i).live = true ↔ _
-    rw [U.local_canonical]
-    exact B.presentAt p i
-  peer i := congrArg Geometry.Outline.peer (U.local_canonical S tape (B.record p) i)
-
-open scoped Classical in
-theorem away (hv : U.registered S tape (B.record p) A)
-    (i t) (hi : (i, t) ∉ Set.range a.coord) : (A) i t = fun _ => Geometry.Outline.empty := by
-  funext c
-  apply (hv i t).vacant
-  apply Bool.eq_false_iff.mpr
-  intro h
-  let v := U.centerAt S i t c
-  have ho : (U.localAt S A v).live = true := by rw [U.local_center]; exact h
-  obtain ⟨l, hl⟩ := ((B.displayed p (tape := tape)).live v).mp ho
-  obtain ⟨h₁, h₂⟩ := B.address p l
-  rw [hl] at h₁ h₂
-  have ee := congrArg Prod.fst h₁
-  change (U.split (U.split.symm (i, c))).1 = _ at ee
-  rw [U.split.apply_symm_apply] at ee
-  exact hi ⟨_, Prod.ext ee.symm h₂.symm⟩
 
 open scoped Classical in
 theorem linked (hw : ∀ i, Diagram.padWidth u (((Key.share s Q).backdrop.emitted p j).width i) / u
