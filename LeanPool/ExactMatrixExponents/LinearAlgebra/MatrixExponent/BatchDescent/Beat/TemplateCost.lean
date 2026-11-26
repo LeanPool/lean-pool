@@ -23,6 +23,32 @@ variable {I : Type*} {F : I → Type} {T : (i : I) → Template (F i)}
 
 local notation "Cost" => MixedCost large small height hosts
 
+/-- Bound the polynomial in the size and degree in the navigation overhead. -/
+theorem navComputation {size degree : I → ℕ} (hs : Poly large size) (hd : Poly large degree) :
+    Poly large (fun i => (100 + (size i + degree i)) ^ 201) :=
+  ((Poly.const hs.two 100).add (hs.add hd)).pow 201
+
+/-- Bound the polynomial in the size and both degrees in the header overhead. -/
+theorem headerComputation {size full core : I → ℕ} (hs : Poly large size)
+    (hf : Poly large full) (hc : Poly large core) :
+    Poly large (fun i => (100 + (size i + full i + core i)) ^ 16) :=
+  ((Poly.const hs.two 100).add ((hs.add hf).add hc)).pow 16
+
+/-- Bound the election computation from the count, width, and group size. -/
+theorem electionComputation {count width groups : I → ℕ} (hn : Poly large count)
+    (hw : Poly large width) (hg : Poly large groups) :
+    Poly large (fun i => (100 + (count i + (width i + groups i))) ^ 42) :=
+  ((Poly.const hn.two 100).add (hn.add (hw.add hg))).pow 42
+
+include largeTwo smallTwo smallLeLarge in
+/-- Charge group preparation and election at the two fixed rates. -/
+theorem groupCost_mixed {dimension query width labels : I → ℕ}
+    (prepare : Cost (fun i => 2 ^ dimension i * (1 + Group.arity (query i) (width i) (labels i))))
+    (elect : Cost (fun i => Group.electionCost (dimension i) (width i))) :
+    Cost (fun i => Group.cost (dimension i) (query i) (width i) (labels i)) :=
+  (prepare.scale 100 smallTwo smallLeLarge).add
+    (elect.scale 4 smallTwo smallLeLarge) largeTwo smallTwo
+
 include largeTwo smallTwo smallLeLarge in
 /-- Apply the two fixed rates to the input widths and add the navigation computation. -/
 theorem navCost_mixed {degree : I → ℕ}

@@ -322,7 +322,8 @@ variable {F : Type} [Field F] {S : Scheme F} {h u a Δ D Y w : ℕ} {B' c c' : �
   (Q : Relation U V) (σ : Cell a) (k : ℕ)
 
 open scoped Classical in
-/-- The raw mode used in the `Setup` construction. -/
+/-- A matched supply uses the same kind at both endpoints. Inside wires share an address.
+Direct and detoured wires carry a unit pairing, and detoured wires share the detour step. -/
 inductive RawMode : U.Raw R → V.Raw R → Prop
   | inside (x : Schedule.Address h) (v z)
       (e : U.delivery.LocalWires R (v, x)) (f : V.delivery.LocalWires R (z, x)) :
@@ -684,7 +685,7 @@ def localRecord (v : Cell a × q.vertex) : (R).obj :=
 open scoped Classical in
 /-- Extends the specified values along the indexing map, using a default elsewhere. -/
 def records (x : B m) (y : B h') : (R).obj :=
-  Function.extend A.vertex (A.localRecord size payload) (fun _ => Post.vacant) (x, y, 0)
+  Post.extendRecord A.vertex (A.localRecord size payload) Post.vacant x y
 
 open scoped Classical in
 /-- Evaluates `(nav v, (R).serial ∘ A.records size payload v)` at the input `v`. -/
@@ -700,15 +701,12 @@ theorem read_output (v : (U).Vtx) :
 open scoped Classical in
 theorem record_at (v : Cell a × q.vertex) :
     A.records size payload (A.vertex v).1 (A.vertex v).2.1 = A.localRecord size payload v :=
-  A.vertex.injective.extend_apply _ _ v
+  Post.extendRecord_at A.vertex (A.localRecord size payload) _ v
 
 open scoped Classical in
 theorem record_vacant (v : (U).Vtx) (hv : v ∉ Set.range A.vertex) :
-    A.records size payload v.1 v.2.1 = Post.vacant := by
-  have he : (v.1, v.2.1, (0 : B 0)) = v := Prod.ext rfl (Prod.ext rfl (Fin.eq_zero _).symm)
-  unfold records
-  rw [he]
-  exact Function.extend_apply' _ _ _ hv
+    A.records size payload v.1 v.2.1 = Post.vacant :=
+  Post.extendRecord_vacant A.vertex (A.localRecord size payload) _ v hv
 
 open scoped Classical in
 theorem stored (v : Cell a × q.vertex) :

@@ -70,14 +70,17 @@ private theorem election_bound {c w : I → ℕ} (hc : Short (fun i => 2 ^ c i))
       (100 + (c i + (w i + (i.m + i.a)))) ^ 42)) := by
   have h := groups_cost P d (((short_const 100).add hw).pow 5)
   have hm : Long (fun i : I => i.m + i.a) := hosts.add Case.groups.rate.short.long
-  have h' := ((long_const 100).add (hc.long.of_exp.add (hw.long.add hm))).pow 42
+  have h' := Template.electionComputation hc.long.of_exp hw.long hm
   exact (h.add (Long.row h').cost).left hc
 
 private theorem groupCost_bound :
     Cost (fun i : I => Group.cost (i.m + i.a) ((i.T.scheme.d + 1) * i.n) i.n i.T.count) := by
   have hn : Short (fun i : I => 2 ^ i.n) := tiles.rate.short
-  exact ((groups_cost P d ((short_const 1).add (groupArity_bound P d))).scale 100).add
-    ((election_bound P d hn hn.of_exp).scale 4)
+  exact Template.groupCost_mixed (dimension := fun i : I => i.m + i.a)
+    (query := fun i => (i.T.scheme.d + 1) * i.n) (width := fun i => i.n)
+    (labels := fun i => i.T.count) (fun i => i.long_two) (fun i => i.short_two)
+    (fun i => i.short_long) (groups_cost P d ((short_const 1).add (groupArity_bound P d)))
+    (election_bound P d hn hn.of_exp)
 
 private theorem light_bound : Cost (fun i : I => i.T.lightCost i.a (b P)) := by
   have hc := colors_bound P d

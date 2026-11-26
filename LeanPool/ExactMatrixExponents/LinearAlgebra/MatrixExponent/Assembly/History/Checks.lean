@@ -776,10 +776,8 @@ open scoped Classical in
 def seating : U.Seating out (g.contract m P G.units hz i) where
   vertex := A.vertex
   pin := A.pin l hz
-  cover v := by
-    obtain ⟨j, he⟩ := U.span_mem_of_pos out A.span l.idle (s := v.1)
-      (Nat.zero_le v.2.val |>.trans_lt v.2.isLt)
-    exact ⟨_, congrArg Prod.fst he⟩
+  cover := U.cover_of_span out A.span A.vertex (whereAt g m P G.units i p)
+    (fun _ => rfl) l.idle
   sample := H.sample
   vacant := H.vacant
 

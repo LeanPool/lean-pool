@@ -847,7 +847,7 @@ private theorem childInput_bound : Cost (fun i : I => (Child.Input i.m i.T.schem
 
 private theorem nav_bound {q : I → ℕ} (h : Short (fun i => 2 ^ (q i))) :
     Cost (fun i : I => i.T.navCost i.a (q i)) := by
-  have bits := ((long_const 100).add ((size_bound P d).add h.long)).pow 201
+  have bits := Template.navComputation (size_bound P d) h.long
   exact Template.navCost_mixed (large := Case.long) (small := Case.short)
     (height := Case.height) (hosts := Case.m) (F := fun _ => F)
     (T := fun i : I => i.T) (a := fun i => i.a)
@@ -871,7 +871,7 @@ private theorem headerCost_bound : Cost (fun i : I => i.T.headerCost i.a Δ (deg
     refine p.mono fun i => ?_
     simp only [Template.degree, Template.bound, i.h.core, Bool.false_eq_true, ↓reduceIte]
     rfl
-  have bits := ((long_const 100).add (((size_bound P d).add p.long).add q.long)).pow 16
+  have bits := Template.headerComputation (size_bound P d) p.long q.long
   have flags : Cost (fun i : I => (Format.vec (i.T.size i.a)
       (.vec (i.T.degree i.a Δ (degreeBound i.S i.T Δ)) .bit)).width) := by
     refine (expanded P d p.long.row).mono fun i => ?_

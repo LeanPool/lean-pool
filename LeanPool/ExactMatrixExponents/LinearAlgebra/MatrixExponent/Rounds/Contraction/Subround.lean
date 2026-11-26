@@ -225,8 +225,7 @@ private theorem childInput_bound : Cost (fun i : I => (Child.Input i.m i.T.schem
 
 private theorem nav_bound {q : I → ℕ} (h : Short (fun i => 2 ^ (q i))) :
     Cost (fun i : I => i.T.navCost i.a (q i)) := by
-  have bits := ((long_const 100).add ((hosts.add (child_factor P d B).short.long.of_exp).add
-    h.long)).pow 201
+  have bits := Template.navComputation (hosts.add (child_factor P d B).short.long.of_exp) h.long
   exact Template.navCost_mixed (large := Case.long) (small := Case.block)
     (height := Case.height) (hosts := Case.m) (F := Case.F)
     (T := fun i : I => i.T) (a := fun i => i.a)
@@ -249,8 +248,8 @@ private theorem headerCost_bound : Cost (fun i : I => i.T.headerCost i.a Δ C) :
     refine Nat.pow_le_pow_right (by decide) ?_
     exact Nat.mul_le_mul_right 3 (Nat.add_le_add_right (Nat.add_le_add i.h.degree (min_le_right
       ..)) 1)
-  have bits := ((long_const 100).add (((hosts.add (child_factor P d B).short.long.of_exp).add
-    p.long).add q.long)).pow 16
+  have bits := Template.headerComputation (hosts.add (child_factor P d B).short.long.of_exp)
+    p.long q.long
   have flags : Cost (fun i : I => (Format.vec (i.T.size i.a)
       (.vec (i.T.degree i.a Δ C) .bit)).width) := by
     refine (expanded P d B p.long.row).mono fun i => ?_
@@ -346,14 +345,17 @@ private theorem election_bound {c w : I → ℕ} (hc : Short (fun i => 2 ^ c i))
       + i.a)))) ^ 42)) := by
   have a := groups_cost Q d B (((short_const 100).add hw).pow 5)
   have j : Long (fun i : I => i.m + i.a) := hosts.add Case.groups.short.long
-  have g := ((long_const 100).add (hc.long.of_exp.add (hw.long.add j))).pow 42
+  have g := Template.electionComputation hc.long.of_exp hw.long j
   exact (a.add (Long.row g).cost).left hc.block
 
 private theorem groupCost_bound :
     Cost (fun i : I => Group.cost (i.m + i.a) ((i.T.scheme.d + 1) * i.n) i.n i.T.count) := by
   have hn : Short (fun i : I => 2 ^ i.n) := tiles.short
-  exact ((groups_cost Q d B ((short_const 1).add (groupArity_bound Q d B))).scale 100).add
-    ((election_bound Q d B hn hn.of_exp).scale 4)
+  exact Template.groupCost_mixed (dimension := fun i : I => i.m + i.a)
+    (query := fun i => (i.T.scheme.d + 1) * i.n) (width := fun i => i.n)
+    (labels := fun i => i.T.count) (fun i => i.long_two) (fun i => i.block_two)
+    (fun i => i.block_long) (groups_cost Q d B ((short_const 1).add (groupArity_bound Q d B)))
+    (election_bound Q d B hn hn.of_exp)
 
 private theorem light_bound : Cost (fun i : I => i.T.lightCost i.a (b Q)) := by
   have hc := (colors_bound Q d B).long.row.cost

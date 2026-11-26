@@ -15,9 +15,9 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Spectra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Spectral.Transport
 
 /-!
-# Extending the coefficient field
+# Mapping tensor coefficients
 
-A field homomorphism acts entrywise on both tensor factors and local
+A semiring homomorphism acts entrywise on both tensor factors and local
 restriction matrices. It therefore induces a monotone semiring homomorphism.
 -/
 
@@ -26,7 +26,7 @@ restriction matrices. It therefore induces a monotone semiring homomorphism.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral
 
-variable {K L S : Type} [Field K] [Field L] [Fintype S]
+variable {K L S : Type} [CommSemiring K] [CommSemiring L] [Fintype S]
 
 namespace Raw
 
@@ -39,14 +39,47 @@ def map (A : Raw K S) (f : K →+* L) : Raw L S :=
   change (∑ i : A.term, ∏ s, f (A.factor i s (x s))) = _
   simp only [coeff, map_sum, map_prod]
 
+/-- Apply the same coefficient homomorphism to the entries of every local matrix. -/
+def mapRestrictionMaps {A B : Raw K S} (P : RestrictionMaps A B) (f : K →+* L) :
+    RestrictionMaps (A.map f) (B.map f) := fun s x y => f (P s x y)
+
+theorem coeff_mapRestrictionMaps {A B : Raw K S} (P : RestrictionMaps A B) (f : K →+* L)
+    (h : ∀ x, B.coeff x = ∑ i : A.term, ∏ s, ∑ y, P s (x s) y * A.factor i s y)
+    (x : ∀ s, (B.map f).leg s) :
+    (B.map f).coeff x = ∑ i : (A.map f).term, ∏ s,
+      ∑ y, mapRestrictionMaps P f s (x s) y * (A.map f).factor i s y := by
+  change ∀ s, B.leg s at x
+  change (B.map f).coeff x = ∑ i : A.term, ∏ s, ∑ y, f (P s (x s) y) * f (A.factor i s y)
+  rw [coeff_map, h]
+  simp only [map_sum, map_prod, map_mul]
+
 theorem Restricts.map {A B : Raw K S} (h : A.Restricts B) (f : K →+* L) :
     (A.map f).Restricts (B.map f) := by
   obtain ⟨P, hP⟩ := h
-  refine ⟨fun s x y => f (P s x y), fun x => ?_⟩
-  change ∀ s, B.leg s at x
-  change (B.map f).coeff x = ∑ i : A.term, ∏ s, ∑ y, f (P s (x s) y) * f (A.factor i s y)
-  rw [coeff_map, hP]
-  simp only [map_sum, map_prod, map_mul]
+  exact ⟨mapRestrictionMaps P f, coeff_mapRestrictionMaps P f hP⟩
+
+omit [Fintype S] in
+theorem map_zero_relabels (f : K →+* L) : Relabels ((0 : Raw K S).map f) 0 :=
+  ⟨Equiv.refl _, fun _ => Equiv.refl _, fun i => Empty.elim i⟩
+
+omit [Fintype S] in
+theorem map_one_relabels (f : K →+* L) : Relabels ((1 : Raw K S).map f) 1 :=
+  ⟨Equiv.refl _, fun _ => Equiv.refl _, fun _ _ _ => map_one f⟩
+
+omit [Fintype S] in
+theorem map_mul_relabels (f : K →+* L) (A B : Raw K S) :
+    Relabels ((A * B).map f) (A.map f * B.map f) :=
+  ⟨Equiv.refl _, fun _ => Equiv.refl _, fun _ _ _ => map_mul f _ _⟩
+
+omit [Fintype S] in
+theorem map_add_relabels (f : K →+* L) (A B : Raw K S) :
+    Relabels ((A + B).map f) (A.map f + B.map f) := by
+  refine ⟨Equiv.refl _, fun _ => Equiv.refl _, ?_⟩
+  rintro (i | i) s (x | x)
+  · rfl
+  · exact map_zero f
+  · exact map_zero f
+  · rfl
 
 end Raw
 
@@ -55,24 +88,12 @@ namespace Tensor
 /-- Applies the operation on representatives under the induced quotient relation. -/
 def map (f : K →+* L) : Tensor K S →+* Tensor L S where
   toFun := Quotient.map (fun A => A.map f) fun _ _ h => ⟨h.1.map f, h.2.map f⟩
-  map_zero' := by
-    refine ofRaw_eq (Raw.relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_)
-    exact fun i => Empty.elim i
-  map_one' := by
-    refine ofRaw_eq (Raw.relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_)
-    exact fun _ _ _ => map_one f
-  map_mul' X Y := by
-    refine Quotient.inductionOn₂ X Y fun A B => ?_
-    refine ofRaw_eq (Raw.relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_)
-    exact fun _ _ _ => map_mul f _ _
-  map_add' X Y := by
-    refine Quotient.inductionOn₂ X Y fun A B => ?_
-    refine ofRaw_eq (Raw.relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_)
-    rintro (i | i) s (x | x)
-    · rfl
-    · exact map_zero f
-    · exact map_zero f
-    · rfl
+  map_zero' := ofRaw_eq (Raw.relabel_of_relabels (Raw.map_zero_relabels f))
+  map_one' := ofRaw_eq (Raw.relabel_of_relabels (Raw.map_one_relabels f))
+  map_mul' X Y := Quotient.inductionOn₂ X Y fun A B =>
+    ofRaw_eq (Raw.relabel_of_relabels (Raw.map_mul_relabels f A B))
+  map_add' X Y := Quotient.inductionOn₂ X Y fun A B =>
+    ofRaw_eq (Raw.relabel_of_relabels (Raw.map_add_relabels f A B))
 
 @[simp] theorem map_ofRaw (f : K →+* L) (A : Raw K S) :
     map f (ofRaw A) = ofRaw (A.map f) := rfl

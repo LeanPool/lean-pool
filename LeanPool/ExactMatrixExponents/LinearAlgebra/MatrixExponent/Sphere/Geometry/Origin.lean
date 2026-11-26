@@ -13,7 +13,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Boundary
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Proof.Initial
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Shows
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Ledger.Quota
 
 /-! # Exterior load is invariant under relabeling the occupied fibers -/
 

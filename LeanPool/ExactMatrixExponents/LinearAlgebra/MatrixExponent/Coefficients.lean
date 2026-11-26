@@ -66,7 +66,7 @@ theorem closed_laws (h : Fulfills Coeff) (K : Type) [Field K] [IsAlgClosed K] :
   have ex : ∃ k : ClosedField, ¬ Fulfills k.carrier := ⟨⟨K⟩, bad⟩
   exact Classical.epsilon_spec ex h
 
-theorem exists_nonzero_nodes {F : Type*} [Field F] [Infinite F] (n : ℕ) :
+theorem exists_nonzero_nodes {F : Type*} [Zero F] [Infinite F] (n : ℕ) :
     ∃ nodes : Fin n → F, Function.Injective nodes ∧ ∀ i, nodes i ≠ 0 := by
   let e : Fin n ↪ ({0}ᶜ : Set F) :=
     Fin.valEmbedding.trans ((Set.finite_singleton (0 : F)).infinite_compl.natEmbedding _)

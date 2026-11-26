@@ -446,6 +446,32 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Assembly.History.Post
 open Coloring
 
+open scoped Classical in
+/-- Extend a record to a padded position, using its vacant value outside the original range. -/
+def extendRecord {A X Y T : Type*} (vertex : A → X × Y × B 0)
+    (localRecord : A → T) (vacant : T) (x : X) (y : Y) : T :=
+  Function.extend vertex localRecord (fun _ => vacant) (x, y, 0)
+
+private theorem paddedVertex {X Y : Type*} (v : X × Y × B 0) :
+    (v.1, v.2.1, (0 : B 0)) = v :=
+  Prod.ext rfl (Prod.ext rfl (Fin.eq_zero _).symm)
+
+theorem extendRecord_at {A X Y T : Type*} (vertex : A ↪ X × Y × B 0)
+    (localRecord : A → T) (vacant : T) (v : A) :
+    extendRecord vertex localRecord vacant (vertex v).1 (vertex v).2.1 = localRecord v := by
+  classical
+  unfold extendRecord
+  rw [paddedVertex]
+  exact vertex.injective.extend_apply _ _ v
+
+theorem extendRecord_vacant {A X Y T : Type*} (vertex : A → X × Y × B 0)
+    (localRecord : A → T) (vacant : T) (v : X × Y × B 0) (outside : v ∉ Set.range vertex) :
+    extendRecord vertex localRecord vacant v.1 v.2.1 = vacant := by
+  classical
+  unfold extendRecord
+  rw [paddedVertex]
+  exact Function.extend_apply' _ _ _ outside
+
 /-- Length index, direction, attached flag, neighbor slot, peer slot. -/
 abbrev field (d e ℓ : ℕ) : Format :=
   .pair (.addr ℓ) (.pair .bit (.pair .bit (.pair (.addr d) (.addr e))))
@@ -848,20 +874,17 @@ def localRecord (v : Site G.V h) : (Post.record d e ℓ Y).obj :=
 open scoped Classical in
 /-- Extends the specified values along the indexing map, using a default elsewhere. -/
 def records (x : B m') (y : B h') : (Post.record d e ℓ Y).obj :=
-  Function.extend A.vertex (A.localRecord size data) (fun _ => Post.vacant) (x, y, 0)
+  Post.extendRecord A.vertex (A.localRecord size data) Post.vacant x y
 
 open scoped Classical in
 theorem record_at (v : Site G.V h) :
     A.records size data (A.vertex v).1 (A.vertex v).2.1 = A.localRecord size data v :=
-  A.vertex.injective.extend_apply _ _ v
+  Post.extendRecord_at A.vertex (A.localRecord size data) _ v
 
 open scoped Classical in
 theorem record_vacant (v : (U).Vtx) (hv : v ∉ Set.range A.vertex) :
-    A.records size data v.1 v.2.1 = Post.vacant := by
-  have he : (v.1, v.2.1, (0 : B 0)) = v := Prod.ext rfl (Prod.ext rfl (Fin.eq_zero _).symm)
-  unfold records
-  rw [he]
-  exact Function.extend_apply' _ _ _ hv
+    A.records size data v.1 v.2.1 = Post.vacant :=
+  Post.extendRecord_vacant A.vertex (A.localRecord size data) _ v hv
 
 variable (nav : B m' → B d → B m')
 

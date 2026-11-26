@@ -238,6 +238,17 @@ theorem proper_of_span {J E : Type*} (span : J ⊕ (E × Bool) → S.Span) (edge
 open scoped Classical in
 /-- Indexes the pin by the coordinates of `Σ p : S.Span, Fin (S.width r p)`. -/
 abbrev Pin := Σ p : S.Span, Fin (S.width r p)
+
+open scoped Classical in
+/-- A pin lies at the vertex of a positive-width span in the allocation. -/
+theorem cover_of_span {A V : Type*} (span : A → S.Span) (vertex : V → S.Vtx)
+    (site : A → V) (placed : ∀ j, vertex (site j) = (span j).1)
+    (idle : ∀ s ∉ Set.range span, S.width r s = 0) (pin : S.Pin r) :
+    ∃ v, vertex v = pin.1.1 := by
+  obtain ⟨j, equal⟩ := S.span_mem_of_pos r span idle (s := pin.1)
+    ((Nat.zero_le pin.2.val).trans_lt pin.2.isLt)
+  exact ⟨site j, (placed j).trans (congrArg Prod.fst equal)⟩
+
 open scoped Classical in
 /-- Indexes the local pin by the coordinates of `Σ s : B S.e, Fin (S.width r (v, s))`. -/
 abbrev LocalPin (v : S.Vtx) := Σ s : B S.e, Fin (S.width r (v, s))

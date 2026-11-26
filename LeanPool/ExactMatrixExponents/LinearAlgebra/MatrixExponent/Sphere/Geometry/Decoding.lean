@@ -11,7 +11,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Origin
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Shows
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Verifier.Caps
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Ledger.Quota
 
 /-!
 # Reading the geometry from a finite tag and length words

@@ -317,36 +317,29 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Valued
 
 open Spectral
-variable {E K S : Type} [Field E] [Field K] [Fintype S]
+variable {E K S : Type} [Fintype S]
+
+section
+variable [CommRing E] [CommRing K]
 variable {R : Subring E} {O : Subring K}
 
 theorem Restricts.map {A B : Raw E S} (h : Restricts R A B) (f : E →+* K)
     (hf : ∀ x ∈ R, f x ∈ O) : Restricts O (A.map f) (B.map f) := by
   obtain ⟨P, hp, he⟩ := h
-  refine ⟨fun s x y => f (P s x y), fun s x y => hf _ (hp s x y), fun x => ?_⟩
-  change ∀ s, B.leg s at x
-  change (B.map f).coeff x = ∑ i : A.term, ∏ s, ∑ y, f (P s (x s) y) * f (A.factor i s y)
-  rw [Raw.coeff_map, he]
-  simp only [map_sum, map_prod, map_mul]
+  exact ⟨Raw.mapRestrictionMaps P f, fun s x y => hf _ (hp s x y),
+    Raw.coeff_mapRestrictionMaps P f he⟩
 
 namespace ITensor
 
 /-- Applies the operation on representatives under the induced quotient relation. -/
 def map (f : E →+* K) (hf : ∀ x ∈ R, f x ∈ O) : ITensor R S →+* ITensor O S where
   toFun := Quotient.map (fun A => A.map f) fun _ _ h => ⟨h.1.map f hf, h.2.map f hf⟩
-  map_zero' := ofRaw_eq (relabel (Equiv.refl _) (fun _ => Equiv.refl _) fun i => Empty.elim i)
-  map_one' := ofRaw_eq (relabel (Equiv.refl _) (fun _ => Equiv.refl _) fun _ _ _ => map_one f)
-  map_mul' X Y := by
-    refine Quotient.inductionOn₂ X Y fun A B => ?_
-    exact ofRaw_eq (relabel (Equiv.refl _) (fun _ => Equiv.refl _) fun _ _ _ => map_mul f _ _)
-  map_add' X Y := by
-    refine Quotient.inductionOn₂ X Y fun A B => ?_
-    refine ofRaw_eq (relabel (Equiv.refl _) (fun _ => Equiv.refl _) ?_)
-    rintro (i | i) s (x | x)
-    · rfl
-    · exact map_zero f
-    · exact map_zero f
-    · rfl
+  map_zero' := ofRaw_eq (relabel_of_relabels (Raw.map_zero_relabels f))
+  map_one' := ofRaw_eq (relabel_of_relabels (Raw.map_one_relabels f))
+  map_mul' X Y := Quotient.inductionOn₂ X Y fun A B =>
+    ofRaw_eq (relabel_of_relabels (Raw.map_mul_relabels f A B))
+  map_add' X Y := Quotient.inductionOn₂ X Y fun A B =>
+    ofRaw_eq (relabel_of_relabels (Raw.map_add_relabels f A B))
 
 theorem map_mono (f : E →+* K) (hf : ∀ x ∈ R, f x ∈ O) : Monotone (map (S := S) f hf) :=
   fun X Y => Quotient.inductionOn₂ X Y fun _ _ h => Restricts.map h f hf
@@ -362,7 +355,12 @@ def top : Tensor K S →+* ITensor (⊤ : Subring K) S where
 theorem top_mono : Monotone (top (K := K) (S := S)) :=
   fun X Y => Quotient.inductionOn₂ X Y fun _ _ h => top_restricts h
 
-variable [Algebra E K]
+end ITensor
+end
+
+namespace ITensor
+
+variable [Field E] [Field K] [Algebra E K] {O : Subring K}
 
 /-- The indexed operation `(map (algebraMap E K) (fun x _ => hO ⟨x, rfl⟩)).comp top`. -/
 def fromBase (hO : constants E K ≤ O) : Tensor E S →+* ITensor O S :=
