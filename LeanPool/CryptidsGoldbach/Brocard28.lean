@@ -69,9 +69,9 @@ open Goldbach21 (nSteps nSteps_zero nSteps_succ nSteps_reaches nSteps_add nSteps
 local notation "mkL" => Goldbach21.Tape.mkL
 
 /-- The blank half of the binary tape. -/
-def B0 : ListBlank (Fin 2) := ListBlank.mk []
+abbrev B0 : ListBlank (Fin 2) := Goldbach21.B0
 
-theorem B0_cons_zero : B0.cons 0 = B0 := ListBlank.cons_head_tail B0
+theorem B0_cons_zero : B0.cons 0 = B0 := Goldbach21.B0_cons_zero
 
 theorem mkRight_blank (L : ListBlank (Fin 2)) : Tape.mk' L B0 = ⟨0, L, B0⟩ := rfl
 
@@ -259,22 +259,14 @@ theorem sBs_1 (L R) : step brocard28 ⟨27, ⟨1, L, R⟩⟩ = some ⟨27, Tape.
 theorem sweepR {q : Fin 28}
     (h : ∀ L R, step brocard28 ⟨q, ⟨1, L, R⟩⟩ = some ⟨q, Tape.mk' (L.cons 1) R⟩)
     (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps brocard28 k ⟨q, Tape.mk' L (ones k R)⟩ = some ⟨q, Tape.mk' (ones k L) R⟩ := by
-  induction k generalizing L with
-  | zero => rfl
-  | succ k ih =>
-    rw [nSteps_succ, show ones (k + 1) R = (ones k R).cons 1 from rfl,
-      mk'_cons, h, Option.bind_some, ih, ones_succ']
+    nSteps brocard28 k ⟨q, Tape.mk' L (ones k R)⟩ = some ⟨q, Tape.mk' (ones k L) R⟩ :=
+  Goldbach21.nSteps_mk'_right_scan_of_step h k L R
 
 theorem sweepL {q : Fin 28}
     (h : ∀ L R, step brocard28 ⟨q, ⟨1, L, R⟩⟩ = some ⟨q, mkL L (R.cons 1)⟩)
     (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps brocard28 k ⟨q, mkL (ones k L) R⟩ = some ⟨q, mkL L (ones k R)⟩ := by
-  induction k generalizing R with
-  | zero => rfl
-  | succ k ih =>
-    rw [nSteps_succ, show ones (k + 1) L = (ones k L).cons 1 from rfl,
-      mkL_cons, h, Option.bind_some, ih, ones_succ']
+    nSteps brocard28 k ⟨q, mkL (ones k L) R⟩ = some ⟨q, mkL L (ones k R)⟩ :=
+  Goldbach21.nSteps_mkL_left_scan_of_step h k L R
 
 /-! ## Tape Encoding and Configurations -/
 
@@ -529,23 +521,15 @@ theorem zeros_B0 (k : ℕ) : zeros k B0 = B0 := by
 theorem sweepR_erase {q : Fin 28}
     (h : ∀ L R, step brocard28 ⟨q, ⟨1, L, R⟩⟩ = some ⟨q, Tape.mk' (L.cons 0) R⟩)
     (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps brocard28 k ⟨q, Tape.mk' L (ones k R)⟩ = some ⟨q, Tape.mk' (zeros k L) R⟩ := by
-  induction k generalizing L with
-  | zero => rfl
-  | succ k ih =>
-    rw [nSteps_succ, show ones (k + 1) R = (ones k R).cons 1 from rfl,
-      mk'_cons, h, Option.bind_some, ih, zeros_succ']
+    nSteps brocard28 k ⟨q, Tape.mk' L (ones k R)⟩ = some ⟨q, Tape.mk' (zeros k L) R⟩ :=
+  Goldbach21.nSteps_mk'_right_scan_of_step h k L R
 
 /-- A state that moves left over zeros. -/
 theorem sweepL_zeros {q : Fin 28}
     (h : ∀ L R, step brocard28 ⟨q, ⟨0, L, R⟩⟩ = some ⟨q, mkL L (R.cons 0)⟩)
     (k : ℕ) (L R : ListBlank (Fin 2)) :
-    nSteps brocard28 k ⟨q, mkL (zeros k L) R⟩ = some ⟨q, mkL L (zeros k R)⟩ := by
-  induction k generalizing R with
-  | zero => rfl
-  | succ k ih =>
-    rw [nSteps_succ, show zeros (k + 1) L = (zeros k L).cons 0 from rfl,
-      mkL_cons, h, Option.bind_some, ih, zeros_succ']
+    nSteps brocard28 k ⟨q, mkL (zeros k L) R⟩ = some ⟨q, mkL L (zeros k R)⟩ :=
+  Goldbach21.nSteps_mkL_left_scan_of_step h k L R
 
 /-- `TR0` right after the hole of `B`, with `r` cells of `B` still to pass. -/
 def tCfg (n a r p q : ℕ) : Cfg 28 2 :=

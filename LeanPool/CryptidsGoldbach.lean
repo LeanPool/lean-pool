@@ -11,7 +11,7 @@ public import LeanPool.CryptidsGoldbach.BrocardSemantics
 /-!
 # Finite-state Turing machines for Goldbach and Brocard
 
-Source: url:https://github.com/google-deepmind/cryptids/tree/f873434871b2301d5c8c91ba6fa224f92c93c1e1
+Source: url:https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6
 Authors: Maxence Faldor, Moritz Firsching, Daniel Veljjanoski
 Status: verified
 Main declarations: `ConjectureMachines.Goldbach21.Semantics.halts_candidate_iff_not_goldbach`,

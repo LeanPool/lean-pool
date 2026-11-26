@@ -230,27 +230,45 @@ theorem append_replicate_add (m n : ℕ) (b : Fin 2) (L : ListBlank (Fin 2)) :
       ListBlank.append (List.replicate (m + n) b) L := by
   rw [← ListBlank.append_assoc, ← List.replicate_add]
 
-theorem nSteps_mkL_left_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
-    (h : M.transition q a = some (b, .left, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
+/-- Scan to the left over a constant block using a uniform tape step. -/
+theorem nSteps_mkL_left_scan_of_step {M : Machine states 2} {q : Fin states} {a b : Fin 2}
+    (h : ∀ L R, step M ⟨q, ⟨a, L, R⟩⟩ = some ⟨q, Tape.mkL L (R.cons b)⟩)
+    (k : ℕ) (L R : ListBlank (Fin 2)) :
     nSteps M k ⟨q, Tape.mkL (ListBlank.append (List.replicate k a) L) R⟩ =
       some ⟨q, Tape.mkL L (ListBlank.append (List.replicate k b) R)⟩ := by
   induction k generalizing R with
   | zero => rfl
   | succ k ih =>
-    rw [List.replicate_succ, ListBlank.append, nSteps_succ, step_mkL_left h]
+    rw [List.replicate_succ, ListBlank.append, nSteps_succ, Tape.mkL_cons, h]
     simp only [Option.bind_some]
     rw [ih (R.cons b), append_replicate_cons]
 
-theorem nSteps_mk'_right_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
-    (h : M.transition q a = some (b, .right, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
+theorem nSteps_mkL_left_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
+    (h : M.transition q a = some (b, .left, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
+    nSteps M k ⟨q, Tape.mkL (ListBlank.append (List.replicate k a) L) R⟩ =
+      some ⟨q, Tape.mkL L (ListBlank.append (List.replicate k b) R)⟩ :=
+  nSteps_mkL_left_scan_of_step (fun l r ↦ by simpa only [Tape.mkL_cons] using step_mkL_left h l r)
+    k L R
+
+/-- Scan to the right over a constant block using a uniform tape step. -/
+theorem nSteps_mk'_right_scan_of_step {M : Machine states 2} {q : Fin states} {a b : Fin 2}
+    (h : ∀ L R, step M ⟨q, ⟨a, L, R⟩⟩ = some ⟨q, Tape.mk' (L.cons b) R⟩)
+    (k : ℕ) (L R : ListBlank (Fin 2)) :
     nSteps M k ⟨q, Tape.mk' L (ListBlank.append (List.replicate k a) R)⟩ =
       some ⟨q, Tape.mk' (ListBlank.append (List.replicate k b) L) R⟩ := by
   induction k generalizing L with
   | zero => rfl
   | succ k ih =>
-    rw [List.replicate_succ, ListBlank.append, nSteps_succ, step_mk'_right h]
+    rw [List.replicate_succ, ListBlank.append, nSteps_succ, Tape.mk'_cons, h]
     simp only [Option.bind_some]
     rw [ih (L.cons b), append_replicate_cons]
+
+theorem nSteps_mk'_right_scan {M : Machine states 2} {q : Fin states} {a b : Fin 2}
+    (h : M.transition q a = some (b, .right, q)) (k : ℕ) (L R : ListBlank (Fin 2)) :
+    nSteps M k ⟨q, Tape.mk' L (ListBlank.append (List.replicate k a) R)⟩ =
+      some ⟨q, Tape.mk' (ListBlank.append (List.replicate k b) L) R⟩ :=
+  nSteps_mk'_right_scan_of_step (fun l r ↦ by simpa only [Tape.mk'_cons] using step_mk'_right h l r)
+    k L R
 
 /-- The all-blank one-sided binary tape. -/
 def B0 : ListBlank (Fin 2) := ListBlank.mk []

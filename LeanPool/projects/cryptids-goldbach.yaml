@@ -13,13 +13,13 @@ authors:
 - Moritz Firsching
 - Daniel Veljjanoski
 source:
-  url: https://github.com/google-deepmind/cryptids/tree/f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  url: https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6
   github_repo: google-deepmind/cryptids
-  commit: f873434871b2301d5c8c91ba6fa224f92c93c1e1
+  commit: 481f4e3e39907304dbcad33e508bf21d80c6d5a6
+  goldbach_commit: f873434871b2301d5c8c91ba6fa224f92c93c1e1
   announcement_url: https://leanprover.zulipchat.com/#narrow/channel/579630-Project-announcements/topic/Cryptids/near/632199475
   announcement_date: '2026-10-16'
   brocard_url: https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6/artifacts/brocard_28
-  brocard_commit: 481f4e3e39907304dbcad33e508bf21d80c6d5a6
   brocard_announcement_url: https://github.com/google-deepmind/cryptids/pull/27
   brocard_announcement_date: '2026-11-11'
 license: Apache-2.0
