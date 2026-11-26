@@ -5,6 +5,7 @@ Authors: Vladislav Kuznetsov
 -/
 module
 
+import LeanPool.ConwaySoifer.Certificates.CheckpointOwnerProofs
 import LeanPool.ConwaySoifer.Certificates.FanCertificate
 
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Checkpoints.Sext110000120000
@@ -131,8 +132,8 @@ theorem checked24 : StepValid model24 9000000000000 step24 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded24_0
     · exact excluded24_1
     · exact (hj rfl).elim
@@ -144,8 +145,20 @@ theorem checked24 : StepValid model24 9000000000000 step24 0 1 100 := by
     · exact excluded24_8
     · exact excluded24_9
 theorem next24 : model24.insert step24 = model25 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded25_1 : ExcludedOn (model25.B 1 ++ [step25.q]) 9000000000000 (model25.caps 1)
     (model25.ord 1) 0 1 100 := by
@@ -247,8 +260,8 @@ theorem checked25 : StepValid model25 9000000000000 step25 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact (hj rfl).elim
     · exact excluded25_1
     · exact excluded25_2
@@ -260,8 +273,20 @@ theorem checked25 : StepValid model25 9000000000000 step25 0 1 100 := by
     · exact excluded25_8
     · exact excluded25_9
 theorem next25 : model25.insert step25 = model26 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded26_1 : ExcludedOn (model26.B 1 ++ [step26.q]) 9000000000000 (model26.caps 1)
     (model26.ord 1) 0 1 100 := by
@@ -363,8 +388,8 @@ theorem checked26 : StepValid model26 9000000000000 step26 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact (hj rfl).elim
     · exact excluded26_1
     · exact excluded26_2
@@ -376,8 +401,20 @@ theorem checked26 : StepValid model26 9000000000000 step26 0 1 100 := by
     · exact excluded26_8
     · exact excluded26_9
 theorem next26 : model26.insert step26 = model27 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded27_1 : ExcludedOn (model27.B 1 ++ [step27.q]) 9000000000000 (model27.caps 1)
     (model27.ord 1) 0 1 100 := by
@@ -480,8 +517,8 @@ theorem checked27 : StepValid model27 9000000000000 step27 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact (hj rfl).elim
     · exact excluded27_1
     · exact excluded27_2
@@ -493,8 +530,20 @@ theorem checked27 : StepValid model27 9000000000000 step27 0 1 100 := by
     · exact excluded27_8
     · exact excluded27_9
 theorem next27 : model27.insert step27 = model28 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded28_0 : ExcludedOn (model28.B 0 ++ [step28.q]) 9000000000000 (model28.caps 0)
     (model28.ord 0) 0 1 100 := by
@@ -585,8 +634,8 @@ theorem checked28 : StepValid model28 9000000000000 step28 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded28_0
     · exact excluded28_1
     · exact excluded28_2
@@ -598,8 +647,20 @@ theorem checked28 : StepValid model28 9000000000000 step28 0 1 100 := by
     · exact (hj rfl).elim
     · exact excluded28_9
 theorem next28 : model28.insert step28 = model29 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded29_0 : ExcludedOn (model29.B 0 ++ [step29.q]) 9000000000000 (model29.caps 0)
     (model29.ord 0) 0 1 100 := by
@@ -685,8 +746,8 @@ theorem checked29 : StepValid model29 9000000000000 step29 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded29_0
     · exact excluded29_1
     · exact excluded29_2
@@ -698,8 +759,20 @@ theorem checked29 : StepValid model29 9000000000000 step29 0 1 100 := by
     · exact excluded29_8
     · exact excluded29_9
 theorem next29 : model29.insert step29 = model30 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded30_0 : ExcludedOn (model30.B 0 ++ [step30.q]) 9000000000000 (model30.caps 0)
     (model30.ord 0) 0 1 100 := by
@@ -787,8 +860,8 @@ theorem checked30 : StepValid model30 9000000000000 step30 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded30_0
     · exact excluded30_1
     · exact (hj rfl).elim
@@ -800,8 +873,20 @@ theorem checked30 : StepValid model30 9000000000000 step30 0 1 100 := by
     · exact excluded30_8
     · exact excluded30_9
 theorem next30 : model30.insert step30 = model31 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 theorem excluded31_0 : ExcludedOn (model31.B 0 ++ [step31.q]) 9000000000000 (model31.caps 0)
     (model31.ord 0) 0 1 100 := by
@@ -884,8 +969,8 @@ theorem checked31 : StepValid model31 9000000000000 step31 0 1 100 := by
   · as_aux_lemma => decide
   · as_aux_lemma => decide
   · as_aux_lemma => rfl
-  · intro j hj
-    fin_cases j
+  · apply forall_checkpoint_owners
+    all_goals intro hj
     · exact excluded31_0
     · exact excluded31_1
     · exact excluded31_2
@@ -897,8 +982,20 @@ theorem checked31 : StepValid model31 9000000000000 step31 0 1 100 := by
     · exact excluded31_8
     · exact excluded31_9
 theorem next31 : model31.insert step31 = model32 := by
-  apply Model.ext_fields
-  all_goals intro j; fin_cases j <;> (as_aux_lemma => rfl)
+  apply Model.ext_checkpoint_owners
+  intro j
+  fin_cases j
+  all_goals constructor
+  all_goals try
+    guard_target = _ ∧ _
+    constructor
+  all_goals try
+    guard_target = (_ : List IPoint) = _
+    as_aux_lemma => rfl
+  all_goals try
+    guard_target = (_ : List Cap) = _
+    as_aux_lemma => rfl
+  all_goals as_aux_lemma => rfl
 
 end Sext110000120000
 end ConwaySoifer.Simplified.Certificates

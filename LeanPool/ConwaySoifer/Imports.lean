@@ -9,6 +9,7 @@ module  -- shake: keep-all --deprecated_module: ignore
 public import LeanPool.ConwaySoifer
 public import LeanPool.ConwaySoifer.Certificates.Checker
 public import LeanPool.ConwaySoifer.Certificates.CheckerSound
+public import LeanPool.ConwaySoifer.Certificates.CheckpointOwnerProofs
 public import LeanPool.ConwaySoifer.Certificates.FanCertificate
 public import LeanPool.ConwaySoifer.Certificates.IntPoly
 public import LeanPool.ConwaySoifer.Certificates.IntervalCover
@@ -349,6 +350,7 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Sint32000033000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Sint330000340000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Sint340000350000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.Data.Sint350000360000
+public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Arithmetic
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part0
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part1
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown1200001300000Part2
@@ -420,6 +422,7 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown210000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part5
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part6
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part7
+public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part7RightIntervals
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Aown2100002200005Part8
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1400001500006Part0
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1400001500006Part1
@@ -436,6 +439,7 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext150000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part3
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part4
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part5
+public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part5SplitIntervals
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part6
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part7
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sext1500001600000Part8
@@ -503,6 +507,7 @@ public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint280000
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint2800002900002Part7
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint2800002900002Part8
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part0
+public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part0RightIntervals
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part1
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part2
 public import LeanPool.ConwaySoifer.Simplified.Certificates.FanChecks.Sint3200003300004Part3

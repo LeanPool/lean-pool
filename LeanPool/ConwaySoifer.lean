@@ -251,11 +251,13 @@ checkpoint declarations, and emits the complete state payload and every exclusio
 Pairs and support triples are searched again. Retained orientation directions, split intervals
 and hint modes are seeds; they are not proof assumptions.
 
-The current output contains 100 Data inputs, 639 checkpoint/replay consumers, 18 FanData
-modules and 162 FanChecks modules (919 files). Checkpoint point literals, point lists, caps,
+The current output contains 100 Data inputs, 639 checkpoint/replay consumers, 44 FanData
+modules and 166 FanChecks modules (949 files). Checkpoint point literals, point lists, caps,
 flags and steps are rendered from the fresh payload. Shared fan definitions are recursively
-expanded before proposal generation and comparison; their values and every check-theorem
-context are validated and rendered from the same freshly generated exclusion proposals.
+expanded before proposal generation and comparison; their values and each exclusion-check
+context are validated and rendered from the same freshly generated proposals. Separate leaf and
+arithmetic checks are matched to the fresh witness on their own subinterval. For an arithmetic
+check, the incoming direction is recovered from the previous node in the fresh fan.
 The retained files supply declaration names, layout and kernel-proof scaffolding. This is
 intentional template-based regeneration of the public certificate cache, not recovery of the
 unpublished search/export pipeline and not a generator of proofs for changed geometry.
@@ -448,24 +450,65 @@ def exclusion_rows_text(
 
 
 def check_rows(source: str) -> list[dict[str, Any]]:
-    pattern = (r'^theorem (checkedWitnessForExcluded(\d+)_(\d+))\s*:\s*'
+    pattern = (r'^theorem (checkedWitnessForExcluded(\d+)_(\d+)((?:Right)?Leaf\d+)?)\s*:\s*'
                r'(.*?)\s*=\s*true\s*:= by\n')
     matches = list(re.finditer(pattern, source, re.M | re.S))
     assert len(matches) == len(re.findall(r'^theorem checkedWitnessForExcluded', source, re.M))
     rows = []
     for match in matches:
-        values = arguments(match[4])
+        values = arguments(match[5])
         assert len(values) == 10 and values[0] == 'ExclusionHint.check', match[1]
         offset = 0
         spans = []
         for value in values:
-            start = match[4].index(value, offset)
-            spans.append((match.start(4) + start, match.start(4) + start + len(value)))
+            start = match[5].index(value, offset)
+            spans.append((match.start(5) + start, match.start(5) + start + len(value)))
             offset = start + len(value)
         rows.append({'name': f'excluded{match[2]}_{match[3]}', 'check': match[1],
+                     'leaf': match[4] is not None,
                      'arguments': values[1:5] + values[7:10],
                      'fuel': int(compact(values[5])), 'hint': values[6], 'span': spans[6]})
     return rows
+
+
+def split_witness_leaves(witness: str, interval: list[str]) -> list[tuple[list[str], str]]:
+    if not re.match(r'^\(\s*\.split\s', witness):
+        return [(interval, witness)]
+    _, lower, middle, upper, denominator, left, right = arguments(witness[1:-1])
+    return (split_witness_leaves(left, [lower, middle, denominator])
+            + split_witness_leaves(right, [middle, upper, denominator]))
+
+
+def verify_fan_tails(source: str, rows: dict[str, dict[str, Any]],
+                     proposals: dict[str, str], generated: dict[str, str]) -> None:
+    pattern = (r'^theorem checkedFan(\d+)Owner(\d+)Part\d+Arithmetic\s*:\s*'
+               r'(fan\d+Owner\d+Part\d+)\.check (.*?)\s*=\s*true\s*:= by\n')
+    checks = list(re.finditer(pattern, source, re.M | re.S))
+    assert len(checks) == len(re.findall(r'^theorem checkedFan\w+Arithmetic\b', source, re.M))
+    for match in checks:
+        values = list(map(compact, arguments(match[4])))
+        name = f'excluded{match[1]}_{match[2]}'
+        row = rows[name]
+        context = list(map(compact, row['arguments']))
+        assert len(values) == 8 and values[:3] == context[:3], match[0][:100]
+        assert int(values[6]) == row['fuel'], match[3]
+        tail = compact(generated[match[3]])
+        matches = 0
+        for interval, witness in split_witness_leaves(proposals[name], row['arguments'][4:]):
+            if (list(map(compact, interval)) != values[3:6]
+                    or not witness.startswith('(.witnessedFan ')):
+                continue
+            _, fan = arguments(witness[1:-1])
+            direction = 'eastP'
+            while True:
+                if compact(fan) == tail and compact(direction) == values[7]:
+                    matches += 1
+                kind, *fields = arguments(fan[1:-1])
+                if kind == '.terminal':
+                    break
+                assert kind == '.next', kind
+                direction, _, _, fan = fields
+        assert matches == 1, match[3]
 
 
 def render_fan_sources(templates: dict[str, str], aliases: dict[str, str],
@@ -481,14 +524,23 @@ def render_fan_sources(templates: dict[str, str], aliases: dict[str, str],
                 edits.append((*match.span(2), value))
         else:
             assert '/FanChecks/' in path, path
+            verify_fan_tails(template, rows, proposals, generated)
             for check in check_rows(template):
                 row = rows[check['name']]
-                assert (
-                    list(map(compact, check['arguments']))
-                    == list(map(compact, row['arguments']))
-                ), (path, check['check'])
+                checked_arguments = list(map(compact, check['arguments']))
+                exclusion_arguments = list(map(compact, row['arguments']))
+                assert checked_arguments[:4] == exclusion_arguments[:4], (path, check['check'])
                 assert check['fuel'] == row['fuel'], (path, check['check'])
-                value = render_shared(check['hint'], proposals[check['name']], aliases)
+                witness = proposals[check['name']]
+                if check['leaf']:
+                    leaves = split_witness_leaves(witness, row['arguments'][4:])
+                    matching = [leaf for interval, leaf in leaves
+                                if list(map(compact, interval)) == checked_arguments[4:]]
+                    assert len(leaves) > 1 and len(matching) == 1, (path, check['check'])
+                    witness, = matching
+                else:
+                    assert checked_arguments[4:] == exclusion_arguments[4:], (path, check['check'])
+                value = render_shared(check['hint'], witness, aliases)
                 edits.append((*check['span'], value))
         for start, end, value in sorted(edits, reverse=True):
             template = template[:start] + value + template[end:]
