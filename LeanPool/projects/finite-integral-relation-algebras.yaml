@@ -2,16 +2,16 @@ slug: finite-integral-relation-algebras
 title: Enumeration of finite integral relation algebras through seven atoms
 summary: Classifies finite integral relation algebras by lawful atom cycles and verifies the
   published isomorphism-class counts using Burnside's lemma and kernel-checked Boolean
-  counting certificates.
+  counting certificates. The reference table is Peter Jipsen's compilation, which follows
+  the ordering of Roger Maddux's earlier list.
 branch: algebraic logic
 entry_module: LeanPool.FiniteIntegralRelationAlgebras
 authors:
 - Chris Henson
 source:
-  title: Small relation algebras
+  title: List of small integral relation algebras
   authors:
   - Peter Jipsen
-  - Roger Maddux
   url: https://www1.chapman.edu/~jipsen/gap/ramaddux.html
   github_repo: chenson2018/finite-integral-ra
   commit: 5620a22cc48127b592bca85b1aaf013e55d4f6df

@@ -196,12 +196,7 @@ theorem check : P.check = true := by decide +kernel
 
 theorem rows : P.checkRows = true := by decide +kernel
 
-theorem c0 : P.sumLeaves 10 0 1 = 250 := by decide +kernel
-
-theorem total : P.sumLeaves 10 0 1 = 250 :=
-  sumLeaves_of_chunks (cs := [(1, 250)])
-    (.cons c0 (.nil))
-    (by decide +kernel) (by decide +kernel)
+theorem total : P.sumLeaves 10 0 1 = 250 := by decide +kernel
 
 /-- The number of lawful cycle sets invariant under the symmetry of this class. -/
 theorem count : fixCountL 0 3 [0, 3, 4, 5, 6, 2, 1] = 250 :=

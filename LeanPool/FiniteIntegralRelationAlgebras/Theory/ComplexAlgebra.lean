@@ -7,6 +7,7 @@ Authors: Chris Henson
 module
 
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.AtomStructure
+public import Mathlib.Data.Fintype.Order
 public import Mathlib.Order.Atoms.Finite
 public import Mathlib.Order.Irreducible
 
@@ -169,40 +170,14 @@ theorem exists_forall_isAtom_le_iff (S : Set {a : α // IsAtom a}) :
 
 variable (α) in
 /-- The isomorphism from a finite relation algebra to the complex algebra of its atom structure.
-This is the analogue of `complexAlgebraEquiv` that does not require a
-`CompleteAtomicRelationAlgebra` instance. -/
+A finite Boolean algebra supplies the complete atomic structure used by `complexAlgebraEquiv`. -/
 noncomputable def complexAlgebraEquivOfFinite :
-    RelationAlgebraEquiv α (ComplexAlgebra (atomStructure α)) where
-  toFun x := ⟨{a | a.val ≤ x}⟩
-  invFun S := Classical.choose (exists_forall_isAtom_le_iff S.carrier)
-  left_inv x := by
-    have h := Classical.choose_spec
-      (exists_forall_isAtom_le_iff {a : {a : α // IsAtom a} | a.val ≤ x})
-    change Classical.choose
-      (exists_forall_isAtom_le_iff {a : {a : α // IsAtom a} | a.val ≤ x}) = x
-    refine le_antisymm ?_ ?_ <;> rw [BooleanAlgebra.le_iff_atom_le_imp] <;> intro a ha hax
-    · exact (h ⟨a, ha⟩).mp hax
-    · exact (h ⟨a, ha⟩).mpr hax
-  right_inv S := by
-    ext a
-    exact Classical.choose_spec (exists_forall_isAtom_le_iff S.carrier) a
-  map_rel_iff' {x y} := by
-    rw [BooleanAlgebra.le_iff_atom_le_imp (x := x)]
-    exact ⟨fun h a ha hax => @h ⟨a, ha⟩ hax, fun h a hax => h a.val a.property hax⟩
-  map_mul' x y := by
-    ext p
-    rw [ComplexAlgebra.mem_mul]
-    constructor
-    · intro hp
-      obtain ⟨r, hr, hrx, hpr⟩ := exists_atom_le_mul_left p.property hp
-      obtain ⟨u, hu, huy, hpu⟩ := exists_atom_le_mul_right p.property hpr
-      exact ⟨⟨r, hr⟩, hrx, ⟨u, hu⟩, huy, hpu⟩
-    · rintro ⟨r, hr, u, hu, h⟩
-      exact h.trans (mul_le_mul' hr hu)
-  map_star' x := by
-    ext p
-    rw [ComplexAlgebra.mem_star]
-    exact le_star_iff
+    RelationAlgebraEquiv α (ComplexAlgebra (atomStructure α)) := by
+  letI := Fintype.ofFinite α
+  letI : CompleteAtomicRelationAlgebra α :=
+    { __ := ‹RelationAlgebra α›
+      __ := Fintype.toCompleteAtomicBooleanAlgebra α }
+  exact complexAlgebraEquiv
 
 theorem complexAlgebraEquivOfFinite_apply (x : α) :
     complexAlgebraEquivOfFinite α x = ⟨{a | a.val ≤ x}⟩ := rfl

@@ -111,60 +111,39 @@ theorem exists_equiv_isAtom (h1 : IsIntegral α) (hs : (symmetricDiversityAtoms 
       fun h => x.property.2 (star_injective h)⟩)
     (fun x => Subtype.ext (star_star x.val)) (fun x h => x.property.2 (congrArg Subtype.val h))
     (by rw [Nat.card_coe_set_eq, hn])
-  let φ : IntegralAtom (Fin s) (Fin n) → {a : α // IsAtom a} :=
-    elim ⟨1, h1⟩ (fun i => ⟨(es i).val, (es i).property.1⟩)
-      (fun i b => ⟨(en (i, b)).val, (en (i, b)).property.1⟩)
-  have hone_symm : (1 : α) ∉ symmetricDiversityAtoms α := fun h =>
-    (IsAtom.le_compl_iff h.1).mp h.2.1 le_rfl
-  have hone_nsymm : (1 : α) ∉ nonsymmetricDiversityAtoms α := fun h => h.2 (star_one α)
-  have hdisj : ∀ x, x ∈ symmetricDiversityAtoms α → x ∉ nonsymmetricDiversityAtoms α :=
-    fun x h h' => h'.2 h.2.2
-  have hinj : Function.Injective φ := by
-    rintro (_ | i | ⟨i, b⟩) (_ | j | ⟨j, c⟩) h
-    · rfl
-    · have h' := congrArg Subtype.val h
-      change (1 : α) = (es j).val at h'
-      exact (hone_symm (h' ▸ (es j).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (1 : α) = (en (j, c)).val at h'
-      exact (hone_nsymm (h' ▸ (en (j, c)).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (es i).val = (1 : α) at h'
-      exact (hone_symm (h' ▸ (es i).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (es i).val = (es j).val at h'
-      exact congrArg symm (es.injective (Subtype.ext h'))
-    · have h' := congrArg Subtype.val h
-      change (es i).val = (en (j, c)).val at h'
-      exact (hdisj _ (es i).property (h' ▸ (en (j, c)).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (en (i, b)).val = (1 : α) at h'
-      exact (hone_nsymm (h' ▸ (en (i, b)).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (en (i, b)).val = (es j).val at h'
-      exact (hdisj _ (es j).property (h' ▸ (en (i, b)).property)).elim
-    · have h' := congrArg Subtype.val h
-      change (en (i, b)).val = (en (j, c)).val at h'
-      have h'' := en.injective (Subtype.ext h')
-      rw [Prod.mk.injEq] at h''
-      rw [h''.1, h''.2]
-  have hsurj : Function.Surjective φ := by
-    rintro ⟨a, ha⟩
-    have hmem : a ∈ {a : α | IsAtom a} := ha
-    rw [setOf_isAtom_eq, identityAtoms_eq_of_isIntegral h1] at hmem
-    rcases hmem with (h | h) | h
-    · exact ⟨one, Subtype.ext h.symm⟩
-    · refine ⟨symm (es.symm ⟨a, h⟩), Subtype.ext ?_⟩
-      change (es (es.symm ⟨a, h⟩)).val = a
-      rw [Equiv.apply_symm_apply]
-    · obtain ⟨⟨i, b⟩, hib⟩ := en.surjective ⟨a, h⟩
-      exact ⟨nsymm i b, Subtype.ext (show (en (i, b)).val = a from congrArg Subtype.val hib)⟩
-  have hconv : ∀ a, (φ (conv a)).val = star (φ a).val := by
-    rintro (_ | i | ⟨i, b⟩)
-    · exact (star_one α).symm
-    · exact (es i).property.2.2.symm
-    · exact congrArg Subtype.val (hen i b)
-  exact ⟨Equiv.ofBijective φ ⟨hinj, hsurj⟩, rfl, hconv⟩
+  classical
+  let labels : IntegralAtom (Fin s) (Fin n) ≃ (PUnit.{1} ⊕ Fin s) ⊕ (Fin n × Bool) :=
+    { toFun := fun
+        | one => .inl (.inl PUnit.unit)
+        | symm i => .inl (.inr i)
+        | nsymm i b => .inr (i, b)
+      invFun := fun
+        | .inl (.inl _) => one
+        | .inl (.inr i) => symm i
+        | .inr (i, b) => nsymm i b
+      left_inv := by rintro (_ | _ | ⟨_, _⟩) <;> rfl
+      right_inv := by rintro ((⟨⟩ | _) | ⟨_, _⟩) <;> rfl }
+  have hpartition : ({a : α | IsAtom a} : Set α) =
+      {1} ∪ symmetricDiversityAtoms α ∪ nonsymmetricDiversityAtoms α := by
+    rw [setOf_isAtom_eq, identityAtoms_eq_of_isIntegral h1]
+  have hsymm : Disjoint ({1} : Set α) (symmetricDiversityAtoms α) := by
+    rw [← identityAtoms_eq_of_isIntegral h1]
+    exact disjoint_identityAtoms_symmetricDiversityAtoms
+  have hnsymm : Disjoint ({1} ∪ symmetricDiversityAtoms α) (nonsymmetricDiversityAtoms α) := by
+    rw [← identityAtoms_eq_of_isIntegral h1, Set.disjoint_union_left]
+    exact ⟨disjoint_identityAtoms_nonsymmetricDiversityAtoms,
+      disjoint_symmetricDiversityAtoms_nonsymmetricDiversityAtoms⟩
+  let singleton : PUnit.{1} ≃ ({1} : Set α) := (Equiv.Set.singleton (1 : α)).symm
+  let pieces := Equiv.sumCongr (Equiv.sumCongr singleton es) en
+  let paired := Equiv.sumCongr (Equiv.Set.union hsymm).symm
+    (Equiv.refl (nonsymmetricDiversityAtoms α))
+  let atoms := Equiv.subtypeEquivRight (Set.ext_iff.mp hpartition.symm)
+  let e := labels.trans (pieces.trans (paired.trans ((Equiv.Set.union hnsymm).symm.trans atoms)))
+  refine ⟨e, rfl, ?_⟩
+  rintro (_ | i | ⟨i, b⟩)
+  · exact (star_one α).symm
+  · exact (es i).property.2.2.symm
+  · exact congrArg Subtype.val (hen i b)
 
 /-- A finite integral relation algebra with `s` symmetric diversity atoms and `2 * n` nonsymmetric
 atoms is isomorphic to the complex algebra of a lawful cycle set on

@@ -18,18 +18,6 @@ checking the next row.
 
 namespace RACert
 
-/-- Verify that a generator's multiplication row agrees with composition of permutations. -/
-noncomputable def checkMultiplicationRow (t : ℕ) (perms : List (List ℕ × List ℕ))
-    (g : ℕ × List ℕ) : Bool :=
-  allZip 0 (fun e c => Nat.blt c perms.length &&
-    eqComp (pAt perms g.1) t (pAtB (blocks blockLen perms.length perms) c) e.1) perms g.2
-
-/-- Verify that the inverse row agrees with the inverse permutations in the table. -/
-noncomputable def checkInverseRow (t : ℕ) (perms : List (List ℕ × List ℕ))
-    (inv : List ℕ) : Bool :=
-  allZip 0 (fun e c => Nat.blt c perms.length &&
-    eqOn t (pAtB (blocks blockLen perms.length perms) c) e.2) perms inv
-
 /-- Assemble a group certificate from independently checked rows and structural conditions. -/
 theorem checkBitGroup_of_parts {t : ℕ} {perms : List (List ℕ × List ℕ)}
     {gens : List (ℕ × List ℕ)} {inv : List ℕ}

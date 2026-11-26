@@ -606,43 +606,12 @@ theorem fixCountL_eq_sumLeaves (hcheck : P.check = true) (hrows : P.checkRows = 
     (hb : b ≤ P.V) : fixCountL P.s P.n P.perm = P.sumLeaves b 0 (2 ^ (P.V - b)) := by
   rw [fixCountL_eq hcheck, card_models_eq hrows hb]
 
-/-- A list of consecutive chunks `(count, value)` of leaves starting at `lo`, each with its sum. -/
-def Chunks (P : Problem) (b : ℕ) : ℕ → List (ℕ × ℕ) → Prop
-  | _, [] => True
-  | lo, c :: cs => P.sumLeaves b lo c.1 = c.2 ∧ Chunks P b (lo + c.1) cs
-
-theorem sumLeaves_chunks {b : ℕ} : ∀ {lo : ℕ} {cs : List (ℕ × ℕ)}, Chunks P b lo cs →
-    P.sumLeaves b lo (cs.map Prod.fst).sum = (cs.map Prod.snd).sum
-  | _, [], _ => rfl
-  | lo, c :: cs, h => by
-    rw [List.map_cons, List.sum_cons, sumLeaves_add, h.1, sumLeaves_chunks h.2, List.map_cons,
-      List.sum_cons]
-
-theorem Chunks.nil {b lo : ℕ} : Chunks P b lo [] := trivial
-
-theorem Chunks.cons {b lo c v : ℕ} {cs : List (ℕ × ℕ)} (h : P.sumLeaves b lo c = v)
-    (hs : Chunks P b (lo + c) cs) : Chunks P b lo ((c, v) :: cs) := ⟨h, hs⟩
-
-/-- Combine consecutive chunks of leaves. -/
-theorem sumLeaves_of_chunks {b lo : ℕ} {cs : List (ℕ × ℕ)} (hcs : Chunks P b lo cs) {cnt N : ℕ}
-    (hcnt : Nat.beq (cs.map Prod.fst).sum cnt = true)
-    (hN : Nat.beq (cs.map Prod.snd).sum N = true) : P.sumLeaves b lo cnt = N := by
-  rw [← Nat.eq_of_beq_eq_true hcnt, sumLeaves_chunks hcs, Nat.eq_of_beq_eq_true hN]
-
 /-- The form used by generated certificates: the count from the sum of all leaves. -/
 theorem fixCountL_of_total (hcheck : P.check = true) (hrows : P.checkRows = true) {b cnt N : ℕ}
     (hb : Nat.ble b P.V = true) (hcnt : Nat.beq cnt (2 ^ (P.V - b)) = true)
     (htotal : P.sumLeaves b 0 cnt = N) : fixCountL P.s P.n P.perm = N := by
   rw [fixCountL_eq_sumLeaves hcheck hrows (Nat.le_of_ble_eq_true hb),
     ← Nat.eq_of_beq_eq_true hcnt, htotal]
-
-/-- The count from a chunked sum of leaves. -/
-theorem fixCountL_of_chunks (hcheck : P.check = true) (hrows : P.checkRows = true) {b : ℕ}
-    (hb : Nat.ble b P.V = true) {cs : List (ℕ × ℕ)} (hcs : Chunks P b 0 cs) {N : ℕ}
-    (hcnt : Nat.beq (cs.map Prod.fst).sum (2 ^ (P.V - b)) = true)
-    (hN : Nat.beq (cs.map Prod.snd).sum N = true) : fixCountL P.s P.n P.perm = N := by
-  rw [fixCountL_eq_sumLeaves hcheck hrows (Nat.le_of_ble_eq_true hb), ← Nat.eq_of_beq_eq_true hcnt,
-    sumLeaves_chunks hcs, Nat.eq_of_beq_eq_true hN]
 
 end Problem
 
