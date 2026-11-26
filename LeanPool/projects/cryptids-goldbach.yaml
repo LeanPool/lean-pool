@@ -20,8 +20,8 @@ source:
   announcement_url: https://leanprover.zulipchat.com/#narrow/channel/579630-Project-announcements/topic/Cryptids/near/632199475
   announcement_date: '2026-10-16'
   brocard_url: https://github.com/google-deepmind/cryptids/tree/481f4e3e39907304dbcad33e508bf21d80c6d5a6/artifacts/brocard_28
-  brocard_announcement_url: https://github.com/google-deepmind/cryptids/pull/27
-  brocard_announcement_date: '2026-11-11'
+  brocard_announcement_url: https://github.com/google-deepmind/cryptids/commit/ab177608e88ce30697d1e705e1cd9531bef9cb8e
+  brocard_announcement_date: '2026-11-09'
 license: Apache-2.0
 status: verified
 provenance: mix
