@@ -7,7 +7,6 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Weight
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Proof.Accept
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Decoding
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Scales
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Waves.Scenario

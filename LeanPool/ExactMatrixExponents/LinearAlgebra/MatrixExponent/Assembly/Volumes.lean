@@ -466,48 +466,6 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Assembly
 
 open Coloring
 
-namespace Payload
-variable {a b c a' b' c' d : ℕ} {x : Payload a b c} {y : Payload a' b' c'}
-
-open scoped Classical in
-/-- The two host lists may repeat entries. Use the first matching
-slot for each contact. -/
-def contacts (f : y.Bit ↪ x.Bit) (left : B a → Fin d → B a') (right : B a' → Fin d → B a)
-    (hl : ∀ i, ∃ k, left (f i).1 k = i.1) (hr : ∀ i, ∃ k, right i.1 k = (f i).1) :
-    Contacts f d := by
-  let E := {e : B a × B a' // ∃ i, ((f i).1, i.1) = e}
-  have hs (e : E) : ∃ k, left e.val.1 k = e.val.2 := by
-    obtain ⟨i, h⟩ := e.property
-    rw [← h]; exact hl i
-  have ht (e : E) : ∃ k, right e.val.2 k = e.val.1 := by
-    obtain ⟨i, h⟩ := e.property
-    rw [← h]; exact hr i
-  let l (e : E) := (Finset.univ.filter (fun k => left e.val.1 k = e.val.2)).min'
-    (Finset.filter_nonempty_iff.mpr (by simpa using hs e))
-  let r (e : E) := (Finset.univ.filter (fun k => right e.val.2 k = e.val.1)).min'
-    (Finset.filter_nonempty_iff.mpr (by simpa using ht e))
-  have h₁ (e : E) : left e.val.1 (l e) = e.val.2 :=
-    (Finset.mem_filter.mp (Finset.min'_mem (Finset.univ.filter (fun k => left e.val.1 k
-      = e.val.2)) _)).2
-  have h₂ (e : E) : right e.val.2 (r e) = e.val.1 :=
-    (Finset.mem_filter.mp (Finset.min'_mem (Finset.univ.filter (fun k => right e.val.2 k
-      = e.val.1)) _)).2
-  refine { E := E
-           src := ⟨fun e => (e.val.1, l e), ?_⟩
-           dst := ⟨fun e => (e.val.2, r e), ?_⟩
-           edge := fun i => ⟨((f i).1, i.1), i, rfl⟩
-           from_host := fun _ => rfl
-           to_host := fun _ => rfl
-           no_repeat := f.injective }
-  · intro u v he
-    obtain ⟨ha, hb⟩ := Prod.mk.inj he
-    exact Subtype.ext (Prod.ext ha ((h₁ u).symm.trans ((congrArg₂ left ha hb).trans (h₁ v))))
-  · intro u v he
-    obtain ⟨ha, hb⟩ := Prod.mk.inj he
-    exact Subtype.ext (Prod.ext ((h₂ u).symm.trans ((congrArg₂ right ha hb).trans (h₂ v))) ha)
-
-end Payload
-
 namespace Encoding
 
 universe v
@@ -532,25 +490,6 @@ open scoped Classical in
 D.scheme.m D.volume D.height d`. -/
 abbrev channels (d : ℕ) :=
   payloadChannels E.scheme.m E.volume E.height D.scheme.m D.volume D.height d
-
-open scoped Classical in
-/-- Check the payload independently of the controller's branch weights. -/
-theorem routed {d : ℕ} (i : I) (j : J) (M : Payload.Contacts (E.sources D i j) d)
-    (a : Val x) (b : Val y) (z : D.payload.obj) :
-    (E.channels D d).kernel F (M.traffic.links.plan.control, E.body i a b) z =
-      if D.body j a b = z then 1 else 0 := by
-  let f := E.relabel D i j
-  have he : (E.presents i).exterior a b ∘ f = (D.presents j).exterior a b := by
-    funext p
-    obtain ⟨u, rfl⟩ := (D.presents j).boundary.surjective p
-    simp only [Function.comp_apply, f, relabel, Equiv.trans_apply, Equiv.symm_apply_apply,
-      Scheme.Presentation.exterior_boundary]
-  have hc := Scheme.transfer_kernel E.scheme D.scheme (E.fits i) (D.fits j) f M
-    ((E.presents i).exterior a b) z
-  rw [he] at hc
-  change _ = if D.scheme.store _ _ _ = z then 1 else 0
-  refine hc.trans ?_
-  exact if_congr eq_comm rfl rfl
 
 end Encoding
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly

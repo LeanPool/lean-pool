@@ -336,8 +336,6 @@ end Physical
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
-/- # Frozen station charges in the ordered diagram -/
-
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
@@ -358,8 +356,13 @@ variable {U G π old data status} (B : U.Physical G π old data status)
 local notation "S" => Key.share s Q
 local notation "H" => G.layout U.dyadic U.large p j
 local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
-open Finset
 local notation "Q'" => B.term p
+
+/- # Frozen station charges in the ordered diagram -/
+
+
+section
+open Finset
 
 open scoped Classical in
 /-- Reindexes `{i // G.frozen i}` and `(Q').freeze.Fixed` by an equivalence. -/
@@ -431,34 +434,13 @@ theorem square_place {σ b l : ℕ} (hbud : G.Budgets n σ s.scene.level)
     (B.internal_nonneg p _) ?_
   rw [internalCharge, charge_frozen, exterior_frozen, sub_add_cancel]
 
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
 /- # Frozen square bound for a single occupied cell -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 open Finset
-local notation "Q'" => B.term p
 
 omit [Finite K] in
 open scoped Classical in
@@ -488,34 +470,13 @@ theorem cell_square {σ b l : ℕ} {thin : Layout.Place s.scene.cell → Prop} {
     rw [home_frozen]
     split_ifs <;> rfl
 
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
 /- # Counting the internal bits displayed by a printed blueprint -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 open Finset
-local notation "Q'" => B.term p
 
 variable {l : ℕ} (A : Coloring.B m → Coloring.B h → Geometry.Blueprint U.childBits
     (Children.degree d U.childBits) U.spanBits l)
@@ -576,32 +537,13 @@ theorem view_at (i : V) :
   rw [h.1, h.2]
 
 end Displayed
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
+
 end
 
 /- # Maximum toll of a frozen or mobile child -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
-local notation "Q'" => B.term p
+section
 
 variable {l : ℕ} (A : Coloring.B m → Coloring.B h → Geometry.Blueprint U.childBits
     (Children.degree d U.childBits) U.spanBits l)
@@ -657,34 +599,14 @@ theorem small (v : P.Occupied) (i : Coloring.B U.childBits)
   exact_mod_cast hm.trans (hc.coreMax ⟨w, hf⟩)
 
 end Displayed
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
+
 end
 
 /- # Translating charges between child labels and physical stations -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 open Finset
-local notation "Q'" => B.term p
 
 variable {l : ℕ} (A : Coloring.B m → Coloring.B h → Geometry.Blueprint U.childBits
     (Children.degree d U.childBits) U.spanBits l)
@@ -783,34 +705,14 @@ theorem mobile (v : P.Occupied) :
     · simp only [Function.comp_apply, ite_eq_right hi, le_refl]
 
 end Displayed
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
+
 end
 
 /- # Every genuine blueprint satisfies the finite quota check -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 open Finset
-local notation "Q'" => B.term p
 
 variable {l : ℕ} (A : Coloring.B m → Coloring.B h → Geometry.Blueprint U.childBits
     (Children.degree d U.childBits) U.spanBits l)
@@ -850,6 +752,9 @@ theorem quota {σ b c ν : ℕ} {thin : Layout.Place s.scene.cell → Prop} {sel
     exact_mod_cast h
 
 end Displayed
+
+end
+
 end Physical
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end

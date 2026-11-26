@@ -607,13 +607,6 @@ structure Checked (rows : U.template.format.obj) (Q : LocalTerm F x y S.h u)
   quota : ∀ v, Geometry.Quota (Input.terminalExponent g σ) n (T / u) U.fixedChild
     (U.canonical S tape rows (loc v).1 (loc v).2) (credit v)
 
-open scoped Classical in
-/-- The measured release of type `∀ i, U.Checked pres σ loc credit (U.advance data status
-(select.write i)) (term i) (shows i)` for the given inputs. -/
-structure MeasuredRelease extends U.NamedRelease pres data status f σ where
-  checked : ∀ i, U.Checked pres σ loc credit (U.advance data status (select.write i)) (term i)
-    (shows i)
-
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 

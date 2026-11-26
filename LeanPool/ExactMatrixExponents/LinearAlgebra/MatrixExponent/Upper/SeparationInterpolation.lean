@@ -9,7 +9,6 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
-public import Mathlib.Tactic.Choose
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.RestrictionInterpolation
 
 /-!
@@ -57,16 +56,12 @@ theorem polynomial_coeff_mem_restrictionOrbit {ι : Type*}
     (fun u v w => (P u v w).coeff d) ∈
       LocalTensor.orbit (Tensor.directSum (fun _ : ι => T)) := by
   classical
-  let weight : (ι) → Coeff := fun i => (Lagrange.basis Finset.univ nodes i).coeff d
-  have h := TensorSpectrum.RestrictionInterpolation.weighted_sum_of_restrictions
-    T (fun i u v w => (P u v w).eval (nodes i)) weight
-    (fun i => heval (nodes i) (hnonzero i))
-  have hcoeff : (fun u v w => (P u v w).coeff d) =
-      (fun u v w => ∑ i, weight i * (P u v w).eval (nodes i)) := by
-    funext u v w
-    simpa only [weight, mul_comm] using
-      Tensor.coeff_eq_sum_eval nodes hinj (P u v w) d (hdegree u v w)
-  rwa [hcoeff]
+  refine TensorSpectrum.RestrictionInterpolation.coefficient_mem_restrictionOrbit T P
+    nodes (fun i => (Lagrange.basis Finset.univ nodes i).coeff d) d
+    (fun i => heval (nodes i) (hnonzero i)) ?_
+  intro u v w
+  simpa only [mul_comm] using
+    Tensor.coeff_eq_sum_eval nodes hinj (P u v w) d (hdegree u v w)
 
 /-- The finite interpolation bound before applying any character. For every
 power `j`, exactly `K*j+1` copies of the power of the original source suffice.

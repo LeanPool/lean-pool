@@ -107,6 +107,18 @@ theorem weighted_sum_of_restrictions {ι : Type*} [Fintype ι] [DecidableEq ι]
   intro i hi
   rw [he i, restrict_scale_first]
 
+/-- A coefficient identity and the restrictions at its nodes give a restriction
+of the coefficient from the charged direct sum. -/
+theorem coefficient_mem_restrictionOrbit {ι : Type*} [Fintype ι] [DecidableEq ι]
+    (T : Tensor R X Y Z) (P : Tensor (Polynomial R) U V W)
+    (nodes weight : ι → R) (d : ℕ)
+    (heval : ∀ i, (fun u v w => (P u v w).eval (nodes i)) ∈ LocalTensor.orbit T)
+    (hcoeff : ∀ u v w, (P u v w).coeff d = ∑ i, weight i * (P u v w).eval (nodes i)) :
+    (fun u v w => (P u v w).coeff d) ∈ LocalTensor.orbit (Tensor.directSum (fun _ : ι => T)) := by
+  rw [show (fun u v w => (P u v w).coeff d) = _ from funext fun u =>
+    funext fun v => funext fun w => hcoeff u v w]
+  exact weighted_sum_of_restrictions T (fun i u v w => (P u v w).eval (nodes i)) weight heval
+
 end Coefficients
 
 variable {U V W : Type*}

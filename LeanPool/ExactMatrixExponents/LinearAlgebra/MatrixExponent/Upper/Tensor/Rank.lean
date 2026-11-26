@@ -56,16 +56,8 @@ theorem nonzero_restricts_natTensor_one {T : Tensor Coeff X Y Z} (hT : T ≠ 0) 
     funext x y z
     exact Classical.byContradiction (fun hn => h ⟨x, y, z, hn⟩)
   obtain ⟨x, y, z, hxyz⟩ := hex
-  refine ⟨fun _ i => if i = x then (T x y z)⁻¹ else 0,
-    fun _ j => if j = y then 1 else 0,
-    fun _ k => if k = z then 1 else 0, ?_⟩
-  funext i j k
-  have hij : i = j := Subsingleton.elim _ _
-  have hik : i = k := Subsingleton.elim _ _
-  subst j
-  subst k
-  simp [Tensor.restrict, natTensor, TensorSpectrum.CoefficientTensor.natTensor, Tensor.diagonal,
-    ite_mul, mul_ite, hxyz]
+  exact TensorSpectrum.CoefficientTensor.scaled_restricts_natTensor_one x y z
+    (T x y z)⁻¹ (inv_mul_cancel₀ hxyz)
 
 end CoefficientTensor
 

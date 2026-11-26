@@ -28,14 +28,14 @@ open scoped Classical in
 abbrev Index (n : ℕ) := Fin 3 × Rectangle.Pos n n
 open scoped Classical in
 /-- Computes the poly by the application `MvPolynomial (Index n) F`. -/
-abbrev Poly (F : Type*) [Field F] (n : ℕ) := MvPolynomial (Index n) F
+abbrev Poly (F : Type*) [CommRing F] (n : ℕ) := MvPolynomial (Index n) F
 
 open scoped Classical in
 /-- The set of values attained by `MvPolynomial.C ∪ Set.range MvPolynomial.X`. -/
-def inputs (F : Type*) [Field F] (n : ℕ) : Set (Poly F n) :=
+def inputs (F : Type*) [CommRing F] (n : ℕ) : Set (Poly F n) :=
   Set.range MvPolynomial.C ∪ Set.range MvPolynomial.X
 
-variable {F : Type*} [Field F] {n : ℕ}
+variable {F : Type*} [CommRing F] {n : ℕ}
 
 open scoped Classical in
 /-- The condition `∀ i j : Fin n, ∑ k, x (0, i, k) * x (1, k, j) = x (2, i, j)` on the specified
@@ -45,7 +45,7 @@ def Correct (x : Index n → F) : Prop :=
 
 open scoped Classical in
 /-- The data for the test construction, including `count`, `left`, `right`. -/
-structure Test (F : Type*) [Field F] (n : ℕ) where
+structure Test (F : Type*) [CommRing F] (n : ℕ) where
   /-- The number of entries. -/
   count : ℕ
   /-- The left-side data carried by `Test`, with type `Fin count → Poly F n`. -/
@@ -68,7 +68,7 @@ def Test.cost (T : Test F n) (c : ℝ) : Prop :=
 
 open scoped Classical in
 /-- The uniform of type `Prop` for the given inputs. -/
-def Uniform (F : Type*) [Field F] (n : ℕ) (s c p : ℝ) : Prop :=
+def Uniform (F : Type*) [CommRing F] (n : ℕ) (s c p : ℝ) : Prop :=
   ∃ (L : ℕ) (A : Fin L → Test F n), 0 < L ∧ (L : ℝ) ≤ s ∧ (∀ i, (A i).cost c) ∧
     (∀ x, Correct x → ∀ i, (A i).accept x) ∧
     ∀ x, ¬ Correct x → (#{i | (A i).accept x} : ℝ) ≤ p * L
@@ -76,13 +76,13 @@ def Uniform (F : Type*) [Field F] (n : ℕ) (s c p : ℝ) : Prop :=
 open scoped Classical in
 /-- The condition `∀ ε > (0 : ℝ), ∀ p > (0 : ℝ), ∀ᶠ n : ℕ in atTop, Uniform F n ((n : ℝ) ^ (ρ +
 ε)) ((n : ℝ) ^ (v + ε)) p` on the specified data. -/
-def Support (F : Type*) [Field F] (ρ v : ℝ) : Prop :=
+def Support (F : Type*) [CommRing F] (ρ v : ℝ) : Prop :=
   ∀ ε > (0 : ℝ), ∀ p > (0 : ℝ), ∀ᶠ n : ℕ in atTop, Uniform F n ((n : ℝ) ^ (ρ + ε)) ((n : ℝ) ^ (v
     + ε)) p
 
 open scoped Classical in
 /-- The entropy of type `Prop` for the given inputs. -/
-def Entropy (F : Type*) [Field F] (η v : ℝ) : Prop :=
+def Entropy (F : Type*) [CommRing F] (η v : ℝ) : Prop :=
   ∀ ε > (0 : ℝ), ∀ᶠ n : ℕ in atTop,
     ∃ (L : ℕ) (A : Fin L → Test F n) (w : Fin L → ℝ),
       (∀ i, 0 ≤ w i) ∧ (∑ i, w i) = 1 ∧ -(∑ i, w i * Real.log (w i)) ≤ (η + ε) * Real.log n ∧

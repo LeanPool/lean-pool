@@ -613,8 +613,6 @@ theorem physical (G₀ : (Key.share s Q).Geo P k) (hs : ∀ i, G₀.site i = i.v
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer.Signal
 end
 
-/- # Exact support of the printed station dictionary -/
-
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
@@ -635,6 +633,11 @@ variable {U G π old data status} (B : U.Physical G π old data status)
 local notation "S" => Key.share s Q
 local notation "H" => G.layout U.dyadic U.large p j
 local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+
+/- # Exact support of the printed station dictionary -/
+
+
+section
 
 open scoped Classical in
 theorem read_eq (i : U.engine.scheme.Vtx) :
@@ -667,32 +670,12 @@ theorem read_inactive (i : U.engine.scheme.Vtx) (hi : i ∉ Set.range (B.vertex 
   refine hi ⟨v, Prod.ext (U.split.injective h₁) (Prod.ext h₂ ?_)⟩
   exact Fin.eq_zero i.2.2 |>.symm
 
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
 /- # A presentation of the diagram selected by a physical printer -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 local notation "A" => U.template
 local notation "rows" => B.record p
 local notation "node" => (B.term p)
@@ -757,6 +740,8 @@ def frame : Frame U.engine (rows).1 (B.labels.names p j u H B.idx) ((H).routed (
       (B.host y.1, cellIndex h y.2, 0)
     rw [B.nav_at p _ _ he.2, he.1]
     rfl
+
+end
 
 end Physical
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
@@ -880,8 +865,6 @@ end Physical
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
-/- # A printed record displays its weighted local term -/
-
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
@@ -902,6 +885,11 @@ variable {U G π old data status} (B : U.Physical G π old data status)
 local notation "S" => Key.share s Q
 local notation "H" => G.layout U.dyadic U.large p j
 local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+
+/- # A printed record displays its weighted local term -/
+
+
+section
 local notation "A" => U.template
 local notation "rows" => B.record p
 local notation "node" => (B.term p)
@@ -962,32 +950,12 @@ def shows : (A).Shows rows node where
     intro v
     exact Option.isSome_iff_exists.mpr ⟨_, B.read_active p v⟩
 
-end Physical
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
 /- # Values and charges of the selected diagrams -/
 
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 
-open Coloring Assembly Rounds Surface Surface.Local
-open MatrixMultiplicationAllFields.MatrixExponent.Sphere.Layout (Alphabet Key Node Sharing)
-
-variable {F K N X Z : Type} [Field F] [Finite K] {x y : Wire} {m d h ℓ M r t q D k n u j z : ℕ}
-  {T R g w : ℕ} {W : ℝ} {P : Input F x y h D T R g W}
-  {Y : Alphabet P.Occupied} {s : Stage F (M * r) (M * t) Z P.Occupied P.grid.Seam X}
-  {Q : Key.Source Y x y s} (U : Printer F K N m d h ℓ M r t q D k n u j z)
-  (G : (Key.share s Q).Geo P k) {a : Atlas P.Occupied P.grid.Seam m d h} (π : Palette a w q)
-  (old : P.V ↪ B m) (data : U.rows.obj) (status : (Children.Header m d).obj)
-
-namespace Physical
-variable {U G π old data status} (B : U.Physical G π old data status)
-  (p : Layout.Profile s.scene.cell s.scene.level)
-
-local notation "S" => Key.share s Q
-local notation "H" => G.layout U.dyadic U.large p j
-local notation "V" => Node (Sharing.Position S) (Sharing.radius k * n)
+section
 
 open Finset
 
@@ -1020,6 +988,8 @@ open scoped Classical in
 theorem concentrated {σ A : ℕ} (hc : Concentrated P (G.output U.dyadic U.large p j U.pos) A n σ) :
     Concentrated P (B.term p) A n σ :=
   ((H).pad u).drawn_concentrated (G.external U.dyadic U.large p j) _ _ P hc
+
+end
 
 end Physical
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer

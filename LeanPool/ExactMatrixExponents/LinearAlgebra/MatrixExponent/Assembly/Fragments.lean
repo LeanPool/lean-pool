@@ -617,131 +617,12 @@ end Payload
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly
 end
 
-/-
-# Ordering a contact by destination offset
-
-Given an assignment of destinations to contacts, use their relative
-ranks to index packets. The source list for the same packet uses
-exactly this order. Source and destination positions do not overlap between contacts.
--/
+/- # Reindexing exterior coordinates across snapshots -/
 
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Assembly
 
 open Coloring
-
-namespace Payload
-variable {m V k m' V' k' d : ℕ} {x : Payload m V k} {y : Payload m' V' k'}
-
-open scoped Classical in
-/-- One channel per contact at each host. -/
-structure Contacts (f : y.Bit → x.Bit) (d : ℕ) where
-  /-- The type of edges. -/
-  E : Type
-  /-- Assigns the source of each connection. -/
-  src : E ↪ B m × Fin d
-  /-- Assigns the destination of each connection. -/
-  dst : E ↪ B m' × Fin d
-  /-- The indexed edge data carried by `Contacts`, with type `y.Bit → E`. -/
-  edge : y.Bit → E
-  from_host : ∀ i, (f i).1 = (src (edge i)).1
-  to_host : ∀ i, i.1 = (dst (edge i)).1
-  no_repeat : Function.Injective f
-
-namespace Contacts
-variable {f : y.Bit → x.Bit} (M : Contacts f d)
-
-open scoped Classical in
-/-- The subtype of `i : Fin (y.length (M.dst e).1)` satisfying `M.edge ⟨(M.dst e).1, i⟩ = e`. -/
-abbrev Fiber (e : M.E) :=
-  {i : Fin (y.length (M.dst e).1) // M.edge ⟨(M.dst e).1, i⟩ = e}
-
-open scoped Classical in
-/-- Computes the ordinal by the application `Fintype.orderIsoFinOfCardEq _ rfl`. -/
-def ordinal (e : M.E) : Fin (Fintype.card (M.Fiber e)) ≃o M.Fiber e :=
-  Fintype.orderIsoFinOfCardEq _ rfl
-
-open scoped Classical in
-/-- Embeds `Fin (Fintype.card (M.Fiber e))` into `Fin (y.length (M.dst e).1)`. -/
-def receive (e : M.E) : Fin (Fintype.card (M.Fiber e)) ↪ Fin (y.length (M.dst e).1) :=
-  (M.ordinal e).toEquiv.toEmbedding.trans (Function.Embedding.subtype _)
-
-open scoped Classical in
-/-- Uses `⟨(M.dst e).1, M.receive e t⟩` as the representation. -/
-def atDest (e : M.E) (t : Fin (Fintype.card (M.Fiber e))) : y.Bit :=
-  ⟨(M.dst e).1, M.receive e t⟩
-
-open scoped Classical in
-theorem edge_at (e : M.E) (t : Fin (Fintype.card (M.Fiber e))) :
-    M.edge (M.atDest e t) = e := (M.ordinal e t).2
-
-open scoped Classical in
-theorem source_at (e : M.E) (t : Fin (Fintype.card (M.Fiber e))) :
-    (f (M.atDest e t)).1 = (M.src e).1 := by rw [M.from_host, M.edge_at]
-
-open scoped Classical in
-/-- The value specified by `(f (M.atDest e t)).2.cast (congrArg x.length (M.source_at e t))`. -/
-def atSource (e : M.E) (t : Fin (Fintype.card (M.Fiber e))) :
-    Fin (x.length (M.src e).1) :=
-  (f (M.atDest e t)).2.cast (congrArg x.length (M.source_at e t))
-
-open scoped Classical in
-theorem source_eq (e : M.E) (t : Fin (Fintype.card (M.Fiber e))) :
-    f (M.atDest e t) = ⟨(M.src e).1, M.atSource e t⟩ := by
-  refine Sigma.ext (M.source_at e t) ?_
-  exact (Fin.heq_ext_iff (congrArg x.length (M.source_at e t))).mpr rfl
-
-open scoped Classical in
-/-- Embeds `Fin (Fintype.card (M.Fiber e))` into `Fin (x.length (M.src e).1) where toFun`. -/
-def send (e : M.E) : Fin (Fintype.card (M.Fiber e)) ↪ Fin (x.length (M.src e).1) where
-  toFun := M.atSource e
-  inj' i j h := by
-    have he : f (M.atDest e i) = f (M.atDest e j) := by rw [M.source_eq, M.source_eq, h]
-    have hi := M.no_repeat he
-    exact (M.receive e).injective (eq_of_heq (Sigma.mk.inj hi).2)
-
-open scoped Classical in
-theorem dest_eq {e z : M.E} {i : Fin (Fintype.card (M.Fiber e))}
-    {j : Fin (Fintype.card (M.Fiber z))} (h : M.atDest e i = M.atDest z j) :
-    e = z ∧ i.val = j.val := by
-  have hh := congrArg M.edge h
-  rw [M.edge_at, M.edge_at] at hh
-  subst z
-  exact ⟨rfl, congrArg Fin.val ((M.receive e).injective (eq_of_heq (Sigma.mk.inj h).2))⟩
-
-open scoped Classical in
-/-- Counts the elements of `(M.Fiber e)`. -/
-def traffic : Traffic x y d where
-  E := M.E
-  src := M.src
-  dst := M.dst
-  length e := Fintype.card (M.Fiber e)
-  send := M.send
-  get := M.receive
-  disjoint_send e z i j hs ht := by
-    apply M.dest_eq
-    apply M.no_repeat
-    rw [M.source_eq, M.source_eq]
-    exact Sigma.ext hs ((Fin.heq_ext_iff (congrArg x.length hs)).mpr ht)
-  disjoint_get e z i j hs ht := by
-    apply M.dest_eq
-    exact Sigma.ext hs ((Fin.heq_ext_iff (congrArg y.length hs)).mpr ht)
-  covers j := by
-    generalize he : M.edge j = e
-    have hh := M.to_host j
-    rw [he] at hh
-    obtain ⟨a, b⟩ := j
-    change a = (M.dst e).1 at hh
-    subst a
-    obtain ⟨i, hi⟩ := (M.ordinal e).surjective ⟨b, he⟩
-    exact ⟨e, i, congrArg (fun u : M.Fiber e => (⟨(M.dst e).1, u.val⟩ : y.Bit)) hi⟩
-
-open scoped Classical in
-theorem consistent (e : M.traffic.E) (t : Fin (M.traffic.length e)) :
-    f (M.traffic.target e t) = M.traffic.source e t := M.source_eq _ _
-
-end Contacts
-end Payload
 
 namespace Scheme
 variable {F : Type} (S S' : Scheme F) {r : S.format.obj} {r' : S'.format.obj} {V k V' k' d : ℕ}
@@ -750,19 +631,6 @@ variable {F : Type} (S S' : Scheme F) {r : S.format.obj} {r' : S'.format.obj} {V
 open scoped Classical in
 /-- The value specified by `S.index r h ∘ f ∘ (S'.index r' h').symm`. -/
 def transfer := S.index r h ∘ f ∘ (S'.index r' h').symm
-
-open scoped Classical in
-theorem transfer_kernel [Field F] (M : Payload.Contacts (S.transfer S' h h' f) d)
-    (a : S.exposed r → Bool) (b : (Fmt.payload S'.m V' k').obj) :
-    ((payloadBank S.m V k S'.m V' k').channels (max k k') d).kernel F
-      (M.traffic.links.plan.control, S.store r h a) b = if b = S'.store r' h' (a ∘ f) then 1 else 0
-        := by
-  unfold store
-  rw [M.traffic.kernel F _ M.consistent]
-  have he : (a ∘ (S.index r h).symm) ∘ S.transfer S' h h' f = (a ∘ f) ∘ (S'.index r' h').symm := by
-    funext i
-    simp [transfer]
-  rw [he]
 
 end Scheme
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly

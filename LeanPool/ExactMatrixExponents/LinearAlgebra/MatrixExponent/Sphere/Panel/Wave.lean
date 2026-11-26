@@ -165,8 +165,8 @@ theorem terminal {a : ℕ} (hD : D = 2 ^ a) {u : ℕ} (hu : 0 < u)
     (hu' : u * D ^ (terminalExponent g ℓ) ≤ T) :
     ∀ s (z : P.Configuration p),
       (P.plant p s).Reach m (2 * g) (SphereScale.energy ℓ D (d * b)) (D ^ 5) z →
-      z.Valid (D ^ 5) → z.Stopped → P.Emitted p z u (terminalExponent g ℓ) a := by
-  intro s z hz _ hs
+      z.Stopped → P.Emitted p z u (terminalExponent g ℓ) a := by
+  intro s z hz hs
   have hb := P.final_bounds p sc s z hz hs
   obtain ⟨j, hj⟩ := sc.divides
   have hdb : d * b = chunks ℓ D * (j * b) := by rw [hj, mul_assoc]
@@ -200,7 +200,8 @@ theorem local_law {k : Type} [Field k] [Finite k]
   intro F _ _ _ hF u hu hu' x y h W P
   have : CharP F p := charP_of_injective_algebraMap' K p
   obtain ⟨kit⟩ := P.tools_exist sc hK
-  exact hA sc F K p l rfl hF P kit u _ a (P.terminal kit sc rfl hu hu')
+  exact hA sc F K p l rfl hF P kit u _ a
+    (fun s z reaches _ stopped => P.terminal kit sc rfl hu hu' s z reaches stopped)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds
 end

@@ -400,7 +400,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Control.Reorder
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Control.Update
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Control.View
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Copy.Overlay
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Coupled
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Crossing.Form
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Debit.Legs
@@ -446,7 +445,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Print.Work
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Private.Install
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Private.Preparation
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Proof.Accept
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Proof.Initial
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Scalar.Term
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Seam

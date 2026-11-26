@@ -109,11 +109,12 @@ theorem rankAtMost_mono {T : Tensor K X Y Z} {r s : ℕ}
   exact (natTensor_restricts_of_le hrs).trans
     ((rankAtMost_iff_natTensor_restricts T r).mp hT)
 
-theorem unit_restricts_natTensor_one {T : Tensor K X Y Z} (hT : ∃ x y z, T x y z = 1) :
+/-- Select one coefficient and scale the first map to obtain the unit tensor. -/
+theorem scaled_restricts_natTensor_one {T : Tensor K X Y Z}
+    (x : X) (y : Y) (z : Z) (scale : K) (hscale : scale * T x y z = 1) :
     Restricts T (natTensor 1) := by
   classical
-  obtain ⟨x, y, z, hxyz⟩ := hT
-  refine ⟨fun _ i => if i = x then 1 else 0,
+  refine ⟨fun _ i => if i = x then scale else 0,
     fun _ j => if j = y then 1 else 0,
     fun _ k => if k = z then 1 else 0, ?_⟩
   funext i j k
@@ -121,7 +122,12 @@ theorem unit_restricts_natTensor_one {T : Tensor K X Y Z} (hT : ∃ x y z, T x y
   have hik : i = k := Subsingleton.elim _ _
   subst j
   subst k
-  simp [Tensor.restrict, natTensor, Tensor.diagonal, ite_mul, mul_ite, hxyz]
+  simp [Tensor.restrict, natTensor, Tensor.diagonal, ite_mul, mul_ite, hscale]
+
+theorem unit_restricts_natTensor_one {T : Tensor K X Y Z} (hT : ∃ x y z, T x y z = 1) :
+    Restricts T (natTensor 1) := by
+  obtain ⟨x, y, z, hxyz⟩ := hT
+  exact scaled_restricts_natTensor_one x y z 1 (by rw [one_mul, hxyz])
 
 end Coordinates
 
