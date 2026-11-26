@@ -85,4 +85,36 @@ theorem testBit_maskOf (l : List ℕ) (x : ℕ) : (maskOf l).testBit x = decide 
   rw [maskOf, testBit_foldl_mask]
   simp
 
+/-- The base-`k` number with digits `l`, most significant digit first. For lists of the same
+length with entries `< k`, the numeric order of codes is the lexicographic order of lists. -/
+def codeL (k : ℕ) (l : List ℕ) : ℕ := l.foldl (fun acc x => Nat.add (Nat.mul acc k) x) 0
+
+/-- `a < l[0] < l[1] < …`. -/
+def increasingFrom : ℕ → List ℕ → Bool
+  | _, [] => true
+  | a, b :: l => Nat.blt a b && increasingFrom b l
+
+/-- `l[0] < l[1] < …`. -/
+def increasing : List ℕ → Bool
+  | [] => true
+  | a :: l => increasingFrom a l
+
+theorem increasingFrom_spec : ∀ {a : ℕ} {l : List ℕ}, increasingFrom a l = true →
+    (∀ x ∈ l, a < x) ∧ l.Pairwise (· < ·)
+  | _, [], _ => by simp
+  | a, b :: l, h => by
+    rw [increasingFrom, Bool.and_eq_true, Nat.blt_eq] at h
+    obtain ⟨h1, h2⟩ := increasingFrom_spec h.2
+    refine ⟨fun x hx => ?_, List.pairwise_cons.mpr ⟨h1, h2⟩⟩
+    rcases List.mem_cons.mp hx with rfl | hx
+    · exact h.1
+    · exact Nat.lt_trans h.1 (h1 x hx)
+
+theorem increasing_spec {l : List ℕ} (h : increasing l = true) : l.Pairwise (· < ·) := by
+  cases l with
+  | nil => exact List.Pairwise.nil
+  | cons a l =>
+    obtain ⟨h1, h2⟩ := increasingFrom_spec (a := a) (l := l) h
+    exact List.pairwise_cons.mpr ⟨h1, h2⟩
+
 end RACert

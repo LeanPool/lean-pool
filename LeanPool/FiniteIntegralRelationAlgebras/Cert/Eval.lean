@@ -320,8 +320,8 @@ noncomputable def quadTab4 (T on : ℕ) (rows : List (List (List ℕ))) (r u t p
 
 /-- The table of violations of the associativity condition of the quadruple with code `x`. -/
 noncomputable def quadTab (T on : ℕ) (rows : List (List (List ℕ))) (x : ℕ) : ℕ :=
-  P.quadTab4 T on rows (Nat.mod (Nat.div (Nat.div (Nat.div x P.k) P.k) P.k) P.k)
-    (Nat.mod (Nat.div (Nat.div x P.k) P.k) P.k) (Nat.mod (Nat.div x P.k) P.k) (Nat.mod x P.k)
+  P.quadTab4 T on rows (P.quadFirst x)
+    (P.quadSecond x) (P.quadThird x) (P.quadFourth x)
 
 theorem quadTab_eq (T on : ℕ) (rows : List (List (List ℕ))) (x : ℕ) :
     P.quadTab T on rows x = P.quadTab4 T on rows (x / P.k / P.k / P.k % P.k)

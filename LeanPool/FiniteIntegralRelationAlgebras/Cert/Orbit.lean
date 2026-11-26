@@ -292,40 +292,12 @@ noncomputable def qAt (perms : List (List ℕ × List ℕ)) (i : ℕ) : List ℕ
 /-- The first `t` entries of `p` as a number in base `t`, most significant digit first. For lists
 with entries below `t`, comparing codes is comparing the first `t` entries lexicographically. -/
 noncomputable def permCode (t : ℕ) (p : List ℕ) : ℕ :=
-  ((List.range t).map (nth 0 p)).foldl (fun acc d => Nat.add (Nat.mul acc t) d) 0
+  codeL t ((List.range t).map (nth 0 p))
 
 theorem permCode_congr {t : ℕ} {p p' : List ℕ} (h : ∀ x < t, nth 0 p x = nth 0 p' x) :
     permCode t p = permCode t p' := by
   unfold permCode
   rw [List.map_congr_left fun x hx => h x (List.mem_range.mp hx)]
-
-/-- `a < l[0] < l[1] < …`. -/
-def increasingFrom : ℕ → List ℕ → Bool
-  | _, [] => true
-  | a, b :: l => Nat.blt a b && increasingFrom b l
-
-/-- `l[0] < l[1] < …`. -/
-def increasing : List ℕ → Bool
-  | [] => true
-  | a :: l => increasingFrom a l
-
-theorem increasingFrom_spec : ∀ {a : ℕ} {l : List ℕ}, increasingFrom a l = true →
-    (∀ x ∈ l, a < x) ∧ l.Pairwise (· < ·)
-  | _, [], _ => by simp
-  | a, b :: l, h => by
-    rw [increasingFrom, Bool.and_eq_true, Nat.blt_eq] at h
-    obtain ⟨h1, h2⟩ := increasingFrom_spec h.2
-    refine ⟨fun x hx => ?_, List.pairwise_cons.mpr ⟨h1, h2⟩⟩
-    rcases List.mem_cons.mp hx with rfl | hx
-    · exact h.1
-    · exact Nat.lt_trans h.1 (h1 x hx)
-
-theorem increasing_spec {l : List ℕ} (h : increasing l = true) : l.Pairwise (· < ·) := by
-  cases l with
-  | nil => exact List.Pairwise.nil
-  | cons a l =>
-    obtain ⟨h1, h2⟩ := increasingFrom_spec (a := a) (l := l) h
-    exact List.pairwise_cons.mpr ⟨h1, h2⟩
 
 /-- `f l[j] r[j]` for all `j < l.length` (with `r[j] = d` beyond the end of `r`). -/
 def allZip {α β : Type} (d : β) (f : α → β → Bool) : List α → List β → Bool

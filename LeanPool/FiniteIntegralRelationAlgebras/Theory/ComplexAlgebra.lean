@@ -9,7 +9,6 @@ module
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.AtomStructure
 public import Mathlib.Data.Fintype.Order
 public import Mathlib.Order.Atoms.Finite
-public import Mathlib.Order.Irreducible
 
 /-!
 # Complex algebras and isomorphisms of atom structures
@@ -142,31 +141,9 @@ theorem exists_equiv_of_relationAlgebraEquiv {A : AtomStructure α} {B : AtomStr
 
 end ComplexAlgebra
 
-/-- An atom of a Boolean algebra lies below a finite supremum exactly when it lies below one of
-the terms. -/
-theorem isAtom_le_finset_sup_iff {α ι : Type*} [BooleanAlgebra α] {a : α} (ha : IsAtom a)
-    (t : Finset ι) (f : ι → α) : a ≤ t.sup f ↔ ∃ i ∈ t, a ≤ f i := by
-  refine SupPrime.le_finset_sup ⟨fun h => ha.1 (isMin_iff_eq_bot.mp h), fun b c h => ?_⟩
-  by_contra hcon
-  rw [not_or, ha.not_le_iff_disjoint, ha.not_le_iff_disjoint] at hcon
-  exact ha.1 (disjoint_self.mp ((hcon.1.sup_right hcon.2).mono_right h))
-
 section Finite
 
 variable {α : Type*} [RelationAlgebra α] [Finite α]
-
-/-- In a finite relation algebra, every set of atoms is the set of atoms below some element. -/
-theorem exists_forall_isAtom_le_iff (S : Set {a : α // IsAtom a}) :
-    ∃ x : α, ∀ a : {a : α // IsAtom a}, a.val ≤ x ↔ a ∈ S := by
-  classical
-  refine ⟨S.toFinite.toFinset.sup Subtype.val, fun a => ?_⟩
-  rw [isAtom_le_finset_sup_iff a.property]
-  constructor
-  · rintro ⟨b, hb, hab⟩
-    rw [Set.Finite.mem_toFinset] at hb
-    have : a = b := Subtype.ext ((b.property.le_iff_eq a.property.ne_bot).mp hab)
-    exact this ▸ hb
-  · exact fun ha => ⟨a, S.toFinite.mem_toFinset.mpr ha, le_rfl⟩
 
 variable (α) in
 /-- The isomorphism from a finite relation algebra to the complex algebra of its atom structure.

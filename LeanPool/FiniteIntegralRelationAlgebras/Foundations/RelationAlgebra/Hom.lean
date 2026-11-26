@@ -6,7 +6,6 @@ Authors: Chris Henson
 
 module
 
-public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.Data.SetRel
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.Basic
 public import Mathlib.Algebra.Star.MonoidHom
 public import Mathlib.Order.Hom.BoundedLattice
@@ -230,15 +229,6 @@ theorem ncard_symmetricDiversityAtoms (e : RelationAlgebraEquiv α β) :
 theorem ncard_nonsymmetricDiversityAtoms (e : RelationAlgebraEquiv α β) :
     (nonsymmetricDiversityAtoms α).ncard = (nonsymmetricDiversityAtoms β).ncard :=
   Nat.card_congr (e.toEquiv.subtypeEquiv fun _ => e.apply_mem_nonsymmetricDiversityAtoms_iff.symm)
-
-omit [RelationAlgebra α] [RelationAlgebra β] in
-/-- An equivalence between types lifts to an equivalence between their algebras of relations. -/
-@[simps!]
-def setRelOfEquiv (e : α ≃ β) : RelationAlgebraEquiv (SetRel α α) (SetRel β β) where
-  __ := SetRel.mapEquiv e e
-  map_rel_iff' := SetRel.map_subset_map_iff e.injective e.injective
-  map_mul' _ _ := SetRel.map_comp_of_injective e.injective
-  map_star' _ := SetRel.map_inv.symm
 
 end RelationAlgebraEquiv
 

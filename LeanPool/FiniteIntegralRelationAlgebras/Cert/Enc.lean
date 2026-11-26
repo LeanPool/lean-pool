@@ -6,7 +6,8 @@ Authors: Chris Henson
 
 module
 
-public import LeanPool.FiniteIntegralRelationAlgebras.Theory.Burnside
+public import LeanPool.FiniteIntegralRelationAlgebras.Theory.CycleSets
+public import Mathlib.Data.List.GetD
 
 /-!
 # Numeric codes for integral atoms

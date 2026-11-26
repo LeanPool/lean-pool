@@ -7,6 +7,9 @@ Authors: Chris Henson
 module
 
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Enc
+public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Prim
+public import LeanPool.FiniteIntegralRelationAlgebras.Theory.AutEquiv
+public import LeanPool.FiniteIntegralRelationAlgebras.Theory.Orbits
 public import Mathlib.Data.List.GetD
 
 /-!
@@ -42,19 +45,9 @@ def nodupN : List ℕ → Bool
   | [] => true
   | x :: xs => !(xs.any (Nat.beq x)) && nodupN xs
 
-/-- A Boolean check that a list of naturals is strictly increasing. -/
-def increasingN : List ℕ → Bool
-  | [] => true
-  | [_] => true
-  | x :: y :: ys => Nat.blt x y && increasingN (y :: ys)
-
 /-- A Boolean check that a list of naturals has no duplicates, with a linear-time fast path for
 strictly increasing lists. -/
-def distinctN (l : List ℕ) : Bool := increasingN l || nodupN l
-
-/-- The base-`k` number with digits `l`, most significant digit first. For lists of the same
-length with entries `< k`, the numeric order of codes is the lexicographic order of lists. -/
-def codeL (k : ℕ) (l : List ℕ) : ℕ := l.foldl (fun acc x => Nat.add (Nat.mul acc k) x) 0
+def distinctN (l : List ℕ) : Bool := increasing l || nodupN l
 
 /-- `l` codes an element of `Aut s n`: length `k = numAtoms s n`, `l[0] = 0`, all entries `< k`,
 no duplicates, and commutes with converse (`l[cvN s c] = cvN s l[c]` for all `c < k`). -/
@@ -98,27 +91,9 @@ theorem nodupN_iff {l : List ℕ} : nodupN l = true ↔ l.Nodup := by
     rw [← Bool.not_eq_true, List.any_eq_true]
     simp [Nat.beq_eq]
 
-theorem increasingN_cons {x : ℕ} {l : List ℕ} (h : increasingN (x :: l) = true) :
-    (∀ y ∈ l, x < y) ∧ increasingN l = true := by
-  induction l generalizing x with
-  | nil => simp [increasingN]
-  | cons y ys ih =>
-    simp only [increasingN, Bool.and_eq_true, Nat.blt_eq] at h
-    refine ⟨fun z hz => ?_, h.2⟩
-    rcases List.mem_cons.mp hz with rfl | hz
-    · exact h.1
-    · exact h.1.trans ((ih h.2).1 z hz)
-
-theorem nodup_of_increasingN {l : List ℕ} (h : increasingN l = true) : l.Nodup := by
-  induction l with
-  | nil => exact List.nodup_nil
-  | cons x xs ih =>
-    obtain ⟨hlt, hxs⟩ := increasingN_cons h
-    exact List.nodup_cons.mpr ⟨fun hx => lt_irrefl _ (hlt x hx), ih hxs⟩
-
 theorem nodup_of_distinctN {l : List ℕ} (h : distinctN l = true) : l.Nodup := by
   rcases Bool.or_eq_true_iff.mp h with h | h
-  · exact nodup_of_increasingN h
+  · exact (increasing_spec h).imp Nat.ne_of_lt
   · exact nodupN_iff.mp h
 
 theorem validPerm_iff :

@@ -180,14 +180,14 @@ variable (P : Problem)
 /-- The two sides of the condition of the quadruple with code `x` are the same pair of rows, so
 that the condition holds for every assignment. -/
 noncomputable def trivQuad (x : ℕ) : Bool :=
-  (listBeq (nth [] (nth [] P.cls (cvN P.s (x / P.k / P.k / P.k % P.k))) (x % P.k))
-        (nth [] (nth [] P.cls (x / P.k / P.k / P.k % P.k)) (x / P.k / P.k % P.k)) &&
-      listBeq (nth [] (nth [] P.cls (x / P.k / P.k % P.k)) (x / P.k % P.k))
-        (nth [] (nth [] P.cls (x % P.k)) (cvN P.s (x / P.k % P.k)))) ||
-    (listBeq (nth [] (nth [] P.cls (cvN P.s (x / P.k / P.k / P.k % P.k))) (x % P.k))
-        (nth [] (nth [] P.cls (x % P.k)) (cvN P.s (x / P.k % P.k))) &&
-      listBeq (nth [] (nth [] P.cls (x / P.k / P.k % P.k)) (x / P.k % P.k))
-        (nth [] (nth [] P.cls (x / P.k / P.k / P.k % P.k)) (x / P.k / P.k % P.k)))
+  (listBeq (nth [] (nth [] P.cls (cvN P.s (P.quadFirst x))) (P.quadFourth x))
+        (nth [] (nth [] P.cls (P.quadFirst x)) (P.quadSecond x)) &&
+      listBeq (nth [] (nth [] P.cls (P.quadSecond x)) (P.quadThird x))
+        (nth [] (nth [] P.cls (P.quadFourth x)) (cvN P.s (P.quadThird x)))) ||
+    (listBeq (nth [] (nth [] P.cls (cvN P.s (P.quadFirst x))) (P.quadFourth x))
+        (nth [] (nth [] P.cls (P.quadFourth x)) (cvN P.s (P.quadThird x))) &&
+      listBeq (nth [] (nth [] P.cls (P.quadSecond x)) (P.quadThird x))
+        (nth [] (nth [] P.cls (P.quadFirst x)) (P.quadSecond x)))
 
 variable {P}
 
@@ -258,11 +258,11 @@ quadruple with code `x`. -/
 noncomputable def checkLeaf (b x : ℕ) (sl sr : Side) : Bool :=
   Nat.ble b 64 &&
     (checkSide b sl
-        (nth [] (nth [] P.cls (cvN P.s (x / P.k / P.k / P.k % P.k))) (x % P.k))
-        (nth [] (nth [] P.cls (x / P.k / P.k % P.k)) (x / P.k % P.k)) &&
+        (nth [] (nth [] P.cls (cvN P.s (P.quadFirst x))) (P.quadFourth x))
+        (nth [] (nth [] P.cls (P.quadSecond x)) (P.quadThird x)) &&
       checkSide b sr
-        (nth [] (nth [] P.cls (x / P.k / P.k / P.k % P.k)) (x / P.k / P.k % P.k))
-        (nth [] (nth [] P.cls (x % P.k)) (cvN P.s (x / P.k % P.k))))
+        (nth [] (nth [] P.cls (P.quadFirst x)) (P.quadSecond x))
+        (nth [] (nth [] P.cls (P.quadFourth x)) (cvN P.s (P.quadThird x))))
 
 /-- All leaves of the tree are valid. -/
 noncomputable def leavesOK (b : ℕ) : QTree → Bool

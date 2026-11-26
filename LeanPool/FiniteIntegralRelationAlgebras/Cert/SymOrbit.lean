@@ -72,6 +72,20 @@ theorem leaf_actBits (hcheck : P.check = true) (hrows : P.checkRows = true) {b :
     rw [testBit_actBits he, show nth 0 e.2 (nth 0 S.vp j - b) = j - b by omega]
     simp [hi]
 
+/-- A checked orbit sum gives the count whenever the leaf evaluator is invariant. -/
+theorem fixCountL_of_invariantLeaves (hcheck : P.check = true) (hrows : P.checkRows = true)
+    {b t hi : ℕ} (hb : Nat.ble b P.V = true) (ht : Nat.beq t (P.V - b) = true)
+    (hhi : Nat.beq hi (2 ^ t) = true) {perms : List (List ℕ × List ℕ)}
+    {gens : List (ℕ × List ℕ)} {inv : List ℕ}
+    (hgrp : checkBitGroup t perms gens inv = true)
+    (hinv : ∀ e ∈ perms, ∀ α < 2 ^ t, P.leaf b (actBits t e.1 α) = P.leaf b α)
+    {W : ℕ} (hseg : OrbitSeg t perms (P.leaf b) 0 hi hi W) : fixCountL P.s P.n P.perm = W := by
+  obtain rfl := Nat.eq_of_beq_eq_true ht
+  obtain rfl := Nat.eq_of_beq_eq_true hhi
+  rw [fixCountL_eq_sumLeaves hcheck hrows (Nat.le_of_ble_eq_true hb), sumLeaves_eq_sum]
+  simp only [Nat.zero_add]
+  exact OrbitSeg.sum_eq hgrp hinv hseg
+
 /-- **Count with symmetry reduction.** The number of invariant lawful cycle sets is the weighted
 sum of the leaves over the orbit minima of the assignments of the high variables. -/
 theorem fixCountL_of_orbits (hcheck : P.check = true) (hrows : P.checkRows = true) {b t hi : ℕ}
@@ -80,17 +94,13 @@ theorem fixCountL_of_orbits (hcheck : P.check = true) (hrows : P.checkRows = tru
     {gens : List (ℕ × List ℕ)} {inv : List ℕ} (hsyms : P.checkSyms b syms perms = true)
     (hgrp : checkBitGroup t perms gens inv = true) {W : ℕ}
     (hseg : OrbitSeg t perms (P.leaf b) 0 hi hi W) : fixCountL P.s P.n P.perm = W := by
-  have hb' := Nat.le_of_ble_eq_true hb
+  refine fixCountL_of_invariantLeaves hcheck hrows hb ht hhi hgrp (fun e he α hα => ?_) hseg
   obtain rfl := Nat.eq_of_beq_eq_true ht
-  obtain rfl := Nat.eq_of_beq_eq_true hhi
-  rw [fixCountL_eq_sumLeaves hcheck hrows hb', sumLeaves_eq_sum]
-  simp only [Nat.zero_add]
-  refine OrbitSeg.sum_eq hgrp (fun e he α hα => ?_) hseg
   obtain ⟨S, hS⟩ := checkSyms_spec hsyms e he
   have hbp : checkBitPerm (P.V - b) e.1 e.2 = true := by
     simp only [checkBitGroup, Bool.and_eq_true] at hgrp
     exact List.all_eq_true.mp hgrp.1 e he
-  exact leaf_actBits hcheck hrows hb' hS hbp hα
+  exact leaf_actBits hcheck hrows (Nat.le_of_ble_eq_true hb) hS hbp hα
 
 end Problem
 

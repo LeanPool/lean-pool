@@ -364,8 +364,8 @@ noncomputable def quadD4 (T on b : ℕ) (krows : List (List (List ℕ))) (r u t 
 
 /-- Add the violations of the quadruple with code `x` to `bad`. -/
 noncomputable def quadD (T on b : ℕ) (krows : List (List (List ℕ))) (x bad : ℕ) : ℕ :=
-  P.quadD4 T on b krows (x / P.k / P.k / P.k % P.k) (x / P.k / P.k % P.k) (x / P.k % P.k)
-    (x % P.k) bad
+  P.quadD4 T on b krows (P.quadFirst x) (P.quadSecond x) (P.quadThird x)
+    (P.quadFourth x) bad
 
 variable {P}
 
@@ -397,7 +397,7 @@ theorem quadD_spec (hrows : P.checkRows = true) {b α β : ℕ} (hβ : β < 2 ^ 
     (hm (x / P.k / P.k)) (hm x) (cvN_lt (hm (x / P.k)))
   obtain ⟨h1, h2⟩ := neqS_spec hL1 hR1 hβ
   obtain ⟨g1, g2⟩ := badS_spec hbad h1 β
-  rw [quadD, quadD4]
+  rw [quadD, quadD4, quadFirst, quadSecond, quadThird, quadFourth]
   refine ⟨g1, ?_⟩
   rw [g2, h2, hL2, hR2, quadAt, quadB]
   cases dotB P.k (P.tbl (joinN b α β)) (cvN P.s (x / P.k / P.k / P.k % P.k)) (x % P.k)
@@ -532,18 +532,18 @@ variable (P : Problem)
 /-- The left side of the condition of the quadruple with code `x`, the high variables being `r`. -/
 noncomputable def dotRL (b x r : ℕ) : ℕ :=
   dotD (top b) b
-    (rowAt (krowsOf b r P.cls) (cvN P.s (Nat.mod (Nat.div (Nat.div (Nat.div x P.k) P.k) P.k) P.k))
-      (Nat.mod x P.k))
-    (rowAt (krowsOf b r P.cls) (Nat.mod (Nat.div (Nat.div x P.k) P.k) P.k)
-      (Nat.mod (Nat.div x P.k) P.k)) 0
+    (rowAt (krowsOf b r P.cls) (cvN P.s (P.quadFirst x))
+      (P.quadFourth x))
+    (rowAt (krowsOf b r P.cls) (P.quadSecond x)
+      (P.quadThird x)) 0
 
 /-- The right side of the condition of the quadruple with code `x`, the high variables being
 `r`. -/
 noncomputable def dotRR (b x r : ℕ) : ℕ :=
   dotD (top b) b
-    (rowAt (krowsOf b r P.cls) (Nat.mod (Nat.div (Nat.div (Nat.div x P.k) P.k) P.k) P.k)
-      (Nat.mod (Nat.div (Nat.div x P.k) P.k) P.k))
-    (rowAt (krowsOf b r P.cls) (Nat.mod x P.k) (cvN P.s (Nat.mod (Nat.div x P.k) P.k))) 0
+    (rowAt (krowsOf b r P.cls) (P.quadFirst x)
+      (P.quadSecond x))
+    (rowAt (krowsOf b r P.cls) (P.quadFourth x) (cvN P.s (P.quadThird x))) 0
 
 theorem dotRL_eq (b x r : ℕ) : P.dotRL b x r = dotD (top b) b
     (rowAt (krowsOf b r P.cls) (cvN P.s (x / P.k / P.k / P.k % P.k)) (x % P.k))
@@ -562,13 +562,13 @@ condition of `x` depend. -/
 noncomputable def coversQuad (b : ℕ) (e : ℕ × ℕ × ℕ) : Bool :=
   coversDot b e.2.1
       (nth [] (nth [] P.cls
-        (cvN P.s (Nat.mod (Nat.div (Nat.div (Nat.div e.1 P.k) P.k) P.k) P.k))) (Nat.mod e.1 P.k))
-      (nth [] (nth [] P.cls (Nat.mod (Nat.div (Nat.div e.1 P.k) P.k) P.k))
-        (Nat.mod (Nat.div e.1 P.k) P.k)) &&
+        (cvN P.s (P.quadFirst e.1))) (P.quadFourth e.1))
+      (nth [] (nth [] P.cls (P.quadSecond e.1))
+        (P.quadThird e.1)) &&
     coversDot b e.2.2
-      (nth [] (nth [] P.cls (Nat.mod (Nat.div (Nat.div (Nat.div e.1 P.k) P.k) P.k) P.k))
-        (Nat.mod (Nat.div (Nat.div e.1 P.k) P.k) P.k))
-      (nth [] (nth [] P.cls (Nat.mod e.1 P.k)) (cvN P.s (Nat.mod (Nat.div e.1 P.k) P.k)))
+      (nth [] (nth [] P.cls (P.quadFirst e.1))
+        (P.quadSecond e.1))
+      (nth [] (nth [] P.cls (P.quadFourth e.1)) (cvN P.s (P.quadThird e.1)))
 
 variable {P}
 

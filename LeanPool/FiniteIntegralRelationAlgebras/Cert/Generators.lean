@@ -71,16 +71,13 @@ theorem fixCountL_of_orbitGenerators {P : Problem} (hcheck : P.check = true)
     (hsyms : P.checkGeneratorSymmetries b perms gens syms = true)
     (hgrp : checkBitGroup t perms gens inv = true) {W : ℕ}
     (hseg : OrbitSeg t perms (P.leaf b) 0 hi hi W) : fixCountL P.s P.n P.perm = W := by
-  have hb' := Nat.le_of_ble_eq_true hb
+  refine fixCountL_of_invariantLeaves hcheck hrows hb ht hhi hgrp (fun e he α hα => ?_) hseg
   obtain rfl := Nat.eq_of_beq_eq_true ht
-  obtain rfl := Nat.eq_of_beq_eq_true hhi
   have hinv := bitAct_invariant_of_generators (F := P.leaf b) hgrp (fun g hg => by
     obtain ⟨hIndex, s, hs⟩ := checkGeneratorSymmetries_spec hsyms g hg
     exact ⟨hIndex, fun α hα =>
-      leaf_actBits hcheck hrows hb' hs ((checkBitGroup_spec hgrp).1 _ hIndex) hα⟩)
-  rw [fixCountL_eq_sumLeaves hcheck hrows hb', sumLeaves_eq_sum]
-  simp only [Nat.zero_add]
-  refine OrbitSeg.sum_eq hgrp (fun e he α hα => ?_) hseg
+      leaf_actBits hcheck hrows (Nat.le_of_ble_eq_true hb) hs
+        ((checkBitGroup_spec hgrp).1 _ hIndex) hα⟩)
   obtain ⟨i, hi, rfl⟩ := List.mem_iff_getElem.mp he
   simpa only [bitAct, pAt, nth_eq_getElem ([], []) hi] using hinv i hi α hα
 

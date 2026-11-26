@@ -182,6 +182,18 @@ noncomputable def checkCover : Bool :=
 noncomputable def check : Bool :=
   P.checkPerm && (P.checkId && (P.checkInv && (P.checkDiv && (P.checkReps && P.checkCover))))
 
+/-- Decode the first atom of a quadruple. -/
+abbrev quadFirst (x : ℕ) : ℕ := x / P.k / P.k / P.k % P.k
+
+/-- Decode the second atom of a quadruple. -/
+abbrev quadSecond (x : ℕ) : ℕ := x / P.k / P.k % P.k
+
+/-- Decode the third atom of a quadruple. -/
+abbrev quadThird (x : ℕ) : ℕ := x / P.k % P.k
+
+/-- Decode the fourth atom of a quadruple. -/
+abbrev quadFourth (x : ℕ) : ℕ := x % P.k
+
 /-- The associativity condition of the quadruple with code `x`. -/
 noncomputable def quadAt (v : ℕ → Bool) (x : ℕ) : Bool :=
   quadB P.s P.k (P.tbl v) (x / P.k / P.k / P.k % P.k) (x / P.k / P.k % P.k) (x / P.k % P.k)

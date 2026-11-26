@@ -1367,12 +1367,10 @@ public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Sym
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.SymOrbit
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.WPop
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Weights
-public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.Data.SetRel
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.AtomStructure
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.Basic
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.Hom
 public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.IntegralAtomStructure
-public import LeanPool.FiniteIntegralRelationAlgebras.Foundations.RelationAlgebra.SpecialElements
 public import LeanPool.FiniteIntegralRelationAlgebras.Theory.Aut
 public import LeanPool.FiniteIntegralRelationAlgebras.Theory.AutEquiv
 public import LeanPool.FiniteIntegralRelationAlgebras.Theory.Burnside
