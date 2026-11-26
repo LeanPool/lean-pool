@@ -162,50 +162,37 @@ theorem dense_test {μ : Measure M} [IsFiniteMeasure μ] : DenseRange (testToL2 
   rw [Metric.denseRange_iff]
   intro u r hr
   have hu : MemLp (u : M → ℝ) 2 μ := Lp.memLp u
-  set c : ℝ≥0∞ := μ univ ^ ((2 : ℝ≥0∞).toReal⁻¹) with hc
-  have hcfin : c ≠ ⊤ := by
-    refine ENNReal.rpow_ne_top_of_nonneg (by simp) (measure_ne_top _ _)
-  obtain ⟨g, hgc, hgn, hgcont, hgmem⟩ := hu.exists_hasCompactSupport_eLpNorm_sub_le
-    (p := 2) (by norm_num) (ε := ENNReal.ofReal (r / 4)) (by simpa using hr)
-  set δ : ℝ := (r / 4) / (c.toReal + 1) with hδ
-  have hδpos : 0 < δ := by
-    have := ENNReal.toReal_nonneg (a := c)
-    positivity
-  obtain ⟨h, hh⟩ := exists_test_approx F hgcont hgc hδpos
+  obtain ⟨g, hgCompact, hgNear, hgContinuous, hgMem⟩ :=
+    hu.exists_hasCompactSupport_eLpNorm_sub_le
+      (p := 2) (by norm_num) (ε := ENNReal.ofReal (r / 4)) (by positivity)
+  let gLp := hgMem.toLp g
+  have nearContinuous : dist u gLp ≤ r / 4 := by
+    have difference : u - gLp = (hu.sub hgMem).toLp ((u : M → ℝ) - g) :=
+      ((MemLp.toLp_sub hu hgMem).trans
+        (congrArg (fun v ↦ v - gLp) (Lp.toLp_coeFn u hu))).symm
+    rw [dist_eq_norm, difference, Lp.norm_toLp, ← ENNReal.toReal_ofReal (by positivity : 0 ≤ r / 4)]
+    exact ENNReal.toReal_mono ENNReal.ofReal_ne_top hgNear
+  let mass : ℝ := ↑(measureUnivNNReal μ ^ (2 : ℝ≥0∞).toReal⁻¹)
+  have massNonneg : 0 ≤ mass := NNReal.coe_nonneg _
+  have massPlusPos : 0 < mass + 1 := add_pos_of_nonneg_of_pos massNonneg zero_lt_one
+  let δ := (r / 4) / (mass + 1)
+  have δPos : 0 < δ := div_pos (by positivity) massPlusPos
+  obtain ⟨h, hh⟩ := exists_test_approx F hgContinuous hgCompact δPos
+  have nearSmooth : dist gLp (testToL2 F μ h) ≤ r / 4 := by
+    rw [dist_eq_norm]
+    have pointwise : ∀ᵐ x ∂μ, ‖(gLp - testToL2 F μ h) x‖ ≤ δ := by
+      filter_upwards [Lp.coeFn_sub gLp (testToL2 F μ h), MemLp.coeFn_toLp hgMem,
+        coeFn_testToL2 F μ h] with x hSub hg hSmooth
+      rw [hSub, Pi.sub_apply, hg, hSmooth, Real.norm_eq_abs, abs_sub_comm]
+      exact (hh x).le
+    calc
+      _ ≤ mass * δ := Lp.norm_le_of_ae_bound δPos.le pointwise
+      _ ≤ (mass + 1) * δ :=
+        mul_le_mul_of_nonneg_right (le_add_of_nonneg_right zero_le_one) δPos.le
+      _ = r / 4 := mul_div_cancel₀ _ massPlusPos.ne'
   refine ⟨h, ?_⟩
-  have hhmem := testSub_memLp F h μ
-  have h1 : eLpNorm ((u : M → ℝ) - (h : M → ℝ)) 2 μ ≤ ENNReal.ofReal (r / 2) := by
-    have e : (u : M → ℝ) - (h : M → ℝ) =
-        ((u : M → ℝ) - g) + (g - (h : M → ℝ)) := (sub_add_sub_cancel _ _ _).symm
-    rw [e]
-    refine (eLpNorm_add_le (by norm_num)).trans ?_
-    have h2 : eLpNorm (g - (h : M → ℝ)) 2 μ ≤ ENNReal.ofReal (r / 4) := by
-      have := eLpNorm_le_of_ae_bound (p := 2) (μ := μ) (f := g - (h : M → ℝ)) (C := δ)
-        (hgmem.aestronglyMeasurable.sub hhmem.aestronglyMeasurable)
-        (Eventually.of_forall fun x => by
-          rw [Pi.sub_apply, Real.norm_eq_abs, abs_sub_comm]
-          exact (hh x).le)
-      refine this.trans ?_
-      rw [← hc]
-      have hmul : c * ENNReal.ofReal δ = ENNReal.ofReal (c.toReal * δ) := by
-        rw [ENNReal.ofReal_mul ENNReal.toReal_nonneg, ENNReal.ofReal_toReal hcfin]
-      rw [hmul]
-      apply ENNReal.ofReal_le_ofReal
-      rw [hδ, ← mul_div_assoc, div_le_iff₀ (by positivity)]
-      have := ENNReal.toReal_nonneg (a := c)
-      nlinarith
-    calc _ ≤ eLpNorm ((u : M → ℝ) - g) 2 μ + eLpNorm (g - (h : M → ℝ)) 2 μ := le_rfl
-      _ ≤ ENNReal.ofReal (r / 4) + ENNReal.ofReal (r / 4) := add_le_add hgn h2
-      _ = ENNReal.ofReal (r / 2) := by
-        rw [← ENNReal.ofReal_add (by positivity) (by positivity)]; congr 1; ring
-  rw [dist_eq_norm]
-  have e2 : u - testToL2 F μ h = (hu.sub hhmem).toLp ((u : M → ℝ) - (h : M → ℝ)) := by
-    rw [MemLp.toLp_sub hu hhmem, Lp.toLp_coeFn]
-    rfl
-  rw [e2, Lp.norm_toLp]
-  have : (eLpNorm ((u : M → ℝ) - (h : M → ℝ)) 2 μ).toReal ≤ r / 2 := by
-    have := ENNReal.toReal_mono ENNReal.ofReal_ne_top h1
-    rwa [ENNReal.toReal_ofReal (by positivity)] at this
-  linarith
+  have bound := (dist_triangle u gLp (testToL2 F μ h)).trans
+    (add_le_add nearContinuous nearSmooth)
+  linarith only [bound, hr]
 
 end CutoffRigidity.Riemann.Diff

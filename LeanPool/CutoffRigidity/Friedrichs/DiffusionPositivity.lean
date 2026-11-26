@@ -10,10 +10,10 @@ module
 
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionForm
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
-public import LeanPool.CutoffRigidity.Friedrichs.FunctionalCalculusSemigroup
 import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 import TauCeti.Analysis.SpecialFunctions.SmoothTransition
 import TauCeti.Geometry.Manifold.Riemannian.Gradient.ChainRule
+import TauCeti.MeasureTheory.Function.Lp.Order
 
 /-! # Smooth contractions and positivity of the weighted diffusion resolvent -/
 
@@ -240,36 +240,17 @@ theorem diffusion_resolvent_nonneg {parameter : ℝ} (hparameter : 0 < parameter
   rw [hfixed] at hx
   exact le_of_not_gt fun hneg ↦ (hlt (u x) hneg).ne hx
 
-omit [EMetricSpace M] [BorelSpace M] [IsFiniteMeasure μ] in
-/-- Nonnegativity almost everywhere is a closed condition in the real `L²` norm. -/
-private theorem isClosed_ae_nonneg :
-    IsClosed {u : M →₂[μ] ℝ | 0 ≤ᵐ[μ] u} := by
-  have eq : {u : M →₂[μ] ℝ | 0 ≤ᵐ[μ] u} = {u | Lp.posPart u = u} := by
-    ext u
-    change (0 ≤ᵐ[μ] u) ↔ Lp.posPart u = u
-    constructor
-    · intro h
-      apply Lp.ext
-      filter_upwards [h, Lp.coeFn_posPart u] with x hx hpart
-      exact hpart.trans (max_eq_left hx)
-    · intro h
-      filter_upwards [Lp.coeFn_posPart u] with x hx
-      rw [h] at hx
-      exact hx.symm ▸ le_max_right (u x) 0
-  rw [eq]
-  exact isClosed_eq Lp.continuous_posPart continuous_id
-
 /-- Euler convergence transfers positivity from the weighted resolvents to the semigroup. -/
 theorem diffusion_semigroup_nonneg (time : ℝ≥0) (g : M →₂[μ] ℝ) (hg : 0 ≤ᵐ[μ] g) :
     0 ≤ᵐ[μ] (diffFormData F hV hμ).semigroup time g := by
   let S := diffFormData F hV hμ
-  apply cfcSemigroup_mapsTo S.R_unitOp {u : M →₂[μ] ℝ | 0 ≤ᵐ[μ] u} isClosed_ae_nonneg _ time hg
+  refine (Lp.coeFn_nonneg _).mpr
+    (S.semigroup_mapsTo (Ici 0) isClosed_Ici ?_ time ((Lp.coeFn_nonneg g).mp hg))
   intro parameter hparameter u hu
-  change 0 ≤ᵐ[μ] (parameter • S.resolvent parameter u : M →₂[μ] ℝ)
-  filter_upwards [diffusion_resolvent_nonneg F hV hμ hparameter u hu,
-    Lp.coeFn_smul parameter (S.resolvent parameter u)] with x hx hsmul
-  rw [hsmul]
-  exact mul_nonneg hparameter.le hx
+  change 0 ≤ parameter • S.resolvent parameter u
+  exact smul_nonneg hparameter.le
+    ((Lp.coeFn_nonneg _).mp (diffusion_resolvent_nonneg F hV hμ hparameter u
+      ((Lp.coeFn_nonneg u).mpr hu)))
 
 end Concrete
 
