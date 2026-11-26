@@ -36,7 +36,6 @@ theorem structOf_conv (T : Set (Cycle (Fin s) (Fin n))) (a : IntegralAtom (Fin s
 @[simp]
 theorem structOf_id (T : Set (Cycle (Fin s) (Fin n))) : (structOf T).id = {one} := rfl
 
-@[simp]
 theorem mem_structOf_id {T : Set (Cycle (Fin s) (Fin n))} {a : IntegralAtom (Fin s) (Fin n)} :
     a ∈ (structOf T).id ↔ a = one := .rfl
 

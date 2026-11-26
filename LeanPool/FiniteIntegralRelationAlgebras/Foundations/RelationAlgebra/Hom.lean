@@ -25,10 +25,16 @@ namespace FiniteIntegralRelationAlgebras
 structure RelationAlgebraHom (α β : Type*) [RelationAlgebra α] [RelationAlgebra β]
     extends BoundedLatticeHom α β, StarMonoidHom α β
 
+/-- The monoid homomorphism preserving converse underlying a relation algebra homomorphism. -/
+add_decl_doc RelationAlgebraHom.toStarMonoidHom
+
 /-- The type of relation algebra equivalence from `α` to `β`, preserving both the Boolean algebra
   and composition operations -/
 structure RelationAlgebraEquiv (α β : Type*) [RelationAlgebra α] [RelationAlgebra β]
     extends toOrderIso : OrderIso α β, StarMulEquiv α β
+
+/-- The multiplicative equivalence preserving converse underlying a relation algebra equivalence. -/
+add_decl_doc RelationAlgebraEquiv.toStarMulEquiv
 
 namespace RelationAlgebraHom
 
