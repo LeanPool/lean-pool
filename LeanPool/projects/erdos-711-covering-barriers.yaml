@@ -1,0 +1,37 @@
+slug: erdos-711-covering-barriers
+title: Cauchy–Schwarz covering barriers for Erdős problem 711
+summary: Proves two lower bounds for the divisor-multiplicity sums in the three-path
+  reflection method. For sufficiently large N, the results hold for every finite cover of
+  (N/2, N] and give exponential corrections with exponents two thirds and one half, respectively.
+branch: analytic number theory
+entry_module: LeanPool.Erdos711
+authors:
+- Antigravity / Arithmetica4 Prize Campaign Contributors
+source:
+  url: https://github.com/nil-commits/erdos711-half-cauchy
+  github_repo: nil-commits/erdos711-half-cauchy
+  commit: f5e897b2ce86f4fa69bb44e3135b84ef34a38d28
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339-AI-authored-projects/topic/Erd.C5.91s.20.23711.20Cauchy.E2.80.93Schwarz.20barriers/near/643690949
+  announcement_date: '2026-11-25'
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Erdos711.Barriers.barrier1_unabsorbed_two_thirds
+- Erdos711.Barriers.barrier2a_absorbed_half
+main_results:
+- declaration: Erdos711.Barriers.barrier1_unabsorbed_two_thirds
+  informal: Proves the two-thirds exponent obstruction for unabsorbed bounds over
+    an arbitrary cover.
+- declaration: Erdos711.Barriers.barrier2a_absorbed_half
+  informal: Proves the one-half exponent obstruction for absorbed bounds over an arbitrary
+    cover.
+tags:
+- number-theory
+- analytic-number-theory
+- additive-combinatorics
+- matching
+msc:
+- 11B75
+- 11N37
+- 05C70
