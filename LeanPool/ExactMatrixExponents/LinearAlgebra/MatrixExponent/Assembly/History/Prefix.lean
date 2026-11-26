@@ -897,3 +897,37 @@ theorem emitted (h₀ : M.length 0 = 0) (hsize : ∀ j, M.length (size j) = visi
 
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly.History.Subround.Allocation
 end
+
+/- # A finite length table with zero at the reserved address -/
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Assembly.History
+
+open Coloring
+
+/-- The address width for a set with space for three additional lengths. -/
+abbrev lengthBits (lengths : Finset ℕ) := Nat.clog 2 (lengths.card + 3)
+
+open scoped Classical in
+/-- Encode a bounded finite set of lengths with a decoder that sends the reserved
+address to zero and recovers every length in the set. -/
+theorem length_dictionary (lengths : Finset ℕ) {d : ℕ}
+    (zero_mem : 0 ∈ lengths) (capacity : lengths.card ≤ 2 ^ d) :
+    ∃ table : (ℕ → B d) × (B d → ℕ),
+      table.2 0 = 0 ∧ ∀ n ∈ lengths, table.2 (table.1 n) = n := by
+  obtain ⟨embed⟩ : Nonempty (↥lengths ↪ B d) :=
+    Function.Embedding.nonempty_of_card_le (by
+      simpa only [Fintype.card_coe, Fintype.card_fin] using capacity)
+  let zero : ↥lengths := ⟨0, zero_mem⟩
+  let address := embed.trans (Equiv.swap (embed zero) 0).toEmbedding
+  have reserved : address zero = 0 := Equiv.swap_apply_left _ _
+  let decode := Function.extend address Subtype.val (fun _ => 0)
+  let encode (n : ℕ) := if h : n ∈ lengths then address ⟨n, h⟩ else 0
+  refine ⟨(encode, decode), ?_, fun n hn => ?_⟩
+  · change decode 0 = 0
+    rw [← reserved]
+    exact address.injective.extend_apply Subtype.val (fun _ => 0) zero
+  · simp only [encode, dite_eq_left hn, decode, address.injective.extend_apply]
+
+end MatrixMultiplicationAllFields.MatrixExponent.Assembly.History
+end

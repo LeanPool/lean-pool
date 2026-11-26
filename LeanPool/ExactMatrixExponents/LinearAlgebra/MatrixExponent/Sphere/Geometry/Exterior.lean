@@ -70,17 +70,6 @@ Nat.mod_lt _ U.positive⟩)))`. -/
 def childFor (x : B ℓ) (name : N) : B U.childBits :=
   U.slot (.inl (.inl (true, ⟨namedIndex (U.namesAt x) name % D ^ k, Nat.mod_lt _ U.positive⟩)))
 
-variable [Finite K] (V : Printer F K (B S.k) S.m d S.h ℓ M r t q D k n u j z)
-  (pres : S.Presentation tape P.diagram) (data : V.rows.obj) (status : (Children.Header S.m d).obj)
-  (f : Val x → Val y → F) (σ : ℕ)
-
-open scoped Classical in
-/-- The data for the named release construction, including `nonzero`, `named`. -/
-structure NamedRelease extends V.Release pres data status f σ where
-  nonzero : ∀ i, coeff i ≠ 0
-  named : ∀ i e, let v := (pres.boundary e).val.1.1
-    (V.split (((shows i).pres.boundary e).val.1.1.1)).2 = V.childFor ((data v.1).2 v.2.1) v.2.2
-
 end Printer
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print
 end

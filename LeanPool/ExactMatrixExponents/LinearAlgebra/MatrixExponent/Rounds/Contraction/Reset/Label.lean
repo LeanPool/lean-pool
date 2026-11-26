@@ -246,7 +246,8 @@ theorem meter_bound : Base (fun i : I => (meter i.L t i.z B).count) := by
 
 theorem palette_bound : Base (fun i : I => (book i.T i.u t i.z B).d) := by
   refine ((base_const (B + 4)).add units).mono fun i => ?_
-  simp only [book, History.Reset.Book.make, History.Reset.Book.lenBits, Finset.card_range]
+  simp only [book, History.Reset.Book.make, History.Reset.Book.lenBits, History.lengthBits,
+    Finset.card_range]
   exact clog_mul B i.z
 
 theorem overhead_bound : Base (fun i : I => History.Reset.overhead i.T.scheme (e t B)) := by

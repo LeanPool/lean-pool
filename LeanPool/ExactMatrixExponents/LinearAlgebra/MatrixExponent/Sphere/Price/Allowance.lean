@@ -6,7 +6,6 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Weight
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Decoding
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Scales
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Waves.Scenario

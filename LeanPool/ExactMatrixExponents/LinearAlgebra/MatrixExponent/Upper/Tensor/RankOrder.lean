@@ -43,7 +43,7 @@ theorem one_le_of_ne_zero {A : TensorClass} (hA : A ≠ 0) : 1 ≤ A := by
       rw [← ofTensor_coeff a, h, ofTensor_zero]
     rw [← ofTensor_coeff a]
     have h := ofTensor_le (nonzero_restricts_natTensor_one ha)
-    rw [ofTensor_natTensor_one] at h
+    rw [MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.ofTensor_natTensor_one] at h
     exact h
 
 

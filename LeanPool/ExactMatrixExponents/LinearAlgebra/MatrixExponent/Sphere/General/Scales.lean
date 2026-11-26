@@ -698,46 +698,6 @@ theorem directed_order : t.order.Directed := by
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly.Template.Binning.Trial
 end
 
-/- # Printing a local expansion with arbitrary station mobility -/
-
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-open Assembly Coloring Routing.Private Sphere SphereScale Surface Surface.Local
-
-variable {F K : Type} [Field F] [Field K] [Algebra K F] {x y : Wire}
-    {g ℓ D T b d p l j : ℕ} {W : ℝ} {S : Scheme F}
-    (P : Input F x y S.h D T (d * b) g W)
-    {z : S.format.obj} (A : P.HostChart S z)
-    (sc : Scales g ℓ D T (p ^ l) b d) (hK : Ready K ℓ D g (p ^ l) b d)
-    (s : P.Occupied → Shape (probes ℓ D) b d)
-
-local notation "world" => P.localWorld A sc hK s
-local notation "Cfg" => design S g ℓ D b d p l
-
-open scoped Classical in
-/-- Any ordered presentation whose stations match the terminal frame
-produces a weighted expansion that retains both exterior lists. -/
-def localNamedRelease (pres : S.Presentation z P.diagram) {tone : B S.m → ℕ} {mobile : S.Vtx → Bool}
-    (h : P.Placed pres A.coord tone mobile) (hd : pres.Directed)
-    {menu : (Cfg).Menu F (B S.k) (B S.ℓ) j} (c : (world).Code (Cfg).waves menu)
-    {M r t k n u e : ℕ}
-    (U : Print.Printer F (panelKeys Cfg) (B S.k) S.m S.d S.h j M r t (Cfg).R D k n u (p ^ l) e)
-    (ha : d * b = M * r) (hb : d = M * t) (hm : U.menu = printMenu S menu ha hb)
-    (status : (Print.Children.Header S.m S.d).obj)
-    (loc : ∀ v, A.coord v = (A.host v.val.1, cellIndex S.h v.val.2))
-    (parents : Print.Children.Shows P.adj A.host (A.graph, status)) (hn : Nonempty P.V)
-    (hM : M = chunks ℓ D) (hk : k = Sphere.Layout.Sharing.allocation g ℓ)
-    (hu : u * D ^ (terminalExponent g ℓ) ≤ T)
-    (hc : terminalExponent g ℓ * D * T ≤ u * U.cap) (hz : depth ℓ D g (p ^ l) (d * b) < 2 ^ e) :
-    U.NamedRelease pres c.tape status ((world).eval c.frame) ℓ := by
-  have sig := P.printSignal A sc hK s pres h hd c U ha hb hm status loc parents
-  have bd := P.panelBounds A sc hK s c.frame
-  have keep := P.namedKeeps (P.kit sc hK) s c.frame.reach h c.frame.match'
-  exact sig.1.namedRelease keep hn bd sc ha hb rfl rfl hM hk hu hc hz
-
-end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Input
-end
-
 /- # Common dimensions of the printer for a grouped layer -/
 
 noncomputable section

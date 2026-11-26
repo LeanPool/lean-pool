@@ -9,10 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Face.Contact
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Threshold.Square
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Dual
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Speedup.Strict
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Interior.Convert
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Sparse.Entropy
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Lower
 
 /-!
 # Rectangular matrix multiplication over arbitrary fields

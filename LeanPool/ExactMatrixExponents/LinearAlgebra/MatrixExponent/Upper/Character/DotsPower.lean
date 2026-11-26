@@ -57,16 +57,4 @@ theorem pY_le_one (f : Character) : f.pY ≤ 1 :=
 theorem pZ_le_one (f : Character) : f.pZ ≤ 1 :=
   TensorSpectrum.TensorClass.Character.pZ_le_one f
 
-theorem dotXValue_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
-    f.dotXValue n = (n : ℝ) ^ f.pX :=
-  TensorSpectrum.TensorClass.Character.dotXValue_eq_rpow f n hn
-
-theorem dotYValue_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
-    f.dotYValue n = (n : ℝ) ^ f.pY :=
-  TensorSpectrum.TensorClass.Character.dotYValue_eq_rpow f n hn
-
-theorem dotZValue_eq_rpow (f : Character) (n : ℕ) (hn : 1 ≤ n) :
-    f.dotZValue n = (n : ℝ) ^ f.pZ :=
-  TensorSpectrum.TensorClass.Character.dotZValue_eq_rpow f n hn
-
 end MatrixMultiplicationAllFields.MatrixExponent.Upper.TensorClass.Character

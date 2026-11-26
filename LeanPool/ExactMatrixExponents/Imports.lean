@@ -408,7 +408,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Ballot
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Pruned
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Scales
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.General.Weight
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Boundary
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Decoding
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Geometry.Exterior

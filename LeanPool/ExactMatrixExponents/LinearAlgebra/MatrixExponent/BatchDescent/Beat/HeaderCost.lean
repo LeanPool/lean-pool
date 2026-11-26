@@ -457,7 +457,7 @@ theorem overhead_bound : Rate (fun i : I => (book P i.S i.T i.v i.h.vpos).overhe
   have hs : Rate (fun i : I => 2 ^ (book P i.S i.T i.v i.h.vpos).s) :=
     (spans.exp_add (rate_const (2 ^ 2))).exp_add (rate_const (2 ^ Nat.clog 2 (P.b + 1)))
   have hd : Rate (fun i : I => (book P i.S i.T i.v i.h.vpos).d) := by
-    simpa only [book, Book.make, Book.lenBits, Finset.card_singleton] using
+    simpa only [book, Book.make, Book.lenBits, History.lengthBits, Finset.card_singleton] using
       (rate_const (Nat.clog 2 (1 + 3)) : Rate (fun _ : I => _))
   have hr := role_bound P d
   have hl : Rate (fun i : I => Dense.used (i.T.scheme.ℓ + Kind.width i.T.scheme P (i.T.scheme.e
@@ -476,7 +476,7 @@ theorem added_bound : Rate (fun i : I => added P i.S i.T i.v i.h.vpos Δ i.R i.a
   have he := (spans_bound P Δ d).rate
   have hq := (child_slots P Δ d).rate.of_exp
   have hd : Rate (fun i : I => (book P i.S i.T i.v i.h.vpos).d) := by
-    simpa only [book, Book.make, Book.lenBits, Finset.card_singleton] using
+    simpa only [book, Book.make, Book.lenBits, History.lengthBits, Finset.card_singleton] using
       (rate_const (Nat.clog 2 (1 + 3)) : Rate (fun _ : I => _))
   have h := (rate_const 1).add (he.mul (hd.add ((rate_const 1).add ((rate_const 1).add (hq.add
     he.of_exp)))))

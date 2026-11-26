@@ -916,7 +916,7 @@ theorem coeff_binary : BinaryLaw Coeff := by
   let g : Character := ⟨f.comp interpret, hf.comp interpret_mono⟩
   have hg : g.pX = p := by
     apply (Real.rpow_right_inj (by norm_num : (0 : ℝ) < 2) (by norm_num : (2 : ℝ) ≠ 1)).mp
-    have hd := g.dotXValue_eq_rpow 2 (by decide)
+    have hd := TensorSpectrum.TensorClass.Character.dotXValue_eq_rpow g 2 (by decide)
     change (f (interpret (dotX 2)) : ℝ) = (2 : ℝ) ^ g.pX at hd
     rw [interpret_dot, he] at hd
     exact hd.symm

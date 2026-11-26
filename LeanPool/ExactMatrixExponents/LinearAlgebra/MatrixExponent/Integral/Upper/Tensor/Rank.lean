@@ -73,25 +73,6 @@ namespace TensorClass
 export MatrixMultiplicationAllFields.TensorSpectrum.TensorClass
   (rank rank_ofRep rank_mono rank_ofTensor)
 
-/-- The natural tensor on a sum is equivalent to the two diagonal blocks. -/
-theorem ofTensor_natTensor_add (r s : ℕ) :
-    ofTensor (CoefficientTensor.natTensor (r + s)) =
-      ofTensor (CoefficientTensor.blockSum
-        (CoefficientTensor.natTensor r) (CoefficientTensor.natTensor s)) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.ofTensor_natTensor_add (K := O) r s
-
-/-- The one-dimensional diagonal tensor is equivalent to the unit tensor. -/
-theorem ofTensor_natTensor_one :
-    ofTensor (CoefficientTensor.natTensor 1) =
-      ofTensor (fun (_ _ _ : PUnit) => (1 : O)) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.ofTensor_natTensor_one
-
-/-- The zero-dimensional diagonal tensor is equivalent to the empty tensor. -/
-theorem ofTensor_natTensor_zero :
-    ofTensor (CoefficientTensor.natTensor 0) =
-      ofTensor (0 : Tensor O Empty Empty Empty) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.ofTensor_natTensor_zero
-
 end TensorClass
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

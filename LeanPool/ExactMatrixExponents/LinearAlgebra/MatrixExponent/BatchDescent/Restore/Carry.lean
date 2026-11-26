@@ -120,7 +120,7 @@ variable [Fintype F]
 
 theorem added_bound (Y : ℕ) : Rate (fun i : I => added i.S i.T Δ t i.R Y) := by
   apply reset_added _ (spans_bound t d).rate
-  · simpa only [Reset.Book.lenBits, Finset.card_singleton] using
+  · simpa only [Reset.Book.lenBits, History.lengthBits, Finset.card_singleton] using
       (rate_const (Nat.clog 2 (1 + 3)) : Rate (fun _ : I => _))
   · exact (rate_const 2).mono fun i => (child_degree Δ d i).le
 

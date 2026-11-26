@@ -174,7 +174,7 @@ namespace Book
 
 open scoped Classical in
 /-- The least binary width whose power of two reaches the stated size. -/
-abbrev lenBits (W : Finset ℕ) := Nat.clog 2 (W.card + 3)
+abbrev lenBits (W : Finset ℕ) := History.lengthBits W
 
 open scoped Classical in
 theorem dictionary (W : Finset ℕ) :
@@ -184,19 +184,9 @@ theorem dictionary (W : Finset ℕ) :
   have hc : U.card ≤ W.card + 3 :=
     ((Finset.card_insert_le _ _).trans (Nat.succ_le_succ (Finset.card_insert_le _ _))).trans
       (Nat.le_succ _)
-  obtain ⟨i⟩ : Nonempty (↥U ↪ B (lenBits W)) := Function.Embedding.nonempty_of_card_le (by
-    simp only [Fintype.card_coe, Fintype.card_fin]
-    exact hc.trans (Nat.le_pow_clog (by decide) _))
-  let a : ↥U := ⟨0, by simp [U]⟩
-  let k := i.trans (Equiv.swap (i a) 0).toEmbedding
-  let len := Function.extend k Subtype.val (fun _ => 0)
-  let put (j : ℕ) := if h : j ∈ U then k ⟨j, h⟩ else 0
-  have hl (j : ℕ) (h : j ∈ U) : len (put j) = j := by
-    simp only [put, dite_eq_left h, len, k.injective.extend_apply]
-  have hz : len 0 = 0 := by
-    rw [← show k a = 0 from Equiv.swap_apply_left _ _]
-    exact k.injective.extend_apply _ _ a
-  exact ⟨(put, len), hz, hl _ (by simp [U]), fun j hj => hl j (by simp [U, hj])⟩
+  obtain ⟨table, zero, decode⟩ := History.length_dictionary U (by simp [U])
+    (hc.trans (Nat.le_pow_clog (by decide) _))
+  exact ⟨table, zero, decode _ (by simp [U]), fun j hj => decode j (by simp [U, hj])⟩
 
 variable (ord : B S.ℓ ≃ B S.ℓ) (W : Finset ℕ)
 
