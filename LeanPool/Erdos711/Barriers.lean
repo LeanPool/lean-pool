@@ -3,6 +3,7 @@ Copyright (c) 2026 Antigravity / Arithmetica4 Prize Campaign Contributors. All r
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Antigravity / Arithmetica4 Prize Campaign Contributors
 -/
+/- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
 public import Mathlib.Data.Finset.Card
@@ -24,8 +25,7 @@ public import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 public import Mathlib.NumberTheory.Primorial
 public import Mathlib.Algebra.BigOperators.Field
 public import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
-public import Mathlib.Data.Nat.GCD.BigOperators
-import Mathlib.Tactic.ByContra
+public import Mathlib.Tactic.ByContra
 import Mathlib.Tactic.Choose
 import Mathlib.Tactic.Convert
 import Mathlib.Tactic.FieldSimp
@@ -243,6 +243,30 @@ private lemma finset_sum_biUnion_le {ι α : Type*} [DecidableEq α] (idx : Fins
       linarith
     exact le_trans hunion (add_le_add (le_refl _) (ih hf_s))
 
+/-- Total divisor weight on one set is at most its maximum multiplicity. -/
+private lemma sum_dvd_weight_le (S : Finset ℕ) (H : ℕ) (w : ℕ → ℝ)
+    (hw_nn : ∀ t ∈ Finset.Icc 1 H, 0 ≤ w t)
+    (hw_sum : ∑ t ∈ Finset.Icc 1 H, w t ≤ 1) :
+    (∑ d ∈ S, ∑ t ∈ (Finset.Icc 1 H).filter (fun t => d ∣ t), w t) ≤
+      (((Finset.Icc 1 H).sup (fun t => (S.filter (fun d => d ∣ t)).card) : ℕ) : ℝ) := by
+  have hswap : ∑ d ∈ S, (∑ t ∈ (Finset.Icc 1 H).filter (fun t => d ∣ t), w t) =
+      ∑ t ∈ Finset.Icc 1 H, ((S.filter (fun d => d ∣ t)).card : ℝ) * w t := by
+    have h1 : ∀ d ∈ S, (∑ t ∈ (Finset.Icc 1 H).filter (fun t => d ∣ t), w t) =
+        ∑ t ∈ Finset.Icc 1 H, if d ∣ t then w t else 0 :=
+      fun _ _ => Finset.sum_filter _ _
+    rw [Finset.sum_congr rfl h1, Finset.sum_comm]
+    refine Finset.sum_congr rfl fun t _ => ?_
+    rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
+  rw [hswap]
+  set κ := (Finset.Icc 1 H).sup (fun t => (S.filter (fun d => d ∣ t)).card)
+  calc ∑ t ∈ Finset.Icc 1 H, ((S.filter (fun d => d ∣ t)).card : ℝ) * w t
+      ≤ ∑ t ∈ Finset.Icc 1 H, (κ : ℝ) * w t := by
+        refine Finset.sum_le_sum fun t ht => mul_le_mul_of_nonneg_right ?_ (hw_nn t ht)
+        exact_mod_cast Finset.le_sup (f := fun t => (S.filter (fun d => d ∣ t)).card) ht
+    _ = (κ : ℝ) * ∑ t ∈ Finset.Icc 1 H, w t := by rw [← Finset.mul_sum]
+    _ ≤ (κ : ℝ) * 1 := mul_le_mul_of_nonneg_left hw_sum (Nat.cast_nonneg _)
+    _ = (κ : ℝ) := mul_one _
+
 /-- Abstract Partition-Elimination for Barrier 1 (`2/3`): for any sub-probability weight `w` on
 `Icc 1 H` and any cover `D ⊆ idx.biUnion S`,
 `∑ d ∈ D, p_w(d)^(2/3) ≤ ∑ α ∈ idx, κ(S α, H)^(2/3) * |S α|^(1/3)`. -/
@@ -258,25 +282,6 @@ lemma partition_lower_two_thirds {ι : Type*} (D : Finset ℕ) (H : ℕ)
   intro p_w
   have hp_nn : ∀ d, 0 ≤ p_w d := fun d =>
     Finset.sum_nonneg fun t ht => hw_nn t (Finset.mem_filter.mp ht).1
-  have hsum_le_κ : ∀ α ∈ idx, ∑ d ∈ S α, p_w d ≤
-      (((Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card) : ℕ) : ℝ) := by
-    intro α _
-    have hswap : ∑ d ∈ S α, p_w d =
-        ∑ t ∈ Finset.Icc 1 H, (((S α).filter (fun d => d ∣ t)).card : ℝ) * w t := by
-      have h1 : ∀ d ∈ S α, p_w d = ∑ t ∈ Finset.Icc 1 H, if d ∣ t then w t else 0 := fun d _ => by
-        dsimp [p_w]; rw [Finset.sum_filter]
-      rw [Finset.sum_congr rfl h1, Finset.sum_comm]
-      refine Finset.sum_congr rfl fun t _ => ?_
-      rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
-    rw [hswap]
-    set κ := (Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card)
-    calc ∑ t ∈ Finset.Icc 1 H, (((S α).filter (fun d => d ∣ t)).card : ℝ) * w t
-        ≤ ∑ t ∈ Finset.Icc 1 H, (κ : ℝ) * w t := by
-          refine Finset.sum_le_sum fun t ht => mul_le_mul_of_nonneg_right ?_ (hw_nn t ht)
-          exact_mod_cast Finset.le_sup (f := fun t => ((S α).filter (fun d => d ∣ t)).card) ht
-      _ = (κ : ℝ) * ∑ t ∈ Finset.Icc 1 H, w t := by rw [← Finset.mul_sum]
-      _ ≤ (κ : ℝ) * 1 := mul_le_mul_of_nonneg_left hw_sum (Nat.cast_nonneg _)
-      _ = (κ : ℝ) := mul_one _
   calc ∑ d ∈ D, (p_w d) ^ ((2 : ℝ) / 3)
       ≤ ∑ d ∈ idx.biUnion S, (p_w d) ^ ((2 : ℝ) / 3) :=
         Finset.sum_le_sum_of_subset_of_nonneg hcover fun d _ _ => Real.rpow_nonneg (hp_nn d) _
@@ -287,9 +292,10 @@ lemma partition_lower_two_thirds {ι : Type*} (D : Finset ℕ) (H : ℕ)
           (((Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card) : ℕ) : ℝ) ^ ((2 :
             ℝ) / 3) *
             ((S α).card : ℝ) ^ ((1 : ℝ) / 3) := by
-        refine Finset.sum_le_sum fun α hα => ?_
+        refine Finset.sum_le_sum fun α _ => ?_
         have h1 := sum_rpow_two_thirds_le (S α) p_w (fun d _ => hp_nn d)
-        have h2 := Real.rpow_le_rpow (Finset.sum_nonneg fun d _ => hp_nn d) (hsum_le_κ α hα) (by
+        have h2 := Real.rpow_le_rpow (Finset.sum_nonneg fun d _ => hp_nn d)
+          (sum_dvd_weight_le (S α) H w hw_nn hw_sum) (by
           norm_num : (0 : ℝ) ≤ 2 / 3)
         exact le_trans h1 (mul_le_mul_of_nonneg_right h2 (by positivity))
 
@@ -313,25 +319,6 @@ lemma partition_lower_half {ι : Type*} (D : Finset ℕ) (H : ℕ)
       3) *
       ((S α).card : ℝ) ^ ((1 : ℝ) / 3)
   have ha_nn : ∀ α ∈ idx, 0 ≤ a α := fun _ _ => by dsimp [a]; positivity
-  have hsum_le_κ : ∀ α ∈ idx, ∑ d ∈ S α, p_w d ≤
-      (((Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card) : ℕ) : ℝ) := by
-    intro α _
-    have hswap : ∑ d ∈ S α, p_w d =
-        ∑ t ∈ Finset.Icc 1 H, (((S α).filter (fun d => d ∣ t)).card : ℝ) * w t := by
-      have h1 : ∀ d ∈ S α, p_w d = ∑ t ∈ Finset.Icc 1 H, if d ∣ t then w t else 0 := fun d _ => by
-        dsimp [p_w]; rw [Finset.sum_filter]
-      rw [Finset.sum_congr rfl h1, Finset.sum_comm]
-      refine Finset.sum_congr rfl fun t _ => ?_
-      rw [← Finset.sum_filter, Finset.sum_const, nsmul_eq_mul]
-    rw [hswap]
-    set κ := (Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card)
-    calc ∑ t ∈ Finset.Icc 1 H, (((S α).filter (fun d => d ∣ t)).card : ℝ) * w t
-        ≤ ∑ t ∈ Finset.Icc 1 H, (κ : ℝ) * w t := by
-          refine Finset.sum_le_sum fun t ht => mul_le_mul_of_nonneg_right ?_ (hw_nn t ht)
-          exact_mod_cast Finset.le_sup (f := fun t => ((S α).filter (fun d => d ∣ t)).card) ht
-      _ = (κ : ℝ) * ∑ t ∈ Finset.Icc 1 H, w t := by rw [← Finset.mul_sum]
-      _ ≤ (κ : ℝ) * 1 := mul_le_mul_of_nonneg_left hw_sum (Nat.cast_nonneg _)
-      _ = (κ : ℝ) := mul_one _
   have h32 : ∑ d ∈ D, (p_w d) ^ ((1 : ℝ) / 2) ≤ (∑ α ∈ idx, a α) ^ ((3 : ℝ) / 2) := by
     calc ∑ d ∈ D, (p_w d) ^ ((1 : ℝ) / 2)
         ≤ ∑ d ∈ idx.biUnion S, (p_w d) ^ ((1 : ℝ) / 2) :=
@@ -340,9 +327,10 @@ lemma partition_lower_half {ι : Type*} (D : Finset ℕ) (H : ℕ)
           finset_sum_biUnion_le idx S (fun d => (p_w d) ^ ((1 : ℝ) / 2)) (fun d _ =>
             Real.rpow_nonneg (hp_nn d) _)
       _ ≤ ∑ α ∈ idx, (a α) ^ ((3 : ℝ) / 2) := by
-          refine Finset.sum_le_sum fun α hα => ?_
+          refine Finset.sum_le_sum fun α _ => ?_
           have h1 := sum_rpow_half_le (S α) p_w (fun d _ => hp_nn d)
-          have h2 := Real.rpow_le_rpow (Finset.sum_nonneg fun d _ => hp_nn d) (hsum_le_κ α hα) (by
+          have h2 := Real.rpow_le_rpow (Finset.sum_nonneg fun d _ => hp_nn d)
+            (sum_dvd_weight_le (S α) H w hw_nn hw_sum) (by
             norm_num : (0 : ℝ) ≤ 1 / 2)
           have ha32 : (a α) ^ ((3 : ℝ) / 2) =
               (((Finset.Icc 1 H).sup (fun t => ((S α).filter (fun d => d ∣ t)).card) : ℕ) : ℝ) ^
@@ -362,24 +350,6 @@ lemma partition_lower_half {ι : Type*} (D : Finset ℕ) (H : ℕ)
   exact hpow
 
 /-! ### Section 2: Elementary Chebyshev Primorial Upper Bound & Dyadic Prime Lower Bound -/
-
-private lemma nat_prod_dvd_of_coprime {ι : Type*} (s : Finset ι) (f : ι → ℕ) (n : ℕ)
-    (hcop : (s : Set ι).Pairwise fun i j => Nat.Coprime (f i) (f j))
-    (hdvd : ∀ i ∈ s, f i ∣ n) :
-    ∏ i ∈ s, f i ∣ n := by
-  classical
-  induction s using Finset.induction_on with
-  | empty => simp
-  | @insert a s ha ih =>
-    rw [Finset.prod_insert ha]
-    have hcop_s : (s : Set ι).Pairwise fun i j => Nat.Coprime (f i) (f j) :=
-      hcop.mono (by intro x hx; exact Finset.mem_insert_of_mem hx)
-    have h1 : f a ∣ n := hdvd a (Finset.mem_insert_self a s)
-    have h2 : ∏ i ∈ s, f i ∣ n := ih hcop_s fun i hi => hdvd i (Finset.mem_insert_of_mem hi)
-    have hca : Nat.Coprime (f a) (∏ i ∈ s, f i) :=
-      Nat.Coprime.prod_right fun i hi =>
-        hcop (Finset.mem_insert_self a s) (Finset.mem_insert_of_mem hi) (by rintro rfl; exact ha hi)
-    exact hca.mul_dvd_of_dvd_of_dvd h1 h2
 
 /-- Erdős's 1932 elementary primorial bound: `∏_{p ≤ N} p ≤ 4 ^ N` for all `N : ℕ`. -/
 private lemma prod_primes_le_four_pow (N : ℕ) :
@@ -1972,7 +1942,7 @@ private lemma unified_random_tilt_lower (N J : ℕ) (α : ℝ)
     _ ≤ ∑ d ∈ Finset.Ioc (N / 2) N, f_obj d :=
         Finset.sum_le_sum_of_subset_of_nonneg hsub_D fun d _ _ => hf_nn d
 
-/-! ### Section 5: Shared Elementary Helpers & All Four Headline Barrier Theorems -/
+/-! ### Section 5: Shared Estimates and the Two Covering Barriers -/
 
 /-- Auxiliary asymptotic inequalities for `N ≥ Nat.ceil (Real.exp (Real.exp 200))`. -/
 private lemma large_N_barrier_bounds (N : ℕ)
@@ -2120,7 +2090,8 @@ private lemma exists_primeWindow_scale (N : ℕ) (L LL : ℝ)
     linarith
   exact ⟨J, hJ30, hY_budget, hY_sq, hlogN100, h2J_ge⟩
 
-/-- **BARRIER THEOREM 1 (Exact `2/3` Unabsorbed Minimax Wall):**
+/-- Unabsorbed covering lower bound with exponent `2/3`.
+
 There exist `c > 0` and `N₀ : ℕ` such that for every `N ≥ N₀`, setting `H := ⌊N^(4/3)⌋`,
 every set-theoretic cover `Finset.Ioc (N / 2) N ⊆ idx.biUnion S` satisfies
 ```
@@ -2215,7 +2186,8 @@ theorem barrier1_unabsorbed_two_thirds :
     _ ≤ (N : ℝ) ^ ((1 : ℝ) / 3) * Real.exp ((1 : ℝ) / 32 * ((2 ^ J : ℕ) : ℝ) ^ ((2 : ℝ) / 3)) :=
         mul_le_mul_of_nonneg_left (Real.exp_le_exp.mpr hexp_diff) (by positivity)
 
-/-- **BARRIER THEOREM 2a (Exact `1/2` Absorbed Minimax Wall, Even With `K₁ ≡ 1`):**
+/-- Absorbed covering lower bound with exponent `1/2`.
+
 There exist `c > 0` and `N₀ : ℕ` such that for every `N ≥ N₀`, setting `H := ⌊N^(4/3)⌋`,
 every set-theoretic cover `Finset.Ioc (N / 2) N ⊆ idx.biUnion S` satisfies
 ```
