@@ -11,9 +11,8 @@ summary: Proves Giambelli's identity s_λ = det(s_(α_i | β_j))_{i,j<d}, expres
   h_{a−r} e_{b+1+r} is included. Giambelli's identity is classical (Macdonald, Symmetric
   Functions and Hall Polynomials, Ch. I §3, Example 9). This is a port of the formalization
   in DataDotFoundation/RMTlib; the Lean proofs were produced with AI (Claude). Motivated by
-  arXiv:1201.4478 (Dehaye), which uses Giambelli's identity (§7.1.4, in the Frobenius–Schur
-  form of Olshanski–Regev–Vershik, whereas this project proves the classical Schur form), and
-  by further condensation of the formal RH proof; it is not claimed to shorten that proof.
+  arXiv:1201.4478 (Dehaye), which uses Giambelli's identity in the Frobenius–Schur form of
+  Olshanski–Regev–Vershik (§7.1.4). This project proves the classical Schur form.
 branch: combinatorics
 entry_module: LeanPool.Giambelli
 authors:

@@ -49,6 +49,5 @@ This is a port of `RMTlib/Symmetric/Giambelli.lean` from DataDotFoundation/RMTli
 `ac695b1`). The Lean proofs were produced with AI (Claude). The formalization was motivated by
 P.-O. Dehaye, *Combinatorics of lower order terms in the moment conjectures for the Riemann zeta
 function*, arXiv:1201.4478, §7.1.4, which uses Giambelli's identity in the Frobenius–Schur form of
-Olshanski–Regev–Vershik (this project proves the classical Schur form), and by further
-condensation of the formal RH proof. It is not claimed to shorten that proof.
+Olshanski–Regev–Vershik. This project proves the classical Schur form.
 -/
