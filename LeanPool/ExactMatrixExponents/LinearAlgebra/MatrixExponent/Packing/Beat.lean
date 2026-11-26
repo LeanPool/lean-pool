@@ -371,6 +371,21 @@ theorem beat (tag : Radix.WideTag F ∨ ¬Tagged.Hard F) (Δ : ℕ) (hΔ : 3 ≤
   exact ⟨_, _, _, _, _, by positivity, by positivity,
     fun L _ _ => ((p L).comp (q L)).relax le_rfl decrease le_rfl⟩
 
+
+/-- At the first halving the accumulated loss is the one-step charge. -/
+theorem half_loss_one (charge : ℝ) : 2 * charge * (1 - 1 / 2) = charge := by ring
+
+/-- Prepending one halving adds its charge weighted by the later halvings. -/
+theorem half_loss_succ (charge : ℝ) (t : ℕ) :
+    (1 / 2 : ℝ) ^ t * charge + 2 * charge * (1 - (1 / 2) ^ t) =
+      2 * charge * (1 - (1 / 2) ^ (t + 1)) := by
+  rw [pow_succ]
+  ring
+
+theorem half_loss_le {charge : ℝ} (h : 0 ≤ charge) (t : ℕ) :
+    2 * charge * (1 - (1 / 2) ^ t) ≤ 2 * charge :=
+  mul_le_of_le_one_right (mul_nonneg (by norm_num) h) (sub_le_self _ (by positivity))
+
 /-- Repeat a fixed beat while keeping both rates and the subdivision explicit. -/
 theorem Reduction.iterate {Δ b n e K : ℕ} {C : ℝ} (p : Reduction F Δ 3 b n e K (1 / 2) C)
     (hΔ : 3 ≤ Δ) (he : 0 < e) (t : ℕ) (ht : 0 < t) :
@@ -388,20 +403,17 @@ theorem Reduction.iterate {Δ b n e K : ℕ} {C : ℝ} (p : Reduction F Δ 3 b n
         := by
     induction t, ht using Nat.le_induction with
     | base =>
-      simp only [Nat.succ_eq_add_one, Nat.zero_add, pow_one, mul_one, show 2 * C * (1 - (1 / 2))
-        = C by ring]
+      simp only [Nat.succ_eq_add_one, Nat.zero_add, pow_one, mul_one, half_loss_one]
       exact p.relax hk le_rfl le_rfl
     | succ t _ ih =>
       have h := w.comp ih
       rw [show Reduction.fee K (1 / 2) C = H from rfl,
         ← pow_succ' b, ← pow_succ' e, ← pow_succ' H, ← pow_succ (1 / 2 : ℝ),
-        show n + n * t = n * (t + 1) by ring,
-        show (1 / 2 : ℝ) ^ t * C + 2 * C * (1 - (1 / 2) ^ t) = 2 * C * (1 - (1 / 2) ^ (t
-          + 1)) by rw [pow_succ]; ring] at h
+        show n + n * t = n * (t + 1) by rw [Nat.mul_succ, add_comm],
+        half_loss_succ] at h
       exact h
   refine (hit t ht).relax le_rfl le_rfl ?_
-  exact mul_le_of_le_one_right (mul_nonneg (by norm_num) p.loss)
-    (sub_le_self _ (by positivity))
+  exact half_loss_le p.loss t
 
 /-- Iterate with a bounded additive loss and only exponential growth
 of the subdivision, load and full-degree exponent. -/

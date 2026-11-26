@@ -475,8 +475,6 @@ theorem eventual_span_log (p : Design δ) (M extra : ℕ) {a : ℝ} (ha : 0 < a)
   filter_upwards [hl] with n hn v T₀ b ξ hb ok
   let h : ℝ := Nat.clog 2 n
   change 1 ≤ Real.log h at hn
-  have logs : 0 ≤ Real.log h := zero_le_one.trans hn
-  have hlog2 : 0 < Real.log 2 := Real.log_pos (by norm_num)
   have hj : (v.j : ℝ) ≤ d * Real.log h := ok.rounds_log ha'
   have ha1 : 1 ≤ (Real.log h) ^ 2 := one_le_pow₀ hn
   have hs : (v.span : ℝ) ≤ (c : ℝ) * (v.j : ℝ) ^ 2 := by

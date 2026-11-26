@@ -437,13 +437,10 @@ open Classical in
 theorem edge_injective : Function.Injective (edge src dst serial) := by
   have distinct (p : Link R) (u : Fin R) i j :
       (serial p.val.1 p.val.2 i).val ≠ (serial u u j).val := by
-    have hi := (serial p.val.1 p.val.2 i).property
     have hj := (serial u u j).property
-    have hp := p.property
     grind
   rintro (⟨p, i⟩ | ⟨u, i⟩) (⟨q, j⟩ | ⟨v, j⟩) he <;> dsimp only [edge] at he
-  · have hi := (serial p.val.1 p.val.2 i).property
-    have hj := (serial q.val.1 q.val.2 j).property
+  · have hj := (serial q.val.1 q.val.2 j).property
     have hp := p.property
     have hq := q.property
     have : p = q := Subtype.ext (Prod.ext (by grind) (by grind))

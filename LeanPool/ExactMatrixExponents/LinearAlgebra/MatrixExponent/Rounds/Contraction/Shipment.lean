@@ -856,19 +856,17 @@ theorem Block.iterate {Δ b n e K : ℕ} {c : ℝ} (p : Block k Δ 3 b n e K (1 
       Block k Δ 3 (b ^ t) (n * t) (e ^ t) (H ^ t) ((1 / 2) ^ t) (2 * c * (1 - (1 / 2) ^ t)) := by
     induction t, ht using Nat.le_induction with
     | base =>
-      simp only [Nat.succ_eq_add_one, Nat.zero_add, pow_one, mul_one, show 2 * c * (1 - (1 / 2))
-        = c by ring]
+      simp only [Nat.succ_eq_add_one, Nat.zero_add, pow_one, mul_one, half_loss_one]
       exact p.relax hk le_rfl le_rfl
     | succ t _ ih =>
       have h := w.comp ih
       rw [show Block.fee K (1 / 2) c = H from rfl,
         ← pow_succ' b, ← pow_succ' e, ← pow_succ' H, ← pow_succ (1 / 2 : ℝ),
-        show n + n * t = n * (t + 1) by ring,
-        show (1 / 2 : ℝ) ^ t * c + 2 * c * (1 - (1 / 2) ^ t) = 2 * c * (1 - (1 / 2) ^ (t
-          + 1)) by rw [pow_succ]; ring] at h
+        show n + n * t = n * (t + 1) by rw [Nat.mul_succ, add_comm],
+        half_loss_succ] at h
       exact h
   refine (hit t ht).relax le_rfl le_rfl ?_
-  exact mul_le_of_le_one_right (mul_nonneg (by norm_num) p.loss) (sub_le_self _ (by positivity))
+  exact half_loss_le p.loss t
 
 /-- For any positive number of repetitions the core degree returns to three
 and the width factor halves at each repetition, with uniformly bounded loss. -/

@@ -190,14 +190,7 @@ include h in
 open scoped Classical in
 theorem slack (hK : 2 ^ (k Δ) ≤ K) (v : ℕ) (hv : v ≤ 2 ^ T.scheme.m) :
     (2 : ℝ) ^ (k Δ) * P.load * (v * 2 ^ a : ℕ) ≤ σ := by
-  have := cost_pos h
-  apply le_of_mul_le_mul_right _ (show (0 : ℝ) < 2 ^ r by positivity)
-  apply le_trans _ h.slack
-  push_cast
-  rw [mul_assoc, mul_assoc (v : ℝ), ← pow_add, Nat.sub_add_cancel h.group, pow_add]
-  gcongr
-  · exact_mod_cast hK
-  · exact_mod_cast hv
+  exact BatchDescent.slack_of_width_count (cost_pos h).le h.group hK hv h.slack
 
 variable (q : (frame A L (Q.b * v) z payload Δ C P).state)
 

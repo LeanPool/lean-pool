@@ -27,6 +27,20 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.BatchDescent
 open Assembly Packing
 
+/-- A charge for all hosts and blocks bounds the charge for the occupied hosts. -/
+theorem slack_of_width_count {exponent limit group height hosts count : ℕ} {load budget : ℝ}
+    (load_nonneg : 0 ≤ load) (group_le : group ≤ height)
+    (exponent_le : 2 ^ exponent ≤ limit) (count_le : count ≤ 2 ^ hosts)
+    (slack : (limit : ℝ) * load * (2 ^ (hosts + height) : ℕ) ≤ budget * (2 : ℝ) ^ group) :
+    (2 : ℝ) ^ exponent * load * (count * 2 ^ (height - group) : ℕ) ≤ budget := by
+  apply le_of_mul_le_mul_right _ (show (0 : ℝ) < 2 ^ group by positivity)
+  apply le_trans _ slack
+  push_cast
+  rw [mul_assoc, mul_assoc (count : ℝ), ← pow_add, Nat.sub_add_cancel group_le, pow_add]
+  gcongr
+  · exact_mod_cast exponent_le
+  · exact_mod_cast count_le
+
 /-- The data for the budget construction, including `load`, `tag`, `reach`, `width`, `mass`. -/
 structure Budget where
   /-- Stores the load associated with this `Budget`. -/

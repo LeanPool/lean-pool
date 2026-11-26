@@ -80,7 +80,10 @@ end
 
 noncomputable section
 
-variable {F I : Type*} [Field F]
+variable {F I : Type*}
+
+section
+variable [CommRing F]
 
 /-- Interpret an arithmetic expression as a formal polynomial in its inputs. -/
 def expressionPolynomial : Expression F I → MvPolynomial I F
@@ -89,6 +92,10 @@ def expressionPolynomial : Expression F I → MvPolynomial I F
   | .add left right => expressionPolynomial left + expressionPolynomial right
   | .sub left right => expressionPolynomial left - expressionPolynomial right
   | .mul left right => expressionPolynomial left * expressionPolynomial right
+
+end
+
+variable [Field F]
 
 theorem registerPolynomial_compile (e : Expression F I) :
     registerPolynomial e.compile.program e.compile.output = expressionPolynomial e := by

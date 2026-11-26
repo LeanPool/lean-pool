@@ -21,7 +21,10 @@ open MatrixMultiplicationAllFields.MatrixMultiplication
 open Arithmetic MvPolynomial
 noncomputable section
 
-variable {F I J : Type*} [Field F]
+variable {F I J : Type*}
+
+section
+variable [CommRing F]
 
 /-- Replacing each circuit input by a variable or a scalar realizes the
 corresponding substitution on its formal output polynomial. -/
@@ -40,6 +43,10 @@ theorem registerPolynomial_mapSource (f : I → J ⊕ F) {r : ℕ}
     | add a b => simp [Program.mapSource, Gate.mapSource, gatePolynomial, ih]
     | sub a b => simp [Program.mapSource, Gate.mapSource, gatePolynomial, ih]
     | mul a b => simp [Program.mapSource, Gate.mapSource, gatePolynomial, ih]
+
+end
+
+variable [Field F]
 
 theorem FormalCorrect.pad {a b c A B C : ℕ} {P : MatrixAlgorithm F A B C}
     (hP : FormalCorrect P) (ha : a ≤ A) (hb : b ≤ B) (hc : c ≤ C) :

@@ -117,14 +117,7 @@ theorem slack (hk : 2 ^ t ≤ K) (q : (frame S T u Δ R).state) : W *
     (Fintype.card q.val.G.V * 2 ^ a : ℕ) ≤ σ := by
   have hv : Fintype.card q.val.G.V ≤ 2 ^ T.scheme.m := by
     simpa using Fintype.card_le_of_injective _ q.val.encodes.post.host.injective
-  apply le_of_mul_le_mul_right _ (show (0 : ℝ) < 2 ^ r by positivity)
-  apply le_trans _ h.slack
-  push_cast
-  rw [mul_assoc, mul_assoc (Fintype.card q.val.G.V : ℝ), ← pow_add, Nat.sub_add_cancel h.group,
-    pow_add]
-  gcongr
-  · exact_mod_cast hk
-  · exact_mod_cast hv
+  exact BatchDescent.slack_of_width_count (by positivity) h.group hk hv h.slack
 
 include h in
 omit [Field F] in

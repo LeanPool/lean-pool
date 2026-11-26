@@ -890,7 +890,6 @@ private theorem packet_count (w n C h : ℕ) (hn : 2 ≤ n) (hw : 12 * C + 8 ≤
     r ^ 6 ≤ N ∧ Fintype.card (Packet n r (B * rounds n r h (12 * (C * N * d)))) < N ^ 8 := by
   intro N r d B
   have hw' : w < N := Nat.lt_two_pow_self
-  have hr : 0 < r := by unfold r; positivity
   have ht (j : ℕ) (hj : j ≤ 16 * n) : r ^ j ≤ N := by
     unfold r N
     rw [← pow_mul]

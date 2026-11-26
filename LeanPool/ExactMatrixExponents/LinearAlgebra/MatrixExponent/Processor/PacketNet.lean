@@ -803,11 +803,6 @@ abbrev MemberOrder (hn : 2 ≤ n) (R : A.Report r d) (c : Class r) (p : ℕ) :=
   @OrderIso (Fin p) (A.Members hn R c) _ (A.memberOrder hn R c).toLE
 
 open Classical in
-/-- Computes the enumerate by the application `Fintype.orderIsoFinOfCardEq _ hp`. -/
-def enumerate (hp : Fintype.card (A.Members hn R c) = p) : MemberOrder A hn R c p :=
-  Fintype.orderIsoFinOfCardEq _ hp
-
-open Classical in
 /-- Computes the symbol by the application `encode A R.1 (A.shared N R c) (z.1.val (e j)) (z.2
 (e j))`. -/
 def symbol (e : MemberOrder A hn R c p) (z : A.Alphabet hn N R c) (j : Fin p) : Code A → Bool :=

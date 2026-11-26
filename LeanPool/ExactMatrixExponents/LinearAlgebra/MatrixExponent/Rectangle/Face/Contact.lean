@@ -378,7 +378,6 @@ theorem escapes_of_dual (hd : dual F 1 1 ≤ 1 / 2) : Escapes F := by
   have hd₄ : d ≤ 1 / (16 * (M + 1)) := (min_le_right _ _).trans (min_le_right _ _)
   obtain ⟨x, y, z, D, hx, hy, hz, hD, hs, hp, hl, hu⟩ := near_contact hd hd' (by linarith)
   let g := y * z / 2
-  have hg : 0 < g := by unfold g; positivity
   change D - dStar x y z + (g ^ 2 / (x + g) + (y - 1) ^ 2 / 2) < d at hu
   have h₁ : 0 ≤ g ^ 2 / (x + g) := by positivity
   have h₂ : 0 ≤ (y - 1) ^ 2 / 2 := by positivity

@@ -104,7 +104,6 @@ private theorem stages {R : ℕ → ℕ → ℕ → ℕ → Prop} {n m e J : ℕ
   have hn₀ : 0 < (n : ℝ) := zero_lt_one.trans_le hn₁
   have hh₀ : 0 < h := zero_lt_one.trans_le hh
   let x := (1 - δ) * a
-  have hx : 0 ≤ x := mul_nonneg (sub_nonneg.mpr hd) ha.le
   suffices ∀ j : ℕ, j ≤ J → ∃ d s u : ℕ,
       1 ≤ d ∧ (d : ℝ) ≤ (n : ℝ) ^ (ξ * j) ∧ R j d s u ∧
       (s : ℝ) ≤ 4 * m * d * h ^ (-(x * j)) ∧

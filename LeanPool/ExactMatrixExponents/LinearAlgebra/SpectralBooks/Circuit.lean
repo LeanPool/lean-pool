@@ -28,7 +28,7 @@ open Arithmetic Foundation MvPolynomial
 open scoped BigOperators
 noncomputable section
 
-variable {F A B I R : Type*} [Field F]
+variable {F A B I R : Type*} [CommRing F]
 
 /-- Number of scalar multiplication gates. Register loads, additions and
 subtractions contribute zero. -/
@@ -37,7 +37,7 @@ def multiplicationCount : {r : ℕ} → Program F I r → ℕ
   | _, .step p (.mul _ _) => multiplicationCount p + 1
   | _, .step p _ => multiplicationCount p
 
-omit [Field F] in
+omit [CommRing F] in
 theorem multiplicationCount_le_cost {r : ℕ} (p : Program F I r) :
     multiplicationCount p ≤ p.cost := by
   induction p with
@@ -45,7 +45,7 @@ theorem multiplicationCount_le_cost {r : ℕ} (p : Program F I r) :
   | step p g ih => cases g <;> simp [multiplicationCount, Gate.cost] <;> omega
 
 /-- Formal polynomials over the disjoint sets of left and right input variables. -/
-abbrev InputPoly (F A B : Type*) [Field F] := MvPolynomial (A ⊕ B) F
+abbrev InputPoly (F A B : Type*) [CommRing F] := MvPolynomial (A ⊕ B) F
 
 /-- The coefficient of the squarefree monomial indexed by a left and a right input. -/
 def mixedPart (p : InputPoly F A B) (x : A) (y : B) : F :=

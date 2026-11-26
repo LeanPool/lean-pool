@@ -38,18 +38,6 @@ abbrev TensorRep := MatrixMultiplicationAllFields.TensorSpectrum.TensorRep Coeff
 
 namespace TensorRep
 
-/-- The first coordinate dimension. -/
-abbrev xDim (T : TensorRep) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.xDim T
-
-/-- The second coordinate dimension. -/
-abbrev yDim (T : TensorRep) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.yDim T
-
-/-- The third coordinate dimension. -/
-abbrev zDim (T : TensorRep) :=
-  MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.zDim T
-
 /-- The coefficient array of a tensor representative. -/
 abbrev coeff (T : TensorRep) :=
   MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.coeff T
