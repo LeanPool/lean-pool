@@ -2,8 +2,8 @@ slug: split-clique-partition-gap
 title: Nearly quadratic additive gaps for edge-clique partitions of split graphs
 summary: Constructs connected split graphs of every sufficiently large order with a nearly
   quadratic difference between the integral and fractional edge-clique partition numbers.
-  The strongest construction also withstands deletion of any set of fewer than one fifth
-  of the vertices. The development includes host assignments that transfer residual
+  The strongest construction remains connected after deletion of any set of fewer
+  than one fifth of the vertices. The development includes host assignments that transfer residual
   triangle-packings to clique partitions, and quantitative product constructions.
 branch: graph theory
 entry_module: LeanPool.SplitCliqueGap

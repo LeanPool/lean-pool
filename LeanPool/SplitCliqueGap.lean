@@ -3,6 +3,7 @@ Copyright (c) 2026 Juan Pablo Traverso Gianini. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Juan Pablo Traverso Gianini
 -/
+/- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
 public import LeanPool.SplitCliqueGap.R434.PolylogGap
