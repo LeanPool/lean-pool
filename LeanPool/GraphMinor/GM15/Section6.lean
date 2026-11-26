@@ -153,15 +153,7 @@ transaction in a society $(G, \Omega)$ such that $|\mathcal{P}| \ge (\phi - 1)(2
 *$|\mathcal{P}'| = \tau_1$ and $\mathcal{P}'$ is a leap transaction, or* (iii)
 *$|\mathcal{P}'| = \tau_2$ and $\mathcal{P}'$ is a doublecross transaction." -/
 def GM15Theorem62Statement : Prop :=
-  ∀ {α : Type u} {β : Type v} (S : Society α β) (φ τ₁ τ₂ : ℕ)
-    (P_set : Set (Graph α β)),
-    2 ≤ φ → 3 ≤ τ₁ → 4 ≤ τ₂ →
-    S.IsCrookedTransaction P_set →
-    (φ - 1) * (2 * τ₁ + τ₂ - 7) ≤ P_set.ncard →
-    ∃ P' ⊆ P_set,
-      (P'.ncard = φ ∧ S.IsCrosscapTransaction P') ∨
-      (P'.ncard = τ₁ ∧ S.IsLeapTransaction P') ∨
-      (P'.ncard = τ₂ ∧ S.IsDoublecrossTransaction P')
+  GM09Theorem71Statement.{u, v}
 
 /-- Corrected Graph Minors XV, (6.2) (page 134), with $2\tau_1$ in the threshold.
 Every crooked transaction of cardinality `≥ (φ - 1)(2τ₁ + τ₂ - 7)` contains a crosscap transaction

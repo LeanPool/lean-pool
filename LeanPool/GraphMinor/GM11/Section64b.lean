@@ -406,11 +406,14 @@ theorem exists_flat_regions (hS : IsClosedSurface S) (hE : Γ.E.Nonempty)
     => h)
     (fun _ _ _ _ h => h) hnull hS₀V (hS₀V.trans hrad.2.1.2.1) hS₀f hord
 
-/-- **Claim (2) of (6.4)** (pages 90–91), for a drawing. -/
-theorem exists_oArc_of_null (hS : IsClosedSurface S) (hns : ¬ IsSphere S) (hE : Γ.E.Nonempty)
-    (hrad : (PaintingOrDrawing.drawing Γ).IsRadialDrawing Γ') (hθ : 1 ≤ θ)
-    (hd : IsDerivedSlope (PaintingOrDrawing.drawing Γ) Γ' θ T ins) {A B : Hypergraph S (Set S)}
-    (hsep : Γ.toHypergraph.IsSeparation A B) (hord : separationOrder A B < θ)
+/-- Flat neighborhoods of the separating vertices and null-homotopy on one side force an essential
+circle in the other side outside the separator. -/
+theorem exists_oArc_of_flat_regions
+  (hS : IsClosedSurface S) (hns : ¬ IsSphere S) (Γ : Drawing S) {A B : Hypergraph S (Set S)}
+    (hsep : Γ.toHypergraph.IsSeparation A B)
+    (hflat : ∃ D : S → Set S, (∀ s ∈ (A ∩ B).vertexSet, IsOpen (D s)) ∧ (∀ s ∈
+      (A ∩ B).vertexSet, s ∈ D s) ∧
+      Flat ((⋃ r ∈ Γ.R, r) ∪ ⋃ s ∈ (A ∩ B).vertexSet, D s))
     (hA : ∀ F : Set S, F ⊆ PaintingOrDrawing.underlying A → IsOArc F → IsNullHomotopicOArc F) :
     ∃ F : Set S, IsOArc F ∧ F ⊆ PaintingOrDrawing.underlying B \ PaintingOrDrawing.underlying A ∧
       ¬ IsNullHomotopicOArc F := by
@@ -418,14 +421,8 @@ theorem exists_oArc_of_null (hS : IsClosedSurface S) (hns : ¬ IsSphere S) (hE :
   push Not at hno
   have ht2 : T2Space S := hS.2.1
   have hlc : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have hnull : ∀ C : Drawing S, C.IsCircuit → C.IsSubdrawing Γ' → C.length < 2 * θ
-    → IsNullHomotopicOArc C.U :=
-    fun C hC hCs hl => null_of_short hd hC hCs hl
   have hS₀V : (A ∩ B).vertexSet ⊆ Γ.V := fun x hx => hsep.left_le.vertexSet_subset hx.1
-  obtain ⟨D, hDo, hsD, hfl⟩ := exists_flat_regions hS hE hrad hθ hnull hS₀V
-    (A ∩ B).vertexSet_finite hord
-  set S₀ : Set S := (A ∩ B).vertexSet with hS₀
-  -- The closed set `Q`.
+  obtain ⟨D, hDo, hsD, hfl⟩ := hflat
   obtain ⟨γ₀, hγ₀⟩ := exists_edgePar Γ
   obtain ⟨Q, hQc, hQn, hQU, hQc'⟩ := exists_cut_edges hγ₀ hS₀V hDo hsD
   have hcl : ∀ e ∈ (PaintingOrDrawing.drawing Γ).E, closure e \ (PaintingOrDrawing.drawing Γ).V ⊆ e
@@ -465,6 +462,23 @@ theorem exists_oArc_of_null (hS : IsClosedSurface S) (hns : ¬ IsSphere S) (hE :
     exact Or.inr (mem_iUnion₂.mpr ⟨s, hs, hxs⟩)
   · obtain ⟨r, hr, hxr⟩ := exists_region_of_notMem hxU
     exact Or.inl (mem_iUnion₂.mpr ⟨r, hr, hxr⟩)
+
+/-- **Claim (2) of (6.4)** (pages 90–91), for a drawing. -/
+theorem exists_oArc_of_null (hS : IsClosedSurface S) (hns : ¬ IsSphere S) (hE : Γ.E.Nonempty)
+    (hrad : (PaintingOrDrawing.drawing Γ).IsRadialDrawing Γ') (hθ : 1 ≤ θ)
+    (hd : IsDerivedSlope (PaintingOrDrawing.drawing Γ) Γ' θ T ins) {A B : Hypergraph S (Set S)}
+    (hsep : Γ.toHypergraph.IsSeparation A B) (hord : separationOrder A B < θ)
+    (hA : ∀ F : Set S, F ⊆ PaintingOrDrawing.underlying A → IsOArc F → IsNullHomotopicOArc F) :
+    ∃ F : Set S, IsOArc F ∧ F ⊆ PaintingOrDrawing.underlying B \ PaintingOrDrawing.underlying A ∧
+      ¬ IsNullHomotopicOArc F := by
+  have : T2Space S := hS.2.1
+  have hnull : ∀ C : Drawing S, C.IsCircuit → C.IsSubdrawing Γ' → C.length < 2 * θ
+    → IsNullHomotopicOArc C.U :=
+    fun C hC hCs hl => null_of_short hd hC hCs hl
+  have hS₀V : (A ∩ B).vertexSet ⊆ Γ.V := fun x hx => hsep.left_le.vertexSet_subset hx.1
+  have hflat := exists_flat_regions hS hE hrad hθ hnull hS₀V
+    (A ∩ B).vertexSet_finite hord
+  exact exists_oArc_of_flat_regions hS hns Γ hsep hflat hA
 
 end Main
 

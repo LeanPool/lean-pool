@@ -471,7 +471,7 @@ private theorem updateLabelling_isTreeLabelling [Fintype ι] {E : Set β} {κ : 
 private theorem kappaSum_updateLabelling [Fintype ι] {E : Set β} {κ : Set β → ℤ}
     {𝒜 : Set (Set β)} {T : SimpleGraph ι} {α : ι → Sym2 ι → Set β}
     (hκ : IsConnectivityFunction E κ) (hα : IsTreeLabelling E κ 𝒜 T α)
-    {t t₁ t₂ : ι} (hadj₁ : T.Adj t t₁) (_hadj₂ : T.Adj t t₂) :
+    {t t₁ t₂ : ι} (hadj₁ : T.Adj t t₁) :
     kappaSum κ T (updateLabelling E α t t₁ (α t s(t, t₂))) - kappaSum κ T α =
       2 * (κ (α t s(t, t₁) \ α t s(t, t₂)) - κ (α t s(t, t₁))) := by
   classical
@@ -781,7 +781,7 @@ theorem theorem_3_2_proof [Fintype ι] {E : Set β} {κ : Set β → ℤ} {𝒜 
         ⟨Set.sdiff_subset.trans hA_eff.1, hk_le⟩
       have htree' := updateLabelling_isTreeLabelling hκ hα_tree ha hb hab heff'
       have hle_sum := hα_kmin _ htree'
-      have hdiff_sum := kappaSum_updateLabelling hκ hα_tree ha hb
+      have hdiff_sum := kappaSum_updateLabelling (t₂ := b) hκ hα_tree ha
       omega
     · have := hA_eff.2
       omega
@@ -856,7 +856,7 @@ theorem theorem_3_2_proof [Fintype ι] {E : Set β} {κ : Set β → ℤ} {𝒜 
     have hksum' : kappaSum κ T α' = kappaSum κ T α₁ := by
       have hdiff : kappaSum κ T α' - kappaSum κ T α =
           2 * (κ (α t s(t, a) \ α t s(t, b)) - κ (α t s(t, a))) :=
-        kappaSum_updateLabelling hκ hα_tree ha hb
+        kappaSum_updateLabelling (t₂ := b) hκ hα_tree ha
       omega
     have hα'_S₂ : α' ∈ S₂ := ⟨htree', hksum'⟩
     have hfw_lt : forkWeight T t₀ α' < forkWeight T t₀ α :=

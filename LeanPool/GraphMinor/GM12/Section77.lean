@@ -695,19 +695,12 @@ private theorem exists_path_of_radial_walk {Γ K : Drawing S}
         simp only [hu, hw, ↓reduceIte]
         omega
 
-/-- Every closed walk `W` of positive length `2 * m` in a radial drawing `K` is traced by a
-`Γ`-normal closed curve `φ : C(Circle, S)` with `range φ = (walkDrawing K W).U` and
-`curveLength Γ φ ≤ m`. -/
-private theorem exists_closedCurve_of_radial_walk {Γ K : Drawing S}
-    (hrad : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
-    {u : S} (W : GraphWalk K.toGraph u u) (hpos : 0 < W.length)
-    {m : ℕ} (hlen : W.length ≤ 2 * m) :
-    ∃ φ : C(Circle, S),
-      range φ = (walkDrawing K W).U ∧
-      IsNormalCurve Γ φ ∧
-      curveLength Γ φ ≤ m := by
-  classical
-  obtain ⟨p, hran, hfin_p, hcard_p⟩ := exists_path_of_radial_walk hrad W hpos
+omit [T2Space S] in
+/-- A closed path descends to a continuous curve on the circle. The half-open parameter
+interval gives the original path values, and both maps have the same range. -/
+theorem exists_closedCurve_of_loop_with_parameter {u : S} (p : Path u u) :
+    ∃ φ : C(Circle, S), range φ = range p ∧
+      ∀ t : unitInterval, t.1 < 1 → φ (Circle.exp (2 * Real.pi * t.1)) = p t := by
   have : Fact ((0 : ℝ) < 1) := ⟨zero_lt_one⟩
   let f : ℝ → S := extI p
   have hf_per : f 0 = f 1 := by
@@ -752,6 +745,23 @@ private theorem exists_closedCurve_of_radial_walk {Γ K : Drawing S}
         exact mem_range_self (q 0)
       · rw [← hφ_q t ht1]
         exact mem_range_self (q t)
+  exact ⟨φ, hrange, hφ_q⟩
+
+/-- Every closed walk `W` of positive length `2 * m` in a radial drawing `K` is traced by a
+`Γ`-normal closed curve `φ : C(Circle, S)` with `range φ = (walkDrawing K W).U` and
+`curveLength Γ φ ≤ m`. -/
+private theorem exists_closedCurve_of_radial_walk {Γ K : Drawing S}
+    (hrad : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
+    {u : S} (W : GraphWalk K.toGraph u u) (hpos : 0 < W.length)
+    {m : ℕ} (hlen : W.length ≤ 2 * m) :
+    ∃ φ : C(Circle, S),
+      range φ = (walkDrawing K W).U ∧
+      IsNormalCurve Γ φ ∧
+      curveLength Γ φ ≤ m := by
+  classical
+  obtain ⟨p, hran, hfin_p, hcard_p⟩ := exists_path_of_radial_walk hrad W hpos
+  obtain ⟨φ, hrange, hφ_q⟩ := exists_closedCurve_of_loop_with_parameter p
+  let q : unitInterval → Circle := fun t => Circle.exp (2 * Real.pi * t.1)
   have hrange_W : range φ = (walkDrawing K W).U := hrange.trans hran
   have hnorm_W : Γ.IsNormal (range φ) := by
     unfold Drawing.IsNormal
@@ -765,8 +775,9 @@ private theorem exists_closedCurve_of_radial_walk {Γ K : Drawing S}
     rw [zero_add] at hs
     let t : unitInterval := ⟨s, hs.1, hs.2.le⟩
     have hqt : q t = z := hsz
+    have hq : φ (q t) = p t := hφ_q t hs.2
     have hpt_U : p t ∈ Γ.U := by
-      rw [← hφ_q t hs.2, hqt]
+      rw [← hq, hqt]
       exact hz
     have hpt_V : p t ∈ Γ.V := hnorm_W ⟨hrange ▸ mem_range_self t, hpt_U⟩
     exact ⟨t, ⟨hs.2, hpt_V⟩, hqt⟩

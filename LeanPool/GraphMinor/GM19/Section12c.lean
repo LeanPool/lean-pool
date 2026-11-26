@@ -542,31 +542,15 @@ theorem exists_side_of_meet (D : TangleDatum cap χ) {q : Set Shat} {e : Set S} 
   have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hfm, rfl⟩
   exact ⟨f, hf, edge_subset_closure_of_incident hT hfE hρR ⟨_, mem_image_of_mem _ hzf', hpcl⟩⟩
 
-/-- **The corner lemma.** Let `q` be a region of `Γ*` with edge `e` of `Γ`, and let `q` meet the
-region of `w ∈ R*`, where
-`w` is `k`-near `H`, for `k ≥ 2`. If `ē` misses `bd(Σ)` or `|eTilde| = 2`, then each end of `e` is
-`(k +
-1)`-near `H`. -/
-theorem IsNear.of_corner (hnear : D.IsNear H (k + 2) x) (hH : H.IsSubdrawing D.rad.G) {q : Set
-  Shat} {e : Set S}
-    (hq : q ∈ D.rad.G.R) (he : e ∈ D.P.Γ.E) (heq : cap.emb '' e ⊆ q) (hx : x ∈ D.rad.Rstar)
-    (hm : (q ∩ D.rad.regionOf x).Nonempty) (hoff : (tilde e).ncard = 3 → closure e ∩ bd S = ∅)
-    {v : S} (hv : v ∈ tilde e) : D.IsNear H (k + 3) (cap.emb v) := by
+/-- A side of an edge of size 3 has two different ends, among the ends of the edge. -/
+theorem exists_side_ends (D : TangleDatum cap χ) {e f : Set S} (hf : D.P.Γ.IsSkEdgeIn f e) (h3 :
+  (tilde e).ncard = 3) :
+    ∃ a b, a ≠ b ∧ a ∈ closure f ∧ b ∈ closure f ∧ a ∈ tilde e ∧ b ∈ tilde e ∧
+      closure f ⊆ f ∪ {a, b} := by
   classical
   have hS := χ.isSurface
-  have hvV := D.P.Γ.tilde_subset_V he hv
-  obtain ⟨f, hf, hfr⟩ := exists_side_of_meet D hq he heq hx hm
-  have hemb : ∀ {z : S}, z ∈ closure f → cap.emb z ∈ closure (D.rad.regionOf x) := fun hz ↦ by
-    have := image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ hz)
-    exact closure_minimal hfr isClosed_closure this
-  rcases D.P.Γ.size_cases he with h2 | h3
-  · have hfe : f = e := by
-      rcases hf.2 with ⟨-, h⟩ | ⟨h, -⟩
-      · exact h
-      · omega
-    subst hfe
-    exact hnear.of_closure_region hx hvV (hemb hv.1)
-  -- the two ends of the side
+  have he := hf.1
+  have : ConnectedSpace Shat := cap.connected
   obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap D.P.Γ
   have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
   have hc3 := D.P.Γ.isDisc_of_three he h3
@@ -607,7 +591,42 @@ theorem IsNear.of_corner (hnear : D.IsNear H (k + 2) x) (hH : H.IsSubdrawing D.r
     exact ⟨z', hz, ⟨closure_mono hf.subset hz, fun h ↦ D.P.Γ.disjoint_V he h hz'⟩, rfl⟩
   obtain ⟨a', ha'f, ha't, rfl⟩ := (hend (t := a) (hcap ▸ mem_insert _ _))
   obtain ⟨b', hb'f, hb't, rfl⟩ := (hend (t := b) (hcap ▸ mem_insert_of_mem _ rfl))
-  have hab' : a' ≠ b' := fun h ↦ hab (by rw [h])
+  refine ⟨a', b', fun h ↦ hab (by rw [h]), ha'f, hb'f, ha't, hb't, fun t ht ↦ ?_⟩
+  have htcl : cap.emb t ∈ closure (cap.emb '' f) :=
+    image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ ht)
+  rcases closure_edge_subset hfE htcl with ⟨t', ht', htt⟩ | htV
+  · exact .inl (cap.isEmbedding.injective htt ▸ ht')
+  · have hm : cap.emb t ∈ closure (cap.emb '' f) ∩ Sk.V := ⟨htcl, htV⟩
+    rw [hcap] at hm
+    rcases hm with hm | hm
+    · exact .inr (.inl (cap.isEmbedding.injective hm))
+    · exact .inr (.inr (cap.isEmbedding.injective hm))
+
+/-- **The corner lemma.** Let `q` be a region of `Γ*` with edge `e` of `Γ`, and let `q` meet the
+region of `w ∈ R*`, where
+`w` is `k`-near `H`, for `k ≥ 2`. If `ē` misses `bd(Σ)` or `|eTilde| = 2`, then each end of `e` is
+`(k +
+1)`-near `H`. -/
+theorem IsNear.of_corner (hnear : D.IsNear H (k + 2) x) (hH : H.IsSubdrawing D.rad.G) {q : Set
+  Shat} {e : Set S}
+    (hq : q ∈ D.rad.G.R) (he : e ∈ D.P.Γ.E) (heq : cap.emb '' e ⊆ q) (hx : x ∈ D.rad.Rstar)
+    (hm : (q ∩ D.rad.regionOf x).Nonempty) (hoff : (tilde e).ncard = 3 → closure e ∩ bd S = ∅)
+    {v : S} (hv : v ∈ tilde e) : D.IsNear H (k + 3) (cap.emb v) := by
+  classical
+  have hS := χ.isSurface
+  have hvV := D.P.Γ.tilde_subset_V he hv
+  obtain ⟨f, hf, hfr⟩ := exists_side_of_meet D hq he heq hx hm
+  have hemb : ∀ {z : S}, z ∈ closure f → cap.emb z ∈ closure (D.rad.regionOf x) := fun hz ↦ by
+    have := image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ hz)
+    exact closure_minimal hfr isClosed_closure this
+  rcases D.P.Γ.size_cases he with h2 | h3
+  · have hfe : f = e := by
+      rcases hf.2 with ⟨-, h⟩ | ⟨h, -⟩
+      · exact h
+      · omega
+    subst hfe
+    exact hnear.of_closure_region hx hvV (hemb hv.1)
+  obtain ⟨a', b', hab', ha'f, hb'f, ha't, hb't, -⟩ := D.exists_side_ends hf h3
   have hoff' := hoff h3
   by_cases hva : v = a'
   · subst hva

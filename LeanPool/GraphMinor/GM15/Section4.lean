@@ -508,42 +508,8 @@ theorem exists_hasTangleMetric {S : Type w} [TopologicalSpace S] [T2Space S]
 /-- If `H₁` is a 2-cell drawing in a closed surface `S` with `H₁.E = ∅`, then `H₁.V.ncard ≤ 1`. -/
 theorem ncard_V_le_one_of_E_empty {S : Type w} [TopologicalSpace S] [T2Space S] [ConnectedSpace S]
     (hS : IsClosedSurface S) {H₁ : Drawing S} (h2cell : (PaintingOrDrawing.drawing H₁).IsTwoCell)
-    (hE : H₁.E = ∅) : H₁.V.ncard ≤ 1 := by
-  classical
-  have hlc : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  by_contra hgt
-  have h1lt : 1 < H₁.V.ncard := Nat.lt_of_not_le hgt
-  obtain ⟨x, z, hx, hz, hxz⟩ := (Set.one_lt_ncard_iff H₁.finite_V).mp h1lt
-  let Bad : Set S := H₁.V \ {x}
-  have hBad : IsClosed Bad := (H₁.finite_V.subset sdiff_subset).isClosed
-  have hxBad : x ∉ Bad := fun h => h.2 rfl
-  obtain ⟨D, D', hD, hD', hxD', hD'D, hDO, hbdD⟩ :=
-    exists_closedDisc_nbhd hS hBad.isOpen_compl hxBad
-  have hU_eq : H₁.U = H₁.V := by rw [H₁.U_eq, hE]; simp
-  have hbdU : Disjoint (discBd D) H₁.U := by
-    refine disjoint_left.mpr fun y hy hyU => ?_
-    have hyD : y ∈ D := GM11.discBd_subset D hy
-    have hyx : y ≠ x := fun h => (hbdD ▸ hy).2 (h ▸ hxD')
-    exact hDO hyD ⟨hU_eq ▸ hyU, hyx⟩
-  have hF := hD.isOArc_discBd
-  have hbdne : (discBd D).Nonempty := by obtain ⟨φ⟩ := hF; exact ⟨_, (φ 1).2⟩
-  have hbdconn : IsPreconnected (discBd D) := by
-    obtain ⟨φ⟩ := hF
-    have : discBd D = range fun w => (φ w).1 := by
-      ext y
-      exact ⟨fun hy => ⟨φ.symm ⟨y, hy⟩, by simp⟩, by rintro ⟨w, rfl⟩; exact (φ w).2⟩
-    rw [this]
-    exact isPreconnected_range (by fun_prop)
-  obtain ⟨y, hy⟩ := hbdne
-  obtain ⟨r, hr, hyr⟩ := exists_region_of_notMem (disjoint_left.mp hbdU hy)
-  have hsub : discBd D ⊆ r := subset_region hr hbdconn hbdU hy hyr
-  obtain ⟨Δ, hΔr, hΔ, hb⟩ := GM11.exists_disc_in_openDisc (h2cell.2 r hr) hF hsub
-  have hxΔ : x ∉ Δ := fun h => region_subset hr (hΔr h) (H₁.V_subset_U hx)
-  have hcov := GM11.cover_of_discBd_eq hS hD hΔ hb.symm fun h => hxΔ (h ▸ hD'D hxD')
-  have hzU : z ∈ H₁.U := H₁.V_subset_U hz
-  rcases (hcov ▸ mem_univ z : z ∈ D ∪ Δ) with h | h
-  · exact hDO h ⟨hz, hxz.symm⟩
-  · exact region_subset hr (hΔr h) hzU
+    (hE : H₁.E = ∅) : H₁.V.ncard ≤ 1 :=
+  GM12.ncard_V_le_one_of_E_empty hS h2cell hE
 
 /-- Every edge of a drawing has at least one endpoint in `V`. -/
 theorem edge_closure_inter_V_nonempty {S : Type w} [TopologicalSpace S]
@@ -1453,16 +1419,6 @@ theorem isTangle_inducedBySubgraph {α β : Type*} {G G' : Hypergraph α β} {θ
     apply hT'.axiom3 hAB.2.2
     change A.vertexSet ∩ G'.vertexSet = G'.vertexSet
     rw [hV, Set.inter_eq_right.mpr hSub.vertexSet_subset]
-
-/-- For a closed set `D ⊆ Σ`, `(PaintingOrDrawing.drawing H').inter D ≤ H'.toHypergraph`. -/
-private theorem drawing_inter_le {S : Type w} [TopologicalSpace S]
-    (H' : Drawing S) {D : Set S} (hD : IsClosed D) :
-    (PaintingOrDrawing.drawing H').inter D ≤ H'.toHypergraph := by
-  refine ⟨inter_subset_left, fun _ h => h.1, fun e he => ?_⟩
-  ext v
-  change (e ∈ H'.E ∧ v ∈ H'.V ∧ v ∈ closure e) ↔
-    (e ∈ H'.E ∧ v ∈ H'.V ∧ v ∈ closure e) ∧ e ⊆ D ∧ v ∈ D
-  exact ⟨fun h => ⟨h, he.2, hD.closure_subset_iff.mpr he.2 h.2.2⟩, fun h => h.1⟩
 
 /-- If `H₀` is a subdrawing of `H'` and `T₀` is a respectful tangle of order `θ'` in `H₀`, then
 `inducedBySubgraph H'.toHypergraph H₀.toHypergraph θ' T₀` is respectful in `H'`. -/

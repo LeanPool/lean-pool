@@ -328,7 +328,7 @@ variable [T2Space X] {γ : 𝕀 → X} {T : Set 𝕀}
 omit [TopologicalSpace X] [T2Space X] in
 /-- In a minimal admissible set, equal values of `γ` leave no point of the set between them. -/
 private theorem Ioo_inter_eq_empty (hT : Minimal (IsAdmissible γ) T) {s t : 𝕀} (hs : s ∈ T)
-    (ht : t ∈ T) (_hst : s < t) (heq : γ s = γ t) : Ioo s t ∩ T = ∅ := by
+    (ht : t ∈ T) (heq : γ s = γ t) : Ioo s t ∩ T = ∅ := by
   have hadm : IsAdmissible γ (T \ Ioo s t) := by
     refine ⟨hT.1.1.sdiff isOpen_Ioo, ⟨hT.1.2.1, fun h => absurd h.1 (unitInterval.nonneg' (t
       := s)).not_gt⟩,
@@ -410,7 +410,7 @@ private theorem exists_between_of_ne (hγ : Continuous γ) (hT : Minimal (IsAdmi
       hpt⟩
     rintro ⟨q', hq'T, hq'q, hgap'⟩
     have hγq' : γ q' = γ q := hT.1.2.2.2 q' hq'T q hqT hq'q hgap'
-    have := Ioo_inter_eq_empty hT hq'T hpT (hq'q.trans hqp) (hγq'.trans hγq)
+    have := Ioo_inter_eq_empty hT hq'T hpT (hγq'.trans hγq)
     have hm : q ∈ Ioo q' p ∩ T := ⟨⟨hq'q, hqp⟩, hqT⟩
     rw [this] at hm
     exact hm
@@ -439,7 +439,7 @@ private theorem exists_core_between (hγ : Continuous γ) (hT : Minimal (IsAdmis
     intro z hz hza
     by_contra h0
     have hzpos : 0 < z := lt_of_le_of_ne unitInterval.nonneg' (Ne.symm h0)
-    have := Ioo_inter_eq_empty hT h0T ha.1 (hzpos.trans hza) hγa.symm
+    have := Ioo_inter_eq_empty hT h0T ha.1 hγa.symm
     have hm : z ∈ Ioo 0 a ∩ T := ⟨⟨hzpos, hza⟩, hz⟩
     rw [this] at hm
     exact hm
@@ -447,7 +447,7 @@ private theorem exists_core_between (hγ : Continuous γ) (hT : Minimal (IsAdmis
     intro z hz hbz
     by_contra h1
     have hzlt : z < 1 := lt_of_le_of_ne unitInterval.le_one' h1
-    have := Ioo_inter_eq_empty hT hb.1 h1T (hbz.trans hzlt) hγb
+    have := Ioo_inter_eq_empty hT hb.1 h1T hγb
     have hm : z ∈ Ioo b 1 ∩ T := ⟨⟨hbz, hzlt⟩, hz⟩
     rw [this] at hm
     exact hm
@@ -509,7 +509,7 @@ private theorem exists_core_between (hγ : Continuous γ) (hT : Minimal (IsAdmis
     have hsa : s ≤ a := max_eq_right_iff.mp h'
     rcases eq_or_lt_of_le hsa with he | hl
     · exact h3 (by rw [h, he])
-    · have := Ioo_inter_eq_empty hT hs hzT (hl.trans hza) h.symm
+    · have := Ioo_inter_eq_empty hT hs hzT h.symm
       have hm : a ∈ Ioo s z ∩ T := ⟨⟨hl, hza⟩, ha.1⟩
       rw [this] at hm
       exact hm
@@ -530,7 +530,7 @@ theorem exists_arc_of_path [T2Space X] {γ : 𝕀 → X} (hγ : Continuous γ) (
   have hcore := fun {s t : 𝕀} => @exists_core_between X _ _ γ T hγ hT h01 s t
   have hdist : ∀ y ∈ coreSet T γ, ∀ y' ∈ coreSet T γ, y < y' → γ y ≠ γ y' := by
     intro y hy y' hy' hyy heq
-    exact hy'.2.1 ⟨y, hy.1, hyy, Ioo_inter_eq_empty hT hy.1 hy'.1 hyy heq⟩
+    exact hy'.2.1 ⟨y, hy.1, hyy, Ioo_inter_eq_empty hT hy.1 hy'.1 heq⟩
   obtain ⟨c, hcm, hcc, hcd, hc0, hc1, hcs, hcgap⟩ := exists_monotone_interval_collapse (coreSet T γ)
     (by
       obtain ⟨z, hz, -⟩ := hcore h0T h1T h01lt h01
@@ -591,7 +591,7 @@ theorem exists_arc_of_path [T2Space X] {γ : 𝕀 → X} (hγ : Continuous γ) (
     have key : ∀ s t : 𝕀, s ∈ T → t ∈ T → s < t → γ s = γ t → c s = c t := by
       intro s t hs ht hst heq
       refine hcgap s t hst ?_
-      have hgap := Ioo_inter_eq_empty hT hs ht hst heq
+      have hgap := Ioo_inter_eq_empty hT hs ht heq
       rw [eq_empty_iff_forall_notMem]
       rintro z ⟨hz1, hz2⟩
       rcases eq_or_lt_of_le hz1.2 with he | hl

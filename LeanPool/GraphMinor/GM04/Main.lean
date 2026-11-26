@@ -19,12 +19,13 @@ public import LeanPool.GraphMinor.Minor.Basic
 /-!
 # Graph Minors IV, (1.5), with every hypothesis proved
 
-`GM04.theorem_1_5` derives (1.5) from (5.3), Menger's theorem, Higman's theorem (8.3) and the
-description of minors by models. This file supplies each of them:
+`GM04.theorem_1_5_proved` derives (1.5) from (5.3), Menger's theorem, the labelled finite-set
+generalization of Higman's theorem (8.3) and the description of minors by models. This file
+supplies each of them:
 - (5.3) is `theorem_5_3`, which uses the tree lemma (2.2) (`lemma_2_2`) and Thomas's lemma (5.1)
   (`thomas_5_1`, which uses Menger's theorem);
 - Menger's theorem is `menger`;
-- Higman's theorem (8.3) is `higman_8_3`;
+- `higman_8_3` is the generalization of (8.3) allowing repeated labels;
 - the statement about models of minors is `isIsoMinor_of_isMinorModel`.
 -/
 

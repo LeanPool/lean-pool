@@ -649,39 +649,10 @@ theorem no_parallel_spokes_at_region_hub [ConnectedSpace S]
     {g h : Set S} {v u : S} (hv : v ∈ Γ.V) (hg : g ∈ K.E) (hh : h ∈ K.E) (hgh : g ≠ h)
     (hur : u ∈ r) (huK : u ∈ K.V)
     (hcapg : closure g ∩ K.V = {v, u}) (hcaph : closure h ∩ K.V = {v, u}) : False := by
-  let F := closure g ∪ closure h
-  have hvu : v ≠ u := fun h => region_subset hr (h ▸ hur) (Γ.V_subset_U hv)
-  have hLg := isLine_closure hg hvu hcapg
-  have hLh := isLine_closure hh hvu hcaph
-  have hF : IsOArc F := isOArc_union hLg hLh fun x hx =>
-    hcapg.subset ⟨hx.1, closure_inter_subset_V hg hh hgh hx⟩
-  have hFZ : F ⊆ r ∪ {v} := union_subset
-    (closure_spoke_subset_region_vertex hS hT.1 hK hg hr hur hcapg)
-    (closure_spoke_subset_region_vertex hS hT.1 hK hh hr hur hcaph)
-  have hvF : v ∈ F := Or.inl (hcapg.superset (Or.inl rfl)).1
-  have hn : (PaintingOrDrawing.drawing Γ).IsNormal F := by
-    rintro x ⟨hxF, hxΓ⟩
-    rcases hFZ hxF with hxr | hxv
-    · exact (region_subset hr hxr hxΓ).elim
-    · exact hxv ▸ hv
-  have hFV : F ∩ Γ.V = {v} := by
-    apply Subset.antisymm
-    · rintro x ⟨hxF, hxV⟩
-      exact (hFZ hxF).resolve_left (fun hxr => region_subset hr hxr (Γ.V_subset_U hxV))
-    · rintro x hx
-      rcases mem_singleton_iff.mp hx with rfl
-      exact ⟨hvF, hv⟩
-  have hFr : F \ {v} ⊆ r := fun x hx => (hFZ hx.1).resolve_right hx.2
-  obtain ⟨D, hD, hbd, hm⟩ := hT.2.2.2 F hF hn
-    (by change (F ∩ Γ.V).ncard < θ; rw [hFV, ncard_singleton]; omega)
-  have hVD : Γ.V ∩ D = {v} :=
-    vertices_in_selected_region_disc_of_no_edges hS hT.1 hD hbd hn hFV
-      (hno D F v hD hbd hn hFV hFr hm)
-  have hDb : discBd D = F := (IsClosedDisc.frontier_eq_discBd hS hD).symm.trans
-    ((subBd_eq_frontier D).symm.trans hbd)
-  have hDr : D ⊆ r ∪ {v} := disc_subset_region_vertex_of_no_edges hS hD hDb hvF hn hVD hr
-    hFr (hno D F v hD hbd hn hFV hFr hm)
-  exact hK.2.2.2.2.2 g hg h hh hgh v hv r hr u ⟨hur, huK⟩ hcapg hcaph ⟨D, hD, hDr, hbd⟩
+  apply parallel_spokes_contradiction hS hθ hT hK hv hg hh hgh hr hur huK hcapg hcaph
+  intro D F hD _ hbd hn hFV hFr hm
+  have hnone := hno D F v hD hbd hn hFV hFr hm
+  exact ⟨vertices_in_selected_region_disc_of_no_edges hS hT.1 hD hbd hn hFV hnone, hnone⟩
 
 /-! ## 5. Case 2 of (7.5): deduction of (i)–(iv) from (7.4) (pages 265–266) -/
 

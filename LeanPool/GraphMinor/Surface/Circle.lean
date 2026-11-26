@@ -34,6 +34,17 @@ open Set Function Complex Real Topology
 
 universe u
 
+/-- An `O`-arc contains infinitely many points. -/
+theorem IsOArc.infinite {S : Type u} [TopologicalSpace S] {F : Set S} (hF : IsOArc F) :
+    F.Infinite := by
+  obtain ⟨f⟩ := hF
+  have hinj : InjOn (fun t => (f (Circle.exp t)).1) (Ico (0 : ℝ) (2 * Real.pi)) := by
+    intro s hs t ht h
+    exact Circle.exp_injOn_Ico (by simp) hs ht (f.injective (Subtype.ext h))
+  refine ((Set.Ico_infinite Real.two_pi_pos).image hinj).mono ?_
+  rintro _ ⟨t, _, rfl⟩
+  exact (f (Circle.exp t)).2
+
 /-! ## 1. Open Arcs on `Circle` -/
 
 /-- The open counterclockwise arc on `Circle` from $x$ to $y$, defined as the image of $(0, 1)$

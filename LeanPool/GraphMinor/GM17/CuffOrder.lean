@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM17.Basic
 import Mathlib.Analysis.Convex.PathConnected
 import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 import Mathlib.Data.Finset.Sort
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Circular Order on Cuffs and Cuff Enumerations in Paintings
@@ -103,13 +104,8 @@ theorem exists_cuffPoint_mem_Ico (f : Circle ≃ₜ Θ) (t₀ : ℝ) {x : S} (hx
   rw [h_eq, cuffPoint, hexp₀, hz]
 
 /-- Every `O`-arc is infinite. -/
-theorem infinite_of_isOArc (hΘ : IsOArc Θ) : Θ.Infinite := by
-  rcases hΘ with ⟨f⟩
-  have hlt : (0 : ℝ) < 0 + 2 * Real.pi := by positivity
-  have hinf : (Ico (0 : ℝ) (0 + 2 * Real.pi)).Infinite := Set.Ico_infinite hlt
-  refine (hinf.image (cuffPoint_injOn_Ico f 0)).mono ?_
-  rintro _ ⟨t, _, rfl⟩
-  exact cuffPoint_mem f t
+theorem infinite_of_isOArc (hΘ : IsOArc Θ) : Θ.Infinite :=
+  hΘ.infinite
 
 /-! ### Symmetries of `GM19.InOrderOn` -/
 

@@ -144,7 +144,6 @@ private theorem separation_of_triple_union {G A B X₁ X₂ X₃ : Hypergraph α
     (hX₁ : X₁ ≤ A) (hX₂ : X₂ ≤ A) (hX₃ : X₃ ≤ A)
     (hU : X₁ ∪ X₂ ∪ X₃ = A)
     (hd12 : Disjoint X₁.edgeSet X₂.edgeSet)
-    (_hd23 : Disjoint X₂.edgeSet X₃.edgeSet)
     (hd13 : Disjoint X₁.edgeSet X₃.edgeSet) :
     A.IsSeparation X₁ (X₂ ∪ X₃) ∧
     G.IsSeparation X₁ (B ∪ (X₂ ∪ X₃)) ∧
@@ -222,12 +221,11 @@ theorem theorem_3_3_proof {G A B : Hypergraph α β} {θ : ℕ}
   have step_in_tangle : ∀ {Y₁ Y₂ Y₃ : Hypergraph α β},
       Y₁ ≤ A → Y₂ ≤ A → Y₃ ≤ A → Y₁ ∪ Y₂ ∪ Y₃ = A →
       Disjoint Y₁.edgeSet Y₂.edgeSet →
-      Disjoint Y₂.edgeSet Y₃.edgeSet →
       Disjoint Y₁.edgeSet Y₃.edgeSet →
       ((Y₂ ∪ Y₃) ∩ Y₁).vertexSet.ncard < ((Y₂ ∪ Y₃) ∩ B).vertexSet.ncard →
       (Y₁, B ∪ (Y₂ ∪ Y₃)) ∈ 𝒯 := by
-    intro Y₁ Y₂ Y₃ hY₁ hY₂ hY₃ hUY hd1 hd2 hd3 hltY
-    have ⟨_, hsepG₁, _⟩ := separation_of_triple_union hsepAB hY₁ hY₂ hY₃ hUY hd1 hd2 hd3
+    intro Y₁ Y₂ Y₃ hY₁ hY₂ hY₃ hUY hd1 hd3 hltY
+    have ⟨_, hsepG₁, _⟩ := separation_of_triple_union hsepAB hY₁ hY₂ hY₃ hUY hd1 hd3
     by_contra hnot_mem
     have hord_ge : separationOrder B A ≤ separationOrder Y₁ (B ∪ (Y₂ ∪ Y₃)) := by
       by_cases hlt_θ : separationOrder Y₁ (B ∪ (Y₂ ∪ Y₃)) < θ
@@ -281,16 +279,15 @@ theorem theorem_3_3_proof {G A B : Hypergraph α β} {θ : ℕ}
   have hU312 : X₃ ∪ X₁ ∪ X₂ = A := by
     rw [GM10.union_comm (X₃ ∪ X₁) X₂, ← GM10.union_assoc, hU231]
   have hm1 : (X₁, B ∪ (X₂ ∪ X₃)) ∈ 𝒯 :=
-    step_in_tangle hX₁ hX₂ hX₃ hU hd12 hd23 hd13 hlt1
+    step_in_tangle hX₁ hX₂ hX₃ hU hd12 hd13 hlt1
   have hm2 : (X₂, B ∪ (X₃ ∪ X₁)) ∈ 𝒯 :=
-    step_in_tangle hX₂ hX₃ hX₁ hU231 hd23 hd13.symm hd12.symm hlt2
+    step_in_tangle hX₂ hX₃ hX₁ hU231 hd23 hd12.symm hlt2
   have hm3 : (X₃, B ∪ (X₁ ∪ X₂)) ∈ 𝒯 :=
-    step_in_tangle hX₃ hX₁ hX₂ hU312 hd13.symm hd12 hd23.symm hlt3
+    step_in_tangle hX₃ hX₁ hX₂ hU312 hd13.symm hd23.symm hlt3
   -- Next, for each cyclic permutation, `θ ≤ separationOrder (Y₁ ∪ B) (Y₂ ∪ Y₃)`
   have step_theta_lt : ∀ {Y₁ Y₂ Y₃ : Hypergraph α β},
       Y₁ ≤ A → Y₂ ≤ A → Y₃ ≤ A → Y₁ ∪ Y₂ ∪ Y₃ = A →
       Disjoint Y₁.edgeSet Y₂.edgeSet →
-      Disjoint Y₂.edgeSet Y₃.edgeSet →
       Disjoint Y₁.edgeSet Y₃.edgeSet →
       (Y₁, B ∪ (Y₂ ∪ Y₃)) ∈ 𝒯 →
       (Y₂, B ∪ (Y₃ ∪ Y₁)) ∈ 𝒯 →
@@ -298,8 +295,8 @@ theorem theorem_3_3_proof {G A B : Hypergraph α β} {θ : ℕ}
       ((Y₂ ∪ Y₃) ∩ Y₁).vertexSet.ncard < ((Y₂ ∪ Y₃) ∩ B).vertexSet.ncard →
       θ < 2 * (((Y₂ ∪ Y₃) ∩ B).vertexSet \ (Y₁ ∩ B).vertexSet).ncard +
         (((Y₂ ∪ Y₃) ∩ B).vertexSet ∩ (Y₁ ∩ B).vertexSet).ncard := by
-    intro Y₁ Y₂ Y₃ hY₁ hY₂ hY₃ hUY hd1 hd2 hd3 hY1_T hY2_T hY3_T hltY
-    have ⟨_, _, hsepG₂⟩ := separation_of_triple_union hsepAB hY₁ hY₂ hY₃ hUY hd1 hd2 hd3
+    intro Y₁ Y₂ Y₃ hY₁ hY₂ hY₃ hUY hd1 hd3 hY1_T hY2_T hY3_T hltY
+    have ⟨_, _, hsepG₂⟩ := separation_of_triple_union hsepAB hY₁ hY₂ hY₃ hUY hd1 hd3
     have hnot1 : (Y₁ ∪ B, Y₂ ∪ Y₃) ∉ 𝒯 := by
       intro hm
       apply h𝒯.axiom2 hm hY2_T hY3_T
@@ -346,9 +343,9 @@ theorem theorem_3_3_proof {G A B : Hypergraph α β} {θ : ℕ}
         (((Y₂ ∪ Y₃) ∩ B).vertexSet_finite.inter_of_left _),
         Set.sdiff_union_inter]
     omega
-  have hb1 := step_theta_lt hX₁ hX₂ hX₃ hU hd12 hd23 hd13 hm1 hm2 hm3 hlt1
-  have hb2 := step_theta_lt hX₂ hX₃ hX₁ hU231 hd23 hd13.symm hd12.symm hm2 hm3 hm1 hlt2
-  have hb3 := step_theta_lt hX₃ hX₁ hX₂ hU312 hd13.symm hd12 hd23.symm hm3 hm1 hm2 hlt3
+  have hb1 := step_theta_lt hX₁ hX₂ hX₃ hU hd12 hd13 hm1 hm2 hm3 hlt1
+  have hb2 := step_theta_lt hX₂ hX₃ hX₁ hU231 hd23 hd12.symm hm2 hm3 hm1 hlt2
+  have hb3 := step_theta_lt hX₃ hX₁ hX₂ hU312 hd13.symm hd23.symm hm3 hm1 hm2 hlt3
   -- Convert the sets `(Xᵢ ∩ B).vertexSet` to `Finset α` and apply `finset_card_triple_bound`
   let fW₁ := (X₁ ∩ B).vertexSet_finite.toFinset
   let fW₂ := (X₂ ∩ B).vertexSet_finite.toFinset

@@ -16,7 +16,6 @@ import LeanPool.GraphMinor.GM12.Section1
 import LeanPool.GraphMinor.GM11.Section64
 import LeanPool.GraphMinor.GM11.Section91
 import LeanPool.GraphMinor.Surface.ArcTools
-import Mathlib.Topology.Instances.AddCircle.Defs
 
 /-!
 # Graph Minors XIV – Section 10 Translation (Part 3: Tangle Metric vs. Curve Distance Bounds)
@@ -179,50 +178,8 @@ omit [T2Space S] in
 with `range φ = range p`. -/
 theorem exists_closedCurve_of_loop {u : S} (p : Path u u) :
     ∃ φ : C(Circle, S), range φ = range p := by
-  have : Fact ((0 : ℝ) < 1) := ⟨zero_lt_one⟩
-  let f : ℝ → S := extI p
-  have hf_per : f 0 = f 1 := by
-    change extI p (0 : unitInterval).1 = extI p (1 : unitInterval).1
-    rw [extI_coe, extI_coe, p.source, p.target]
-  have hf_cont : Continuous f := continuous_extI p.continuous
-  let g : AddCircle (1 : ℝ) → S := AddCircle.liftIco (1 : ℝ) 0 f
-  have hg_cont : Continuous g :=
-    AddCircle.liftIco_zero_continuous hf_per hf_cont.continuousOn
-  let e : Circle ≃ₜ AddCircle (1 : ℝ) := (AddCircle.homeomorphCircle one_ne_zero).symm
-  let φ : C(Circle, S) := ⟨g ∘ e, hg_cont.comp e.continuous⟩
-  let q : unitInterval → Circle := fun t => Circle.exp (2 * Real.pi * t.1)
-  have hφ_q : ∀ t : unitInterval, t.1 < 1 → φ (q t) = p t := by
-    intro t ht1
-    have ht_Ico : t.1 ∈ Ico (0 : ℝ) 1 := ⟨t.2.1, ht1⟩
-    have he_qt : e (q t) = (t.1 : AddCircle (1 : ℝ)) := by
-      refine (Homeomorph.symm_apply_eq (AddCircle.homeomorphCircle one_ne_zero)).mpr ?_
-      symm
-      rw [AddCircle.homeomorphCircle_apply, AddCircle.toCircle_apply_mk]
-      change Circle.exp (2 * Real.pi / 1 * t.1) = Circle.exp (2 * Real.pi * t.1)
-      congr 1
-      ring
-    change g (e (q t)) = p t
-    rw [he_qt]
-    change AddCircle.liftIco (1 : ℝ) 0 f (t.1 : AddCircle (1 : ℝ)) = p t
-    rw [AddCircle.liftIco_zero_coe_apply ht_Ico]
-    exact extI_coe p t
-  refine ⟨φ, ?_⟩
-  ext x
-  constructor
-  · rintro ⟨z, rfl⟩
-    obtain ⟨s, hs, hsz⟩ := (GM12.circle_parameter_bijOn 0).surjOn (mem_univ z)
-    rw [zero_add] at hs
-    let t : unitInterval := ⟨s, hs.1, hs.2.le⟩
-    have hqt : q t = z := hsz
-    rw [← hqt, hφ_q t hs.2]
-    exact mem_range_self t
-  · rintro ⟨t, rfl⟩
-    rcases eq_or_lt_of_le t.2.2 with ht1 | ht1
-    · have ht_eq : t = 1 := Subtype.ext ht1
-      rw [ht_eq, p.target, ← p.source, ← hφ_q 0 zero_lt_one]
-      exact mem_range_self (q 0)
-    · rw [← hφ_q t ht1]
-      exact mem_range_self (q t)
+  obtain ⟨φ, hRange, _⟩ := GM12.exists_closedCurve_of_loop_with_parameter p
+  exact ⟨φ, hRange⟩
 
 omit [T2Space S] in
 /-- Given any closed curve `φ : C(Circle, S)`, a point `z₀ : Circle`, and a path `γ : Path (φ z₀)

@@ -32,9 +32,10 @@ the case `κ = Ω`, `ℓ i = id`.
 
 namespace GraphMinor.GM04
 
-/-- Graph Minors IV, (8.3), for labelled finite sets: for every sequence of finite sets `X i` with
-labels `ℓ i` in a well-quasi-order `Ω`, there is an infinite set `I` of indices such that for all
-`i < i'` in `I` some injection `g : X i → X i'` satisfies `ℓ i x ≤ ℓ i' (g x)` for all `x ∈ X i`. -/
+/-- Labelled finite-set generalization of Graph Minors IV, (8.3). For finite sets `X i` with
+possibly repeated labels `ℓ i` in a well-quasi-order `Ω`, there is an infinite set `I` of indices
+such that each `i < i'` in `I` admits an injection `g : X i → X i'` satisfying `ℓ i x ≤ ℓ i' (g x)`
+for all `x ∈ X i`. -/
 def Higman83Statement : Prop :=
   ∀ {κ Ω : Type*} [Preorder Ω], WellQuasiOrderedLE Ω → ∀ (X : ℕ → Finset κ) (ℓ : ℕ → κ → Ω),
     ∃ I : Set ℕ, I.Infinite ∧ ∀ i ∈ I, ∀ i' ∈ I, i < i' →

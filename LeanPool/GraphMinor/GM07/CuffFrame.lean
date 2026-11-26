@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM07.CuffNest
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Parallel copies of the circuits, and the grid of page 234
@@ -30,21 +31,9 @@ universe u
 variable {S T : Type u} [TopologicalSpace S] [TopologicalSpace T]
 
 /-- An `O`-arc is infinite. -/
-theorem isOArc_infinite_any {Y : Type*} [TopologicalSpace Y] [T1Space Y] {F : Set Y}
-  (hF : IsOArc F) : F.Infinite := by
-  obtain ⟨φ⟩ := hF
-  have h1 : F = range (fun z => (φ z : Y)) := by
-    ext x
-    exact ⟨fun hx => ⟨φ.symm ⟨x, hx⟩, by simp⟩, fun ⟨z, hz⟩ => hz ▸ (φ z).2⟩
-  have h2 : IsPreconnected F := by
-    rw [h1]
-    exact isPreconnected_range (continuous_subtype_val.comp φ.continuous)
-  refine IsPreconnected.infinite_of_nontrivial h2 ⟨φ 1, (φ 1).2, φ (Circle.exp Real.pi), (φ _).2,
-    fun h3 => ?_⟩
-  have h4 : (1 : Circle) = Circle.exp Real.pi := φ.injective (Subtype.ext h3)
-  have h5 : ((1 : Circle) : ℂ) = (Circle.exp Real.pi : ℂ) := congrArg _ h4
-  rw [Circle.coe_one, Circle.coe_exp, Complex.exp_pi_mul_I] at h5
-  norm_num at h5
+theorem isOArc_infinite_any {Y : Type*} [TopologicalSpace Y] {F : Set Y}
+    (hF : IsOArc F) : F.Infinite :=
+  hF.infinite
 
 /-- The closure of an edge adds only vertices. -/
 theorem closure_edge_subset_union [T2Space S] (H : Drawing S) {e : Set S}

@@ -141,15 +141,21 @@ theorem closure_region_subset [LocallyConnectedSpace S] {r : Set S} (hr : r ∈ 
   rw [region_eq_of_mem hr hr' hz hz']
   exact Or.inl hyr'
 
+/-- Two locally defined sides cover the complement of a drawing around each point of an edge. -/
+@[expose]
+def LocalEdgeSides (Γ : Drawing S) (e : Set S) : Prop :=
+  ∀ p ∈ e, ∃ W A₁ A₂ : Set S, IsOpen W ∧ p ∈ W ∧ W ∩ Γ.U ⊆ e ∧
+    W \ Γ.U ⊆ A₁ ∪ A₂ ∧ IsPreconnected A₁ ∧ IsPreconnected A₂ ∧
+    Disjoint A₁ Γ.U ∧ Disjoint A₂ Γ.U ∧ e ∩ W ⊆ closure A₁ ∧ e ∩ W ⊆ closure A₂
+
 /-- If a region has a point of an edge in its closure then all of the edge is in its closure. The
 set of such points is open in `e` by the two sides of an edge, and `e` is connected. -/
-theorem edge_subset_closure_of_incident (hS : IsClosedSurface S)
-    {e r : Set S} (he : e ∈ Γ.E) (hr : r ∈ Γ.R)
+theorem edge_subset_closure_of_local_sides
+    {e r : Set S} (hsides : LocalEdgeSides Γ e) (he : e ∈ Γ.E) (hr : r ∈ Γ.R)
     (hinc : (e ∩ closure r).Nonempty) : e ⊆ closure r := by
-  have : T2Space S := hS.2.1
   have hstep : ∀ p ∈ e ∩ closure r, ∃ W : Set S, IsOpen W ∧ p ∈ W ∧ e ∩ W ⊆ closure r := by
     rintro p ⟨hpe, hpr⟩
-    obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, h₁, h₂, d₁, d₂, c₁, c₂⟩ := exists_edge_sides hS Γ he hpe
+    obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, h₁, h₂, d₁, d₂, c₁, c₂⟩ := hsides p hpe
     refine ⟨W, hW, hpW, ?_⟩
     obtain ⟨x, hxW, hxr⟩ := mem_closure_iff.mp hpr W hW hpW
     have hxU : x ∉ Γ.U := region_subset hr hxr
@@ -174,12 +180,11 @@ theorem edge_subset_closure_of_incident (hS : IsClosedSurface S)
   exact hyr (hWs q hq ⟨hye, hyq⟩)
 
 /-- Every edge is incident with a region. -/
-theorem exists_region_incident (hS : IsClosedSurface S)
-    {e : Set S} (he : e ∈ Γ.E) :
+theorem exists_region_incident_of_local_sides
+    {e : Set S} (hsides : LocalEdgeSides Γ e) (he : e ∈ Γ.E) :
     ∃ r ∈ Γ.R, e ⊆ closure r := by
-  have : T2Space S := hS.2.1
   obtain ⟨p, hp⟩ := he.1
-  obtain ⟨W, A₁, A₂, -, hpW, -, -, h₁, -, d₁, -, c₁, -⟩ := exists_edge_sides hS Γ he hp
+  obtain ⟨W, A₁, A₂, -, hpW, -, -, h₁, -, d₁, -, c₁, -⟩ := hsides p hp
   have hne : A₁.Nonempty := by
     by_contra hcon
     rw [not_nonempty_iff_eq_empty] at hcon
@@ -188,17 +193,17 @@ theorem exists_region_incident (hS : IsClosedSurface S)
     exact this
   obtain ⟨x, hx⟩ := hne
   obtain ⟨r, hr, hxr⟩ := exists_region_of_notMem (disjoint_left.mp d₁ hx)
-  refine ⟨r, hr, edge_subset_closure_of_incident hS he hr ⟨p, hp, ?_⟩⟩
+  refine ⟨r, hr, edge_subset_closure_of_local_sides hsides he hr ⟨p, hp, ?_⟩⟩
   exact closure_mono (subset_region hr h₁ d₁ hx hxr) (c₁ ⟨hp, hpW⟩)
 
 /-- An edge is incident with at most two regions: of three such regions, two are equal. -/
-theorem region_incident_two (hS : IsClosedSurface S)
-    {e r₁ r₂ r₃ : Set S} (he : e ∈ Γ.E) (h₁ : r₁ ∈ Γ.R) (h₂ : r₂ ∈ Γ.R)
-    (h₃ : r₃ ∈ Γ.R) (i₁ : e ⊆ closure r₁) (i₂ : e ⊆ closure r₂) (i₃ : e ⊆ closure r₃) :
+theorem region_incident_two_of_local_sides
+    {e r₁ r₂ r₃ : Set S} (hsides : LocalEdgeSides Γ e) (he : e ∈ Γ.E)
+    (h₁ : r₁ ∈ Γ.R) (h₂ : r₂ ∈ Γ.R) (h₃ : r₃ ∈ Γ.R)
+    (i₁ : e ⊆ closure r₁) (i₂ : e ⊆ closure r₂) (i₃ : e ⊆ closure r₃) :
     r₁ = r₂ ∨ r₁ = r₃ ∨ r₂ = r₃ := by
-  have : T2Space S := hS.2.1
   obtain ⟨p, hp⟩ := he.1
-  obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, c₁, c₂, d₁, d₂, -, -⟩ := exists_edge_sides hS Γ he hp
+  obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, c₁, c₂, d₁, d₂, -, -⟩ := hsides p hp
   have hside : ∀ r ∈ Γ.R, e ⊆ closure r → (∃ x ∈ A₁, x ∈ r) ∨ ∃ x ∈ A₂, x ∈ r := by
     intro r hr hi
     obtain ⟨x, hxW, hxr⟩ := mem_closure_iff.mp (hi hp) W hW hpW
@@ -219,5 +224,29 @@ theorem region_incident_two (hS : IsClosedSurface S)
   · exact Or.inr (Or.inl (hsame c₂ d₂ h₁ h₃ a c))
   · exact Or.inl (hsame c₂ d₂ h₁ h₂ a b)
   · exact Or.inl (hsame c₂ d₂ h₁ h₂ a b)
+
+/-- If a region has a point of an edge in its closure then all of the edge is in its closure. The
+set of such points is open in `e` by the two sides of an edge, and `e` is connected. -/
+theorem edge_subset_closure_of_incident (hS : IsClosedSurface S)
+    {e r : Set S} (he : e ∈ Γ.E) (hr : r ∈ Γ.R)
+    (hinc : (e ∩ closure r).Nonempty) : e ⊆ closure r := by
+  have : T2Space S := hS.2.1
+  exact edge_subset_closure_of_local_sides (fun _ hp => exists_edge_sides hS Γ he hp) he hr hinc
+
+/-- Every edge is incident with a region. -/
+theorem exists_region_incident (hS : IsClosedSurface S)
+    {e : Set S} (he : e ∈ Γ.E) :
+    ∃ r ∈ Γ.R, e ⊆ closure r := by
+  have : T2Space S := hS.2.1
+  exact exists_region_incident_of_local_sides (fun _ hp => exists_edge_sides hS Γ he hp) he
+
+/-- An edge is incident with at most two regions: of three such regions, two are equal. -/
+theorem region_incident_two (hS : IsClosedSurface S)
+    {e r₁ r₂ r₃ : Set S} (he : e ∈ Γ.E) (h₁ : r₁ ∈ Γ.R) (h₂ : r₂ ∈ Γ.R)
+    (h₃ : r₃ ∈ Γ.R) (i₁ : e ⊆ closure r₁) (i₂ : e ⊆ closure r₂) (i₃ : e ⊆ closure r₃) :
+    r₁ = r₂ ∨ r₁ = r₃ ∨ r₂ = r₃ := by
+  have : T2Space S := hS.2.1
+  exact region_incident_two_of_local_sides
+    (fun _ hp => exists_edge_sides hS Γ he hp) he h₁ h₂ h₃ i₁ i₂ i₃
 
 end GraphMinor.GM11

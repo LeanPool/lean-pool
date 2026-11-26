@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM14.Cited
 import LeanPool.GraphMinor.GM10.Section12
 import LeanPool.GraphMinor.GM11.Section4c
+import LeanPool.GraphMinor.GM12.Section1
 
 /-!
 # Graph Minors XIV, Section 3: tangles, zones, and clearing
@@ -44,59 +45,10 @@ variable {S : Type u} [TopologicalSpace S] [T1Space S]
 /-! ## Proof of (3.1) -/
 
 omit [T1Space S] in
-/-- If a subdrawing `L` of `K` has a point in a region `c` of `H`, it has the vertex of `K` in `c`:
-an edge of `K` in `c` has an end off `V(H)`, and that end lies in `c`. -/
-private theorem vertex_of_mem_region [LocallyConnectedSpace S] {H K : Drawing S}
-    (hK : (PaintingOrDrawing.drawing H).IsPreRadialDrawing K) {c : Set S} (hc : c ∈ H.R)
-    {L : Drawing S} (hL : L.IsSubdrawing K) {x w : S} (hxL : x ∈ L.U) (hxc : x ∈ c) (hw : w ∈ c)
-    (hwK : w ∈ K.V) : w ∈ L.V := by
-  obtain ⟨hUU, hVV, huniq, -, hbip, -⟩ := hK
-  have hUU' : H.U ∩ K.U = H.V := hUU
-  have hVV' : H.V ⊆ K.V := hVV
-  have huniq' : ∀ r ∈ H.R, ∃! w, w ∈ r ∧ w ∈ K.V := huniq
-  have heq : ∀ y ∈ c, y ∈ K.V → y = w := fun y hy hyK =>
-    (huniq' c hc).unique ⟨hy, hyK⟩ ⟨hw, hwK⟩
-  by_cases hxV : x ∈ L.V
-  · rw [← heq x hxc (hL.1 hxV)]
-    exact hxV
-  obtain ⟨e, he, hxe⟩ := L.exists_edge_of_mem hxL hxV
-  have heK := hL.2 he
-  obtain ⟨v, hv, w', hw', hcap⟩ := hbip e heK
-  have hedis : Disjoint e H.U := disjoint_left.mpr fun y hy hyU => by
-    have hyK : y ∈ K.U := (heK.2.1 hy).1
-    have : y ∈ H.U ∩ K.U := ⟨hyU, hyK⟩
-    rw [hUU'] at this
-    exact (heK.2.1 hy).2 (hVV' this)
-  have hsub : e ⊆ c := subset_region hc
-    (show IsPathConnected e from heK.2.2.1).isConnected.isPreconnected hedis hxe hxc
-  have hw'mem : w' ∈ closure e ∩ K.V := by rw [hcap]; simp
-  have hw'U : w' ∉ H.U := fun h => by
-    have : w' ∈ H.U ∩ K.U := ⟨h, K.V_subset_U hw'mem.2⟩
-    rw [hUU'] at this
-    exact hw'.2 this
-  have hw'c : w' ∈ c := by
-    rcases closure_region_subset hc (closure_mono hsub hw'mem.1) with h | h
-    · exact h
-    · exact absurd h hw'U
-  rw [← heq w' hw'c hw'mem.2]
-  exact ((hL.closure_inter_V he).symm ▸ hw'mem : w' ∈ closure e ∩ L.V).2
-
-omit [T1Space S] in
 /-- A preconnected set that meets a closed set `D` and misses its frontier lies in `D`. -/
 theorem subset_of_disjoint_frontier {A D : Set S} (hA : IsPreconnected A) (hD : IsClosed D)
-    (hdis : Disjoint A (frontier D)) {x : S} (hx : x ∈ A) (hxD : x ∈ D) : A ⊆ D := by
-  have hcov : A ⊆ interior D ∪ Dᶜ := by
-    intro y hy
-    by_cases hyD : y ∈ D
-    · refine Or.inl ?_
-      by_contra h
-      exact disjoint_left.mp hdis hy ⟨subset_closure hyD, h⟩
-    · exact Or.inr hyD
-  have hxi : x ∈ interior D := (hcov hx).resolve_right (fun h => h hxD)
-  intro y hy
-  by_contra hyD
-  obtain ⟨z, -, hz₁, hz₂⟩ := hA _ _ isOpen_interior hD.isOpen_compl hcov ⟨x, hx, hxi⟩ ⟨y, hy, hyD⟩
-  exact hz₂ (interior_subset hz₁)
+    (hdis : Disjoint A (frontier D)) {x : S} (hx : x ∈ A) (hxD : x ∈ D) : A ⊆ D :=
+  GM12.subset_of_disjoint_frontier hA hD hdis hx hxD
 
 /-- Graph Minors XIV, (3.1) (page 28):
 "If $W$ is a closed walk of $K$ with length $<2\theta$ (so that $ins(W)$ is defined), and $x
@@ -108,73 +60,8 @@ theorem theorem_3_1_proof {H K : Drawing S} (hS : IsClosedSurface S)
     (hd : IsDerivedSlope (PaintingOrDrawing.drawing H) K θ T ins) {x x' : Set S}
     (hx : IsCorrespondingAtom H K x x') {u : S} (W : GraphWalk K.toGraph u u)
     (hl : W.length < 2 * θ) :
-    x' ⊆ insWalk ins K W ↔ (x ∩ insWalk ins K W).Nonempty := by
-  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
-  have : T2Space S := hS.2.1
-  have hP := hK.2.1
-  have hLs : (walkDrawing K W).IsSubdrawing K := walkDrawing_isSubdrawing K W
-  have hdisc : ∀ C : Drawing S, C.IsCircuit → C.IsSubdrawing (walkDrawing K W) →
-      IsClosed (ins C) ∧ frontier (ins C) = C.U ∧ C.U ⊆ ins C := by
-    intro C hC hCs
-    have hlen : C.length < 2 * θ := by
-      refine lt_of_le_of_lt ?_ hl
-      have hsub : C.E ⊆ {e | e ∈ W.edges} := by
-        have := hCs.2
-        rwa [walkDrawing_E] at this
-      calc C.E.ncard ≤ ({e | e ∈ W.edges} : Set (Set S)).ncard :=
-            Set.ncard_le_ncard hsub (List.finite_toSet _)
-        _ ≤ W.edges.length := by
-            rw [show ({e | e ∈ W.edges} : Set (Set S)) = ↑W.edges.toFinset by ext; simp,
-              Set.ncard_coe_finset]
-            exact List.toFinset_card_le _
-        _ = W.length := rfl
-    obtain ⟨h₁, h₂, -⟩ := hd C hC (hCs.trans hLs) hlen
-    have hcl : IsClosed (ins C) := h₁.isClosed
-    have hfr : frontier (ins C) = C.U := by rw [subBd_eq_frontier', h₂]
-    exact ⟨hcl, hfr, hfr ▸ hcl.frontier_subset⟩
-  constructor
-  · intro h
-    obtain ⟨-, -, hcase⟩ := hx
-    rcases hcase with ⟨v, -, rfl, rfl⟩ | ⟨he, hr, hsub⟩ | ⟨hr, v, hv, rfl⟩
-    · exact ⟨v, rfl, h rfl⟩
-    · obtain ⟨y, hy⟩ := he.1
-      exact ⟨y, hy, h (hsub hy)⟩
-    · exact ⟨v, hv.2, h rfl⟩
-  · rintro ⟨y, hyx, hyW⟩
-    obtain ⟨-, -, hcase⟩ := hx
-    rcases hcase with ⟨v, -, rfl, rfl⟩ | ⟨he, hr, hsub⟩ | ⟨hr, w, hw, rfl⟩
-    · exact singleton_subset_iff.mpr (by rwa [mem_singleton_iff.mp hyx] at hyW)
-    · have hUU : H.U ∩ K.U = H.V := hP.1
-      have hyK : y ∉ K.U := fun h => by
-        have hyU : y ∈ H.U := (he.2.1 hyx).1
-        have : y ∈ H.U ∩ K.U := ⟨hyU, h⟩
-        rw [hUU] at this
-        exact (he.2.1 hyx).2 this
-      have hdisr : Disjoint x' K.U := disjoint_left.mpr fun z hz hzU => region_subset hr hz hzU
-      rcases hyW with hy | hy
-      · exact absurd (hLs.U_subset hy) hyK
-      · obtain ⟨C, ⟨hC, hCs⟩, hyC⟩ := mem_iUnion₂.mp hy
-        obtain ⟨hcl, hfr, -⟩ := hdisc C hC hCs
-        have hd' : Disjoint x' (frontier (ins C)) := by
-          rw [hfr]
-          exact hdisr.mono_right (hCs.trans hLs).U_subset
-        have hin := subset_of_disjoint_frontier (region_isPreconnected hr) hcl hd' (hsub hyx) hyC
-        exact fun z hz => Or.inr (mem_iUnion₂.mpr ⟨C, ⟨hC, hCs⟩, hin hz⟩)
-    · refine singleton_subset_iff.mpr ?_
-      rcases hyW with hy | hy
-      · exact Or.inl ((walkDrawing K W).V_subset_U
-          (vertex_of_mem_region hP hr hLs hy hyx hw.2 hw.1))
-      · obtain ⟨C, ⟨hC, hCs⟩, hyC⟩ := mem_iUnion₂.mp hy
-        obtain ⟨hcl, hfr, hUin⟩ := hdisc C hC hCs
-        refine Or.inr (mem_iUnion₂.mpr ⟨C, ⟨hC, hCs⟩, ?_⟩)
-        by_cases hwC : w ∈ C.V
-        · exact hUin (C.V_subset_U hwC)
-        · refine subset_of_disjoint_frontier (region_isPreconnected hr) hcl ?_ hyx hyC hw.2
-          rw [hfr]
-          refine disjoint_left.mpr fun z hz hzC => hwC ?_
-          exact vertex_of_mem_region hP hr (hCs.trans hLs) hzC hz hw.2 hw.1
-
-/-! ## Regions of `H ∩ (Σ - Λ)` and Proof of (3.2) -/
+    x' ⊆ insWalk ins K W ↔ (x ∩ insWalk ins K W).Nonempty :=
+  GM12.corresponding_atom_subset_iff hS hK hd hx W hl
 
 omit [T1Space S] in
 /-- An `O`-arc in a Hausdorff space is closed. -/

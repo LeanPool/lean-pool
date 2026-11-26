@@ -13,6 +13,7 @@ public import LeanPool.GraphMinor.GM06.Section2Dual
 public import LeanPool.GraphMinor.GM11.Section5b
 import LeanPool.GraphMinor.Surface.JordanDomain
 import LeanPool.GraphMinor.GM11.EdgeSides
+import LeanPool.GraphMinor.GM11.Regions
 import LeanPool.GraphMinor.Surface.DiscArcs
 import Mathlib.Analysis.Convex.PathConnected
 
@@ -415,80 +416,24 @@ theorem disc_exists_edge_sides (hS : IsClosedDiscSpace S) (Γ : Drawing S) (hpro
 `e` lies in its closure. -/
 theorem disc_edge_subset_closure_of_incident (hS : IsClosedDiscSpace S) {Γ : Drawing S}
     (hprop : Γ.IsProper) {e r : Set S} (he : e ∈ Γ.E) (hr : r ∈ Γ.R)
-    (hinc : (e ∩ closure r).Nonempty) : e ⊆ closure r := by
-  have hstep : ∀ p ∈ e ∩ closure r, ∃ W : Set S, IsOpen W ∧ p ∈ W ∧ e ∩ W ⊆ closure r := by
-    rintro p ⟨hpe, hpr⟩
-    obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, h₁, h₂, d₁, d₂, c₁, c₂⟩ :=
-      disc_exists_edge_sides hS Γ hprop he hpe
-    refine ⟨W, hW, hpW, ?_⟩
-    obtain ⟨x, hxW, hxr⟩ := mem_closure_iff.mp hpr W hW hpW
-    have hxU : x ∉ Γ.U := region_subset hr hxr
-    rcases hsub ⟨hxW, hxU⟩ with hx | hx
-    · exact c₁.trans (closure_mono (subset_region hr h₁ d₁ hx hxr))
-    · exact c₂.trans (closure_mono (subset_region hr h₂ d₂ hx hxr))
-  choose! W hWo hpW hWs using hstep
-  let O : Set S := ⋃ p ∈ e ∩ closure r, W p
-  have hO : IsOpen O := isOpen_biUnion fun p hp => hWo p hp
-  by_contra hcon
-  obtain ⟨z, hze, hzr⟩ := not_subset.mp hcon
-  have hconn : IsPreconnected e := he.2.2.1.isConnected.isPreconnected
-  have hcov : e ⊆ O ∪ (closure r)ᶜ := by
-    intro y hy
-    by_cases hyr : y ∈ closure r
-    · exact Or.inl (mem_iUnion₂.mpr ⟨y, ⟨hy, hyr⟩, hpW y ⟨hy, hyr⟩⟩)
-    · exact Or.inr hyr
-  obtain ⟨p, hp⟩ := hinc
-  obtain ⟨y, hye, hyO, hyr⟩ := hconn O (closure r)ᶜ hO isClosed_closure.isOpen_compl hcov
-    ⟨p, hp.1, mem_iUnion₂.mpr ⟨p, hp, hpW p hp⟩⟩ ⟨z, hze, hzr⟩
-  obtain ⟨q, hq, hyq⟩ := mem_iUnion₂.mp hyO
-  exact hyr (hWs q hq ⟨hye, hyq⟩)
+    (hinc : (e ∩ closure r).Nonempty) : e ⊆ closure r :=
+  GM11.edge_subset_closure_of_local_sides
+    (fun _ hp => disc_exists_edge_sides hS Γ hprop he hp) he hr hinc
 
 /-- Every edge of a proper drawing on `S` is incident with a region. -/
 theorem disc_exists_region_incident (hS : IsClosedDiscSpace S) {Γ : Drawing S}
     (hprop : Γ.IsProper) {e : Set S} (he : e ∈ Γ.E) :
-    ∃ r ∈ Γ.R, e ⊆ closure r := by
-  obtain ⟨p, hp⟩ := he.1
-  obtain ⟨W, A₁, A₂, -, hpW, -, -, h₁, -, d₁, -, c₁, -⟩ :=
-    disc_exists_edge_sides hS Γ hprop he hp
-  have hne : A₁.Nonempty := by
-    by_contra hcon
-    rw [not_nonempty_iff_eq_empty] at hcon
-    have := c₁ ⟨hp, hpW⟩
-    rw [hcon, closure_empty] at this
-    exact this
-  obtain ⟨x, hx⟩ := hne
-  obtain ⟨r, hr, hxr⟩ := exists_region_of_notMem (disjoint_left.mp d₁ hx)
-  refine ⟨r, hr, disc_edge_subset_closure_of_incident hS hprop he hr ⟨p, hp, ?_⟩⟩
-  exact closure_mono (subset_region hr h₁ d₁ hx hxr) (c₁ ⟨hp, hpW⟩)
+    ∃ r ∈ Γ.R, e ⊆ closure r :=
+  GM11.exists_region_incident_of_local_sides
+    (fun _ hp => disc_exists_edge_sides hS Γ hprop he hp) he
 
 /-- An edge of a proper drawing on `S` is incident with at most two regions. -/
 theorem disc_region_incident_two (hS : IsClosedDiscSpace S) {Γ : Drawing S}
     (hprop : Γ.IsProper) {e r₁ r₂ r₃ : Set S} (he : e ∈ Γ.E) (h₁ : r₁ ∈ Γ.R) (h₂ : r₂ ∈ Γ.R)
     (h₃ : r₃ ∈ Γ.R) (i₁ : e ⊆ closure r₁) (i₂ : e ⊆ closure r₂) (i₃ : e ⊆ closure r₃) :
-    r₁ = r₂ ∨ r₁ = r₃ ∨ r₂ = r₃ := by
-  obtain ⟨p, hp⟩ := he.1
-  obtain ⟨W, A₁, A₂, hW, hpW, -, hsub, c₁, c₂, d₁, d₂, -, -⟩ :=
-    disc_exists_edge_sides hS Γ hprop he hp
-  have hside : ∀ r ∈ Γ.R, e ⊆ closure r → (∃ x ∈ A₁, x ∈ r) ∨ ∃ x ∈ A₂, x ∈ r := by
-    intro r hr hi
-    obtain ⟨x, hxW, hxr⟩ := mem_closure_iff.mp (hi hp) W hW hpW
-    rcases hsub ⟨hxW, region_subset hr hxr⟩ with hx | hx
-    · exact Or.inl ⟨x, hx, hxr⟩
-    · exact Or.inr ⟨x, hx, hxr⟩
-  have hsame : ∀ {A r r' : Set S}, IsPreconnected A → Disjoint A Γ.U → r ∈ Γ.R → r' ∈ Γ.R →
-      (∃ x ∈ A, x ∈ r) → (∃ x ∈ A, x ∈ r') → r = r' := by
-    rintro A r r' hA hd hr hr' ⟨x, hxA, hxr⟩ ⟨y, hyA, hyr⟩
-    exact region_eq_of_mem hr hr' (subset_region hr hA hd hxA hxr hyA) hyr
-  rcases hside r₁ h₁ i₁ with a | a <;> rcases hside r₂ h₂ i₂ with b | b <;>
-    rcases hside r₃ h₃ i₃ with c | c
-  · exact Or.inl (hsame c₁ d₁ h₁ h₂ a b)
-  · exact Or.inl (hsame c₁ d₁ h₁ h₂ a b)
-  · exact Or.inr (Or.inl (hsame c₁ d₁ h₁ h₃ a c))
-  · exact Or.inr (Or.inr (hsame c₂ d₂ h₂ h₃ b c))
-  · exact Or.inr (Or.inr (hsame c₁ d₁ h₂ h₃ b c))
-  · exact Or.inr (Or.inl (hsame c₂ d₂ h₁ h₃ a c))
-  · exact Or.inl (hsame c₂ d₂ h₁ h₂ a b)
-  · exact Or.inl (hsame c₂ d₂ h₁ h₂ a b)
+    r₁ = r₂ ∨ r₁ = r₃ ∨ r₂ = r₃ :=
+  GM11.region_incident_two_of_local_sides
+    (fun _ hp => disc_exists_edge_sides hS Γ hprop he hp) he h₁ h₂ h₃ i₁ i₂ i₃
 
 /-- Either an edge of a proper drawing on `S` is incident with a region, or it misses the closure
 of the region. -/

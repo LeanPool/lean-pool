@@ -413,7 +413,7 @@ theorem dist_le_of_oarc_disc
   exact tangleMetric_le_of_walk ha'_K hb'_K W' hW'_lt hW'_len ha'_sub hb'_sub
 
 /-- If `H₁` is a 2-cell drawing in a closed surface `S` with `H₁.E = ∅`, then `H₁.V.ncard ≤ 1`. -/
-private theorem ncard_V_le_one_of_E_empty [ConnectedSpace S]
+theorem ncard_V_le_one_of_E_empty [ConnectedSpace S]
     (hS : IsClosedSurface S) {H₁ : Drawing S} (h2cell : (PaintingOrDrawing.drawing H₁).IsTwoCell)
     (hE : H₁.E = ∅) : H₁.V.ncard ≤ 1 := by
   classical

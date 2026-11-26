@@ -149,53 +149,8 @@ theorem exists_oArc_of_flat {T : Type} [TopologicalSpace T] [ConnectedSpace T]
       Flat ((⋃ r ∈ Γ.R, r) ∪ ⋃ s ∈ (A ∩ B).vertexSet, D s))
     (hA : ∀ F : Set T, F ⊆ PaintingOrDrawing.underlying A → IsOArc F → IsNullHomotopicOArc F) :
     ∃ F : Set T, IsOArc F ∧ F ⊆ PaintingOrDrawing.underlying B \ PaintingOrDrawing.underlying A ∧
-      ¬ IsNullHomotopicOArc F := by
-  by_contra hno
-  push Not at hno
-  have ht2 : T2Space T := hS.2.1
-  have hlc : LocallyConnectedSpace T := IsClosedSurface.locallyConnectedSpace hS
-  have hS₀V : (A ∩ B).vertexSet ⊆ Γ.V := fun x hx => hsep.left_le.vertexSet_subset hx.1
-  obtain ⟨D, hDo, hsD, hfl⟩ := hflat
-  set S₀ : Set T := (A ∩ B).vertexSet with hS₀
-  obtain ⟨γ₀, hγ₀⟩ := exists_edgePar Γ
-  obtain ⟨Q, hQc, hQn, hQU, hQc'⟩ := exists_cut_edges hγ₀ hS₀V hDo hsD
-  have hcl : ∀ e ∈ (PaintingOrDrawing.drawing Γ).E, closure e \ (PaintingOrDrawing.drawing Γ).V ⊆ e
-    := fun e he =>
-    (Γ.closure_diff_V he).subset
-  have hAc := isClosed_underlying (Γ := PaintingOrDrawing.drawing Γ) hcl hsep.left_le
-  have hBc := isClosed_underlying (Γ := PaintingOrDrawing.drawing Γ) hcl hsep.right_le
-  have hcov := U_subset_underlying (Γ := PaintingOrDrawing.drawing Γ)
-    (fun x hx hxV => Γ.exists_edge_of_mem hx hxV) hsep
-  have hint := underlying_inter (Γ := PaintingOrDrawing.drawing Γ)
-    (fun e he f hf x hxe hxf => Γ.edge_eq_of_mem he hf hxe hxf) (fun e he x hx
-      => edge_notMem_V he hx) hsep
-  have hu : Q ≠ univ := fun h => by
-    obtain ⟨z, -, hz⟩ := exists_notMem_U (Γ := Γ) hS isOpen_univ univ_nonempty
-    exact hz (hQU (h ▸ mem_univ z)).1
-  obtain ⟨Δ, hΔ, -, hQΔ⟩ := theorem_7_5_proof hS hQc hQn hu finite_empty
-    (disjoint_empty _) fun F hFQ hF => by
-    rw [sdiff_empty]
-    have hFA : F ⊆ PaintingOrDrawing.underlying A ∪ PaintingOrDrawing.underlying B := fun x hx =>
-      hcov (hQU (hFQ hx)).1
-    by_cases hFa : F ⊆ PaintingOrDrawing.underlying A
-    · exact hA F hFa hF
-    · refine hno F hF fun x hx => ?_
-      have hFB : F ⊆ PaintingOrDrawing.underlying B := by
-        obtain ⟨a, ha, haA⟩ := not_subset.mp hFa
-        by_contra hFb
-        obtain ⟨c, hc, hcB⟩ := not_subset.mp hFb
-        obtain ⟨z, hzF, hz₁, hz₂⟩ := isPreconnected_closed_iff.mp hF.isPreconnected _ _ hAc hBc hFA
-          ⟨c, hc, (hFA hc).resolve_right hcB⟩ ⟨a, ha, (hFA ha).resolve_left haA⟩
-        exact (hQU (hFQ hzF)).2 (hint ⟨hz₁, hz₂⟩)
-      refine ⟨hFB hx, fun hxA => ?_⟩
-      exact (hQU (hFQ hx)).2 (hint ⟨hxA, hFB hx⟩)
-  refine not_flat_compl_disc hS hns hΔ (fun x hx => ?_) hfl
-  have hxQ : x ∉ Q := fun h => hx (hQΔ h)
-  by_cases hxU : x ∈ Γ.U
-  · obtain ⟨s, hs, hxs⟩ := mem_iUnion₂.mp (hQc' ⟨hxU, hxQ⟩)
-    exact Or.inr (mem_iUnion₂.mpr ⟨s, hs, hxs⟩)
-  · obtain ⟨r, hr, hxr⟩ := exists_region_of_notMem hxU
-    exact Or.inl (mem_iUnion₂.mpr ⟨r, hr, hxr⟩)
+      ¬ IsNullHomotopicOArc F :=
+  GM11.exists_oArc_of_flat_regions hS hns Γ hsep hflat hA
 
 variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat] [T2Space Shat]
   {cap : IsCappedSurface S Shat} {β : Type w} {χ : ColourScheme S β}

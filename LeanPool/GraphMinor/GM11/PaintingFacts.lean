@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM11.PaintingRadial
 public import LeanPool.GraphMinor.GM11.RadialFacts
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Each region of a radial drawing of a painting contains a unique cell
@@ -37,24 +38,8 @@ universe u
 variable {S : Type u} [TopologicalSpace S]
 
 /-- An `O`-arc is infinite. -/
-theorem infinite_of_isOArc {F : Set S} (hF : IsOArc F) : F.Infinite := by
-  obtain ⟨f⟩ := id hF
-  obtain ⟨p, -, -, -, hper, himg, -⟩ := exists_oArc_par hF (f 1).2
-  have hpos : (0 : ℝ) < 2 * Real.pi := Real.two_pi_pos
-  have hinj : InjOn p (Ico 0 (2 * Real.pi)) := by
-    intro s hs t ht h
-    obtain ⟨m, hm⟩ := hper s t h
-    have h₁ : (m : ℝ) * (2 * Real.pi) < 2 * Real.pi := by linarith [hs.2, ht.1]
-    have h₂ : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith [hs.1, ht.2]
-    have h₃ : (m : ℝ) < 1 := by nlinarith
-    have h₄ : (-1 : ℝ) < m := by nlinarith
-    have h₅ : m < 1 := by exact_mod_cast h₃
-    have h₆ : -1 < m := by exact_mod_cast h₄
-    have h₇ : m = 0 := by omega
-    rw [hm, h₇]
-    simp
-  rw [← himg]
-  exact (Ico_infinite hpos).image hinj
+theorem infinite_of_isOArc {F : Set S} (hF : IsOArc F) : F.Infinite :=
+  hF.infinite
 
 variable [T2Space S] [ConnectedSpace S] {Γ : Painting S} {Γ' : Drawing S}
 

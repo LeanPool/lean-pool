@@ -14,12 +14,12 @@ import Mathlib.Data.List.Forall2
 import Mathlib.Order.WellFoundedSet
 
 /-!
-# Proof of Higman's theorem (Graph Minors IV, (8.3))
+# Higman's theorem for labelled finite sets
 
-This file proves `GraphMinor.GM04.Higman83Statement`, the theorem of Higman quoted as
-Graph Minors IV, (8.3) (page 249): for every sequence of finite sets `X i` with labels `ℓ i` in a
-well-quasi-order `Ω`, there is an infinite set `I` of indices such that for all `i < i'` in `I`
-some injection `g : X i → X i'` satisfies `ℓ i x ≤ ℓ i' (g x)` for all `x ∈ X i`.
+This file proves `GraphMinor.GM04.Higman83Statement`, the labelled finite-set generalization of
+Higman's theorem quoted in Graph Minors IV, (8.3) (page 249). The paper states the result for finite
+subsets of the well-quasi-order `Ω`. Here different elements of a finite set may carry the same
+label in `Ω`, as needed for the edge sets in the proof of (8.4).
 
 We represent each finite set `X i` as a duplicate-free list `(X i).toList`, map it by `ℓ i` to a
 list in `Ω`, apply Mathlib's Higman lemma
@@ -34,9 +34,9 @@ open Set
 
 public section
 
-/-- Graph Minors IV, (8.3) (page 249): for every sequence of finite sets `X i` with labels `ℓ i`
-in a well-quasi-order `Ω`, there is an infinite set `I` of indices such that for all `i < i'` in
-`I` some injection `g : X i → X i'` satisfies `ℓ i x ≤ ℓ i' (g x)` for all `x ∈ X i`. -/
+/-- Labelled finite-set generalization of Graph Minors IV, (8.3) (page 249).
+An infinite subsequence of finite sets with labels in a well-quasi-order admits injections from
+each earlier set into each later set that weakly increase labels. Labels may repeat within a set. -/
 theorem higman_8_3 : Higman83Statement := by
   classical
   intro κ Ω _ hwqo X ℓ

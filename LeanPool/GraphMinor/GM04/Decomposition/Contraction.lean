@@ -55,17 +55,6 @@ theorem exists_lca {x y : ι} (hx : x ∈ T.verts) (hy : y ∈ T.verts) :
         exact hxy hzy
       exact ha z (T.reaches_parent_of_reaches_of_ne hzx hzx_ne) hzy
 
-private theorem isComponentRoot_unique {F : Set ι} {s₁ s₂ x : ι}
-    (h₁ : T.IsComponentRoot F s₁ x) (h₂ : T.IsComponentRoot F s₂ x) : s₁ = s₂ := by
-  by_contra hne
-  rcases T.reaches_total_of_reaches h₁.1 h₂.1 with h₁₂ | h₂₁
-  · rcases h₂.2.1 with rfl | hs₂F
-    · exact hne (T.reaches_root_iff.mp h₁₂)
-    · exact h₁.2.2 s₂ (Ne.symm hne) h₁₂ h₂.1 hs₂F
-  · rcases h₁.2.1 with rfl | hs₁F
-    · exact hne (T.reaches_root_iff.mp h₂₁).symm
-    · exact h₂.2.2 s₁ hne h₂₁ h₁.1 hs₁F
-
 private theorem exists_isComponentRoot_mem (F : Set ι) {x : ι} (hx : x ∈ T.verts) :
     ∃ s ∈ T.verts, T.IsComponentRoot F s x := by
   obtain ⟨n, hn⟩ := T.exists_iterate_eq_root x hx

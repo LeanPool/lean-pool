@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.Surface.Collar
 import LeanPool.GraphMinor.GM11.Section6
 import LeanPool.GraphMinor.Surface.Triangulate
 import Mathlib.Data.Fintype.EquivFin
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Finite disjoint disc families in a closed surface
@@ -29,22 +30,9 @@ namespace GraphMinor.GM12
 open Set Surface GM11
 
 /-- A topological circle has infinitely many points, in any universe. -/
-theorem infinite_oArc {X : Type*} [TopologicalSpace X] [T1Space X] {F : Set X}
-  (hF : IsOArc F) : F.Infinite := by
-  obtain ⟨φ⟩ := hF
-  have h1 : F = range (fun z => (φ z : X)) := by
-    ext x
-    exact ⟨fun hx => ⟨φ.symm ⟨x, hx⟩, by simp⟩, fun ⟨z, hz⟩ => hz ▸ (φ z).2⟩
-  have h2 : IsPreconnected F := by
-    rw [h1]
-    exact isPreconnected_range (continuous_subtype_val.comp φ.continuous)
-  refine IsPreconnected.infinite_of_nontrivial h2 ⟨φ 1, (φ 1).2, φ (Circle.exp Real.pi), (φ _).2,
-    fun h3 => ?_⟩
-  have h4 : (1 : Circle) = Circle.exp Real.pi := φ.injective (Subtype.ext h3)
-  have h5 : ((1 : Circle) : ℂ) = (Circle.exp Real.pi : ℂ) := congrArg _ h4
-  rw [Circle.coe_one, Circle.coe_exp, Complex.exp_pi_mul_I] at h5
-  norm_num at h5
-
+theorem infinite_oArc {X : Type*} [TopologicalSpace X] {F : Set X}
+    (hF : IsOArc F) : F.Infinite :=
+  hF.infinite
 
 /-- A nonempty closed surface contains any prescribed finite number
 of pairwise disjoint closed discs. -/

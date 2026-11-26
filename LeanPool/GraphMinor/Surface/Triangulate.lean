@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.Surface.Fan
 public import Mathlib.Topology.Separation.Connected
+import LeanPool.GraphMinor.Surface.Circle
 
 /-!
 # Triangulating a closed surface
@@ -298,20 +299,10 @@ theorem IsDissection.exists_halves {V : Set X} {E 𝓕 : Set (Set X)} (h : IsDis
       hinj₁.ncard_image]
     omega
 
-theorem isOArc_infinite {F : Set X} (hF : IsOArc F) : F.Infinite := by
-  obtain ⟨φ⟩ := hF
-  have h1 : F = range (fun z => (φ z : X)) := by
-    ext x
-    exact ⟨fun hx => ⟨φ.symm ⟨x, hx⟩, by simp⟩, fun ⟨z, hz⟩ => hz ▸ (φ z).2⟩
-  have h2 : IsPreconnected F := by
-    rw [h1]
-    exact isPreconnected_range (continuous_subtype_val.comp φ.continuous)
-  refine IsPreconnected.infinite_of_nontrivial h2 ⟨φ 1, (φ 1).2, φ (Circle.exp Real.pi), (φ _).2,
-    fun h3 => ?_⟩
-  have h4 : (1 : Circle) = Circle.exp Real.pi := φ.injective (Subtype.ext h3)
-  have h5 : ((1 : Circle) : ℂ) = (Circle.exp Real.pi : ℂ) := congrArg _ h4
-  rw [Circle.coe_one, Circle.coe_exp, Complex.exp_pi_mul_I] at h5
-  norm_num at h5
+omit [T2Space X] in
+/-- The boundary of a disc, or any other `O`-arc, has infinitely many points. -/
+theorem isOArc_infinite {F : Set X} (hF : IsOArc F) : F.Infinite :=
+  hF.infinite
 
 /-- Each face of a dissection has an edge on its boundary, so two vertices. -/
 theorem IsDissection.two_vertices {V : Set X} {E 𝓕 : Set (Set X)} (h : IsDissection V E 𝓕) {Φ : Set

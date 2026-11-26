@@ -339,6 +339,101 @@ theorem fence_cut_A_arc {Ω : CyclicPerm α} {A B W' : Set α}
     hsub_Bf (Ω.interval_subset_bar b'_0 a_0) disjoint_sdiff_self_right
   exact ⟨A_f, B_f, hfence_f, hA_arc_eq, hB_arc_sub, hG₁_sub, hG₂_sub⟩
 
+/-- Dual of `fence_cut_G₁`: cutting `G₁ = Ω.interval a'_0 b_0` at `x₁ ∈ G₁` so that `x₁ ∈ A_f`:
+`A_f := {a_0, x₁} ∪ Ω.interval a_0 x₁` and `B_f := Ω.interval x₁ a_0` satisfy
+`A_arc ∪ {x₁} ⊆ A_f` and `B_arc ∪ G₂ ⊆ B_f`. -/
+theorem fence_cut_G₁_dual {Ω : CyclicPerm α} {A B W' : Set α}
+    (hfence : Ω.IsFence A B) (hW' : W' ⊆ Ω.bar)
+    {a_0 a'_0 b_0 b'_0 x₁ : α}
+    (ha_0 : a_0 ∈ A ∩ W') (ha'_0 : a'_0 ∈ A ∩ W')
+    (hb_0 : b_0 ∈ B ∩ W') (hb'_0 : b'_0 ∈ B ∩ W')
+    (hd_ab : Disjoint (Ω.interval a'_0 b_0) W')
+    (hd_ba : Disjoint (Ω.interval b'_0 a_0) W')
+    (hx₁ : x₁ ∈ Ω.interval a'_0 b_0) :
+    let G₁ := Ω.interval a'_0 b_0
+    let G₂ := Ω.interval b'_0 a_0
+    let A_arc := ({a'_0} ∪ Ω.interval b'_0 a'_0) \ G₂
+    let B_arc := ({b'_0} ∪ Ω.interval a'_0 b'_0) \ G₁
+    ∃ A_f B_f : Set α, Ω.IsFence A_f B_f ∧
+      A_arc ⊆ A_f ∧ x₁ ∈ A_f ∧ B_arc ⊆ B_f ∧ G₂ ⊆ B_f := by
+  intro G₁ G₂ A_arc B_arc
+  obtain ⟨_, hB_sub, _, hG₁_sub_P₂, hdisj_P, _⟩ :=
+    four_arc_partition hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
+  have ha_0_bar : a_0 ∈ Ω.bar := hW' ha_0.2
+  have hx₁_bar : x₁ ∈ Ω.bar := hx₁.1.1
+  have ha'_0_in_a0b0 : a'_0 ∈ {a_0} ∪ Ω.interval a_0 b_0 := by
+    by_cases h_eq : a'_0 = a_0
+    · exact Or.inl h_eq
+    · exact Or.inr (Ω.mem_interval_rotate_left
+        (Ω.mem_interval_of_mem_B_of_disjoint_AB hfence.symm hW' hb'_0 ha_0 hd_ba
+          hb_0 ha'_0 h_eq).1)
+  have hG₁_sub_a0b0 : Ω.interval a'_0 b_0 ⊆ Ω.interval a_0 b_0 := by
+    rcases ha'_0_in_a0b0 with h_eq | ha'_in
+    · rw [mem_singleton_iff.mp h_eq]
+    · exact Ω.interval_subset_interval_right ha'_in
+  have hx₁_a0b0 : x₁ ∈ Ω.interval a_0 b_0 := hG₁_sub_a0b0 hx₁
+  have ha_0_ne_x₁ : a_0 ≠ x₁ := fun h => Ω.not_mem_interval_left a_0 b_0 (h ▸ hx₁_a0b0)
+  have hb_0_in_x₁a0 : b_0 ∈ Ω.interval x₁ a_0 := Ω.mem_interval_rotate_left hx₁_a0b0
+  have hQ₂_sub : {b_0} ∪ Ω.interval b_0 a_0 ⊆ Ω.interval x₁ a_0 := by
+    rintro z (rfl | hz)
+    · exact hb_0_in_x₁a0
+    · exact Ω.interval_subset_interval_right hb_0_in_x₁a0 hz
+  have hb'_0_in_b0a0 : b'_0 ∈ {b_0} ∪ Ω.interval b_0 a_0 := by
+    by_cases h_eq : b'_0 = b_0
+    · exact Or.inl h_eq
+    · exact Or.inr (Ω.mem_interval_rotate_left
+        (Ω.mem_interval_of_mem_B_of_disjoint_AB hfence hW' ha'_0 hb_0 hd_ab
+          ha_0 hb'_0 h_eq).1)
+  have hG₂_sub_b0a0 : Ω.interval b'_0 a_0 ⊆ Ω.interval b_0 a_0 := by
+    rcases hb'_0_in_b0a0 with h_eq | hb'_in
+    · rw [mem_singleton_iff.mp h_eq]
+    · exact Ω.interval_subset_interval_right hb'_in
+  have hB_arc_sub_Q₂ : B_arc ⊆ {b_0} ∪ Ω.interval b_0 a_0 := by
+    rintro z ⟨rfl | hz_in, hz_not_G₁⟩
+    · exact hb'_0_in_b0a0
+    · have hb_0_in_P₂ : b_0 ∈ {b'_0} ∪ Ω.interval a'_0 b'_0 := (hB_sub hb_0).1
+      rcases hb_0_in_P₂ with h_eq | hb_0_in
+      · rw [← mem_singleton_iff.mp h_eq] at hz_in
+        exact (hz_not_G₁ hz_in).elim
+      · rw [Ω.interval_eq_union_of_mem hb_0_in] at hz_in
+        rcases hz_in with (hz_G₁ | rfl) | hz_b0b'
+        · exact (hz_not_G₁ hz_G₁).elim
+        · exact Or.inl rfl
+        · rcases hb'_0_in_b0a0 with h_eq | hb'_in
+          · exact (Ω.not_mem_interval_right a'_0 b'_0 (h_eq ▸ hb_0_in)).elim
+          · exact Or.inr (Ω.interval_subset_interval_left hb'_in hz_b0b')
+  have hfence_f : Ω.IsFence ({a_0, x₁} ∪ Ω.interval a_0 x₁) (Ω.interval x₁ a_0) :=
+    Ω.isFence_interval_compl ha_0_bar hx₁_bar ha_0_ne_x₁
+  have hA_arc_sub_Af : A_arc ⊆ {a_0, x₁} ∪ Ω.interval a_0 x₁ := by
+    rintro z ⟨hz_P₁, hz_not_G₂⟩
+    have hz_bar : z ∈ Ω.bar := by
+      rcases hz_P₁ with rfl | hz
+      · exact hW' ha'_0.2
+      · exact hz.1.1
+    have hz_union : z ∈ ({a_0, x₁} ∪ Ω.interval a_0 x₁) ∪ Ω.interval x₁ a_0 :=
+      hfence_f.2.2.2.1.symm ▸ hz_bar
+    refine hz_union.resolve_right fun hz_Bf => ?_
+    rw [Ω.interval_eq_union_of_mem hb_0_in_x₁a0] at hz_Bf
+    rcases hz_Bf with (hz_x₁b0 | rfl) | hz_b0a0
+    · have hz_G₁ : z ∈ Ω.interval a'_0 b_0 := Ω.interval_subset_interval_right hx₁ hz_x₁b0
+      exact disjoint_left.mp hdisj_P hz_P₁ (Or.inr (hG₁_sub_P₂ hz_G₁))
+    · exact disjoint_left.mp hdisj_P hz_P₁ (hB_sub hb_0).1
+    · rcases hb'_0_in_b0a0 with h_eq | hb'_in
+      · rw [← mem_singleton_iff.mp h_eq] at hz_b0a0
+        exact hz_not_G₂ hz_b0a0
+      · rw [Ω.interval_eq_union_of_mem hb'_in] at hz_b0a0
+        rcases hz_b0a0 with (hz_b0b' | rfl) | hz_G₂
+        · have hb_0_in_P₂ : b_0 ∈ {b'_0} ∪ Ω.interval a'_0 b'_0 := (hB_sub hb_0).1
+          have hb_0_a'b' : b_0 ∈ Ω.interval a'_0 b'_0 :=
+            hb_0_in_P₂.resolve_left fun h => Ω.not_mem_interval_left b_0 a_0 (h ▸ hb'_in)
+          exact disjoint_left.mp hdisj_P hz_P₁
+            (Or.inr (Ω.interval_subset_interval_right hb_0_a'b' hz_b0b'))
+        · exact disjoint_left.mp hdisj_P hz_P₁ (Or.inl rfl)
+        · exact hz_not_G₂ hz_G₂
+  exact ⟨{a_0, x₁} ∪ Ω.interval a_0 x₁, Ω.interval x₁ a_0, hfence_f,
+    hA_arc_sub_Af, Or.inl (Or.inr rfl), hB_arc_sub_Q₂.trans hQ₂_sub,
+    hG₂_sub_b0a0.trans (subset_union_right.trans hQ₂_sub)⟩
+
 private theorem fence_for_two_switches_of_first_nonmember {Ω : CyclicPerm α} {A B W' : Set α}
     (hfence : Ω.IsFence A B) (hW' : W' ⊆ Ω.bar)
     {a_0 a'_0 b_0 b'_0 x₁ x₂ u u' : α}
@@ -371,98 +466,10 @@ private theorem fence_for_two_switches_of_first_nonmember {Ω : CyclicPerm α} {
       fence_cut_G₁ hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba hx₁
     exact ⟨A_f, B_f, hff, hA_sub.trans hAf, hB_sub.trans hBf,
       Or.inl ⟨hAf huA, hx₁f⟩, Or.inr ⟨hG₂f hx₂, hBf hu'B⟩⟩
-  · -- `u ∈ B_arc` and `u' ∈ A_arc`: apply `fence_cut_G₁` to `(B, A)` at `x₂ ∈ G₂`?
-    -- Wait: in `(B, A)` at `x₂ ∈ G₂`, `B_arc` and `G₁` are on one side, and `A_arc` and `{x₂}` on
-    -- the other!
-    -- Instead, apply `fence_cut_G₁` to `(A, B)`? No: `fence_cut_G₁` puts `A_arc ∪ G₂` in `A_f` and
-    -- `B_arc ∪ {x₁}` in `B_f`.
-    -- We want `A_arc ∪ {x₁}` in `A_f` and `B_arc ∪ G₂` in `B_f`, which is `A_f := {a_0, x₁} ∪
-    -- Ω.interval a_0 x₁` and `B_f := Ω.interval x₁ a_0`!
-    have ha_0_bar : a_0 ∈ Ω.bar := hW' ha_0.2
-    have hx₁_bar : x₁ ∈ Ω.bar := hx₁.1.1
-    have ha'_0_in_a0b0 : a'_0 ∈ {a_0} ∪ Ω.interval a_0 b_0 := by
-      by_cases h_eq : a'_0 = a_0
-      · exact Or.inl h_eq
-      · exact Or.inr (Ω.mem_interval_rotate_left
-          (Ω.mem_interval_of_mem_B_of_disjoint_AB hfence.symm hW' hb'_0 ha_0 hd_ba
-            hb_0 ha'_0 h_eq).1)
-    have hG₁_sub_a0b0 : Ω.interval a'_0 b_0 ⊆ Ω.interval a_0 b_0 := by
-      rcases ha'_0_in_a0b0 with h_eq | ha'_in
-      · rw [mem_singleton_iff.mp h_eq]
-      · exact Ω.interval_subset_interval_right ha'_in
-    have hx₁_a0b0 : x₁ ∈ Ω.interval a_0 b_0 := hG₁_sub_a0b0 hx₁
-    have ha_0_ne_x₁ : a_0 ≠ x₁ := fun h => Ω.not_mem_interval_left a_0 b_0 (h ▸ hx₁_a0b0)
-    have hb_0_in_x₁a0 : b_0 ∈ Ω.interval x₁ a_0 := Ω.mem_interval_rotate_left hx₁_a0b0
-    have hQ₂_sub : {b_0} ∪ Ω.interval b_0 a_0 ⊆ Ω.interval x₁ a_0 := by
-      rintro z (rfl | hz)
-      · exact hb_0_in_x₁a0
-      · exact Ω.interval_subset_interval_right hb_0_in_x₁a0 hz
-    have hb'_0_in_b0a0 : b'_0 ∈ {b_0} ∪ Ω.interval b_0 a_0 := by
-      by_cases h_eq : b'_0 = b_0
-      · exact Or.inl h_eq
-      · exact Or.inr (Ω.mem_interval_rotate_left
-          (Ω.mem_interval_of_mem_B_of_disjoint_AB hfence hW' ha'_0 hb_0 hd_ab
-            ha_0 hb'_0 h_eq).1)
-    have hG₂_sub_b0a0 : Ω.interval b'_0 a_0 ⊆ Ω.interval b_0 a_0 := by
-      rcases hb'_0_in_b0a0 with h_eq | hb'_in
-      · rw [mem_singleton_iff.mp h_eq]
-      · exact Ω.interval_subset_interval_right hb'_in
-    have hB_arc_sub_Q₂ : ({b'_0} ∪ Ω.interval a'_0 b'_0) \ Ω.interval a'_0 b_0 ⊆
-        {b_0} ∪ Ω.interval b_0 a_0 := by
-      rintro z ⟨rfl | hz_in, hz_not_G₁⟩
-      · exact hb'_0_in_b0a0
-      · have hb_0_in_P₂ : b_0 ∈ {b'_0} ∪ Ω.interval a'_0 b'_0 := (hB_sub hb_0).1
-        rcases hb_0_in_P₂ with h_eq | hb_0_in
-        · rw [← mem_singleton_iff.mp h_eq] at hz_in
-          exact (hz_not_G₁ hz_in).elim
-        · rw [Ω.interval_eq_union_of_mem hb_0_in] at hz_in
-          rcases hz_in with (hz_G₁ | rfl) | hz_b0b'
-          · exact (hz_not_G₁ hz_G₁).elim
-          · exact Or.inl rfl
-          · rcases hb'_0_in_b0a0 with h_eq | hb'_in
-            · exact (Ω.not_mem_interval_right a'_0 b'_0 (h_eq ▸ hb_0_in)).elim
-            · exact Or.inr (Ω.interval_subset_interval_left hb'_in hz_b0b')
-    have hfence_f : Ω.IsFence ({a_0, x₁} ∪ Ω.interval a_0 x₁) (Ω.interval x₁ a_0) :=
-      Ω.isFence_interval_compl ha_0_bar hx₁_bar ha_0_ne_x₁
-    have hA_arc_sub_Af : ({a'_0} ∪ Ω.interval b'_0 a'_0) \ Ω.interval b'_0 a_0 ⊆
-        {a_0, x₁} ∪ Ω.interval a_0 x₁ := by
-      rintro z ⟨hz_P₁, hz_not_G₂⟩
-      have hz_bar : z ∈ Ω.bar := by
-        rcases hz_P₁ with rfl | hz
-        · exact hW' ha'_0.2
-        · exact hz.1.1
-      have hz_union : z ∈ ({a_0, x₁} ∪ Ω.interval a_0 x₁) ∪ Ω.interval x₁ a_0 :=
-        hfence_f.2.2.2.1.symm ▸ hz_bar
-      refine hz_union.resolve_right fun hz_Bf => ?_
-      rw [Ω.interval_eq_union_of_mem hb_0_in_x₁a0] at hz_Bf
-      rcases hz_Bf with (hz_x₁b0 | rfl) | hz_b0a0
-      · have hz_G₁ : z ∈ Ω.interval a'_0 b_0 := Ω.interval_subset_interval_right hx₁ hz_x₁b0
-        obtain ⟨_, _, _, hG₁_sub_P₂, hdisj_P, _⟩ :=
-          four_arc_partition hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-        exact disjoint_left.mp hdisj_P hz_P₁ (Or.inr (hG₁_sub_P₂ hz_G₁))
-      · obtain ⟨_, _, _, _, hdisj_P, _⟩ :=
-          four_arc_partition hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-        exact disjoint_left.mp hdisj_P hz_P₁ (hB_sub hb_0).1
-      · rcases hb'_0_in_b0a0 with h_eq | hb'_in
-        · rw [← mem_singleton_iff.mp h_eq] at hz_b0a0
-          exact hz_not_G₂ hz_b0a0
-        · rw [Ω.interval_eq_union_of_mem hb'_in] at hz_b0a0
-          rcases hz_b0a0 with (hz_b0b' | rfl) | hz_G₂
-          · obtain ⟨_, _, _, _, hdisj_P, _⟩ :=
-              four_arc_partition hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-            have hb_0_in_P₂ : b_0 ∈ {b'_0} ∪ Ω.interval a'_0 b'_0 := (hB_sub hb_0).1
-            have hb_0_a'b' : b_0 ∈ Ω.interval a'_0 b'_0 :=
-              hb_0_in_P₂.resolve_left fun h => Ω.not_mem_interval_left b_0 a_0 (h ▸ hb'_in)
-            exact disjoint_left.mp hdisj_P hz_P₁
-              (Or.inr (Ω.interval_subset_interval_right hb_0_a'b' hz_b0b'))
-          · obtain ⟨_, _, _, _, hdisj_P, _⟩ :=
-              four_arc_partition hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba
-            exact disjoint_left.mp hdisj_P hz_P₁ (Or.inl rfl)
-          · exact hz_not_G₂ hz_G₂
-    exact ⟨{a_0, x₁} ∪ Ω.interval a_0 x₁, Ω.interval x₁ a_0, hfence_f,
-      hA_sub.trans hA_arc_sub_Af, hB_sub.trans (hB_arc_sub_Q₂.trans hQ₂_sub),
-      Or.inr ⟨Or.inl (Or.inr rfl), hQ₂_sub (hB_arc_sub_Q₂ huB)⟩,
-      Or.inl ⟨hA_arc_sub_Af hu'A, hQ₂_sub (Or.inr (hG₂_sub_b0a0 hx₂))⟩⟩
+  · obtain ⟨A_f, B_f, hff, hAf, hx₁f, hBf, hG₂f⟩ :=
+      fence_cut_G₁_dual hfence hW' ha_0 ha'_0 hb_0 hb'_0 hd_ab hd_ba hx₁
+    exact ⟨A_f, B_f, hff, hA_sub.trans hAf, hB_sub.trans hBf,
+      Or.inr ⟨hx₁f, hBf huB⟩, Or.inl ⟨hAf hu'A, hG₂f hx₂⟩⟩
   · -- `u ∈ B_arc` and `u' ∈ B_arc`: use `fence_cut_A_arc` on `(B, A)`.
     obtain ⟨B_f, A_f, hff, hBf, hAf, hG₂f, hG₁f⟩ :=
       fence_cut_A_arc hfence.symm hW' hb_0 hb'_0 ha_0 ha'_0 hd_ba hd_ab huB hu_not_W'

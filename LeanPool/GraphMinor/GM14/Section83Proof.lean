@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM14.Defs
 import LeanPool.GraphMinor.GM14.Section8a
+import LeanPool.GraphMinor.GM14.Section8Core
 import LeanPool.GraphMinor.GM09.Basic
 import LeanPool.GraphMinor.GM09.Section2a
 import LeanPool.GraphMinor.GM09.Section2d
@@ -54,49 +55,6 @@ universe u v
 variable {α : Type u} {β : Type v}
 
 /-! ## 1. Refinement of GM09 (5.2) for `p = 2` with `2` Separating Paths -/
-
-/-- A crooked transaction `{P₁, P₂}` with `P₁ ≠ P₂` is a cross: `S.OmegaPathsCross P₁ P₂`. -/
-private theorem omegaPathsCross_of_isCrookedTransaction_pair (S : Society α β)
-    {P₁ P₂ : Graph α β} (hne : P₁ ≠ P₂) (hcr : S.IsCrookedTransaction {P₁, P₂}) :
-    S.OmegaPathsCross P₁ P₂ := by
-  obtain ⟨⟨A, B, hF⟩, hnp⟩ := hcr
-  obtain ⟨a₁, -, b₁, -, h₁⟩ := hF.2.2 P₁ (Or.inl rfl)
-  obtain ⟨a₂, -, b₂, -, h₂⟩ := hF.2.2 P₂ (Or.inr rfl)
-  have hdisj : Disjoint V(P₁) V(P₂) := hF.1.2 (Or.inl rfl) (Or.inr rfl) hne
-  have hends : ∀ v ∈ S.transactionEnds {P₁, P₂}, (v = a₁ ∨ v = b₁) ∨ (v = a₂ ∨ v = b₂) := by
-    rintro v ⟨P, hP, b, hv⟩
-    have hmem : v ∈ pathEnds S.G P := by
-      rw [hv.1.pathEnds_eq]
-      exact Or.inl rfl
-    rcases hP with rfl | rfl
-    · rw [h₁.1.pathEnds_eq] at hmem
-      exact Or.inl hmem
-    · rw [h₂.1.pathEnds_eq] at hmem
-      exact Or.inr hmem
-  have hnd₁ : ¬ Disjoint (S.Ω.interval a₁ b₁) (S.transactionEnds {P₁, P₂}) := fun hd =>
-    hnp P₁ (Or.inl rfl) ⟨Or.inl rfl, a₁, b₁, h₁, Or.inl hd⟩
-  have hnd₂ : ¬ Disjoint (S.Ω.interval b₁ a₁) (S.transactionEnds {P₁, P₂}) := fun hd =>
-    hnp P₁ (Or.inl rfl) ⟨Or.inl rfl, a₁, b₁, h₁, Or.inr hd⟩
-  obtain ⟨x, hx, hxe⟩ := Set.not_disjoint_iff.mp hnd₁
-  obtain ⟨y, hy, hye⟩ := Set.not_disjoint_iff.mp hnd₂
-  have hxe' : x = a₂ ∨ x = b₂ := by
-    rcases hends x hxe with (rfl | rfl) | h
-    · exact (S.Ω.not_mem_interval_left _ _ hx).elim
-    · exact (S.Ω.not_mem_interval_right _ _ hx).elim
-    · exact h
-  have hye' : y = a₂ ∨ y = b₂ := by
-    rcases hends y hye with (rfl | rfl) | h
-    · exact (S.Ω.not_mem_interval_right _ _ hy).elim
-    · exact (S.Ω.not_mem_interval_left _ _ hy).elim
-    · exact h
-  have hxy : x ≠ y := fun h =>
-    Set.disjoint_left.mp (S.Ω.disjoint_interval_swap a₁ b₁) hx (h ▸ hy)
-  refine ⟨hdisj, a₁, b₁, a₂, b₂, h₁, h₂, S.Ω.crosses_iff_interval.mpr ?_⟩
-  rcases hxe' with rfl | rfl <;> rcases hye' with rfl | rfl
-  · exact (hxy rfl).elim
-  · exact Or.inl ⟨hx, hy⟩
-  · exact Or.inr ⟨hx, hy⟩
-  · exact (hxy rfl).elim
 
 /-- A transaction of cardinality `2` has no overpass. -/
 private theorem not_isOverpass_of_ncard_eq_two (S : Society α β)
@@ -156,7 +114,7 @@ private theorem halfCovered_of_ncard_eq_two (S : Society α β)
     · rintro (rfl | rfl) <;> assumption
   have hcr_pair : S.IsCrookedTransaction {P₁, P₂} := hP_set_eq ▸ hcr
   have hcross : S.OmegaPathsCross P₁ P₂ :=
-    omegaPathsCross_of_isCrookedTransaction_pair S hP12 hcr_pair
+    Society.omegaPathsCross_of_isCrookedTransaction_pair S hP12 hcr_pair
   have hdisj_P₂Q : Disjoint V(P₂) V(Q) := by
     by_contra hnot
     rw [not_disjoint_iff_nonempty_inter] at hnot

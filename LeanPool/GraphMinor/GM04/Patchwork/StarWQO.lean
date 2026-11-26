@@ -44,7 +44,7 @@ universe u v w u₁ u₂
 
 variable {Ω : Type w} [Preorder Ω] {α β ι : Type*}
 
-/-! ### Universe-polymorphic and partitioned Higman (8.3) helpers -/
+/-! ### Universe-polymorphic and partitioned helpers for labelled Higman -/
 
 open Classical in
 /-- A wrapper equipping `Σ i : ℕ, Fin (X i).card` with the pullback preorder of `ℓ`. -/

@@ -127,7 +127,7 @@ theorem clampRamp_strict {a b m m' : ℝ} (hab : a < b) (he : clampRamp a b m = 
 variable {S : Type u} [TopologicalSpace S]
 
 /-- A path contains no `O`-arc. -/
-theorem no_oArc_of_path [T1Space S] [T2Space S] {P : Drawing S} {a b : S}
+theorem no_oArc_of_path [T2Space S] {P : Drawing S} {a b : S}
   (hP : P.IsPathBetween a b) {J : Set S} (hJ : IsOArc J) (hs : J ⊆ P.U) : False := by
   by_cases hab : a = b
   · subst hab

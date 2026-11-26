@@ -229,9 +229,6 @@ private theorem invAt_injective (a : ℂ) : Function.Injective (invAt a) := by
 
 private theorem invAt_zero (a : ℂ) : invAt a 0 = a := by simp [invAt]
 
-private theorem invAt_ne {a w : ℂ} (hw : w ≠ 0) : invAt a w ≠ a := fun h =>
-  hw ((invAt_injective a) (h.trans (invAt_zero a).symm))
-
 private theorem continuousOn_invAt (a : ℂ) {A : Set ℂ} (hA : (0 : ℂ) ∉ A) :
     ContinuousOn (invAt a) A :=
   continuousOn_const.add (continuousOn_id.inv₀ fun _ hz h => hA (h ▸ hz))

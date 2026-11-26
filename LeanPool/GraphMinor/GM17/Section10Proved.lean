@@ -50,12 +50,6 @@ universe u v
 
 /-! ## 1. Helper Lemmas on Walks and Subhypergraphs -/
 
-private lemma walk_skeleton_mono {α : Type u} {β : Type v}
-    {H₁ H₂ : Hypergraph α β} (h : H₁ ≤ H₂) {u v : α}
-    (W : H₁.skeleton.Walk u v) :
-    ∃ W' : H₂.skeleton.Walk u v, W'.support = W.support :=
-  ⟨W.map (SimpleGraph.Hom.ofLE (skeleton_le_of_le h)), by simp⟩
-
 private lemma walk_support_subset_vertexSet {α : Type u} {β : Type v}
     {H : Hypergraph α β} {u v : α} (hu : u ∈ H.vertexSet)
     (W : H.skeleton.Walk u v) :

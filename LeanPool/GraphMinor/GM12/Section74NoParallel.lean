@@ -77,35 +77,10 @@ theorem no_parallel_spokes_in_theorem_7_4_base
     {g h r : Set S} {u : S} (hg : g ∈ K.E) (hh : h ∈ K.E) (hgh : g ≠ h)
     (hr : r ∈ Γ.R) (hur : u ∈ r) (huK : u ∈ K.V)
     (hcapg : closure g ∩ K.V = {v, u}) (hcaph : closure h ∩ K.V = {v, u}) : False := by
-  let F := closure g ∪ closure h
-  have hvu : v ≠ u := fun h => region_subset hr (h ▸ hur) (Γ.V_subset_U hv)
-  have hLg := isLine_closure hg hvu hcapg
-  have hLh := isLine_closure hh hvu hcaph
-  have hF : IsOArc F := isOArc_union hLg hLh fun x hx =>
-    hcapg.subset ⟨hx.1, closure_inter_subset_V hg hh hgh hx⟩
-  have hFZ : F ⊆ r ∪ {v} := union_subset
-    (closure_spoke_subset_region_vertex hS hT.1 hK hg hr hur hcapg)
-    (closure_spoke_subset_region_vertex hS hT.1 hK hh hr hur hcaph)
-  have hvF : v ∈ F := Or.inl (hcapg.superset (Or.inl rfl)).1
-  have hn : (PaintingOrDrawing.drawing Γ).IsNormal F := by
-    rintro x ⟨hxF, hxΓ⟩
-    rcases hFZ hxF with hxr | hxv
-    · exact (region_subset hr hxr hxΓ).elim
-    · exact hxv ▸ hv
-  have hFV : F ∩ Γ.V = {v} := by
-    apply Subset.antisymm
-    · rintro x ⟨hxF, hxV⟩
-      exact (hFZ hxF).resolve_left (fun hxr => region_subset hr hxr (Γ.V_subset_U hxV))
-    · exact singleton_subset_iff.mpr ⟨hvF, hv⟩
-  obtain ⟨D, hD, hbd, hm⟩ := hT.2.2.2 F hF hn
-    (by change (F ∩ Γ.V).ncard < θ; rw [hFV, ncard_singleton]; omega)
+  apply parallel_spokes_contradiction hS hθ hT hK hv hg hh hgh hr hur huK hcapg hcaph
+  intro D F hD hF hbd hn hFV _ hm
   have hE : Γ.E.Nonempty := edgeSet_nonempty_of_isTangle_of_two_le hT.2.1 hθ
-  have hVD := vertices_in_normal_vertex_disc_of_no_edges hS ⟨hT.1, hK⟩ hE hD hbd hn hFV
-    (hno D F hD hF hbd hn hFV hm)
-  have hDb : discBd D = F := (IsClosedDisc.frontier_eq_discBd hS hD).symm.trans
-    ((subBd_eq_frontier D).symm.trans hbd)
-  have hDr : D ⊆ r ∪ {v} := disc_subset_region_vertex_of_no_edges hS hD hDb hvF hn hVD hr
-    (fun x hx => (hFZ hx.1).resolve_right hx.2) (hno D F hD hF hbd hn hFV hm)
-  exact hK.2.2.2.2.2 g hg h hh hgh v hv r hr u ⟨hur, huK⟩ hcapg hcaph ⟨D, hD, hDr, hbd⟩
+  have hnone := hno D F hD hF hbd hn hFV hm
+  exact ⟨vertices_in_normal_vertex_disc_of_no_edges hS ⟨hT.1, hK⟩ hE hD hbd hn hFV hnone, hnone⟩
 
 end GraphMinor.GM12

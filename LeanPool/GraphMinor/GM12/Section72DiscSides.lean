@@ -38,7 +38,7 @@ private theorem eq_discInt_of_two_sides
     {X : Type*} [TopologicalSpace X]
     {B C O T : Set X} (hB : IsClosedDisc B) (hC : IsClosedDisc C)
     (hbB : discBd B = O) (hbC : discBd C = O)
-    (hu : B ∪ C = univ) (_hi : B ∩ C = O)
+    (hu : B ∪ C = univ)
     (hTo : IsOpen T) (hclT : closure T ⊆ T ∪ O) (hdis : Disjoint T O)
     (hne : T.Nonempty) (hout : ∃ z, z ∉ O ∧ z ∉ T) :
     T = discInt B ∨ T = discInt C := by
@@ -164,9 +164,9 @@ theorem theorem_7_2_disc_side (hS : IsClosedSurface S)
     · exact fun hpO => hpD.2 (Surface.discBd_subset Δ (hO_in hpr hpO))
     · rintro ⟨x, hx, hxp⟩
       exact hpD.2 (hinj hx.2 hpr hxp ▸ hx.1.1)
-  obtain ⟨B, C, _, hB, hC, hbB, hbC, hu, hi, _, _⟩ :=
+  obtain ⟨B, C, _, hB, hC, hbB, hbC, hu, _, _, _⟩ :=
     sphere_disc (OnePoint r) (isSphere_onePoint hr) O hO
-  rcases eq_discInt_of_two_sides hB hC hbB hbC hu hi hTo hclT hdis hne hout with h | h
+  rcases eq_discInt_of_two_sides hB hC hbB hbC hu hTo hclT hdis hne hout with h | h
   · exact ⟨B, hB, hbB, h⟩
   · exact ⟨C, hC, hbC, h⟩
 

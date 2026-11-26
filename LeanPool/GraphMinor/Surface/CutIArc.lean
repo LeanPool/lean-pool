@@ -215,6 +215,123 @@ theorem length_erase_erase {c i j : ℕ} (hij : i ≠ j) (hi : i < c) (hj : j < 
     List.mem_range'_1.mpr (by omega)⟩), length_erase_range hi]
   omega
 
+/-- Classify both surfaces of a connected cut along a proper `I`-arc by normalizing the gluing
+word. Except in the case of merging two ambient cuffs, the endpoints are in the same cuff. -/
+theorem connected_cut_arc_models {S Y : Type u} [TopologicalSpace S] [TopologicalSpace Y]
+    [T2Space S] {ψ : Y → S} {F : Set S} {s t : S} {X X' : Set Y}
+    (hY : IsSurface Y) (hYc : ConnectedSpace Y) (hψ : IsCutting ψ F)
+    (hP : LiftPair ψ F s t X X') (hFc : IsClosed F) (hsb : s ∈ bd S) (htb : t ∈ bd S) :
+    ∃ a b c : ℕ, 0 < c ∧ Nonempty (Y ≃ₜ SurfaceModel a b c) ∧
+      (Nonempty (S ≃ₜ SurfaceModel a b (c + 1)) ∨
+        connectedComponentIn (bd S) s = connectedComponentIn (bd S) t ∧
+          (Nonempty (S ≃ₜ SurfaceModel a (b + 1) c) ∨
+            2 ≤ c ∧ (Nonempty (S ≃ₜ SurfaceModel (a + 1) b (c - 2 + 1)) ∨
+              Nonempty (S ≃ₜ SurfaceModel a (b + 2) (c - 2 + 1))))) := by
+  have : CompactSpace Y := hY.1
+  have : T2Space Y := hY.2.1
+  have hPc := hP
+  obtain ⟨-, -, -, -, -, -, hd, hun, -, -, -, -, -, -⟩ := hP
+  obtain ⟨a₀, ξ, η, L, ha0, ha1, himξ, himη, hiξ, hiη⟩ := exists_arcLift hPc hψ
+  have hub : ψ ⁻¹' F = ξ '' Icc 0 1 ∪ η '' Icc 0 1 := by rw [himξ, himη, hun]
+  have hXb : X ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hun ▸ Or.inl hz)
+  have hXb' : X' ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hun ▸ Or.inr hz)
+  have pX : IsPreconnected X := himξ ▸ isPreconnected_Icc.image _ L.cξ
+  have pX' : IsPreconnected X' := himη ▸ isPreconnected_Icc.image _ L.cη
+  have hex : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
+  have hx : ξ 0 ∈ X := himξ ▸ ⟨0, hex, rfl⟩
+  have hy : η 0 ∈ X' := himη ▸ ⟨0, hex, rfl⟩
+  have hξm : ∀ u ∈ Icc (0 : ℝ) 1, ξ u ∈ X := fun u hu => himξ ▸ ⟨u, hu, rfl⟩
+  have hηm : ∀ u ∈ Icc (0 : ℝ) 1, η u ∈ X' := fun u hu => himη ▸ ⟨u, hu, rfl⟩
+  have hdcuff := cuff_statement.{u} Y hY
+  have hdc : ∀ {C : Set Y}, C ∈ cuffs Y → C ⊆ bd Y := fun {C} hC => by
+    obtain ⟨z, -, rfl⟩ := hC
+    exact connectedComponentIn_subset _ _
+  obtain ⟨a, b, c, ⟨e⟩⟩ := classification.{u} Y hY hYc
+  have hC : connectedComponentIn (bd Y) (ξ 0) ∈ cuffs Y := ⟨_, hXb hx, rfl⟩
+  have hC' : connectedComponentIn (bd Y) (η 0) ∈ cuffs Y := ⟨_, hXb' hy, rfl⟩
+  have hXC := pX.subset_connectedComponentIn hx hXb
+  have hXC' := pX'.subset_connectedComponentIn hy hXb'
+  by_cases hCC : connectedComponentIn (bd Y) (ξ 0) = connectedComponentIn (bd Y) (η 0)
+  · obtain ⟨i, hi, φ, g, hg, hs⟩ := exists_one_hole e hC
+    obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
+      (fun u hu => hXC (hξm u hu)) hiξ hiη
+    obtain ⟨hN, hLf⟩ := erase_facts c i
+    have hξ' : ∀ u ∈ Icc (0 : ℝ) 1, ξ' u ∈ X := fun u hu => by
+      rw [← himξ, ← hxim]
+      exact ⟨u, hu, rfl⟩
+    have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
+      rw [← himη, ← heim]
+      exact ⟨u, hu, rfl⟩
+    have hub' : ψ ⁻¹' F = ξ' '' Icc 0 1 ∪ η' '' Icc 0 1 := by rw [hxim, heim, hub]
+    obtain ⟨σ, g', hp, -, p, q, hpq, e1, e2, e3⟩ := arc_one_aux hY L' hψ.1 hψ.2.1 hC φ hi hLf hg
+      hs hmc hmm hmξ
+      (fun u hu => hCC ▸ hXC' (hη' u hu)) hix hie (fun u hu v hv he => Set.disjoint_left.mp hd
+        (hξ' u hu) (he ▸ hη' v hv))
+    have hn := nf_blkB (a := a) (b := b) (c := c) hi hN hLf σ
+    have hlen := length_erase_range hi
+    have : Nonempty S := ⟨s⟩
+    cases σ with
+    | false =>
+      obtain ⟨w, h5, h6⟩ := hn.1 rfl
+      obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
+      rw [hlen, show c - 1 + 2 = c + 1 by omega] at e'
+      exact ⟨a, b, c, by omega, ⟨e⟩, Or.inl ⟨e'⟩⟩
+    | true =>
+      obtain ⟨w, h5, h6⟩ := hn.2 rfl
+      obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
+      rw [hlen, show c - 1 + 1 = c by omega] at e'
+      have h0 : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
+      have hb1 : ψ (φ (ee p)).1 = a' 1 := by rw [e1, L'.hξ 1 h0]
+      have hb2 : ψ (φ (ee q)).1 = a' 0 := by
+        rw [e2, ofs_true, L'.hη 0 hex]
+      have hends : a' 0 ∈ bd S ∧ a' 1 ∈ bd S := by
+        rcases ha' with ⟨h2, h3⟩ | ⟨h2, h3⟩ <;> rw [h2, h3, ha0, ha1]
+          <;> exact ⟨by assumption, by assumption⟩
+      have key := same_of_gap hψ hFc (hdc hC) φ hpq (fun v hv hF' => by
+        have hm' : (φ (ee v)).1 ∈ ψ ⁻¹' F := hF'
+        rw [hub'] at hm'
+        rcases hm' with ⟨u, hu, hu'⟩ | ⟨u, hu, hu'⟩
+        · exact (e3 v hv u hu).1 hu'.symm
+        · exact (e3 v hv u hu).2 hu'.symm) (hb1 ▸ hends.2) (hb2 ▸ hends.1)
+      rw [hb1, hb2] at key
+      have same : connectedComponentIn (bd S) s = connectedComponentIn (bd S) t := by
+        rcases ha' with ⟨h2, h3⟩ | ⟨h2, h3⟩
+        · rw [h2, h3, ha0, ha1] at key
+          exact key.symm
+        · rw [h2, h3, ha0, ha1] at key
+          exact key
+      exact ⟨a, b, c, by omega, ⟨e⟩, Or.inr ⟨same, Or.inl ⟨e'⟩⟩⟩
+  · have hdis := cuffs_disjoint hC hC' hCC
+    obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
+    have same := same_of_cuff hψ hFc L (hdc hC) φ₀ (fun u hu => hXC (hξm u hu)) hiξ hiη
+      (fun u hu hm => Set.disjoint_left.mp hdis hm (hXC' (hηm u hu))) hub (ha0 ▸ hsb) (ha1 ▸ htb)
+    rw [ha0, ha1] at same
+    obtain ⟨i, hi, j, hj, hij, φ, φ', g, hg, hs, hs'⟩ := exists_two_holes e hC hC' hCC
+    obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
+      (fun u hu => hXC (hξm u hu)) hiξ hiη
+    obtain ⟨hN, hLf⟩ := erase_erase_facts c i j
+    have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
+      rw [← himη, ← heim]
+      exact ⟨u, hu, rfl⟩
+    obtain ⟨σ, g', hp, -⟩ := arc_two_aux hY L' hψ.1 hψ.2.1 hC hC' (hdcuff.2.2 _
+      hC).isCompact.isClosed
+      (hdcuff.2.2 _ hC').isCompact.isClosed hdis φ φ' hij hi hj hLf hg hs hs' hmc hmm hmξ
+        (fun u hu => hXC' (hη' u hu)) hix hie
+    have hn := nf_blkA (a := a) (b := b) (c := c) hij hi hj hN hLf σ
+    have hlen := length_erase_erase hij hi hj
+    have : Nonempty S := ⟨s⟩
+    cases σ with
+    | false =>
+      obtain ⟨w, h5, h6⟩ := hn.1 rfl
+      obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
+      rw [hlen] at e'
+      exact ⟨a, b, c, by omega, ⟨e⟩, Or.inr ⟨same, Or.inr ⟨by omega, Or.inl ⟨e'⟩⟩⟩⟩
+    | true =>
+      obtain ⟨w, h5, h6⟩ := hn.2 rfl
+      obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
+      rw [hlen] at e'
+      exact ⟨a, b, c, by omega, ⟨e⟩, Or.inr ⟨same, Or.inr ⟨by omega, Or.inr ⟨e'⟩⟩⟩⟩
+
 /-- **Cutting along an `I`-arc.** The classical cut and paste proof: Massey, *Algebraic Topology: an
 Introduction*, Chapter 1,
 Section 7. -/
@@ -252,97 +369,16 @@ theorem cutIArc : CutIArcStatement.{u} := by
     exact connectedComponentIn_subset _ _
   rcases cut_comps hψ hY pX pX' hun hx hy with hYc | ⟨W₁, W₂, hne, hsc, hX₁, hX₂, hW₁, hW₂, hU,
     hdW, hc₁, hc₂⟩
-  · obtain ⟨a, b, c, ⟨e⟩⟩ := classification.{u} Y hY hYc
-    have hC : connectedComponentIn (bd Y) (ξ 0) ∈ cuffs Y := ⟨_, hXb hx, rfl⟩
-    have hC' : connectedComponentIn (bd Y) (η 0) ∈ cuffs Y := ⟨_, hXb' hy, rfl⟩
-    have hXC := pX.subset_connectedComponentIn hx hXb
-    have hXC' := pX'.subset_connectedComponentIn hy hXb'
-    by_cases hCC : connectedComponentIn (bd Y) (ξ 0) = connectedComponentIn (bd Y) (η 0)
-    · have hη₀ : ∀ u ∈ Icc (0 : ℝ) 1, η u ∈ connectedComponentIn (bd Y) (ξ 0) := fun u hu
-      => hCC ▸ hXC' (hηm u hu)
-      obtain ⟨i, hi, φ, g, hg, hs⟩ := exists_one_hole e hC
-      obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
-        (fun u hu => hXC (hξm u hu)) hiξ hiη
-      obtain ⟨hN, hLf⟩ := erase_facts c i
-      have hξ' : ∀ u ∈ Icc (0 : ℝ) 1, ξ' u ∈ X := fun u hu => by
-        rw [← himξ, ← hxim]
-        exact ⟨u, hu, rfl⟩
-      have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
-        rw [← himη, ← heim]
-        exact ⟨u, hu, rfl⟩
-      have hub' : ψ ⁻¹' F = ξ' '' Icc 0 1 ∪ η' '' Icc 0 1 := by rw [hxim, heim, hub]
-      obtain ⟨σ, g', hp, -, p, q, hpq, e1, e2, e3⟩ := arc_one_aux hY L' hψ.1 hψ.2.1 hC φ hi hLf hg
-        hs hmc hmm hmξ
-        (fun u hu => hCC ▸ hXC' (hη' u hu)) hix hie (fun u hu v hv he => Set.disjoint_left.mp hd
-          (hξ' u hu) (he ▸ hη' v hv))
-      have hn := nf_blkB (a := a) (b := b) (c := c) hi hN hLf σ
-      have hlen := length_erase_range hi
-      have : Nonempty S := ⟨s⟩
-      cases σ with
-      | false =>
-        obtain ⟨w, h5, h6⟩ := hn.1 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen, show c - 1 + 2 = c + 1 by omega] at e'
-        exact ⟨fun _ => ⟨hYc, a, b, c, ⟨e'⟩, ⟨e⟩⟩, fun _ => .inl (cutIsSimpler_of_connected e e'
-          le_rfl le_rfl (by omega)), hline⟩
-      | true =>
-        obtain ⟨w, h5, h6⟩ := hn.2 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen, show c - 1 + 1 = c by omega] at e'
-        have h0 : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
-        have hb1 : ψ (φ (ee p)).1 = a' 1 := by rw [e1, L'.hξ 1 h0]
-        have hb2 : ψ (φ (ee q)).1 = a' 0 := by
-          rw [e2, ofs_true, L'.hη 0 hex]
-        have hends : a' 0 ∈ bd S ∧ a' 1 ∈ bd S := by
-          rcases ha' with ⟨h2, h3⟩ | ⟨h2, h3⟩ <;> rw [h2, h3, ha0, ha1]
-            <;> exact ⟨by assumption, by assumption⟩
-        have key := same_of_gap hψ hFc (hdc hC) φ hpq (fun v hv hF' => by
-          have hm' : (φ (ee v)).1 ∈ ψ ⁻¹' F := hF'
-          rw [hub'] at hm'
-          rcases hm' with ⟨u, hu, hu'⟩ | ⟨u, hu, hu'⟩
-          · exact (e3 v hv u hu).1 hu'.symm
-          · exact (e3 v hv u hu).2 hu'.symm) (hb1 ▸ hends.2) (hb2 ▸ hends.1)
-        rw [hb1, hb2] at key
-        have same : connectedComponentIn (bd S) s = connectedComponentIn (bd S) t := by
-          rcases ha' with ⟨h2, h3⟩ | ⟨h2, h3⟩
-          · rw [h2, h3, ha0, ha1] at key
-            exact key.symm
-          · rw [h2, h3, ha0, ha1] at key
-            exact key
-        exact ⟨fun h => absurd same h, fun _ => .inl (cutIsSimpler_of_connected e e' (by omega)
-          (by omega) (by omega)), hline⟩
-    · have hdis := cuffs_disjoint hC hC' hCC
-      obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
-      have same := same_of_cuff hψ hFc L (hdc hC) φ₀ (fun u hu => hXC (hξm u hu)) hiξ hiη
-        (fun u hu hm => Set.disjoint_left.mp hdis hm (hXC' (hηm u hu))) hub (ha0 ▸ hsb) (ha1 ▸ htb)
-      rw [ha0, ha1] at same
-      obtain ⟨i, hi, j, hj, hij, φ, φ', g, hg, hs, hs'⟩ := exists_two_holes e hC hC' hCC
-      obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
-        (fun u hu => hXC (hξm u hu)) hiξ hiη
-      obtain ⟨hN, hLf⟩ := erase_erase_facts c i j
-      have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
-        rw [← himη, ← heim]
-        exact ⟨u, hu, rfl⟩
-      obtain ⟨σ, g', hp, -⟩ := arc_two_aux hY L' hψ.1 hψ.2.1 hC hC' (hdcuff.2.2 _
-        hC).isCompact.isClosed
-        (hdcuff.2.2 _ hC').isCompact.isClosed hdis φ φ' hij hi hj hLf hg hs hs' hmc hmm hmξ
-          (fun u hu => hXC' (hη' u hu)) hix hie
-      have hn := nf_blkA (a := a) (b := b) (c := c) hij hi hj hN hLf σ
-      have hlen := length_erase_erase hij hi hj
-      have : Nonempty S := ⟨s⟩
-      cases σ with
-      | false =>
-        obtain ⟨w, h5, h6⟩ := hn.1 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen] at e'
-        exact ⟨fun h => absurd same h, fun _ => .inl (cutIsSimpler_of_connected e e' (by omega)
-          (by omega) (by omega)), hline⟩
-      | true =>
-        obtain ⟨w, h5, h6⟩ := hn.2 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen] at e'
-        exact ⟨fun h => absurd same h, fun _ => .inl (cutIsSimpler_of_connected e e' (by omega)
-          (by omega) (by omega)), hline⟩
+  · obtain ⟨a, b, c, -, ⟨e⟩, hmodels⟩ := connected_cut_arc_models hY hYc hψ hPc hFc hsb htb
+    rcases hmodels with he' | ⟨hsame, hmodels⟩
+    · obtain ⟨e'⟩ := he'
+      exact ⟨fun _ => ⟨hYc, a, b, c, ⟨e'⟩, ⟨e⟩⟩, fun _ => .inl
+        (cutIsSimpler_of_connected e e' le_rfl le_rfl (by omega)), hline⟩
+    · refine ⟨fun h => absurd hsame h, fun _ => .inl ?_, hline⟩
+      rcases hmodels with he' | ⟨hc, he' | he'⟩ <;> obtain ⟨e'⟩ := he'
+      · exact cutIsSimpler_of_connected e e' le_rfl (by omega) (by omega)
+      · exact cutIsSimpler_of_connected e e' (by omega) le_rfl (by omega)
+      · exact cutIsSimpler_of_connected e e' le_rfl (by omega) (by omega)
   · obtain ⟨a₁, b₁, c₁, ⟨e₁⟩⟩ := classification.{u} W₁ (isSurface_sub hY hW₁) hc₁
     obtain ⟨a₂, b₂, c₂, ⟨e₂⟩⟩ := classification.{u} W₂ (isSurface_sub hY hW₂) hc₂
     have hC : connectedComponentIn (bd Y) (ξ 0) ∈ cuffs Y := ⟨_, hXb hx, rfl⟩

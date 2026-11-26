@@ -2582,15 +2582,6 @@ end PlaneChordsAndCaps
 
 section Theorem34
 
-private theorem drawing_inter_le' {S : Type w} [TopologicalSpace S]
-    (H' : Drawing S) {D : Set S} (hD : IsClosed D) :
-    (PaintingOrDrawing.drawing H').inter D ≤ H'.toHypergraph := by
-  refine ⟨inter_subset_left, fun _ h => h.1, fun e he => ?_⟩
-  ext v
-  change (e ∈ H'.E ∧ v ∈ H'.V ∧ v ∈ closure e) ↔
-    (e ∈ H'.E ∧ v ∈ H'.V ∧ v ∈ closure e) ∧ e ⊆ D ∧ v ∈ D
-  exact ⟨fun h => ⟨h, he.2, hD.closure_subset_iff.mpr he.2 h.2.2⟩, fun h => h.1⟩
-
 private theorem isRespectful_inducedBySubgraph' {S : Type w} [TopologicalSpace S] [T2Space S]
     {H₀ H' : Drawing S} {θ' : ℕ}
     {T₀ : Set (Hypergraph S (Set S) × Hypergraph S (Set S))}

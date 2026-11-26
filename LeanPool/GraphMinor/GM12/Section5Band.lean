@@ -16,10 +16,9 @@ import LeanPool.GraphMinor.GM11.Ties
 # Cutting a Möbius band or an annulus along a line
 
 We show that cutting a surface homeomorphic to `SurfaceModel 0 1 1` along a line with ends on the
-boundary gives either a closed disc or two components (`exists_cut_band`). This repeats the case of
-a
-connected cut in `cutIArc`, and keeps the model that the word gives. A closed curve that misses the
-line of a cut with the disc as result is null-homotopic (`null_of_cut`).
+boundary gives either a closed disc or two components (`exists_cut_band`). The connected case uses
+the same normal form of the gluing word as `cutIArc`. A closed curve that misses the line of a cut
+with the disc as result is null-homotopic (`null_of_cut`).
 -/
 
 public section
@@ -57,90 +56,34 @@ theorem exists_cut_band {S : Type u} [TopologicalSpace S] [ConnectedSpace S] {F 
     exact ⟨f⟩
   refine ⟨X, X', hun, hd, hline₁, hline₂, ?_⟩
   obtain ⟨a₀, ξ, η, L, ha0, ha1, himξ, himη, hiξ, hiη⟩ := exists_arcLift hPc hψ
-  have hXb : X ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hun ▸ Or.inl hz)
-  have hXb' : X' ⊆ bd Y := fun z hz => hψ.2.2.2.2 (hun ▸ Or.inr hz)
   have pX : IsPreconnected X := himξ ▸ isPreconnected_Icc.image _ L.cξ
   have pX' : IsPreconnected X' := himη ▸ isPreconnected_Icc.image _ L.cη
   have hex : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
   have hx : ξ 0 ∈ X := himξ ▸ ⟨0, hex, rfl⟩
   have hy : η 0 ∈ X' := himη ▸ ⟨0, hex, rfl⟩
-  have hξm : ∀ u ∈ Icc (0 : ℝ) 1, ξ u ∈ X := fun u hu => himξ ▸ ⟨u, hu, rfl⟩
-  have hηm : ∀ u ∈ Icc (0 : ℝ) 1, η u ∈ X' := fun u hu => himη ▸ ⟨u, hu, rfl⟩
-  have hdcuff := cuff_statement.{u} Y hY
+  have hsb : s ∈ bd S := (show s ∈ F ∩ bd S from hF ▸ mem_insert _ _).2
+  have htb : t ∈ bd S := (show t ∈ F ∩ bd S from hF ▸ mem_insert_of_mem _ rfl).2
   obtain ⟨eM⟩ := hM
   have hcrit := modelCriterion.2
   rcases cut_comps hψ hY pX pX' hun hx hy with hYc | ⟨W₁, W₂, -, -, hX₁, hX₂, hW₁, hW₂, hU, hdW, -,
     -⟩
   · left
-    obtain ⟨a, b, c, ⟨e⟩⟩ := classification.{u} Y hY hYc
-    have hC : connectedComponentIn (bd Y) (ξ 0) ∈ cuffs Y := ⟨_, hXb hx, rfl⟩
-    have hC' : connectedComponentIn (bd Y) (η 0) ∈ cuffs Y := ⟨_, hXb' hy, rfl⟩
-    have hXC := pX.subset_connectedComponentIn hx hXb
-    have hXC' := pX'.subset_connectedComponentIn hy hXb'
-    by_cases hCC : connectedComponentIn (bd Y) (ξ 0) = connectedComponentIn (bd Y) (η 0)
-    · have hη₀ : ∀ u ∈ Icc (0 : ℝ) 1, η u ∈ connectedComponentIn (bd Y) (ξ 0) := fun u hu
-        => hCC ▸ hXC' (hηm u hu)
-      obtain ⟨i, hi, φ, g, hg, hs⟩ := exists_one_hole e hC
-      obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
-        (fun u hu => hXC (hξm u hu)) hiξ hiη
-      obtain ⟨hN, hLf⟩ := erase_facts c i
-      have hξ' : ∀ u ∈ Icc (0 : ℝ) 1, ξ' u ∈ X := fun u hu => by
-        rw [← himξ, ← hxim]
-        exact ⟨u, hu, rfl⟩
-      have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
-        rw [← himη, ← heim]
-        exact ⟨u, hu, rfl⟩
-      obtain ⟨σ, g', hp, -, p, q, hpq, e1, e2, e3⟩ := arc_one_aux hY L' hψ.1 hψ.2.1 hC φ hi hLf hg
-        hs hmc hmm hmξ
-        (fun u hu => hCC ▸ hXC' (hη' u hu)) hix hie (fun u hu v hv he => Set.disjoint_left.mp hd
-          (hξ' u hu) (he ▸ hη' v hv))
-      have hn := nf_blkB (a := a) (b := b) (c := c) hi hN hLf σ
-      have hlen := length_erase_range hi
-      have : Nonempty S := ⟨s⟩
-      cases σ with
-      | false =>
-        obtain ⟨w, h5, h6⟩ := hn.1 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen, show c - 1 + 2 = c + 1 by omega] at e'
-        have := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
-        omega
-      | true =>
-        obtain ⟨w, h5, h6⟩ := hn.2 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        rw [hlen, show c - 1 + 1 = c by omega] at e'
-        have h := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
-        have ha : a = 0 := by omega
-        have hb : b = 0 := by omega
-        have hc : c = 1 := by omega
-        subst ha hb hc
-        obtain ⟨d⟩ := nonempty_disc_homeo
-        exact ⟨e.trans d⟩
-    · have hdis := cuffs_disjoint hC hC' hCC
-      obtain ⟨i, hi, j, hj, hij, φ, φ', g, hg, hs, hs'⟩ := exists_two_holes e hC hC' hCC
-      obtain ⟨a', ξ', η', m, L', ha', hxim, heim, hix, hie, hmc, hmm, hmξ⟩ := orient_lift L φ
-        (fun u hu => hXC (hξm u hu)) hiξ hiη
-      obtain ⟨hN, hLf⟩ := erase_erase_facts c i j
-      have hη' : ∀ u ∈ Icc (0 : ℝ) 1, η' u ∈ X' := fun u hu => by
-        rw [← himη, ← heim]
-        exact ⟨u, hu, rfl⟩
-      obtain ⟨σ, g', hp, -⟩ := arc_two_aux hY L' hψ.1 hψ.2.1 hC hC' (hdcuff.2.2 _
-        hC).isCompact.isClosed
-        (hdcuff.2.2 _ hC').isCompact.isClosed hdis φ φ' hij hi hj hLf hg hs hs' hmc hmm hmξ
-          (fun u hu => hXC' (hη' u hu)) hix hie
-      have hn := nf_blkA (a := a) (b := b) (c := c) hij hi hj hN hLf σ
-      have hlen := length_erase_erase hij hi hj
-      have : Nonempty S := ⟨s⟩
-      cases σ with
-      | false =>
-        obtain ⟨w, h5, h6⟩ := hn.1 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        have h := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
-        omega
-      | true =>
-        obtain ⟨w, h5, h6⟩ := hn.2 rfl
-        obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-        have h := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
-        omega
+    obtain ⟨a, b, c, hcpos, ⟨e⟩, hmodels⟩ :=
+      connected_cut_arc_models hY hYc hψ hPc hFc hsb htb
+    rcases hmodels with he' | ⟨-, he' | ⟨hc, he' | he'⟩⟩ <;> obtain ⟨e'⟩ := he'
+    · have := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
+      omega
+    · have h := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
+      have ha : a = 0 := by omega
+      have hb : b = 0 := by omega
+      have hc : c = 1 := by omega
+      subst ha hb hc
+      obtain ⟨d⟩ := nonempty_disc_homeo
+      exact ⟨e.trans d⟩
+    · have := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
+      omega
+    · have := (hcrit _ _ _ _ _ _).mp ⟨e'.symm.trans eM⟩
+      omega
   · exact .inr ⟨W₁, W₂, hX₁, hX₂, hW₁, hW₂, hU, hdW⟩
 
 /-- Cutting an annulus along a line between its two cuffs gives a closed disc. -/

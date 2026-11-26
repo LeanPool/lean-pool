@@ -100,8 +100,6 @@ theorem vertex_of_mem_region [LocallyConnectedSpace S]
   have huniq' : ∀ r ∈ Γ.R, ∃! w, w ∈ r ∧ w ∈ K.V := huniq
   have heq : ∀ y ∈ c, y ∈ K.V → y = w := fun y hy hyK =>
     (huniq' c hc).unique ⟨hy, hyK⟩ ⟨hw, hwK⟩
-  have hoff : ∀ y ∈ c, y ∉ Γ.U := fun y hy => disjoint_left.mp (show Disjoint c Γ.U from
-    disjoint_left.mpr fun z hz hzU => region_subset hc hz hzU) hy
   by_cases hxV : x ∈ L.V
   · rw [← heq x hxc (hL.1 hxV)]
     exact hxV

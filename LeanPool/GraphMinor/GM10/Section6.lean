@@ -394,15 +394,6 @@ private lemma contractComp_eq_of_rel {G' : Graph α β} {C : Set β} {x y : α}
   ext z
   exact ⟨fun hxz ↦ (contractComp_symm h).trans hxz, fun hyz ↦ h.trans hyz⟩
 
-private lemma contractComp_subset_vertexSet {G' : Graph α β} {C : Set β} {x : α}
-    (hx : x ∈ V(G')) : contractComp G' C x ⊆ V(G') := by
-  intro y hy
-  induction hy with
-  | refl => exact hx
-  | tail _ hstep _ =>
-    rcases hstep with ⟨_, _, hl⟩
-    exact hl.right_mem
-
 private lemma vertexSet_contract_eq (G' : Graph α β) (C : Set β) :
     V(contract G' C) = contractComp G' C '' V(G') := by
   simp [contract, contractComp]

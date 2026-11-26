@@ -9,6 +9,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 module
 
 public import LeanPool.GraphMinor.GM19.Section12l
+public import LeanPool.GraphMinor.GM19.Section12c
 
 /-!
 # Graph Minors XIX, Section 13: (13.1)
@@ -70,66 +71,6 @@ theorem Drawing.subset_edge_of_preconnected {T : Type} [TopologicalSpace T] [T2S
   · exact disjoint_left.mp hXV hyX h
 
 namespace TangleDatum
-
-/-- A side of an edge of size 3 has two different ends, among the ends of the edge. -/
-theorem exists_side_ends (D : TangleDatum cap χ) {e f : Set S} (hf : D.P.Γ.IsSkEdgeIn f e) (h3 :
-  (tilde e).ncard = 3) :
-    ∃ a b, a ≠ b ∧ a ∈ closure f ∧ b ∈ closure f ∧ a ∈ tilde e ∧ b ∈ tilde e ∧
-      closure f ⊆ f ∪ {a, b} := by
-  classical
-  have hS := χ.isSurface
-  have he := hf.1
-  have : ConnectedSpace Shat := cap.connected
-  obtain ⟨Sk, hSk⟩ := exists_isSkHat hS cap D.P.Γ
-  have hfE : cap.emb '' f ∈ Sk.E := hSk.edge_iff.mpr ⟨f, hf.mem, rfl⟩
-  have hc3 := D.P.Γ.isDisc_of_three he h3
-  obtain ⟨hC, hCbd⟩ := isClosedDisc_image hc3.1 cap.isEmbedding
-  have hcl : IsClosedEmbedding cap.emb := cap.isClosedEmbedding hS
-  have hfb : closure (cap.emb '' f) ⊆ cap.emb '' discBd (closure e) := by
-    have hclosed : IsClosed (cap.emb '' discBd (closure e)) := by
-      rw [← hCbd]
-      exact hC.isOArc_discBd.isCompact.isClosed
-    refine closure_minimal ?_ hclosed
-    rintro _ ⟨z, hz, rfl⟩
-    rcases hf.2 with ⟨h, -⟩ | ⟨-, h⟩
-    · omega
-    · exact mem_image_of_mem _ (h.2.1 hz).1
-  obtain ⟨a, b, hab, hcap⟩ : ∃ a b, a ≠ b ∧ closure (cap.emb '' f) ∩ Sk.V = {a, b} := by
-    rcases Sk.edge_cond _ hfE with ⟨a, b, hab, hcap, -⟩ | ⟨u, hcap, hO⟩
-    · exact ⟨a, b, hab, hcap⟩
-    · exfalso
-      have heq' : closure (cap.emb '' f) = discBd (cap.emb '' closure e) :=
-        eq_of_oArc_subset hO hC.isOArc_discBd (hCbd ▸ hfb)
-      have hsub : cap.emb '' tilde e ⊆ {u} := by
-        rintro _ ⟨t, ht, rfl⟩
-        rw [← hcap]
-        refine ⟨heq' ▸ hCbd ▸ mem_image_of_mem _ (hc3.2.1 ht), ?_⟩
-        rw [hSk.hV]
-        exact mem_image_of_mem _ (D.P.Γ.tilde_subset_V he ht)
-      have := ncard_le_ncard hsub (toFinite _)
-      rw [ncard_image_of_injective _ cap.isEmbedding.injective, h3, ncard_singleton] at this
-      omega
-  have hend : ∀ {t}, t ∈ closure (cap.emb '' f) ∩ Sk.V → ∃ z ∈ closure f, z ∈ tilde e ∧ cap.emb z
-    = t := by
-    rintro t ⟨ht, htV⟩
-    rw [hcl.closure_image_eq] at ht
-    obtain ⟨z, hz, rfl⟩ := ht
-    rw [hSk.hV] at htV
-    obtain ⟨z', hz', hzz⟩ := htV
-    obtain rfl := cap.isEmbedding.injective hzz
-    exact ⟨z', hz, ⟨closure_mono hf.subset hz, fun h ↦ D.P.Γ.disjoint_V he h hz'⟩, rfl⟩
-  obtain ⟨a', ha'f, ha't, rfl⟩ := (hend (t := a) (hcap ▸ mem_insert _ _))
-  obtain ⟨b', hb'f, hb't, rfl⟩ := (hend (t := b) (hcap ▸ mem_insert_of_mem _ rfl))
-  refine ⟨a', b', fun h ↦ hab (by rw [h]), ha'f, hb'f, ha't, hb't, fun t ht ↦ ?_⟩
-  have htcl : cap.emb t ∈ closure (cap.emb '' f) :=
-    image_closure_subset_closure_image cap.isEmbedding.continuous (mem_image_of_mem _ ht)
-  rcases closure_edge_subset hfE htcl with ⟨t', ht', htt⟩ | htV
-  · exact .inl (cap.isEmbedding.injective htt ▸ ht')
-  · have hm : cap.emb t ∈ closure (cap.emb '' f) ∩ Sk.V := ⟨htcl, htV⟩
-    rw [hcap] at hm
-    rcases hm with hm | hm
-    · exact .inr (.inl (cap.isEmbedding.injective hm))
-    · exact .inr (.inr (cap.isEmbedding.injective hm))
 
 /-- **The fifth condition, for a side.** Let `f` be a side, off `bd(Σ)`, of an edge `e` of size 3,
 on the boundary of a

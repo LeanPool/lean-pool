@@ -3381,22 +3381,18 @@ theorem lemma_2_4_no_tripod (S : Society α β) {P : Graph α β} {s t : α}
 
 /-! ## Applying `(2.1)` and the Induction on `|E(G)|` for `(2.4)` -/
 
-/-- In a society `S` whose graph `S.G` is connected and has `2 ≤ S.Ω.bar.ncard`, there exist
-distinct `s, t ∈ S.Ω.bar` and an `(s, t)`-path `Q₀` in `S.G` avoiding `S.Ω.bar \ {s, t}`. -/
-theorem exists_path_avoiding_bar_diff (S : Society α β)
-    (hconn_G : IsGraphConnected S.G) (hbar2 : 2 ≤ S.Ω.bar.ncard) :
+/-- Trim a walk between distinct society boundary vertices to its first new boundary vertex. -/
+private theorem exists_path_avoiding_bar_diff_of_walk (S : Society α β) {s t₀ : α}
+    (hs : s ∈ S.Ω.bar) (ht₀ : t₀ ∈ S.Ω.bar) (hst₀ : t₀ ≠ s) (W₀ : GraphWalk S.G s t₀) :
     ∃ s ∈ S.Ω.bar, ∃ t ∈ S.Ω.bar, s ≠ t ∧
       ∃ Q₀ : Graph α β, IsGraphPathWithEnds S.G Q₀ s t ∧ Avoids Q₀ (S.Ω.bar \ {s, t}) := by
-  obtain ⟨s, hs⟩ := nonempty_of_ncard_ne_zero (by omega : S.Ω.bar.ncard ≠ 0)
-  obtain ⟨t₀, ht₀, hst₀⟩ := exists_ne_of_one_lt_ncard (by omega : 1 < S.Ω.bar.ncard) s
   have hst₀' : s ≠ t₀ := hst₀.symm
-  obtain ⟨W₀⟩ := hconn_G.2 s (S.bar_subset hs) t₀ (S.bar_subset ht₀)
   obtain ⟨W, hW_simple, _, _⟩ := exists_isSimple_subwalk W₀
   cases W with
   | nil _ => exact (hst₀' rfl).elim
   | @cons s w t₀ e hlink W' =>
     have hnd : (s :: W'.support).Nodup := hW_simple
-    obtain ⟨hs_not_W', hW'_simple⟩ := List.nodup_cons.mp hnd
+    obtain ⟨hs_not_W', _⟩ := List.nodup_cons.mp hnd
     have ht₀_bar_diff : t₀ ∈ S.Ω.bar \ {s} := ⟨ht₀, fun h => hst₀ (mem_singleton_iff.mp h)⟩
     obtain ⟨w', hw'w, t, ht_diff, Q', _, hVQ'_sub, hQ'_ft⟩ :=
       exists_isFromToPathWithEnds_of_walk W' (X := {w}) (Y := S.Ω.bar \ {s}) rfl ht₀_bar_diff
@@ -3435,6 +3431,17 @@ theorem exists_path_avoiding_bar_diff (S : Society α β)
     · have hx_in : x ∈ V(Q') ∩ (S.Ω.bar \ {s}) := ⟨hxQ', hx_bar, hx_ne.1⟩
       rw [hQ'_ft.2.2, mem_singleton_iff] at hx_in
       exact hx_ne.2 hx_in
+
+/-- In a society `S` whose graph `S.G` is connected and has `2 ≤ S.Ω.bar.ncard`, there exist
+distinct `s, t ∈ S.Ω.bar` and an `(s, t)`-path `Q₀` in `S.G` avoiding `S.Ω.bar \ {s, t}`. -/
+theorem exists_path_avoiding_bar_diff (S : Society α β)
+    (hconn_G : IsGraphConnected S.G) (hbar2 : 2 ≤ S.Ω.bar.ncard) :
+    ∃ s ∈ S.Ω.bar, ∃ t ∈ S.Ω.bar, s ≠ t ∧
+      ∃ Q₀ : Graph α β, IsGraphPathWithEnds S.G Q₀ s t ∧ Avoids Q₀ (S.Ω.bar \ {s, t}) := by
+  obtain ⟨s, hs⟩ := nonempty_of_ncard_ne_zero (by omega : S.Ω.bar.ncard ≠ 0)
+  obtain ⟨t₀, ht₀, hst₀⟩ := exists_ne_of_one_lt_ncard (by omega : 1 < S.Ω.bar.ncard) s
+  obtain ⟨W₀⟩ := hconn_G.2 s (S.bar_subset hs) t₀ (S.bar_subset ht₀)
+  exact exists_path_avoiding_bar_diff_of_walk S hs ht₀ hst₀ W₀
 
 private theorem induced_catches_path_from_path (S : Society α β)
     (hconn : S.IsKConnected 3)
@@ -3781,51 +3788,7 @@ theorem exists_path_avoiding_bar_diff_of_three_connected (S : Society α β)
       obtain ⟨W₀, _, _⟩ := exists_walk_up_of_le (reachableComponent_le S.G u) W_C₀
       exact ⟨s, hs_in.2, t₀, ht₀_in.2, hst₀.symm, ⟨W₀⟩⟩
   obtain ⟨s, hs, t₀, ht₀, hst₀', ⟨W₀⟩⟩ := hex_walk
-  have hst₀ : t₀ ≠ s := hst₀'.symm
-  obtain ⟨W, hW_simple, _, _⟩ := exists_isSimple_subwalk W₀
-  cases W with
-  | nil _ => exact (hst₀' rfl).elim
-  | @cons s w t₀ e hlink W' =>
-    have hnd : (s :: W'.support).Nodup := hW_simple
-    obtain ⟨hs_not_W', _⟩ := List.nodup_cons.mp hnd
-    have ht₀_bar_diff : t₀ ∈ S.Ω.bar \ {s} := ⟨ht₀, fun h => hst₀ (mem_singleton_iff.mp h)⟩
-    obtain ⟨w', hw'w, t, ht_diff, Q', _, hVQ'_sub, hQ'_ft⟩ :=
-      exists_isFromToPathWithEnds_of_walk W' (X := {w}) (Y := S.Ω.bar \ {s}) rfl ht₀_bar_diff
-    rw [mem_singleton_iff] at hw'w
-    subst hw'w
-    have hs_not_Q' : s ∉ V(Q') := fun hsQ' => hs_not_W' (hVQ'_sub hsQ')
-    let W_sw : GraphWalk S.G s w' := .cons hlink (.nil hlink.right_mem)
-    have hsw_ne : s ≠ w' := fun h => hs_not_W' (h ▸ W'.start_mem_support)
-    have hW_sw_simple : W_sw.IsSimple := by simp [GraphWalk.IsSimple, W_sw, hsw_ne]
-    have hP_sw : IsGraphPathWithEnds S.G (walkSubgraph W_sw) s w' :=
-      isGraphPathWithEnds_walkSubgraph hW_sw_simple
-    have hsw_Q' : V(walkSubgraph W_sw) ∩ V(Q') = {w'} := by
-      ext x
-      simp only [vertexSet_walkSubgraph, W_sw, GraphWalk.support_cons, GraphWalk.support_nil,
-        List.mem_cons, List.not_mem_nil, or_false, mem_inter_iff, mem_ofPred_eq,
-        mem_singleton_iff]
-      refine ⟨fun ⟨hx_sw, hxQ'⟩ => hx_sw.resolve_left fun hxs => hs_not_Q' (hxs ▸ hxQ'), ?_⟩
-      rintro rfl
-      exact ⟨Or.inr rfl, hQ'_ft.1.left_mem⟩
-    let Q₀ := subgraphUnion S.G (walkSubgraph W_sw) Q'
-    have hQ₀_path : IsGraphPathWithEnds S.G Q₀ s t :=
-      hP_sw.subgraphUnion hQ'_ft.1 hsw_Q'
-    refine ⟨s, hs, t, ht_diff.1, Ne.symm ht_diff.2, Q₀, hQ₀_path, ?_⟩
-    rw [Avoids, disjoint_left]
-    rintro x ⟨hx_bar, hx_ne⟩ hxQ₀
-    simp only [mem_insert_iff, mem_singleton_iff, not_or] at hx_ne
-    rw [vertexSet_subgraphUnion] at hxQ₀
-    rcases hxQ₀ with hx_sw | hxQ'
-    · simp only [vertexSet_walkSubgraph, W_sw, GraphWalk.support_cons, GraphWalk.support_nil,
-        List.mem_cons, List.not_mem_nil, or_false, mem_ofPred_eq] at hx_sw
-      rcases hx_sw with rfl | rfl
-      · exact hx_ne.1 rfl
-      · have hw_in : x ∈ V(Q') ∩ (S.Ω.bar \ {s}) := ⟨hQ'_ft.1.left_mem, hx_bar, hx_ne.1⟩
-        rw [hQ'_ft.2.2, mem_singleton_iff] at hw_in
-        exact hx_ne.2 hw_in
-    · have hx_in : x ∈ V(Q') ∩ (S.Ω.bar \ {s}) := ⟨hxQ', hx_bar, hx_ne.1⟩
-      rw [hQ'_ft.2.2, mem_singleton_iff] at hx_in
-      exact hx_ne.2 hx_in
+  exact exists_path_avoiding_bar_diff_of_walk S hs ht₀ hst₀'.symm W₀
 
 theorem exists_induced_catches_path_of_three_connected_nonempty (S : Society α β)
     (hconn : S.IsKConnected 3)

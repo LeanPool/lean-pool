@@ -53,13 +53,11 @@ variable {α : Type u} {β : Type v}
 
 /-! ## 1. Crooked transactions of size two -/
 
-/-- A crooked transaction of size two is a cross. Neither path is peripheral, so each of the two
-intervals between the ends of the first path holds an end of the second path. -/
-theorem Society.exists_isCross_of_isCrookedTransaction {S : Society α β}
-    {P_set : Set (Graph α β)} (h : S.IsCrookedTransaction P_set) (hc : P_set.ncard = 2) :
-    ∃ P₁ P₂ : Graph α β, S.IsCross P₁ P₂ := by
-  obtain ⟨P₁, P₂, hne, rfl⟩ := Set.ncard_eq_two.mp hc
-  obtain ⟨⟨A, B, hF⟩, hnp⟩ := h
+/-- A crooked transaction `{P₁, P₂}` with `P₁ ≠ P₂` is a cross: `S.OmegaPathsCross P₁ P₂`. -/
+theorem Society.omegaPathsCross_of_isCrookedTransaction_pair (S : Society α β)
+    {P₁ P₂ : Graph α β} (hne : P₁ ≠ P₂) (hcr : S.IsCrookedTransaction {P₁, P₂}) :
+    S.OmegaPathsCross P₁ P₂ := by
+  obtain ⟨⟨A, B, hF⟩, hnp⟩ := hcr
   obtain ⟨a₁, -, b₁, -, h₁⟩ := hF.2.2 P₁ (Or.inl rfl)
   obtain ⟨a₂, -, b₂, -, h₂⟩ := hF.2.2 P₂ (Or.inr rfl)
   have hdisj : Disjoint V(P₁) V(P₂) := hF.1.2 (Or.inl rfl) (Or.inr rfl) hne
@@ -91,12 +89,20 @@ theorem Society.exists_isCross_of_isCrookedTransaction {S : Society α β}
     · exact h
   have hxy : x ≠ y := fun h =>
     Set.disjoint_left.mp (S.Ω.disjoint_interval_swap a₁ b₁) hx (h ▸ hy)
-  refine ⟨P₁, P₂, hdisj, a₁, b₁, a₂, b₂, h₁, h₂, S.Ω.crosses_iff_interval.mpr ?_⟩
+  refine ⟨hdisj, a₁, b₁, a₂, b₂, h₁, h₂, S.Ω.crosses_iff_interval.mpr ?_⟩
   rcases hxe' with rfl | rfl <;> rcases hye' with rfl | rfl
   · exact (hxy rfl).elim
   · exact Or.inl ⟨hx, hy⟩
   · exact Or.inr ⟨hx, hy⟩
   · exact (hxy rfl).elim
+
+/-- A crooked transaction of size two is a cross. Neither path is peripheral, so each of the two
+intervals between the ends of the first path holds an end of the second path. -/
+theorem Society.exists_isCross_of_isCrookedTransaction {S : Society α β}
+    {P_set : Set (Graph α β)} (h : S.IsCrookedTransaction P_set) (hc : P_set.ncard = 2) :
+    ∃ P₁ P₂ : Graph α β, S.IsCross P₁ P₂ := by
+  obtain ⟨P₁, P₂, hne, rfl⟩ := Set.ncard_eq_two.mp hc
+  exact ⟨P₁, P₂, Society.omegaPathsCross_of_isCrookedTransaction_pair S hne h⟩
 
 /-! ## 2. Moving discs by a homeomorphism -/
 
