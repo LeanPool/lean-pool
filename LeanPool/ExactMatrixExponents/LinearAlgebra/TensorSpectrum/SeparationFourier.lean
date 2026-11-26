@@ -8,7 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.SeparationPolynomial
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Blocks
-public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorRestrictionComposition
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.LocalTensor
 
 /-!
 # Local Fourier restriction of a shared tensor
@@ -22,6 +22,7 @@ coefficients. The number of complete source copies is an input.
 noncomputable section
 
 open scoped BigOperators
+open MatrixMultiplicationAllFields.MatrixExponent
 open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
 
 namespace MatrixMultiplicationAllFields.TensorSpectrum.Separation
@@ -135,6 +136,39 @@ theorem fourier_restrict (A : Fin M → Tensor R X Y Z)
     simp [Tensor.sharedFirst, projected, hyz, ite_mul]
   · simp [Tensor.sharedFirst, projected, hyz]
 
+/-- Realize a polynomial evaluation as a restriction using the Fourier maps
+scaled by the signed coordinate weights. -/
+theorem separationPolynomial_specializes (A : Fin M → Tensor R X Y Z)
+    (power : ℤ → R) (w : Fin L → R) (t : R) (integerPower : ℤ → R)
+    (projection : Tensor.restrict (fourierX power) (fourierY power) (fourierZ power w)
+      (Tensor.directSum (fun _ : Fin L => Tensor.sharedFirst A)) = projected A)
+    (evaluation : (fun x y z => (separationPolynomial A x y z).eval t) =
+      fun x y z => integerPower (weightX x) * integerPower (weightY y) *
+        integerPower (weightZ z) * projected A x y z) :
+    (fun x y z => (separationPolynomial A x y z).eval t) ∈
+      LocalTensor.orbit (Tensor.directSum (fun _ : Fin L => Tensor.sharedFirst A)) := by
+  refine ⟨(fun x i => integerPower (weightX x) * fourierX power x i),
+    (fun y j => integerPower (weightY y) * fourierY power y j),
+    (fun z k => integerPower (weightZ z) * fourierZ power w z k), ?_⟩
+  rw [restrict_scaled, projection]
+  exact evaluation
+
 end Projection
+
+/-- Package the polynomial and its specialization certificates for a specified
+number of shared source copies and a specified set of evaluation points. -/
+theorem finite_charged_separation {M L : ℕ} [Fintype X] [Fintype Y] [Fintype Z]
+    (A : Fin M → Tensor R X Y Z) (valid : R → Prop)
+    (specializes : ∀ t, valid t → (fun x y z => (separationPolynomial A x y z).eval t) ∈
+      LocalTensor.orbit (Tensor.directSum (fun _ : Fin L => Tensor.sharedFirst A))) :
+    ∃ P : Tensor (Polynomial R) (Fin M × (X × Unit))
+        (Fin M × (Y × Fin M)) (Fin M × (Z × Fin M)),
+      (∀ x y z, (P x y z).coeff 0 = separated A x y z) ∧
+      (∀ x y z, (P x y z).degree ≤ ((M - 1) ^ 2 : ℕ)) ∧
+      (∀ t, valid t → (fun x y z => (P x y z).eval t) ∈
+        LocalTensor.orbit (Tensor.directSum (fun _ : Fin L => Tensor.sharedFirst A))) := by
+  refine ⟨separationPolynomial A, ?_, separationPolynomial_degree A, specializes⟩
+  intro x y z
+  exact congrFun (congrFun (congrFun (separationPolynomial_constant A) x) y) z
 
 end MatrixMultiplicationAllFields.TensorSpectrum.Separation

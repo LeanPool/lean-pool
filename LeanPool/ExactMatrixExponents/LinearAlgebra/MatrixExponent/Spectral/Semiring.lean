@@ -42,7 +42,7 @@ attribute [instance] Raw.fleg Raw.fterm
 
 namespace Raw
 
-variable {K S : Type} [Field K] [Fintype S]
+variable {K S : Type} [CommSemiring K] [Fintype S]
 
 /-- The value specified by `∑ i : A.term, ∏ s, A.factor i s (x s)`. -/
 def coeff (A : Raw K S) (x : ∀ s, A.leg s) : K :=
@@ -153,18 +153,26 @@ correspondence between the decompositions.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] {A B C D : Raw K S}
+variable {K S : Type} [CommSemiring K] [Fintype S] {A B C D : Raw K S}
 
 theorem coeff_mul (A B : Raw K S) (x : ∀ s, (A * B).leg s) :
     (A * B).coeff x = A.coeff (fun s => (x s).1) * B.coeff (fun s => (x s).2) := by
   change (∑ i : A.term × B.term, ∏ s, A.factor i.1 s (x s).1 * B.factor i.2 s (x s).2) = _
   simp only [coeff, Fintype.sum_prod_type, Finset.prod_mul_distrib, Finset.sum_mul_sum]
 
-theorem Restricts.mul (h : A.Restricts B) (g : C.Restricts D) :
-    (A * C).Restricts (B * D) := by
-  obtain ⟨L, hL⟩ := h
-  obtain ⟨M, hM⟩ := g
-  refine ⟨fun s x y => L s x.1 y.1 * M s x.2 y.2, fun x => ?_⟩
+/-- The Kronecker product of the local maps witnessing two restrictions. -/
+def restrictMulMap (L : (s : S) → B.leg s → A.leg s → K)
+    (M : (s : S) → D.leg s → C.leg s → K) :
+    (s : S) → (B * D).leg s → (A * C).leg s → K :=
+  fun s x y => L s x.1 y.1 * M s x.2 y.2
+
+theorem coeff_restrictMulMap (L : (s : S) → B.leg s → A.leg s → K)
+    (M : (s : S) → D.leg s → C.leg s → K)
+    (hL : ∀ x, B.coeff x = ∑ i : A.term, ∏ s, ∑ y, L s (x s) y * A.factor i s y)
+    (hM : ∀ x, D.coeff x = ∑ i : C.term, ∏ s, ∑ y, M s (x s) y * C.factor i s y)
+    (x : ∀ s, (B * D).leg s) :
+    (B * D).coeff x = ∑ i : (A * C).term, ∏ s, ∑ y : (A * C).leg s,
+      restrictMulMap L M s (x s) y * (A * C).factor i s y := by
   rw [coeff_mul, hL, hM]
   change _ = ∑ i : A.term × C.term, ∏ s, ∑ y : A.leg s × C.leg s,
     L s (x s).1 y.1 * M s (x s).2 y.2 * (A.factor i.1 s y.1 * C.factor i.2 s y.2)
@@ -174,6 +182,12 @@ theorem Restricts.mul (h : A.Restricts B) (g : C.Restricts D) :
   refine Finset.prod_congr rfl fun s _ => ?_
   rw [Finset.sum_mul_sum, Fintype.sum_prod_type]
   exact Finset.sum_congr rfl fun _ _ => Finset.sum_congr rfl fun _ _ => mul_mul_mul_comm _ _ _ _
+
+theorem Restricts.mul (h : A.Restricts B) (g : C.Restricts D) :
+    (A * C).Restricts (B * D) := by
+  obtain ⟨L, hL⟩ := h
+  obtain ⟨M, hM⟩ := g
+  exact ⟨restrictMulMap L M, coeff_restrictMulMap L M hL hM⟩
 
 /-- Equality of coefficient arrays survives extending the factors by zero. -/
 theorem extend {I J : Type} [Fintype I] [Fintype J] {Z : S → Type}
@@ -192,33 +206,45 @@ theorem extend {I J : Type} [Fintype I] [Fintype J] {Z : S → Type}
     choose x hu hv using hx
     simp only [hu, hv, h]
 
-theorem Restricts.add (h : A.Restricts B) (g : C.Restricts D) :
-    (A + C).Restricts (B + D) := by
-  obtain ⟨L, hL⟩ := h
-  obtain ⟨M, hM⟩ := g
-  let N (s : S) : B.leg s ⊕ D.leg s → A.leg s ⊕ C.leg s → K :=
-    Sum.elim (fun b => Sum.elim (L s b) (fun _ => 0))
-      (fun d => Sum.elim (fun _ => 0) (M s d))
+/-- The block-diagonal sum of the local maps witnessing two restrictions. -/
+def restrictAddMap (L : (s : S) → B.leg s → A.leg s → K)
+    (M : (s : S) → D.leg s → C.leg s → K) (s : S) :
+    (B + D).leg s → (A + C).leg s → K :=
+  Sum.elim (fun b => Sum.elim (L s b) (fun _ => 0))
+    (fun d => Sum.elim (fun _ => 0) (M s d))
+
+theorem coeff_restrictAddMap (L : (s : S) → B.leg s → A.leg s → K)
+    (M : (s : S) → D.leg s → C.leg s → K)
+    (hL : ∀ x, B.coeff x = ∑ i : A.term, ∏ s, ∑ y, L s (x s) y * A.factor i s y)
+    (hM : ∀ x, D.coeff x = ∑ i : C.term, ∏ s, ∑ y, M s (x s) y * C.factor i s y)
+    (x : ∀ s, (B + D).leg s) :
+    (B + D).coeff x = ∑ i : (A + C).term, ∏ s, ∑ y : (A + C).leg s,
+      restrictAddMap L M s (x s) y * (A + C).factor i s y := by
   have left (i : A.term) (s : S) (y : A.leg s ⊕ C.leg s) :
       (A + C).factor (.inl i) s y = Sum.elim (A.factor i s) (fun _ => 0) y := rfl
   have right (i : C.term) (s : S) (y : A.leg s ⊕ C.leg s) :
       (A + C).factor (.inr i) s y = Sum.elim (fun _ => 0) (C.factor i s) y := rfl
-  refine ⟨N, fun x => ?_⟩
   change (∑ i : B.term ⊕ D.term, ∏ s, (B + D).factor i s (x s)) =
     ∑ i : A.term ⊕ C.term, ∏ s, ∑ y : A.leg s ⊕ C.leg s,
-      N s (x s) y * (A + C).factor i s y
+      restrictAddMap L M s (x s) y * (A + C).factor i s y
   simp only [Fintype.sum_sum_type, left, right]
   refine congrArg₂ (· + ·) ?_ ?_
   · refine extend B.factor (fun i s z => ∑ y, L s z y * A.factor i s y) hL ?_
     intro s
     cases x s with
-    | inl z => exact Or.inl ⟨z, fun _ => rfl, fun _ => by simp [N]⟩
-    | inr z => exact Or.inr ⟨fun _ => rfl, fun _ => by simp [N]⟩
+    | inl z => exact Or.inl ⟨z, fun _ => rfl, fun _ => by simp [restrictAddMap]⟩
+    | inr z => exact Or.inr ⟨fun _ => rfl, fun _ => by simp [restrictAddMap]⟩
   · refine extend D.factor (fun i s z => ∑ y, M s z y * C.factor i s y) hM ?_
     intro s
     cases x s with
-    | inl z => exact Or.inr ⟨fun _ => rfl, fun _ => by simp [N]⟩
-    | inr z => exact Or.inl ⟨z, fun _ => rfl, fun _ => by simp [N]⟩
+    | inl z => exact Or.inr ⟨fun _ => rfl, fun _ => by simp [restrictAddMap]⟩
+    | inr z => exact Or.inl ⟨z, fun _ => rfl, fun _ => by simp [restrictAddMap]⟩
+
+theorem Restricts.add (h : A.Restricts B) (g : C.Restricts D) :
+    (A + C).Restricts (B + D) := by
+  obtain ⟨L, hL⟩ := h
+  obtain ⟨M, hM⟩ := g
+  exact ⟨restrictAddMap L M, coeff_restrictAddMap L M hL hM⟩
 
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 end
@@ -233,7 +259,7 @@ the same sum or product equivalence.
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] (A B C : Raw K S)
+variable {K S : Type} [CommSemiring K] (A B C : Raw K S)
 
 theorem comm_add_relabels : Relabels (A + B) (B + A) := by
   refine ⟨(Equiv.sumComm _ _), (fun _ => Equiv.sumComm _ _), ?_⟩
@@ -315,12 +341,12 @@ noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral
 
 /-- Coefficient tensors modulo mutual local linear restriction. -/
-def Tensor (K S : Type) [Field K] [Fintype S] :=
+def Tensor (K S : Type) [CommSemiring K] [Fintype S] :=
   Quotient (inferInstance : Setoid (Raw K S))
 
 namespace Tensor
 
-variable {K S : Type} [Field K] [Fintype S]
+variable {K S : Type} [CommSemiring K] [Fintype S]
 
 /-- Passes a raw multilinear table to its equivalence class under mutual restriction. -/
 def ofRaw (A : Raw K S) : Tensor K S := Quotient.mk _ A
@@ -400,7 +426,11 @@ It suffices to put the weight at one site.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
-variable {K S : Type} [Field K] [Fintype S] [Nonempty S]
+variable {K S : Type} [Fintype S] [Nonempty S]
+
+section Tables
+
+variable [CommSemiring K]
 
 open Classical in
 /-- Selects the appropriate branch of `if y = x s then if s = Classical.arbitrary S then a else
@@ -430,6 +460,10 @@ def ofTable (f : (∀ s, X s) → K) : Raw K S := by
   classical
   change (∑ i : ∀ s, X s, ∏ s, selector i (f i) s (x s)) = _
   simp [prod_selector]
+
+end Tables
+
+variable [Field K]
 
 /-- Selecting a nonzero coefficient and scaling by its inverse recovers the unit. -/
 theorem restricts_one (A : Raw K S) (h : ∃ x, A.coeff x ≠ 0) : A.Restricts 1 := by

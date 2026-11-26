@@ -40,26 +40,6 @@ def Runs : ℕ → (I → ℕ) → ℝ → Prop
   | k + 1, z, v => (Q z).take ≤ z ∧ ∀ j,
       Runs k ((Q z).next z j + copies L 1) (v + (Q z).cost j)
 
-theorem Runs.plan {P : Intervention I E → Prop} (hp : ∀ z, P (Q z))
-    (k : ℕ) (z : I → ℕ) (v : ℝ) (h : Runs L a Q budget k z v) :
-    Plan a P budget k (z + copies L k) v := by
-  induction k generalizing z v with
-  | zero =>
-    rw [show copies L 0 = 0 by ext i; simp [copies], add_zero]
-    exact Plan.close h
-  | succ k ih =>
-    obtain ⟨hz, hn⟩ := h
-    apply Plan.step (z := z + copies L (k + 1)) (Q z) (hp z) (fun i
-      => (hz i).trans (Nat.le_add_right _ _))
-    intro j
-    have he : (Q z).next (z + copies L (k + 1)) j = ((Q z).next z j + copies L 1) + copies L k := by
-      funext i
-      have hh : (Q z).take i ≤ z i := hz i
-      by_cases h : i ∈ L <;> simp [Intervention.next, copies, h]
-      omega
-    rw [he]
-    exact ih _ _ (hn j)
-
 private theorem runs_of_change {μ : ℝ} (hμ : 0 < μ) (r : ℝ)
     (h : ∀ z, (Q z).take ≤ z ∧ ∀ j,
       potential μ a ((Q z).next z j + copies L 1) + (Q z).cost j ≤ potential μ a z + r)

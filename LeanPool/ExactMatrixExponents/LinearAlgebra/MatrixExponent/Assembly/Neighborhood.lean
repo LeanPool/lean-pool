@@ -245,6 +245,40 @@ open scoped Classical in
 /-- The subtype of `p : S.Pin r` satisfying `S.peer r p.1 = none`. -/
 abbrev exposed := {p : S.Pin r // S.peer r p.1 = none}
 
+/-- Embedding the site and the seats above each site gives an injective span address. -/
+theorem span_injective {Site Face : Type*} (atSite : Face → Site)
+    (vertex : Site ↪ S.Vtx) (seat : ∀ v, {j // atSite j = v} ↪ B S.e)
+    (slot : Face → B S.e) (slot_eq : ∀ v j, slot j.val = seat v j) :
+    Function.Injective (fun j => (vertex (atSite j), slot j)) := by
+  intro j k he
+  have hk := vertex.injective (Prod.mk.inj he).1
+  let t : {j // atSite j = atSite k} := ⟨j, hk⟩
+  have h : seat _ t = seat _ ⟨k, rfl⟩ :=
+    (slot_eq _ t).symm.trans ((Prod.mk.inj he).2.trans (slot_eq _ ⟨k, rfl⟩))
+  exact congrArg Subtype.val ((seat _).injective h)
+
+/-- Order the pins at a site by its visible faces and then by the offset within each face. -/
+def orderPins {Site Face : Type*} (atSite : Face → Site)
+    (vertex : Site ↪ S.Vtx) (seat : ∀ v, {j // atSite j = v} ↪ B S.e)
+    (slot : Face → B S.e) (slot_eq : ∀ v j, slot j.val = seat v j)
+    (width : Face → ℕ) (v : Site)
+    (length_at : ∀ j, S.width r (vertex v, seat v j) = width j.val)
+    (idle : ∀ t ∉ Set.range (fun j => (vertex (atSite j), slot j)), S.width r t = 0) :
+    (Σ j : {j // atSite j = v}, Fin (width j.val)) ≃ S.LocalPin r (vertex v) :=
+  Equiv.ofBijective (fun t => ⟨seat v t.1, t.2.cast (length_at t.1).symm⟩) ⟨by
+    rintro ⟨j, b⟩ ⟨k, c⟩ he
+    have hj : j = k := (seat v).injective (congrArg Sigma.fst he)
+    subst k
+    have hi : b.val = c.val := congrArg (fun p => p.2.val) he
+    rw [Fin.ext hi], by
+    rintro ⟨j, b⟩
+    obtain ⟨k, hk⟩ := S.span_mem_of_pos r _ idle (Nat.zero_le b.val |>.trans_lt b.isLt)
+    let t : {j // atSite j = v} := ⟨k, vertex.injective (Prod.mk.inj hk).1⟩
+    have he : seat v t = j := (slot_eq v t).symm.trans (Prod.mk.inj hk).2
+    have hl : b.val < width t.val := by rw [← length_at, he]; exact b.isLt
+    refine ⟨⟨t, ⟨b.val, hl⟩⟩, Sigma.ext he ?_⟩
+    exact (Fin.heq_ext_iff (congrArg (fun j => S.width r (vertex v, j)) he)).mpr rfl⟩
+
 open scoped Classical in
 /-- Uses `⟨(v, p.1), p.2⟩` as the representation. -/
 def port (v : S.Vtx) (p : S.LocalPin r v) : S.Pin r := ⟨(v, p.1), p.2⟩

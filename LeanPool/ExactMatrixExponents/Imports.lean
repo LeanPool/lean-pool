@@ -79,6 +79,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembl
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Volumes
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Beat.HeaderCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Beat.Rule
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Beat.TemplateCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Compilation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Dictionary
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Encoded

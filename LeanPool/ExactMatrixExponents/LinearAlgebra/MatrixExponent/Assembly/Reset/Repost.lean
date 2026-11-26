@@ -150,12 +150,8 @@ open scoped Classical in
 def span (j : Face p q) : U.Span := (A.vertex (atSite j), A.slot j)
 
 open scoped Classical in
-theorem span_injective : Function.Injective A.span := by
-  intro j k he
-  have hk := A.vertex.injective (Prod.mk.inj he).1
-  let t : Visible p q (atSite k) := ⟨j, hk⟩
-  have h : A.seat _ t = A.seat _ ⟨k, rfl⟩ := (A.slot_eq _ t).symm.trans (Prod.mk.inj he).2
-  exact congrArg Subtype.val ((A.seat _).injective h)
+theorem span_injective : Function.Injective A.span :=
+  U.span_injective atSite A.vertex A.seat A.slot A.slot_eq
 
 open scoped Classical in
 /-- The data for the lengths construction, including `used`, `idle`. -/
@@ -177,24 +173,8 @@ open scoped Classical in
 def orderPins (v : Cell a × q.vertex) :
     (Σ j : Visible p q v, Fin (visibleWidth p q j.val)) ≃
       U.LocalPin out (A.vertex v) :=
-  Equiv.ofBijective (fun t => ⟨A.seat v t.1, t.2.cast (A.length_at l v t.1).symm⟩) ⟨by
-    rintro ⟨j, b⟩ ⟨k, c⟩ he
-    have hj : j = k := (A.seat v).injective (congrArg Sigma.fst he)
-    subst k
-    have hi : b.val = c.val := congrArg (fun p => p.2.val) he
-    rw [Fin.ext hi], by
-    rintro ⟨j, b⟩
-    have hs : (A.vertex v, j) ∈ Set.range A.span := by
-      by_contra h
-      have := l.idle _ h
-      have := b.isLt
-      omega
-    obtain ⟨k, hk⟩ := hs
-    let t : Visible p q v := ⟨k, A.vertex.injective (Prod.mk.inj hk).1⟩
-    have he : A.seat v t = j := (A.slot_eq v t).symm.trans (Prod.mk.inj hk).2
-    have hl : b.val < visibleWidth p q t.val := by rw [← A.length_at l, he]; exact b.isLt
-    refine ⟨⟨t, ⟨b.val, hl⟩⟩, Sigma.ext he ?_⟩
-    exact (Fin.heq_ext_iff (congrArg (fun j => U.width out (A.vertex v, j)) he)).mpr rfl⟩
+  U.orderPins out atSite A.vertex A.seat A.slot A.slot_eq (visibleWidth p q)
+    v (A.length_at l v) l.idle
 
 open scoped Classical in
 /-- Reindexes `(q.contract G.units).Port v` and `U.LocalPin out (A.vertex v)` by an equivalence. -/

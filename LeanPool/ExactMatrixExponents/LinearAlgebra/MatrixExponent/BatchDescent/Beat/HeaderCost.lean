@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Beat.TemplateCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Template.Issue
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Template.Sweep
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.History.Length
@@ -847,19 +848,24 @@ private theorem childInput_bound : Cost (fun i : I => (Child.Input i.m i.T.schem
 private theorem nav_bound {q : I → ℕ} (h : Short (fun i => 2 ^ (q i))) :
     Cost (fun i : I => i.T.navCost i.a (q i)) := by
   have bits := ((long_const 100).add ((size_bound P d).add h.long)).pow 201
-  exact (((format_bound P d).add ((groupInput_bound P d).scale 3)).add
-    ((childInput_bound P d).scale 68)).add (expanded P d (Long.row bits))
+  exact Template.navCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (degree := q) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (format_bound P d) (groupInput_bound P d) (childInput_bound P d)
+    (expanded P d (Long.row bits))
 
 private theorem childCost_bound : Cost (fun i : I => i.T.childCost i.a Δ (degreeBound i.S i.T Δ))
     := by
-  have h := format_bound P d
-  have s := h.add ((status_bound P d).scale 34)
-  exact (((h.scale 5).add s).add (nav_bound P d (child_slots P Δ d).rate.short)).scale 4
+  exact Template.childCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (delta := fun _ => Δ) (C := fun i => degreeBound i.S i.T Δ)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (format_bound P d) (status_bound P d) (nav_bound P d (child_slots P Δ d).rate.short)
 
 private theorem headerCost_bound : Cost (fun i : I => i.T.headerCost i.a Δ (degreeBound i.S i.T Δ))
     := by
-  have h := format_bound P d
-  have s := status_bound P d
   have p := (child_slots P Δ d).rate.short
   have q : Short (fun i : I => 2 ^ (Child.nextWidth i.n Δ i.T.scheme.d)) := by
     refine p.mono fun i => ?_
@@ -870,11 +876,13 @@ private theorem headerCost_bound : Cost (fun i : I => i.T.headerCost i.a Δ (deg
       (.vec (i.T.degree i.a Δ (degreeBound i.S i.T Δ)) .bit)).width) := by
     refine (expanded P d p.long.row).mono fun i => ?_
     rw [Format.width_vec, Format.width_vec, Format.width_bit, mul_one]
-  have h₁ := ((h.scale 5).add (h.add (s.scale 34))).add (h.add (s.scale 2))
-  have h₂ := (((h.scale 5).add (nav_bound P d p)).add (nav_bound P d q)).add (expanded P d
-    (Long.row bits))
-  have h₃ := (pair_cost P d (pair_cost P d s s) flags).add ((header_bound P Δ d).scale 34)
-  exact (((h.scale 5).add h₁).add h₂).add h₃
+  exact Template.headerCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (delta := fun _ => Δ) (C := fun i => degreeBound i.S i.T Δ)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (format_bound P d) (status_bound P d) (nav_bound P d p) (nav_bound P d q)
+    (expanded P d (Long.row bits)) flags (header_bound P Δ d)
 
 theorem groups_cost {f : I → ℕ} (hf : Short f) : Cost (fun i : I => 2 ^ (i.m + i.a) * f i) := by
   simpa only [pow_add, mul_assoc] using hf.groups.hosts
@@ -892,38 +900,42 @@ private theorem entries_bound : Cost (fun i : I => (i.T.Entries i.a (b P)).width
 private theorem markCost_bound : Cost (fun i : I => i.T.markCost i.a (b P)) := by
   have p := pollRow_bound P d
   have s := side_bound P d
-  have x := ((poll_bound P d).add ((groups_width P d p).scale 2)).scale 4
-  have y := groups_cost P d (((short_const 1).add p).add s)
-  have z := ((groups_width P d s).add ((entries_bound P d).scale 2)).scale 4
-  exact (x.add y).add z
+  exact Template.markCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (b := fun _ => b P)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (poll_bound P d) (groups_width P d p) (groups_width P d s)
+    (entries_bound P d) (groups_cost P d (((short_const 1).add p).add s))
 
 private theorem layoutCost_bound : Cost (fun i : I => i.T.layoutCost i.a (b P) (profile P)) := by
-  have hc := seats_bound P d
-  have h : Cost (fun i : I => 2 ^ (i.m + i.a + (i.n + i.T.scheme.e))) := by
-    refine hc.mono fun i => ?_
-    rw [Fintype.card_congr (i.T.seatIndex i.a).symm, Fintype.card_fin]
-  have g : Cost (fun i : I => (Side.Input (i.m + i.a + (i.n + i.T.scheme.e)) (b P)).width) :=
-    (h.mul (short_const (Side.Entry (b P)).width)).mono fun _ => (Format.width_vec ..).le
-  have mark := (markCost_bound P d).add (hc.mul (short_const (Branches.charge (b P))))
-  exact (mark.add (((entries_bound P d).add (g.scale 2)).scale 4)).add
-    ((h.mul (short_const ((100 + profile P) ^ 8))).scale 4)
+  exact Template.layoutCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (bits := b P)
+    (profile := profile P) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (markCost_bound P d) (seats_bound P d) (entries_bound P d)
 
 private theorem rawCost_bound : Cost (fun i : I =>
     i.T.rawCost i.a (b P) Δ (degreeBound i.S i.T Δ) (profile P)) := by
-  have p := poll_bound P d
-  have c := counted_bound P d
   have hb : Cost (fun _ : I => Format.bit.width) := (long_const _).row.cost
-  have copies := pair_cost P d (format_bound P d) (pair_cost P d p p)
-  have fields := pair_cost P d (pair_cost P d (status_bound P d) (graph_bound P Δ d)) (pair_cost P
-    d hb c)
-  have x := (p.add (copies.scale 2)).scale 4
-  have y := (childCost_bound P Δ d).add ((layoutCost_bound P d).add ((p.add (c.scale 2)).scale 4))
-  exact (x.add y).add ((fields.add ((raw_bound P Δ d).scale 2)).scale 4)
+  exact Template.rawCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (b := fun _ => b P)
+    (delta := fun _ => Δ) (C := fun i => degreeBound i.S i.T Δ) (profile := profile P)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (format_bound P d) (poll_bound P d) (counted_bound P d) (status_bound P d)
+    (graph_bound P Δ d) hb (childCost_bound P Δ d)
+    (layoutCost_bound P d) (raw_bound P Δ d)
 
 theorem headedCost_bound : Cost (fun i : I => headedCost P i.S i.T Δ i.r) := by
-  have p := poll_bound P d
-  have x := (p.add ((pair_cost P d p (format_bound P d)).scale 2)).scale 4
-  exact x.add ((rawCost_bound P Δ d).add ((headerCost_bound P Δ d).scale 4))
+  exact Template.headedCost_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m) (F := fun _ => F)
+    (T := fun i : I => i.T) (a := fun i => i.a)
+    (b := fun _ => b P) (delta := fun _ => Δ) (C := fun i => degreeBound i.S i.T Δ)
+    (profile := profile P) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (format_bound P d) (poll_bound P d) (rawCost_bound P Δ d) (headerCost_bound P Δ d)
 
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Beat
 end

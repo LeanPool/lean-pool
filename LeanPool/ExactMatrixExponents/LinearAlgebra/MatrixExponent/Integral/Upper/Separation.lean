@@ -118,11 +118,9 @@ theorem separationPolynomial_specializes
       LocalTensor.orbit (Tensor.directSum (fun _ : Fin (6 * M) => shared A)) := by
   classical
   obtain ⟨ζ, w, hζ, haverage⟩ := phases (M := M)
-  refine ⟨(fun x i => t ^ weightX x * fourierX ζ x i),
-    (fun y j => t ^ weightY y * fourierY ζ y j),
-    (fun z k => t ^ weightZ z * fourierZ ζ w z k), ?_⟩
-  rw [restrict_scaled, fourier_restrict A ζ w hζ haverage]
-  exact separationPolynomial_eval A t ht
+  exact TensorSpectrum.Separation.separationPolynomial_specializes (L := 6 * M)
+    A (fun e => ζ ^ e) w t (fun e => t ^ e)
+    (fourier_restrict A ζ w hζ haverage) (separationPolynomial_eval A t ht)
 
 /-- The complete finite construction, without a rank or character premise.
 The nonzero-evaluation witnesses are restrictions of the full source direct
@@ -134,11 +132,9 @@ theorem finite_charged_separation
       (∀ x y z, (P x y z).coeff 0 = separated A x y z) ∧
       (∀ x y z, (P x y z).degree ≤ ((M - 1) ^ 2 : ℕ)) ∧
       (∀ t : O, IsUnit t → (fun x y z => (P x y z).eval t) ∈
-        LocalTensor.orbit (Tensor.directSum (fun _ : Fin (6 * M) => shared A))) := by
-  refine ⟨separationPolynomial A, ?_, separationPolynomial_degree A,
-    separationPolynomial_specializes A⟩
-  intro x y z
-  exact congrFun (congrFun (congrFun (separationPolynomial_constant A) x) y) z
+        LocalTensor.orbit (Tensor.directSum (fun _ : Fin (6 * M) => shared A))) :=
+  TensorSpectrum.Separation.finite_charged_separation (L := 6 * M) A IsUnit
+    (separationPolynomial_specializes A)
 
 end Realization
 
