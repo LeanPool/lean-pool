@@ -6,6 +6,7 @@ Authors: Adam McKenna
 module
 
 public import LeanPool.DistinctDistances.S4CertificateCase14Data
+import LeanPool.DistinctDistances.S4CertificateCachedRows
 import LeanPool.DistinctDistances.S4CertificateKernelReplay -- shake: keep
 
 /-!
@@ -21,10 +22,16 @@ open FarkasPackedCheck
 /-- Proposed summary for subtree 1 of case 14. -/
 noncomputable def case14Summary1 : PackedSummary := s4_summary% 14, case14Rows1
 
+private theorem cachedReplay :
+    replaySummaryWithCachedRows (caseY.get 14) (caseY.get 15)
+      case14Rows1 = case14Summary1 := by
+  s4_check_equality
+
 private theorem certificateReplay :
     SummaryValid 256 params.box case14Build case14Rows1 case14Summary1 :=
   summaryValidOfSharedDenominatorReplay params (caseY.get 14) (caseY.get 15)
-    (by s4_check_equality)
+    (by
+      as_aux_lemma => exact replaySummary_eq_of_cached cachedReplay)
 
 private theorem certificateCost :
     case14Rows1.sumNat (leafCost 256 params.box.nv case14Build) = case14Summary1.cost := by

@@ -43,6 +43,7 @@ public import LeanPool.DistinctDistances.PlanarGeneralPosition
 public import LeanPool.DistinctDistances.RationalFarkasRows
 public import LeanPool.DistinctDistances.RefinedClosePairGeometry
 public import LeanPool.DistinctDistances.RegularDistanceCocircular
+public import LeanPool.DistinctDistances.S4CertificateCachedRows
 public import LeanPool.DistinctDistances.S4CertificateCase00
 public import LeanPool.DistinctDistances.S4CertificateCase00Data
 public import LeanPool.DistinctDistances.S4CertificateCase00Summary0
