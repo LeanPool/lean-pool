@@ -60,8 +60,8 @@ theorem isSCap_capPow {S : Set F} {A : Finset U} (hA : IsSCap S (A : Set U)) (j 
     IsSCap S (capPow A j : Set (Fin j → U)) := by
   rw [coe_capPow]; exact hA.pi
 
-omit [DecidableEq F] [Fintype F] in
-theorem actCol_single {W : Type} [AddCommGroup W] [Module F W] (σ : Fin 6 ↪ F) :
+omit [DecidableEq F] [Fintype F] [Field F] in
+theorem actCol_single {W : Type} (σ : Fin 6 ↪ F) :
     actCol (single (W := W) σ) = Set.range σ := rfl
 
 end Single

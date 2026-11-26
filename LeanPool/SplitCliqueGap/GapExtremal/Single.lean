@@ -28,10 +28,10 @@ namespace GapExtremal
 
 open Finset
 
-variable {F : Type} [Field F] [Fintype F] [DecidableEq F]
+variable {F : Type}
 
 /-- The one-layer positioned core. -/
-def single {W : Type} [AddCommGroup W] [Module F W] (σ : Fin 6 ↪ F) : PData F W (F × W) F where
+def single {W : Type} (σ : Fin 6 ↪ F) : PData F W (F × W) F where
   base := id
   pos := Prod.fst
   col := id
@@ -44,8 +44,7 @@ def single {W : Type} [AddCommGroup W] [Module F W] (σ : Fin 6 ↪ F) : PData F
   rl_pos := fun _ _ h => h
   colσ := fun _ _ h => Or.inl (σ.injective h)
 
-omit [DecidableEq F] [Fintype F] in
-theorem single_same {W : Type} [AddCommGroup W] [Module F W] (σ : Fin 6 ↪ F) :
+theorem single_same {W : Type} (σ : Fin 6 ↪ F) :
     ∀ v v' : F × W, (single (W := W) σ).base v = (single (W := W) σ).base v' →
       ∀ i j, σ i = (single (W := W) σ).pos v → σ j = (single (W := W) σ).pos v' →
         ¬ H12.graph.Adj i j := by
@@ -54,6 +53,7 @@ theorem single_same {W : Type} [AddCommGroup W] [Module F W] (σ : Fin 6 ↪ F) 
   subst hb
   exact hij.ne (σ.injective (hi.trans hj.symm))
 
+variable [Field F] [Fintype F] [DecidableEq F]
 variable {U : Type} [AddCommGroup U] [Module F U] [Fintype U] [DecidableEq U]
 
 /-- The one-layer graph of `A^j`. -/
