@@ -1,0 +1,70 @@
+/-
+Copyright (c) 2026 MohammadTaghi Hajiaghayi and Mahdi JafariRaviz. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
+-/
+
+/- Modified by Lean Pool contributors for the Lean 4.36 port. -/
+
+module
+
+public import LeanPool.GraphMinor.GM12.Section72NoBigon
+import LeanPool.GraphMinor.GM12.Section77
+import LeanPool.GraphMinor.GM11.Section810
+
+/-!
+# The radial conditions after deleting the interior pieces
+
+In XII (7.2), page 260, the closed outside of the two-spoke circuit
+and the deletion of one boundary spoke satisfy the defining radial
+conditions before maximality. The point-set and hub results give the
+first conditions. A possible empty bigon in an unchanged region was
+already empty. The new merged region is handled by cutting along the
+deleted boundary spoke.
+-/
+
+public section
+
+namespace GraphMinor.GM12
+
+open Set Topology Surface GM11
+
+/-- The radial deletion in XII (7.2), page 260, satisfies all radial
+conditions apart from maximality. -/
+theorem radialDiscDeletion_isPreRadial
+    {S : Type*} [TopologicalSpace S] [T2Space S] (hS : IsClosedSurface S)
+    {Γ K C : Drawing S} (hK : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
+    (hC : C.IsSubdrawing K) {D r f : Set S} {v u : S}
+    (hD : IsClosedDisc D) (hb : frontier D = C.U) (hCV : C.V = {v, u})
+    (hr : r ∈ Γ.R) (hv : v ∈ Γ.V) (hur : u ∈ r) (huK : u ∈ K.V)
+    (hCZ : C.U ⊆ r ∪ {v}) (hmeet : Γ.U ∩ C.U = {v})
+    (hfC : f ∈ C.E) (hf : K.toGraph.IsLink f v u) :
+    (PaintingOrDrawing.drawing (Γ.interSet (closure (univ \ D)))).IsPreRadialDrawing
+      (radialDiscDeletion K D f) := by
+  have : LocallyConnectedSpace S := IsClosedSurface.locallyConnectedSpace hS
+  let Γ' := Γ.interSet (closure (univ \ D))
+  let K' := radialDiscDeletion K D f
+  let Y := r ∪ (D \ {v})
+  have hΓ : Γ'.IsSubdrawing Γ := Drawing.span_isSubdrawing Γ _ _
+  have hKK : K'.IsSubdrawing K := radialDiscDeletion_isSubdrawing K D f
+  obtain ⟨_, _, _, _, hY, hcover⟩ := radialDiscDeletion_region_facts hS hD hb hr hv hCZ hmeet
+  have huNew : u ∈ K'.V := radialDiscDeletion_mem_vertexSet_of_mem_frontier
+    (hb.symm ▸ C.V_subset_U (hCV.symm ▸ Or.inr rfl)) huK
+  refine ⟨radialDiscDeletion_inter hK D f, radialDiscDeletion_vertex_subset hK D f,
+    radialDiscDeletion_region_hubs hS hK hC hD hb hCV hr hv hur huK hCZ hmeet,
+    radialDiscDeletion_vertex_region hK D f, radialDiscDeletion_edge_ends hK D f, ?_⟩
+  intro g hg h hh hgh x hx s hs w hw hcapg hcaph
+  have hcapgK : closure g ∩ K.V = {x, w} := (hKK.closure_inter_V hg).symm.trans hcapg
+  have hcaphK : closure h ∩ K.V = {x, w} := (hKK.closure_inter_V hh).symm.trans hcaph
+  by_cases hsY : s = Y
+  · subst s
+    have hwu : w = u :=
+      (radialDiscDeletion_merged_hub hK hC hb hCV hr hur huK).unique hw ⟨Or.inl hur, huNew⟩
+    subst w
+    exact no_empty_bigon_in_merged_region hS hK hC hD hb hCZ hr hv hur huK hfC hf
+      hg hh hgh (hΓ.1 hx) hcapgK hcaphK
+  · have hsOld := region_mem_of_ne_merged_region hΓ hY hcover hs hsY
+    exact hK.2.2.2.2.2 g (hKK.2 hg) h (hKK.2 hh) hgh x (hΓ.1 hx) s hsOld
+      w ⟨hw.1, hKK.1 hw.2⟩ hcapgK hcaphK
+
+end GraphMinor.GM12

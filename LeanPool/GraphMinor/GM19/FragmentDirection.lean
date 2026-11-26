@@ -1,0 +1,314 @@
+/-
+Copyright (c) 2026 MohammadTaghi Hajiaghayi and Mahdi JafariRaviz. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
+-/
+
+/- Modified by Lean Pool contributors for the Lean 4.36 port. -/
+
+module
+
+public import LeanPool.GraphMinor.GM19.FragmentChord
+public import LeanPool.GraphMinor.GM19.CircleLift
+
+/-!
+# Directions of a circle
+
+A direction of the boundary of a closed disc comes from a parametrization by the circle. Two
+directions of one `O`-arc are equal or
+reverse (`IsDirectionOf.same_or_reverse`), since a homeomorphism of the circle keeps or reverses the
+cyclic order. We then consider
+relations given only on a family of discs (`IsPartialOrientation`). Two of them on a closed disc
+that are equal on one subdisc are equal
+on every subdisc, by `exists_nested_chord`.
+-/
+
+@[expose] public section
+
+namespace GraphMinor.GM19
+
+open Set Topology Metric Filter GraphMinor.Surface
+
+theorem exp_eq_of_angles {s t : ℝ} (hs : 0 < s) (hs' : s < 2 * Real.pi) (ht : 0 < t)
+  (ht' : t < 2 * Real.pi)
+    (h : Circle.exp s = Circle.exp t) : s = t :=
+  CircleOrder.exp_eq_of_angles hs hs' ht ht' h
+
+/-- Three points of the circle do not lie in both cyclic orders. -/
+theorem not_circleCyclic_both {a b c : Circle} (h : CircleCyclic a b c)
+  (h' : CircleCyclic a c b) : False :=
+  CircleOrder.not_circleCyclic_both h h'
+
+theorem circleCyclic_inv {a b c : Circle} (h : CircleCyclic a b c) : CircleCyclic a⁻¹ c⁻¹ b⁻¹ :=
+  CircleOrder.circleCyclic_inv h
+
+theorem exists_angle_of_circle (a : Circle) : ∃ α : ℝ, a = Circle.exp α :=
+  CircleOrder.exists_angle_of_circle a
+
+/-- A homeomorphism of the circle with an increasing lift keeps the cyclic order. -/
+theorem circleCyclic_map_mono {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
+  (hm : StrictMono L)
+    (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
+      CircleCyclic (τ a) (τ b) (τ c) :=
+  CircleCyclic.map_increasing_lift hc hm hl h
+
+/-- A homeomorphism of the circle with a decreasing lift reverses the cyclic order. -/
+theorem circleCyclic_map_anti {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
+  (hm : StrictAnti L)
+    (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
+      CircleCyclic (τ a) (τ c) (τ b) :=
+  CircleCyclic.map_decreasing_lift hc hm hl h
+
+theorem circle_map_or (τ : Circle ≃ₜ Circle) :
+    (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ b)
+      (τ c))) ∨
+    (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ c)
+      (τ b))) :=
+  circleCyclic_homeomorph τ
+
+variable {X : Type} [TopologicalSpace X] [T2Space X]
+
+/-- `r` is a direction of the set `F`: a cyclic order that comes from a parametrization of `F` by
+the circle. -/
+def IsDirectionOf (F : Set X) (r : X → X → X → Prop) : Prop :=
+  ∃ φ : Circle → X, Continuous φ ∧ Function.Injective φ ∧ range φ = F ∧
+    ∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (r (φ a) (φ b) (φ c) ↔ CircleCyclic a b c)
+
+omit [T2Space X] in
+theorem IsDirectionOf.swap {F : Set X} {r : X → X → X → Prop} (h : IsDirectionOf F r) {a b c : X}
+  (ha : a ∈ F) (hb : b ∈ F) (hc : c ∈ F)
+    (hab : a ≠ b) (hbc : b ≠ c) (hac : a ≠ c) : r a b c ↔ ¬ r a c b := by
+  obtain ⟨φ, -, hi, rfl, hφ⟩ := h
+  obtain ⟨a, rfl⟩ := ha
+  obtain ⟨b, rfl⟩ := hb
+  obtain ⟨c, rfl⟩ := hc
+  have hab' : a ≠ b := fun h ↦ hab (by rw [h])
+  have hac' : a ≠ c := fun h ↦ hac (by rw [h])
+  have hbc' : b ≠ c := fun h ↦ hbc (by rw [h])
+  rw [hφ a b c hab' hbc' hac', hφ a c b hac' hbc'.symm hab']
+  exact ⟨fun h h' ↦ not_circleCyclic_both h h', fun h ↦ (circleCyclic_or hab' hac'
+    hbc').resolve_right h⟩
+
+theorem IsDirectionOf.same_or_reverse {F : Set X} {r r' : X → X → X → Prop} (h : IsDirectionOf F r)
+  (h' : IsDirectionOf F r') :
+    (∀ a b c, a ∈ F → b ∈ F → c ∈ F → a ≠ b → b ≠ c → a ≠ c → (r a b c ↔ r' a b c)) ∨
+    (∀ a b c, a ∈ F → b ∈ F → c ∈ F → a ≠ b → b ≠ c → a ≠ c → (r a b c ↔ r' a c b)) := by
+  obtain ⟨φ, hc, hi, rfl, hφ⟩ := h
+  obtain ⟨φ', hc', hi', hr, hφ'⟩ := h'
+  let e : Circle ≃ₜ range φ := (hc.isClosedEmbedding hi).isEmbedding.toHomeomorph
+  let e' : Circle ≃ₜ range φ' := (hc'.isClosedEmbedding hi').isEmbedding.toHomeomorph
+  let τ : Circle ≃ₜ Circle := e.trans ((Homeomorph.setCongr hr.symm).trans e'.symm)
+  have hτ : ∀ x, φ' (τ x) = φ x := fun x ↦ by
+    have : (e' (τ x)).1 = (e x).1 := by
+      change (e' (e'.symm (Homeomorph.setCongr hr.symm (e x)))).1 = _
+      rw [e'.apply_symm_apply]
+      rfl
+    exact this
+  have hne : ∀ {x y : Circle}, x ≠ y → τ x ≠ τ y := fun h h' ↦ h (τ.injective h')
+  rcases circle_map_or τ with hm | hm
+  · refine Or.inl ?_
+    rintro _ _ _ ⟨a, rfl⟩ ⟨b, rfl⟩ ⟨c, rfl⟩ hab hbc hac
+    have hab' : a ≠ b := fun h ↦ hab (by rw [h])
+    have hac' : a ≠ c := fun h ↦ hac (by rw [h])
+    have hbc' : b ≠ c := fun h ↦ hbc (by rw [h])
+    rw [hφ a b c hab' hbc' hac', ← hτ a, ← hτ b, ← hτ c, hφ' _ _ _ (hne hab') (hne hbc') (hne hac')]
+    exact hm a b c hab' hbc' hac'
+  · refine Or.inr ?_
+    rintro _ _ _ ⟨a, rfl⟩ ⟨b, rfl⟩ ⟨c, rfl⟩ hab hbc hac
+    have hab' : a ≠ b := fun h ↦ hab (by rw [h])
+    have hac' : a ≠ c := fun h ↦ hac (by rw [h])
+    have hbc' : b ≠ c := fun h ↦ hbc (by rw [h])
+    rw [hφ a b c hab' hbc' hac', ← hτ a, ← hτ b, ← hτ c, hφ' _ _ _ (hne hac') (hne hbc'.symm)
+      (hne hab')]
+    exact hm a b c hab' hbc' hac'
+
+/-- The relation `pos` is a direction of the boundary of each disc of `𝓕`, and nested discs of `𝓕`
+agree on common boundary points.
+So `pos` is an orientation, restricted to the discs of `𝓕`. -/
+structure IsPartialOrientation (𝓕 : Set (Set X)) (pos : Set X → X → X → X → Prop) : Prop where
+  dir : ∀ Δ ∈ 𝓕, IsClosedDisc Δ → IsDirectionOf (discBd Δ) (pos Δ)
+  agree : ∀ Δ₁ ∈ 𝓕, ∀ Δ₂ ∈ 𝓕, IsClosedDisc Δ₁ → IsClosedDisc Δ₂ → Δ₁ ⊆ Δ₂ → ∀ a b c : X,
+    a ∈ discBd Δ₁ ∩ discBd Δ₂ → b ∈ discBd Δ₁ ∩ discBd Δ₂ → c ∈ discBd Δ₁ ∩ discBd Δ₂ →
+    a ≠ b → b ≠ c → a ≠ c → (pos Δ₁ a b c ↔ pos Δ₂ a b c)
+
+omit [T2Space X] in
+theorem SurfaceOrientation.isPartial (ω : SurfaceOrientation X) (𝓕 : Set
+  (Set X)) : IsPartialOrientation 𝓕 ω.pos :=
+  ⟨fun Δ _ hΔ ↦ ω.isDirection Δ hΔ, fun Δ₁ _ Δ₂ _ h₁ h₂ ↦ ω.agree Δ₁ Δ₂ h₁ h₂⟩
+
+omit [T2Space X] in
+theorem IsPartialOrientation.mono {𝓕 𝓖 : Set (Set X)} {pos : Set X → X → X → X → Prop}
+  (h : IsPartialOrientation 𝓕 pos) (hs : 𝓖 ⊆ 𝓕) :
+    IsPartialOrientation 𝓖 pos :=
+  ⟨fun Δ hΔ ↦ h.dir Δ (hs hΔ), fun Δ₁ h₁ Δ₂ h₂ ↦ h.agree Δ₁ (hs h₁) Δ₂ (hs h₂)⟩
+
+/-- The reverse of `pos`. -/
+def revPos (pos : Set X → X → X → X → Prop) : Set X → X → X → X → Prop := fun Δ a b c ↦ pos Δ a c b
+
+omit [T2Space X] in
+theorem IsPartialOrientation.rev {𝓕 : Set (Set X)} {pos : Set X → X → X → X → Prop}
+  (h : IsPartialOrientation 𝓕 pos) :
+    IsPartialOrientation 𝓕 (revPos pos) := by
+  refine ⟨fun Δ hΔ hd ↦ ?_, fun Δ₁ h₁ Δ₂ h₂ hd₁ hd₂ hs a b c ha hb hc hab hbc hac ↦
+    h.agree Δ₁ h₁ Δ₂ h₂ hd₁ hd₂ hs a c b ha hc hb hac hbc.symm hab⟩
+  obtain ⟨φ, hc, hi, hr, hφ⟩ := h.dir Δ hΔ hd
+  refine ⟨fun x ↦ φ x⁻¹, by fun_prop, fun x y he ↦ inv_injective (hi he), ?_,
+    fun a b c hab hbc hac ↦ ?_⟩
+  · rw [← hr]
+    ext x
+    constructor
+    · rintro ⟨y, rfl⟩
+      exact ⟨y⁻¹, rfl⟩
+    · rintro ⟨y, rfl⟩
+      exact ⟨y⁻¹, by simp⟩
+  · have hne : ∀ {x y : Circle}, x ≠ y → x⁻¹ ≠ y⁻¹ := fun h h' ↦ h (inv_injective h')
+    change pos Δ (φ a⁻¹) (φ c⁻¹) (φ b⁻¹) ↔ _
+    rw [hφ _ _ _ (hne hac) (hne hbc.symm) (hne hab)]
+    refine ⟨fun h ↦ ?_, circleCyclic_inv⟩
+    simpa using circleCyclic_inv h
+
+/-- The relations `pos` and `pos'` are equal on the boundary of `Δ`. -/
+def SameOn (pos pos' : Set X → X → X → X → Prop) (Δ : Set X) : Prop :=
+  ∀ a b c, a ∈ discBd Δ → b ∈ discBd Δ → c ∈ discBd Δ → a ≠ b → b ≠ c → a ≠ c →
+    (pos Δ a b c ↔ pos' Δ a b c)
+
+theorem sameOn_iff_triple {pos pos' : Set X → X → X → X → Prop} {Δ : Set X} (h : IsDirectionOf
+  (discBd Δ) (pos Δ))
+    (h' : IsDirectionOf (discBd Δ) (pos' Δ)) {a b c : X} (ha : a ∈ discBd Δ) (hb : b ∈ discBd Δ)
+      (hc : c ∈ discBd Δ) (hab : a ≠ b)
+    (hbc : b ≠ c) (hac : a ≠ c) : SameOn pos pos' Δ ↔ (pos Δ a b c ↔ pos' Δ a b c) := by
+  refine ⟨fun hs ↦ hs a b c ha hb hc hab hbc hac, fun he ↦ ?_⟩
+  rcases h.same_or_reverse h' with h₁ | h₁
+  · exact h₁
+  · have h₂ := h₁ a b c ha hb hc hab hbc hac
+    have h₃ := h'.swap ha hc hb hac hbc.symm hab
+    have h₄ := h'.swap ha hb hc hab hbc hac
+    tauto
+
+theorem sameOn_of_notSame {pos pos' : Set X → X → X → X → Prop} {Δ : Set X} (h : IsDirectionOf
+  (discBd Δ) (pos Δ))
+    (h' : IsDirectionOf (discBd Δ) (pos' Δ)) (hn : ¬ SameOn pos pos' Δ) : SameOn pos
+      (revPos pos') Δ :=
+  (h.same_or_reverse h').resolve_left hn
+
+/-- Nested discs with three common boundary points are alike for the comparison of two relations. -/
+theorem sameOn_nested_triple {𝓕 : Set (Set X)} {pos pos' : Set X → X → X → X → Prop}
+  (h : IsPartialOrientation 𝓕 pos)
+    (h' : IsPartialOrientation 𝓕 pos') {Δ₁ Δ₂ : Set X} (h₁ : Δ₁ ∈ 𝓕) (h₂ : Δ₂ ∈ 𝓕)
+      (hd₁ : IsClosedDisc Δ₁) (hd₂ : IsClosedDisc Δ₂)
+    (hs : Δ₁ ⊆ Δ₂) (ht : HasTriple (discBd Δ₁ ∩ discBd Δ₂)) : SameOn pos pos' Δ₁ ↔ SameOn pos pos'
+      Δ₂ := by
+  obtain ⟨a, b, c, ha, hb, hc, hab, hbc, hac⟩ := ht
+  rw [sameOn_iff_triple (h.dir _ h₁ hd₁) (h'.dir _ h₁ hd₁) ha.1 hb.1 hc.1 hab hbc hac,
+    sameOn_iff_triple (h.dir _ h₂ hd₂) (h'.dir _ h₂ hd₂) ha.2 hb.2 hc.2 hab hbc hac,
+    h.agree _ h₁ _ h₂ hd₁ hd₂ hs a b c ha hb hc hab hbc hac, h'.agree _ h₁ _ h₂ hd₁ hd₂ hs a b c ha
+      hb hc hab hbc hac]
+
+theorem sameOn_of_subset_discInt {𝓕 : Set (Set X)} {pos pos' : Set X → X → X → X → Prop}
+  (hh : ∀ Δ ∈ 𝓕, ∀ Δ' ⊆ Δ, Δ' ∈ 𝓕)
+    (h : IsPartialOrientation 𝓕 pos) (h' : IsPartialOrientation 𝓕 pos') {D₀ D₁ : Set X}
+      (h₁ : D₁ ∈ 𝓕) (hd₀ : IsClosedDisc D₀)
+    (hd₁ : IsClosedDisc D₁) (hs : D₀ ⊆ discInt D₁) : SameOn pos pos' D₀ ↔ SameOn pos pos' D₁ := by
+  obtain ⟨Δ, hΔ, h₀Δ, hΔ₁, t₁, t₂⟩ := exists_nested_chord hd₀ hd₁ hs
+  have hF : Δ ∈ 𝓕 := hh D₁ h₁ Δ hΔ₁
+  have hF₀ : D₀ ∈ 𝓕 := hh Δ hF D₀ h₀Δ
+  exact (sameOn_nested_triple h h' hF₀ hF hd₀ hΔ h₀Δ t₁).trans (sameOn_nested_triple h h' hF h₁ hΔ
+    hd₁ hΔ₁ t₂)
+
+/-- A closed disc has a smaller closed disc in its inside. -/
+theorem exists_inner_disc {D : Set X} (hD : IsClosedDisc D) : ∃ D', IsClosedDisc D'
+  ∧ D' ⊆ discInt D := by
+  obtain ⟨h, g, c⟩ := hD.exists_isChart
+  have hb : Convex ℝ (closedBall (0 : ℂ) (1 / 2)) := convex_closedBall _ _
+  obtain ⟨hZ, -⟩ := isClosedDisc_of_convex hb (by
+    rw [interior_closedBall _ (by norm_num)]
+    exact ⟨0, by simp⟩) isBounded_closedBall isClosed_closedBall
+  have hs : closedBall (0 : ℂ) (1 / 2) ⊆ closedBall 0 1 := closedBall_subset_closedBall
+    (by norm_num)
+  refine ⟨g '' closedBall 0 (1 / 2), (isClosedDisc_image_injOn hZ (c.gc.mono hs)
+    (c.hg.injOn.mono hs)).1, ?_⟩
+  rw [c.discInt_eq]
+  exact image_mono (closedBall_subset_ball (by norm_num))
+
+/-- Two relations are equal on a subdisc if and only if they are equal on the disc. This is the step
+that makes orientations rigid. -/
+theorem sameOn_of_subset (hman : ∀ x : X, IsManifoldPoint x) {𝓕 : Set (Set X)} {pos pos' : Set X
+  → X → X → X → Prop}
+    (hh : ∀ Δ ∈ 𝓕, ∀ Δ' ⊆ Δ, Δ' ∈ 𝓕) (h : IsPartialOrientation 𝓕 pos)
+      (h' : IsPartialOrientation 𝓕 pos') {D₀ D₁ : Set X} (h₁ : D₁ ∈ 𝓕)
+    (hd₀ : IsClosedDisc D₀) (hd₁ : IsClosedDisc D₁) (hs : D₀ ⊆ D₁) : SameOn pos pos' D₀ ↔ SameOn
+      pos pos' D₁ := by
+  obtain ⟨D', hD', hin⟩ := exists_inner_disc hd₀
+  have hF₀ : D₀ ∈ 𝓕 := hh D₁ h₁ D₀ hs
+  rw [← sameOn_of_subset_discInt hh h h' hF₀ hD' hd₀ hin]
+  exact sameOn_of_subset_discInt hh h h' h₁ hD' hd₁ (hin.trans (discInt_mono hman hd₀ hs))
+
+omit [T2Space X] in
+/-- Around an interior point there is a closed disc inside any given open set. -/
+theorem exists_small_disc {y : X} (hy : IsInteriorPoint y) {W : Set X} (hW : IsOpen W)
+  (hyW : y ∈ W) :
+    ∃ E : Set X, IsClosedDisc E ∧ y ∈ discInt E ∧ E ⊆ W := by
+  obtain ⟨U, h, g, c, hU, hg0⟩ := hy.exists_ballChart hW hyW (R := 2) two_pos
+  obtain ⟨hZ, hbd⟩ := isClosedDisc_closedBall
+  have hsub : Metric.closedBall (0 : ℂ) 1 ⊆ Metric.ball 0 2 :=
+    Metric.closedBall_subset_ball (by norm_num)
+  obtain ⟨hE, hEb⟩ := c.image_disc hZ hsub
+  refine ⟨_, hE, ⟨⟨0, by simp, hg0⟩, fun hy' ↦ ?_⟩, image_subset_iff.2 fun z hz ↦ hU (c.gm
+    (hsub hz))⟩
+  rw [hEb, hbd] at hy'
+  obtain ⟨z, hz, hzy⟩ := hy'
+  have hz' : ‖z‖ = 1 := by simpa using hz
+  have h₁ : z = 0 := by
+    have ha := c.hg (show z ∈ Metric.ball (0 : ℂ) 2 from hsub (Metric.sphere_subset_closedBall hz))
+    have hb := c.hg (show (0 : ℂ) ∈ Metric.ball (0 : ℂ) 2 by simp)
+    rw [← ha, hzy, ← hg0, hb]
+  rw [h₁] at hz'
+  simp at hz'
+
+/-- **Rigidity.** Two relations on the discs of a connected open set of interior points are equal on
+all discs or on none. -/
+theorem sameOn_const (hman : ∀ x : X, IsManifoldPoint x) {G : Set X} (hG : IsOpen G)
+  (hGc : IsPreconnected G)
+    (hint : ∀ x ∈ G, IsInteriorPoint x) {pos pos' : Set X → X → X → X → Prop}
+      (h : IsPartialOrientation {Δ | Δ ⊆ G} pos)
+    (h' : IsPartialOrientation {Δ | Δ ⊆ G} pos') {D₁ D₂ : Set X} (hd₁ : IsClosedDisc D₁)
+      (hd₂ : IsClosedDisc D₂) (hs₁ : D₁ ⊆ G)
+    (hs₂ : D₂ ⊆ G) : SameOn pos pos' D₁ ↔ SameOn pos pos' D₂ := by
+  have hh : ∀ Δ ∈ {Δ | Δ ⊆ G}, ∀ Δ' ⊆ Δ, Δ' ∈ {Δ | Δ ⊆ G} := fun Δ hΔ Δ' hs ↦ hs.trans hΔ
+  have key : ∀ {D D' : Set X}, IsClosedDisc D → IsClosedDisc D' → D ⊆ G → D' ⊆ G →
+    (discInt D ∩ discInt D').Nonempty →
+      (SameOn pos pos' D ↔ SameOn pos pos' D') := by
+    intro D D' hD hD' hs hs' ⟨x, hx, hx'⟩
+    obtain ⟨E, hE, hxE, hEW⟩ := exists_small_disc (hint x (hs (discInt_subset D hx)))
+      ((hD.isOpen_discInt hman).inter (hD'.isOpen_discInt hman)) ⟨hx, hx'⟩
+    rw [← sameOn_of_subset_discInt hh h h' hs hE hD (hEW.trans inter_subset_left),
+      ← sameOn_of_subset_discInt hh h h' hs' hE hD' (hEW.trans inter_subset_right)]
+  let Z : Prop → Set X := fun p ↦ ⋃₀ {U | ∃ D, IsClosedDisc D ∧ D ⊆ G ∧ U = discInt D ∧
+    (SameOn pos pos' D ↔ p)}
+  have hop : ∀ p, IsOpen (Z p) := fun p ↦ isOpen_sUnion (by
+    rintro _ ⟨D, hD, -, rfl, -⟩
+    exact hD.isOpen_discInt hman)
+  have hmem : ∀ {D}, IsClosedDisc D → D ⊆ G → ∀ {x}, x ∈ discInt D → x ∈ Z (SameOn pos pos' D)
+    := fun hD hs _ hx ↦
+    ⟨_, ⟨_, hD, hs, rfl, Iff.rfl⟩, hx⟩
+  have hdisj : Disjoint (Z True) (Z False) := by
+    refine disjoint_left.2 ?_
+    rintro x ⟨_, ⟨D, hD, hs, rfl, ht⟩, hx⟩ ⟨_, ⟨D', hD', hs', rfl, hf⟩, hx'⟩
+    have := key hD hD' hs hs' ⟨x, hx, hx'⟩
+    tauto
+  have hcov : G ⊆ Z True ∪ Z False := by
+    intro x hx
+    obtain ⟨E, hE, hxE, hEW⟩ := exists_small_disc (hint x hx) hG hx
+    by_cases hc : SameOn pos pos' E
+    · exact Or.inl ⟨_, ⟨E, hE, hEW, rfl, by simpa using hc⟩, hxE⟩
+    · exact Or.inr ⟨_, ⟨E, hE, hEW, rfl, by simpa using hc⟩, hxE⟩
+  have hex : ∀ {D}, IsClosedDisc D → D ⊆ G → ∀ p, G ⊆ Z p → (SameOn pos pos' D ↔ p) := by
+    intro D hD hs p hp
+    obtain ⟨x, hx⟩ := hD.nonempty_discInt
+    obtain ⟨_, ⟨D', hD', hs', rfl, he⟩, hx'⟩ := hp (hs (discInt_subset D hx))
+    exact (key hD hD' hs hs' ⟨x, hx, hx'⟩).trans he
+  rcases hGc.subset_or_subset (hop _) (hop _) hdisj hcov with hZ | hZ
+  · exact (hex hd₁ hs₁ _ hZ).trans (hex hd₂ hs₂ _ hZ).symm
+  · exact (hex hd₁ hs₁ _ hZ).trans (hex hd₂ hs₂ _ hZ).symm
+
+end GraphMinor.GM19
