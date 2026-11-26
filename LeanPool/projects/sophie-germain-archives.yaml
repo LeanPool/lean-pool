@@ -37,6 +37,8 @@ provenance: AI
 main_declarations:
 - LeanPool.SophieGermainArchives.Naf4073.triangular_of_square
 - LeanPool.SophieGermainArchives.Naf4073.lagrange_unique
+- LeanPool.SophieGermainArchives.Naf4073.S_ten
+- LeanPool.SophieGermainArchives.Naf4073.S_even_eq_S_two_mul
 - LeanPool.SophieGermainArchives.Fr9115Arithmetic.manuscriptC_odd
 - LeanPool.SophieGermainArchives.Fr9115Arithmetic.dvd_n_of_dvd_both
 - LeanPool.SophieGermainArchives.Fr9115Arithmetic.exists_prime_nonresidue
@@ -63,6 +65,12 @@ main_results:
 - declaration: LeanPool.SophieGermainArchives.Naf4073.T_pow_eq_sum
   informal: For k ≥ 1, 2^{k−1} T_n^k is the sum over m ≤ k with k − m odd of C(k, m) S_{k+m}(n),
     where S_p(n) = 1^p + ⋯ + n^p. These identities give a triangular system for the odd power sums.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.S_ten
+  informal: 33 S_10(n) = (2n + 1) T_n (48T_n⁴ − 80T_n³ + 68T_n² − 30T_n + 5), the fifth row of
+    the system obtained by telescoping (2n + 1) T_n^k, solved.
+- declaration: LeanPool.SophieGermainArchives.Naf4073.S_even_eq_S_two_mul
+  informal: For every k ≥ 1 there is a polynomial R_k with rational coefficients such that
+    S_{2k}(n) = S_2(n) R_k(S_1(n)) for every n (proposition 10 of the edition's article).
 - declaration: LeanPool.SophieGermainArchives.Naf4073.gersonides
   informal: 2^p + 1 = 3^q with p, q ≥ 1 holds only for (p, q) = (1, 1) and (3, 2) (Levi ben
     Gershon).

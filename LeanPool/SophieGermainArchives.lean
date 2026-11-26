@@ -23,6 +23,8 @@ Authors: Michel Hua
 Status: verified
 Main declarations: `LeanPool.SophieGermainArchives.Naf4073.triangular_of_square`,
   `LeanPool.SophieGermainArchives.Naf4073.lagrange_unique`,
+  `LeanPool.SophieGermainArchives.Naf4073.S_ten`,
+  `LeanPool.SophieGermainArchives.Naf4073.S_even_eq_S_two_mul`,
   `LeanPool.SophieGermainArchives.Fr9115Arithmetic.manuscriptC_odd`,
   `LeanPool.SophieGermainArchives.Fr9115Arithmetic.dvd_n_of_dvd_both`,
   `LeanPool.SophieGermainArchives.Fr9115Arithmetic.exists_prime_nonresidue`,
