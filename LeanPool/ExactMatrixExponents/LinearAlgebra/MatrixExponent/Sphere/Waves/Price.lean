@@ -53,17 +53,6 @@ theorem loc_near (v : w.V) : w.atlas.near (a.U + 1) (w.loc j v) v := by
     exact h.choose_spec.2
   · exact .refl _ _ _
 
-open scoped Classical in
-/-- The data for the balanced construction, including `energy`, `time`, `outside`. -/
-structure Balanced (s : w.At j.val) (q : w.At (j.val + 1)) : Prop where
-  energy : ∀ i, (∑ v ∈ univ.filter (fun v => w.loc j v = i), q.stage.energyCre a.chart a.H a.g v) ≤
-    ∑ v ∈ univ.filter (fun v => w.loc j v = i), s.stage.energyCre a.chart a.H a.g v
-  time : ∀ i, (∑ v ∈ univ.filter (fun v => w.loc j v = i), q.stage.timeCre a.chart a.H a.U v) ≤
-    ∑ v ∈ univ.filter (fun v => w.loc j v = i), s.stage.timeCre a.chart a.H a.U v
-  outside : ∀ v, (¬ ∃ u, w.leader j v u) →
-    q.stage.energyCre a.chart a.H a.g v = s.stage.energyCre a.chart a.H a.g v ∧
-    q.stage.timeCre a.chart a.H a.U v = s.stage.timeCre a.chart a.H a.U v
-
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Surface.Local.Scenario
 end
 
@@ -927,90 +916,4 @@ theorem priced_waves (hk : Frame.budget F a.chart a.g a.H a.M a.D a.U ≤ 2 ^ k)
     a.le_hops))
 
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Surface.Local
-end
-
-/- # Regional balances for the actual encoded wave successor -/
-
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Surface.Local.Scenario
-open Assembly Coloring Transcript
-
-variable {F A N : Type} [Field F] [Fintype F] {a : Design} [ExpChar F a.p]
-  {e k : ℕ} {x y : Wire} {menu : a.Menu F N A e}
-  (w : Scenario F N A a x y) (hF : a.M * (2 * a.D + 1) < Fintype.card F)
-  (j : Fin a.waves) (s : w.Code j.val menu)
-  (hk : Frame.budget F a.chart a.g a.H a.M a.D a.U ≤ 2 ^ k)
-
-local notation "C" => actions w hF j s
-local notation "S" => selector w hF j s hk
-
-open scoped Classical in
-private theorem affected (i : Fin ((w.π.plan w.pos).count j)) (v : w.V)
-    (h : (C i).affected w.atlas.src w.atlas.dst v) :
-    w.leader j v ((w.π.plan w.pos).root j i) := by
-  let u := (w.π.plan w.pos).root j i
-  have hc : w.π.mark u = (finProdFinEquiv.symm j).1 := (w.π.mem_roots _ u).mp ⟨i, rfl⟩
-  refine ⟨hc, ?_⟩
-  rcases h with h | ⟨e, ⟨z, rfl⟩, he⟩
-  · exact ((w.π.vertex_range le_rfl).mp h).mono (by omega)
-  · have hh := (w.π.seam_spec a.U u z).1.near
-    rcases he with rfl | rfl
-    · exact hh.1
-    · exact hh.2
-
-open scoped Classical in
-private theorem body_next (i : Branch w hF j s) (q : w.Code (j.val + 1) (a.nextMenu hF j menu k))
-    (he : q.tape = a.update s.tape ((S).write i)) (v : w.V) :
-    q.frame.record.body w.π.edge v = (Wave.update C s.frame.record i).body w.π.edge v := by
-  let p := w.atlas.coord v
-  have hr := Frame.routed a.p a.l hF j w.c s.frame w.size hk i p
-  have ha := s.around w ((S).write i) p
-  have hn := q.read p
-  rw [he] at hn
-  unfold Design.nextMenu Design.update Fmt.update at hn
-  simp only [Equiv.symm_apply_apply, ha, Atlas.around_zero, s.read, stored] at hn
-  have hb := (congrArg Prod.snd hn).symm.trans hr
-  rw [Palette.records_at, Palette.records_at] at hb
-  exact congrArg (fun u => u.2.2.2.toBody) (Option.some.inj hb)
-
-open scoped Classical in
-/-- Any honest successor on this tape has the same local credits
-as the semantic execution of the commands. -/
-theorem balanced_of_tape (hP : 0 < a.chart) (hH : 0 < a.H)
-    (i : Branch w hF j s) (q : w.Code (j.val + 1) (a.nextMenu hF j menu k))
-    (he : q.tape = a.update s.tape ((S).write i)) : w.Balanced j s.frame q.frame := by
-  let f := s.frame
-  have hp := Frame.prepared w.c a.p a.l hF j f
-  obtain ⟨t, β, h, _⟩ := Wave.execute C hp.separate f.stage f.address (hp.inputs f.match')
-    f.layout f.valid (fun y hy => w.room _ (f.reach.trans hy)) f.calm
-  have hL : (t i).Layout w.atlas.src w.atlas.dst a.g :=
-    ⟨f.layout.loopless, (h i).reach.ports_eq.symm ▸ f.layout.incident,
-      (h i).reach.ports_eq.symm ▸ f.layout.unique, (h i).reach.ports_eq.symm ▸ f.layout.degree⟩
-  have hm := hp.outputs f.match' (h i)
-  have hb := body_next w hF j s hk i q he
-  have heq v : q.frame.stage.energyCre a.chart a.H a.g v = (t i).energyCre a.chart a.H a.g v := by
-    rw [← q.frame.match'.energyCre w.π.edge, ← hm.energyCre w.π.edge, hb]
-  have htq v : q.frame.stage.timeCre a.chart a.H a.U v = (t i).timeCre a.chart a.H a.U v := by
-    rw [← q.frame.match'.timeCre q.frame.layout w.π.edge, ← hm.timeCre hL w.π.edge, hb]
-  have hreg := (h i).history.regional hP hH f.layout (w.loc j)
-    (fun a => ⟨_, fun v hv => w.loc_of_leader j (affected w hF j s a v hv)⟩)
-  refine ⟨?_, ?_, ?_⟩
-  · simp_rw [heq]
-    exact hreg.1
-  · simp_rw [htq]
-    exact hreg.2.1
-  · intro v hv
-    rw [heq, htq]
-    exact hreg.2.2 v (fun a ha => hv ⟨_, affected w hF j s a v ha⟩)
-
-open scoped Classical in
-theorem step_balanced (hP : 0 < a.chart) (hH : 0 < a.H) :
-    ∃ q : Branch w hF j s → w.Code (j.val + 1) (a.nextMenu hF j menu k),
-      (∀ i, (q i).tape = a.update s.tape ((S).write i)) ∧
-      (∀ i, w.Balanced j s.frame (q i).frame) ∧
-      ∀ u v, w.eval s.frame u v = ∑ i, scalar w hF j s i * w.eval (q i).frame u v := by
-  obtain ⟨q, he, hq⟩ := step w hF j s hk
-  exact ⟨q, he, fun i => balanced_of_tape w hF j s hk hP hH i (q i) (he i), hq⟩
-
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Surface.Local.Scenario
 end

@@ -7,7 +7,6 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Square
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Dual
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.Reduction
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Iteration

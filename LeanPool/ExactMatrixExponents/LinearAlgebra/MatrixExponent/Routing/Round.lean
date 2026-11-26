@@ -487,7 +487,7 @@ theorem batch (u : Finset I) (hu : (2 : Tensor K S) ≤ ∏ i ∈ u, T i) (m : �
     bundle T (copies q.demand (q.move.block * m)) ≤
       ∑ h ∈ histograms q.move.letter m, bundle T (q.output u m h) := by
   simpa only [pow_one] using q.batch_scaled u hu m m 1 le_rfl
-    (fun t ht => ⟨t, by simpa using ht, by rw [pow_one]; exact le_refl _⟩)
+    (fun t ht => ⟨t, by simpa using ht, by rw [pow_one]⟩)
 
 omit [Nonempty S] in
 theorem batch_cost (u : Finset I) (p : I → ℝ) {δ : ℝ}

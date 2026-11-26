@@ -96,6 +96,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDe
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.PortRelay
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.Carry
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.Elect
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.MixCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.Rule
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Stack.StartBound
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Sweep

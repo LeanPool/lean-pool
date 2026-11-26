@@ -11,8 +11,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDe
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.Elect
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Reset.Attachment.WriteNet
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Beat.HeaderCost
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Template.Sweep
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Assembly.Reset.Child.Headers
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.MixCost
 
 /-!
 # Carrying exterior marks through a reset
@@ -392,11 +391,6 @@ private theorem vecSize {A : I → Format} (h : Phase.Case.Row (fun i => (A i).w
     Cost (fun i => (Format.vec i.m (A i)).width) :=
   h.hosts.mono fun _ => (Format.width_vec ..).le
 
-private theorem projectSize {A B : I → Format}
-    (h : Cost (fun i => (A i).width)) (j : Cost (fun i => (B i).width)) :
-    Cost (fun i => Mix.project (A i) (B i)) :=
-  (h.add (j.scale 2)).scale 4
-
 private theorem sourceSize : Cost (fun i : I => (Mix.Sources i.T).width) := by
   refine data_short.blocks.hosts.mono fun i => ?_
   rw [Format.width_vec, Format.width_vec]
@@ -412,7 +406,6 @@ private theorem tallySize : Cost (fun i : I => Mix.tallyCost i.T (K i) (D i)) :=
     refine hd.mono fun i => ?_
     simp only [Mix.Split, Summand, Mixing.Matrix, Mixing.Num, Format.width_pair, Format.width_vec,
       Format.width_addr, mul_add, le_refl]
-  have hp := (h₁.add (h₂.scale 2)).scale 4
   have c := counterBits (F := F) d
   have hs := Short.blocks (((short_const 3).mul c).add (((short_const 100).add c).pow 5))
   have ht : Phase.Case.Row (fun i : I => Mixing.collectCost i.height i.T.scheme.d i.T.CounterBits)
@@ -421,9 +414,10 @@ private theorem tallySize : Cost (fun i : I => Mix.tallyCost i.T (K i) (D i)) :=
     rw [Mixing.collectCost, mul_assoc]
   have hw := callWidth (F := F) Δ d
   have hb := Short.blocks (((short_const 100).add (indices_bound (F := F) Δ d)).pow 5)
-  have hl : Phase.Case.Row (fun i : I => Mix.localCost i.T (K i) (D i)) :=
-    (hw.blocks.add hp).add (((hb.scale 4).add hw.long.row).add (ht.scale 4))
-  exact (projectSize d Case.Child.parent.format (sourceSize d)).add hl.hosts
+  exact Mix.tallyCost_mixed (large := Case.long) (small := Case.short)
+    (F := (fun _ => F)) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    Case.Child.parent.format (sourceSize d) h₁ h₂ hw.blocks hw.long.row hb ht
 
 private theorem depthSize : Cost (fun i : I => (i.T.Depths (K i)).width) := by
   refine (Mixed.long Case.m (Short.long (keys_bound d).of_exp)).mono fun i => ?_
@@ -439,25 +433,34 @@ private theorem nearSize : Cost (fun i : I => i.T.nearCost (K i)) := by
   have hq : Cost (fun i : I => (Format.vec i.T.scheme.d (Perm i.m)).width) := by
     refine ((Mixed.long Case.m hosts).left Case.slots.rate.short).mono fun i => ?_
     rw [Format.width_vec, Format.width_vec, Format.width_addr]
-  have h := projectSize d (netSize d) (pair_budget d (depthSize d) hq)
+  have projection := Mix.project_mixed (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (netSize d) (pair_budget d (depthSize d) hq)
   have v := (hosts.add (keys_bound (F := F) d).long.of_exp).add Case.slots.rate.short.long
-  exact h.add ((Mixed.long Case.m (((long_const 100).add v).pow 12)).scale 4)
+  exact Mixed.add projection ((Mixed.long Case.m (((long_const 100).add v).pow 12)).scale 4)
 
 private theorem gatherSize : Cost (fun i : I => Mix.gatherCost i.T (K i)) := by
   have hn : Cost (fun i : I => (i.T.Next (K i)).width) := by
     refine (Mixed.long Case.m (Case.slots.rate.short.long.mul (keys_bound d).long.of_exp)).mono fun
       i => ?_
     rw [Format.width_vec, Format.width_vec, Format.width_addr]
-  have h := travelSize (F := F) d
-  exact (((h.scale 24).add (projectSize d h (netSize d))).add (nearSize d)).add
-    (projectSize d (pair_budget d h hn) (vecSize d (windowWidth d).long.row))
+  exact Mix.gatherCost_mixed (large := Case.long) (small := Case.short)
+    (F := (fun _ => F)) (T := fun i : I => i.T)
+    (height := Case.height) (hosts := Case.m) (k := K)
+    (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (travelSize d) (netSize d) (nearSize d) hn
+    (vecSize d (windowWidth d).long.row)
 
 private theorem waveSize : Cost (fun i : I => Mix.waveCost i.T (K i) (D i) (i.height - t - i.a))
     := by
   have hn : Short (fun i : I => i.height - t - i.a) :=
     height_short.mono (fun i => (Nat.sub_le ..).trans (Nat.sub_le ..))
-  have h := (((netSize (F := F) d).scale 24).add (gatherSize d)).add (callWidth Δ d).long.row.hosts
-  exact (projectSize d (netSize d) (depthSize d)).add (h.left hn)
+  exact Mix.waveCost_mixed (large := Case.long) (small := Case.short)
+    (F := (fun _ => F)) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (netSize d) (depthSize d) (gatherSize d)
+    (callWidth Δ d).long.row hn
 
 private theorem profileSize : Cost (fun i : I => Mix.profileCost i.T (K i) (D i)) := by
   have a := (headWidth (F := F) d).long.row
@@ -468,22 +471,20 @@ private theorem profileSize : Cost (fun i : I => Mix.profileCost i.T (K i) (D i)
   have rows : Cost (fun i : I => (i.T.profileShape (K i)).width) :=
     vecSize d ((a.add b).mono (fun _ => (Format.width_pair ..).le))
   have w := callWidth (F := F) Δ d
-  have n := netSize (F := F) d
-  have h₁ := ((projectSize d n (travelSize d)).add (gatherSize d)).add w.long.row.hosts
-  have h₂ := (projectSize d n (sourceSize d)).add w.blocks.hosts
-  exact (((n.scale 20).add h₁).add h₂).add (projectSize d sides rows)
+  exact Mix.profileCost_mixed (large := Case.long) (small := Case.short)
+    (F := (fun _ => F)) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    (netSize d) (travelSize d) (gatherSize d) (sourceSize d)
+    w.long.row w.blocks sides rows
 
 theorem summaryCost : Cost (fun i : I =>
     Mix.cost i.T (K i) (indices i.S i.r i.R Δ) (i.height - t - i.a)) := by
-  have hs := vecSize d (stats_bound (F := F) d).long.row
-  have hf := pair_budget d Case.Child.parent.format hs
-  have hb := pair_budget d hf (depthSize d)
-  have h := ((Case.Child.parent.format.scale 48).add (tallySize (F := F) Δ d)).add (hf.scale 24)
-  have h' := ((h.add (projectSize d hf (netSize d))).add (waveSize Δ t d)).add (hb.scale 20)
-  have h'' := (h'.add (projectSize d hb (netSize d))).add (profileSize Δ d)
-  refine ((h''.add (profile_cost Δ d)).add (projectSize d hb hs)).mono fun i => ?_
-  unfold Mix.cost
-  rw [add_assoc _ (Mixing.extractionCost ..)]
+  exact Mix.cost_mixed (large := Case.long) (small := Case.short)
+    (F := (fun _ => F)) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.short_two) (fun i => i.short_long)
+    Case.Child.parent.format (vecSize d (stats_bound d).long.row)
+    (depthSize d) (netSize d) (tallySize Δ d) (waveSize Δ t d)
+    (profileSize Δ d) (profile_cost Δ d)
 
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Restore
 end
@@ -580,13 +581,11 @@ theorem headerCost_bound : Cost (fun i : I =>
   have H := child_bound P Δ t d
   have grow : Long (fun i : I => 2 ^ shift i) := H.growth.long
   have new : Long (fun i : I => 2 ^ (dest i).scheme.d) := H.neighbors.long
-  have head := ((long_const 1000).mul grow).mul new
-  have tail' := ((long_const 4).add grow.of_exp).add hosts
-  have h := Mixed.long Case.m (((head.mul old).mul ((long_const 2).add old.of_exp)).mul tail')
-  refine ((keyCost_bound P Δ t d).add (h.scale 4)).mono fun i => ?_
-  unfold History.Reset.Child.buildCost
-  rw [pow_add, pow_add, pow_add]
-  exact le_of_eq (by ring)
+  have build := History.Reset.Child.buildCost_mixed
+    (large := Case.long) (small := Case.short)
+    (height := Case.height) (hosts := Case.m)
+    (fun i => i.long_two) hosts old grow new
+  exact (keyCost_bound P Δ t d).add (Mixed.scale build 4)
 
 end MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Restore
 end

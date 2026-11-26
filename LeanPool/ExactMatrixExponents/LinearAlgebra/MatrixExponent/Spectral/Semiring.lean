@@ -340,6 +340,85 @@ end
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral
 
+namespace Raw
+
+variable {K S : Type} [CommSemiring K]
+
+/-- Order tensor classes by reverse restriction for the chosen relation. -/
+@[instance_reducible]
+def quotientLE (s : Setoid (Raw K S)) (restricts : Raw K S → Raw K S → Prop)
+    (equivalent : ∀ a b, s.r a b ↔ restricts a b ∧ restricts b a)
+    (transitive : ∀ {a b c}, restricts a b → restricts b c → restricts a c) : LE (Quotient s) :=
+  ⟨Quotient.lift₂ (fun a b => restricts b a) fun a b a' b' ha hb => by
+    obtain ⟨haa', ha'a⟩ := (equivalent a a').mp ha
+    obtain ⟨hbb', hb'b⟩ := (equivalent b b').mp hb
+    exact propext ⟨fun h => transitive hb'b (transitive h haa'),
+      fun h => transitive hbb' (transitive h ha'a)⟩⟩
+
+/-- Mutual restriction yields antisymmetry on tensor classes. -/
+@[instance_reducible]
+def quotientOrder (s : Setoid (Raw K S)) (restricts : Raw K S → Raw K S → Prop)
+    (equivalent : ∀ a b, s.r a b ↔ restricts a b ∧ restricts b a)
+    (reflexive : ∀ a, restricts a a)
+    (transitive : ∀ {a b c}, restricts a b → restricts b c → restricts a c) :
+    PartialOrder (Quotient s) :=
+  letI : LE (Quotient s) := quotientLE s restricts equivalent transitive
+  { le_refl := fun A => Quotient.inductionOn A reflexive
+    le_trans := fun A B C => Quotient.inductionOn₃ A B C fun _ _ _ h g => transitive g h
+    le_antisymm := fun A B => Quotient.inductionOn₂ A B fun a b h g =>
+      Quotient.sound ((equivalent a b).mpr ⟨g, h⟩) }
+
+/-- Lift a binary operation on tensor tables that respects the chosen setoid. -/
+def quotientOperation (s : Setoid (Raw K S)) (operation : Raw K S → Raw K S → Raw K S)
+    (congruent : ∀ {a a' b b'}, s.r a a' → s.r b b' → s.r (operation a b) (operation a' b')) :
+    Quotient s → Quotient s → Quotient s :=
+  Quotient.map₂ operation fun _ _ ha _ _ hb => congruent ha hb
+
+/-- The raw tensor relabelings supply the laws for either restriction semiring. -/
+@[instance_reducible]
+def quotientSemiring (s : Setoid (Raw K S))
+    (addCongr : ∀ {a a' b b'}, s.r a a' → s.r b b' → s.r (a + b) (a' + b'))
+    (mulCongr : ∀ {a a' b b'}, s.r a a' → s.r b b' → s.r (a * b) (a' * b'))
+    (relabel : ∀ {a b}, Relabels a b → s.r a b) : CommSemiring (Quotient s) := by
+  letI : Zero (Quotient s) := ⟨Quotient.mk s 0⟩
+  letI : One (Quotient s) := ⟨Quotient.mk s 1⟩
+  letI : Add (Quotient s) := ⟨quotientOperation s (· + ·) addCongr⟩
+  letI : Mul (Quotient s) := ⟨quotientOperation s (· * ·) mulCongr⟩
+  have addComm (A B : Quotient s) : A + B = B + A :=
+    Quotient.inductionOn₂ A B fun a b => Quotient.sound (relabel (comm_add_relabels a b))
+  have mulComm (A B : Quotient s) : A * B = B * A :=
+    Quotient.inductionOn₂ A B fun a b => Quotient.sound (relabel (comm_mul_relabels a b))
+  have zeroAdd (A : Quotient s) : 0 + A = A :=
+    Quotient.inductionOn A fun a => Quotient.sound (relabel (nil_add_relabels a))
+  have oneMul (A : Quotient s) : 1 * A = A :=
+    Quotient.inductionOn A fun a => Quotient.sound (relabel (unit_mul_relabels a))
+  have zeroMul (A : Quotient s) : 0 * A = 0 :=
+    Quotient.inductionOn A fun a => Quotient.sound (relabel (nil_mul_relabels a))
+  have leftDistrib (A B C : Quotient s) : A * (B + C) = A * B + A * C :=
+    Quotient.inductionOn₃ A B C fun a b c => Quotient.sound (relabel (distrib_left_relabels a b c))
+  exact {
+    add := (· + ·)
+    mul := (· * ·)
+    zero := 0
+    one := 1
+    nsmul := nsmulRec
+    add_assoc := fun A B C => Quotient.inductionOn₃ A B C fun a b c =>
+      Quotient.sound (relabel (assoc_add_relabels a b c))
+    add_comm := addComm
+    zero_add := zeroAdd
+    add_zero := fun A => (addComm A 0).trans (zeroAdd A)
+    mul_assoc := fun A B C => Quotient.inductionOn₃ A B C fun a b c =>
+      Quotient.sound (relabel (assoc_mul_relabels a b c))
+    mul_comm := mulComm
+    one_mul := oneMul
+    mul_one := fun A => (mulComm A 1).trans (oneMul A)
+    zero_mul := zeroMul
+    mul_zero := fun A => (mulComm A 0).trans (zeroMul A)
+    left_distrib := leftDistrib
+    right_distrib := fun A B C => by rw [mulComm, leftDistrib, mulComm C A, mulComm C B] }
+
+end Raw
+
 /-- Coefficient tensors modulo mutual local linear restriction. -/
 def Tensor (K S : Type) [CommSemiring K] [Fintype S] :=
   Quotient (inferInstance : Setoid (Raw K S))
@@ -355,56 +434,59 @@ theorem ofRaw_eq {A B : Raw K S} (h : A ≈ B) : ofRaw A = ofRaw B :=
   Quotient.sound h
 
 instance : LE (Tensor K S) :=
-  ⟨Quotient.lift₂ (fun a b => b.Restricts a) fun _ _ _ _ h g => propext
-    ⟨fun t => g.2.trans (t.trans h.1), fun t => g.1.trans (t.trans h.2)⟩⟩
+  Raw.quotientLE (inferInstance : Setoid (Raw K S)) Raw.Restricts (fun _ _ => Iff.rfl)
+    (fun h g => Raw.Restricts.trans h g)
 
 theorem ofRaw_le (A B : Raw K S) : ofRaw A ≤ ofRaw B ↔ B.Restricts A := Iff.rfl
 
-instance : PartialOrder (Tensor K S) where
-  le := (· ≤ ·)
-  le_refl A := Quotient.inductionOn A (fun a => Raw.Restricts.refl a)
-  le_trans A B C := Quotient.inductionOn₃ A B C fun _ _ _ h g => Raw.Restricts.trans g h
-  le_antisymm A B := Quotient.inductionOn₂ A B fun _ _ h g => Quotient.sound ⟨g, h⟩
+instance : PartialOrder (Tensor K S) :=
+  Raw.quotientOrder (inferInstance : Setoid (Raw K S)) Raw.Restricts
+    (fun _ _ => Iff.rfl) Raw.Restricts.refl (fun h g => Raw.Restricts.trans h g)
 
 instance : Zero (Tensor K S) := ⟨ofRaw 0⟩
 instance : One (Tensor K S) := ⟨ofRaw 1⟩
 
 instance : Add (Tensor K S) :=
-  ⟨Quotient.map₂ (· + ·) fun _ _ h _ _ g => ⟨h.1.add g.1, h.2.add g.2⟩⟩
+  ⟨Raw.quotientOperation (inferInstance : Setoid (Raw K S)) (· + ·)
+    fun h g => ⟨h.1.add g.1, h.2.add g.2⟩⟩
 
 instance : Mul (Tensor K S) :=
-  ⟨Quotient.map₂ (· * ·) fun _ _ h _ _ g => ⟨h.1.mul g.1, h.2.mul g.2⟩⟩
+  ⟨Raw.quotientOperation (inferInstance : Setoid (Raw K S)) (· * ·)
+    fun h g => ⟨h.1.mul g.1, h.2.mul g.2⟩⟩
 
 theorem ofRaw_add (A B : Raw K S) : ofRaw (A + B) = ofRaw A + ofRaw B := rfl
 theorem ofRaw_mul (A B : Raw K S) : ofRaw (A * B) = ofRaw A * ofRaw B := rfl
 
-theorem comm_add (A B : Tensor K S) : A + B = B + A :=
-  Quotient.inductionOn₂ A B fun a b => ofRaw_eq (Raw.comm_add a b)
+instance : CommSemiring (Tensor K S) := by
+  let laws : CommSemiring (Tensor K S) :=
+    Raw.quotientSemiring (inferInstance : Setoid (Raw K S))
+      (fun h g => ⟨h.1.add g.1, h.2.add g.2⟩)
+      (fun h g => ⟨h.1.mul g.1, h.2.mul g.2⟩) Raw.relabel_of_relabels
+  exact {
+    add := (· + ·)
+    mul := (· * ·)
+    zero := 0
+    one := 1
+    nsmul := nsmulRec
+    add_assoc := laws.add_assoc
+    add_comm := laws.add_comm
+    zero_add := laws.zero_add
+    add_zero := laws.add_zero
+    mul_assoc := laws.mul_assoc
+    mul_comm := laws.mul_comm
+    one_mul := laws.one_mul
+    mul_one := laws.mul_one
+    zero_mul := laws.zero_mul
+    mul_zero := laws.mul_zero
+    left_distrib := laws.left_distrib
+    right_distrib := laws.right_distrib }
 
-theorem comm_mul (A B : Tensor K S) : A * B = B * A :=
-  Quotient.inductionOn₂ A B fun a b => ofRaw_eq (Raw.comm_mul a b)
+theorem comm_add (A B : Tensor K S) : A + B = B + A := add_comm A B
+
+theorem comm_mul (A B : Tensor K S) : A * B = B * A := mul_comm A B
 
 theorem distrib_left (A B C : Tensor K S) : A * (B + C) = A * B + A * C :=
-  Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Raw.distrib_left a b c)
-
-instance : CommSemiring (Tensor K S) where
-  add := (· + ·)
-  mul := (· * ·)
-  zero := 0
-  one := 1
-  nsmul := nsmulRec
-  add_assoc A B C := Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Raw.assoc_add a b c)
-  add_comm := comm_add
-  zero_add A := Quotient.inductionOn A fun a => ofRaw_eq (Raw.nil_add a)
-  add_zero A := (comm_add A 0).trans (Quotient.inductionOn A fun a => ofRaw_eq (Raw.nil_add a))
-  mul_assoc A B C := Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Raw.assoc_mul a b c)
-  mul_comm := comm_mul
-  one_mul A := Quotient.inductionOn A fun a => ofRaw_eq (Raw.unit_mul a)
-  mul_one A := (comm_mul A 1).trans (Quotient.inductionOn A fun a => ofRaw_eq (Raw.unit_mul a))
-  zero_mul A := Quotient.inductionOn A fun a => ofRaw_eq (Raw.nil_mul a)
-  mul_zero A := (comm_mul A 0).trans (Quotient.inductionOn A fun a => ofRaw_eq (Raw.nil_mul a))
-  left_distrib := distrib_left
-  right_distrib A B C := by rw [comm_mul, distrib_left, comm_mul C A, comm_mul C B]
+  (inferInstance : CommSemiring (Tensor K S)).left_distrib A B C
 
 theorem add_le_add_right (A B C : Tensor K S) : A ≤ B → A + C ≤ B + C :=
   Quotient.inductionOn₃ A B C fun _ _ c h => Raw.Restricts.add h (.refl c)

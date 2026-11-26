@@ -8,7 +8,6 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.RankCriterion
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Descent
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.RankPower
 
 /-!
 # Invariance under field extension

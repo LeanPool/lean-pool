@@ -6,9 +6,11 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.PrimeFields
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.FieldExtension
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Sparse.Degree
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Folding.Swap
+public import Mathlib.Algebra.Algebra.ZMod
+public import Mathlib.Algebra.Field.ZMod
 
 /-!
 # The upper bound over every field

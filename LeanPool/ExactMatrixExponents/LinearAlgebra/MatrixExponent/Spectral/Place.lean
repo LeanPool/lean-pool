@@ -306,7 +306,6 @@ theorem connected (A B : I → S)
     have hsingle : shared K {a} 2 = 1 := by
       simpa [wire] using wire_self K a (n := 2) (by decide)
     rw [hsingle, Finset.prod_empty]
-    exact le_rfl
   obtain ⟨U, ⟨hne, E, hE, hU⟩, hmax⟩ := Set.Finite.exists_maximal (Set.toFinite {U | P U}) hi
   have hu : U = Finset.univ := by
     by_contra hu

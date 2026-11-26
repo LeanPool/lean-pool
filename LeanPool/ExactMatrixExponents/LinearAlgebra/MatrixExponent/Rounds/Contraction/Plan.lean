@@ -7,6 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Costs
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.BatchDescent.Restore.MixCost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Panel.Wave
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Sphere.Surface.Cardinality
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Contraction.Reset.WindowCost
@@ -95,11 +96,6 @@ local notation "I" => Case F 1 d B
 local notation "K" => keyBits d B
 local notation "D" => digits Δ d B
 
-private theorem projectSize {A Z : I → Format}
-    (h : Cost (fun i => (A i).width)) (j : Cost (fun i => (Z i).width)) :
-    Cost (fun i => Mix.project (A i) (Z i)) :=
-  (h.add (j.scale 2)).scale 4
-
 private theorem sourceSize : Cost (fun i : I => (Mix.Sources i.T).width) := by
   refine (data_short d B).block.blocks.hosts.mono fun i => ?_
   rw [Format.width_vec, Format.width_vec]
@@ -115,7 +111,6 @@ private theorem tallySize : Cost (fun i : I => Mix.tallyCost i.T (K i) (D i)) :=
     refine hd.mono fun i => ?_
     simp only [Mix.Split, Summand, Mixing.Matrix, Mixing.Num, Format.width_pair, Format.width_vec,
       Format.width_addr, mul_add, le_refl]
-  have hp := (h₁.add (h₂.scale 2)).scale 4
   have c := counterBits (F := F) d B
   have hs := (Short.block (((short_const 3).mul c).add (((short_const 100).add c).pow 5))).blocks
   have ht : Row (fun i : I => Mixing.collectCost i.height i.T.scheme.d i.T.CounterBits) := by
@@ -123,9 +118,10 @@ private theorem tallySize : Cost (fun i : I => Mix.tallyCost i.T (K i) (D i)) :=
     rw [Mixing.collectCost, mul_assoc]
   have hw := callWidth (F := F) Δ d B
   have hb := (Short.block (((short_const 100).add (indices_bound (F := F) Δ d B)).pow 5)).blocks
-  have hl : Row (fun i : I => Mix.localCost i.T (K i) (D i)) :=
-    (hw.block.blocks.add hp).add (((hb.scale 4).add hw.long.row).add (ht.scale 4))
-  exact (projectSize d B Case.Child.parent.format (sourceSize d B)).add hl.hosts
+  exact Mix.tallyCost_mixed (large := Case.long) (small := Case.block)
+    (F := Case.F) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    Case.Child.parent.format (sourceSize d B) h₁ h₂ hw.block.blocks hw.long.row hb ht
 
 private theorem depthSize : Cost (fun i : I => (i.T.Depths (K i)).width) := by
   refine (Mixed.long Case.m (Short.long (keys_bound d B).of_exp)).mono fun i => ?_
@@ -141,26 +137,34 @@ private theorem nearSize : Cost (fun i : I => i.T.nearCost (K i)) := by
   have hq : Cost (fun i : I => (Format.vec i.T.scheme.d (Perm i.m)).width) := by
     refine ((Mixed.long Case.m hosts).left Case.slots.short.block).mono fun i => ?_
     rw [Format.width_vec, Format.width_vec, Format.width_addr]
-  have h := projectSize d B (netSize d B) (pair_budget d B (depthSize d B) hq)
+  have projection := Mix.project_mixed (large := Case.long) (small := Case.block)
+    (height := Case.height) (hosts := Case.m)
+    (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (netSize d B) (pair_budget d B (depthSize d B) hq)
   have v := (hosts.add (keys_bound (F := F) d B).long.of_exp).add Case.slots.short.long
-  exact h.add ((Mixed.long Case.m (((long_const 100).add v).pow 12)).scale 4)
+  exact Mixed.add projection ((Mixed.long Case.m (((long_const 100).add v).pow 12)).scale 4)
 
 private theorem gatherSize : Cost (fun i : I => Mix.gatherCost i.T (K i)) := by
   have hn : Cost (fun i : I => (i.T.Next (K i)).width) := by
     refine (Mixed.long Case.m (Case.slots.short.long.mul (keys_bound d B).long.of_exp)).mono fun i
       => ?_
     rw [Format.width_vec, Format.width_vec, Format.width_addr]
-  have h := travelSize (F := F) d B
-  exact (((h.scale 24).add (projectSize d B h (netSize d B))).add (nearSize d B)).add
-    (projectSize d B (pair_budget d B h hn) (Case.Child.parent.vector (windowWidth d B).long.row))
+  exact Mix.gatherCost_mixed (large := Case.long) (small := Case.block)
+    (F := Case.F) (T := fun i : I => i.T)
+    (height := Case.height) (hosts := Case.m) (k := K)
+    (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (travelSize d B) (netSize d B) (nearSize d B) hn
+    (Case.Child.parent.vector (windowWidth d B).long.row)
 
 private theorem waveSize : Cost (fun i : I => Mix.waveCost i.T (K i) (D i) (i.height - t - i.a))
     := by
   have hn : Short (fun i : I => i.height - t - i.a) :=
     (height_short d B).mono (fun i => (Nat.sub_le ..).trans (Nat.sub_le ..))
-  have h := (((netSize (F := F) d B).scale 24).add (gatherSize d B)).add (callWidth Δ d
-    B).long.row.hosts
-  exact (projectSize d B (netSize d B) (depthSize d B)).add (h.left hn.block)
+  exact Mix.waveCost_mixed (large := Case.long) (small := Case.block)
+    (F := Case.F) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (netSize d B) (depthSize d B) (gatherSize d B)
+    (callWidth Δ d B).long.row hn.block
 
 private theorem profileSize : Cost (fun i : I => Mix.profileCost i.T (K i) (D i)) := by
   have a := (headWidth (F := F) d B).long.row
@@ -171,22 +175,20 @@ private theorem profileSize : Cost (fun i : I => Mix.profileCost i.T (K i) (D i)
   have rows : Cost (fun i : I => (i.T.profileShape (K i)).width) :=
     Case.Child.parent.vector ((a.add b).mono (fun _ => (Format.width_pair ..).le))
   have w := callWidth (F := F) Δ d B
-  have n := netSize (F := F) d B
-  have h₁ := ((projectSize d B n (travelSize d B)).add (gatherSize d B)).add w.long.row.hosts
-  have h₂ := (projectSize d B n (sourceSize d B)).add w.block.blocks.hosts
-  exact (((n.scale 20).add h₁).add h₂).add (projectSize d B sides rows)
+  exact Mix.profileCost_mixed (large := Case.long) (small := Case.block)
+    (F := Case.F) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    (netSize d B) (travelSize d B) (gatherSize d B) (sourceSize d B)
+    w.long.row w.block.blocks sides rows
 
 theorem summaryCost : Cost (fun i : I =>
     Mix.cost i.T (K i) (indices i.T Δ i.z B) (i.height - t - i.a)) := by
-  have hs := Case.Child.parent.vector (stats_bound (F := F) d B).long.row
-  have hf := pair_budget d B Case.Child.parent.format hs
-  have hb := pair_budget d B hf (depthSize d B)
-  have h := ((Case.Child.parent.format.scale 48).add (tallySize (F := F) Δ d B)).add (hf.scale 24)
-  have h' := ((h.add (projectSize d B hf (netSize d B))).add (waveSize Δ t d B)).add (hb.scale 20)
-  have h'' := (h'.add (projectSize d B hb (netSize d B))).add (profileSize Δ d B)
-  refine ((h''.add (profile_cost Δ d B)).add (projectSize d B hb hs)).mono fun i => ?_
-  unfold Mix.cost
-  rw [add_assoc _ (Mixing.extractionCost ..)]
+  exact Mix.cost_mixed (large := Case.long) (small := Case.block)
+    (F := Case.F) (T := fun i : I => i.T)
+    (k := K) (d := D) (fun i => i.long_two) (fun i => i.block_two) (fun i => i.block_long)
+    Case.Child.parent.format (Case.Child.parent.vector (stats_bound d B).long.row)
+    (depthSize d B) (netSize d B) (tallySize Δ d B) (waveSize Δ t d B)
+    (profileSize Δ d B) (profile_cost Δ d B)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Contraction.Reset
 end
@@ -291,13 +293,11 @@ theorem headerCost_bound : Cost (fun i : I =>
   have H := child_bound P Δ C t d B
   have grow : Long (fun i : I => 2 ^ growBy i) := H.growth.long
   have new : Long (fun i : I => 2 ^ (dest i).scheme.d) := H.neighbors.long
-  have head := ((long_const 1000).mul grow).mul new
-  have tail' := ((long_const 4).add grow.of_exp).add hosts
-  have h := Mixed.long Case.m (((head.mul old).mul ((long_const 2).add old.of_exp)).mul tail')
-  refine ((keyCost_bound P Δ C t d B).add (h.scale 4)).mono fun i => ?_
-  unfold History.Reset.Child.buildCost
-  rw [pow_add, pow_add, pow_add]
-  exact le_of_eq (by ring)
+  have build := History.Reset.Child.buildCost_mixed
+    (large := Case.long) (small := Case.block)
+    (height := Case.height) (hosts := Case.m)
+    (fun i => i.long_two) hosts old grow new
+  exact (keyCost_bound P Δ C t d B).add (Mixed.scale build 4)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rounds.Contraction.Reset
 end

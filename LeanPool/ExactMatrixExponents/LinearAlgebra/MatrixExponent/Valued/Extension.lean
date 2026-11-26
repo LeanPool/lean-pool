@@ -67,56 +67,57 @@ theorem ofRaw_eq {A B : Raw K S} (h : (equiv O).r A B) : ofRaw (O := O) A = ofRa
   Quotient.sound h
 
 instance : LE (ITensor O S) :=
-  ⟨Quotient.lift₂ (fun a b => Restricts O b a) fun _ _ _ _ h g => propext
-    ⟨fun t => g.2.trans (t.trans h.1), fun t => g.1.trans (t.trans h.2)⟩⟩
+  Raw.quotientLE (equiv O) (Restricts O) (fun _ _ => Iff.rfl)
+    (fun h g => Restricts.trans h g)
 
 theorem ofRaw_le (A B : Raw K S) : ofRaw (O := O) A ≤ ofRaw B ↔ Restricts O B A := Iff.rfl
 
-instance : PartialOrder (ITensor O S) where
-  le := (· ≤ ·)
-  le_refl A := Quotient.inductionOn A (fun a => Restricts.refl a)
-  le_trans A B C := Quotient.inductionOn₃ A B C fun _ _ _ h g => Restricts.trans g h
-  le_antisymm A B := Quotient.inductionOn₂ A B fun _ _ h g => Quotient.sound ⟨g, h⟩
+instance : PartialOrder (ITensor O S) :=
+  Raw.quotientOrder (equiv O) (Restricts O) (fun _ _ => Iff.rfl) Restricts.refl
+    (fun h g => Restricts.trans h g)
 
 instance : Zero (ITensor O S) := ⟨ofRaw 0⟩
 instance : One (ITensor O S) := ⟨ofRaw 1⟩
 
 instance : Add (ITensor O S) :=
-  ⟨Quotient.map₂ (· + ·) fun _ _ h _ _ g => ⟨h.1.add g.1, h.2.add g.2⟩⟩
+  ⟨Raw.quotientOperation (equiv O) (· + ·) fun h g => ⟨h.1.add g.1, h.2.add g.2⟩⟩
 
 instance : Mul (ITensor O S) :=
-  ⟨Quotient.map₂ (· * ·) fun _ _ h _ _ g => ⟨h.1.mul g.1, h.2.mul g.2⟩⟩
+  ⟨Raw.quotientOperation (equiv O) (· * ·) fun h g => ⟨h.1.mul g.1, h.2.mul g.2⟩⟩
 
 theorem ofRaw_add (A B : Raw K S) : ofRaw (O := O) (A + B) = ofRaw A + ofRaw B := rfl
 theorem ofRaw_mul (A B : Raw K S) : ofRaw (O := O) (A * B) = ofRaw A * ofRaw B := rfl
 
-theorem comm_add (A B : ITensor O S) : A + B = B + A :=
-  Quotient.inductionOn₂ A B fun a b => ofRaw_eq (Valued.comm_add a b)
+instance : CommSemiring (ITensor O S) := by
+  let laws : CommSemiring (ITensor O S) :=
+    Raw.quotientSemiring (equiv O)
+      (fun h g => ⟨h.1.add g.1, h.2.add g.2⟩)
+      (fun h g => ⟨h.1.mul g.1, h.2.mul g.2⟩) relabel_of_relabels
+  exact {
+    add := (· + ·)
+    mul := (· * ·)
+    zero := 0
+    one := 1
+    nsmul := nsmulRec
+    add_assoc := laws.add_assoc
+    add_comm := laws.add_comm
+    zero_add := laws.zero_add
+    add_zero := laws.add_zero
+    mul_assoc := laws.mul_assoc
+    mul_comm := laws.mul_comm
+    one_mul := laws.one_mul
+    mul_one := laws.mul_one
+    zero_mul := laws.zero_mul
+    mul_zero := laws.mul_zero
+    left_distrib := laws.left_distrib
+    right_distrib := laws.right_distrib }
 
-theorem comm_mul (A B : ITensor O S) : A * B = B * A :=
-  Quotient.inductionOn₂ A B fun a b => ofRaw_eq (Valued.comm_mul a b)
+theorem comm_add (A B : ITensor O S) : A + B = B + A := add_comm A B
+
+theorem comm_mul (A B : ITensor O S) : A * B = B * A := mul_comm A B
 
 theorem distrib_left (A B C : ITensor O S) : A * (B + C) = A * B + A * C :=
-  Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Valued.distrib_left a b c)
-
-instance : CommSemiring (ITensor O S) where
-  add := (· + ·)
-  mul := (· * ·)
-  zero := 0
-  one := 1
-  nsmul := nsmulRec
-  add_assoc A B C := Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Valued.assoc_add a b c)
-  add_comm := comm_add
-  zero_add A := Quotient.inductionOn A fun a => ofRaw_eq (Valued.nil_add a)
-  add_zero A := (comm_add A 0).trans (Quotient.inductionOn A fun a => ofRaw_eq (Valued.nil_add a))
-  mul_assoc A B C := Quotient.inductionOn₃ A B C fun a b c => ofRaw_eq (Valued.assoc_mul a b c)
-  mul_comm := comm_mul
-  one_mul A := Quotient.inductionOn A fun a => ofRaw_eq (Valued.unit_mul a)
-  mul_one A := (comm_mul A 1).trans (Quotient.inductionOn A fun a => ofRaw_eq (Valued.unit_mul a))
-  zero_mul A := Quotient.inductionOn A fun a => ofRaw_eq (Valued.nil_mul a)
-  mul_zero A := (comm_mul A 0).trans (Quotient.inductionOn A fun a => ofRaw_eq (Valued.nil_mul a))
-  left_distrib := distrib_left
-  right_distrib A B C := by rw [comm_mul, distrib_left, comm_mul C A, comm_mul C B]
+  (inferInstance : CommSemiring (ITensor O S)).left_distrib A B C
 
 theorem add_le_add_right (A B C : ITensor O S) : A ≤ B → A + C ≤ B + C :=
   Quotient.inductionOn₃ A B C fun _ _ c h => Restricts.add h (.refl c)

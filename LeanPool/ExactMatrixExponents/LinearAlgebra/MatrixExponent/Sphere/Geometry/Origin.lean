@@ -575,101 +575,19 @@ theorem admitted_fibers (i j : slots a ⊕ slots b) :
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end
 
-/- # Quantitative certificates carried by the emitted choices -/
+/- # Frozen child slots of the printer -/
 
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
-open Coloring Assembly Rounds
+open Coloring Assembly
 
-variable {F K : Type} [Field F] [Finite K] {x y : Wire} {S : Scheme F}
-  {d ℓ M r t q D k n u j z T R g m : ℕ} {W : ℝ} {P : Input F x y S.h D T R g W}
-  {tape : S.format.obj} (U : Printer F K (B S.k) S.m d S.h ℓ M r t q D k n u j z)
-  (pres : S.Presentation tape P.diagram) (data : U.rows.obj) (status : (Children.Header S.m d).obj)
-  (f : Val x → Val y → F) (σ : ℕ) (loc : P.Occupied ↪ B S.m × B S.h)
-  (credit : P.Occupied → Geometry.Credits g σ D m)
+variable {F K : Type} [Field F] [Finite K] {S : Scheme F}
+  {d ℓ M r t q D k n u j z : ℕ}
+  (U : Printer F K (B S.k) S.m d S.h ℓ M r t q D k n u j z)
 
 open scoped Classical in
 /-- Tests whether `Children.frozen U.slot i` holds. -/
 def fixedChild (i : B U.childBits) : Bool := decide (Children.frozen U.slot i)
-
-open scoped Classical in
-/-- The data for the checked construction, including `valid`, `exactPattern`, `destination`,
-`away`, `quota`. -/
-structure Checked (rows : U.template.format.obj) (Q : LocalTerm F x y S.h u)
-    (p : U.template.Shows rows Q) : Prop where
-  valid : U.Valid S tape rows (U.canonical S tape rows)
-  exactPattern : ∀ v : U.Actors S, U.template.scheme.pattern rows.1 v =
-    (U.revised S).scheme.pattern (U.overlay S tape rows (U.canonical S tape rows)).1 v
-  destination : ∀ i, (p.pres.boundary i).val.1.1 =
-    U.destination S (U.canonical S tape rows) (pres.boundary i).val.1.1
-  away : ∀ i b, (i, b) ∉ Set.range loc → U.canonical S tape rows i b = fun _
-    => Geometry.Outline.empty
-  quota : ∀ v, Geometry.Quota (Input.terminalExponent g σ) n (T / u) U.fixedChild
-    (U.canonical S tape rows (loc v).1 (loc v).2) (credit v)
-
-end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
-end
-
-/- # Recovering the value of a genuine printed term at its canonical blueprint -/
-
-noncomputable section
-namespace MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
-open Assembly Coloring Packing Rounds
-
-variable {F : Type} [Field F] {a b : Wire} {S : Scheme F} {x : S.format.obj}
-
-open scoped Classical in
-private theorem same_offset {T T' : Scheme F} {t : T.format.obj} {t' : T'.format.obj}
-    {G L L' : Diagram F a b} {p : S.Presentation x G} {q : T.Presentation t L}
-    {q' : T'.Presentation t' L'} {z : ℕ} {c : B T.m ≃ B S.m × B z}
-    {c' : B T'.m ≃ B S.m × B z} {o : Bool ↪ B T.e} {o' : Bool ↪ B T'.e}
-    {v : G.V} {w : L.V} {w' : L'.V} (h : Payload.Carrier p q c o v w)
-    (h' : Payload.Carrier p q' c' o' v w') (i : slots a ⊕ slots b) (hi : portEnd G i = v) :
-    (q.boundary i).val.2.val = (q'.boundary i).val.2.val := by
-  cases i with
-  | inl i =>
-    obtain ⟨j, rfl⟩ := List.mem_iff_get.mp ((G.mem_extLeft v i).mpr hi)
-    exact (h.left j).2.trans (h'.left j).2.symm
-  | inr i =>
-    obtain ⟨j, rfl⟩ := List.mem_iff_get.mp ((G.mem_extRight v i).mpr hi)
-    exact (h.right j).2.trans (h'.right j).2.symm
-
-variable {K : Type} [Finite K] {d ℓ M r t q D k n u j z T R g m : ℕ} {W : ℝ}
-    {P : Input F a b S.h D T R g W} {U : Printer F K (B S.k) S.m d S.h ℓ M r t q D k n u j z}
-    {p : S.Presentation x P.diagram} {σ : ℕ} {loc : P.Occupied ↪ B S.m × B S.h}
-    {credit : P.Occupied → Geometry.Credits g σ D m} {y : U.template.format.obj}
-    {Q : LocalTerm F a b S.h u} {shows : U.template.Shows y Q}
-
-open scoped Classical in
-private theorem Checked.of_retains (c : U.Checked p σ loc credit y Q shows)
-    (L : Geometry.Board (U.revised S) (U.overlay S x y (U.canonical S x y)) a b u)
-    (hr' : Payload.Retains p L.shows.pres U.split U.outer)
-    (had : ∀ i, (L.shows.pres.boundary i).val.1.1
-      = U.destination S (U.canonical S x y) (p.boundary i).val.1.1)
-    (hr : Payload.Retains p shows.pres U.split U.outer) :
-    Q.diagram.eval = L.term.diagram.eval := by
-  let A := U.canonical S x y
-  apply U.eval_overlay S x y A shows.pres L.shows.pres c.exactPattern
-  · intro i
-    refine Prod.ext ((c.destination i).trans (had i).symm) ?_
-    obtain ⟨w, h⟩ := hr i
-    obtain ⟨w', h'⟩ := hr' i
-    exact (congrArg Prod.snd (h.owns i rfl)).trans (congrArg Prod.snd (h'.owns i rfl)).symm
-  · intro i
-    obtain ⟨w, h⟩ := hr i
-    obtain ⟨w', h'⟩ := hr' i
-    exact same_offset h h' i rfl
-
-open scoped Classical in
-/-- On a canonical blueprint both descriptions have the same patterns,
-collector addresses, and ordered lists of exterior bits. -/
-theorem Checked.eval (c : U.Checked p σ loc credit y Q shows)
-    {V : Type} [Fintype V] (H : U.Graph S y V) (hd : p.Directed)
-    (hr : Payload.Retains p shows.pres U.split U.outer) :
-    Q.diagram.eval = (U.admitted S x y (U.canonical S x y) c.valid H p hd).term.diagram.eval :=
-  c.of_retains (U.admitted S x y _ c.valid H p hd)
-    (U.admitted_retains S x y _ c.valid H p hd)
-    (U.admitted_address S x y _ c.valid H p hd) hr
 
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print.Printer
 end

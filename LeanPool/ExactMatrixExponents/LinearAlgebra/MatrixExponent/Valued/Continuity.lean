@@ -58,7 +58,7 @@ variable [DecidableEq S] [DecidableEq U] [DecidableEq V] [DecidableEq W]
 private theorem place_nat {X Y : Type} [Fintype X] [Nonempty X] [DecidableEq X]
     [Fintype Y] [DecidableEq Y] (x : X → Y) (n : ℕ) : place x (n : ITensor O X) ≤ n := by
   induction n with
-  | zero => rw [Nat.cast_zero, Nat.cast_zero, place_zero]; exact le_rfl
+  | zero => rw [Nat.cast_zero, Nat.cast_zero, place_zero]
   | succ n ih =>
     rw [Nat.cast_succ, Nat.cast_succ]
     refine (place_add_le x _ _).trans ?_

@@ -7,9 +7,7 @@ Authors: OpenAI
 module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Face.Contact
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Threshold.Square
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Dual
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Sparse.Entropy
 
 /-!
 # Rectangular matrix multiplication over arbitrary fields
