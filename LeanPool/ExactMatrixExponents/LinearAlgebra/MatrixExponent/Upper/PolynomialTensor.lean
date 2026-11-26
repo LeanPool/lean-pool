@@ -10,6 +10,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Polynom
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
 public import Lean.Elab.Tactic.Omega
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialRank
 
 /-!
 # The polynomial multiplication tensor
@@ -44,23 +45,8 @@ theorem polynomialTensor_rankAtMost (a b : ℕ) :
     Tensor.RankAtMost (polynomialTensor a b) (a + b - 1) := by
   classical
   obtain ⟨nodes, hnodes, _⟩ := exists_nonzero_nodes (F := Coeff) (a + b - 1)
-  refine ⟨(fun t i => nodes t ^ i.val),
-    (fun t j => nodes t ^ j.val),
-    (fun t k => (Lagrange.basis Finset.univ nodes t).coeff k.val), ?_⟩
-  funext i j k
-  have hsum : i.val + j.val < a + b - 1 := by
-    have hi := i.isLt
-    have hj := j.isLt
-    omega
-  have hdegree : ((Polynomial.X : Polynomial Coeff) ^ (i.val + j.val)).degree <
-      Fintype.card (Fin (a + b - 1)) := by
-    rw [Polynomial.degree_X_pow, Fintype.card_fin]
-    exact WithBot.coe_lt_coe.mpr hsum
-  have hcoeff := Tensor.coeff_eq_sum_eval nodes hnodes
-    ((Polynomial.X : Polynomial Coeff) ^ (i.val + j.val)) k.val hdegree
-  refine (polynomialTensor_eq_coeff (K := Coeff) a b i j k).trans ?_
-  simpa only [Polynomial.eval_pow, Polynomial.eval_X, Polynomial.eval_mul,
-    Tensor.rankOne, pow_add]
-    using hcoeff
+  exact TensorSpectrum.PolynomialTensors.polynomialTensor_rankAtMost_of_interpolation a b nodes
+    (fun t d => (Lagrange.basis Finset.univ nodes t).coeff d)
+    (Tensor.coeff_eq_sum_eval nodes hnodes)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Upper

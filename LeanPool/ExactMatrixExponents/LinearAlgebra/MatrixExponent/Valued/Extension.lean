@@ -207,53 +207,26 @@ open Spectral Raw
 variable {K S : Type} [Field K] [Fintype S] (U : Type) [Fintype U] {O : Subring K}
 
 theorem pad_zero : (equiv O).r (pad U (0 : Raw K S)) 0 := by
+  let : IsEmpty (pad U (0 : Raw K S)).term := inferInstanceAs (IsEmpty Empty)
+  let : IsEmpty (0 : Raw K (S ⊕ U)).term := inferInstanceAs (IsEmpty Empty)
   constructor <;>
-    exact ⟨fun _ _ _ => 0, fun _ _ _ => O.zero_mem, fun _ => Finset.sum_congr rfl fun i _
-      => Empty.elim i⟩
+    exact ⟨fun _ _ _ => 0, fun _ _ _ => O.zero_mem,
+      Raw.empty_terms_restriction (fun _ _ _ => 0)⟩
 
-theorem pad_one : (equiv O).r (pad U (1 : Raw K S)) 1 := by
-  let e (s : S ⊕ U) : (pad U (1 : Raw K S)).leg s ≃ Unit :=
-    match s with
-    | .inl _ => Equiv.refl Unit
-    | .inr _ => Equiv.refl Unit
-  refine relabel (Equiv.refl _) e ?_
-  rintro i (s | u) x <;> rfl
+theorem pad_one : (equiv O).r (pad U (1 : Raw K S)) 1 :=
+  relabel_of_relabels (Raw.pad_one_relabels U)
 
-theorem pad_mul (A B : Raw K S) : (equiv O).r (pad U (A * B)) (pad U A * pad U B) := by
-  let e (s : S ⊕ U) : (pad U (A * B)).leg s ≃ (pad U A * pad U B).leg s :=
-    match s with
-    | .inl s => Equiv.refl (A.leg s × B.leg s)
-    | .inr _ => (Equiv.punitProd Unit).symm
-  refine relabel (Equiv.refl _) e ?_
-  rintro i (s | u) x
-  · rfl
-  · exact (one_mul (1 : K)).symm
+theorem pad_mul (A B : Raw K S) : (equiv O).r (pad U (A * B)) (pad U A * pad U B) :=
+  relabel_of_relabels (Raw.pad_mul_relabels U A B)
 
 theorem pad_add (A B : Raw K S) : Restricts O (pad U A + pad U B) (pad U (A + B)) := by
   classical
-  let L (s : S ⊕ U) : (pad U (A + B)).leg s → (pad U A + pad U B).leg s → K :=
-    match s with
-    | .inl s => fun (x y : A.leg s ⊕ B.leg s) => if y = x then 1 else 0
-    | .inr _ => fun _ _ => 1
-  refine ⟨L, ?_, fun x => Finset.sum_congr rfl fun i _ => Finset.prod_congr rfl fun s _ => ?_⟩
-  · rintro (s | u) x y
-    · change A.leg s ⊕ B.leg s at x y
-      change (if y = x then (1 : K) else 0) ∈ O
-      split_ifs <;> simp
-    · exact O.one_mem
-  change A.term ⊕ B.term at i
-  cases s with
-  | inl s =>
-    have key (z : A.leg s ⊕ B.leg s) (f : A.leg s ⊕ B.leg s → K) :
-        f z = ∑ y, (if y = z then (1 : K) else 0) * f y := by simp [ite_mul]
-    exact key (x (.inl s)) ((A + B).factor i s)
-  | inr u =>
-    change 1 = ∑ y : Unit ⊕ Unit, 1 * (pad U A + pad U B).factor i (.inr u) y
-    rw [Fintype.sum_sum_type]
-    simp only [Fintype.sum_unique, one_mul]
-    cases i
-    · exact (add_zero (1 : K)).symm
-    · exact (zero_add (1 : K)).symm
+  refine ⟨Raw.padAddMap U A B, ?_, Raw.pad_add_coeff U A B⟩
+  rintro (s | u) x y
+  · change A.leg s ⊕ B.leg s at x y
+    change (if y = x then (1 : K) else 0) ∈ O
+    split_ifs <;> simp
+  · exact O.one_mem
 
 namespace ITensor
 

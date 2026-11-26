@@ -9,6 +9,7 @@ module
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.TagFinite
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.PolynomialTensor
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterDegeneration
 
 /-!
 # Positivity and rank bounds for polynomial character values
@@ -47,16 +48,9 @@ theorem Character.polynomial_value_pos (f : Character) (a b : ℕ)
 
 theorem Character.polynomial_value_le (f : Character) (a b : ℕ)
     (ha : 1 ≤ a) (hb : 1 ≤ b) :
-    (f (ofTensor (polynomialTensor a b)) : ℝ) ≤ (a : ℝ) + (b : ℝ) - 1 := by
-  have hRank : rank (ofTensor (polynomialTensor a b)) ≤ a + b - 1 := by
-    rw [rank_ofTensor]
-    exact (CoefficientTensor.rank_le_iff _ _).mpr (polynomialTensor_rankAtMost a b)
-  have hnn : f (ofTensor (polynomialTensor a b)) ≤ (a + b - 1 : ℕ) :=
-    (f.le_rank _).trans (Nat.cast_le.mpr hRank)
-  have hr : (f (ofTensor (polynomialTensor a b)) : ℝ) ≤ ((a + b - 1 : ℕ) : ℝ) := by
-    exact_mod_cast hnn
-  have hab : 1 ≤ a + b := by omega
-  simpa only [Nat.cast_sub hab, Nat.cast_add, Nat.cast_one] using hr
+    (f (ofTensor (polynomialTensor a b)) : ℝ) ≤ (a : ℝ) + (b : ℝ) - 1 :=
+  TensorSpectrum.TensorClass.Character.polynomial_value_le_of_rankAtMost
+    f a b ha hb (polynomialTensor_rankAtMost a b)
 
 end TensorClass
 end MatrixMultiplicationAllFields.MatrixExponent.Upper

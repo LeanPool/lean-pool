@@ -8,6 +8,7 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassPowers
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagGrowth
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
 
 /-!
 # Character monotonicity under polynomial restriction
@@ -47,5 +48,21 @@ theorem Character.polynomial_constant_le (f : Character R)
     (f (ofTensor T)).coe_nonneg
     (fun j => by exact_mod_cast hpower j)
   exact_mod_cast hreal
+
+open PolynomialTensors (polynomialTensor)
+
+theorem Character.polynomial_value_le_of_rankAtMost (f : Character R) (a b : ℕ)
+    (ha : 1 ≤ a) (hb : 1 ≤ b)
+    (h : Tensor.RankAtMost (polynomialTensor (K := R) a b) (a + b - 1)) :
+    (f (ofTensor (polynomialTensor a b)) : ℝ) ≤ (a : ℝ) + (b : ℝ) - 1 := by
+  have hRank : rank (ofTensor (polynomialTensor (K := R) a b)) ≤ a + b - 1 := by
+    rw [rank_ofTensor]
+    exact (CoefficientTensor.rank_le_iff _ _).mpr h
+  have hnn : f (ofTensor (polynomialTensor a b)) ≤ (a + b - 1 : ℕ) :=
+    (f.le_rank _).trans (Nat.cast_le.mpr hRank)
+  have hr : (f (ofTensor (polynomialTensor a b)) : ℝ) ≤ ((a + b - 1 : ℕ) : ℝ) := by
+    exact_mod_cast hnn
+  have hab : 1 ≤ a + b := by omega
+  simpa only [Nat.cast_sub hab, Nat.cast_add, Nat.cast_one] using hr
 
 end MatrixMultiplicationAllFields.TensorSpectrum.TensorClass

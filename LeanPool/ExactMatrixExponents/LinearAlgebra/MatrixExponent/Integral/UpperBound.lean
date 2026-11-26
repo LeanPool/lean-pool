@@ -286,8 +286,9 @@ private theorem comparison (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c)
   have hn₁ : 1 ≤ (n : ℝ) := by exact_mod_cast hn'
   have hr : 0 < (r : ℝ) := lt_trans (by positivity) hlo
   have hx : 1 ≤ M := by
-    simpa only [M, dots, one_mul] using mul_mono (mul_mono (one_le_dotX (side_pos hn' b))
-      (one_le_dotY (side_pos hn' a))) (one_le_dotZ (side_pos hn' c))
+    simpa only [M, dots, TensorSpectrum.TensorClass.dots, one_mul] using
+      mul_mono (mul_mono (one_le_dotX (side_pos hn' b)) (one_le_dotY (side_pos hn' a)))
+        (one_le_dotZ (side_pos hn' c))
   have hy : 1 ≤ (r : TensorClass) := by
     rw [← Nat.cast_one (R := TensorClass), natCast_eq_ofTensor_natTensor,
       natCast_eq_ofTensor_natTensor]

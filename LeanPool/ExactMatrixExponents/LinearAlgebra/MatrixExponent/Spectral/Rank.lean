@@ -127,48 +127,74 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 
 variable {K S : Type} [Field K] [Fintype S] (U : Type) [Fintype U]
 
-theorem pad_zero : pad U (0 : Raw K S) ≈ 0 := by
-  constructor <;>
-    exact ⟨fun _ _ _ => 0, fun _ => Finset.sum_congr rfl fun i _ => Empty.elim i⟩
+theorem empty_terms_restriction {A B : Raw K S} [IsEmpty A.term] [IsEmpty B.term]
+    (maps : ∀ s, B.leg s → A.leg s → K) (x : ∀ s, B.leg s) :
+    B.coeff x = ∑ i : A.term, ∏ s, ∑ y : A.leg s, maps s (x s) y * A.factor i s y := by
+  simp [coeff]
 
-theorem pad_one : pad U (1 : Raw K S) ≈ 1 := by
+theorem pad_zero : pad U (0 : Raw K S) ≈ 0 := by
+  let : IsEmpty (pad U (0 : Raw K S)).term := inferInstanceAs (IsEmpty Empty)
+  let : IsEmpty (0 : Raw K (S ⊕ U)).term := inferInstanceAs (IsEmpty Empty)
+  constructor <;> exact ⟨fun _ _ _ => 0, empty_terms_restriction (fun _ _ _ => 0)⟩
+
+omit [Fintype S] [Fintype U] in
+theorem pad_one_relabels : Relabels (pad U (1 : Raw K S)) 1 := by
   let e (s : S ⊕ U) : (pad U (1 : Raw K S)).leg s ≃ Unit :=
     match s with
     | .inl _ => Equiv.refl Unit
     | .inr _ => Equiv.refl Unit
-  refine relabel (Equiv.refl _) e ?_
+  refine ⟨Equiv.refl _, e, ?_⟩
   rintro i (s | u) x <;> rfl
 
-theorem pad_mul (A B : Raw K S) : pad U (A * B) ≈ pad U A * pad U B := by
+omit [Fintype S] [Fintype U] in
+theorem pad_mul_relabels (A B : Raw K S) : Relabels (pad U (A * B)) (pad U A * pad U B) := by
   let e (s : S ⊕ U) : (pad U (A * B)).leg s ≃ (pad U A * pad U B).leg s :=
     match s with
     | .inl s => Equiv.refl (A.leg s × B.leg s)
     | .inr _ => (Equiv.punitProd Unit).symm
-  refine relabel (Equiv.refl _) e ?_
+  refine ⟨Equiv.refl _, e, ?_⟩
   rintro i (s | u) x
   · rfl
   · exact (one_mul (1 : K)).symm
 
-theorem pad_add (A B : Raw K S) : (pad U A + pad U B).Restricts (pad U (A + B)) := by
+theorem pad_one : pad U (1 : Raw K S) ≈ 1 :=
+  relabel_of_relabels (pad_one_relabels U)
+
+theorem pad_mul (A B : Raw K S) : pad U (A * B) ≈ pad U A * pad U B :=
+  relabel_of_relabels (pad_mul_relabels U A B)
+
+omit [Fintype S] [Fintype U] in
+/-- Duplicate the unit coordinate on new sites and copy retained coordinates identically. -/
+def padAddMap (A B : Raw K S) (s : S ⊕ U) :
+    (pad U (A + B)).leg s → (pad U A + pad U B).leg s → K := by
   classical
-  let L (s : S ⊕ U) : (pad U (A + B)).leg s → (pad U A + pad U B).leg s → K :=
-    match s with
-    | .inl s => fun (x y : A.leg s ⊕ B.leg s) => if y = x then 1 else 0
-    | .inr _ => fun _ _ => 1
-  refine ⟨L, fun x => Finset.sum_congr rfl fun i _ => Finset.prod_congr rfl fun s _ => ?_⟩
-  change A.term ⊕ B.term at i
-  cases s with
-  | inl s =>
-    have key (z : A.leg s ⊕ B.leg s) (f : A.leg s ⊕ B.leg s → K) :
-        f z = ∑ y, (if y = z then (1 : K) else 0) * f y := by simp [ite_mul]
-    exact key (x (.inl s)) ((A + B).factor i s)
-  | inr u =>
-    change 1 = ∑ y : Unit ⊕ Unit, 1 * (pad U A + pad U B).factor i (.inr u) y
-    rw [Fintype.sum_sum_type]
-    simp only [Fintype.sum_unique, one_mul]
-    cases i
-    · exact (add_zero (1 : K)).symm
-    · exact (zero_add (1 : K)).symm
+  exact match s with
+  | .inl s => fun (x y : A.leg s ⊕ B.leg s) => if y = x then 1 else 0
+  | .inr _ => fun _ _ => 1
+
+theorem pad_add_coeff (A B : Raw K S) (x : ∀ s, (pad U (A + B)).leg s) :
+    (pad U (A + B)).coeff x =
+      ∑ i : (pad U A + pad U B).term, ∏ s,
+        ∑ y : (pad U A + pad U B).leg s,
+          padAddMap U A B s (x s) y * (pad U A + pad U B).factor i s y := by
+  classical
+  exact Finset.sum_congr rfl fun i _ => Finset.prod_congr rfl fun s _ => by
+    change A.term ⊕ B.term at i
+    cases s with
+    | inl s =>
+      have key (z : A.leg s ⊕ B.leg s) (f : A.leg s ⊕ B.leg s → K) :
+          f z = ∑ y, (if y = z then (1 : K) else 0) * f y := by simp [ite_mul]
+      exact key (x (.inl s)) ((A + B).factor i s)
+    | inr u =>
+      change 1 = ∑ y : Unit ⊕ Unit, 1 * (pad U A + pad U B).factor i (.inr u) y
+      rw [Fintype.sum_sum_type]
+      simp only [Fintype.sum_unique, one_mul]
+      cases i
+      · exact (add_zero (1 : K)).symm
+      · exact (zero_add (1 : K)).symm
+
+theorem pad_add (A B : Raw K S) : (pad U A + pad U B).Restricts (pad U (A + B)) :=
+  ⟨padAddMap U A B, pad_add_coeff U A B⟩
 
 end MatrixMultiplicationAllFields.MatrixExponent.Spectral.Raw
 end

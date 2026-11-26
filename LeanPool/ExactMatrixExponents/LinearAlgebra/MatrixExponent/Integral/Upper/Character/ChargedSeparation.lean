@@ -10,6 +10,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Character.Degeneration
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Character.DirectSum
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Separation
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialCharacterBounds
 
 /-!
 # The charged separation inequality for actual characters
@@ -42,15 +43,7 @@ theorem Character.charged_separation (f : Character)
   have h := f.polynomial_constant_le
     (Tensor.directSum (fun _ : Fin (6 * M) => Separation.shared A))
     (Separation.separated A) P ((M - 1) ^ 2) hconstant hdegree heval
-  rw [Character.map_directSum_const] at h
-  have houtput : f (ofTensor (Separation.separated A)) =
-      (∑ h, f (ofTensor (A h))) *
-        f (ofTensor (Separation.dotPairingX (Fin M))) := by
-    unfold Separation.separated
-    rw [Character.map_directSum_fin]
-    simp only [← ofTensor_mul, Character.map_mul, Finset.sum_mul]
-  rw [houtput] at h
-  simpa only [Nat.cast_mul, Nat.cast_ofNat] using h
+  exact TensorSpectrum.TensorClass.Character.charged_separation f 6 A h
 
 /-- The block count pays the growing part of the separation cost.  The
 remaining factor six is fixed, and is removed only in a later power limit. -/
@@ -59,17 +52,8 @@ theorem Character.charged_separation_equal (f : Character)
     {M : ℕ} (hM : 0 < M) (A : Fin M → Tensor O X Y Z)
     (c : ℝ≥0) (hvalue : ∀ h, f (ofTensor (A h)) = c) :
     c * f (ofTensor (Separation.dotPairingX (Fin M))) ≤
-      6 * f (ofTensor (Separation.shared A)) := by
-  have h := f.charged_separation A
-  simp only [hvalue, Finset.sum_const, Finset.card_univ, Fintype.card_fin,
-    nsmul_eq_mul] at h
-  have hM' : (0 : ℝ≥0) < M := by exact_mod_cast hM
-  apply (mul_le_mul_iff_right₀ hM').mp
-  calc
-    (M : ℝ≥0) * (c * f (ofTensor (Separation.dotPairingX (Fin M)))) =
-        ((M : ℝ≥0) * c) * f (ofTensor (Separation.dotPairingX (Fin M))) :=
-      (mul_assoc _ _ _).symm
-    _ ≤ (6 * M : ℝ≥0) * f (ofTensor (Separation.shared A)) := h
-    _ = (M : ℝ≥0) * (6 * f (ofTensor (Separation.shared A))) := by ring
+      6 * f (ofTensor (Separation.shared A)) :=
+  TensorSpectrum.TensorClass.Character.charged_separation_equal f 6 hM A c hvalue
+    (f.charged_separation A)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper.TensorClass
