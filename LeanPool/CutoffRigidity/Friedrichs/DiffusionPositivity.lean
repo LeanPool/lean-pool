@@ -10,7 +10,6 @@ module
 
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionForm
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
-import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 import TauCeti.Analysis.SpecialFunctions.SmoothTransition
 import TauCeti.Geometry.Manifold.Riemannian.Gradient.ChainRule
 import TauCeti.MeasureTheory.Function.Lp.Order
@@ -153,12 +152,6 @@ theorem normalContraction_stable (θ : ℝ → ℝ) (hθ : ContDiff ℝ ∞ θ) 
   have h2 : deriv θ (f x) ^ 2 ≤ 1 := by
     simpa only [pow_two] using abs_le_one_iff_mul_self_le_one.mp (h1 (f x))
   exact mul_le_of_le_one_left (carre_nonneg F f x) h2
-
-omit [MeasurableSpace F] [BorelSpace F] in
-private theorem integrable_carre (a b : testSub F M) :
-    Integrable (fun x => carre F (a : M → ℝ) (b : M → ℝ) x) μ := by
-  have hs : MSmooth F (carre F (a : M → ℝ) (b : M → ℝ)) := WReg.msmooth_carre a.2.1 b.2.1
-  exact hs.continuous.integrable_of_hasCompactSupport (hasCompactSupport_carre F _ a.2.2)
 
 /-- The test function `τ ∘ a`. -/
 def compTest {τ : ℝ → ℝ} (hτ : ContDiff ℝ ∞ τ) (h0 : τ 0 = 0) (a : testSub F M) : testSub F M :=

@@ -50,11 +50,6 @@ theorem testSub_memLp (f : testSub F M) (μ : Measure M) [IsFiniteMeasure μ] :
     MemLp (f : M → ℝ) 2 μ :=
   (testSub_continuous F f).memLp_of_hasCompactSupport f.2.2
 
-omit [MeasurableSpace M] [BorelSpace M] in
-theorem testSub_bounded (f : testSub F M) : ∃ C : ℝ, ∀ x, |(f : M → ℝ) x| ≤ C := by
-  obtain ⟨C, hC⟩ := (testSub_continuous F f).bounded_above_of_compact_support f.2.2
-  exact ⟨C, fun x => by simpa using hC x⟩
-
 /-- The embedding `𝒟 → L²(μ)`. -/
 noncomputable def testToL2 (μ : Measure M) [IsFiniteMeasure μ] :
     testSub F M →ₗ[ℝ] (M →₂[μ] ℝ) where

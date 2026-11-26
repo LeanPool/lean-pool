@@ -10,6 +10,7 @@ module
 
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionTestFunctions
 public import LeanPool.CutoffRigidity.Friedrichs.EnergyForm
+import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedGradientRegularity
 
 /-! # The test-core energy form of the weighted diffusion generator -/
 
@@ -28,7 +29,15 @@ variable (F : Type) [NormedAddCommGroup F] [InnerProductSpace ℝ F] [FiniteDime
   [RiemannianBundle (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [IsContMDiffRiemannianBundle 𝓘(ℝ, F) ∞ F (fun x : M => TangentSpace 𝓘(ℝ, F) x)]
   [MeasurableSpace M] [BorelSpace M]
-  {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M} [IsFiniteMeasure μ]
+
+omit [MeasurableSpace F] [BorelSpace F] in
+/-- The gradient pairing of smooth compactly supported test functions is integrable. -/
+theorem integrable_carre {μ : Measure M} [IsFiniteMeasureOnCompacts μ] (a b : testSub F M) :
+    Integrable (fun x => carre F (a : M → ℝ) (b : M → ℝ) x) μ := by
+  have hs : MSmooth F (carre F (a : M → ℝ) (b : M → ℝ)) := WReg.msmooth_carre a.2.1 b.2.1
+  exact hs.continuous.integrable_of_hasCompactSupport (hasCompactSupport_carre F _ a.2.2)
+
+variable {V : M → ℝ} (hV : MSmooth F V) {μ : Measure M} [IsFiniteMeasure μ]
   (hμ : IsWeightedVolume F μ V)
 
 /-- The operator `A = -𝓛` on `D = C_c^∞(M) ⊂ L²(μ)`. -/
