@@ -7,6 +7,7 @@ module
 
 public import LeanPool.Erdos97ConvexOctagon.CoverageCertificateData08
 public import LeanPool.Erdos97ConvexOctagon.CoverageCertificateData09
+import all LeanPool.Erdos97ConvexOctagon.CoverageCertificateReplay
 import Mathlib.Algebra.Order.Algebra
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
 import Mathlib.Data.Sym.Sym2.Init
@@ -17,6 +18,8 @@ import Mathlib.Tactic.NormNum.GCD
 @[expose] public section
 
 namespace Erdos97Octagon.RawIncidence.StaticDirectCoverage
+
+attribute [local instance 2000] nodeChunkReplayDecidable
 
 /-- Root audit for fixed branch (2, 16). -/
 theorem coverageBranchRoot_2_16 :
