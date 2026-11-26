@@ -45,7 +45,7 @@ theorem Character.tripling_graded_le (f : Character) (a h : ℕ)
     (ha : 1 ≤ a) (hh : 1 ≤ h) :
     (f (ofTensor (triplingSectorTensor a h)) : ℝ) ≤
       (f (ofTensor (polynomialTensor a (3 * h + a - 1))) : ℝ) :=
-  TensorSpectrum.TensorClass.Character.tripling_graded_le f
+  TensorSpectrum.TensorClass.Character.tripling_graded_le_of_evaluation f
     (node := fun t : O => IsUnit t) f.polynomial_constant_le a h ha hh
     (fun _ ht => triplingPolynomialFamily_eval_mem_restrictionOrbit a h ha hh ht)
 

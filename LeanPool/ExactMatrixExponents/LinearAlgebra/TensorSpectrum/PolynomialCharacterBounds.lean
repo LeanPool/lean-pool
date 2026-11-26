@@ -87,7 +87,16 @@ end Determinant
 
 variable {K : Type*} [CommSemiring K]
 
-theorem Character.tripling_graded_le (f : Character K) {node : K → Prop}
+theorem Character.tripling_graded_le (f : Character K) (a h : ℕ)
+    (hpower : ∀ j : ℕ,
+      Tensor.power (triplingSectorTensor (K := K) a h) j ∈ LocalTensor.orbit
+      (Tensor.directSum (fun _ : Fin (1 * j + 1) =>
+        Tensor.power (polynomialTensor a (triplingWidth a h)) j))) :
+    (f (ofTensor (triplingSectorTensor a h)) : ℝ) ≤
+      (f (ofTensor (polynomialTensor a (3 * h + a - 1))) : ℝ) := by
+  exact_mod_cast f.polynomial_constant_le
+    (polynomialTensor a (triplingWidth a h)) (triplingSectorTensor a h) 1 hpower
+theorem Character.tripling_graded_le_of_evaluation (f : Character K) {node : K → Prop}
     (compare : f.PolynomialBound node) (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h)
     (heval : ∀ t, node t → (fun x y z => (triplingPolynomialFamily a h ha hh x y z).eval t) ∈
       LocalTensor.orbit (polynomialTensor a (triplingWidth a h))) :
