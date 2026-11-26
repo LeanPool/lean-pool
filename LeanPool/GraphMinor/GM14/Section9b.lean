@@ -217,9 +217,7 @@ private theorem disc_on_other_side_gives_larger_zone
     disjoint_union_right.mpr ⟨hdis_cl_r_Λ, hdis_cl_r_e₀⟩
   have hint_D_eq : D_big \ subBd D_big = interior D_big := by
     rw [subBd_eq_frontier]
-    ext x
-    exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-      fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+    exact self_sdiff_frontier _
   have hreg_sub : ∀ s ∈ H.R, (closure s ∩ Z).Nonempty → s ⊆ D_big \ subBd D_big := by
     rintro s hs ⟨p, hps, hpZ⟩
     have hsr : s ≠ r := fun heq => disjoint_left.mp hdis_cl_r_Z (heq ▸ hps) hpZ
@@ -310,9 +308,7 @@ theorem enlarge_disc_past_disconnected_region [T2Space S] [ConnectedSpace S]
   have hfr_out : frontier Δ_out = subBd Δ_out := (subBd_eq_frontier Δ_out).symm
   have hint_out_eq : Δ_out \ subBd Δ_out = interior Δ_out := by
     rw [← hfr_out]
-    ext x
-    exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-      fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+    exact self_sdiff_frontier _
   obtain ⟨hv₁F₂, hv₂F₂⟩ := IsLineWithEnds.ends_mem hF₂_line
   have hv₁_cl_r : v₁ ∈ closure r :=
     closure_mono hF₂_r (IsLineWithEnds.subset_closure_sdiff_pair hF₂_line hv₁F₂)
@@ -485,9 +481,7 @@ private theorem regionalDistance_add_one_le [ConnectedSpace S] (hS : IsClosedSur
     rw [h0] at hvlast
     exact disjoint_left.mp hdis (hX hv0) hvlast
   · have hint_eq : D \ frontier D = interior D := by
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have hv0_int : v_seq 0 ∈ interior D := hint_eq ▸ hX hv0
     have hr0_R : r_seq 0 ∈ H.R := (hsteps 0).1
     have hv0_r0 : v_seq 0 ∈ closure (r_seq 0) := (hsteps 0).2.1
@@ -1444,9 +1438,7 @@ private theorem split_uncrossed_path_at_circuit [T2Space S]
     have hΛ_eq_int : Λ = interior Δ := by
       change Δ \ C.U = interior Δ
       rw [← hbd, subBd_eq_frontier]
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have hΛ_open : IsOpen Λ := hΛ_eq_int ▸ isOpen_interior
     have hΔ_ext_closed : IsClosed Δ_ext := isClosed_univ.sdiff hΛ_open
     have hfr_ext : frontier Δ_ext = C.U := by
@@ -1674,9 +1666,7 @@ private theorem optimal_circuit_gives_rigid_cleared_zone
   have hint_C'' : interior (discIns (closure Λ₁) (C'' h)) =
       discIns (closure Λ₁) (C'' h) \ (C'' h).U := by
     rw [← hp''_h.2.2.2.1]
-    ext x
-    exact ⟨fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩,
-      fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩⟩
+    exact (self_sdiff_frontier _).symm
   have hΛ'_sub_C'' : Λ'_h ⊆ discIns (closure Λ₁) (C'' h) \ (C'' h).U := by
     rw [← hint_C'', ← hOD'.1.interior_eq]
     exact interior_mono (subset_closure.trans hcl'_sub_C'')
@@ -1766,9 +1756,7 @@ theorem theorem_9_5_proof :
     have hint_0 : interior Δ₀ = Λ₀ := by
       change interior Δ₀ = Δ₀ \ (C i₀).U
       rw [← hp_0.2.2.2.1]
-      ext x
-      exact ⟨fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩,
-        fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩⟩
+      exact (self_sdiff_frontier _).symm
     rw [← hint_0, ← hZone₂.isOpenDisc.1.interior_eq]
     exact interior_mono (subset_closure.trans hcl₂_sub_Δ₀)
   have hi₀_lt_h : i₀ < h := by change 0 < beta / 2 + 1; omega

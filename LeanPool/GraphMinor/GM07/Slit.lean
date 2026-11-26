@@ -56,6 +56,93 @@ theorem exists_ball_chart {T : Type} [TopologicalSpace T] (hT : IsClosedSurface 
         ∧ |z.re| ≤ s ∧ K z = x :=
   exists_stretched_arc_chart hT ha hW haW
 
+private theorem exists_line_chart_in_cap {M : Type} [TopologicalSpace M]
+    (hM : IsSurface M) {L : Set M} {u v : M}
+    (hL : IsLineWithEnds L u v) (hd : L ∩ bd M = ∅)
+    {W : Set M} (hW : IsOpen W) (hLW : L ⊆ W) :
+    let B : Set ℂ := closedBall 0 1
+    ∃ (T : Type) (_ : TopologicalSpace T) (j : M → T) (J : T → M)
+      (O : Set ℂ) (K : ℂ → T) (s : ℝ),
+      IsClosedSurface T ∧ IsClosedEmbedding j ∧ StripChart O K ∧
+      0 < s ∧ s < 1 ∧ B ⊆ O ∧
+      (∀ z ∈ B, K z ∈ range j) ∧ (∀ y ∈ range j, j (J y) = y) ∧
+      ContinuousOn (J ∘ K) B ∧ InjOn (J ∘ K) B ∧ (J ∘ K) '' B ⊆ W ∧
+      (∀ z ∈ B, J (K z) ∉ bd M) ∧ J (K (-s : ℝ)) = u ∧ J (K (s : ℝ)) = v ∧
+      ∀ x, x ∈ L ↔ ∃ z ∈ B, z.im = 0 ∧ |z.re| ≤ s ∧ J (K z) = x := by
+  classical
+  obtain ⟨T, tT, j, Kc, hT, hj, hKc, hun, hint, -⟩ := exists_capAll M hM
+  have ht2 : T2Space T := hT.2.1
+  have ht2M : T2Space M := hM.2.1
+  have hcM : CompactSpace M := hM.1
+  obtain ⟨a₀, ha₀, hr, ha0, ha1⟩ := hL.exists_arc
+  have ha : IsArcMap (j ∘ a₀) := ⟨hj.continuous.comp ha₀.1, hj.injective.comp ha₀.2⟩
+  have hWT : IsOpen (Kcᶜ ∩ (j '' Wᶜ)ᶜ) := hKc.isOpen_compl.inter (hj.isClosedMap _
+    hW.isClosed_compl).isOpen_compl
+  have haW : range (j ∘ a₀) ⊆ Kcᶜ ∩ (j '' Wᶜ)ᶜ := by
+    rintro _ ⟨t, rfl⟩
+    have htL : a₀ t ∈ L := hr ▸ mem_range_self t
+    refine ⟨fun hc => ?_, ?_⟩
+    · have h1 : j (a₀ t) ∈ range j ∩ Kc := ⟨mem_range_self _, hc⟩
+      rw [hint] at h1
+      obtain ⟨y, hy, he⟩ := h1
+      have h3 : a₀ t ∈ L ∩ bd M := ⟨htL, hj.injective he ▸ hy⟩
+      rw [hd] at h3
+      exact h3
+    · rintro ⟨y, hy, he⟩
+      exact hy (hj.injective he ▸ hLW htL)
+  obtain ⟨O, K, s, hK, hs0, hs1, hBO, hBW, hKm, hKp, hrange⟩ := exists_ball_chart hT ha hWT haW
+  let B : Set ℂ := closedBall 0 1
+  have hKr : ∀ z ∈ B, K z ∈ range j := fun z hz => by
+    have h1 := hun.ge (mem_univ (K z))
+    exact h1.resolve_right (hBW ⟨z, hz, rfl⟩).1
+  have : Nonempty M := by
+    obtain ⟨y, -⟩ := hKr 0 (by simp [B])
+    exact ⟨y⟩
+  let J : T → M := Function.invFun j
+  have hJ : ∀ x, J (j x) = x := Function.leftInverse_invFun hj.injective
+  have hjJ : ∀ y ∈ range j, j (J y) = y := fun y ⟨x, hx⟩ => by rw [← hx, hJ]
+  let K₀ : ℂ → M := fun z => J (K z)
+  have hjK : ∀ z ∈ B, j (K₀ z) = K z := fun z hz => hjJ _ (hKr z hz)
+  have hK₀i : InjOn K₀ B := fun z hz w hw he => hK.hi (hBO hz) (hBO hw)
+    (by rw [← hjK z hz, ← hjK w hw, he])
+  have hK₀c : ContinuousOn K₀ B := by
+    rw [hj.isEmbedding.continuousOn_iff]
+    exact (hK.hc.mono hBO).congr fun z hz => hjK z hz
+  refine ⟨T, tT, j, J, O, K, s, hT, hj, hK, hs0, hs1, hBO, hKr, hjJ,
+    hK₀c, hK₀i, ?_, ?_, ?_, ?_, fun x => ?_⟩
+  · rintro _ ⟨z, hz, rfl⟩
+    by_contra hn
+    exact (hBW ⟨z, hz, rfl⟩).2 ⟨_, hn, hjK z hz⟩
+  · intro z hz hb
+    have h1 : j (K₀ z) ∈ range j ∩ Kc := hint ▸ mem_image_of_mem j hb
+    rw [hjK z hz] at h1
+    exact (hBW ⟨z, hz, rfl⟩).1 h1.2
+  · rw [hKm, Function.comp_apply, ha0, hJ]
+  · rw [hKp, Function.comp_apply, ha1, hJ]
+  · constructor
+    · intro hx
+      rw [← hr] at hx
+      obtain ⟨t, rfl⟩ := hx
+      obtain ⟨z, hz, him, hre, hEq⟩ := (hrange (j (a₀ t))).mp ⟨t, rfl⟩
+      exact ⟨z, hz, him, hre, by rw [hEq, hJ]⟩
+    · rintro ⟨z, hz, him, hre, rfl⟩
+      obtain ⟨t, ht⟩ := (hrange (K z)).mpr ⟨z, hz, him, hre, rfl⟩
+      have he : a₀ t = J (K z) := hj.injective (by rw [hjK z hz]; exact ht)
+      rw [← he, ← hr]
+      exact mem_range_self t
+
+/-- A chart of a disc around a line off the boundary: the line is a segment of a diameter. -/
+theorem exists_line_chart_aux {M : Type} [TopologicalSpace M] (hM : IsSurface M) {L : Set M} {u v :
+  M} (hL : IsLineWithEnds L u v) (hd : L ∩ bd M = ∅)
+    {W : Set M} (hW : IsOpen W) (hLW : L ⊆ W) :
+    ∃ (K₀ : ℂ → M) (s : ℝ), 0 < s ∧ s < 1 ∧ ContinuousOn K₀ (closedBall 0 1) ∧ InjOn K₀
+      (closedBall 0 1) ∧ K₀ '' closedBall 0 1 ⊆ W ∧
+      (∀ z ∈ closedBall (0 : ℂ) 1, K₀ z ∉ bd M) ∧ K₀ (-s : ℝ) = u ∧ K₀ (s : ℝ) = v
+        ∧ ∀ x, x ∈ L ↔ ∃ z ∈ closedBall (0 : ℂ) 1, z.im = 0 ∧ |z.re| ≤ s ∧ K₀ z = x := by
+  obtain ⟨T, tT, j, J, O, K, s, _, _, _, hs0, hs1, _, _, _, hc, hi, hW, hb, hu, hv, hL⟩ :=
+    exists_line_chart_in_cap hM hL hd hW hLW
+  exact ⟨J ∘ K, s, hs0, hs1, hc, hi, hW, hb, hu, hv, hL⟩
+
 /-- `E` is a closed disc off the boundary, and `c` is a homotopy from the identity to a map of the
 surface that takes `E`
 to the line `L`. Off the inside of `E`, this map is onto, it folds `discBd E` onto `L` with two
@@ -283,25 +370,17 @@ private theorem slit_boundary_fiber
 theorem exists_slit_aux {M : Type} [TopologicalSpace M] (hM : IsSurface M) {L : Set M} {u v : M}
     (hL : IsLineWithEnds L u v) (hd : L ∩ bd M = ∅) : ∃ E c, IsSlit L u v E c := by
   classical
-  obtain ⟨T, tT, j, Kc, hT, hj, hKc, hun, hint, -⟩ := exists_capAll M hM
+  obtain ⟨T, tT, j, J, O, K, s, hT, hj, hK, hs0, hs1, hBO, hKr, hjJ,
+    hK₀c, hK₀i, _, hK₀bd, hu, hv, hjp⟩ :=
+    exists_line_chart_in_cap hM hL hd isOpen_univ (subset_univ L)
   have ht2 : T2Space T := hT.2.1
   have ht2M : T2Space M := hM.2.1
   have hcM : CompactSpace M := hM.1
-  obtain ⟨a₀, ha₀, hr, ha0, ha1⟩ := hL.exists_arc
-  have ha : IsArcMap (j ∘ a₀) := ⟨hj.continuous.comp ha₀.1, hj.injective.comp ha₀.2⟩
-  have hW : IsOpen Kcᶜ := hKc.isOpen_compl
-  have haW : range (j ∘ a₀) ⊆ Kcᶜ := by
-    rintro _ ⟨t, rfl⟩ hc
-    have h1 : j (a₀ t) ∈ range j ∩ Kc := ⟨mem_range_self _, hc⟩
-    rw [hint] at h1
-    obtain ⟨y, hy, he⟩ := h1
-    have h2 : y = a₀ t := hj.injective he
-    have h3 : a₀ t ∈ L ∩ bd M := ⟨hr ▸ mem_range_self t, h2 ▸ hy⟩
-    rw [hd] at h3
-    exact h3
-  obtain ⟨O, K, s, hK, hs0, hs1, hBO, hBW, hKm, hKp, hrange⟩ := exists_ball_chart hT ha hW haW
   let B : Set ℂ := closedBall 0 1
   have hBc : IsCompact B := isCompact_closedBall _ _
+  let K₀ : ℂ → M := J ∘ K
+  change (∀ z ∈ B, K₀ z ∉ bd M) at hK₀bd
+  have hjK : ∀ z ∈ B, j (K₀ z) = K z := fun z hz => hjJ _ (hKr z hz)
   let Φ : 𝕀 × ℂ → ℂ := fun q => ((1 - q.1.1 : ℝ) : ℂ) * q.2 + ((q.1.1 : ℝ) : ℂ) * slitMap s q.2
   have hsl := continuous_slitMap hs0
   have hΦc : Continuous Φ := by
@@ -328,23 +407,6 @@ theorem exists_slit_aux {M : Type} [TopologicalSpace M] (hM : IsSurface M) {L : 
   obtain ⟨c, hcc, hc1, hc2⟩ := exists_glue hK hBc hBO Φ hΦc.continuousOn hΦm hΦid
   have hΦ0 : ∀ z, Φ (0, z) = z := fun z => by simp [Φ]
   have hΦ1 : ∀ z, Φ (1, z) = slitMap s z := fun z => by simp [Φ]
-  -- Pull everything back to `M`.
-  have hKr : ∀ z ∈ B, K z ∈ range j := fun z hz => by
-    have h1 := hun.ge (mem_univ (K z))
-    exact h1.resolve_right (hBW ⟨z, hz, rfl⟩)
-  have : Nonempty M := by
-    obtain ⟨y, -⟩ := hKr 0 (by simp [B])
-    exact ⟨y⟩
-  let J : T → M := Function.invFun j
-  have hJ : ∀ x, J (j x) = x := Function.leftInverse_invFun hj.injective
-  have hjJ : ∀ y ∈ range j, j (J y) = y := fun y ⟨x, hx⟩ => by rw [← hx, hJ]
-  let K₀ : ℂ → M := fun z => J (K z)
-  have hjK : ∀ z ∈ B, j (K₀ z) = K z := fun z hz => hjJ _ (hKr z hz)
-  have hK₀i : InjOn K₀ B := fun z hz w hw he => hK.hi (hBO hz) (hBO hw)
-    (by rw [← hjK z hz, ← hjK w hw, he])
-  have hK₀c : ContinuousOn K₀ B := by
-    rw [hj.isEmbedding.continuousOn_iff]
-    exact (hK.hc.mono hBO).congr fun z hz => hjK z hz
   have hrj : ∀ q : 𝕀 × M, c (q.1, j q.2) ∈ range j := fun q => by
     by_cases hin : j q.2 ∈ K '' B
     · obtain ⟨z, hz, he⟩ := hin
@@ -366,10 +428,6 @@ theorem exists_slit_aux {M : Type} [TopologicalSpace M] (hM : IsSurface M) {L : 
     refine hc2 _ _ ?_
     rintro ⟨z, hz, he⟩
     exact hx ⟨z, hz, hj.injective (by rw [hjK z hz, he])⟩)
-  have hK₀bd : ∀ z ∈ B, K₀ z ∉ bd M := fun z hz hb => by
-    have h1 : j (K₀ z) ∈ range j ∩ Kc := hint ▸ mem_image_of_mem j hb
-    rw [hjK z hz] at h1
-    exact hBW ⟨z, hz, rfl⟩ h1.2
   have hsB : closedBall (0 : ℂ) s ⊆ B := closedBall_subset_closedBall hs1.le
   obtain ⟨hD, hDb⟩ := closedBall_disc hs0
   obtain ⟨K', hK'c, hK'l⟩ := exists_inv_of_compactOn (hBc.of_isClosed_subset isClosed_closedBall
@@ -380,31 +438,10 @@ theorem exists_slit_aux {M : Type} [TopologicalSpace M] (hM : IsSurface M) {L : 
   rw [hDb] at hEb
   have hint' : discInt E = K₀ '' ball 0 s := by
     exact discInt_image_closedBall (M := M) s B K₀ hK₀i hsB hEb
-  have hjp : ∀ x, x ∈ L ↔ ∃ z ∈ B, z.im = 0 ∧ |z.re| ≤ s ∧ K₀ z = x := fun x => by
-    have h1 : x ∈ L ↔ j x ∈ range (j ∘ a₀) := by
-      constructor
-      · intro hx
-        rw [← hr] at hx
-        obtain ⟨t, rfl⟩ := hx
-        exact ⟨t, rfl⟩
-      · rintro ⟨t, ht⟩
-        have h2 : a₀ t = x := hj.injective ht
-        rw [← h2, ← hr]
-        exact mem_range_self _
-    rw [h1, hrange]
-    constructor
-    · rintro ⟨z, hz, h2, h3, h4⟩
-      exact ⟨z, hz, h2, h3, hj.injective (by rw [hjK z hz, h4])⟩
-    · rintro ⟨z, hz, h2, h3, rfl⟩
-      exact ⟨z, hz, h2, h3, (hjK z hz).symm⟩
   have hmem : ∀ {z : ℂ}, ‖z‖ ≤ 1 → z ∈ B := fun h => mem_closedBall_zero_iff.mpr h
   have hreal : ∀ {x : ℝ}, |x| ≤ s → (x : ℂ) ∈ B := fun {x} h => hmem (by
     rw [Complex.norm_real, Real.norm_eq_abs]
     linarith)
-  have hmB : ((-s : ℝ) : ℂ) ∈ B := hreal (by rw [abs_neg, abs_of_pos hs0])
-  have hpB : (s : ℂ) ∈ B := hreal (by rw [abs_of_pos hs0])
-  have hu : K₀ (-s : ℝ) = u := hj.injective (by rw [hjK _ hmB, hKm, ← ha0]; rfl)
-  have hv : K₀ (s : ℝ) = v := hj.injective (by rw [hjK _ hpB, hKp, ← ha1]; rfl)
   have hnotint : ∀ {z}, z ∈ B → K₀ z ∉ discInt E → s ≤ ‖z‖ := fun {z} hz hn => by
     by_contra hlt
     exact hn (hint' ▸ ⟨z, mem_ball_zero_iff.mpr (not_le.mp hlt), rfl⟩)

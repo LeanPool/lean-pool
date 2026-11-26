@@ -1127,7 +1127,6 @@ theorem lemma_6_1_claim_7 {P G₁ G₂ : Graph α β} {a b : α}
     (hinter : V(G₁) ∩ V(G₂) = V(P))
     (hP_G₁ : P ≤ G₁)
     (hab_G₁ : S.Ω.interval a b ⊆ V(G₁))
-    (_hba_G₂ : S.Ω.interval b a ⊆ V(G₂))
     (hclaim6 : ∀ P' : Graph α β, S.IsOmegaPath P' → P' ≤ G₁ → S.IsOmegaPathWithEnds P' a b) :
     S.Ω.interval a b = ∅ := by
   rw [eq_empty_iff_forall_notMem]
@@ -1757,10 +1756,6 @@ private theorem connectorDisjointOfPeripheral
 there is a path of $G$ between $a$ and $b$ avoiding $V(H')$, then $H' = H$." -/
 theorem lemma_6_1_claim_8 {p : ℕ} {P_set : Set (Graph α β)} {P G₁ G₂ H H' : Graph α β} {a b : α}
     (hp2 : 2 ≤ p)
-    (_hp3 : p ≠ 3)
-    (_hconn3 : S.IsKConnected 3)
-    (_hconn4 : S.IsInternallyKConnected 4)
-    (_hsimple : IsSimpleGraph S.G)
     (htrans : S.IsTransaction P_set)
     (hcard : P_set.ncard = 3 * p + 8)
     (hno_int : ∀ R ∈ P_set, Disjoint (pathInternalVerts S.G R) S.Ω.bar)
@@ -1776,11 +1771,9 @@ theorem lemma_6_1_claim_8 {p : ℕ} {P_set : Set (Graph α β)} {P G₁ G₂ H H
     (hd_ab : Disjoint (S.Ω.interval a b) (S.transactionEnds P_set))
     (hsep : IsGraphSeparation S.G G₁ G₂)
     (hinter : V(G₁) ∩ V(G₂) = V(P))
-    (_hP_G₁ : P ≤ G₁)
     (hab_empty : S.Ω.interval a b = ∅)
     (hba_G₂ : S.Ω.interval b a ⊆ V(G₂))
     (hHG : H ≤ S.G)
-    (_hH_del_G₂ : H = deleteVertices G₂ V(G₁))
     (hH_del_G : H = deleteVertices S.G V(G₁))
     (hVH : V(H) = V(S.G) \ V(G₁))
     (hG₁_eq : G₁ = deleteVertices S.G V(H))
@@ -2047,9 +2040,8 @@ theorem eq_path_of_claim_7_and_8 {P G₁ H : Graph α β} {a b : α}
 \cap V(\mathcal{P}) = \emptyset$, then $\Omega(a, b) = \emptyset$, $P$ is induced, and
 $\Omega(b, a)$ catches $G \setminus V(P)$." -/
 theorem lemma_6_1_claim_9 {p : ℕ} {P_set : Set (Graph α β)} {P : Graph α β} {a b : α}
-    (hp2 : 2 ≤ p) (hp3 : p ≠ 3)
+    (hp2 : 2 ≤ p)
     (hconn3 : S.IsKConnected 3)
-    (hconn4 : S.IsInternallyKConnected 4)
     (hno_crooked : ∀ P_set_c : Set (Graph α β), S.IsCrookedTransaction P_set_c → P_set_c.ncard ≠ p)
     (hsimple : IsSimpleGraph S.G)
     (hno_iso : ∀ v ∈ S.Ω.bar, ∃ u : α, S.G.Adj v u)
@@ -2070,7 +2062,7 @@ theorem lemma_6_1_claim_9 {p : ℕ} {P_set : Set (Graph α β)} {P : Graph α β
       P = S.G.induce V(P) ∧
       Catches (S.Ω.interval b a) (deleteVertices S.G V(P)) := by
   have hno_intP : Disjoint (pathInternalVerts S.G P) S.Ω.bar := hno_int P hP_in
-  obtain ⟨G₁, G₂, H, hsep, hinter, hP_G₁, hab_G₁, hba_G₂, hHG, hH_del_G₂, hH_del_G,
+  obtain ⟨G₁, G₂, H, hsep, hinter, hP_G₁, hab_G₁, hba_G₂, hHG, _, hH_del_G,
     hVH, hG₁_eq, hcatch_H⟩ :=
     S.exists_minimal_separation_of_separating hP_ends hP_sep hno_intP
   have hloopless : ∀ x : α, ¬ S.G.Adj x x := fun x ⟨e, he⟩ => hsimple.1 e he.edge_mem x he
@@ -2080,12 +2072,12 @@ theorem lemma_6_1_claim_9 {p : ℕ} {P_set : Set (Graph α β)} {P : Graph α β
         hab_G₁ hba_G₂ hP'_omega hP'_le
   have hab_empty : S.Ω.interval a b = ∅ :=
     S.lemma_6_1_claim_7 hconn3 hloopless hno_iso hP_ends hno_intP hsep hinter hP_G₁
-      hab_G₁ hba_G₂ hclaim6
+      hab_G₁ hclaim6
   have hclaim8 : ∀ H' : Graph α β, H ≤ H' → H' ≤ S.G → Catches (S.Ω.interval b a) H' →
       (∃ Q : Graph α β, IsGraphPathWithEnds S.G Q a b ∧ Avoids Q V(H')) → H' = H :=
     fun H' hH_le_H' hH'_le_G hcatch_H' hex_path =>
-      S.lemma_6_1_claim_8 hp2 hp3 hconn3 hconn4 hsimple htrans hcard hno_int hmax hno_crooked
-        hP_in hP_ends hd_ab hsep hinter hP_G₁ hab_empty hba_G₂ hHG hH_del_G₂ hH_del_G hVH
+      S.lemma_6_1_claim_8 hp2 htrans hcard hno_int hmax hno_crooked
+        hP_in hP_ends hd_ab hsep hinter hab_empty hba_G₂ hHG hH_del_G hVH
         hG₁_eq hcatch_H hH_le_H' hH'_le_G hcatch_H' hex_path
   have hPG₁ : IsGraphPathWithEnds G₁ P a b := hP_ends.1.of_le hP_G₁
   have hP_eq_G₁ : P = G₁ :=

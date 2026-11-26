@@ -87,22 +87,7 @@ theorem exists_isOpen_inter_bd_eq_image_Ioo_f (N : Net S) (i : Fin N.r)
   let t₀ : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
   have ht₀ : t₀ ∈ Ioo (0 : unitInterval) 1 := by
     constructor <;> rw [← Subtype.coe_lt_coe] <;> norm_num [t₀]
-  have hIoo_pc : IsPathConnected (Ioo (0 : unitInterval) 1) := by
-    have heq : projIcc (0 : ℝ) 1 zero_le_one '' Ioo (0 : ℝ) 1 = Ioo (0 : unitInterval) 1 := by
-      ext x
-      simp only [mem_image, mem_Ioo]
-      constructor
-      · rintro ⟨r, ⟨hr0, hr1⟩, rfl⟩
-        have hval : (projIcc (0 : ℝ) 1 zero_le_one r : ℝ) = r :=
-          congr_arg Subtype.val (projIcc_of_mem zero_le_one ⟨hr0.le, hr1.le⟩)
-        exact ⟨Subtype.coe_lt_coe.mp (by simpa [hval] using hr0),
-          Subtype.coe_lt_coe.mp (by simpa [hval] using hr1)⟩
-      · rintro ⟨hx0, hx1⟩
-        refine ⟨x.1, ⟨Subtype.coe_lt_coe.mpr hx0, Subtype.coe_lt_coe.mpr hx1⟩, ?_⟩
-        exact projIcc_val zero_le_one x
-    rw [← heq]
-    exact ((convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image
-      continuous_projIcc
+  have hIoo_pc := Net.unitInterval_interior_isPathConnected
   have hfIoo_conn : IsPreconnected (N.f i '' Ioo (0 : unitInterval) 1) :=
     (hIoo_pc.image (N.f i).continuous).isConnected.isPreconnected
   have hf0_not : N.f i 0 ∉ N.f i '' Ioo (0 : unitInterval) 1 := by

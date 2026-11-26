@@ -708,23 +708,21 @@ theorem IsTangle.exists_isExtreme {G : Hypergraph α β} {θ : ℕ}
   refine ⟨(eq_of_le_of_ncard_eq hAA' (by omega) (by omega)).symm,
     eq_of_le_of_ncard_eq hB'B (by omega) (by omega)⟩
 
-/-- First part of **Graph Minors X, (2.8)** (page 157):
-"Let $\mathscr{T}$ be a tangle of order $\theta$ in a hypergraph $G$, and let $(A, B)\in
-\mathscr{T}$ be extreme. Then $(A, B)$ has order $\theta - 1$." -/
-theorem theorem_2_8_order {G : Hypergraph α β} {θ : ℕ}
+/-- Enlarging the small side of an extreme separation by one vertex raises its order by one.
+Neither orientation of the enlarged separation belongs to the tangle. -/
+theorem IsTangle.exists_enlarged_extreme_separation {G : Hypergraph α β} {θ : ℕ}
     {𝒯 : Set (Hypergraph α β × Hypergraph α β)} (h𝒯 : IsTangle G θ 𝒯)
     {A B : Hypergraph α β} (hext : IsExtreme 𝒯 A B) :
-    separationOrder A B = θ - 1 := by
+    ∃ A', G.IsSeparation A' B ∧ separationOrder A' B = separationOrder A B + 1 ∧
+      (A', B) ∉ 𝒯 ∧ (B, A') ∉ 𝒯 := by
   have hAB := hext.1
   have hsep := h𝒯.isSeparation hAB
-  have hord := h𝒯.order_lt hAB
   have hVA_ne := h𝒯.axiom3 hAB
   obtain ⟨v, hvG, hv_notA⟩ := Set.exists_of_ssubset
     (ssubset_of_subset_of_ne hsep.left_le.vertexSet_subset hVA_ne)
   have hvB : v ∈ B.vertexSet :=
     (hsep.vertexSet_union.symm ▸ hvG).resolve_left hv_notA
   let Kv : Hypergraph α β := vertexHypergraph v
-  have hKv_le_B : Kv ≤ B := vertexHypergraph_le hvB
   have hKv_le_G : Kv ≤ G := vertexHypergraph_le hvG
   have hsep' : G.IsSeparation (A ∪ Kv) B := by
     rw [isSeparation_iff_of_le (union_le hsep.left_le hKv_le_G) hsep.right_le]
@@ -744,11 +742,6 @@ theorem theorem_2_8_order {G : Hypergraph α β} {θ : ℕ}
     intro hm
     apply h𝒯.axiom2 hAB hAB hm
     rw [union_self, hsep.union_eq]
-  have hord_ge : θ ≤ separationOrder (A ∪ Kv) B := by
-    by_contra! hlt
-    rcases h𝒯.axiom1 hsep' hlt with h | h
-    · exact hAK_not h
-    · exact hBAK_not h
   have hset_eq : ((A ∪ Kv) ∩ B).vertexSet = insert v (A ∩ B).vertexSet := by
     ext x
     simp only [inter_vertexSet, union_vertexSet, Kv, vertexHypergraph, Set.mem_inter_iff,
@@ -764,6 +757,19 @@ theorem theorem_2_8_order {G : Hypergraph α β} {θ : ℕ}
   have hcard : separationOrder (A ∪ Kv) B = separationOrder A B + 1 := by
     rw [separationOrder, hset_eq, Set.ncard_insert_of_notMem hv_notAB (A ∩ B).vertexSet_finite,
       separationOrder]
+  exact ⟨A ∪ Kv, hsep', hcard, hAK_not, hBAK_not⟩
+
+/-- First part of **Graph Minors X, (2.8)** (page 157):
+"Let $\mathscr{T}$ be a tangle of order $\theta$ in a hypergraph $G$, and let $(A, B)\in
+\mathscr{T}$ be extreme. Then $(A, B)$ has order $\theta - 1$." -/
+theorem theorem_2_8_order {G : Hypergraph α β} {θ : ℕ}
+    {𝒯 : Set (Hypergraph α β × Hypergraph α β)} (h𝒯 : IsTangle G θ 𝒯)
+    {A B : Hypergraph α β} (hext : IsExtreme 𝒯 A B) :
+    separationOrder A B = θ - 1 := by
+  obtain ⟨A', hsep, hord, hnot, hnotRev⟩ := h𝒯.exists_enlarged_extreme_separation hext
+  have hlt := h𝒯.order_lt hext.1
+  have hge : θ ≤ separationOrder A' B :=
+    Nat.le_of_not_gt fun h => (h𝒯.axiom1 hsep h).elim hnot hnotRev
   omega
 
 /-- Second part of **Graph Minors X, (2.8)** (page 157):

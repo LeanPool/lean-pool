@@ -545,6 +545,17 @@ theorem exists_disjoint_of_three_le {X : Type*} {φ : ℕ} (hφ : 3 ≤ φ)
   have hle := Set.ncard_le_ncard hsub hZ_fin
   omega
 
+/-- A curve that meets a drawing only at at most two vertices misses one of three disjoint lines
+in the drawing. -/
+theorem exists_stripe_avoiding_normal_curve {T : Type*} [TopologicalSpace T] {φ : ℕ}
+    (hφ : 3 ≤ φ) {H : Drawing T} {F : Set T} {L : Fin φ → Set T}
+    (hFU : F ∩ H.U ⊆ H.V) (hFV : (F ∩ H.V).ncard ≤ 2)
+    (hL_sub_U : ∀ i, L i ⊆ H.U)
+    (hL_disj : Pairwise fun i j => Disjoint (L i) (L j)) :
+    ∃ i : Fin φ, Disjoint F (L i) :=
+  exists_disjoint_of_three_le hφ (H.finite_V.subset inter_subset_right) hFV hL_disj
+    (fun i _ hx => ⟨hx.1, hFU ⟨hx.1, hL_sub_U i hx.2⟩⟩)
+
 /-- Gluing map from `bd ↥ClosedCylinder` to `univ \ (Λ₁ ∪ Λ₂)` sending the `r = 1` boundary circle
 to `subBd Λ₁` via `g₁` and the `r = 2` boundary circle to `subBd Λ₂` via `g₂`. -/
 noncomputable def handleGlueMap {S : Type w} [TopologicalSpace S] {Λ₁ Λ₂ : Set S}
@@ -2973,43 +2984,17 @@ private theorem cylinder_dial_of_normal_closed_curve
   let S₂ := range (GluedSpace.inr hb_inj)
   let L := fun i => GluedSpace.inr hb_inj '' {p : ClosedCylinder | p.1.2 = w i}
   intro F hF_S₂ hF hFU hFV
-  have hFU_eq : F ∩ H'.U = F ∩ H'.V :=
-    Subset.antisymm (fun x hx => ⟨hx.1, hFU hx⟩) (inter_subset_inter_right _ H'.V_subset_U)
-  have hF_fin : (F ∩ H'.U).Finite :=
-    hFU_eq ▸ H'.finite_V.subset inter_subset_right
-  have hF_card : (F ∩ H'.U).ncard ≤ 2 := hFU_eq ▸ hFV
   have hL_sub_U : ∀ i, L i ⊆ H'.U := fun i => by
     rw [hH'_U]; exact (subset_iUnion L i).trans subset_union_right
-  obtain ⟨i₀, hF_disj_i₀⟩ :=
-    exists_disjoint_of_three_le hφ hF_fin hF_card hL_disj
-      (fun i => inter_subset_inter_right _ (hL_sub_U i))
-  have hF_cl : IsClosed F := by
-    obtain ⟨ψ⟩ := hF
-    have hEq : F = range (fun z : Circle => (ψ z).1) := by
-      ext x
-      exact ⟨fun hx => ⟨ψ.symm ⟨x, hx⟩, by simp⟩, fun ⟨z, hz⟩ => hz ▸ (ψ z).2⟩
-    rw [hEq]
-    exact (isCompact_range (continuous_subtype_val.comp ψ.continuous)).isClosed
+  obtain ⟨i₀, hF_disj_i₀⟩ := exists_stripe_avoiding_normal_curve hφ hFU hFV hL_sub_U hL_disj
+  have hF_cl : IsClosed F := hF.isCompact.isClosed
   obtain ⟨D, hD_S₂, hD_disc, hF_D, hD_bd, hD_U, hD_paths⟩ :=
     exists_striped_disc_in_S₂ hS hΛ₁_open hΛ₂_open hd g₁ g₂ hb_inj hw_inj
       ha'_inr hb'_inr (fun _ => rfl) (fun i => (hH_path i).1) hS₂_U hF_cl hF_S₂ i₀ hF_disj_i₀
-  let e_sub := (Fintype.equivFin {i : Fin φ // i ≠ i₀}).symm
-  have hD_U_fin : D ∩ H'.U ⊆ D ∩ (S₁ ∩ S₂) ∪ ⋃ k, (H_path (e_sub k).1).U := by
-    refine hD_U.trans (union_subset_union_right _ ?_)
-    intro x hx
-    obtain ⟨j, hxj⟩ := mem_iUnion.mp hx
-    exact mem_iUnion.mpr ⟨e_sub.symm j, by simpa using hxj⟩
   obtain ⟨Δ, hΔ_D, hDial⟩ :=
-    dial_of_oArc_in_striped_disc hS' hD_disc hD_bd hD_U_fin
-      (fun k => (hD_paths (e_sub k)).1)
-      (fun k => (hH_path (e_sub k).1).1 ▸ hL_line (e_sub k).1)
-      (fun k => (hH_path (e_sub k).1).2.2.1)
-      (fun k => (hD_paths (e_sub k)).2)
-      (fun k₁ k₂ hk => by
-        change Disjoint (H_path (e_sub k₁).1).U (H_path (e_sub k₂).1).U
-        rw [(hH_path (e_sub k₁).1).1, (hH_path (e_sub k₂).1).1]
-        exact hL_disj (fun h => hk (e_sub.injective (Subtype.ext h))))
-      hF_D hF hFU hFV
+    dial_of_oArc_in_remaining_stripes hS' hD_disc hD_bd hD_U
+      (fun i => ⟨(hH_path i).1, (hH_path i).2.2.1⟩) hL_line (fun j => (hD_paths j).2)
+      hL_disj hF_D hF hFU hFV
   exact ⟨Δ, hΔ_D.trans hD_S₂, hDial⟩
 
 private theorem cylinder_disc_of_normal_chord

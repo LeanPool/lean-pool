@@ -161,62 +161,34 @@ private theorem ncard_attachments_areaGraph_le
         IsLineWithEnds F n₁ n₂ ∧ π.Γ.IsNormal F ∧ F ∩ bd π.S = {n₁, n₂} ∧
         F ⊆ discBd Δ ∧ discBd Δ ⊆ F ∪ bd π.S ∧ (π.Γ.N ∩ F).ncard = 3)) :
     (attachments G (π.areaGraph Δ)).ncard ≤ 2 * p + 3 := by
-  have : CompactSpace π.S := π.isSurface.1
-  have : T2Space π.S := π.isSurface.2.1
-  have : ConnectedSpace π.S := π.connected
-  let I₁ : Set (Set π.S) := {c ∈ π.Γ.C | c ⊆ Δ}
-  let I₂ : Set (Set π.S) := {c ∈ π.Γ.C | ¬ c ⊆ Δ}
-  have hcov : I₁ ∪ I₂ = π.Γ.C := by
-    ext c
-    simp only [I₁, I₂, mem_union, mem_sep_iff]
-    refine ⟨fun h => h.elim And.left And.left, ?_⟩
-    intro hc
-    by_cases h : c ⊆ Δ
-    · exact Or.inl ⟨hc, h⟩
-    · exact Or.inr ⟨hc, h⟩
-  have hdisj : Disjoint I₁ I₂ := by
-    rw [Set.disjoint_left]
-    exact fun _ h₁ h₂ => h₂.2 h₁.2
-  have hsep : G.IsSeparation (π.cellsUnion I₁) (π.cellsUnion I₂) :=
-    π.isSeparation_cellsUnion hcov hdisj
-  have hatt_sub_inter : attachments G (π.areaGraph Δ) ⊆
-      (π.cellsUnion I₁ ∩ π.cellsUnion I₂).vertexSet :=
-    attachments_subset_inter_of_isSeparation hsep
-  have h21 := (theorem_2_1_proof π hcov hdisj).2
   rcases hbd_cases with ⟨_, hnorm, hcard3⟩ | ⟨F, n₁, n₂, hF, hnorm, hFbd, hF_bd, hbd_sub, hcard3⟩
   · -- Case 1: `discBd Δ` is a `Γ`-normal `O`-arc with `3` nodes.
-    obtain ⟨hdich, hno_bd, _⟩ := normal_disc_cell_dichotomy π.isSurface π.Γ hΔ hnorm
-    have hsub_nv : attachments G (π.areaGraph Δ) ⊆ π.nodeVertex '' (π.Γ.N ∩ discBd Δ) := by
-      intro v hv
-      have hv_inter := hatt_sub_inter hv
-      rw [h21] at hv_inter
-      rcases hv_inter with hγ | hbs
-      · rw [mem_iUnion₂] at hγ
-        rcases hγ with ⟨c₁, hc₁, hγ⟩
-        rw [mem_iUnion₂] at hγ
-        rcases hγ with ⟨c₂, hc₂, hγ⟩
-        rw [← π.gammaImage_inter, Portrayal.mem_gammaImage_iff] at hγ
-        rcases hγ with ⟨n, ⟨hnc₁, hndom⟩, rfl⟩
-        have hc₂_out : c₂ ⊆ Set.univ \ Δ :=
-          (hdich c₂ hc₂.1).resolve_left fun h => hc₂.2 (h.trans sdiff_subset)
-        have hcl_inter :=
-          (closure_cell_inter_disc_of_subset_compl π.isSurface π.Γ hΔ hnorm hc₂.1 hc₂_out).2
-        have hn_Δ : n ∈ Δ := (isClosed_of_isClosedDisc hΔ).closure_subset_iff.mpr hc₁.2 hnc₁.1.1
-        have hn_bdΔ : n ∈ discBd Δ := by
-          have : n ∈ closure c₂ ∩ Δ := ⟨hnc₁.2.1, hn_Δ⟩
-          rw [hcl_inter] at this
-          exact this.2
-        exact ⟨n, ⟨π.domγ_subset hndom, hn_bdΔ⟩, rfl⟩
-      · rw [mem_iUnion₂] at hbs
-        rcases hbs with ⟨n, ⟨c₁, hc₁, hbd₁, _⟩, _⟩
-        have hc₁_out : c₁ ⊆ Set.univ \ Δ := hno_bd c₁ hc₁.1 hbd₁
-        rcases hbd₁ with ⟨x, hxc₁, _⟩
-        exact ((hc₁_out hxc₁).2 (hc₁.2 hxc₁)).elim
-    have hfin : (π.Γ.N ∩ discBd Δ).Finite := π.Γ.finite_N.inter_of_left _
-    have hle : (attachments G (π.areaGraph Δ)).ncard ≤ (π.Γ.N ∩ discBd Δ).ncard :=
-      (ncard_le_ncard hsub_nv (hfin.image _)).trans (ncard_image_le hfin)
+    have hle := π.ncard_attachments_areaGraph_le_normal_disc hΔ hnorm
+    rw [Set.inter_comm, hcard3] at hle
     omega
   · -- Case 2: `F` is a `Γ`-normal `I`-arc with ends `n₁, n₂` and `3` nodes.
+    have : CompactSpace π.S := π.isSurface.1
+    have : T2Space π.S := π.isSurface.2.1
+    have : ConnectedSpace π.S := π.connected
+    let I₁ : Set (Set π.S) := {c ∈ π.Γ.C | c ⊆ Δ}
+    let I₂ : Set (Set π.S) := {c ∈ π.Γ.C | ¬ c ⊆ Δ}
+    have hcov : I₁ ∪ I₂ = π.Γ.C := by
+      ext c
+      simp only [I₁, I₂, mem_union, mem_sep_iff]
+      refine ⟨fun h => h.elim And.left And.left, ?_⟩
+      intro hc
+      by_cases h : c ⊆ Δ
+      · exact Or.inl ⟨hc, h⟩
+      · exact Or.inr ⟨hc, h⟩
+    have hdisj : Disjoint I₁ I₂ := by
+      rw [Set.disjoint_left]
+      exact fun _ h₁ h₂ => h₂.2 h₁.2
+    have hsep : G.IsSeparation (π.cellsUnion I₁) (π.cellsUnion I₂) :=
+      π.isSeparation_cellsUnion hcov hdisj
+    have hatt_sub_inter : attachments G (π.areaGraph Δ) ⊆
+        (π.cellsUnion I₁ ∩ π.cellsUnion I₂).vertexSet :=
+      attachments_subset_inter_of_isSeparation hsep
+    have h21 := (theorem_2_1_proof π hcov hdisj).2
     obtain ⟨_, _, _, _, _, _, _, _, _, _, _, hnb⟩ :=
       arc_disc_data π.isSurface hF hFbd hΔ hF_bd hbd_sub
     have hsep_F : ∀ c₁ ∈ I₁, ∀ c₂ ∈ I₂, tilde c₁ ∩ tilde c₂ ⊆ F := by

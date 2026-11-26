@@ -270,16 +270,11 @@ theorem exists_theta_pole {F : Drawing Shat} (hF : F.IsCircuitOf D.rad.G) {p : S
     · exact hvne h.symm
     · exact hvp hv₂ h
   obtain ⟨A, B, hA, hB, hAs, hBs, -, -, hAB, hd, hsup⟩ := hF.2.exists_two_paths hF₁ hF₂ hvne
-  let W : GraphWalk G.toGraph (cap.emb v₁) (cap.emb v₂) := .cons hl₁ (.cons hl₂ (.nil (hvG hv₂)))
-  have hWs : W.IsSimple := by
-    simp [GraphWalk.IsSimple, W, GraphWalk.support, hvp hv₁, hvne, (hvp hv₂).symm]
-  have hQV : (walkDrawing G W).V = {cap.emb v₁, p, cap.emb v₂} := by
-    rw [walkDrawing_V]; ext x; simp [W, GraphWalk.support]
-  have hQE : (walkDrawing G W).E = {e₁, e₂} := by
-    rw [walkDrawing_E]; ext x; simp [W, GraphWalk.edges]
-  have ht : TwoPaths G F A B (walkDrawing G W) (cap.emb v₁) (cap.emb v₂) := by
+  obtain ⟨Q, hQs, hQpath, hQV, hQE, hQU⟩ :=
+    exists_two_edge_drawing_path hl₁ hl₂ (hvp hv₁) hvne (hvp hv₂).symm
+  have ht : TwoPaths G F A B Q (cap.emb v₁) (cap.emb v₂) := by
     refine ⟨hvne, hF.1, ⟨hAs, hA⟩, ⟨hBs, hB⟩, ?_, ?_, hAB.le, hd,
-      ⟨walkDrawing_isSubdrawing _ _, walkDrawing_isPathBetween _ hWs⟩, ?_, ?_⟩
+      ⟨hQs, hQpath⟩, ?_, ?_⟩
     · conv_lhs => rw [← hsup, Drawing.sup_V hAs hBs]
     · conv_lhs => rw [← hsup, Drawing.sup_E hAs hBs]
     · rw [hQV]
@@ -293,7 +288,7 @@ theorem exists_theta_pole {F : Drawing Shat} (hF : F.IsCircuitOf D.rad.G) {p : S
       · exact hn₁ h
       · exact hn₂ h
   have side : ∀ {X : Drawing Shat}, X.IsPathBetween (cap.emb v₁) (cap.emb v₂) → X.IsSubdrawing F →
-      (walkDrawing G W).E.ncard ≤ X.E.ncard := by
+      Q.E.ncard ≤ X.E.ncard := by
     intro X hX hXs
     obtain ⟨f, hf, x, hl, -, hsec⟩ := path_first hX hvne
     have hlG := ((hXs.trans hF.1).isLink_iff hf).mp hl
@@ -303,23 +298,8 @@ theorem exists_theta_pole {F : Drawing Shat} (hF : F.IsCircuitOf D.rad.G) {p : S
       rintro _ (rfl | rfl)
       · exact hf
       · exact hf'
-    rw [hQE, ncard_pair hene, ← ncard_pair hff.symm]
-    exact ncard_le_ncard hsub X.finite_edges
-  refine ⟨A, B, _, ht, by rw [hQV]; simp, side hA hAs, side hB hBs, fun x hx ↦ ?_⟩
-  rw [mem_walkDrawing_U] at hx
-  rcases hx with hx | ⟨f, hf, hxf⟩
-  · have hmem₁ : cap.emb v₁ ∈ closure e₁ ∩ D.rad.G.V := by rw [hs₁]; exact Or.inl rfl
-    have hmem₂ : p ∈ closure e₁ ∩ D.rad.G.V := by rw [hs₁]; exact Or.inr rfl
-    have hmem₃ : cap.emb v₂ ∈ closure e₂ ∩ D.rad.G.V := by rw [hs₂]; exact Or.inl rfl
-    simp only [W, GraphWalk.support, List.mem_cons, List.not_mem_nil, or_false] at hx
-    rcases hx with rfl | rfl | rfl
-    · exact Or.inl hmem₁.1
-    · exact Or.inl hmem₂.1
-    · exact Or.inr hmem₃.1
-  · simp only [W, GraphWalk.edges, List.mem_cons, List.not_mem_nil, or_false] at hf
-    rcases hf with rfl | rfl
-    · exact Or.inl hxf
-    · exact Or.inr hxf
+    exact ncard_edges_le_of_pair_subset hQE hene hff.symm hsub
+  exact ⟨A, B, Q, ht, by rw [hQV]; simp, side hA hAs, side hB hBs, hQU.subset⟩
 
 /-- No short circuit has a pole inside it and two vertices on the cuff of a pole outside it, if no
 short circuit has two poles inside. -/

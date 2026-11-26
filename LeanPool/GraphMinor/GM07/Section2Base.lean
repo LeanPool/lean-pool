@@ -728,6 +728,11 @@ theorem unitInterval_interior_isPathConnected :
   exact ((convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image
     continuous_projIcc
 
+/-- The open unit interval is dense in the closed unit interval. -/
+theorem unitInterval_interior_closure : closure (Ioo (0 : unitInterval) 1) = univ := by
+  rw [closure_Ioo zero_ne_one]
+  exact eq_univ_of_forall fun t => ⟨unitInterval.nonneg t, unitInterval.le_one t⟩
+
 /-- For any net `N`, `i : Fin N.r`, and preconnected subset `U ⊆ bd N.D` avoiding `N.f i 0` and
 `N.f i 1`, if `U` contains `N.f i t` for some `t ∈ Ioo (0 : unitInterval) 1`, then
 `U ⊆ N.f i '' Ioo (0 : unitInterval) 1` (and hence `N.g i t ∉ U`). -/
@@ -869,55 +874,13 @@ theorem hasNoIsolatedVertices_seamGraph (N : Net S) {J : Drawing S}
   have hz₀ : N.φ (N.f i t₀) ∈ J.U \ J.V := hsub ⟨t₀, ht₀, rfl⟩
   let e := pathComponentIn (J.U \ J.V) (N.φ (N.f i t₀))
   have heE : e ∈ J.E := pathComponentIn_mem_arcComponentsIn hz₀
-  have hIoo_pc : IsPathConnected (Ioo (0 : unitInterval) 1) := by
-    have heq : projIcc (0 : ℝ) 1 zero_le_one '' Ioo (0 : ℝ) 1 = Ioo (0 : unitInterval) 1 := by
-      ext x
-      simp only [mem_image, mem_Ioo]
-      constructor
-      · rintro ⟨r, ⟨hr0, hr1⟩, rfl⟩
-        have hval : (projIcc (0 : ℝ) 1 zero_le_one r : ℝ) = r :=
-          congr_arg Subtype.val (projIcc_of_mem zero_le_one ⟨hr0.le, hr1.le⟩)
-        exact ⟨Subtype.coe_lt_coe.mp (by simpa [hval] using hr0),
-          Subtype.coe_lt_coe.mp (by simpa [hval] using hr1)⟩
-      · rintro ⟨hx0, hx1⟩
-        refine ⟨x.1, ⟨Subtype.coe_lt_coe.mpr hx0, Subtype.coe_lt_coe.mpr hx1⟩, ?_⟩
-        exact projIcc_val zero_le_one x
-    rw [← heq]
-    exact ((convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image
-      continuous_projIcc
+  have hIoo_pc := Net.unitInterval_interior_isPathConnected
   have himg_pc : IsPathConnected ((N.φ ∘ N.f i) '' Ioo (0 : unitInterval) 1) :=
     hIoo_pc.image (N.quotientMap_φ.continuous.comp (N.f i).continuous)
   have himg_sub_e : (N.φ ∘ N.f i) '' Ioo (0 : unitInterval) 1 ⊆ e :=
     himg_pc.subset_pathComponentIn ⟨t₀, ht₀, rfl⟩ hsub
-  have hcl_Ioo : closure (Ioo (0 : unitInterval) 1) = univ := by
-    apply eq_univ_of_forall
-    intro x
-    rw [mem_closure_iff]
-    intro U hU hxU
-    rw [isOpen_induced_iff] at hU
-    rcases hU with ⟨V, hV, rfl⟩
-    obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.mp hV x.1 hxU
-    let y_real : ℝ := if (x : ℝ) ≤ 1 / 2 then x + min (ε / 2) (1 / 4) else x - min (ε / 2) (1 / 4)
-    have hδ_pos : 0 < min (ε / 2) (1 / 4) := lt_min (half_pos hε) (by norm_num)
-    have hδ_le1 : min (ε / 2) (1 / 4) ≤ ε / 2 := min_le_left _ _
-    have hδ_le2 : min (ε / 2) (1 / 4) ≤ 1 / 4 := min_le_right _ _
-    have hy_Ioo : y_real ∈ Ioo (0 : ℝ) 1 := by
-      dsimp [y_real]
-      split_ifs with hx_half
-      · exact ⟨by linarith [x.2.1], by linarith⟩
-      · exact ⟨by linarith, by linarith [x.2.2]⟩
-    have hy_ball : y_real ∈ Metric.ball (x : ℝ) ε := by
-      rw [Metric.mem_ball, Real.dist_eq]
-      dsimp [y_real]
-      split_ifs
-      · rw [add_sub_cancel_left, abs_of_pos hδ_pos]
-        linarith
-      · rw [sub_sub_cancel_left, abs_neg, abs_of_pos hδ_pos]
-        linarith
-    refine ⟨⟨y_real, ⟨hy_Ioo.1.le, hy_Ioo.2.le⟩⟩, hball hy_ball, ?_⟩
-    exact ⟨Subtype.coe_lt_coe.mp hy_Ioo.1, Subtype.coe_lt_coe.mp hy_Ioo.2⟩
   have hrange_sub_cl : range (N.φ ∘ N.f i) ⊆ closure e := by
-    rw [← image_univ, ← hcl_Ioo]
+    rw [← image_univ, ← Net.unitInterval_interior_closure]
     exact (image_closure_subset_closure_image
       (N.quotientMap_φ.continuous.comp (N.f i).continuous)).trans (closure_mono himg_sub_e)
   refine ⟨e, heE, ?_⟩
@@ -1379,58 +1342,18 @@ theorem Drawing.eq_edge_of_injOn_Ioo [T2Space S] (Γ : Drawing S) (c : C(unitInt
   have hz₀ : c t₀ ∈ Γ.U \ Γ.V := hIoo t₀ ht₀
   let e₀ := pathComponentIn (Γ.U \ Γ.V) (c t₀)
   have he₀E : e₀ ∈ Γ.E := pathComponentIn_mem_arcComponentsIn hz₀
-  have hIoo_pc : IsPathConnected (Ioo (0 : unitInterval) 1) := by
-    have heq : projIcc (0 : ℝ) 1 zero_le_one '' Ioo (0 : ℝ) 1 = Ioo (0 : unitInterval) 1 := by
-      ext x
-      simp only [mem_image, mem_Ioo]
-      constructor
-      · rintro ⟨r, ⟨hr0, hr1⟩, rfl⟩
-        have hval : (projIcc (0 : ℝ) 1 zero_le_one r : ℝ) = r :=
-          congr_arg Subtype.val (projIcc_of_mem zero_le_one ⟨hr0.le, hr1.le⟩)
-        exact ⟨Subtype.coe_lt_coe.mp (by simpa [hval] using hr0),
-          Subtype.coe_lt_coe.mp (by simpa [hval] using hr1)⟩
-      · rintro ⟨hx0, hx1⟩
-        refine ⟨x.1, ⟨Subtype.coe_lt_coe.mpr hx0, Subtype.coe_lt_coe.mpr hx1⟩, ?_⟩
-        exact projIcc_val zero_le_one x
-    rw [← heq]
-    exact ((convex_Ioo (0 : ℝ) 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image
-      continuous_projIcc
+  have hIoo_pc := Net.unitInterval_interior_isPathConnected
   have he_pc : IsPathConnected e := hIoo_pc.image c.continuous
   have he_sub_UV : e ⊆ Γ.U \ Γ.V := by
     rintro _ ⟨t, ht, rfl⟩
     exact hIoo t ht
   have he_sub_e₀ : e ⊆ e₀ := he_pc.subset_pathComponentIn ⟨t₀, ht₀, rfl⟩ he_sub_UV
-  have hcl_Ioo : closure (Ioo (0 : unitInterval) 1) = univ := by
-    apply eq_univ_of_forall
-    intro x
-    rw [mem_closure_iff]
-    intro U hU hxU
-    rw [isOpen_induced_iff] at hU
-    rcases hU with ⟨V, hV, rfl⟩
-    obtain ⟨ε, hε, hball⟩ := Metric.isOpen_iff.mp hV x.1 hxU
-    let y_real : ℝ := if (x : ℝ) ≤ 1 / 2 then x + min (ε / 2) (1 / 4) else x - min (ε / 2) (1 / 4)
-    have hδ_pos : 0 < min (ε / 2) (1 / 4) := lt_min (half_pos hε) (by norm_num)
-    have hδ_le1 : min (ε / 2) (1 / 4) ≤ ε / 2 := min_le_left _ _
-    have hδ_le2 : min (ε / 2) (1 / 4) ≤ 1 / 4 := min_le_right _ _
-    have hy_Ioo : y_real ∈ Ioo (0 : ℝ) 1 := by
-      dsimp [y_real]
-      split_ifs with hx_half
-      · exact ⟨by linarith [x.2.1], by linarith⟩
-      · exact ⟨by linarith, by linarith [x.2.2]⟩
-    have hy_ball : y_real ∈ Metric.ball (x : ℝ) ε := by
-      rw [Metric.mem_ball, Real.dist_eq]
-      dsimp [y_real]
-      split_ifs
-      · rw [add_sub_cancel_left, abs_of_pos hδ_pos]; linarith
-      · rw [sub_sub_cancel_left, abs_neg, abs_of_pos hδ_pos]; linarith
-    refine ⟨⟨y_real, ⟨hy_Ioo.1.le, hy_Ioo.2.le⟩⟩, hball hy_ball, ?_⟩
-    exact ⟨Subtype.coe_lt_coe.mp hy_Ioo.1, Subtype.coe_lt_coe.mp hy_Ioo.2⟩
   have hcl_e : closure e = e ∪ {c 0, c 1} := by
     have hcl1 : closure e = range c := by
       apply Subset.antisymm
       · exact (isCompact_range c.continuous).isClosed.closure_subset_iff.mpr
           (image_subset_range _ _)
-      · rw [← image_univ, ← hcl_Ioo]
+      · rw [← image_univ, ← Net.unitInterval_interior_closure]
         exact image_closure_subset_closure_image c.continuous
     rw [hcl1]
     ext z

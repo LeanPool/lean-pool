@@ -556,14 +556,10 @@ theorem cleared_zone_of_closedDisc_subset
     have h₁ : Λ₂ = interior Δ₂ := by
       change Δ₂ \ subBd Δ₂ = interior Δ₂
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have h₂ : Δ \ subBd Δ = interior Δ := by
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     rw [h₁, h₂]
     exact interior_mono hΔ₂_sub
   obtain ⟨_, K', ins', _, _, hd'_eq⟩ := hCleared.hasMetric
@@ -737,14 +733,10 @@ private theorem inter_ins_mem_of_cleared [T2Space S] (hS : IsClosedSurface S)
     have h₁ : Λ₂ = interior Δ₂ := by
       change Δ₂ \ subBd Δ₂ = interior Δ₂
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have h₂ : ins' D \ D.U = interior (ins' D) := by
       rw [← hfrD]
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     rw [h₁, h₂]
     exact interior_mono hΔ₂_sub
   have hdis_DU_Λ₂ : Disjoint D.U Λ₂ :=
@@ -989,14 +981,10 @@ theorem theorem_7_8_proof
     have h₁ : Λ₂ = interior Δ₂ := by
       change Δ₂ \ subBd Δ₂ = interior Δ₂
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have h₂ : Δ i \ subBd (Δ i) = interior (Δ i) := by
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     rw [h₁, h₂]
     exact interior_mono (hv_C i).2.2.2.2.1
   have hdis_Ci_Λ₂ : Disjoint (C i).U Λ₂ := by

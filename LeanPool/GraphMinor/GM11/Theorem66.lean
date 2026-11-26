@@ -16,8 +16,10 @@ public import LeanPool.GraphMinor.GM11.Theorem65
 
 `theorem_6_6` is Graph Minors XI, (6.6), pages 92–93, with the correction for loops at `θ = 2` of
 `theorem_6_5`. See the correction to (6.6) in `corrections/GM11.md`. We state it for any two
-drawings with a common radial drawing, which covers the paper's dual drawings. The paper's "In
-particular" is about respectful tangles: `theorem_6_6_exists`.
+drawings with a common radial drawing, which covers the paper's dual drawings.
+The printed closing sentence says "tangle" without qualification. `theorem_6_6_exists` gives the
+existence equivalence for respectful tangles by taking the nonemptiness of the two types in the
+bijection.
 
 `theorem_4_1` is Graph Minors XI, (4.1), page 78.
 
@@ -189,7 +191,9 @@ theorem theorem_6_6_proof (hS : IsClosedSurface S) (hE : Γ.E.Nonempty) (hEs : �
     rw [he]
     exact isDerivedSlope_induced hS hE hrad hsl
 
-/-- **Graph Minors XI, (6.6)** (page 93), the last sentence, for respectful tangles. -/
+/-- The existence equivalence for respectful tangles from Graph Minors XI, (6.6), page 93.
+The printed closing sentence says "tangle". The proof uses the preceding bijection of
+respectful tangles. -/
 theorem theorem_6_6_exists (hS : IsClosedSurface S) (hE : Γ.E.Nonempty) (hEs : Γs.E.Nonempty)
     (hrad : (PaintingOrDrawing.drawing Γ).IsRadialDrawing Γ') (hrads :
       (PaintingOrDrawing.drawing Γs).IsRadialDrawing Γ')

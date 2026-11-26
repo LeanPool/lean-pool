@@ -375,14 +375,10 @@ private theorem no_circuit_in_arrangement_piece [T2Space S]
   have hint_sub : Δ₂ \ subBd Δ₂ ⊆ Δ_i \ subBd Δ_i := by
     have h₁ : Δ₂ \ subBd Δ₂ = interior Δ₂ := by
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     have h₂ : Δ_i \ subBd Δ_i = interior Δ_i := by
       rw [← subBd_eq_frontier']
-      ext x
-      exact ⟨fun ⟨hx, hnf⟩ => by_contra fun hni => hnf ⟨subset_closure hx, hni⟩,
-        fun hx => ⟨interior_subset hx, fun hf => hf.2 hx⟩⟩
+      exact self_sdiff_frontier _
     rw [h₁, h₂]
     exact interior_mono hΔ₂_sub_i
   have hZone_i : IsLambdaZoneAround H d (θ - 4) z (Δ_i \ subBd Δ_i) := by

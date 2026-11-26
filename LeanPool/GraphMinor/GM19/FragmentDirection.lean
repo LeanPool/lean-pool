@@ -49,76 +49,22 @@ theorem exists_angle_of_circle (a : Circle) : ∃ α : ℝ, a = Circle.exp α :=
 theorem circleCyclic_map_mono {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
   (hm : StrictMono L)
     (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
-      CircleCyclic (τ a) (τ b) (τ c) := by
-  obtain ⟨s, t, hs, hst, ht, rfl, rfl⟩ := h
-  obtain ⟨α, rfl⟩ := exists_angle_of_circle a
-  have hpi := Real.pi_pos
-  have hsmall : L (α + t) < L α + 2 * Real.pi := by
-    by_contra hn
-    push Not at hn
-    have hle : L α ≤ L (α + t) := (hm (by linarith : α < α + t)).le
-    obtain ⟨y, hy, hLy⟩ := intermediate_value_Icc (by linarith : α ≤ α + t) hc.continuousOn
-      (show L α + 2 * Real.pi ∈ Icc (L α) (L (α + t)) from ⟨by linarith, hn⟩)
-    have h1 : Circle.exp y = Circle.exp α := τ.injective (by
-      rw [hl, hl, hLy, Circle.exp_add, Circle.exp_two_pi, mul_one])
-    have h2 : α < y := by
-      rcases hy.1.eq_or_lt with h | h
-      · rw [← h] at hLy
-        linarith
-      · exact h
-    have h3 : Circle.exp (y - α) = Circle.exp 0 := by
-      rw [Circle.exp_sub, h1, Circle.exp_zero]
-      simp
-    obtain ⟨m, hm'⟩ := Circle.exp_eq_exp.1 h3
-    have h4 : y - α < 2 * Real.pi := by linarith [hy.2]
-    have h5 : (m : ℝ) * (2 * Real.pi) = y - α := by linarith
-    have h6 : (0 : ℝ) < m := by
-      by_contra hn'
-      push Not at hn'
-      nlinarith
-    have h7 : (m : ℝ) < 1 := by nlinarith
-    have h8 : (0 : ℤ) < m := by exact_mod_cast h6
-    have h9 : m < (1 : ℤ) := by exact_mod_cast h7
-    omega
-  have h1 : L α < L (α + s) := hm (by linarith)
-  have h2 : L (α + s) < L (α + t) := hm (by linarith)
-  refine ⟨L (α + s) - L α, L (α + t) - L α, by linarith, by linarith, by linarith, ?_, ?_⟩
-  · rw [← Circle.exp_add, hl, hl, ← Circle.exp_add]
-    congr 1
-    ring
-  · rw [← Circle.exp_add, hl, hl, ← Circle.exp_add]
-    congr 1
-    ring
+      CircleCyclic (τ a) (τ b) (τ c) :=
+  CircleCyclic.map_increasing_lift hc hm hl h
 
 /-- A homeomorphism of the circle with a decreasing lift reverses the cyclic order. -/
 theorem circleCyclic_map_anti {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
   (hm : StrictAnti L)
     (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
-      CircleCyclic (τ a) (τ c) (τ b) := by
-  let τ' : Circle ≃ₜ Circle := (Homeomorph.inv Circle).trans τ
-  have hl' : ∀ t, τ' (Circle.exp t) = Circle.exp (L (-t)) := fun t ↦ by
-    change τ (Circle.exp t)⁻¹ = _
-    rw [← Circle.exp_neg, hl]
-  have := circleCyclic_map_mono (τ := τ') (L := fun t ↦ L (-t)) (by fun_prop) (fun s t h ↦ hm
-    (neg_lt_neg h)) hl' (circleCyclic_inv h)
-  simpa [τ'] using this
+      CircleCyclic (τ a) (τ c) (τ b) :=
+  CircleCyclic.map_decreasing_lift hc hm hl h
 
 theorem circle_map_or (τ : Circle ≃ₜ Circle) :
     (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ b)
       (τ c))) ∨
     (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ c)
-      (τ b))) := by
-  obtain ⟨L, hc, hm, hl⟩ := exists_circle_lift τ
-  have hne : ∀ {x y : Circle}, x ≠ y → τ x ≠ τ y := fun h h' ↦ h (τ.injective h')
-  rcases hm with hm | hm
-  · refine Or.inl fun a b c hab hbc hac ↦ ⟨circleCyclic_map_mono hc hm hl, fun h ↦ ?_⟩
-    rcases circleCyclic_or hab hac hbc with h' | h'
-    · exact h'
-    · exact (not_circleCyclic_both h (circleCyclic_map_mono hc hm hl h')).elim
-  · refine Or.inr fun a b c hab hbc hac ↦ ⟨circleCyclic_map_anti hc hm hl, fun h ↦ ?_⟩
-    rcases circleCyclic_or hab hac hbc with h' | h'
-    · exact h'
-    · exact (not_circleCyclic_both h (circleCyclic_map_anti hc hm hl h')).elim
+      (τ b))) :=
+  circleCyclic_homeomorph τ
 
 variable {X : Type} [TopologicalSpace X] [T2Space X]
 

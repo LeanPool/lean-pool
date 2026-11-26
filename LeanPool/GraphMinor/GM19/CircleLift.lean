@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.Surface.MoveCuff
 public import LeanPool.GraphMinor.Surface.DiscGrow
+public import LeanPool.GraphMinor.Surface.CircleOrder
 public import Mathlib.Topology.Homotopy.Lifting
 public import Mathlib.Analysis.SpecialFunctions.Complex.Circle
 public import Mathlib.AlgebraicTopology.FundamentalGroupoid.SimplyConnected
@@ -32,7 +33,7 @@ arc of the circle onto the upper half circle.
 
 namespace GraphMinor.GM19
 
-open Set Topology GraphMinor.Surface
+open Set Topology GraphMinor.Surface GraphMinor.CircleOrder
 
 local notation "𝕀" => unitInterval
 
@@ -308,5 +309,82 @@ theorem exists_circle_move (u : Circle) {θ : ℝ} (hθ : θ ∈ Ioo 0 (2 * Real
     have h3 : Real.pi * (θ / θ) = Real.pi := by rw [div_self hθ.1.ne', mul_one]
     rw [h3] at hg
     linarith
+
+/-- A homeomorphism of the circle with an increasing lift keeps the cyclic order. -/
+theorem CircleCyclic.map_increasing_lift {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
+  (hm : StrictMono L)
+    (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
+      CircleCyclic (τ a) (τ b) (τ c) := by
+  obtain ⟨s, t, hs, hst, ht, rfl, rfl⟩ := h
+  obtain ⟨α, rfl⟩ := CircleOrder.exists_angle_of_circle a
+  have hpi := Real.pi_pos
+  have hsmall : L (α + t) < L α + 2 * Real.pi := by
+    by_contra hn
+    push Not at hn
+    have hle : L α ≤ L (α + t) := (hm (by linarith : α < α + t)).le
+    obtain ⟨y, hy, hLy⟩ := intermediate_value_Icc (by linarith : α ≤ α + t) hc.continuousOn
+      (show L α + 2 * Real.pi ∈ Icc (L α) (L (α + t)) from ⟨by linarith, hn⟩)
+    have h1 : Circle.exp y = Circle.exp α := τ.injective (by
+      rw [hl, hl, hLy, Circle.exp_add, Circle.exp_two_pi, mul_one])
+    have h2 : α < y := by
+      rcases hy.1.eq_or_lt with h | h
+      · rw [← h] at hLy
+        linarith
+      · exact h
+    have h3 : Circle.exp (y - α) = Circle.exp 0 := by
+      rw [Circle.exp_sub, h1, Circle.exp_zero]
+      simp
+    obtain ⟨m, hm'⟩ := Circle.exp_eq_exp.1 h3
+    have h4 : y - α < 2 * Real.pi := by linarith [hy.2]
+    have h5 : (m : ℝ) * (2 * Real.pi) = y - α := by linarith
+    have h6 : (0 : ℝ) < m := by
+      by_contra hn'
+      push Not at hn'
+      nlinarith
+    have h7 : (m : ℝ) < 1 := by nlinarith
+    have h8 : (0 : ℤ) < m := by exact_mod_cast h6
+    have h9 : m < (1 : ℤ) := by exact_mod_cast h7
+    omega
+  have h1 : L α < L (α + s) := hm (by linarith)
+  have h2 : L (α + s) < L (α + t) := hm (by linarith)
+  refine ⟨L (α + s) - L α, L (α + t) - L α, by linarith, by linarith, by linarith, ?_, ?_⟩
+  · rw [← Circle.exp_add, hl, hl, ← Circle.exp_add]
+    congr 1
+    ring
+  · rw [← Circle.exp_add, hl, hl, ← Circle.exp_add]
+    congr 1
+    ring
+
+/-- A homeomorphism of the circle with a decreasing lift reverses the cyclic order. -/
+theorem CircleCyclic.map_decreasing_lift {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L)
+  (hm : StrictAnti L)
+    (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
+      CircleCyclic (τ a) (τ c) (τ b) := by
+  let τ' : Circle ≃ₜ Circle := (Homeomorph.inv Circle).trans τ
+  have hl' : ∀ t, τ' (Circle.exp t) = Circle.exp (L (-t)) := fun t ↦ by
+    change τ (Circle.exp t)⁻¹ = _
+    rw [← Circle.exp_neg, hl]
+  have := CircleCyclic.map_increasing_lift (τ := τ') (L := fun t ↦ L (-t))
+    (by fun_prop) (fun _ _ h ↦ hm (neg_lt_neg h)) hl' (CircleOrder.circleCyclic_inv h)
+  simpa [τ'] using this
+
+/-- A circle homeomorphism either preserves every cyclic order or reverses every cyclic order. -/
+theorem circleCyclic_homeomorph (τ : Circle ≃ₜ Circle) :
+    (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ b)
+      (τ c))) ∨
+    (∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic a b c ↔ CircleCyclic (τ a) (τ c)
+      (τ b))) := by
+  obtain ⟨L, hc, hm, hl⟩ := exists_circle_lift τ
+  rcases hm with hm | hm
+  · refine Or.inl fun a b c hab hbc hac ↦ ⟨CircleCyclic.map_increasing_lift hc hm hl, fun h ↦ ?_⟩
+    rcases circleCyclic_or hab hac hbc with h' | h'
+    · exact h'
+    · exact (CircleOrder.not_circleCyclic_both h
+        (CircleCyclic.map_increasing_lift hc hm hl h')).elim
+  · refine Or.inr fun a b c hab hbc hac ↦ ⟨CircleCyclic.map_decreasing_lift hc hm hl, fun h ↦ ?_⟩
+    rcases circleCyclic_or hab hac hbc with h' | h'
+    · exact h'
+    · exact (CircleOrder.not_circleCyclic_both h
+        (CircleCyclic.map_decreasing_lift hc hm hl h')).elim
 
 end GraphMinor.GM19

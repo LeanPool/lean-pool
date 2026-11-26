@@ -784,7 +784,7 @@ theorem hasSophisticationLE_of_no_crooked {p : ℕ} (hp2 : 2 ≤ p) (hp3 : p ≠
         Disjoint (S.Ω.interval a b) (S.transactionEnds P_set) →
         S.Ω.interval a b = ∅ ∧ P = S.G.induce V(P) ∧
           Catches (S.Ω.interval b a) (deleteVertices S.G V(P)) :=
-      fun P hP hsep a b hab hd => S.lemma_6_1_claim_9 hp2 hp3 hconn3 hconn4 hno_cr hsimple hno_iso
+      fun P hP hsep a b hab hd => S.lemma_6_1_claim_9 hp2 hconn3 hno_cr hsimple hno_iso
         htrans hcard hno_int hmax hP hsep hab hd
     -- Adding a vertex to `Ω` gives a society to which the induction applies.
     have hext : ∀ (S₀ : Society α β) (r : α), S₀.G = S.G → r ∉ S.Ω.bar →

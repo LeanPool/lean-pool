@@ -35,54 +35,18 @@ theorem exists_disc_of_line_aux {M : Type} [TopologicalSpace M] (hM : IsSurface 
     (hL : IsLineWithEnds L u v) (hd : L ∩ bd M = ∅) : ∃ B, IsClosedDisc B ∧ L ⊆ discInt B
       ∧ B ∩ bd M = ∅ := by
   classical
-  obtain ⟨T, tT, j, Kc, hT, hj, hKc, hun, hint, -⟩ := exists_capAll M hM
-  have ht2 : T2Space T := hT.2.1
   have ht2M : T2Space M := hM.2.1
-  have hcM : CompactSpace M := hM.1
-  obtain ⟨a₀, ha₀, hr, ha0, ha1⟩ := hL.exists_arc
-  have ha : IsArcMap (j ∘ a₀) := ⟨hj.continuous.comp ha₀.1, hj.injective.comp ha₀.2⟩
-  have hW : IsOpen Kcᶜ := hKc.isOpen_compl
-  have haW : range (j ∘ a₀) ⊆ Kcᶜ := by
-    rintro _ ⟨t, rfl⟩ hc
-    have h1 : j (a₀ t) ∈ range j ∩ Kc := ⟨mem_range_self _, hc⟩
-    rw [hint] at h1
-    obtain ⟨y, hy, he⟩ := h1
-    have h2 : y = a₀ t := hj.injective he
-    have h3 : a₀ t ∈ L ∩ bd M := ⟨hr ▸ mem_range_self t, h2 ▸ hy⟩
-    rw [hd] at h3
-    exact h3
-  obtain ⟨O, K, s, hK, hs0, hs1, hBO, hBW, -, -, hrange⟩ := exists_ball_chart hT ha hW haW
+  obtain ⟨K₀, s, _, hs1, hK₀c, hK₀i, _, hK₀bd, _, _, hLine⟩ :=
+    exists_line_chart_aux hM hL hd isOpen_univ (subset_univ L)
   let B : Set ℂ := closedBall 0 1
   have hBc : IsCompact B := isCompact_closedBall _ _
-  have hKr : ∀ z ∈ B, K z ∈ range j := fun z hz => by
-    have h1 := hun.ge (mem_univ (K z))
-    exact h1.resolve_right (hBW ⟨z, hz, rfl⟩)
-  have : Nonempty M := by
-    obtain ⟨y, -⟩ := hKr 0 (by simp [B])
-    exact ⟨y⟩
-  let J : T → M := Function.invFun j
-  have hJ : ∀ x, J (j x) = x := Function.leftInverse_invFun hj.injective
-  have hjJ : ∀ y ∈ range j, j (J y) = y := fun y ⟨x, hx⟩ => by rw [← hx, hJ]
-  let K₀ : ℂ → M := fun z => J (K z)
-  have hjK : ∀ z ∈ B, j (K₀ z) = K z := fun z hz => hjJ _ (hKr z hz)
-  have hK₀i : InjOn K₀ B := fun z hz w hw he => hK.hi (hBO hz) (hBO hw)
-    (by rw [← hjK z hz, ← hjK w hw, he])
-  have hK₀c : ContinuousOn K₀ B := by
-    rw [hj.isEmbedding.continuousOn_iff]
-    exact (hK.hc.mono hBO).congr fun z hz => hjK z hz
-  have hK₀bd : ∀ z ∈ B, K₀ z ∉ bd M := fun z hz hb => by
-    have h1 : j (K₀ z) ∈ range j ∩ Kc := hint ▸ mem_image_of_mem j hb
-    rw [hjK z hz] at h1
-    exact hBW ⟨z, hz, rfl⟩ h1.2
   obtain ⟨hD, hDb⟩ := closedBall_disc (zero_lt_one' ℝ)
   obtain ⟨K', hK'c, hK'l⟩ := exists_inv_of_compactOn hBc hK₀c hK₀i
   obtain ⟨hE, hEb⟩ := hD.image hK₀c hK'c hK'l
   rw [hDb] at hEb
   have hzof : ∀ x ∈ L, ∃ z ∈ B, ‖z‖ < 1 ∧ K₀ z = x := fun x hx => by
-    rw [← hr] at hx
-    obtain ⟨t, rfl⟩ := hx
-    obtain ⟨z, hz, him, hre, hKz⟩ := (hrange (j (a₀ t))).mp ⟨t, rfl⟩
-    refine ⟨z, hz, ?_, hj.injective (by rw [hjK z hz, hKz])⟩
+    obtain ⟨z, hz, him, hre, rfl⟩ := (hLine x).mp hx
+    refine ⟨z, hz, ?_, rfl⟩
     have : z = (z.re : ℂ) := Complex.ext (by simp) (by simp [him])
     rw [this, Complex.norm_real, Real.norm_eq_abs]
     simpa using hre.trans_lt hs1

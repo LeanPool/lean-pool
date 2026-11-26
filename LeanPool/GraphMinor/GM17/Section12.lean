@@ -23,6 +23,7 @@ import LeanPool.GraphMinor.GM17.CliqueDisc
 import LeanPool.GraphMinor.GM17.Section5Proved
 
 import LeanPool.GraphMinor.GM17.Section6Proved
+import LeanPool.GraphMinor.GM17.Section7
 
 import LeanPool.GraphMinor.GM17.Section8Proved
 
@@ -537,63 +538,6 @@ theorem theorem_12_1_proof
 
 /-! ## 2. Cliques in General: (12.2) (Page 198) -/
 
-/-- For a closed disc $\Delta \subseteq \Sigma$ with $\Gamma$-normal boundary, the attachments of
-$\alpha(\Delta)$ in $G$ are contained in $\gamma(N(\Gamma) \cap \operatorname{bd}(\Delta))$, so
-$|\operatorname{attachments}_G(\alpha(\Delta))| \le |\operatorname{bd}(\Delta) \cap N(\Gamma)|$. -/
-private theorem ncard_attachments_areaGraph_le_normal_disc
-    {α : Type u} {β : Type v} {G : Hypergraph α β}
-    (π : Portrayal G) {Δ : Set π.S} (hΔ : IsClosedDisc Δ)
-    (hnorm : π.Γ.IsNormal (discBd Δ)) :
-    (attachments G (π.areaGraph Δ)).ncard ≤ (discBd Δ ∩ π.Γ.N).ncard := by
-  have : CompactSpace π.S := π.isSurface.1
-  have : T2Space π.S := π.isSurface.2.1
-  have : ConnectedSpace π.S := π.connected
-  let I₁ : Set (Set π.S) := {c ∈ π.Γ.C | c ⊆ Δ}
-  let I₂ : Set (Set π.S) := {c ∈ π.Γ.C | ¬ c ⊆ Δ}
-  have hcov : I₁ ∪ I₂ = π.Γ.C := by
-    ext c
-    simp only [I₁, I₂, mem_union, mem_sep_iff]
-    exact ⟨fun h => h.elim And.left And.left,
-      fun hc => by by_cases h : c ⊆ Δ <;> [exact Or.inl ⟨hc, h⟩; exact Or.inr ⟨hc, h⟩]⟩
-  have hdisj : Disjoint I₁ I₂ := by
-    rw [Set.disjoint_left]
-    exact fun _ h₁ h₂ => h₂.2 h₁.2
-  have hsep : G.IsSeparation (π.cellsUnion I₁) (π.cellsUnion I₂) :=
-    π.isSeparation_cellsUnion hcov hdisj
-  have hatt_sub_inter : attachments G (π.areaGraph Δ) ⊆
-      (π.cellsUnion I₁ ∩ π.cellsUnion I₂).vertexSet :=
-    attachments_subset_inter_of_isSeparation hsep
-  have h21 := (theorem_2_1_proof π hcov hdisj).2
-  obtain ⟨hdich, hno_bd, _⟩ := normal_disc_cell_dichotomy π.isSurface π.Γ hΔ hnorm
-  have hsub_nv : attachments G (π.areaGraph Δ) ⊆ π.nodeVertex '' (discBd Δ ∩ π.Γ.N) := by
-    intro v hv
-    have hv_inter := hatt_sub_inter hv
-    rw [h21] at hv_inter
-    rcases hv_inter with hγ | hbs
-    · rw [mem_iUnion₂] at hγ
-      rcases hγ with ⟨c₁, hc₁, hγ⟩
-      rw [mem_iUnion₂] at hγ
-      rcases hγ with ⟨c₂, hc₂, hγ⟩
-      rw [← π.gammaImage_inter, Portrayal.mem_gammaImage_iff] at hγ
-      rcases hγ with ⟨n, ⟨hnc₁, hndom⟩, rfl⟩
-      have hc₂_out : c₂ ⊆ Set.univ \ Δ :=
-        (hdich c₂ hc₂.1).resolve_left fun h => hc₂.2 (h.trans sdiff_subset)
-      have hcl_inter :=
-        (closure_cell_inter_disc_of_subset_compl π.isSurface π.Γ hΔ hnorm hc₂.1 hc₂_out).2
-      have hn_Δ : n ∈ Δ := (isClosed_of_isClosedDisc hΔ).closure_subset_iff.mpr hc₁.2 hnc₁.1.1
-      have hn_bdΔ : n ∈ discBd Δ := by
-        have : n ∈ closure c₂ ∩ Δ := ⟨hnc₁.2.1, hn_Δ⟩
-        rw [hcl_inter] at this
-        exact this.2
-      exact ⟨n, ⟨hn_bdΔ, π.domγ_subset hndom⟩, rfl⟩
-    · rw [mem_iUnion₂] at hbs
-      rcases hbs with ⟨n, ⟨c₁, hc₁, hbd₁, _⟩, _⟩
-      have hc₁_out : c₁ ⊆ Set.univ \ Δ := hno_bd c₁ hc₁.1 hbd₁
-      rcases hbd₁ with ⟨x, hxc₁, _⟩
-      exact ((hc₁_out hxc₁).2 (hc₁.2 hxc₁)).elim
-  have hfin : (discBd Δ ∩ π.Γ.N).Finite := π.Γ.finite_N.inter_of_right _
-  exact (ncard_le_ncard hsub_nv (hfin.image _)).trans (ncard_image_le hfin)
-
 private theorem no_four_discs_in_portrayal
     {α : Type u}
     {β : Type v}
@@ -618,9 +562,9 @@ private theorem no_four_discs_in_portrayal
     ⟨_, _, _, ⟨B₃, hAB₃⟩⟩,
     hcov⟩
   have hatt₀ : (attachments G (π.areaGraph Δ₀)).ncard ≤ 3 :=
-    (ncard_attachments_areaGraph_le_normal_disc π hΔ₀ hnorm₀).trans hcard₀
+    (π.ncard_attachments_areaGraph_le_normal_disc hΔ₀ hnorm₀).trans hcard₀
   have hatt₁ : (attachments G (π.areaGraph Δ₁)).ncard ≤ 3 :=
-    (ncard_attachments_areaGraph_le_normal_disc π hΔ₁ hnorm₁).trans hcard₁
+    (π.ncard_attachments_areaGraph_le_normal_disc hΔ₁ hnorm₁).trans hcard₁
   have hatt_u : (attachments G (π.areaGraph Δ₀ ∪ π.areaGraph Δ₁)).ncard < θ := by
     have hsub : attachments G (π.areaGraph Δ₀ ∪ π.areaGraph Δ₁) ⊆
         attachments G (π.areaGraph Δ₀) ∪ attachments G (π.areaGraph Δ₁) := by

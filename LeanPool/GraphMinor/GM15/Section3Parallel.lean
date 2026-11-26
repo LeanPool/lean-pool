@@ -3046,6 +3046,46 @@ private theorem parallel_chord_cap_regions
     fun u₁ u₂ u₃ u₄ hu₁ hu₂ hu₃ hu₄ _ hOrd_u => hOrd_r₂ hU_r₂ u₁ u₂ u₃ u₄ hu₁ hu₂ hu₃ hu₄ hOrd_u,
     hd'_r₁_r₂, hd'_vk_vlast⟩
 
+/-- The circle parametrization identifies both ends of each indexed vertical chord. -/
+theorem parallelChart_endpoints {S : Type w} {Λ : Set S} [TopologicalSpace S]
+    {k : ℕ} {v : Fin (2 * k) → S} {p : Circle ≃ₜ ↥(subBd Λ)} {g : ℂ → S}
+    (hg : ∀ z : Circle, g z = (p z).1)
+    (hp : ∀ i : Fin (2 * k), (p (Circle.exp (parallelModelAngle k i.1))).1 = v i)
+    (j : Fin (k - 1)) :
+    g ⟨parallelX k j, parallelY k j⟩ = v ⟨j.1, by omega⟩ ∧
+      g ⟨parallelX k j, -parallelY k j⟩ = v ⟨2 * k - 2 - j.1, by omega⟩ := by
+  constructor
+  · rw [← circle_exp_parallelModelAngle_top j, hg, hp ⟨j.1, by omega⟩]
+  · rw [← circle_exp_parallelModelAngle_bot j, hg, hp ⟨2 * k - 2 - j.1, by omega⟩]
+
+/-- A chart chord meets the region boundary and the original drawing at its two endpoints. -/
+theorem parallelChart_chord_data {S : Type w} [TopologicalSpace S] [T2Space S]
+    {Λ U : Set S} {h : S → ℂ} {g : ℂ → S} (c : IsChart (closure Λ) h g)
+    (hdiscBd : discBd (closure Λ) = subBd Λ)
+    (hregion : closure Λ ∩ (univ \ Λ) = subBd Λ)
+    (houtside : U ⊆ univ \ Λ) (hboundary : subBd Λ ⊆ U)
+    {k : ℕ} (j : Fin (k - 1)) {a b : S}
+    (ha : g ⟨parallelX k j, parallelY k j⟩ = a)
+    (hb : g ⟨parallelX k j, -parallelY k j⟩ = b) :
+    let L := g '' vertChord (parallelX k j)
+    IsLineWithEnds L a b ∧ L ⊆ closure Λ ∧ L ∩ discBd (closure Λ) = {a, b} ∧
+      L ∩ (univ \ Λ) = {a, b} ∧ L ∩ U = {a, b} := by
+  obtain ⟨hline, hclosed, hdisc⟩ :=
+    isLineWithEnds_image_vertChord c (parallelX_sq_add_parallelY_sq j) (parallelY_pos j)
+  rw [ha, hb] at hline hdisc
+  have hbd : (g '' vertChord (parallelX k j)) ∩ subBd Λ = {a, b} := hdiscBd ▸ hdisc
+  refine ⟨hline, hclosed, hdisc, ?_, ?_⟩
+  · calc
+      _ = (g '' vertChord (parallelX k j)) ∩ (closure Λ ∩ (univ \ Λ)) := by
+        rw [← Set.inter_assoc, inter_eq_self_of_subset_left hclosed]
+      _ = {a, b} := by rw [hregion, hbd]
+  · refine Subset.antisymm ?_ ?_
+    · intro x hx
+      have hxbd : x ∈ subBd Λ := hregion ▸ ⟨hclosed hx.1, houtside hx.2⟩
+      exact hbd ▸ ⟨hx.1, hxbd⟩
+    · rw [← hbd]
+      exact inter_subset_inter_right _ hboundary
+
 /-- The proof of Graph Minors XV, (3.4), pages 122–123, and the auxiliary conclusions of
 `GM15Theorem34Statement` in a chart of $\bar\Lambda$ in which the paths $P_1, \dots, P_{k-1}$
 are the vertical chords at `parallelX k j`. The chart `g` maps the unit
@@ -3130,8 +3170,6 @@ theorem theorem_3_4_of_chart {S : Type w} [TopologicalSpace S] [T2Space S] {α :
   have hΛ_disc : IsOpenDisc Λ := hResp_H.1.2 Λ hΛ
   obtain ⟨hout, hCD, hdiscBd, _, _⟩ :=
     isClosedDisc_closure_of_region_tangle hS hResp_H hθ hΛ hOArc
-  have hsubBd_eq_sdiff : subBd Λ = closure Λ \ Λ := by
-    rw [subBd_eq_frontier, hΛ_open.frontier_eq]
   obtain ⟨_, hU_bdΛ, _⟩ := interSet_subBd_isCircuit_and_U_eq hS hΛ hOArc
   have hsubBd_sub_HU : subBd Λ ⊆ H.U := by
     have hcl : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
@@ -3143,10 +3181,10 @@ theorem theorem_3_4_of_chart {S : Type w} [TopologicalSpace S] [T2Space S] {α :
     fun x hxU => ⟨mem_univ x, fun hxΛ => GM11.region_subset hΛ hxΛ hxU⟩
   let a : Fin (k - 1) → S := fun j => v ⟨j.1, by omega⟩
   let b : Fin (k - 1) → S := fun j => v ⟨2 * k - 2 - j.1, by omega⟩
-  have hg_a : ∀ j : Fin (k - 1), g ⟨parallelX k j, parallelY k j⟩ = a j := fun j => by
-    rw [← circle_exp_parallelModelAngle_top j, hg_circ, hp_circ_v ⟨j.1, by omega⟩]
-  have hg_b : ∀ j : Fin (k - 1), g ⟨parallelX k j, -parallelY k j⟩ = b j := fun j => by
-    rw [← circle_exp_parallelModelAngle_bot j, hg_circ, hp_circ_v ⟨2 * k - 2 - j.1, by omega⟩]
+  have hg_a : ∀ j : Fin (k - 1), g ⟨parallelX k j, parallelY k j⟩ = a j :=
+    fun j => (parallelChart_endpoints hg_circ hp_circ_v j).1
+  have hg_b : ∀ j : Fin (k - 1), g ⟨parallelX k j, -parallelY k j⟩ = b j :=
+    fun j => (parallelChart_endpoints hg_circ hp_circ_v j).2
   have hik_eq : i_k = ⟨k - 1, by omega⟩ := Fin.ext hik
   have hilast_eq : i_last = ⟨2 * k - 1, by omega⟩ := Fin.ext hilast
   have hg_ik : g ⟨-1, 0⟩ = v i_k := by
@@ -3160,44 +3198,27 @@ theorem theorem_3_4_of_chart {S : Type w} [TopologicalSpace S] [T2Space S] {α :
   replace hP' : ∀ j : Fin (k - 1), (P' j).U = L j ∧ (P' j).IsPathBetween (a j) (b j) ∧
       (P' j).IsSubdrawing H' ∧ a j ∈ (P' j).V ∧ b j ∈ (P' j).V := hP'
   replace hH'_U : H'.U = H.U ∪ ⋃ j : Fin (k - 1), L j := hH'_U
-  have hL_props : ∀ j : Fin (k - 1),
-      IsLineWithEnds (L j) (a j) (b j) ∧
-      L j ⊆ closure Λ ∧
-      L j ∩ discBd (closure Λ) = {a j, b j} := by
-    intro j
-    obtain ⟨h1, h2, h3⟩ :=
-      isLineWithEnds_image_vertChord c (parallelX_sq_add_parallelY_sq j) (parallelY_pos j)
-    rw [hg_a j, hg_b j] at h1 h3
-    exact ⟨h1, h2, h3⟩
+  have hcl_inter_compl : closure Λ ∩ (univ \ Λ) = subBd Λ := by
+    rw [subBd_eq_frontier, hΛ_open.frontier_eq]
+    ext x
+    simp only [mem_inter_iff, mem_sdiff, mem_univ, true_and]
+  have hL_props := fun j : Fin (k - 1) =>
+    parallelChart_chord_data c hdiscBd hcl_inter_compl hHU_compl hsubBd_sub_HU j (hg_a j) (hg_b j)
   have hL_line : ∀ j : Fin (k - 1), IsLineWithEnds (L j) (a j) (b j) :=
     fun j => (hL_props j).1
   have hL_sub_cl : ∀ j : Fin (k - 1), L j ⊆ closure Λ :=
     fun j => (hL_props j).2.1
   have hL_inter_discBd : ∀ j : Fin (k - 1), L j ∩ discBd (closure Λ) = {a j, b j} :=
-    fun j => (hL_props j).2.2
-  have hL_inter_subBd : ∀ j : Fin (k - 1), L j ∩ subBd Λ = {a j, b j} :=
-    hdiscBd ▸ hL_inter_discBd
+    fun j => (hL_props j).2.2.1
+  have hL_inter_compl : ∀ j : Fin (k - 1), L j ∩ (univ \ Λ) = {a j, b j} :=
+    fun j => (hL_props j).2.2.2.1
+  have hL_inter_HU : ∀ j : Fin (k - 1), L j ∩ H.U = {a j, b j} :=
+    fun j => (hL_props j).2.2.2.2
   have ha_mem : ∀ j : Fin (k - 1), a j ∈ H.V ∩ subBd Λ := fun j => hv_mem ⟨j.1, by omega⟩
   have hb_mem : ∀ j : Fin (k - 1), b j ∈ H.V ∩ subBd Λ := fun j => hv_mem ⟨2 * k - 2 - j.1, by
     omega⟩
   have ha_V : ∀ j : Fin (k - 1), a j ∈ H.V := fun j => (ha_mem j).1
   have hb_V : ∀ j : Fin (k - 1), b j ∈ H.V := fun j => (hb_mem j).1
-  have hcl_inter_compl : closure Λ ∩ (univ \ Λ) = subBd Λ := by
-    rw [hsubBd_eq_sdiff]
-    ext x
-    simp only [mem_inter_iff, mem_sdiff, mem_univ, true_and]
-  have hL_inter_compl : ∀ j : Fin (k - 1), L j ∩ (univ \ Λ) = {a j, b j} := by
-    intro j
-    have h1 : L j ∩ (univ \ Λ) = L j ∩ (closure Λ ∩ (univ \ Λ)) := by
-      ext x
-      exact ⟨fun ⟨hxL, hxC⟩ => ⟨hxL, hL_sub_cl j hxL, hxC⟩, fun ⟨hxL, _, hxC⟩ => ⟨hxL, hxC⟩⟩
-    rw [h1, hcl_inter_compl, hL_inter_subBd j]
-  have hL_inter_HU : ∀ j : Fin (k - 1), L j ∩ H.U = {a j, b j} := by
-    intro j
-    refine Subset.antisymm ?_ ?_
-    · exact (inter_subset_inter_right _ hHU_compl).trans (hL_inter_compl j).subset
-    · rw [← hL_inter_subBd j]
-      exact inter_subset_inter_right _ hsubBd_sub_HU
   -- Step 3: Base drawing restriction `H'.interSet (univ \ Λ) = H` and `H'.U \ Λ = H.U`.
   obtain ⟨hU_compl, hV_compl, hInter_compl⟩ :=
     glued_interSet_base_eq (isClosed_univ.sdiff hΛ_open) ha_V hb_V hHU_compl

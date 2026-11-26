@@ -274,52 +274,10 @@ theorem IsTangle.exists_separation_order_eq {G : Hypergraph α β} {θ : ℕ}
     ∃ A B : Hypergraph α β,
       G.IsSeparation A B ∧ separationOrder A B = θ ∧ (A, B) ∉ 𝒯 ∧ (B, A) ∉ 𝒯 := by
   obtain ⟨A, B, hext, _, _⟩ := h𝒯.exists_isExtreme (bot_self_mem_tangle h𝒯)
-  have hAB := hext.1
-  have hsep := h𝒯.isSeparation hAB
-  have hord := theorem_2_8_order h𝒯 hext
-  have hVA_ne := h𝒯.axiom3 hAB
-  obtain ⟨v, hvG, hv_notA⟩ := Set.exists_of_ssubset
-    (ssubset_of_subset_of_ne hsep.left_le.vertexSet_subset hVA_ne)
-  have hvB : v ∈ B.vertexSet :=
-    (hsep.vertexSet_union.symm ▸ hvG).resolve_left hv_notA
-  let Kv : Hypergraph α β := vertexHypergraph v
-  have hKv_le_G : Kv ≤ G := vertexHypergraph_le hvG
-  have hsep' : G.IsSeparation (A ∪ Kv) B := by
-    rw [isSeparation_iff_of_le (union_le hsep.left_le hKv_le_G) hsep.right_le]
-    refine ⟨?_, ?_, ?_⟩
-    · change (A.vertexSet ∪ {v}) ∪ B.vertexSet = G.vertexSet
-      rw [Set.union_assoc, Set.singleton_union, Set.insert_eq_of_mem hvB, hsep.vertexSet_union]
-    · simp [Kv, vertexHypergraph, hsep.edgeSet_union]
-    · simpa [union_edgeSet, Kv, vertexHypergraph] using hsep.edgeSet_inter_eq
-  have hAK_not : (A ∪ Kv, B) ∉ 𝒯 := by
-    intro hm
-    have hAK_eq := (hext.2 hm (le_union_left hsep.left_le hKv_le_G) le_rfl).1
-    have hvA : v ∈ A.vertexSet := by
-      rw [← hAK_eq]
-      exact Or.inr (Set.mem_singleton v)
-    exact hv_notA hvA
-  have hBAK_not : (B, A ∪ Kv) ∉ 𝒯 := by
-    intro hm
-    apply h𝒯.axiom2 hAB hAB hm
-    rw [union_self, hsep.union_eq]
-  have hset_eq : ((A ∪ Kv) ∩ B).vertexSet = insert v (A ∩ B).vertexSet := by
-    ext x
-    simp only [inter_vertexSet, union_vertexSet, Kv, vertexHypergraph, Set.mem_inter_iff,
-      Set.mem_union, Set.mem_singleton_iff, Set.mem_insert_iff]
-    constructor
-    · rintro ⟨hxA | rfl, hxB⟩
-      · exact Or.inr ⟨hxA, hxB⟩
-      · exact Or.inl rfl
-    · rintro (rfl | ⟨hxA, hxB⟩)
-      · exact ⟨Or.inr rfl, hvB⟩
-      · exact ⟨Or.inl hxA, hxB⟩
-  have hv_notAB : v ∉ (A ∩ B).vertexSet := fun h ↦ hv_notA h.1
-  have hcard : separationOrder (A ∪ Kv) B = θ := by
-    have h1 := h𝒯.one_le
-    rw [separationOrder, hset_eq, Set.ncard_insert_of_notMem hv_notAB (A ∩ B).vertexSet_finite,
-      ← separationOrder, hord]
-    omega
-  exact ⟨A ∪ Kv, B, hsep', hcard, hAK_not, hBAK_not⟩
+  obtain ⟨A', hsep, hord, hnot, hnotRev⟩ := h𝒯.exists_enlarged_extreme_separation hext
+  have horder := theorem_2_8_order h𝒯 hext
+  have hpos := h𝒯.one_le
+  exact ⟨A', B, hsep, by omega, hnot, hnotRev⟩
 
 /-- **Graph Minors X, Section 6** (page 170):
 "We observe also that if $\mathscr{T}, \mathscr{T}'$ are tangles in $G$ then

@@ -811,13 +811,14 @@ theorem stretchTo_mem_Icc_of_mem_Icc {a d δ x : ℝ} (had : a < d) (hδ : 0 < �
   have hpts := stretchTo_eval_pts a d δ
   exact ⟨hpts.1 ▸ hmono hx.1, hpts.2.2.2.2.2 ▸ hmono hx.2⟩
 
-/-- Construct a `CollarChartData S` from an isolated collar `b : Circle × 𝕀 → S` and interval
-parameters `(a, d, δ₀, δ, ε)`. -/
-noncomputable def mkCollarChart [T2Space S]
+/-- The collar chart map has a continuous inverse on the larger closed rectangle. -/
+theorem exists_collar_chart_inverse [T2Space S]
     {b : Circle × 𝕀 → S} (hbc : Continuous b) (hbi : Function.Injective b)
-    {a d δ₀ δ ε : ℝ} (_hδ₀ : 0 < δ₀) (ha : δ₀ ≤ a) (had : a < d) (hd : d ≤ 2 * Real.pi - δ₀)
+    {a d δ₀ δ ε : ℝ} (ha : δ₀ ≤ a) (had : a < d) (hd : d ≤ 2 * Real.pi - δ₀)
     (hδ : 0 < δ) (h2δ : 2 * δ < δ₀) (hε : 0 < ε) (h6ε : 6 * ε < 1) :
-    CollarChartData S :=
+    let K := psiShift.symm '' (Icc (-6 : ℝ) 0 ×ℂ Icc (-3 : ℝ) 3)
+    ∃ h : S → ℂ, ContinuousOn h (collarG b a d δ ε '' K) ∧
+      LeftInvOn h (collarG b a d δ ε) K := by
   let g := collarG b a d δ ε
   let K_big : Set ℂ := psiShift.symm '' (Icc (-6 : ℝ) 0 ×ℂ Icc (-3 : ℝ) 3)
   have hK_big : IsCompact K_big :=
@@ -842,7 +843,17 @@ noncomputable def mkCollarChart [T2Space S]
       have := congrArg (unstretchFrom a d δ) hst_eq
       rwa [unstretchFrom_stretchTo had hδ, unstretchFrom_stretchTo had hδ] at this
     rw [Complex.ext hre him]
-  let h := Classical.choose (exists_inv_of_compact hK_big (continuous_collarG hbc a d δ ε) hinj)
+  exact exists_inv_of_compact hK_big (continuous_collarG hbc a d δ ε) hinj
+
+/-- Construct a `CollarChartData S` from an isolated collar `b : Circle × 𝕀 → S` and interval
+parameters `(a, d, δ₀, δ, ε)`. -/
+noncomputable def mkCollarChart [T2Space S]
+    {b : Circle × 𝕀 → S} (hbc : Continuous b) (hbi : Function.Injective b)
+    {a d δ₀ δ ε : ℝ} (_hδ₀ : 0 < δ₀) (ha : δ₀ ≤ a) (had : a < d) (hd : d ≤ 2 * Real.pi - δ₀)
+    (hδ : 0 < δ) (h2δ : 2 * δ < δ₀) (hε : 0 < ε) (h6ε : 6 * ε < 1) :
+    CollarChartData S :=
+  let g := collarG b a d δ ε
+  let h := Classical.choose (exists_collar_chart_inverse hbc hbi ha had hd hδ h2δ hε h6ε)
   { U := g '' bHalf
     h := h
     g := g
@@ -867,36 +878,14 @@ theorem mkCollarChart_valid (hS : IsSurface S) {Y C : Set S} (hC_sub_bd : C ⊆ 
   set ch := @mkCollarChart S _ hS.2.1 b hbc hbi a d δ₀ δ ε hδ₀ ha had hd hδ h2δ hε h6ε
   let g := collarG b a d δ ε
   let K_big : Set ℂ := psiShift.symm '' (Icc (-6 : ℝ) 0 ×ℂ Icc (-3 : ℝ) 3)
-  have hK_big : IsCompact K_big :=
-    (isCompact_Icc.reProdIm isCompact_Icc).image psiShift.symm.continuous
-  have hinj : InjOn g K_big := by
-    rintro z₁ ⟨w₁, hw₁, rfl⟩ z₂ ⟨w₂, hw₂, rfl⟩ heq
-    have hprod := Prod.ext_iff.mp (hbi heq)
-    have h1 := hprod.1
-    have h2 := congrArg Subtype.val hprod.2
-    simp only [psiShift.apply_symm_apply] at h1 h2
-    rw [(tClamped_of_mem_Icc hε h6ε hw₁.1).1, (tClamped_of_mem_Icc hε h6ε hw₂.1).1] at h2
-    have hre : w₁.re = w₂.re := by nlinarith
-    have hm1 := stretchTo_mem_Icc_of_mem_Icc had hδ hw₁.2
-    have hm2 := stretchTo_mem_Icc_of_mem_Icc had hδ hw₂.2
-    have hIoc1 : stretchTo a d δ w₁.im ∈ Ioc 0 (2 * Real.pi) :=
-      ⟨by linarith [hm1.1], by linarith [hm1.2]⟩
-    have hIoc2 : stretchTo a d δ w₂.im ∈ Ioc 0 (2 * Real.pi) :=
-      ⟨by linarith [hm2.1], by linarith [hm2.2]⟩
-    have hst_eq : stretchTo a d δ w₁.im = stretchTo a d δ w₂.im :=
-      Circle.exp_injOn_Ioc (a := 0) (b := 2 * Real.pi) (by linarith) hIoc1 hIoc2 h1
-    have him : w₁.im = w₂.im := by
-      have := congrArg (unstretchFrom a d δ) hst_eq
-      rwa [unstretchFrom_stretchTo had hδ, unstretchFrom_stretchTo had hδ] at this
-    rw [Complex.ext hre him]
   have hspec := Classical.choose_spec
-    (exists_inv_of_compact hK_big (continuous_collarG hbc a d δ ε) hinj)
+    (exists_collar_chart_inverse hbc hbi ha had hd hδ h2δ hε h6ε)
   have hbHalf_K : bHalf ⊆ K_big := by
     intro z hz
     obtain ⟨hre, him⟩ := psiShift_ball3_bounds hz.1 hz.2
     exact ⟨psiShift z, ⟨hre, ⟨him.1.le, him.2.le⟩⟩, psiShift.symm_apply_apply z⟩
   have hch_h : ch.h = Classical.choose
-      (exists_inv_of_compact hK_big (continuous_collarG hbc a d δ ε) hinj) := rfl
+      (exists_collar_chart_inverse hbc hbi ha had hd hδ h2δ hε h6ε) := rfl
   have hch_g : ch.g = g := rfl
   have hchart : BoundaryHalfChart ch.U ch.h ch.g := by
     refine ⟨hspec.1.mono (image_mono hbHalf_K), continuous_collarG hbc a d δ ε,

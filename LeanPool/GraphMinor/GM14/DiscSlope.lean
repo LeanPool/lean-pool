@@ -28,9 +28,10 @@ import LeanPool.GraphMinor.GM11.Section6
 
 This file provides two slope constructions used across Graph Minors XIV:
 
-1. `isSlope_of_derived`: the derived inside function `ins` of a respectful pretangle `T` of order
-   `θ ≥ 1` in a 2-cell drawing `Γ` is a slope of order `2θ` in a radial drawing `Γ'`
-   (Graph Minors XI, (6.6), used in Sections 7 and 9 of Graph Minors XIV).
+1. `isSlope_of_derived`: the inside function derived from a respectful pretangle of order `θ`
+   gives a slope of order `θ` in the radial drawing, as described before (6.1) in Graph Minors XI,
+   page 87. Lean uses the circuit-length cutoff `2 * θ`. Graph Minors XIV uses this construction
+   in Sections 7 and 9.
 2. `isSlope_discIns`: for any drawing `Γ'` with `U(Γ') ⊆ Δ` inside a closed disc `Δ` in a connected
    closed surface `S`, the function `discIns Δ` mapping each circuit `C` of `Γ'` to the unique
    closed disc in `Δ` bounded by `U(C)` is a slope of any order `k ≥ 2` on `Γ'` (used in Section 5
@@ -313,7 +314,8 @@ theorem not_cover (hT : IsPretangle Γ.toHypergraph θ T) (hrad : Γ.U ∩ Γ'.U
     (m₃ : (Γ.inter Δ₃, Γ.interOutside Δ₃) ∈ T) (hcov : Δ₁ ∪ Δ₂ ∪ Δ₃ = univ) : False :=
   GM11.not_cover_of_radial_frontiers hT hrad c₁ c₂ c₃ b₁ b₂ b₃ m₁ m₂ m₃ hcov
 
-/-- The derived slope of a respectful pretangle is a slope (Graph Minors XI, (6.6)). -/
+/-- A derived inside function is a slope with circuit-length cutoff `2 * θ`.
+This is the cutoff for a slope of order `θ` in Graph Minors XI, page 87, before (6.1). -/
 theorem isSlope_of_derived [ConnectedSpace S] (hS : IsClosedSurface S)
     (hT : IsPretangle Γ.toHypergraph θ T) (hrad : Γ.U ∩ Γ'.U = Γ.V)
     (hd : IsDerivedSlope Γ Γ' θ T ins) : IsSlope Γ' (2 * θ) ins :=

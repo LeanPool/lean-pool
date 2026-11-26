@@ -27,6 +27,38 @@ open Set Topology GraphMinor.Surface GraphMinor.GM10 GraphMinor.GM11
 
 universe w
 
+/-- Two links through a third vertex form a path with exactly those two edges. -/
+theorem exists_two_edge_drawing_path {T : Type*} [TopologicalSpace T] [T1Space T]
+    {G : Drawing T} {a p b : T} {e f : Set T}
+    (he : G.toGraph.IsLink e a p) (hf : G.toGraph.IsLink f p b)
+    (hap : a ≠ p) (hab : a ≠ b) (hpb : p ≠ b) :
+    ∃ Q : Drawing T, Q.IsSubdrawing G ∧ Q.IsPathBetween a b ∧
+      Q.V = {a, p, b} ∧ Q.E = {e, f} ∧ Q.U = closure e ∪ closure f := by
+  let W : GraphWalk G.toGraph a b := .cons he (.cons hf (.nil hf.2.2.1))
+  have hsimple : W.IsSimple := by
+    simp [GraphWalk.IsSimple, W, GraphWalk.support, hap, hab, hpb]
+  refine ⟨walkDrawing G W, walkDrawing_isSubdrawing G W, walkDrawing_isPathBetween G hsimple,
+    ?_, ?_, ?_⟩
+  · rw [walkDrawing_V]
+    ext x
+    simp [W, GraphWalk.support]
+  · rw [walkDrawing_E]
+    ext x
+    simp [W, GraphWalk.edges]
+  · dsimp only [W]
+    rw [GraphWalk.drawing_U_cons, GraphWalk.drawing_U_cons, GraphWalk.drawing_U_nil]
+    have hb : b ∈ closure f ∩ G.V := hf.2.2.2.symm ▸ Or.inr rfl
+    rw [union_eq_self_of_subset_right (singleton_subset_iff.mpr hb.1)]
+
+/-- A drawing with exactly two edges has at most as many edges as a drawing containing
+two distinct edges. -/
+theorem ncard_edges_le_of_pair_subset {T : Type*} [TopologicalSpace T] {Q X : Drawing T}
+    {e₁ e₂ f₁ f₂ : Set T} (hQ : Q.E = {e₁, e₂}) (he : e₁ ≠ e₂)
+    (hf : f₁ ≠ f₂) (hsub : ({f₁, f₂} : Set (Set T)) ⊆ X.E) :
+    Q.E.ncard ≤ X.E.ncard := by
+  rw [hQ, ncard_pair he, ← ncard_pair hf]
+  exact ncard_le_ncard hsub X.finite_edges
+
 section Walks
 
 variable {T : Type} [TopologicalSpace T] [T2Space T] {P : Drawing T} {a b : T}
@@ -355,16 +387,11 @@ theorem spoke_mem (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F)
       · exact hvne h.symm
       · exact hvp hv₂ h
     obtain ⟨A, B, hA, hB, hAs, hBs, -, -, hAB, hd, hsup⟩ := hF.2.exists_two_paths hF₁ hF₂ hvne
-    let W : GraphWalk G.toGraph (cap.emb v₁) (cap.emb v₂) := .cons hl₁ (.cons hl₂ (.nil (hvG hv₂)))
-    have hWs : W.IsSimple := by
-      simp [GraphWalk.IsSimple, W, GraphWalk.support, hvp hv₁, hvne, (hvp hv₂).symm]
-    have hQV : (walkDrawing G W).V = {cap.emb v₁, p, cap.emb v₂} := by
-      rw [walkDrawing_V]; ext x; simp [W, GraphWalk.support]
-    have hQE : (walkDrawing G W).E = {e₁, e₂} := by
-      rw [walkDrawing_E]; ext x; simp [W, GraphWalk.edges]
-    have ht : TwoPaths G F A B (walkDrawing G W) (cap.emb v₁) (cap.emb v₂) := by
+    obtain ⟨Q, hQs, hQpath, hQV, hQE, _⟩ :=
+      exists_two_edge_drawing_path hl₁ hl₂ (hvp hv₁) hvne (hvp hv₂).symm
+    have ht : TwoPaths G F A B Q (cap.emb v₁) (cap.emb v₂) := by
       refine ⟨hvne, hF.1, ⟨hAs, hA⟩, ⟨hBs, hB⟩, ?_, ?_, hAB.le, hd,
-        ⟨walkDrawing_isSubdrawing _ _, walkDrawing_isPathBetween _ hWs⟩, ?_, ?_⟩
+        ⟨hQs, hQpath⟩, ?_, ?_⟩
       · conv_lhs => rw [← hsup, Drawing.sup_V hAs hBs]
       · conv_lhs => rw [← hsup, Drawing.sup_E hAs hBs]
       · rw [hQV]
@@ -378,8 +405,8 @@ theorem spoke_mem (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F)
         · exact hn h
         · exact hn₂ h
     have side : ∀ {X : Drawing Shat}, X.IsPathBetween (cap.emb v₁) (cap.emb v₂) → X.IsSubdrawing F →
-        (walkDrawing G W).E.ncard ≤ X.E.ncard ∧
-          D.tb.weightSub (walkDrawing G W) < D.tb.weightSub X := by
+        Q.E.ncard ≤ X.E.ncard ∧
+          D.tb.weightSub Q < D.tb.weightSub X := by
       intro X hX hXs
       obtain ⟨f, hf, x, hl, -, hsec⟩ := path_first hX hvne
       have hlG := ((hXs.trans hF.1).isLink_iff hf).mp hl
@@ -392,9 +419,8 @@ theorem spoke_mem (hF : F.IsCircuitOf D.rad.G) (hθ : ThetaFree D F)
         · exact hf
         · exact hf'
       constructor
-      · rw [hQE, ncard_pair hene, ← ncard_pair hff.symm]
-        exact ncard_le_ncard hsub X.finite_edges
-      · have h₁ : D.tb.weightSub (walkDrawing G W) = D.tb.wtE e₁ + D.tb.wtE e₂ := by
+      · exact ncard_edges_le_of_pair_subset hQE hene hff.symm hsub
+      · have h₁ : D.tb.weightSub Q = D.tb.wtE e₁ + D.tb.wtE e₂ := by
           simp only [TieBreaker.weightSub, hQE]
           exact finsum_mem_pair hene
         have h₂ := D.tb.weight_subset (hXs.trans hF.1) hsub

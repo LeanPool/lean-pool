@@ -1943,17 +1943,17 @@ private theorem gluing_arc_meets_subdisc_in_closed_interval
     [TopologicalSpace S']
     [T2Space S']
     {D : Set S'}
-    {m' : ℕ}
-    {u' : Fin m' → S'}
-    {v' : Fin m' → S'}
+    {ι : Type*}
+    {u' : ι → S'}
+    {v' : ι → S'}
     {F : Set S'}
     (Δ : Set S')
     (hΔ_disc : IsClosedDisc Δ)
     (hΔ_disj_bd : Disjoint (Δ \ F) (discBd D))
     (hΔ_fr : frontier Δ = F)
-    (j : Fin m')
-    (huj_bd : ∀ (k : Fin m'), u' k ∈ discBd D)
-    (hvj_bd : ∀ (k : Fin m'), v' k ∈ discBd D)
+    (j : ι)
+    (huj_bd : ∀ (k : ι), u' k ∈ discBd D)
+    (hvj_bd : ∀ (k : ι), v' k ∈ discBd D)
     (aR : ℝ → S')
     (haR_cont : Continuous aR)
     (haR_0 : aR 0 = u' j)
@@ -2018,27 +2018,27 @@ private theorem other_gluing_arcs_avoid_subdisc
     [T2Space S']
     {H' : Drawing S'}
     {D : Set S'}
-    {m' : ℕ}
-    {u' : Fin m' → S'}
-    {v' : Fin m' → S'}
-    {Q' : Fin m' → Drawing S'}
-    (hQ'_line : ∀ (j : Fin m'), IsLineWithEnds (Q' j).U (u' j) (v' j))
-    (hQ'_bd : ∀ (j : Fin m'), (Q' j).U ∩ discBd D = {u' j, v' j})
+    {ι : Type*}
+    {u' : ι → S'}
+    {v' : ι → S'}
+    {Q' : ι → Drawing S'}
+    (hQ'_line : ∀ (j : ι), IsLineWithEnds (Q' j).U (u' j) (v' j))
+    (hQ'_bd : ∀ (j : ι), (Q' j).U ∩ discBd D = {u' j, v' j})
     (hQ'_disj : Pairwise fun i j => Disjoint (Q' i).U (Q' j).U)
     {F : Set S'}
     (Δ : Set S')
     (hΔ_disc : IsClosedDisc Δ)
     (hΔ_disj_bd : Disjoint (Δ \ F) (discBd D))
     (hΔ_fr : frontier Δ = F)
-    (j : Fin m')
-    (hQj_H'U : ∀ (k : Fin m'), (Q' k).U ⊆ H'.U)
-    (huj_bd : ∀ (k : Fin m'), u' k ∈ discBd D)
+    (j : ι)
+    (hQj_H'U : ∀ (k : ι), (Q' k).U ⊆ H'.U)
+    (huj_bd : ∀ (k : ι), u' k ∈ discBd D)
     (u : S')
     (v : S')
     (hu_Qj : u ∈ (Q' j).U)
     (hv_Qj : v ∈ (Q' j).U)
     (hFU_eq : F ∩ H'.U = {u, v}) :
-    ∀ (k : Fin m'), k ≠ j → Disjoint (Q' k).U Δ := by
+    ∀ (k : ι), k ≠ j → Disjoint (Q' k).U Δ := by
   intro k hkj
   have hdis_fr : Disjoint (Q' k).U (frontier Δ) := by
     rw [hΔ_fr]
@@ -2067,14 +2067,13 @@ private theorem other_gluing_arcs_avoid_subdisc
 
 /-- Verification of condition (iii) of (3.2) inside a closed disc `D ⊆ S'` where `D ∩ H'.U` is
 contained in `B_bd ∪ ⋃ j, (Q' j).U` with `B_bd ⊆ discBd D`. -/
-theorem dial_of_oArc_in_striped_disc
+theorem dial_of_oArc_in_striped_disc_family
     (hS' : IsClosedSurface S')
-    {H' : Drawing S'} {D B_bd : Set S'} {m' : ℕ}
-    {u' v' : Fin m' → S'} {Q' : Fin m' → Drawing S'}
+    {H' : Drawing S'} {D B_bd : Set S'} {ι : Type*}
+    {u' v' : ι → S'} {Q' : ι → Drawing S'}
     (hD : IsClosedDisc D)
     (hB_bd : B_bd ⊆ discBd D)
-    (hD_U : D ∩ H'.U ⊆ B_bd ∪ ⋃ j : Fin m', (Q' j).U)
-    (_hQ'_D : ∀ j, (Q' j).U ⊆ D)
+    (hD_U : D ∩ H'.U ⊆ B_bd ∪ ⋃ j : ι, (Q' j).U)
     (hQ'_line : ∀ j, IsLineWithEnds (Q' j).U (u' j) (v' j))
     (hQ'_sub : ∀ j, (Q' j).IsSubdrawing H')
     (hQ'_bd : ∀ j, (Q' j).U ∩ discBd D = {u' j, v' j})
@@ -2096,7 +2095,7 @@ theorem dial_of_oArc_in_striped_disc
     obtain ⟨z₀, ⟨hz₀_Δ, hz₀_not_F⟩, hz₀_U⟩ := hne
     have hz₀_not_bdD : z₀ ∉ discBd D := Set.disjoint_left.mp hΔ_disj_bd ⟨hz₀_Δ, hz₀_not_F⟩
     have hz₀_DU : z₀ ∈ D ∩ H'.U := ⟨hΔ_sub_D hz₀_Δ, hz₀_U⟩
-    have hz₀_Q : z₀ ∈ ⋃ j : Fin m', (Q' j).U := by
+    have hz₀_Q : z₀ ∈ ⋃ j : ι, (Q' j).U := by
       rcases hD_U hz₀_DU with hzB | hzQ
       · exact (hz₀_not_bdD (hB_bd hzB)).elim
       · exact hzQ
@@ -2212,11 +2211,11 @@ theorem dial_of_oArc_in_striped_disc
         · exact hF_sub_Δ ha_t₂_F
         · exact hIoo_sub_Δ ⟨t, ⟨hgt1, hlt2⟩, rfl⟩
     have ha_Δ_iff : ∀ t ∈ Icc (0 : ℝ) 1, aR t ∈ Δ ↔ t ∈ Icc t₁ t₂ := by
-      exact gluing_arc_meets_subdisc_in_closed_interval (S' := S') (D := D) (m' := m') (u' := u')
+      exact gluing_arc_meets_subdisc_in_closed_interval (S' := S') (D := D) (ι := ι) (u' := u')
         (v' := v') (F := F) Δ hΔ_disc hΔ_disj_bd hΔ_fr j huj_bd hvj_bd aR haR_cont haR_0 haR_1 t₁
         t₂ ht₁₂ ha_F_iff hIcc_sub_Δ
-    have hdisj_other : ∀ k : Fin m', k ≠ j → Disjoint (Q' k).U Δ := by
-      exact other_gluing_arcs_avoid_subdisc (S' := S') (H' := H') (D := D) (m' := m') (u' := u')
+    have hdisj_other : ∀ k : ι, k ≠ j → Disjoint (Q' k).U Δ := by
+      exact other_gluing_arcs_avoid_subdisc (S' := S') (H' := H') (D := D) (ι := ι) (u' := u')
         (v' := v') (Q' := Q') hQ'_line hQ'_bd hQ'_disj (F := F) Δ hΔ_disc hΔ_disj_bd hΔ_fr j
         hQj_H'U huj_bd u v hu_Qj hv_Qj hFU_eq
     have hU_eq_pieceA : (H'.interSet Δ).U = range (pieceA a t₁ t₂) := by
@@ -2260,6 +2259,47 @@ theorem dial_of_oArc_in_striped_disc
     intro x ⟨hxΔ, hxU⟩
     by_contra hx_not_F
     exact Set.eq_empty_iff_forall_notMem.mp hne x ⟨⟨hxΔ, hx_not_F⟩, hxU⟩
+
+/-- Verification of condition (iii) of (3.2) inside a closed disc `D ⊆ S'` where `D ∩ H'.U` is
+contained in `B_bd ∪ ⋃ j, (Q' j).U` with `B_bd ⊆ discBd D`. -/
+theorem dial_of_oArc_in_striped_disc
+    (hS' : IsClosedSurface S')
+    {H' : Drawing S'} {D B_bd : Set S'} {m' : ℕ}
+    {u' v' : Fin m' → S'} {Q' : Fin m' → Drawing S'}
+    (hD : IsClosedDisc D)
+    (hB_bd : B_bd ⊆ discBd D)
+    (hD_U : D ∩ H'.U ⊆ B_bd ∪ ⋃ j : Fin m', (Q' j).U)
+    (_hQ'_D : ∀ j, (Q' j).U ⊆ D)
+    (hQ'_line : ∀ j, IsLineWithEnds (Q' j).U (u' j) (v' j))
+    (hQ'_sub : ∀ j, (Q' j).IsSubdrawing H')
+    (hQ'_bd : ∀ j, (Q' j).U ∩ discBd D = {u' j, v' j})
+    (hQ'_disj : Pairwise (fun i j => Disjoint (Q' i).U (Q' j).U))
+    {F : Set S'}
+    (hFD : F ⊆ D) (hF : IsOArc F) (hFU : F ∩ H'.U ⊆ H'.V) (hFV : (F ∩ H'.V).ncard ≤ 2) :
+    ∃ Δ : Set S', Δ ⊆ D ∧ IsDial H' F Δ :=
+  dial_of_oArc_in_striped_disc_family hS' hD hB_bd hD_U hQ'_line hQ'_sub hQ'_bd hQ'_disj
+    hFD hF hFU hFV
+
+/-- A striped disc built by omitting one line retains the dial conclusion for the
+remaining paths. -/
+theorem dial_of_oArc_in_remaining_stripes
+    (hS' : IsClosedSurface S')
+    {H' : Drawing S'} {D B_bd : Set S'} {m : ℕ} {omitted : Fin m}
+    {u v : Fin m → S'} {Q : Fin m → Drawing S'} {L : Fin m → Set S'}
+    (hD : IsClosedDisc D) (hB : B_bd ⊆ discBd D)
+    (hcover : D ∩ H'.U ⊆ B_bd ∪ ⋃ j : {i : Fin m // i ≠ omitted}, (Q j.1).U)
+    (hpaths : ∀ i, (Q i).U = L i ∧ (Q i).IsSubdrawing H')
+    (hline : ∀ i, IsLineWithEnds (L i) (u i) (v i))
+    (hends : ∀ j : {i : Fin m // i ≠ omitted}, (Q j.1).U ∩ discBd D = {u j.1, v j.1})
+    (hdisjoint : Pairwise fun i j => Disjoint (L i) (L j))
+    {F : Set S'} (hFD : F ⊆ D) (hF : IsOArc F)
+    (hFU : F ∩ H'.U ⊆ H'.V) (hFV : (F ∩ H'.V).ncard ≤ 2) :
+    ∃ Δ : Set S', Δ ⊆ D ∧ IsDial H' F Δ := by
+  refine dial_of_oArc_in_striped_disc_family hS' hD hB hcover
+    (fun j => (hpaths j.1).1 ▸ hline j.1) (fun j => (hpaths j.1).2) hends ?_ hFD hF hFU hFV
+  intro j k hjk
+  rw [(hpaths j.1).1, (hpaths k.1).1]
+  exact hdisjoint (fun heq => hjk (Subtype.ext heq))
 
 end StripedDisc
 

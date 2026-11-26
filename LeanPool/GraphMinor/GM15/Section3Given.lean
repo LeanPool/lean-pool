@@ -298,8 +298,6 @@ theorem theorem_3_4_drawn : GM15Theorem34DrawnStatement.{u, v, w} := by
   have hΛ_open : IsOpen Λ := GM11.region_isOpen hΛ
   obtain ⟨-, hCD, hdiscBd, _, _⟩ :=
     isClosedDisc_closure_of_region_tangle hS hResp_H hθ hΛ hOArc
-  have hsubBd_eq_sdiff : subBd Λ = closure Λ \ Λ := by
-    rw [subBd_eq_frontier, hΛ_open.frontier_eq]
   obtain ⟨_, hU_bdΛ, _⟩ := interSet_subBd_isCircuit_and_U_eq hS hΛ hOArc
   have hsubBd_sub_HU : subBd Λ ⊆ H.U := by
     have hcl : IsClosed (subBd Λ) := isClosed_closure.inter isClosed_closure
@@ -312,31 +310,24 @@ theorem theorem_3_4_drawn : GM15Theorem34DrawnStatement.{u, v, w} := by
   obtain ⟨p_circ, hp_circ_v, h, g, c, hg_circ⟩ := exists_chart_3_4 hk1 hCD hdiscBd hOrder_v
   let a : Fin (k - 1) → S := fun j => v ⟨j.1, by omega⟩
   let b : Fin (k - 1) → S := fun j => v ⟨2 * k - 2 - j.1, by omega⟩
-  have hg_a : ∀ j : Fin (k - 1), g ⟨parallelX k j, parallelY k j⟩ = a j := fun j => by
-    rw [← circle_exp_parallelModelAngle_top j, hg_circ, hp_circ_v ⟨j.1, by omega⟩]
-  have hg_b : ∀ j : Fin (k - 1), g ⟨parallelX k j, -parallelY k j⟩ = b j := fun j => by
-    rw [← circle_exp_parallelModelAngle_bot j, hg_circ, hp_circ_v ⟨2 * k - 2 - j.1, by omega⟩]
+  have hg_a : ∀ j : Fin (k - 1), g ⟨parallelX k j, parallelY k j⟩ = a j :=
+    fun j => (parallelChart_endpoints hg_circ hp_circ_v j).1
+  have hg_b : ∀ j : Fin (k - 1), g ⟨parallelX k j, -parallelY k j⟩ = b j :=
+    fun j => (parallelChart_endpoints hg_circ hp_circ_v j).2
   -- The paths are drawn along the vertical chords `L j` of the chart.
   let L : Fin (k - 1) → Set S := fun j => g '' vertChord (parallelX k j)
-  have hL_props : ∀ j : Fin (k - 1),
-      IsLineWithEnds (L j) (a j) (b j) ∧
-      L j ⊆ closure Λ ∧
-      L j ∩ discBd (closure Λ) = {a j, b j} := by
-    intro j
-    obtain ⟨h1, h2, h3⟩ :=
-      isLineWithEnds_image_vertChord c (parallelX_sq_add_parallelY_sq j) (parallelY_pos j)
-    rw [hg_a j, hg_b j] at h1 h3
-    exact ⟨h1, h2, h3⟩
+  have hcl_inter_compl : closure Λ ∩ (univ \ Λ) = subBd Λ := by
+    rw [subBd_eq_frontier, hΛ_open.frontier_eq]
+    ext x
+    simp only [mem_inter_iff, mem_sdiff, mem_univ, true_and]
+  have hL_props := fun j : Fin (k - 1) =>
+    parallelChart_chord_data c hdiscBd hcl_inter_compl hHU_compl hsubBd_sub_HU j (hg_a j) (hg_b j)
   have hL_line : ∀ j : Fin (k - 1), IsLineWithEnds (L j) (a j) (b j) :=
     fun j => (hL_props j).1
-  have hL_sub_cl : ∀ j : Fin (k - 1), L j ⊆ closure Λ :=
-    fun j => (hL_props j).2.1
-  have hL_inter_discBd : ∀ j : Fin (k - 1), L j ∩ discBd (closure Λ) = {a j, b j} :=
-    fun j => (hL_props j).2.2
-  have hL_inter_subBd : ∀ j : Fin (k - 1), L j ∩ subBd Λ = {a j, b j} := by
-    intro j
-    rw [← hdiscBd]
-    exact hL_inter_discBd j
+  have hL_inter_compl : ∀ j : Fin (k - 1), L j ∩ (univ \ Λ) = {a j, b j} :=
+    fun j => (hL_props j).2.2.2.1
+  have hL_inter_HU : ∀ j : Fin (k - 1), L j ∩ H.U = {a j, b j} :=
+    fun j => (hL_props j).2.2.2.2
   have hL_disj : Pairwise (fun j₁ j₂ => Disjoint (L j₁) (L j₂)) := by
     intro j₁ j₂ hj
     refine Set.disjoint_left.mpr ?_
@@ -349,22 +340,6 @@ theorem theorem_3_4_drawn : GM15Theorem34DrawnStatement.{u, v, w} := by
     omega⟩
   have ha_V : ∀ j : Fin (k - 1), a j ∈ H.V := fun j => (ha_mem j).1
   have hb_V : ∀ j : Fin (k - 1), b j ∈ H.V := fun j => (hb_mem j).1
-  have hcl_inter_compl : closure Λ ∩ (univ \ Λ) = subBd Λ := by
-    rw [hsubBd_eq_sdiff]
-    ext x
-    simp only [mem_inter_iff, mem_sdiff, mem_univ, true_and]
-  have hL_inter_compl : ∀ j : Fin (k - 1), L j ∩ (univ \ Λ) = {a j, b j} := by
-    intro j
-    have h1 : L j ∩ (univ \ Λ) = L j ∩ (closure Λ ∩ (univ \ Λ)) := by
-      ext x
-      exact ⟨fun ⟨hxL, hxC⟩ => ⟨hxL, hL_sub_cl j hxL, hxC⟩, fun ⟨hxL, _, hxC⟩ => ⟨hxL, hxC⟩⟩
-    rw [h1, hcl_inter_compl, hL_inter_subBd j]
-  have hL_inter_HU : ∀ j : Fin (k - 1), L j ∩ H.U = {a j, b j} := by
-    intro j
-    refine Subset.antisymm ?_ ?_
-    · exact (inter_subset_inter_right _ hHU_compl).trans (hL_inter_compl j).subset
-    · rw [← hL_inter_subBd j]
-      exact inter_subset_inter_right _ hsubBd_sub_HU
   have hP_ab : ∀ j : Fin (k - 1),
       IsHPathWithEnds G η.imageGraph (P j) (η.vMap (a j)) (η.vMap (b j)) := by
     intro j

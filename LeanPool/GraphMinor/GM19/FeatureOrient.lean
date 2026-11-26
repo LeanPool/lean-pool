@@ -40,102 +40,23 @@ local notation "𝕀" => unitInterval
 
 theorem circle_angle_unique {s t : ℝ} (hs0 : 0 < s) (hs1 : s < 2 * Real.pi) (ht0 : 0 < t)
   (ht1 : t < 2 * Real.pi)
-    (h : Circle.exp s = Circle.exp t) : s = t := by
-  obtain ⟨m, hm⟩ := Circle.exp_eq_exp.mp h
-  have hpi := Real.pi_pos
-  have h1 : (m : ℝ) * (2 * Real.pi) < 2 * Real.pi := by linarith
-  have h2 : -(2 * Real.pi) < (m : ℝ) * (2 * Real.pi) := by linarith
-  have h3 : (m : ℝ) < 1 := by nlinarith
-  have h4 : (-1 : ℝ) < m := by nlinarith
-  have h5 : m = 0 := by
-    have : m < 1 := by exact_mod_cast h3
-    have : -1 < m := by exact_mod_cast h4
-    omega
-  rw [hm, h5]
-  simp
+    (h : Circle.exp s = Circle.exp t) : s = t :=
+  CircleOrder.exp_eq_of_angles hs0 hs1 ht0 ht1 h
 
-theorem cyclic_not_swap {a b c : Circle} (h : CircleCyclic a b c) : ¬ CircleCyclic a c b := by
-  rintro ⟨s', t', hs'0, hst', ht'1, hc', hb'⟩
-  obtain ⟨s, t, hs0, hst, ht1, hb, hc⟩ := h
-  have e1 : Circle.exp s = Circle.exp t' := mul_left_cancel (hb.symm.trans hb')
-  have e2 : Circle.exp t = Circle.exp s' := mul_left_cancel (hc.symm.trans hc')
-  have h1 := circle_angle_unique hs0 (by linarith) (by linarith) ht'1 e1
-  have h2 := circle_angle_unique (by linarith) ht1 hs'0 (by linarith) e2
-  linarith
+theorem cyclic_not_swap {a b c : Circle} (h : CircleCyclic a b c) : ¬ CircleCyclic a c b :=
+  CircleOrder.not_circleCyclic_both h
 
 /-- The cyclic order after a lift that goes up. -/
 theorem cyclic_of_mono {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L) (hm : StrictMono L)
     (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
-    CircleCyclic (τ a) (τ b) (τ c) := by
-  obtain ⟨s, t, hs0, hst, ht1, rfl, rfl⟩ := h
-  obtain ⟨α, rfl⟩ : ∃ α, a = Circle.exp α := ⟨_, (Circle.exp_arg a).symm⟩
-  have hpi := Real.pi_pos
-  simp only [← Circle.exp_add, hl]
-  have hbelow : L (α + t) < L α + 2 * Real.pi := by
-    by_contra hge
-    have hmem : L α + 2 * Real.pi ∈ Icc (L α) (L (α + t)) := ⟨by linarith, not_lt.mp hge⟩
-    obtain ⟨u, hu, hue⟩ := intermediate_value_Icc (by linarith : α ≤ α + t) hc.continuousOn hmem
-    have h1 : Circle.exp u = Circle.exp α := by
-      apply τ.injective
-      rw [hl, hl, hue, Circle.exp_add, Circle.exp_two_pi, mul_one]
-    have hu0 : u ≠ α := fun h' ↦ by
-      rw [h'] at hue
-      linarith
-    obtain ⟨m, hm'⟩ := Circle.exp_eq_exp.mp h1
-    have hlt : u - α < 2 * Real.pi := by linarith [hu.2]
-    have hgt : 0 < u - α := lt_of_le_of_ne (by linarith [hu.1]) (fun h' ↦ hu0 (by linarith))
-    have h2 : (m : ℝ) * (2 * Real.pi) = u - α := by linarith
-    have h3 : (0 : ℝ) < m := by nlinarith
-    have h4 : (m : ℝ) < 1 := by nlinarith
-    have h5 : 0 < m := by exact_mod_cast h3
-    have h6 : m < 1 := by exact_mod_cast h4
-    omega
-  refine ⟨L (α + s) - L α, L (α + t) - L α, sub_pos.mpr (hm (by linarith)),
-    by linarith [hm (by linarith : α + s < α + t)],
-    by linarith, ?_, ?_⟩ <;>
-  · rw [← Circle.exp_add]
-    congr 1
-    ring
+    CircleCyclic (τ a) (τ b) (τ c) :=
+  CircleCyclic.map_increasing_lift hc hm hl h
 
 /-- The cyclic order after a lift that goes down. -/
 theorem cyclic_of_anti {τ : Circle ≃ₜ Circle} {L : ℝ → ℝ} (hc : Continuous L) (hm : StrictAnti L)
     (hl : ∀ t, τ (Circle.exp t) = Circle.exp (L t)) {a b c : Circle} (h : CircleCyclic a b c) :
-    CircleCyclic (τ a) (τ c) (τ b) := by
-  obtain ⟨s, t, hs0, hst, ht1, rfl, rfl⟩ := h
-  obtain ⟨α, rfl⟩ : ∃ α, a = Circle.exp α := ⟨_, (Circle.exp_arg a).symm⟩
-  have hpi := Real.pi_pos
-  simp only [← Circle.exp_add, hl]
-  have habove : L α - 2 * Real.pi < L (α + t) := by
-    by_contra hge
-    have hmem : L α - 2 * Real.pi ∈ Icc (L (α + t)) (L α) := ⟨not_lt.mp hge, by linarith⟩
-    obtain ⟨u, hu, hue⟩ := intermediate_value_Icc' (by linarith : α ≤ α + t) hc.continuousOn hmem
-    have h1 : Circle.exp u = Circle.exp α := by
-      apply τ.injective
-      rw [hl, hl, hue]
-      have := Circle.exp_add (L α - 2 * Real.pi) (2 * Real.pi)
-      rw [Circle.exp_two_pi, mul_one, sub_add_cancel] at this
-      exact this.symm
-    have hu0 : u ≠ α := fun h' ↦ by
-      rw [h'] at hue
-      linarith
-    obtain ⟨m, hm'⟩ := Circle.exp_eq_exp.mp h1
-    have hlt : u - α < 2 * Real.pi := by linarith [hu.2]
-    have hgt : 0 < u - α := lt_of_le_of_ne (by linarith [hu.1]) (fun h' ↦ hu0 (by linarith))
-    have h2 : (m : ℝ) * (2 * Real.pi) = u - α := by linarith
-    have h3 : (0 : ℝ) < m := by nlinarith
-    have h4 : (m : ℝ) < 1 := by nlinarith
-    have h5 : 0 < m := by exact_mod_cast h3
-    have h6 : m < 1 := by exact_mod_cast h4
-    omega
-  have h1 := hm (by linarith : α < α + s)
-  have h2 := hm (by linarith : α + s < α + t)
-  have key : ∀ x, Circle.exp (L x) = Circle.exp (L α) * Circle.exp (2 * Real.pi - (L α - L x))
-    := fun x ↦ by
-    rw [← Circle.exp_add, show L α + (2 * Real.pi - (L α - L x)) = L x + 2 * Real.pi by ring,
-      Circle.exp_add,
-      Circle.exp_two_pi, mul_one]
-  exact ⟨2 * Real.pi - (L α - L (α + t)), 2 * Real.pi - (L α - L (α + s)), by linarith,
-    by linarith, by linarith, key _, key _⟩
+    CircleCyclic (τ a) (τ c) (τ b) :=
+  CircleCyclic.map_decreasing_lift hc hm hl h
 
 /-- A homeomorphism of the circle keeps all cyclic orders or reverses all of them. -/
 theorem circle_dichotomy (τ : Circle ≃ₜ Circle) :
@@ -143,16 +64,11 @@ theorem circle_dichotomy (τ : Circle ≃ₜ Circle) :
       (τ c) ↔ CircleCyclic a b c)) ∨
       ∀ a b c : Circle, a ≠ b → b ≠ c → a ≠ c → (CircleCyclic (τ a) (τ b)
         (τ c) ↔ ¬ CircleCyclic a b c) := by
-  obtain ⟨L, hc, hL | hL, hl⟩ := exists_circle_lift τ
-  · refine .inl fun a b c hab hbc hac ↦ ⟨fun h ↦ ?_, cyclic_of_mono hc hL hl⟩
-    rcases circleCyclic_or hab hac hbc with h' | h'
-    · exact h'
-    · exact absurd (cyclic_of_mono hc hL hl h') (cyclic_not_swap h)
-  · refine .inr fun a b c hab hbc hac ↦ ⟨fun h h' ↦ cyclic_not_swap h
-    (cyclic_of_anti hc hL hl h'), fun h ↦ ?_⟩
-    rcases circleCyclic_or hab hac hbc with h' | h'
-    · exact absurd h' h
-    · exact cyclic_of_anti hc hL hl h'
+  rcases circleCyclic_homeomorph τ with h | h
+  · exact .inl fun a b c hab hbc hac ↦ (h a b c hab hbc hac).symm
+  · refine .inr fun a b c hab hbc hac ↦ (h a c b hac hbc.symm hab).symm.trans ?_
+    exact ⟨fun h' h'' ↦ CircleOrder.not_circleCyclic_both h'' h',
+      fun h' ↦ (circleCyclic_or hab hac hbc).resolve_left h'⟩
 
 variable {S : Type u} [TopologicalSpace S]
 
