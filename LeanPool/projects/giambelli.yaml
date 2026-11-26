@@ -1,0 +1,63 @@
+slug: giambelli
+title: Giambelli's identity for Schur polynomials
+summary: Proves Giambelli's identity s_λ = det(s_(α_i | β_j))_{i,j<d}, expressing the
+  Schur polynomial of a Young diagram with Durfee square of side d and Frobenius coordinates
+  (α | β) as the determinant of the hook Schur polynomials, for Tau Ceti's Schur polynomials
+  of Young diagrams (alphabet Fin N) and of partitions (any finite alphabet). The identity
+  is first proved for Jacobi–Trudi determinants det(h_{λ_i − i + j}) of any pair of symbols
+  h, e with H(X)E(−X) = 1, by multiplying by a unitriangular matrix of e's, expanding along
+  the resulting unit rows and using Frobenius complementarity; it is then specialized through
+  Tau Ceti's Jacobi–Trudi identity. The explicit hook formula s_(a | b) = Σ_{r ≤ a} (−1)^r
+  h_{a−r} e_{b+1+r} is included. Giambelli's identity is classical (Macdonald, Symmetric
+  Functions and Hall Polynomials, Ch. I §3, Example 9). This is a port of the formalization
+  in DataDotFoundation/RMTlib; the Lean proofs were produced with AI (Claude). Motivated by
+  arXiv:1201.4478 (Dehaye), which uses Giambelli's identity (§7.1.4, in the Frobenius–Schur
+  form of Olshanski–Regev–Vershik, whereas this project proves the classical Schur form), and
+  by further condensation of the formal RH proof; it is not claimed to shorten that proof.
+branch: combinatorics
+entry_module: LeanPool.Giambelli
+authors:
+- Paul-Olivier Dehaye
+source:
+  title: Symmetric Functions and Hall Polynomials (2nd ed.), Chapter I, Section 3, Example 9
+  authors:
+  - I. G. Macdonald
+  url: https://github.com/DataDotFoundation/RMTlib/blob/ac695b1/RMTlib/Symmetric/Giambelli.lean
+  github_repo: DataDotFoundation/RMTlib
+  commit: ac695b1
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_note: The Lean proofs were produced with Claude (Anthropic) in DataDotFoundation/RMTlib
+  and ported to the Lean Pool toolchain with Claude, reusing Tau Ceti's Jacobi–Trudi identity
+  and h–e convolution.
+main_declarations:
+- Giambelli.diagramSchurPoly_eq_det_hook
+- Giambelli.schurPoly_eq_det_hook
+- Giambelli.giambelli_jt'
+main_results:
+- declaration: Giambelli.diagramSchurPoly_eq_det_hook
+  informal: Giambelli's identity. For a Young diagram μ with Durfee square of side d and
+    Frobenius coordinates (α_0, …, α_{d−1} | β_0, …, β_{d−1}), the Schur polynomial of μ in
+    N variables is the determinant of the d × d matrix of hook Schur polynomials s_(α_i | β_j).
+  source_ref: Macdonald, Symmetric Functions and Hall Polynomials, Ch. I §3, Example 9.
+- declaration: Giambelli.schurPoly_eq_det_hook
+  informal: Giambelli's identity for the Schur polynomial of a partition in any finite
+    alphabet, with the hooks taken as partitions.
+  source_ref: Macdonald, Symmetric Functions and Hall Polynomials, Ch. I §3, Example 9.
+- declaration: Giambelli.giambelli_jt'
+  informal: Giambelli's identity for Jacobi–Trudi determinants det(h_{λ_i − i + j}) of any
+    pair of symbols h, e vanishing in negative degree with e_0 = 1 and H(X)E(−X) = 1.
+- declaration: Giambelli.diagramSchurPoly_hookDiagram
+  informal: The hook Schur polynomial s_(a | b) equals Σ_{r ≤ a} (−1)^r h_{a−r} e_{b+1+r}.
+- declaration: Giambelli.det_unitRows
+  informal: A determinant whose last rows are unit vectors equals a signed minor on the
+    remaining columns.
+tags:
+- symmetric-functions
+- schur-polynomials
+- determinants
+- young-diagrams
+msc:
+- 05E05
+- 15A15
