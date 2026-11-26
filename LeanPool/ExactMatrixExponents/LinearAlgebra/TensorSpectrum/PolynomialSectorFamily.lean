@@ -1,0 +1,102 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.WeightedPolynomials
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialSectors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.LocalTensor
+
+/-!
+# The polynomial witness for the three-sector degeneration
+
+Every coefficient has degree at most one.  Its constant coefficient is the
+entire shared-first-input sector assembly.  At each nonzero parameter the
+evaluated tensor is an actual restriction of the original polynomial tensor.
+These explicit facts support interpolation without assuming that an arbitrary
+tensor character preserves topological limits.
+-/
+
+@[expose] public section
+
+noncomputable section
+
+open scoped BigOperators NNReal
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
+open MatrixMultiplicationAllFields.MatrixExponent
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor
+
+namespace MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors
+
+variable {K : Type*} [CommSemiring K]
+
+/-- The same family as the diagonal degeneration, expressed in the complete
+sector bases on the last two legs.  The first input is unchanged. -/
+def triplingPolynomialFamily (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h) :
+    Tensor (Polynomial K) (Fin a) (TriplingY a h) (TriplingZ a h) :=
+  Tensor.pullback id (triplingYEquiv a h ha hh) (triplingZEquiv a h ha hh)
+    (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val))
+
+theorem tripling_source_weights_nonneg (a h : ℕ) (ha : 1 ≤ a)
+    (x : Fin a) (y : Fin (triplingWidth a h))
+    (z : Fin (a + triplingWidth a h - 1))
+    (hc : polynomialTensor (K := K) a (triplingWidth a h) x y z ≠ 0) :
+    0 ≤ (0 : ℤ) + triplingYWeight a h y.val + triplingZWeight a h z.val := by
+  have hs : x.val + y.val = z.val := by
+    by_contra hn
+    exact hc (by simp [polynomialTensor, hn])
+  simpa using tripling_weight_nonneg ha x.isLt hs
+
+private theorem tripling_weights_toNat_le_one (a h y z : ℕ) :
+    ((0 : ℤ) + triplingYWeight a h y + triplingZWeight a h z).toNat ≤ 1 := by
+  unfold triplingYWeight triplingZWeight
+  split_ifs <;> decide
+
+/-- The constant coefficient retains all three branches, including their
+vanishing cross-sector coefficients, in one shared first-input basis. -/
+theorem triplingPolynomialFamily_coeff_zero (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h)
+    (x : Fin a) (y : TriplingY a h) (z : TriplingZ a h) :
+    (triplingPolynomialFamily (K := K) a h ha hh x y z).coeff 0 =
+      triplingSectorTensor a h x y z := by
+  change (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val) x
+      (triplingYEquiv a h ha hh y) (triplingZEquiv a h ha hh z)).coeff 0 = _
+  rw [weightedPolynomial_coeff_zero _ _ _ _ (tripling_source_weights_nonneg a h ha)]
+  exact congrFun (congrFun (congrFun (triplingGraded_sector_assembly a h ha hh) x) y) z
+
+/-- There is no growing or unspecified approximation degree: every coordinate
+of this explicit family has degree at most one. -/
+theorem triplingPolynomialFamily_degree_le (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h)
+    (x : Fin a) (y : TriplingY a h) (z : TriplingZ a h) :
+    (triplingPolynomialFamily (K := K) a h ha hh x y z).degree ≤ (1 : ℕ) := by
+  exact weightedPolynomial_degree_le (polynomialTensor a (triplingWidth a h))
+    (fun _ => 0) (fun y => triplingYWeight a h y.val)
+    (fun z => triplingZWeight a h z.val) (D := 1)
+    (fun _ y z _ => tripling_weights_toNat_le_one a h y.val z.val)
+    x (triplingYEquiv a h ha hh y) (triplingZEquiv a h ha hh z)
+
+/-- A weighted restriction yields the same evaluated tensor in the sector bases. -/
+theorem triplingPolynomialFamily_eval_mem_restrictionOrbit
+    (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h) (t : K)
+    (he : (fun x y z => (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val) x y z).eval t) ∈
+        LocalTensor.orbit (polynomialTensor a (triplingWidth a h))) :
+    (fun x y z => (triplingPolynomialFamily a h ha hh x y z).eval t) ∈
+      LocalTensor.orbit (polynomialTensor a (triplingWidth a h)) := by
+  classical
+  let E : Tensor K (Fin a) (Fin (triplingWidth a h)) (Fin (a + triplingWidth a h - 1)) :=
+    fun x y z => (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val) x y z).eval t
+  change Tensor.pullback id (triplingYEquiv a h ha hh) (triplingZEquiv a h ha hh) E ∈ _
+  rw [Tensor.pullback_eq_restrict]
+  exact LocalTensor.restrict_mem he _ _ _
+
+end MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors

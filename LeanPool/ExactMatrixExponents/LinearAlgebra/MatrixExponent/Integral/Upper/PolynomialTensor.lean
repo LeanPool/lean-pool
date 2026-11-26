@@ -1,0 +1,52 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialTensors
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Interpolation
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Coefficients
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Polynomial.ComplexPolynomialApproximation
+public import Lean.Elab.Tactic.Omega
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialRank
+
+/-!
+# The polynomial multiplication tensor
+
+The coefficient tensor records ordinary, untruncated polynomial multiplication.
+Evaluation at `a + b - 1` distinct field elements and uniform Lagrange
+interpolation give an actual rank decomposition of that size.
+-/
+
+@[expose] public section
+
+open MatrixMultiplicationAllFields.MatrixExponent.Integral
+
+noncomputable section
+
+open scoped BigOperators
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
+
+namespace MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper
+
+export MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors
+  (polynomialTensor_apply polynomialTensor_eq_coeff polynomialTensor_swap
+    polynomialTensor_one_left)
+
+/-- The shared polynomialTensor construction over the coefficient ring. -/
+abbrev polynomialTensor :=
+  MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors.polynomialTensor (K := O)
+
+/-- Ordinary polynomial multiplication has an actual decomposition into
+`a + b - 1` rank-one tensors. The degenerate empty-input cases are included. -/
+theorem polynomialTensor_rankAtMost (a b : ℕ) :
+    Tensor.RankAtMost (polynomialTensor a b) (a + b - 1) := by
+  classical
+  obtain ⟨nodes, hnodes, _⟩ := unit_nodes (a + b - 1)
+  exact TensorSpectrum.PolynomialTensors.polynomialTensor_rankAtMost_of_interpolation a b nodes
+    (Integral.weight nodes) (Integral.interpolate nodes hnodes)
+
+end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

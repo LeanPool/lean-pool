@@ -1,0 +1,74 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensor
+
+/-!
+# Heterogeneous tensor direct sums
+
+Local block diagonal matrices restrict the two summands independently.
+-/
+
+@[expose] public section
+
+open scoped BigOperators
+
+namespace MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor
+
+variable {K X Y Z U V W X' Y' Z' U' V' W' : Type*} [CommSemiring K]
+
+/-- Direct sum of tensors whose three coordinate spaces may all differ. -/
+def blockSum (T : Tensor K X Y Z) (S : Tensor K U V W) :
+    Tensor K (X ⊕ U) (Y ⊕ V) (Z ⊕ W)
+  | .inl x, .inl y, .inl z => T x y z
+  | .inr u, .inr v, .inr w => S u v w
+  | _, _, _ => 0
+
+/-- Assemble branches with a common first leg and matching sector labels on the other legs. -/
+def sharedFirst {M : ℕ} (A : Fin M → Tensor K X Y Z) :
+    Tensor K X (Fin M × Y) (Fin M × Z) :=
+  fun x y z => if y.1 = z.1 then A y.1 x y.2 z.2 else 0
+
+/-- Block diagonal local coefficient matrix, with no cross-summand maps. -/
+def blockMatrix (A : X' → X → K) (D : U' → U → K) :
+    (X' ⊕ U') → (X ⊕ U) → K
+  | .inl x', .inl x => A x' x
+  | .inr u', .inr u => D u' u
+  | _, _ => 0
+
+@[simp] theorem blockSum_inl (T : Tensor K X Y Z) (S : Tensor K U V W)
+    (x : X) (y : Y) (z : Z) :
+    blockSum T S (.inl x) (.inl y) (.inl z) = T x y z := rfl
+
+@[simp] theorem blockSum_inr (T : Tensor K X Y Z) (S : Tensor K U V W)
+    (u : U) (v : V) (w : W) :
+    blockSum T S (.inr u) (.inr v) (.inr w) = S u v w := rfl
+
+/-- Independent restrictions on the two summands combine into one restriction
+on their full direct sum, including every vanishing cross coefficient. -/
+theorem restrict_blockSum
+    [Fintype X] [Fintype Y] [Fintype Z] [Fintype U] [Fintype V] [Fintype W]
+    (A : X' → X → K) (B : Y' → Y → K) (C : Z' → Z → K)
+    (D : U' → U → K) (E : V' → V → K) (F : W' → W → K)
+    (T : Tensor K X Y Z) (S : Tensor K U V W) :
+    Tensor.restrict (blockMatrix A D) (blockMatrix B E) (blockMatrix C F)
+      (blockSum T S) = blockSum (Tensor.restrict A B C T) (Tensor.restrict D E F S) := by
+  funext x y z
+  rcases x with x | u <;> rcases y with y | v <;> rcases z with z | w <;>
+    simp [Tensor.restrict, blockSum, blockMatrix, Fintype.sum_sum_type]
+
+/-- Relabel the coordinates of each summand independently. -/
+theorem pullback_blockSum (T : Tensor K X Y Z) (S : Tensor K U V W)
+    (a : X' → X) (b : Y' → Y) (c : Z' → Z)
+    (d : U' → U) (e : V' → V) (f : W' → W) :
+    Tensor.pullback (Sum.map a d) (Sum.map b e) (Sum.map c f) (blockSum T S) =
+      blockSum (Tensor.pullback a b c T) (Tensor.pullback d e f S) := by
+  funext x y z
+  rcases x with x | u <;> rcases y with y | v <;> rcases z with z | w <;> rfl
+
+end MatrixMultiplicationAllFields.MatrixMultiplication.Foundation.Tensor

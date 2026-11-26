@@ -1,0 +1,676 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import Mathlib.RingTheory.Nullstellensatz
+public import Mathlib.Data.Fintype.EquivFin
+public import Mathlib.Algebra.BigOperators.Fin
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Cuts
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Verification.Geometry.Jacobian
+public import Mathlib.RingTheory.Spectrum.Prime.Chevalley
+public import Mathlib.RingTheory.Spectrum.Prime.Noetherian
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Root
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Multi.Radial
+
+/-!
+# Products of prime polynomial ideals over an algebraically closed field
+
+Work in the quotient by the block equations. Finite linear elimination
+and the Nullstellensatz permit replacing a rational point of a block
+by any solution in this quotient. Thus vanishing on the product detects
+membership in the sum of the ideals, before knowing it is radical.
+-/
+
+universe u
+
+@[expose] public section
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+open MvPolynomial
+
+variable {K J : Type*} [Field K] {W : J → Type*}
+
+/-- Transforms the indexed data by `⨆ j, (P j).map (rename (Sigma.mk j))`. -/
+def productIdeal (P : ∀ j, Ideal (MvPolynomial (W j) K)) : Ideal (MvPolynomial (Sigma W) K) :=
+  ⨆ j, (P j).map (rename (Sigma.mk j))
+
+namespace BlockProduct
+variable {Z R : Type*} [CommRing R] [Algebra K R]
+
+private theorem point [IsAlgClosed K] [Finite Z] (P : Ideal (MvPolynomial Z K)) [P.IsPrime]
+    (p : MvPolynomial Z K) (hp : p ∉ P) : ∃ x ∈ zeroLocus K P, aeval x p ≠ 0 := by
+  by_contra! h
+  apply hp
+  rw [← MvPolynomial.IsPrime.vanishingIdeal_zeroLocus (K := K) P]
+  exact h
+
+private def specialize (x : Z → K) : MvPolynomial Z K →ₐ[K] R :=
+  (Algebra.ofId K R).comp (aeval x)
+
+/-- Change the evaluation of an isolated block of variables. Eliminate
+one coefficient at a time by evaluating it at a point where it survives. -/
+private theorem eliminate [IsAlgClosed K] [Finite Z] (P : Ideal (MvPolynomial Z K)) [P.IsPrime]
+    (φ : MvPolynomial Z K →ₐ[K] R) (hφ : ∀ u ∈ P, φ u = 0)
+    (n : ℕ) (u : Fin n → MvPolynomial Z K) (w : Fin n → R)
+    (h : ∀ x ∈ zeroLocus K P, ∑ i, specialize x (u i) * w i = 0) :
+    ∑ i, φ (u i) * w i = 0 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+    by_cases hm : u 0 ∈ P
+    · rw [Fin.sum_univ_succ, hφ _ hm, zero_mul, zero_add]
+      apply ih
+      intro x hx
+      have he : specialize (R := R) x (u 0) = 0 := by
+        change algebraMap K R (aeval x (u 0)) = 0
+        rw [hx _ hm, map_zero]
+      simpa only [Fin.sum_univ_succ, he, zero_mul, zero_add] using h x hx
+    obtain ⟨x, hx, hn⟩ := point P _ hm
+    let c (i : Fin n) := -(aeval x (u 0))⁻¹ * aeval x (u i.succ)
+    have e : w 0 = ∑ i : Fin n, algebraMap K R (c i) * w i.succ := by
+      have H := h x hx
+      rw [Fin.sum_univ_succ] at H
+      simp only [c, map_mul, map_neg, mul_assoc, ← Finset.mul_sum]
+      change w 0 = -algebraMap K R (aeval x (u 0))⁻¹ * ∑ i : Fin n,
+        specialize x (u i.succ) * w i.succ
+      rw [eq_neg_of_add_eq_zero_right H, neg_mul_neg, ← mul_assoc]
+      change w 0 = (algebraMap K R (aeval x (u 0))⁻¹ * algebraMap K R (aeval x (u 0))) * w 0
+      rw [← map_mul, inv_mul_cancel₀ hn, map_one, one_mul]
+    let u' (i : Fin n) := u 0 * C (c i) + u i.succ
+    have H (ψ : MvPolynomial Z K →ₐ[K] R) :
+        (∑ i, ψ (u i) * w i) = ∑ i, ψ (u' i) * w i.succ := by
+      rw [Fin.sum_univ_succ, e, Finset.mul_sum, ← Finset.sum_add_distrib]
+      apply Finset.sum_congr rfl
+      intro i _
+      rw [show u' i = _ from rfl, map_add ψ, map_mul ψ, ← algebraMap_eq, ψ.commutes, add_mul,
+        mul_assoc]
+    rw [H]
+    exact ih _ _ fun z hz => (H _).symm.trans (h z hz)
+
+private def total (x : ∀ j, W j → R) : MvPolynomial (Sigma W) K →ₐ[K] R :=
+  aeval (fun i => x i.1 i.2)
+
+variable [DecidableEq J]
+
+private def plug (x : ∀ j, W j → R) (j : J) (φ : MvPolynomial (W j) K →ₐ[K] R) :=
+  total (K := K) (Function.update x j (fun v => φ (X v)))
+
+private theorem expand (x : ∀ j, W j → R) (j : J) (p : MvPolynomial (Sigma W) K) :
+    ∃ (n : ℕ) (u : Fin n → MvPolynomial (W j) K) (w : Fin n → R),
+      ∀ φ : MvPolynomial (W j) K →ₐ[K] R, plug x j φ p = ∑ i, φ (u i) * w i := by
+  induction p using MvPolynomial.induction_on with
+  | C a =>
+    exact ⟨1, fun _ => 1, fun _ => algebraMap K R a, fun _ => by simp [plug, total]⟩
+  | add a b ha hb =>
+    obtain ⟨n, u, w, hu⟩ := ha
+    obtain ⟨m, v, t, hv⟩ := hb
+    refine ⟨n + m, Fin.append u v, Fin.append w t, fun φ => ?_⟩
+    rw [map_add, hu, hv, Fin.sum_univ_add]
+    simp only [Fin.append_left, Fin.append_right]
+  | mul_X a i ha =>
+    obtain ⟨n, u, w, hu⟩ := ha
+    obtain ⟨i, v⟩ := i
+    by_cases h : i = j
+    · subst i
+      refine ⟨n, fun i => u i * X v, w, fun φ => ?_⟩
+      rw [map_mul, hu, Finset.sum_mul]
+      simp only [plug, total, aeval_X, Function.update_self, map_mul]
+      exact Finset.sum_congr rfl fun _ _ => mul_right_comm _ _ _
+    · refine ⟨n, u, fun t => w t * x i v, fun φ => ?_⟩
+      rw [map_mul, hu, Finset.sum_mul]
+      simp only [plug, total, aeval_X, Function.update_of_ne h, mul_assoc]
+
+variable (P : ∀ j, Ideal (MvPolynomial (W j) K))
+
+private abbrev Points := ∀ j, ↥(zeroLocus K (P j))
+
+private def ev (x : Points P) : MvPolynomial (Sigma W) K →ₐ[K] K :=
+  total (fun j => (x j).val)
+
+omit [DecidableEq J] in
+private theorem ev_rename (x : Points P) (j : J) (f : MvPolynomial (W j) K) :
+    ev P x (rename (Sigma.mk j) f) = aeval (x j).val f := aeval_rename _ _ _
+
+omit [DecidableEq J] in
+private theorem ev_zero (x : Points P) {p : MvPolynomial (Sigma W) K} (hp : p ∈ productIdeal P) :
+    ev P x p = 0 := by
+  have h : productIdeal P ≤ RingHom.ker (ev P x) := by
+    refine iSup_le fun j => Ideal.map_le_iff_le_comap.mpr fun f hf => ?_
+    exact (ev_rename P x j f).trans ((x j).property f hf)
+  exact h hp
+
+variable [IsAlgClosed K] [∀ j, Finite (W j)] (hP : ∀ j, (P j).IsPrime)
+include hP
+
+omit [DecidableEq J] in
+private theorem inhabited : Nonempty (Points P) := by
+  have h (j : J) : (zeroLocus K (P j)).Nonempty := by
+    let _ := hP j
+    obtain ⟨x, hx, _⟩ := point (P j) 1 (hP j).one_notMem
+    exact ⟨x, hx⟩
+  exact ⟨fun j => ⟨(h j).choose, (h j).choose_spec⟩⟩
+
+variable [Fintype J]
+
+omit [DecidableEq J] [Fintype J] in
+private theorem vanishes [Finite J] (p : MvPolynomial (Sigma W) K) (hp : ∀ x, ev P x p = 0) :
+    p ∈ productIdeal P := by
+  classical
+  let : Fintype J := Fintype.ofFinite J
+  let R := MvPolynomial (Sigma W) K ⧸ productIdeal P
+  let f := Ideal.Quotient.mkₐ K (productIdeal P)
+  let φ (j : J) := f.comp (rename (Sigma.mk j))
+  have hφ (j : J) (p : MvPolynomial (W j) K) (h : p ∈ P j) : φ j p = 0 :=
+    Ideal.Quotient.eq_zero_iff_mem.mpr
+      ((le_iSup (fun j => (P j).map (rename (Sigma.mk j))) j) (Ideal.mem_map_of_mem _ h))
+  let X' (s : Finset J) (x : Points P) (j : J) (t : W j) : R :=
+    if j ∈ s then φ j (X t) else algebraMap K R ((x j).val t)
+  have H (s : Finset J) (x : Points P) : total (X' s x) p = 0 := by
+    induction s using Finset.induction_on generalizing x with
+    | empty =>
+      have e : total (X' ∅ x) = (Algebra.ofId K R).comp (ev P x) := by
+        apply algHom_ext
+        rintro ⟨j, t⟩
+        simp [total, ev, X']
+      rw [e, AlgHom.comp_apply, hp, map_zero]
+    | @insert j s hj ih =>
+      let _ := hP j
+      obtain ⟨n, u, w, he⟩ := expand (X' s x) j p
+      have e : total (X' (insert j s) x) = plug (X' s x) j (φ j) := by
+        unfold plug
+        apply congrArg
+        funext k t
+        by_cases h : k = j
+        · subst k; simp [X']
+        · simp [X', h]
+      rw [e, he]
+      refine eliminate (P j) (φ j) (hφ j) n u w fun y hy => ?_
+      rw [← he]
+      let z := Function.update x j (⟨y, hy⟩ : zeroLocus K (P j))
+      have h : plug (X' s x) j (specialize y) = total (X' s z) := by
+        unfold plug
+        apply congrArg
+        funext k t
+        by_cases h : k = j
+        · subst k; simp [X', z, hj, specialize]
+        · simp [X', z, h]
+      rw [h, ih]
+  obtain ⟨x⟩ := inhabited P hP
+  have e : total (X' Finset.univ x) = f := by
+    apply algHom_ext
+    rintro ⟨j, t⟩
+    simp [X', total, φ]
+  apply Ideal.Quotient.eq_zero_iff_mem.mp
+  change f p = 0
+  rw [← e, H]
+
+omit [IsAlgClosed K] [∀ j, Finite (W j)] [Fintype J] hP in
+private theorem section_eval (x : Points P) (j : J) (p : MvPolynomial (Sigma W) K) :
+    ∃ q : MvPolynomial (W j) K, ∀ y : zeroLocus K (P j),
+      ev P (Function.update x j y) p = aeval y.val q := by
+  obtain ⟨n, u, w, he⟩ := expand (fun i => (x i).val) j p
+  refine ⟨∑ i, u i * C (w i), fun y => ?_⟩
+  have e : ev P (Function.update x j y) = plug (fun i => (x i).val) j (aeval y.val) := by
+    unfold ev plug
+    apply congrArg
+    funext k t
+    by_cases h : k = j
+    · subst k; simp
+    · simp [h]
+  rw [e, he]
+  simp
+
+omit [DecidableEq J] [Fintype J] in
+/-- Move a pair of nonvanishing witnesses together, one block at a time. -/
+private theorem common [Finite J] (p q : MvPolynomial (Sigma W) K) (x y : Points P)
+    (hx : ev P x p ≠ 0) (hy : ev P y q ≠ 0) : ∃ z, ev P z (p * q) ≠ 0 := by
+  classical
+  let : Fintype J := Fintype.ofFinite J
+  have H (s : Finset J) : ∃ x y : Points P,
+      ev P x p ≠ 0 ∧ ev P y q ≠ 0 ∧ ∀ i ∈ s, x i = y i := by
+    induction s using Finset.induction_on with
+    | empty => exact ⟨x, y, hx, hy, by simp⟩
+    | @insert j s hj ih =>
+      obtain ⟨x, y, hx, hy, e⟩ := ih
+      obtain ⟨u, hu⟩ := section_eval P x j p
+      obtain ⟨w, hw⟩ := section_eval P y j q
+      have h₁ : u ∉ P j := by
+        intro h
+        apply hx
+        simpa using (hu (x j)).trans ((x j).property _ h)
+      have h₂ : w ∉ P j := by
+        intro h
+        apply hy
+        simpa using (hw (y j)).trans ((y j).property _ h)
+      let _ := hP j
+      obtain ⟨z, hz, he⟩ := point (P j) (u * w) (fun h => ((hP j).mem_or_mem h).elim h₁ h₂)
+      let a : zeroLocus K (P j) := ⟨z, hz⟩
+      rw [map_mul] at he
+      refine ⟨Function.update x j a, Function.update y j a, ?_, ?_, ?_⟩
+      · rw [hu]; exact left_ne_zero_of_mul he
+      · rw [hw]; exact right_ne_zero_of_mul he
+      · intro i hi
+        rcases Finset.mem_insert.mp hi with rfl | hi
+        · simp
+        · have h : i ≠ j := fun he => hj (he ▸ hi)
+          simpa [h] using e i hi
+  obtain ⟨x, y, hx, hy, e⟩ := H Finset.univ
+  have h : x = y := funext fun i => e i (Finset.mem_univ _)
+  subst y
+  exact ⟨x, by rw [map_mul]; exact mul_ne_zero hx hy⟩
+
+end BlockProduct
+open BlockProduct
+variable [IsAlgClosed K] [∀ j, Finite (W j)] (P : ∀ j, Ideal (MvPolynomial (W j) K))
+  (hP : ∀ j, (P j).IsPrime)
+
+include hP
+
+/-- The sum of prime ideals on disjoint polynomial blocks is prime. -/
+theorem productIdeal_prime [Finite J] : (productIdeal P).IsPrime := by
+  classical
+  let _ := Fintype.ofFinite J
+  obtain ⟨x⟩ := inhabited P hP
+  constructor
+  · intro h
+    have hh := ev_zero P x (show 1 ∈ productIdeal P by rw [h]; trivial)
+    simp at hh
+  · intro p q h
+    by_contra! hn
+    obtain ⟨x, hx⟩ := not_forall.mp (mt (vanishes P hP p) hn.1)
+    obtain ⟨y, hy⟩ := not_forall.mp (mt (vanishes P hP q) hn.2)
+    obtain ⟨z, hz⟩ := common P hP p q x y hx hy
+    exact hz (ev_zero P z h)
+
+/-- The product equations impose no new relations within a single block. -/
+theorem productIdeal_comap (j : J) : (productIdeal P).comap (rename (Sigma.mk j)) = P j := by
+  classical
+  let _ := hP j
+  refine le_antisymm ?_ (Ideal.map_le_iff_le_comap.mp (le_iSup (fun j
+    => (P j).map (rename (Sigma.mk j))) j))
+  intro p hp
+  by_contra h
+  obtain ⟨z, hz, hn⟩ := point (P j) p h
+  obtain ⟨x⟩ := inhabited P hP
+  let y := Function.update x j (⟨z, hz⟩ : zeroLocus K (P j))
+  have he := ev_zero P y (show rename (Sigma.mk j) p ∈ productIdeal P from hp)
+  rw [ev_rename] at he
+  apply hn
+  simpa [y] using he
+
+end MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+end
+
+/-
+# Local dimension of systems with shared coordinates
+
+Separate the common coordinates and impose equality to the first
+copy. If every factor had a long prime chain through the point,
+their product would have a chain longer than the number of these
+diagonal equations. The remaining short factor admits rational cuts.
+-/
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+open MvPolynomial
+
+variable {K : Type*} [Field K] {J Z : Type} {W : J → Type}
+
+open scoped Classical in
+private theorem mono_product : Monotone (productIdeal (K := K) (W := W)) := by
+  intro p q h
+  exact iSup_mono fun i => Ideal.map_mono (h i)
+
+open scoped Classical in
+private theorem point_product (w : ∀ j, W j → K) :
+    productIdeal (fun j => maxPoint (w j)) ≤ maxPoint (fun t : Sigma W => w t.1 t.2) := by
+  refine iSup_le fun j => Ideal.map_le_iff_le_comap.mpr fun p hp => ?_
+  change eval (fun t : Sigma W => w t.1 t.2) (rename (Sigma.mk j) p) = 0
+  rw [eval_rename]
+  exact hp
+
+open scoped Classical in
+private theorem lengths [IsAlgClosed K] [Fintype J] [∀ j, Finite (W j)]
+    (I : ∀ j, Ideal (MvPolynomial (W j) K)) (w : ∀ j, W j → K) {B : Type} [Fintype B]
+    (y : B → MvPolynomial (Sigma W) K)
+    (h : Isolated (fun t : Sigma W => w t.1 t.2) (productIdeal I ⊔ Ideal.span (Set.range y)))
+    {n : ℕ} (hc : ∀ j, ∃ p, I j ≤ p ∧ Chain p (maxPoint (w j)) n) :
+    Fintype.card J * n ≤ Fintype.card B := by
+  let : ∀ j, Fintype (W j) := fun j => Fintype.ofFinite (W j)
+  choose p hp hchain using hc
+  have he (u v : ∀ j, Ideal (MvPolynomial (W j) K))
+      (hu : ∀ j, (u j).IsPrime) (hv : ∀ j, (v j).IsPrime) (he : productIdeal u
+        = productIdeal v) : u = v := by
+    funext j
+    rw [← productIdeal_comap u hu j, ← productIdeal_comap v hv j, he]
+  have chain := Chain.product productIdeal mono_product (fun u hu => productIdeal_prime u hu) he
+    (fun j => RingHom.ker_isPrime (eval (w j))) hchain
+  exact (chain.weaken (point_product w)).equations y h (mono_product hp)
+
+open scoped Classical in
+private theorem threshold (L N : ℕ) (h : 0 < L) :
+    ∃ d ≤ N, N ≤ L * (N - d) ∧ (L - 1) * N < L * (d + 1) := by
+  let A := (L - 1) * N
+  let d := A / L
+  have hd : L * d ≤ A := Nat.mul_div_le A L
+  have ht : A < (d + 1) * L := (Nat.div_lt_iff_lt_mul h).mp (Nat.lt_succ_self d)
+  have ha : A + N = L * N := by
+    unfold A
+    rw [← Nat.succ_mul, show (L - 1).succ = L by omega]
+  refine ⟨d, Nat.le_of_mul_le_mul_left (hd.trans (by omega)) h, ?_, ?_⟩
+  · rw [Nat.mul_sub_left_distrib]; omega
+  · rwa [mul_comm L]
+
+open scoped Classical in
+theorem local_cut [CharZero K] [IsAlgClosed K] [Fintype J] [Fintype Z]
+    [∀ j, Finite (W j)] [Nonempty J]
+    (I : ∀ j, Ideal (MvPolynomial (Z ⊕ W j) K)) (β : Z → K) (w : ∀ j, W j → K)
+    (joint : Isolated (Sum.elim β (fun x => w x.1 x.2)) (diagonalIdeal I))
+    (fiber : ∀ j, Isolated (Sum.elim β (w j)) (I j ⊔ Ideal.span (Set.range (offset β)))) :
+    ∃ (j : J) (d : ℕ), d ≤ Fintype.card Z ∧ Fintype.card Z ≤ Fintype.card J * (Fintype.card Z - d) ∧
+      ∃ A : Fin d → Z → ℚ, Isolated (Sum.elim β (w j))
+        (I j ⊔ Ideal.span (Set.range (fun t => comb (offset β) (A t)))) := by
+  obtain ⟨d, hd, hsize, hmax⟩ := threshold (Fintype.card J) (Fintype.card Z) Fintype.card_pos
+  have ex : ∃ j, ∀ p, I j ≤ p → ¬Chain p (maxPoint (Sum.elim β (w j))) (d + 1) := by
+    by_contra! hh
+    let k := Classical.arbitrary J
+    have hc := lengths I (fun j => Sum.elim β (w j)) (difference k) (joint.separate k) hh
+    have he : Fintype.card {j // j ≠ k} = Fintype.card J - 1 := by simp
+    rw [Fintype.card_prod, he] at hc
+    exact hmax.not_ge hc
+  obtain ⟨j, hj⟩ := ex
+  exact ⟨j, d, hd, hsize, cut _ _ (fiber j) hj⟩
+
+end MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+end
+
+/-
+# A coordinate projection missing an infinite subfield
+
+Chevalley's theorem makes the image constructible in the prime spectrum
+of the polynomial ring in one variable. The Nullstellensatz identifies
+its rational points. Each basic constructible piece has finite or
+cofinite rational points.
+-/
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+
+open PrimeSpectrum Topology
+variable {K W : Type*} [Field K]
+
+private def polyPoint (x : K) : PrimeSpectrum (Polynomial K) :=
+  ⟨RingHom.ker (Polynomial.evalRingHom x), RingHom.ker_isPrime _⟩
+
+private def coord (i : W) : Polynomial K →+* MvPolynomial W K :=
+  (Polynomial.aeval (MvPolynomial.X i)).toRingHom
+
+private theorem presented [Finite W] (i : W) : (coord (K := K) i).FinitePresentation := by
+  apply RingHom.FinitePresentation.of_finiteType.mp
+  apply RingHom.FiniteType.of_comp_finiteType (f := algebraMap K (Polynomial K))
+  have he : (coord i).comp (algebraMap K (Polynomial K)) = algebraMap K (MvPolynomial W K) := by
+    ext1 t
+    exact AlgHom.commutes (Polynomial.aeval (MvPolynomial.X i : MvPolynomial W K)) t
+  rw [he, RingHom.finiteType_algebraMap]
+  infer_instance
+
+private theorem eval_coord (i : W) (x : W → K) (f : Polynomial K) :
+    MvPolynomial.eval x (coord i f) = f.eval (x i) := by
+  have h := Polynomial.aeval_algHom_apply (MvPolynomial.aeval x) (MvPolynomial.X i) f
+  simpa [coord, MvPolynomial.aeval_eq_eval] using h.symm
+
+private theorem projected [Finite W] [IsAlgClosed K] (P : Set (MvPolynomial W K)) (i : W) (t : K) :
+    polyPoint t ∈ comap (coord i) '' zeroLocus P ↔
+      ∃ x : W → K, (∀ p ∈ P, MvPolynomial.eval x p = 0) ∧ x i = t := by
+  constructor
+  · rintro ⟨q, hq, he⟩
+    obtain ⟨m, hm, hle⟩ := Ideal.exists_le_maximal q.asIdeal q.isPrime.ne_top
+    obtain ⟨x, hx⟩ := MvPolynomial.eq_vanishingIdeal_singleton_of_isMaximal K hm
+    have h (p) (hp : p ∈ q.asIdeal) : MvPolynomial.eval x p = 0 := by
+      have h := hle hp
+      rw [hx, MvPolynomial.mem_vanishingIdeal_singleton_iff, MvPolynomial.aeval_eq_eval] at h
+      exact h
+    refine ⟨x, fun p hp => h p (hq hp), ?_⟩
+    let f := Polynomial.X - Polynomial.C t
+    have hf : f ∈ (comap (coord i) q).asIdeal := by
+      rw [he]
+      change f.eval t = 0
+      simp [f]
+    have hh := h (coord i f) hf
+    simpa [eval_coord, f, sub_eq_zero] using hh
+  · rintro ⟨x, hx, rfl⟩
+    let q : PrimeSpectrum (MvPolynomial W K) :=
+      ⟨RingHom.ker (MvPolynomial.eval x), RingHom.ker_isPrime _⟩
+    refine ⟨q, fun p hp => hx p hp, PrimeSpectrum.ext ?_⟩
+    ext f
+    change MvPolynomial.eval x (coord i f) = 0 ↔ f.eval (x i) = 0
+    rw [eval_coord]
+
+private theorem constructible_projection [Finite W] (P : Set (MvPolynomial W K)) (i : W) :
+    IsConstructible (comap (coord i) '' zeroLocus P) := by
+  apply isConstructible_comap_image (presented i)
+  have hc := (isClosed_zeroLocus P).isOpen_compl
+  have h : IsRetrocompact (zeroLocus P)ᶜ := fun _ _ _
+    => TopologicalSpace.NoetherianSpace.isCompact _
+  simpa using (h.isConstructible hc).compl
+
+private theorem basic_thin (s : BasicConstructibleSetData (Polynomial K)) (T : Set K)
+    (ht : T.Infinite) (h : ∀ x ∈ T, polyPoint x ∉ s.toSet) :
+    (polyPoint ⁻¹' s.toSet).Finite := by
+  classical
+  by_cases hx : ∃ j, s.g j ≠ 0
+  · obtain ⟨j, hj⟩ := hx
+    apply (Polynomial.finite_setOfPred_isRoot hj).subset
+    intro y hy
+    exact hy.1 ⟨j, rfl⟩
+  push Not at hx
+  have hf : s.f = 0 := by
+    by_contra he
+    apply ht
+    refine (Polynomial.finite_setOfPred_isRoot he).subset (fun x hxt => ?_)
+    by_contra hn
+    apply h x hxt
+    constructor
+    · rintro _ ⟨j, rfl⟩
+      rw [hx]
+      exact (polyPoint x).asIdeal.zero_mem
+    · exact fun hh => hn (hh (Set.mem_singleton _))
+  apply Set.finite_empty.subset
+  intro x h
+  apply h.2
+  rintro _ rfl
+  rw [hf]
+  exact (polyPoint x).asIdeal.zero_mem
+
+/-- If the projected rational points avoid an infinite set, their
+coordinate assumes only finitely many values. -/
+theorem finite_projection [Finite W] [IsAlgClosed K] (P : Set (MvPolynomial W K)) (i : W)
+    (T : Set K) (ht : T.Infinite) (ha : ∀ x, (∀ p ∈ P, MvPolynomial.eval x p = 0) → x i ∉ T) :
+    {t | ∃ x : W → K, (∀ p ∈ P, MvPolynomial.eval x p = 0) ∧ x i = t}.Finite := by
+  obtain ⟨D, hD⟩ := exists_constructibleSetData_iff.mpr (constructible_projection P i)
+  have hs : (polyPoint ⁻¹' D.toSet).Finite := by
+    simp only [ConstructibleSetData.toSet, Set.preimage_iUnion]
+    apply D.finite_toSet.biUnion
+    intro s hs
+    apply basic_thin s T ht
+    intro t ht' he
+    have hz : polyPoint t ∈ D.toSet := Set.mem_iUnion₂.mpr ⟨s, hs, he⟩
+    rw [hD, projected] at hz
+    obtain ⟨x, hx, rfl⟩ := hz
+    exact ha x hx ht'
+  rw [hD] at hs
+  exact hs.subset (fun t hx => (projected P i t).mpr hx)
+
+end MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+end
+
+/-
+# The field along a generic ray
+
+Specializing the scaling parameter to one proves independence.
+Over the field generated by the parameter, every derivation kills
+the given polynomial values. The Jacobian then forces it to kill
+all the generating coordinates. In characteristic zero this excludes
+any further transcendental element.
+-/
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+open MvPolynomial
+variable {K L E : Type u} [Field K] [Field L] [Field E]
+  [Algebra K L] [Algebra L E] [Algebra K E] [IsScalarTower K L E]
+  {σ : Type} {c : σ → L} (hc : AlgebraicIndependent K c)
+  {t : E} (ht : Transcendental L t) {a : σ → E} {G : σ → MvPolynomial σ K}
+  (h : ∀ i, aeval a (G i) = t * algebraMap L E (c i))
+
+include hc ht h in
+theorem independent_ray : AlgebraicIndependent K (fun i => aeval a (G i)) := by
+  let P := aeval (R := K) (fun i => Polynomial.X * Polynomial.C (c i))
+  have param : ((Polynomial.aeval t).restrictScalars K).comp P =
+      aeval (fun i => aeval a (G i)) := by
+    ext i
+    simp [P, h]
+    ring
+  have one : ((Polynomial.aeval (1 : L)).restrictScalars K).comp P = aeval c := by
+    ext i
+    simp [P]
+  rw [algebraicIndependent_iff_injective_aeval, ← param]
+  intro x y he
+  have he' : P x = P y := (transcendental_iff_injective.mp ht) he
+  apply algebraicIndependent_iff_injective_aeval.mp hc
+  rw [← one]
+  exact congrArg (Polynomial.aeval (1 : L)) he'
+
+include hc ht h in
+theorem algebraic_ray [Finite σ] [CharZero E]
+    (ha : IntermediateField.adjoin L (insert t (Set.range a)) = ⊤) :
+    Algebra.IsAlgebraic (IntermediateField.adjoin L {t}) E := by
+  classical
+  let : Fintype σ := Fintype.ofFinite σ
+  let M := IntermediateField.adjoin L {t}
+  have unit := isUnit_jacobian G a (independent_ray hc ht h)
+  constructor
+  intro z
+  by_contra hz
+  have ind : AlgebraicIndependent M (fun _ : Unit => z)
+    := algebraicIndependent_unique_type_iff.mpr hz
+  obtain ⟨d, hd⟩ := derivation_of_independent ind (fun _ => 1)
+  let D := d.restrictScalars L
+  have hdt : D t = 0 := d.map_algebraMap (⟨t, IntermediateField.subset_adjoin L _ (by simp)⟩ : M)
+  have eval (i : σ) : D (aeval a (G i)) = 0 := by
+    rw [h, D.leibniz, hdt, D.map_algebraMap, smul_zero, smul_zero, add_zero]
+  have killed : (fun i => D (a i)) = 0 := by
+    apply Matrix.mulVec_injective_iff_isUnit.mpr unit
+    rw [Matrix.mulVec_zero]
+    funext i
+    exact (derivation_aeval (D.restrictScalars K) a (G i)).symm.trans (eval i)
+  have zero (z : E) (hm : z ∈ IntermediateField.adjoin L (insert t (Set.range a))) : D z = 0 := by
+    induction hm using IntermediateField.adjoin_induction with
+    | mem z hz =>
+      rcases hz with rfl | ⟨j, rfl⟩
+      · exact hdt
+      · exact congrFun killed j
+    | algebraMap z => exact D.map_algebraMap z
+    | add z w _ _ hz hw => rw [map_add, hz, hw, add_zero]
+    | inv z _ hz => rw [D.leibniz_inv, hz, smul_zero]
+    | mul z w _ _ hz hw => rw [D.leibniz, hz, hw, smul_zero, smul_zero, add_zero]
+  exact one_ne_zero ((hd ()).symm.trans (zero z (by rw [ha]; trivial)))
+
+end MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+end
+
+/- # A finite, nonempty slice by base-field coordinate equations -/
+
+noncomputable section
+namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+
+variable {F K W : Type*} [Field F] [Field K] [Algebra F K]
+
+open scoped Classical in
+/-- The indexing data represented by `{x | (∀ p ∈ P, MvPolynomial.eval x p = 0) ∧ ∀ j t, b j =
+some t → x j = algebraMap F K t}`. -/
+def slice (P : Set (MvPolynomial W K)) (b : W → Option F) : Set (W → K) :=
+  {x | (∀ p ∈ P, MvPolynomial.eval x p = 0) ∧ ∀ j t, b j = some t → x j = algebraMap F K t}
+
+open scoped Classical in
+private def equations (P : Set (MvPolynomial W K)) (b : W → Option F) :=
+  P ∪ {p | ∃ j t, b j = some t ∧ p = MvPolynomial.X j - MvPolynomial.C (algebraMap F K t)}
+
+open scoped Classical in
+private theorem equations_iff (P : Set (MvPolynomial W K)) (b : W → Option F) (x : W → K) :
+    (∀ p ∈ equations P b, MvPolynomial.eval x p = 0) ↔ x ∈ slice P b := by
+  constructor
+  · intro h
+    refine ⟨fun p hp => h _ (.inl hp), fun j t ht => ?_⟩
+    simpa [sub_eq_zero] using h _ (.inr ⟨j, t, ht, rfl⟩)
+  · rintro ⟨h, h'⟩ p (hp|⟨j, t, ht, rfl⟩)
+    · exact h _ hp
+    · simp [h' j t ht]
+
+open scoped Classical in
+private theorem single_slice [Finite W] [Infinite F] [IsAlgClosed K]
+    (P : Set (MvPolynomial W K)) (b : W → Option F) (hb : (slice P b).Nonempty) (i : W) :
+    ∃ b' : W → Option F, (slice P b').Nonempty ∧ slice P b' ⊆ slice P b ∧
+      ((fun x => x i) '' slice P b').Finite := by
+  by_cases hh : ∃ x ∈ slice P b, ∃ t, x i = algebraMap F K t
+  · obtain ⟨x, hx, t, ht⟩ := hh
+    let b' := Function.update b i (some t)
+    have he (y : W → K) (hy : y ∈ slice P b') : y i = x i :=
+      (hy.2 i t (by simp [b'])).trans ht.symm
+    refine ⟨b', ⟨x, hx.1, ?_⟩, ?_, ?_⟩
+    · intro j s hs
+      by_cases hj : j = i
+      · subst j
+        have : t = s := by simpa [b'] using hs
+        rwa [← this]
+      · exact hx.2 j s (by simpa [b', hj] using hs)
+    · intro y hy
+      refine ⟨hy.1, fun j s hs => ?_⟩
+      by_cases hj : j = i
+      · subst j; exact (he y hy).trans (hx.2 i s hs)
+      · exact hy.2 j s (by simpa [b', hj] using hs)
+    · apply (Set.finite_singleton (x i)).subset
+      rintro _ ⟨y, hy, rfl⟩
+      exact he y hy
+  · refine ⟨b, hb, Set.Subset.rfl, ?_⟩
+    have hp := finite_projection (equations P b) i (Set.range (algebraMap F K))
+      (Set.infinite_range_of_injective (algebraMap F K).injective) (by
+        rintro x hx ⟨t, ht⟩
+        exact hh ⟨x, (equations_iff P b x).mp hx, t, ht.symm⟩)
+    refine hp.subset ?_
+    rintro _ ⟨x, hx, rfl⟩
+    exact ⟨x, (equations_iff P b x).mpr hx, rfl⟩
+
+open scoped Classical in
+/-- Fix a coordinate when possible. Otherwise its projection omits the
+entire infinite subfield, hence is already finite. Later cuts can only
+shrink the projections already controlled. -/
+theorem finite_slice (F : Type*) [Field F] [Infinite F] {K W : Type*}
+    [Field K] [Algebra F K] [IsAlgClosed K] [Finite W] (P : Set (MvPolynomial W K))
+    (h : ∃ x, ∀ p ∈ P, MvPolynomial.eval x p = 0) :
+    ∃ b : W → Option F, (slice P b).Nonempty ∧ (slice P b).Finite := by
+  let _ := Fintype.ofFinite W
+  have step (s : Finset W) : ∃ b : W → Option F, (slice P b).Nonempty ∧
+      ∀ i ∈ s, ((fun x => x i) '' slice P b).Finite := by
+    induction s using Finset.induction_on with
+    | empty =>
+      obtain ⟨x, hx⟩ := h
+      exact ⟨fun _ => none, ⟨x, hx, by simp⟩, by simp⟩
+    | @insert i s _ ih =>
+      obtain ⟨b, hb, hs⟩ := ih
+      obtain ⟨b', hb', hle, hi⟩ := single_slice P b hb i
+      refine ⟨b', hb', fun j hj => ?_⟩
+      rcases Finset.mem_insert.mp hj with rfl|hj
+      · exact hi
+      · exact (hs j hj).subset (Set.image_mono hle)
+  obtain ⟨b, hb, hs⟩ := step Finset.univ
+  exact ⟨b, hb, (Set.Finite.pi' (fun j => hs j (Finset.mem_univ _))).subset
+    (fun x hx _ => ⟨x, hx, rfl⟩)⟩
+
+end MatrixMultiplicationAllFields.MatrixExponent.Rectangle.Verification
+end

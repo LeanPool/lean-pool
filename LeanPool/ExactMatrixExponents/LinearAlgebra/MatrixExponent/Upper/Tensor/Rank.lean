@@ -1,0 +1,92 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.SpectralBooks.Tensor
+public import LeanPool.MatrixMultiplicationAllFields.LinearAlgebra.MatrixMultiplication.Tensor.ComplexTensorBatching
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Blocks
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TensorClassRank
+
+/-!
+# Actual finite tensor rank
+
+The natural tensor is the diagonal coefficient tensor. Its local restrictions
+are exactly the tensors admitting the corresponding number of rank-one terms.
+Every finite coefficient tensor has such a decomposition, obtained by expanding
+its individual coefficients. Exact rank is therefore a genuine minimum.
+-/
+
+@[expose] public section
+
+open MatrixMultiplicationAllFields.MatrixExponent MatrixMultiplicationAllFields.TensorSpectrum
+
+noncomputable section
+
+open scoped BigOperators
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
+
+namespace MatrixMultiplicationAllFields.MatrixExponent.Upper
+namespace CoefficientTensor
+
+/-- The diagonal coefficient tensor for independent scalar products. -/
+abbrev natTensor := MatrixMultiplicationAllFields.TensorSpectrum.CoefficientTensor.natTensor
+  (K := Coeff)
+
+export MatrixMultiplicationAllFields.TensorSpectrum.CoefficientTensor
+  (restrict_natTensor rankAtMost_natTensor rankAtMost_iff_natTensor_restricts
+    natTensor_add_pullback natTensor_add_restricts rankAtMost_blockSum natTensor_restricts_of_le
+    rankAtMost_mono rank rank_spec rank_le_iff rank_mono rank_product_le rank_blockSum_le
+    rank_eq_zero_iff)
+
+variable {X Y Z : Type*} [Fintype X] [Fintype Y] [Fintype Z]
+
+/-- A nonzero coefficient can be selected and rescaled to obtain the scalar
+unit tensor. No nonzero-rank assumption replaces this actual restriction. -/
+theorem nonzero_restricts_natTensor_one {T : Tensor Coeff X Y Z} (hT : T ≠ 0) :
+    Restricts T (natTensor 1) := by
+  classical
+  have hex : ∃ x y z, T x y z ≠ 0 := by
+    by_contra h
+    apply hT
+    funext x y z
+    exact Classical.byContradiction (fun hn => h ⟨x, y, z, hn⟩)
+  obtain ⟨x, y, z, hxyz⟩ := hex
+  exact TensorSpectrum.CoefficientTensor.scaled_restricts_natTensor_one x y z
+    (T x y z)⁻¹ (inv_mul_cancel₀ hxyz)
+
+end CoefficientTensor
+
+namespace TensorRep
+
+/-- The rank of the tensor in its chosen coordinates. -/
+abbrev rank (T : TensorRep) := MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.rank T
+
+namespace Restricts
+
+export MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.Restricts
+  (rank_le)
+
+end Restricts
+
+namespace Equivalent
+
+export MatrixMultiplicationAllFields.TensorSpectrum.TensorRep.Equivalent
+  (rank_eq)
+
+end Equivalent
+
+end TensorRep
+
+namespace TensorClass
+
+export MatrixMultiplicationAllFields.TensorSpectrum.TensorClass
+  (rank rank_ofRep rank_mono rank_ofTensor)
+
+end TensorClass
+
+end MatrixMultiplicationAllFields.MatrixExponent.Upper

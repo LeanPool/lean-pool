@@ -1,0 +1,54 @@
+/-
+Copyright (c) 2026 the original authors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: OpenAI
+-/
+/- Modified by Lean Pool contributors for this port. -/
+module
+
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coefficients
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.PolynomialDegeneration
+public import Mathlib.Algebra.Polynomial.Degree.Defs
+public import Mathlib.Algebra.Polynomial.Eval.Coeff
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.WeightedPolynomials
+
+/-!
+# Explicit polynomial families for diagonal weight degenerations
+
+The diagonal degeneration has a polynomial coefficient family, not merely a
+topological limit. Its constant coefficient is the retained tensor. Its degree
+is controlled by the supported total weights. At every nonzero parameter its
+evaluation is an exact restriction of the source tensor. These are the inputs
+needed to extract tensor powers by finite interpolation.
+-/
+
+@[expose] public section
+
+open MatrixMultiplicationAllFields.MatrixExponent MatrixMultiplicationAllFields.TensorSpectrum
+
+open MatrixMultiplicationAllFields.MatrixMultiplication.Foundation
+
+noncomputable section
+
+namespace MatrixMultiplicationAllFields.MatrixExponent.Upper
+
+variable {X Y Z : Type*}
+
+export MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors
+  (weightedPolynomial weightedPolynomial_eval weightedPolynomial_coeff_zero
+    weightedPolynomial_natDegree_le weightedPolynomial_degree_le
+    weightedPolynomial_degree_le_one)
+
+/-- Every nonzero evaluation has actual diagonal local restriction witnesses;
+the polynomial family does not assume a character or a continuity principle. -/
+theorem weightedPolynomial_eval_mem_restrictionOrbit
+    [Fintype X] [Fintype Y] [Fintype Z]
+    (T : Tensor Coeff X Y Z) (wx : X → ℤ) (wy : Y → ℤ) (wz : Z → ℤ)
+    (h : ∀ x y z, T x y z ≠ 0 → 0 ≤ wx x + wy y + wz z)
+    {t : Coeff} (ht : t ≠ 0) :
+    (fun x y z => (weightedPolynomial T wx wy wz x y z).eval t) ∈
+      LocalTensor.orbit T := by
+  rw [weightedPolynomial_eval]
+  exact weightedFamily_mem_restrictionOrbit T wx wy wz h ht
+
+end MatrixMultiplicationAllFields.MatrixExponent.Upper
