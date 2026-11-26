@@ -134,9 +134,11 @@ theorem rows : P.checkRows = true := by decide +kernel
 
 /-- Symmetries of the problem, one for each element of `perms`. -/
 def syms : List Sym :=
-  [{ h := [0, 1, 2, 3, 4, 5], hi := [0, 1, 2, 3, 4, 5], vp := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23], vq := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-    12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] }]
+  [
+    { h := [0, 1, 2, 3, 4, 5],
+      hi := [0, 1, 2, 3, 4, 5],
+      vp := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23],
+      vq := [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23] }]
 
 /-- The group of permutations of the high variables induced by the symmetries. -/
 def perms : List (List ℕ × List ℕ) :=
