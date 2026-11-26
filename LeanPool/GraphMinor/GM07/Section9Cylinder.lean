@@ -588,7 +588,7 @@ theorem _root_.GraphMinor.Surface.IsClosedDisc.isPreconnected {X : Type*} [Topol
   IsPreconnected.subset_closure hD.isPreconnected_discInt (discInt_subset D)
     hD.subset_closure_discInt
 
-private theorem minimal_line_meets_first_boundary_at_end
+private theorem minimal_line_meets_boundaries_at_ends
     {S : Type u}
     [TopologicalSpace S]
     {F₁ : Set S}
@@ -608,61 +608,39 @@ private theorem minimal_line_meets_first_boundary_at_end
     (↑(f 1) = v) →
     let g : ↑unitInterval → S := fun t => ↑(f t)
     (Injective g) →
-    ∀ (t : ↑unitInterval), g t ∈ F₁ ↔ t = 1 := by
-  intro a b haF₂ hbF₁ I u v hI_disj f hf0 hf1 g hg_inj t
-  constructor
-  · intro htF₁
-    by_contra ht1
-    have ht0 : t ≠ 0 := by
-      intro ht0
-      have hgu : g t = u := ht0 ▸ hf0
-      exact disjoint_left.mp hDisj htF₁ (hgu ▸ haF₂)
-    have hgt_uv : g t ∉ ({u, v} : Set S) := by
+    (∀ t : unitInterval, g t ∈ F₁ ↔ t = 1) ∧
+      (∀ t : unitInterval, g t ∈ F₂ ↔ t = 0) := by
+  intro a b haF₂ hbF₁ I u v hI_disj f hf0 hf1 g hg_inj
+  have interior_misses {t : unitInterval} (ht0 : t ≠ 0) (ht1 : t ≠ 1) :
+      g t ∉ F₁ ∪ F₂ := by
+    have hEnds : g t ∉ ({u, v} : Set S) := by
       rintro (hgu | hgv)
       · exact ht0 (hg_inj (hgu.trans hf0.symm))
       · exact ht1 (hg_inj (hgv.trans hf1.symm))
-    exact disjoint_left.mp hI_disj ⟨(f t).2, hgt_uv⟩ (Or.inl htF₁)
-  · rintro rfl
-    change (f 1).1 ∈ F₁
-    rwa [hf1]
-
-private theorem minimal_line_meets_second_boundary_at_end
-    {S : Type u}
-    [TopologicalSpace S]
-    {F₁ : Set S}
-    {F₂ : Set S}
-    (hDisj : Disjoint F₁ F₂)
-    (g₁ : unitInterval → S) :
-    ∀ (a : ↑unitInterval),
-    ∀ (b : ↑unitInterval),
-    (g₁ a ∈ F₂) →
-    (g₁ b ∈ F₁) →
-    let I : Set S := g₁ '' Icc a b
-    let u : S := g₁ a
-    let v : S := g₁ b
-    (Disjoint (I \ {u, v}) (F₁ ∪ F₂)) →
-    ∀ (f : ↑unitInterval ≃ₜ ↑I),
-    (↑(f 0) = u) →
-    (↑(f 1) = v) →
-    let g : ↑unitInterval → S := fun t => ↑(f t)
-    (Injective g) →
-    ∀ (t : ↑unitInterval), g t ∈ F₂ ↔ t = 0 := by
-  intro a b haF₂ hbF₁ I u v hI_disj f hf0 hf1 g hg_inj t
+    exact disjoint_left.mp hI_disj ⟨(f t).2, hEnds⟩
   constructor
-  · intro htF₂
-    by_contra ht0
-    have ht1 : t ≠ 1 := by
-      intro ht1
-      have hgv : g t = v := ht1 ▸ hf1
-      exact disjoint_left.mp hDisj (hgv ▸ hbF₁) htF₂
-    have hgt_uv : g t ∉ ({u, v} : Set S) := by
-      rintro (hgu | hgv)
-      · exact ht0 (hg_inj (hgu.trans hf0.symm))
-      · exact ht1 (hg_inj (hgv.trans hf1.symm))
-    exact disjoint_left.mp hI_disj ⟨(f t).2, hgt_uv⟩ (Or.inr htF₂)
-  · rintro rfl
-    change (f 0).1 ∈ F₂
-    rwa [hf0]
+  · intro t
+    constructor
+    · intro ht
+      by_contra ht1
+      have ht0 : t ≠ 0 := by
+        rintro rfl
+        exact disjoint_left.mp hDisj ht (show (f 0).1 ∈ F₂ from hf0.symm ▸ haF₂)
+      exact interior_misses ht0 ht1 (Or.inl ht)
+    · rintro rfl
+      change (f 1).1 ∈ F₁
+      rwa [hf1]
+  · intro t
+    constructor
+    · intro ht
+      by_contra ht0
+      have ht1 : t ≠ 1 := by
+        rintro rfl
+        exact disjoint_left.mp hDisj (show (f 1).1 ∈ F₁ from hf1.symm ▸ hbF₁) ht
+      exact interior_misses ht0 ht1 (Or.inr ht)
+    · rintro rfl
+      change (f 0).1 ∈ F₂
+      rwa [hf0]
 
 private theorem parametrization_maps_vertex_times_to_vertices
     {S : Type u}
@@ -850,12 +828,8 @@ theorem exists_minimal_line_and_split {S : Type u} [TopologicalSpace S] [T2Space
       exact (f t).2
     · intro hx
       exact ⟨f.symm ⟨x, hx⟩, congrArg Subtype.val (f.apply_symm_apply ⟨x, hx⟩)⟩
-  have hg_F₁_iff : ∀ t : unitInterval, g t ∈ F₁ ↔ t = 1 := by
-    exact minimal_line_meets_first_boundary_at_end (S := S) (F₁ := F₁) (F₂ := F₂) hDisj g₁ a b
-      haF₂ hbF₁    hI_disj f hf0 hf1  hg_inj
-  have hg_F₂_iff : ∀ t : unitInterval, g t ∈ F₂ ↔ t = 0 := by
-    exact minimal_line_meets_second_boundary_at_end (S := S) (F₁ := F₁) (F₂ := F₂) hDisj g₁ a b
-      haF₂ hbF₁    hI_disj f hf0 hf1  hg_inj
+  obtain ⟨hg_F₁_iff, hg_F₂_iff⟩ :=
+    minimal_line_meets_boundaries_at_ends hDisj g₁ a b haF₂ hbF₁ hI_disj f hf0 hf1 hg_inj
   -- Order the m vertices of G on I along unitInterval
   let T_V : Set unitInterval := g ⁻¹' G.V
   have hTV_fin : T_V.Finite := G.finite_V.preimage hg_inj.injOn
@@ -1654,121 +1628,37 @@ private theorem pullback_candidate_is_preconnected
   rw [← himg]
   exact isPreconnected_univ.image _ (continuous_subtype_val.comp e.continuous).continuousOn
 
-private theorem pullback_candidate_meets_first_barrier
-    {S : Type u}
-    {Z : Type u}
-    [TopologicalSpace Z]
-    {j : S → Z}
-    {barI₁ : Set S}
-    {barI₂ : Set S}
-    {D₁ : Set Z}
-    {D₂ : Set Z}
-    {D₃ : Set Z}
-    {E₂ : Set Z}
-    {E₁' : Set Z}
-    (C_sub : Set Z) :
-    let P : Fin 3 → Set Z := ![D₁, D₂, D₃]
-    ∀ (X' : Set ↥C_sub),
-    ∀ (B₁ : Set ↥C_sub),
-    ∀ (B₂ : Set ↥C_sub),
-    (B₁ ⊆ X') →
-    (B₂ ⊆ X') →
-    ∀ (i₁ : Fin 3),
-    ∀ (i₂ : Fin 3),
-    (i₁ ≠ i₂) →
-    let X : Set S := unliftEdge j C_sub X'
-    (j '' X = Subtype.val '' X') →
-    ∀ (D_B₁ : Set Z),
-    (discBd D_B₁ = Subtype.val '' B₁) →
-    (∀ (j : Fin 3), P j ⊆ D_B₁ ↔ j = i₁) →
-    ∀ (D_B₂ : Set Z),
-    (discBd D_B₂ = Subtype.val '' B₂) →
-    (∀ (j : Fin 3), P j ⊆ D_B₂ ↔ j = i₂) →
-    ((D₁ ⊆ D_B₁ ∧ ¬D₃ ⊆ D_B₁ ∨ ¬D₁ ⊆ D_B₁ ∧ D₃ ⊆ D_B₁ → (discBd D_B₁ ∩ (E₂ ∪ j ''
-      barI₁)).Nonempty) ∧ (D₂ ⊆ D_B₁ ∧ ¬D₃ ⊆ D_B₁ ∨ ¬D₂ ⊆ D_B₁ ∧ D₃ ⊆ D_B₁ → (discBd D_B₁ ∩ (E₁' ∪
-      j '' barI₂)).Nonempty)) →
-    ((D₁ ⊆ D_B₂ ∧ ¬D₃ ⊆ D_B₂ ∨ ¬D₁ ⊆ D_B₂ ∧ D₃ ⊆ D_B₂ → (discBd D_B₂ ∩ (E₂ ∪ j ''
-      barI₁)).Nonempty) ∧ (D₂ ⊆ D_B₂ ∧ ¬D₃ ⊆ D_B₂ ∨ ¬D₂ ⊆ D_B₂ ∧ D₃ ⊆ D_B₂ → (discBd D_B₂ ∩ (E₁' ∪
-      j '' barI₂ )).Nonempty)) →
-    (j '' X ∩ (E₂ ∪ j '' barI₁)).Nonempty := by
-  intro P X' B₁ B₂ hB₁_sub hB₂_sub i₁ i₂ hi₁i₂_ne X hjX_eq D_B₁ hbdB₁ honeB₁
-    D_B₂ hbdB₂ honeB₂ hDB₁_K hDB₂_K
-  rw [hjX_eq]
-  have h02 : (i₁ = 0 ∨ i₁ = 2) ∨ (i₂ = 0 ∨ i₂ = 2) := by
-    fin_cases i₁ <;> fin_cases i₂ <;> first | exact (hi₁i₂_ne rfl).elim | decide
-  rcases h02 with hi₁ | hi₂
-  · have hne : (discBd D_B₁ ∩ (E₂ ∪ j '' barI₁)).Nonempty := by
-      apply hDB₁_K.1
-      rcases hi₁ with rfl | rfl
-      · exact Or.inl ⟨(honeB₁ 0).mpr rfl, fun h => by have := (honeB₁ 2).mp h; revert this; decide⟩
-      · exact Or.inr ⟨fun h => by have := (honeB₁ 0).mp h; revert this; decide, (honeB₁ 2).mpr rfl⟩
-    rw [hbdB₁] at hne
-    exact hne.mono (inter_subset_inter_left _ (image_mono hB₁_sub))
-  · have hne : (discBd D_B₂ ∩ (E₂ ∪ j '' barI₁)).Nonempty := by
-      apply hDB₂_K.1
-      rcases hi₂ with rfl | rfl
-      · exact Or.inl ⟨(honeB₂ 0).mpr rfl, fun h => by have := (honeB₂ 2).mp h; revert this; decide⟩
-      · exact Or.inr ⟨fun h => by have := (honeB₂ 0).mp h; revert this; decide, (honeB₂ 2).mpr rfl⟩
-    rw [hbdB₂] at hne
-    exact hne.mono (inter_subset_inter_left _ (image_mono hB₂_sub))
-
-private theorem pullback_candidate_meets_second_barrier
-    {S : Type u}
-    {Z : Type u}
-    [TopologicalSpace Z]
-    {j : S → Z}
-    {barI₁ : Set S}
-    {barI₂ : Set S}
-    {D₁ : Set Z}
-    {D₂ : Set Z}
-    {D₃ : Set Z}
-    {E₂ : Set Z}
-    {E₁' : Set Z}
-    (C_sub : Set Z) :
-    let P : Fin 3 → Set Z := ![D₁, D₂, D₃]
-    ∀ (X' : Set ↥C_sub),
-    ∀ (B₁ : Set ↥C_sub),
-    ∀ (B₂ : Set ↥C_sub),
-    (B₁ ⊆ X') →
-    (B₂ ⊆ X') →
-    ∀ (i₁ : Fin 3),
-    ∀ (i₂ : Fin 3),
-    (i₁ ≠ i₂) →
-    let X : Set S := unliftEdge j C_sub X'
-    (j '' X = Subtype.val '' X') →
-    ∀ (D_B₁ : Set Z),
-    (discBd D_B₁ = Subtype.val '' B₁) →
-    (∀ (j : Fin 3), P j ⊆ D_B₁ ↔ j = i₁) →
-    ∀ (D_B₂ : Set Z),
-    (discBd D_B₂ = Subtype.val '' B₂) →
-    (∀ (j : Fin 3), P j ⊆ D_B₂ ↔ j = i₂) →
-    ((D₁ ⊆ D_B₁ ∧ ¬D₃ ⊆ D_B₁ ∨ ¬D₁ ⊆ D_B₁ ∧ D₃ ⊆ D_B₁ → (discBd D_B₁ ∩ (E₂ ∪ j ''
-      barI₁)).Nonempty) ∧ (D₂ ⊆ D_B₁ ∧ ¬D₃ ⊆ D_B₁ ∨ ¬D₂ ⊆ D_B₁ ∧ D₃ ⊆ D_B₁ → (discBd D_B₁ ∩ (E₁' ∪
-      j '' barI₂)).Nonempty)) →
-    ((D₁ ⊆ D_B₂ ∧ ¬D₃ ⊆ D_B₂ ∨ ¬D₁ ⊆ D_B₂ ∧ D₃ ⊆ D_B₂ → (discBd D_B₂ ∩ (E₂ ∪ j ''
-      barI₁)).Nonempty) ∧ (D₂ ⊆ D_B₂ ∧ ¬D₃ ⊆ D_B₂ ∨ ¬D₂ ⊆ D_B₂ ∧ D₃ ⊆ D_B₂ → (discBd D_B₂ ∩ (E₁' ∪
-      j '' barI₂ )).Nonempty)) →
-    (j '' X ∩ (E₁' ∪ j '' barI₂)).Nonempty := by
-  intro P X' B₁ B₂ hB₁_sub hB₂_sub i₁ i₂ hi₁i₂_ne X hjX_eq D_B₁ hbdB₁ honeB₁
-    D_B₂ hbdB₂ honeB₂ hDB₁_K hDB₂_K
-  rw [hjX_eq]
-  have h12 : (i₁ = 1 ∨ i₁ = 2) ∨ (i₂ = 1 ∨ i₂ = 2) := by
-    fin_cases i₁ <;> fin_cases i₂ <;> first | exact (hi₁i₂_ne rfl).elim | decide
-  rcases h12 with hi₁ | hi₂
-  · have hne : (discBd D_B₁ ∩ (E₁' ∪ j '' barI₂)).Nonempty := by
-      apply hDB₁_K.2
-      rcases hi₁ with rfl | rfl
-      · exact Or.inl ⟨(honeB₁ 1).mpr rfl, fun h => by have := (honeB₁ 2).mp h; revert this; decide⟩
-      · exact Or.inr ⟨fun h => by have := (honeB₁ 1).mp h; revert this; decide, (honeB₁ 2).mpr rfl⟩
-    rw [hbdB₁] at hne
-    exact hne.mono (inter_subset_inter_left _ (image_mono hB₁_sub))
-  · have hne : (discBd D_B₂ ∩ (E₁' ∪ j '' barI₂)).Nonempty := by
-      apply hDB₂_K.2
-      rcases hi₂ with rfl | rfl
-      · exact Or.inl ⟨(honeB₂ 1).mpr rfl, fun h => by have := (honeB₂ 2).mp h; revert this; decide⟩
-      · exact Or.inr ⟨fun h => by have := (honeB₂ 1).mp h; revert this; decide, (honeB₂ 2).mpr rfl⟩
-    rw [hbdB₂] at hne
-    exact hne.mono (inter_subset_inter_left _ (image_mono hB₂_sub))
+private theorem pullback_candidate_meets_barrier
+    {S Z : Type u} [TopologicalSpace Z] {j : S → Z} {X : Set S} {C_sub : Set Z}
+    {X' B₁ B₂ : Set C_sub} (hB₁ : B₁ ⊆ X') (hB₂ : B₂ ⊆ X')
+    {i₁ i₂ : Fin 3} (hne : i₁ ≠ i₂) (hX : j '' X = Subtype.val '' X')
+    (P : Fin 3 → Set Z) (index : Fin 3) (hIndex : index ≠ 2) {barrier D₁ D₂ : Set Z}
+    (hBd₁ : discBd D₁ = Subtype.val '' B₁) (hOnly₁ : ∀ k, P k ⊆ D₁ ↔ k = i₁)
+    (hBd₂ : discBd D₂ = Subtype.val '' B₂) (hOnly₂ : ∀ k, P k ⊆ D₂ ↔ k = i₂)
+    (hMeet₁ : (P index ⊆ D₁ ∧ ¬ P 2 ⊆ D₁) ∨ (¬ P index ⊆ D₁ ∧ P 2 ⊆ D₁) →
+      (discBd D₁ ∩ barrier).Nonempty)
+    (hMeet₂ : (P index ⊆ D₂ ∧ ¬ P 2 ⊆ D₂) ∨ (¬ P index ⊆ D₂ ∧ P 2 ⊆ D₂) →
+      (discBd D₂ ∩ barrier).Nonempty) :
+    (j '' X ∩ barrier).Nonempty := by
+  have selectDisc : ∀ k a b : Fin 3, k ≠ 2 → a ≠ b →
+      (a = k ∨ a = 2) ∨ (b = k ∨ b = 2) := by decide
+  have meet {B : Set C_sub} {D : Set Z} {i : Fin 3} (hB : B ⊆ X')
+      (hBd : discBd D = Subtype.val '' B) (hOnly : ∀ k, P k ⊆ D ↔ k = i)
+      (hMeet : (P index ⊆ D ∧ ¬ P 2 ⊆ D) ∨ (¬ P index ⊆ D ∧ P 2 ⊆ D) →
+        (discBd D ∩ barrier).Nonempty) (hi : i = index ∨ i = 2) :
+      (Subtype.val '' X' ∩ barrier).Nonempty := by
+    have hinter : (discBd D ∩ barrier).Nonempty := by
+      apply hMeet
+      rcases hi with h | h
+      · exact Or.inl
+          ⟨(hOnly index).mpr h.symm, fun hp => hIndex (h.symm.trans ((hOnly 2).mp hp).symm)⟩
+      · exact Or.inr ⟨fun hp => hIndex (((hOnly index).mp hp).trans h), (hOnly 2).mpr h.symm⟩
+    rw [hBd] at hinter
+    exact hinter.mono (inter_subset_inter_left _ (image_mono hB))
+  rw [hX]
+  rcases selectDisc index i₁ i₂ hIndex hne with h | h
+  · exact meet hB₁ hBd₁ hOnly₁ hMeet₁ h
+  · exact meet hB₂ hBd₂ hOnly₂ hMeet₂ h
 
 private theorem one_candidate_disc_surrounds_original_cuff
     {Z : Type u}
@@ -1973,16 +1863,12 @@ theorem lemma_9_3_claim_2 {S Z : Type u} [TopologicalSpace S] [T2Space S]
     hD₁ hD₂ hD₃ hE₂ hbE₂ hE₁' hbE₁' hD₁_in_E₂ hD₂_in_E₁' hjz_D₃ hDB₁ hbdB₁_sub
   have hDB₂_K := discBd_meets_K₁_or_K₂ hCS_Z hSphZ hj hbarI₁_ends hbarI₂_ends hu hv
     hD₁ hD₂ hD₃ hE₂ hbE₂ hE₁' hbE₁' hD₁_in_E₂ hD₂_in_E₁' hjz_D₃ hDB₂ hbdB₂_sub
-  have hX_meets_K₁ : (j '' X ∩ (E₂ ∪ j '' barI₁)).Nonempty := by
-    exact pullback_candidate_meets_first_barrier (S := S) (Z := Z) (j := j) (barI₁ := barI₁)
-      (barI₂ := barI₂) (D₁ := D₁) (D₂ := D₂) (D₃ := D₃) (E₂ := E₂) (E₁' := E₁') C_sub X' B₁
-      B₂ hB₁_sub hB₂_sub i₁ i₂ hi₁i₂_ne hjX_eq D_B₁ hbdB₁ honeB₁ D_B₂ hbdB₂
-      honeB₂ hDB₁_K hDB₂_K
-  have hX_meets_K₂ : (j '' X ∩ (E₁' ∪ j '' barI₂)).Nonempty := by
-    exact pullback_candidate_meets_second_barrier (S := S) (Z := Z) (j := j) (barI₁ := barI₁)
-      (barI₂ := barI₂) (D₁ := D₁) (D₂ := D₂) (D₃ := D₃) (E₂ := E₂) (E₁' := E₁') C_sub X' B₁
-      B₂ hB₁_sub hB₂_sub i₁ i₂ hi₁i₂_ne hjX_eq D_B₁ hbdB₁ honeB₁ D_B₂ hbdB₂
-      honeB₂ hDB₁_K hDB₂_K
+  have hX_meets_K₁ : (j '' X ∩ (E₂ ∪ j '' barI₁)).Nonempty :=
+    pullback_candidate_meets_barrier hB₁_sub hB₂_sub hi₁i₂_ne hjX_eq P 0 (by decide)
+      hbdB₁ honeB₁ hbdB₂ honeB₂ hDB₁_K.1 hDB₂_K.1
+  have hX_meets_K₂ : (j '' X ∩ (E₁' ∪ j '' barI₂)).Nonempty :=
+    pullback_candidate_meets_barrier hB₁_sub hB₂_sub hi₁i₂_ne hjX_eq P 1 (by decide)
+      hbdB₁ honeB₁ hbdB₂ honeB₂ hDB₁_K.2 hDB₂_K.2
   -- Step 4: Case split on whether j '' X meets E₁' or E₂
   by_cases hXE₁' : (j '' X ∩ E₁').Nonempty
   · exact ncard_ge_of_arcConnected_meets G hDisj hbarI₁_norm hbarI₂_norm

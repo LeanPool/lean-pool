@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM07.Defs
 public import LeanPool.GraphMinor.Surface.ArcTools
+import LeanPool.GraphMinor.GM07.NetSeparateEquivalence
 import LeanPool.GraphMinor.GM07.NetSwapFibers
 import LeanPool.GraphMinor.GM07.NetSwapArcs
 import LeanPool.GraphMinor.GM07.NetSwapSides
@@ -65,7 +66,6 @@ theorem Net.swap_map_eqvGen
   let R : T → T → Prop := Relation.EqvGen
     (fun a b : T => ∃ (j : Fin N.r) (t : unitInterval), a = f j t ∧ b = g j t)
   have hRsymm {x y : T} : R x y → R y x := Relation.EqvGen.symm x y
-  have hRtrans {x y z : T} : R x y → R y z → R x z := Relation.EqvGen.trans x y z
   have hRpair : ∀ j t, R (f j t) (g j t) := fun j t => .rel _ _ ⟨j, t, rfl, rfl⟩
   have hqCoarse : range (g i) ⊆ β '' {x : B | x.val ∈ range (N.g i)} ∪
       α '' {x : A | x.val ∈ F} := by
@@ -87,29 +87,6 @@ theorem Net.swap_map_eqvGen
     exact hRsymm h
   let σ : A ⊕ B → N.D := Sum.elim Subtype.val Subtype.val
   let μ : A ⊕ B → T := Sum.elim α β
-  have hSame : ∀ a b, σ a = σ b → R (μ a) (μ b) := by
-    intro a b hab
-    cases a with
-    | inl x =>
-      cases b with
-      | inl y =>
-        have hxy : x = y := Subtype.ext hab
-        subst y
-        exact .refl _
-      | inr y => exact hCut x y hab
-    | inr x =>
-      cases b with
-      | inl y => exact hRsymm (hCut y x hab.symm)
-      | inr y =>
-        have hxy : x = y := Subtype.ext hab
-        subst y
-        exact .refl _
-  let δ : N.D → A ⊕ B := fun x => if hx : x ∈ A then Sum.inl ⟨x, hx⟩ else
-    Sum.inr ⟨x, (hAB.symm ▸ mem_univ x).resolve_left hx⟩
-  have hδ : ∀ x, σ (δ x) = x := by
-    intro x
-    dsimp [δ]
-    split <;> rfl
   obtain ⟨_, hmates, hleft, hright⟩ := N.sides_on_retained_piece i u v hu huv hv hF hcover hBd
   have hgB : ∀ t, N.g i t ∈ B :=
     fun t => discBd_subset B (hmates i (mem_range_self t))
@@ -173,51 +150,6 @@ theorem Net.swap_map_eqvGen
       have h := hRpair j t
       rw [hxf, hyg] at h
       exact h
-  have hδpair : ∀ j t, R (μ (δ (N.f j t))) (μ (δ (N.g j t))) := by
-    intro j t
-    obtain ⟨a, b, ha, hb, hab⟩ := hOldPair j t
-    exact hRtrans (hSame _ a ((hδ _).trans ha.symm))
-      (hRtrans hab (hSame b _ (hb.trans (hδ _).symm)))
-  have hLift : ∀ x y, N.φ x = N.φ y → R (μ (δ x)) (μ (δ y)) := by
-    intro x y hxy
-    have h := (N.bd_eq_iff x y).mp hxy
-    clear hxy
-    induction h with
-    | rel a b hab =>
-      obtain ⟨j, t, rfl, rfl⟩ := hab
-      exact hδpair j t
-    | refl a => exact .refl _
-    | symm a b _ ih => exact hRsymm ih
-    | trans a b c _ _ ih1 ih2 => exact hRtrans ih1 ih2
-  have hμ : ∀ a, φ (μ a) = N.φ (σ a) := by
-    intro a
-    cases a with
-    | inl x => exact hφA x
-    | inr y => exact hφB y
-  intro z w
-  constructor
-  · intro hzw
-    obtain ⟨a, ha⟩ : ∃ a, μ a = z := by
-      rcases hT.symm ▸ mem_univ z with ⟨x, hx⟩ | ⟨y, hy⟩
-      · exact ⟨Sum.inl x, hx⟩
-      · exact ⟨Sum.inr y, hy⟩
-    obtain ⟨b, hb⟩ : ∃ b, μ b = w := by
-      rcases hT.symm ▸ mem_univ w with ⟨x, hx⟩ | ⟨y, hy⟩
-      · exact ⟨Sum.inl x, hx⟩
-      · exact ⟨Sum.inr y, hy⟩
-    have hab : N.φ (σ a) = N.φ (σ b) :=
-      (hμ a).symm.trans ((congrArg φ ha).trans
-        (hzw.trans ((congrArg φ hb).symm.trans (hμ b))))
-    have h : R (μ a) (μ b) :=
-      hRtrans (hSame a _ (hδ _).symm) (hRtrans (hLift _ _ hab) (hSame _ b (hδ _)))
-    exact ha ▸ hb ▸ h
-  · intro h
-    induction h with
-    | rel a b hab =>
-      obtain ⟨j, t, rfl, rfl⟩ := hab
-      exact hpair j t
-    | refl a => rfl
-    | symm a b _ ih => exact ih.symm
-    | trans a b c _ _ ih1 ih2 => exact ih1.trans ih2
+  exact N.map_eqvGen_of_cut_lifts hAB α β hT φ hφA hφB f g hpair hCut hOldPair
 
 end GraphMinor.GM07

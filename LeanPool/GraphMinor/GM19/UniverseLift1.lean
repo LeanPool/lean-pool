@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM19.Thinning
 public import LeanPool.GraphMinor.Surface.Classification
 public import LeanPool.GraphMinor.Surface.AddCrosscap
+import LeanPool.GraphMinor.Surface.PlaneDisc
 
 /-!
 # Universe-polymorphic transport of paintings, frames, thinnings, and inflations
@@ -41,9 +42,8 @@ theorem image_symm_image_u (A : Set S') : ψ '' (ψ.symm '' A) = A := by
   rw [← image_comp]
   simp
 
-theorem image_tilde_u (c : Set S) : tilde (ψ '' c) = ψ '' tilde c := by
-  unfold tilde
-  rw [← ψ.image_closure, image_sdiff ψ.injective]
+theorem image_tilde_u (c : Set S) : tilde (ψ '' c) = ψ '' tilde c :=
+  Surface.image_tilde_homeomorph ψ c
 
 theorem ncard_tilde_image_u (c : Set S) : (tilde (ψ '' c)).ncard = (tilde c).ncard := by
   rw [image_tilde_u, ncard_image_of_injective _ ψ.injective]
@@ -57,39 +57,27 @@ theorem image_componentsIn_u (F : Set S) :
   componentsIn_image (f' := ψ.symm) ψ.continuous.continuousOn ψ.symm.continuous.continuousOn
     (fun x _ ↦ by simp)
 
-theorem image_isClosedDisc_u {Δ : Set S} (h : IsClosedDisc Δ) : IsClosedDisc (ψ '' Δ) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image Δ)⟩
+theorem image_isClosedDisc_u {Δ : Set S} (h : IsClosedDisc Δ) : IsClosedDisc (ψ '' Δ) :=
+  Surface.image_isClosedDisc_homeomorph ψ h
 
-theorem image_isOArc_u {F : Set S} (h : IsOArc F) : IsOArc (ψ '' F) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image F)⟩
+theorem image_isOArc_u {F : Set S} (h : IsOArc F) : IsOArc (ψ '' F) :=
+  Surface.image_isOArc_homeomorph ψ h
 
-theorem image_isLine_u {F : Set S} (h : IsLine F) : IsLine (ψ '' F) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image F)⟩
+theorem image_isLine_u {F : Set S} (h : IsLine F) : IsLine (ψ '' F) :=
+  Surface.image_isLine_homeomorph ψ h
 
-theorem image_discBd_u (Δ : Set S) : discBd (ψ '' Δ) = ψ '' discBd Δ := by
-  unfold discBd
-  rw [← image_bd_homeomorph (ψ.image Δ), ← image_comp, ← image_comp]
-  rfl
+theorem image_discBd_u (Δ : Set S) : discBd (ψ '' Δ) = ψ '' discBd Δ :=
+  Surface.image_discBd_homeomorph ψ Δ
 
-theorem image_lineEnds_subset_u (F : Set S) : ψ '' lineEnds F ⊆ lineEnds (ψ '' F) := by
-  rintro _ ⟨u, ⟨v, φ, h₀, h₁⟩, rfl⟩
-  exact ⟨ψ v, φ.trans (ψ.image F), by rw [← h₀]; rfl, by rw [← h₁]; rfl⟩
+theorem image_lineEnds_subset_u (F : Set S) : ψ '' lineEnds F ⊆ lineEnds (ψ '' F) :=
+  Surface.image_lineEnds_subset_homeomorph ψ F
 
 theorem image_lineEnds_u {S : Type u₁} {S' : Type u₂} [TopologicalSpace S] [TopologicalSpace S']
-    (ψ : S ≃ₜ S') (F : Set S) : lineEnds (ψ '' F) = ψ '' lineEnds F := by
-  refine Subset.antisymm ?_ (image_lineEnds_subset_u ψ F)
-  have h := image_lineEnds_subset_u ψ.symm (ψ '' F)
-  rw [symm_image_image_u] at h
-  intro x hx
-  exact ⟨ψ.symm x, h ⟨x, hx, rfl⟩, by simp⟩
+    (ψ : S ≃ₜ S') (F : Set S) : lineEnds (ψ '' F) = ψ '' lineEnds F :=
+  Surface.image_lineEnds_homeomorph ψ F
 
-theorem cuffs_eq_image_u : cuffs S' = (fun C ↦ ψ '' C) '' cuffs S := by
-  unfold cuffs
-  rw [← image_bd ψ]
-  exact image_componentsIn_u ψ (bd S)
+theorem cuffs_eq_image_u : cuffs S' = (fun C ↦ ψ '' C) '' cuffs S :=
+  Surface.image_cuffs_homeomorph ψ
 
 include ψ in
 theorem numCuffs_eq_u : numCuffs S = numCuffs S' := by

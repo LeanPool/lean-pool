@@ -675,14 +675,7 @@ Graph Minors XI with `U(P) = U` and `V(P) = V` this is `PaintingOrDrawing.IsPreR
 (`isPreRadial_iff`). The definition never looks at the shape of an edge. -/
 def IsPreRadial {Shat : Type u} [TopologicalSpace Shat] (U V : Set Shat) (G : Drawing Shat) :
     Prop :=
-  U ∩ G.U = V ∧
-  V ⊆ G.V ∧
-  (∀ r ∈ componentsIn Uᶜ, ∃! w, w ∈ r ∧ w ∈ G.V) ∧
-  (∀ w ∈ G.V \ V, ∃ r ∈ componentsIn Uᶜ, w ∈ r) ∧
-  (∀ e ∈ G.E, ∃ v ∈ V, ∃ w ∈ G.V \ V, closure e ∩ G.V = {v, w}) ∧
-  (∀ e ∈ G.E, ∀ f ∈ G.E, e ≠ f → ∀ v ∈ V, ∀ r ∈ componentsIn Uᶜ, ∀ w ∈ r ∩ G.V,
-    closure e ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
-    ¬ ∃ Δ : Set Shat, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {v} ∧ subBd Δ = closure e ∪ closure f)
+  GM11.IsPreRadialOn U V (componentsIn Uᶜ) G
 
 /-- A radial drawing `Γ*` in `Σ̂` of a painting `Γ` (Graph Minors XIX, Section 5, page 337):
 "A drawing $\Gamma^*$ in $\hat{\Sigma}$ is a *radial drawing* of $\Gamma$ if it satisfies the four

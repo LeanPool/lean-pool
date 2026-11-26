@@ -8,7 +8,7 @@ Authors: MohammadTaghi Hajiaghayi, Mahdi JafariRaviz
 
 module
 
-public import LeanPool.GraphMinor.GM17.Defs
+public import LeanPool.GraphMinor.GM17.Defs2
 public import LeanPool.GraphMinor.GM18.Cited
 public import LeanPool.GraphMinor.GM20.Defs
 
@@ -177,7 +177,7 @@ def GM17Theorem84Statement : Prop :=
 /-- `C*(Γ)`, "the set of all $c \in C(\Gamma)$ such that there is no $c' \in C(\Gamma)$ with $c' \ne
 c$ and $\tilde{c} \subseteq \tilde{c}'$" (Graph Minors XVII, Section 8, page 182). -/
 def GM17.starCells {S : Type} [TopologicalSpace S] (Γ : GM17.Painting S) : Set (Set S) :=
-  {c ∈ Γ.C | ¬ ∃ c' ∈ Γ.C, c' ≠ c ∧ tilde c ⊆ tilde c'}
+  Γ.CStar
 
 /-- Graph Minors XVII, (8.7) (page 182):
 "(8.7) *For every node $n$ there are at least two cells $c \in C^*(\Gamma)$ with $n \in \tilde{c}$,

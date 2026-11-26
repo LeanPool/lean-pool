@@ -313,6 +313,18 @@ structure IsPretangle {α β : Type*} (G : Hypergraph α β) (θ : ℕ)
   /-- The second tangle axiom. -/
   axiom2 : GM10.TangleAxiom2 G 𝒯
 
+/-- Pre-radial drawing conditions for a point set, its vertices, and its regions. -/
+abbrev IsPreRadialOn {S : Type u} [TopologicalSpace S] (U V : Set S) (R : Set (Set S))
+    (G : Drawing S) : Prop :=
+  U ∩ G.U = V ∧
+  V ⊆ G.V ∧
+  (∀ r ∈ R, ∃! w, w ∈ r ∧ w ∈ G.V) ∧
+  (∀ w ∈ G.V \ V, ∃ r ∈ R, w ∈ r) ∧
+  (∀ e ∈ G.E, ∃ v ∈ V, ∃ w ∈ G.V \ V, closure e ∩ G.V = {v, w}) ∧
+  (∀ e ∈ G.E, ∀ f ∈ G.E, e ≠ f → ∀ v ∈ V, ∀ r ∈ R, ∀ w ∈ r ∩ G.V,
+    closure e ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
+    ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {v} ∧ subBd Δ = closure e ∪ closure f)
+
 section Main
 
 variable {S : Type u} [TopologicalSpace S] [T1Space S]
@@ -417,14 +429,7 @@ def IsRespectful (Γ : PaintingOrDrawing S) (θ : ℕ)
 (iv) if `e, f` are edges of `Γ'` with the same ends `v, v_r`, where `v ∈ V(Γ)` and `r ∈ R(Γ)`, then
 `closure e ∪ closure f` does not bound a closed disc in `r ∪ {v}`. -/
 def IsPreRadialDrawing (Γ : PaintingOrDrawing S) (Γ' : Drawing S) : Prop :=
-  Γ.U ∩ Γ'.U = Γ.V ∧
-  Γ.V ⊆ Γ'.V ∧
-  (∀ r ∈ Γ.R, ∃! w, w ∈ r ∧ w ∈ Γ'.V) ∧
-  (∀ w ∈ Γ'.V \ Γ.V, ∃ r ∈ Γ.R, w ∈ r) ∧
-  (∀ e ∈ Γ'.E, ∃ v ∈ Γ.V, ∃ w ∈ Γ'.V \ Γ.V, closure e ∩ Γ'.V = {v, w}) ∧
-  (∀ e ∈ Γ'.E, ∀ f ∈ Γ'.E, e ≠ f → ∀ v ∈ Γ.V, ∀ r ∈ Γ.R, ∀ w ∈ r ∩ Γ'.V,
-    closure e ∩ Γ'.V = {v, w} → closure f ∩ Γ'.V = {v, w} →
-    ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {v} ∧ subBd Δ = closure e ∪ closure f)
+  IsPreRadialOn Γ.U Γ.V Γ.R Γ'
 
 /-- `Γ'` is a *radial drawing* of the 2-cell painting or drawing `Γ` (Graph Minors XI, Section 3,
 page 75): it satisfies (i)–(iv) of `IsPreRadialDrawing`, and "(v) $\Gamma'$ is maximal subject to

@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM19.Perimeter
 public import LeanPool.GraphMinor.GM11.RadialCorners
 public import LeanPool.GraphMinor.GM11.RadialExists
+import LeanPool.GraphMinor.GM11.RadialChord
 public import Mathlib.Topology.Separation.Connected
 
 /-!
@@ -30,20 +31,6 @@ namespace GraphMinor.GM19
 
 open Set Topology GraphMinor.Surface unitInterval
 
-private theorem line_inter_spoke_vertices {T : Type} [TopologicalSpace T] [T2Space T]
-    {G : Drawing T} {K : Set T} {c x : T} (hc : c ∈ G.V) (hxV : x ∈ G.V)
-    (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKU : Disjoint (K \ {c, x}) G.U) :
-    K ∩ G.V = {x, c} := by
-  apply subset_antisymm
-  · rintro y ⟨hyK, hyV⟩
-    by_contra hn
-    have hn' : y ∉ ({c, x} : Set T) := fun h ↦ hn (by rw [pair_comm]; exact h)
-    exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (G.V_subset_U hyV)
-  · have hend : ({c, x} : Set T) ⊆ K := (GM11.lineDrawing hK hcx).V_subset_U
-    rintro y (rfl | rfl)
-    · exact ⟨hend (Or.inr rfl), hxV⟩
-    · exact ⟨hend (Or.inl rfl), hc⟩
-
 /-- A maximal pre-radial drawing contains a spoke that bounds no disc with another spoke. -/
 theorem mem_spoke_line_of_no_bounded_disc {T : Type} [TopologicalSpace T] [T2Space T]
     {U V : Set T} {G : Drawing T}
@@ -56,65 +43,9 @@ theorem mem_spoke_line_of_no_bounded_disc {T : Type} [TopologicalSpace T] [T2Spa
       K ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
       ¬ ∃ Δ : Set T, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = K ∪ closure f) :
     K \ {c, x} ∈ G.E := by
-  classical
-  obtain ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ := hpre
-  have hxV : x ∈ G.V := h₂ hx
-  have hVsub : (GM11.lineDrawing hK hcx).V ⊆ G.V := by
-    rintro y (rfl | rfl)
-    · exact hc
-    · exact hxV
-  have hmeet : G.U ∩ (GM11.lineDrawing hK hcx).U ⊆ G.V ∩ (GM11.lineDrawing hK hcx).V := by
-    rintro y ⟨hy, hyK⟩
-    have : y ∈ ({c, x} : Set T) := by
-      by_contra hn
-      exact disjoint_left.mp hKU ⟨hyK, hn⟩ hy
-    exact ⟨hVsub this, this⟩
-  let G₂ : Drawing T := G.glue (GM11.lineDrawing hK hcx) hmeet
-  have hGV : G₂.V = G.V := union_eq_left.mpr hVsub
-  have hGE : G₂.E = G.E ∪ {K \ {c, x}} := by
-    change (G.glue (GM11.lineDrawing hK hcx) hmeet).E = _
-    rw [Drawing.glue_E, GM11.lineDrawing_E]
-  have hKcl : closure (K \ {c, x}) = K := GM11.closure_sdiff_pair hK
-  have hKV := line_inter_spoke_vertices hc hxV hK hcx hKU
-  have hcnV : c ∉ V := fun h ↦ disjoint_left.mp hrU hcr (hVU h)
-  have hiv₂ : ∀ e ∈ G₂.E, ∀ f ∈ G₂.E, e ≠ f → ∀ v ∈ V, ∀ r' ∈ componentsIn Uᶜ, ∀ w ∈ r' ∩ G₂.V,
-      closure e ∩ G₂.V = {v, w} → closure f ∩ G₂.V = {v, w} →
-      ¬ ∃ Δ : Set T, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = closure e ∪ closure f := by
-    rw [hGE, hGV]
-    rintro e (he | rfl) f (hf | rfl) hef v hv r' hr' w hw hee hfe hΔ
-    · exact h₆ e he f hf hef v hv r' hr' w hw hee hfe hΔ
-    · rw [hKcl] at hfe hΔ
-      obtain ⟨Δ, h₁, h₂, h₃⟩ := hΔ
-      exact hiv e he hef.symm v hv r' hr' w hw hfe hee ⟨Δ, h₁, h₂, by rw [h₃, Set.union_comm]⟩
-    · rw [hKcl] at hee hΔ
-      exact hiv f hf hef v hv r' hr' w hw hee hfe hΔ
-    · exact hef rfl
-  have hpre' : IsPreRadial U V G₂ := by
-    refine ⟨?_, ?_, ?_, ?_, ?_, hiv₂⟩
-    · apply subset_antisymm
-      · rintro y ⟨hyU, hyG | hyK⟩
-        · rw [← h₁]
-          exact ⟨hyU, hyG⟩
-        · by_cases hym : y ∈ ({c, x} : Set T)
-          · rcases hym with rfl | rfl
-            · exact (disjoint_left.mp hrU hcr hyU).elim
-            · exact hx
-          · exact (disjoint_left.mp hrU (hKr ⟨hyK, hym⟩) hyU).elim
-      · intro y hy
-        rw [← h₁] at hy
-        exact ⟨hy.1, Or.inl hy.2⟩
-    · rw [hGV]
-      exact h₂
-    · rw [hGV]
-      exact h₃
-    · rw [hGV]
-      exact h₄
-    · intro e he
-      rw [hGE] at he
-      rw [hGV]
-      rcases he with he | rfl
-      · exact h₅ e he
-      · exact ⟨x, hx, c, ⟨hc, hcnV⟩, by rw [hKcl]; exact hKV⟩
+  obtain ⟨G₂, hpre', hGV, hGE, _⟩ :=
+    GM11.exists_glue_spoke_of_no_bounded_disc (R := componentsIn Uᶜ) hpre hcr hc hx hK hcx
+      hKr hKU hrU hVU hiv
   have hsub : G.IsSubdrawing G₂ := ⟨by rw [hGV], by rw [hGE]; exact subset_union_left⟩
   exact (hmax G₂ hpre' hsub).2 (by rw [hGE]; exact Or.inr rfl)
 
@@ -129,7 +60,7 @@ theorem exists_spoke_of_line {T : Type} [TopologicalSpace T] [T2Space T] {U V : 
     (hKU : Disjoint (K \ {c, x}) G.U) (hrU : Disjoint r U) (hVU : V ⊆ U) :
     ∃ h ∈ G.E, closure h ∩ G.V = {x, c} := by
   by_contra hno
-  have hKV := line_inter_spoke_vertices hc (hpre.2.1 hx) hK hcx hKU
+  have hKV := GM11.line_inter_spoke_vertices hc (hpre.2.1 hx) hK hcx hKU
   have hmem := mem_spoke_line_of_no_bounded_disc hpre hmax hcr hc hx hK hcx hKr hKU hrU hVU
     (fun f hf _ v _ _ _ w _ hKe hfe _ => hno ⟨f, hf, hfe.trans (hKe.symm.trans hKV)⟩)
   obtain ⟨y, hy⟩ := (GM11.isPathConnected_sdiff_pair hK).nonempty

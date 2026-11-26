@@ -114,24 +114,6 @@ theorem ControlsCliqueMinor.mono {G : Graph α β} {p₁ p₂ : ℕ}
     fun i j hij => hlink (Fin.castLE hp i) (Fin.castLE hp j) hij,
     fun A B hAB hord i => hno_small hAB (lt_of_lt_of_le hord hp) (Fin.castLE hp i)⟩
 
-private theorem isLink_of_inc_of_inc_of_ne {G : Graph α β} {e : β} {u v : α}
-    (hu : G.Inc e u) (hv : G.Inc e v) (huv : u ≠ v) : G.IsLink e u v := by
-  rcases hu with ⟨x, hux⟩
-  rcases hv with ⟨y, hvy⟩
-  rcases G.eq_or_eq_of_isLink_of_isLink hvy hux.symm with rfl | rfl
-  · exact hux
-  · exact (huv rfl).elim
-
-private theorem reflTransGen_adj_of_skeleton_walk {H : Graph α β}
-    {hVH : V(H).Finite} {hEH : E(H).Finite} {u v : α}
-    (w : (Hypergraph.ofGraph H hVH hEH).skeleton.Walk u v) :
-    Relation.ReflTransGen H.Adj u v := by
-  induction w with
-  | nil => exact Relation.ReflTransGen.refl
-  | @cons a b c hadj _ ih =>
-    rcases hadj with ⟨hab, e, ha_inc, hb_inc⟩
-    exact Relation.ReflTransGen.head ⟨e, isLink_of_inc_of_inc_of_ne ha_inc hb_inc hab⟩ ih
-
 /-- `GM12.ControlsMinor` for `completeGraph p` implies `GM15.ControlsCliqueMinor`. -/
 theorem controlsCliqueMinor_of_gm12 {G : Graph α β}
     {hV : V(G).Finite} {hE : E(G).Finite} {θ_star p : ℕ}

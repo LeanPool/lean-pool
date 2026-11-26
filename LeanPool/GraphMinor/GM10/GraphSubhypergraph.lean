@@ -27,6 +27,28 @@ open Set Graph Hypergraph
 universe u v
 variable {α : Type u} {β : Type v}
 
+/-- If `u ≠ v` and `e` is incident with both `u` and `v` in `G : Graph α β`, then `G.IsLink e u v`.
+-/
+theorem isLink_of_inc_of_inc_of_ne {G : Graph α β} {e : β} {u v : α}
+    (hu : G.Inc e u) (hv : G.Inc e v) (huv : u ≠ v) : G.IsLink e u v := by
+  rcases hu with ⟨x, hux⟩
+  rcases hv with ⟨y, hvy⟩
+  rcases G.eq_or_eq_of_isLink_of_isLink hvy hux.symm with rfl | rfl
+  · exact hux
+  · exact (huv rfl).elim
+
+/-- Reachability in `(Hypergraph.ofGraph H hVH hEH).skeleton` implies `Relation.ReflTransGen H.Adj`.
+-/
+theorem reflTransGen_adj_of_skeleton_walk {H : Graph α β}
+    {hVH : V(H).Finite} {hEH : E(H).Finite} {u v : α}
+    (w : (Hypergraph.ofGraph H hVH hEH).skeleton.Walk u v) :
+    Relation.ReflTransGen H.Adj u v := by
+  induction w with
+  | nil => exact Relation.ReflTransGen.refl
+  | @cons a b c hadj _ ih =>
+    rcases hadj with ⟨hab, e, ha_inc, hb_inc⟩
+    exact Relation.ReflTransGen.head ⟨e, isLink_of_inc_of_inc_of_ne ha_inc hb_inc hab⟩ ih
+
 /-- The subgraph of `G` corresponding to a subhypergraph `H ≤ Hypergraph.ofGraph G hV hE`. -/
 def subgraphOfSubhypergraph (G : Graph α β) (H : Hypergraph α β) : Graph α β :=
   (G.induce H.vertexSet).restrict H.edgeSet

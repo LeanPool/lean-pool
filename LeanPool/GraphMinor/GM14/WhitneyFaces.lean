@@ -50,38 +50,8 @@ theorem disc_split {D L A B : Set S} {a b : S} (hD : IsClosedDisc D)
     (hAB : A ∩ B = {a, b}) (hLA : L ∩ A = {a, b}) (hLB : L ∩ B = {a, b})
     (hbd : discBd D = A ∪ B) (hLD : L ⊆ D) (hab : a ≠ b) :
     ∃ E₁ E₂ : Set S, IsClosedDisc E₁ ∧ IsClosedDisc E₂ ∧ E₁ ∪ E₂ = D ∧ E₁ ∩ E₂ = L ∧
-      discBd E₁ = A ∪ L ∧ discBd E₂ = B ∪ L := by
-  have hcap : L ∩ discBd D = {a, b} := by
-    rw [hbd, inter_union_distrib_left, hLA, hLB, union_self]
-  obtain ⟨C₁, C₂, E₁, E₂, _, hcomponents, hE₁, hE₂, hU, hI, hb₁, hb₂, _⟩ :=
-    disc_iArc D L a b hD hLD hab hL hcap
-  have hcomp : componentsIn (discBd D \ {a, b}) = {A \ {a, b}, B \ {a, b}} := by
-    rw [hbd]
-    exact GM12.componentsIn_union_sdiff hA.isCompact.isClosed hB.isCompact.isClosed hAB.subset
-      (GraphMinor.GM11.IsLineWithEnds.isPreconnected_sdiff_pair hA)
-      (GraphMinor.GM11.IsLineWithEnds.isPreconnected_sdiff_pair hB)
-      (line_interior_nonempty hA) (line_interior_nonempty hB)
-  have hend : ({a, b} : Set S) ⊆ L := by
-    intro x hx
-    exact (hLA.symm ▸ hx).1
-  have hrem : ∀ {X : Set S}, (X \ {a, b}) ∪ L = X ∪ L := by
-    intro X
-    ext x
-    constructor
-    · rintro (hx | hx)
-      · exact Or.inl hx.1
-      · exact Or.inr hx
-    · rintro (hx | hx)
-      · by_cases hxF : x ∈ ({a, b} : Set S)
-        · exact Or.inr (hend hxF)
-        · exact Or.inl ⟨hx, hxF⟩
-      · exact Or.inr hx
-  have hpair : ({C₁, C₂} : Set (Set S)) = {A \ {a, b}, B \ {a, b}} :=
-    hcomponents.symm.trans hcomp
-  rcases Set.pair_eq_pair_iff.mp hpair with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-  · exact ⟨E₁, E₂, hE₁, hE₂, hU, hI, hb₁.trans (h₁ ▸ hrem), hb₂.trans (h₂ ▸ hrem)⟩
-  · exact ⟨E₂, E₁, hE₂, hE₁, (union_comm _ _).trans hU, (inter_comm _ _).trans hI,
-      hb₂.trans (h₂ ▸ hrem), hb₁.trans (h₁ ▸ hrem)⟩
+      discBd E₁ = A ∪ L ∧ discBd E₂ = B ∪ L :=
+  GM12.disc_split_with_boundary_arcs_inter hD hL hA hB hAB hLA hLB hbd hLD hab
 
 section Basics
 

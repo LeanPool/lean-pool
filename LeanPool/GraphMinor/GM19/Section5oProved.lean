@@ -28,38 +28,32 @@ namespace GraphMinor.GM19
 open Set Topology GraphMinor.Surface
 universe w
 
-/-- **Graph Minors XIX, (5.4)** (page 337), from (5.2) and the facts about orientations and
-cappings. -/
-theorem theorem_5_4_proof
-     : Theorem54Statement.{w} := by
+/-- Transport an infinite sequence of bounded features to one feature drawing and pass to a
+subsequence on which the vertex intersection with that drawing is fixed. -/
+theorem exists_aligned_feature_subsequence {S : Type} [TopologicalSpace S] [T2Space S]
+    {β : Type w} {χ : ColourScheme S β} (P : ℕ → ColouredPainting χ) (K : ℕ → Drawing S)
+    {A : Set ℕ} (hA : A.Infinite) (bound : ℕ) (hFeature : ∀ i ∈ A, IsFeature χ.Φ (K i))
+    (hBound : ∀ i ∈ A, (K i).V.ncard + (K i).E.ncard ≤ bound)
+    (hIntersection : ∀ i ∈ A, (P i).Γ.U ∩ (K i).U ⊆ (P i).Γ.V ∩ (K i).V) :
+    ∃ (e₁ e₂ : ℕ → ℕ) (α : ℕ → S ≃ₜ S) (hα : ∀ m, IsFramePreservingHomeo χ.Φ (α m)),
+      StrictMono e₁ ∧ StrictMono e₂ ∧ (∀ m, e₁ m ∈ A) ∧
+      (∀ m, α m '' (K (e₁ 0)).U = (K (e₁ m)).U) ∧
+      (∀ m, α m '' (K (e₁ 0)).V = (K (e₁ m)).V) ∧
+      let Q : ℕ → ColouredPainting χ := fun m ↦ (P (e₁ m)).image (α m).symm (hα m).symm
+      (∀ m, (Q m).Γ.U ∩ (K (e₁ 0)).U ⊆ (Q m).Γ.V ∩ (K (e₁ 0)).V) ∧
+      (∀ i j, ∀ v ∈ (K (e₁ 0)).V, v ∈ (Q (e₂ i)).Γ.V ↔ v ∈ (Q (e₂ j)).Γ.V) := by
   classical
-  intro S Shat _ _ _ _ β _ cap χ hS3 P hbad hsim rad n
-  have hS := χ.isSurface
-  have := χ.connected
-  by_contra hno
-  push Not at hno
-  have hA : {i | Painting.dist (rad i) ≤ n}.Infinite :=
-    Set.infinite_of_forall_exists_gt fun a ↦ by
-      obtain ⟨i, hi, hd⟩ := hno (a + 1)
-      exact ⟨i, hd, by omega⟩
-  have hK : ∀ i ∈ {i | Painting.dist (rad i) ≤ n}, ∃ K, IsCrossLine χ.Φ (P i).Γ (4 * n + 3) K :=
-    fun i hi ↦ exists_crossLine hS (rad i) (P i).fits hi
-  have : Nonempty (Drawing S) := by
-    obtain ⟨i, hi⟩ := hA.nonempty
-    obtain ⟨K, -⟩ := hK i hi
-    exact ⟨K⟩
-  choose! K hK using hK
-  obtain ⟨𝓕, hf, h𝓕⟩ := GraphMinor.GM19.theorem_5_2_proof S hS χ.connected χ.Φ (4 * n + 3)
-  have h𝓕' : ∀ i ∈ {i | Painting.dist (rad i) ≤ n}, ∃ K₀ ∈ 𝓕, FeatureEquiv χ.Φ K₀ (K i) :=
-    fun i hi ↦ h𝓕 _ (hK i hi).feature (hK i hi).size
+  have : Nonempty (Drawing S) := ⟨K 0⟩
+  obtain ⟨𝓕, hf, h𝓕⟩ := theorem_5_2_proof S χ.isSurface χ.connected χ.Φ bound
+  have h𝓕' : ∀ i ∈ A, ∃ K₀ ∈ 𝓕, FeatureEquiv χ.Φ K₀ (K i) :=
+    fun i hi ↦ h𝓕 _ (hFeature i hi) (hBound i hi)
   choose! G hG hG' using h𝓕'
   obtain ⟨K₀, -, hinf⟩ := exists_infinite_fiber hA hf G hG
-  set e₁ := Nat.nth (· ∈ {i | Painting.dist (rad i) ≤ n} ∩ G ⁻¹' {K₀}) with he₁
+  set e₁ := Nat.nth (· ∈ A ∩ G ⁻¹' {K₀})
   have he₁s : StrictMono e₁ := Nat.nth_strictMono hinf
-  have he₁m : ∀ m, e₁ m ∈ {i | Painting.dist (rad i) ≤ n} ∧ G (e₁ m) = K₀
+  have he₁m : ∀ m, e₁ m ∈ A ∧ G (e₁ m) = K₀
     := fun m ↦ Nat.nth_mem_of_infinite hinf m
   set Kc := K (e₁ 0) with hKc
-  have hcross := hK _ (he₁m 0).1
   have hfe : ∀ m, ∃ α : S ≃ₜ S, IsFramePreservingHomeo χ.Φ α ∧ α '' Kc.U = (K (e₁ m)).U ∧
       α '' Kc.V = (K (e₁ m)).V := by
     intro m
@@ -87,7 +81,7 @@ theorem theorem_5_4_proof
     have hy' : y ∈ (K (e₁ m)).U := by
       rw [← hαU m]
       exact ⟨_, hx₂, (α m).apply_symm_apply y⟩
-    obtain ⟨h₁, h₂⟩ := (hK _ (he₁m m).1).inter ⟨hy, hy'⟩
+    obtain ⟨h₁, h₂⟩ := hIntersection _ (he₁m m).1 ⟨hy, hy'⟩
     refine ⟨?_, ?_⟩
     · rw [(hQ m).V]
       exact mem_image_of_mem _ h₁
@@ -98,7 +92,7 @@ theorem theorem_5_4_proof
   obtain ⟨W₀, -, hinf₂⟩ := exists_infinite_fiber (A := univ) infinite_univ
     Kc.finite_V.finite_subsets g
     (fun m _ ↦ inter_subset_left)
-  set e₂ := Nat.nth (· ∈ univ ∩ g ⁻¹' {W₀}) with he₂
+  set e₂ := Nat.nth (· ∈ univ ∩ g ⁻¹' {W₀})
   have he₂s : StrictMono e₂ := Nat.nth_strictMono hinf₂
   have he₂m : ∀ m, g (e₂ m) = W₀ := fun m ↦ (Nat.nth_mem_of_infinite hinf₂ m).2
   let R : ℕ → ColouredPainting χ := fun m ↦ Q (e₂ m)
@@ -110,6 +104,38 @@ theorem theorem_5_4_proof
       exact (h₁ ▸ (⟨hv, h⟩ : v ∈ g (e₂ i)) : v ∈ g (e₂ j)).2
     · intro h
       exact (h₁.symm ▸ (⟨hv, h⟩ : v ∈ g (e₂ j)) : v ∈ g (e₂ i)).2
+  exact ⟨e₁, e₂, α, hα, he₁s, he₂s, fun m ↦ (he₁m m).1, hαU, hαV, hinter, hRV⟩
+
+/-- **Graph Minors XIX, (5.4)** (page 337), from (5.2) and the facts about orientations and
+cappings. -/
+theorem theorem_5_4_proof
+     : Theorem54Statement.{w} := by
+  classical
+  intro S Shat _ _ _ _ β _ cap χ hS3 P hbad hsim rad n
+  have hS := χ.isSurface
+  have := χ.connected
+  by_contra hno
+  push Not at hno
+  have hA : {i | Painting.dist (rad i) ≤ n}.Infinite :=
+    Set.infinite_of_forall_exists_gt fun a ↦ by
+      obtain ⟨i, hi, hd⟩ := hno (a + 1)
+      exact ⟨i, hd, by omega⟩
+  have hK : ∀ i ∈ {i | Painting.dist (rad i) ≤ n}, ∃ K, IsCrossLine χ.Φ (P i).Γ (4 * n + 3) K :=
+    fun i hi ↦ exists_crossLine hS (rad i) (P i).fits hi
+  have : Nonempty (Drawing S) := by
+    obtain ⟨i, hi⟩ := hA.nonempty
+    obtain ⟨K, -⟩ := hK i hi
+    exact ⟨K⟩
+  choose! K hK using hK
+  obtain ⟨e₁, e₂, α, hα, he₁s, he₂s, he₁m, _, _, hinter, hRV⟩ :=
+    exists_aligned_feature_subsequence P K hA (4 * n + 3)
+      (fun i hi ↦ (hK i hi).feature) (fun i hi ↦ (hK i hi).size) (fun i hi ↦ (hK i hi).inter)
+  let Kc := K (e₁ 0)
+  have hcross := hK _ (he₁m 0)
+  let Q : ℕ → ColouredPainting χ := fun m ↦ (P (e₁ m)).image (α m).symm (hα m).symm
+  have hQ : ∀ m, IsColouredImage (α m).symm (P (e₁ m)) (Q m) := fun m ↦
+    ColouredPainting.isImage_image _ _ _
+  let R : ℕ → ColouredPainting χ := fun m ↦ Q (e₂ m)
   obtain ⟨s, t, hst, hbd, hl, hne⟩ := hcross.line
   obtain ⟨Y, tY, t2Y, ψ, hY, hcY, hψ, hsheet, a, b, c, h₁, h₂⟩ := exists_cross_cut hS hst hbd hl hne
   let y₀ : Y := Classical.arbitrary Y

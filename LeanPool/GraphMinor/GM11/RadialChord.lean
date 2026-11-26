@@ -227,83 +227,68 @@ def PreRad (Γ : PaintingOrDrawing S) (Γ' : Drawing S) : Prop :=
 def RadMax (Γ : PaintingOrDrawing S) (Γ' : Drawing S) : Prop :=
   ∀ Γ'' : Drawing S, Γ.IsPreRadialDrawing Γ'' → Γ'.IsSubdrawing Γ'' → Γ''.IsSubdrawing Γ'
 
-/-- **A chord has a parallel spoke.** Graph Minors XI, Section 3, uses the maximality in condition
-(v) of a radial drawing in this form, without stating it. -/
-theorem exists_parallel_spoke {Γ : PaintingOrDrawing S} {Γ' : Drawing S}
-    (hpre : Γ.IsPreRadialDrawing Γ') (hmax : RadMax Γ Γ')
-    {r : Set S} (hr : r ∈ Γ.R) (hcr : c ∈ r) (hc : c ∈ Γ'.V) (hx : x ∈ Γ.V)
-    (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKr : K \ {c, x} ⊆ r)
-    (hKU : Disjoint (K \ {c, x}) Γ'.U) (hrU : Disjoint r Γ.U)
-    (hrr : ∀ {r₁ r₂ : Set S}, r₁ ∈ Γ.R → r₂ ∈ Γ.R → ∀ {y : S}, y ∈ r₁ → y ∈ r₂ → r₁ = r₂) :
-    ∃ h ∈ Γ'.E, closure h ∩ Γ'.V = {x, c} ∧ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {x} ∧
-      subBd Δ = closure h ∪ K := by
+/-- A proposed spoke that avoids a drawing in its interior meets its vertices at its ends. -/
+theorem line_inter_spoke_vertices
+    {G : Drawing S} {K : Set S} {c x : S} (hc : c ∈ G.V) (hxV : x ∈ G.V)
+    (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKU : Disjoint (K \ {c, x}) G.U) :
+    K ∩ G.V = {x, c} := by
+  apply subset_antisymm
+  · rintro y ⟨hyK, hyV⟩
+    by_contra hn
+    have hn' : y ∉ ({c, x} : Set S) := fun h ↦ hn (by rw [pair_comm]; exact h)
+    exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (G.V_subset_U hyV)
+  · have hend : ({c, x} : Set S) ⊆ K := (lineDrawing hK hcx).V_subset_U
+    rintro y (rfl | rfl)
+    · exact ⟨hend (Or.inr rfl), hxV⟩
+    · exact ⟨hend (Or.inl rfl), hc⟩
+
+/-- Glue a line to a pre-radial drawing when the new edge bounds no disc with an old edge
+with the same ends. -/
+theorem exists_glue_spoke_of_no_bounded_disc
+    {U V : Set S} {R : Set (Set S)} {G : Drawing S} (hpre : IsPreRadialOn U V R G)
+    {r : Set S} {c x : S} (hcr : c ∈ r) (hc : c ∈ G.V) (hx : x ∈ V)
+    {K : Set S} (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKr : K \ {c, x} ⊆ r)
+    (hKU : Disjoint (K \ {c, x}) G.U) (hrU : Disjoint r U) (hVU : V ⊆ U)
+    (hiv : ∀ f ∈ G.E, K \ {c, x} ≠ f → ∀ v ∈ V, ∀ r' ∈ R, ∀ w ∈ r' ∩ G.V,
+      K ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
+      ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = K ∪ closure f) :
+    ∃ G₂ : Drawing S, IsPreRadialOn U V R G₂ ∧ G₂.V = G.V ∧
+      G₂.E = G.E ∪ {K \ {c, x}} ∧ G₂.U = G.U ∪ K := by
   classical
   obtain ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ := hpre
-  have hxV : x ∈ Γ'.V := h₂ hx
-  have hVsub : (lineDrawing hK hcx).V ⊆ Γ'.V := by
+  have hxV : x ∈ G.V := h₂ hx
+  have hVsub : (lineDrawing hK hcx).V ⊆ G.V := by
     rintro y (rfl | rfl)
     · exact hc
     · exact hxV
-  have hmeet : Γ'.U ∩ (lineDrawing hK hcx).U ⊆ Γ'.V ∩ (lineDrawing hK hcx).V := by
+  have hmeet : G.U ∩ (lineDrawing hK hcx).U ⊆ G.V ∩ (lineDrawing hK hcx).V := by
     rintro y ⟨hy, hyK⟩
     have : y ∈ ({c, x} : Set S) := by
       by_contra hn
       exact disjoint_left.mp hKU ⟨hyK, hn⟩ hy
     exact ⟨hVsub this, this⟩
-  let G : Drawing S := Γ'.glue (lineDrawing hK hcx) hmeet
-  have hGV : G.V = Γ'.V := union_eq_left.mpr hVsub
-  have hGE : G.E = Γ'.E ∪ {K \ {c, x}} := by
-    change (Γ'.glue (lineDrawing hK hcx) hmeet).E = _
+  let G₂ : Drawing S := G.glue (lineDrawing hK hcx) hmeet
+  have hGV : G₂.V = G.V := union_eq_left.mpr hVsub
+  have hGE : G₂.E = G.E ∪ {K \ {c, x}} := by
+    change (G.glue (lineDrawing hK hcx) hmeet).E = _
     rw [Drawing.glue_E, lineDrawing_E]
   have hKcl : closure (K \ {c, x}) = K := closure_sdiff_pair hK
-  have hKV : K ∩ Γ'.V = {x, c} := by
-    apply subset_antisymm
-    · rintro y ⟨hyK, hyV⟩
-      by_contra hn
-      have hn' : y ∉ ({c, x} : Set S) := fun h => hn (by rw [pair_comm]; exact h)
-      exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (Γ'.V_subset_U hyV)
-    · have hend : ({c, x} : Set S) ⊆ K := (lineDrawing hK hcx).V_subset_U
-      rintro y (rfl | rfl)
-      · exact ⟨hend (Or.inr rfl), hxV⟩
-      · exact ⟨hend (Or.inl rfl), hc⟩
-  have hVU : Γ.V ⊆ Γ.U := by
-    rw [← h₁]
-    exact inter_subset_left
-  have hcnV : c ∉ Γ.V := fun h => disjoint_left.mp hrU hcr (hVU h)
-  by_contra hno
-  have hiv : ∀ e ∈ G.E, ∀ f ∈ G.E, e ≠ f → ∀ v ∈ Γ.V, ∀ r' ∈ Γ.R, ∀ w ∈ r' ∩ G.V,
-      closure e ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
+  have hKV := line_inter_spoke_vertices hc hxV hK hcx hKU
+  have hcnV : c ∉ V := fun h ↦ disjoint_left.mp hrU hcr (hVU h)
+  have hiv₂ : ∀ e ∈ G₂.E, ∀ f ∈ G₂.E, e ≠ f → ∀ v ∈ V, ∀ r' ∈ R, ∀ w ∈ r' ∩ G₂.V,
+      closure e ∩ G₂.V = {v, w} → closure f ∩ G₂.V = {v, w} →
       ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = closure e ∪ closure f := by
-    -- The case of `K` and an old edge.
-    have key : ∀ f ∈ Γ'.E, ∀ v ∈ Γ.V, ∀ r' ∈ Γ.R, ∀ w ∈ r' ∩ Γ'.V,
-        K ∩ Γ'.V = {v, w} → closure f ∩ Γ'.V = {v, w} →
-        ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = closure f ∪ K := by
-      intro f hf v hv r' hr' w hw hKe hfe hΔ
-      have hmx : x ∈ ({v, w} : Set S) := hKe ▸ (show x ∈ K ∩ Γ'.V by rw [hKV]; simp)
-      have hmc : c ∈ ({v, w} : Set S) := hKe ▸ (show c ∈ K ∩ Γ'.V by rw [hKV]; simp)
-      have hvc : c ≠ v := fun h => hcnV (h ▸ hv)
-      have hcw : c = w := hmc.resolve_left hvc
-      subst hcw
-      have hr'r : r' = r := hrr hr' hr hw.1 hcr
-      have hxv : x = v := by
-        rcases hmx with h | h
-        · exact h
-        · exact absurd h.symm hcx
-      subst hxv
-      subst hr'r
-      obtain ⟨Δ, hd, hsubΔ, hb⟩ := hΔ
-      exact hno ⟨f, hf, hfe, Δ, hd, hsubΔ, hb⟩
     rw [hGE, hGV]
     rintro e (he | rfl) f (hf | rfl) hef v hv r' hr' w hw hee hfe hΔ
     · exact h₆ e he f hf hef v hv r' hr' w hw hee hfe hΔ
     · rw [hKcl] at hfe hΔ
-      exact key e he v hv r' hr' w hw hfe hee hΔ
+      obtain ⟨Δ, h₁, h₂, h₃⟩ := hΔ
+      exact hiv e he hef.symm v hv r' hr' w hw hfe hee ⟨Δ, h₁, h₂, by rw [h₃, Set.union_comm]⟩
     · rw [hKcl] at hee hΔ
-      obtain ⟨Δ, a, b, c'⟩ := hΔ
-      exact key f hf v hv r' hr' w hw hee hfe ⟨Δ, a, b, by rw [c', union_comm]⟩
+      exact hiv f hf hef v hv r' hr' w hw hee hfe hΔ
     · exact hef rfl
-  have hpre' : Γ.IsPreRadialDrawing G := by
-    refine ⟨?_, ?_, ?_, ?_, ?_, hiv⟩
+  have hpre' : IsPreRadialOn U V R G₂ := by
+    refine ⟨?_, ?_, ?_, ?_, ?_, hiv₂⟩
     · apply subset_antisymm
       · rintro y ⟨hyU, hyG | hyK⟩
         · rw [← h₁]
@@ -328,6 +313,44 @@ theorem exists_parallel_spoke {Γ : PaintingOrDrawing S} {Γ' : Drawing S}
       rcases he with he | rfl
       · exact h₅ e he
       · exact ⟨x, hx, c, ⟨hc, hcnV⟩, by rw [hKcl]; exact hKV⟩
+  exact ⟨G₂, hpre', hGV, hGE, rfl⟩
+
+/-- **A chord has a parallel spoke.** Graph Minors XI, Section 3, uses the maximality in condition
+(v) of a radial drawing in this form, without stating it. -/
+theorem exists_parallel_spoke {Γ : PaintingOrDrawing S} {Γ' : Drawing S}
+    (hpre : Γ.IsPreRadialDrawing Γ') (hmax : RadMax Γ Γ')
+    {r : Set S} (hr : r ∈ Γ.R) (hcr : c ∈ r) (hc : c ∈ Γ'.V) (hx : x ∈ Γ.V)
+    (hK : IsLineWithEnds K c x) (hcx : c ≠ x) (hKr : K \ {c, x} ⊆ r)
+    (hKU : Disjoint (K \ {c, x}) Γ'.U) (hrU : Disjoint r Γ.U)
+    (hrr : ∀ {r₁ r₂ : Set S}, r₁ ∈ Γ.R → r₂ ∈ Γ.R → ∀ {y : S}, y ∈ r₁ → y ∈ r₂ → r₁ = r₂) :
+    ∃ h ∈ Γ'.E, closure h ∩ Γ'.V = {x, c} ∧ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r ∪ {x} ∧
+      subBd Δ = closure h ∪ K := by
+  have hVU : Γ.V ⊆ Γ.U := by
+    rw [← hpre.1]
+    exact inter_subset_left
+  have hcnV : c ∉ Γ.V := fun h => disjoint_left.mp hrU hcr (hVU h)
+  have hKV := line_inter_spoke_vertices hc (hpre.2.1 hx) hK hcx hKU
+  by_contra hno
+  have key : ∀ f ∈ Γ'.E, K \ {c, x} ≠ f → ∀ v ∈ Γ.V, ∀ r' ∈ Γ.R, ∀ w ∈ r' ∩ Γ'.V,
+      K ∩ Γ'.V = {v, w} → closure f ∩ Γ'.V = {v, w} →
+      ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = K ∪ closure f := by
+    intro f hf _ v hv r' hr' w hw hKe hfe hΔ
+    have hmx : x ∈ ({v, w} : Set S) := hKe ▸ (show x ∈ K ∩ Γ'.V by rw [hKV]; simp)
+    have hmc : c ∈ ({v, w} : Set S) := hKe ▸ (show c ∈ K ∩ Γ'.V by rw [hKV]; simp)
+    have hvc : c ≠ v := fun h => hcnV (h ▸ hv)
+    have hcw : c = w := hmc.resolve_left hvc
+    subst hcw
+    have hr'r : r' = r := hrr hr' hr hw.1 hcr
+    have hxv : x = v := by
+      rcases hmx with h | h
+      · exact h
+      · exact absurd h.symm hcx
+    subst hxv
+    subst hr'r
+    obtain ⟨Δ, hd, hsubΔ, hb⟩ := hΔ
+    exact hno ⟨f, hf, hfe, Δ, hd, hsubΔ, by rw [hb, union_comm]⟩
+  obtain ⟨G, hpre', hGV, hGE, _⟩ :=
+    exists_glue_spoke_of_no_bounded_disc (R := Γ.R) hpre hcr hc hx hK hcx hKr hKU hrU hVU key
   have hsub : Γ'.IsSubdrawing G := ⟨by rw [hGV], by rw [hGE]; exact subset_union_left⟩
   have hback := hmax G hpre' hsub
   have hmem : K \ {c, x} ∈ Γ'.E := hback.2 (by rw [hGE]; exact Or.inr rfl)

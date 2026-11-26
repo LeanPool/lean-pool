@@ -395,7 +395,7 @@ theorem exists_perimeter_of_disc (hS : IsClosedSurface S) (hXc : IsClosed X)
   rw [frontier_compl] at hrng
   rw [compl_compl] at hop
   have hbot : ∀ z, h' (z, 0) ∈ Q := fun z => hQc.frontier_subset (hrng ▸ mem_range_self z)
-  obtain ⟨h, hinjh, hoffh, hboth, hoph⟩ := pull_collar hf hgc hgf hfg hQc hinf h' hinj
+  obtain ⟨h, hinjh, hoffh, hboth, hoph⟩ := pull_collar hf hgc hgf hfg hinf h' hinj
     (fun p hp hq => hmem p hp hq) hbot hop
   rw [hpre] at hoph
   -- The edges and vertices of `D` come from those of `B`.

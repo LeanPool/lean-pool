@@ -77,7 +77,7 @@ theorem exists_height (h : C(Circle × I, S')) [T1Space S'] {z₀ : S'} (hz : �
     exact hball hmem ⟨(z, t), hzt, rfl⟩
 
 /-- A shorter collar still fills a neighbourhood. -/
-theorem isOpen_shrink [T2Space S'] {Q : Set S'} (_hQ : IsClosed Q) (h : C(Circle × I, S'))
+theorem isOpen_shrink [T2Space S'] {Q : Set S'} (h : C(Circle × I, S'))
     (hinj : InjOn h {p | 0 < p.2}) (hoff : ∀ p : Circle × I, 0 < p.2 → h p ∉ Q)
     (hbot : ∀ z, h (z, 0) ∈ Q) (hop : IsOpen (Q ∪ h '' {p | p.2 < 1})) {ε : I} (hε : 0 < ε) :
     IsOpen (Q ∪ h '' {p | p.2 < ε}) := by
@@ -117,7 +117,7 @@ inverse
 theorem pull_collar [T2Space S'] {f : S → S'} {g : S' → S} {z₀ : S'}
   (hfc : Continuous f)
     (hgc : ∀ y, y ≠ z₀ → ContinuousAt g y) (hgf : ∀ x, f x ≠ z₀ → g (f x) = x)
-    (hfg : ∀ y, y ≠ z₀ → f (g y) = y) {Q : Set S'} (hQ : IsClosed Q) (hz₀ : z₀ ∉ Q)
+    (hfg : ∀ y, y ≠ z₀ → f (g y) = y) {Q : Set S'} (hz₀ : z₀ ∉ Q)
     (h' : C(Circle × I, S')) (hinj : InjOn h' {p | 0 < p.2}) (hoff : ∀ p : Circle × I, 0 < p.2
       → h' p ∉ Q)
     (hbot : ∀ z, h' (z, 0) ∈ Q) (hop : IsOpen (Q ∪ h' '' {p | p.2 < 1})) :
@@ -151,7 +151,7 @@ theorem pull_collar [T2Space S'] {f : S → S'} {g : S' → S} {z₀ : S'}
   · intro z
     change g (h' (z, ε * 0)) = _
     rw [mul_zero]
-  · have hshrink := isOpen_shrink hQ h' hinj hoff hbot hop hε
+  · have hshrink := isOpen_shrink h' hinj hoff hbot hop hε
     have heq : f ⁻¹' Q ∪ h '' {p | p.2 < 1} = f ⁻¹' (Q ∪ h' '' {p | p.2 < ε}) := by
       ext x
       constructor

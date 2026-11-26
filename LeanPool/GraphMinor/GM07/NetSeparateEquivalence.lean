@@ -24,28 +24,22 @@ public section
 namespace GraphMinor.GM07
 open Set Surface
 
-/-- The new side family for the separating-pair exchange generates
-exactly the associated map's fibers. This verifies the equivalence
-condition of the new net in VII (2.6), page 218. -/
-theorem Net.separating_map_eqvGen
-    {S T : Type*} [TopologicalSpace S] [TopologicalSpace T]
-    (N : Net S) (i : Fin N.r) {A B F : Set N.D}
-    (hAB : A ∪ B = univ) (hI : A ∩ B = F)
-    (hfA : range (N.f i) ⊆ A) (hgB : range (N.g i) ⊆ B)
+/-- If equal lifts and the old side pairs are identified, the new side pairs generate the fibers
+of the map on the pasted surface. -/
+theorem Net.map_eqvGen_of_cut_lifts
+    {S T : Type*} [TopologicalSpace S] [TopologicalSpace T] (N : Net S)
+    {A B : Set N.D} (hAB : A ∪ B = univ)
     (α : A → T) (β : B → T) (hT : range α ∪ range β = univ)
-    (hcross : ∀ (x : A) (y : B), α x = β y ↔ ∃ r, x.val = N.f i r ∧ y.val = N.g i r)
     (φ : T → S) (hφA : ∀ x : A, φ (α x) = N.φ x.val)
     (hφB : ∀ y : B, φ (β y) = N.φ y.val)
-    (k : Curve N.D) (hkF : range k = F) (f g : Fin N.r → Curve T)
-    (hpair : ∀ j r, φ (f j r) = φ (g j r))
-    (hkf : ∀ r (x : A), x.val = k r → f i r = α x)
-    (hkg : ∀ r (y : B), y.val = k r → g i r = β y)
-    (hotherf : ∀ j, j ≠ i →
-      (∃ h : ∀ r, N.f j r ∈ A, ∀ r, f j r = α ⟨N.f j r, h r⟩) ∨
-      (∃ h : ∀ r, N.f j r ∈ B, ∀ r, f j r = β ⟨N.f j r, h r⟩))
-    (hotherg : ∀ j, j ≠ i →
-      (∃ h : ∀ r, N.g j r ∈ A, ∀ r, g j r = α ⟨N.g j r, h r⟩) ∨
-      (∃ h : ∀ r, N.g j r ∈ B, ∀ r, g j r = β ⟨N.g j r, h r⟩)) :
+    (f g : Fin N.r → Curve T) (hpair : ∀ j t, φ (f j t) = φ (g j t))
+    (hCut : ∀ (x : A) (y : B), x.val = y.val → Relation.EqvGen
+      (fun a b : T => ∃ (j : Fin N.r) (t : unitInterval), a = f j t ∧ b = g j t) (α x) (β y))
+    (hOldPair :
+      let σ : A ⊕ B → N.D := Sum.elim Subtype.val Subtype.val
+      let μ : A ⊕ B → T := Sum.elim α β
+      ∀ j t, ∃ a b, σ a = N.f j t ∧ σ b = N.g j t ∧ Relation.EqvGen
+        (fun x y : T => ∃ (i : Fin N.r) (r : unitInterval), x = f i r ∧ y = g i r) (μ a) (μ b)) :
     ∀ z w, φ z = φ w ↔ Relation.EqvGen
       (fun a b : T => ∃ (j : Fin N.r) (r : unitInterval), a = f j r ∧ b = g j r) z w := by
   classical
@@ -53,16 +47,8 @@ theorem Net.separating_map_eqvGen
     (fun a b : T => ∃ (j : Fin N.r) (r : unitInterval), a = f j r ∧ b = g j r)
   have hRsymm {x y : T} : R x y → R y x := Relation.EqvGen.symm x y
   have hRtrans {x y z : T} : R x y → R y z → R x z := Relation.EqvGen.trans x y z
-  have hRpair : ∀ j r, R (f j r) (g j r) := fun j r => .rel _ _ ⟨j, r, rfl, rfl⟩
   let σ : A ⊕ B → N.D := Sum.elim Subtype.val Subtype.val
   let μ : A ⊕ B → T := Sum.elim α β
-  have hCut : ∀ (x : A) (y : B), x.val = y.val → R (α x) (β y) := by
-    intro x y hxy
-    have hxF : x.val ∈ F := hI ▸ ⟨x.property, hxy.symm ▸ y.property⟩
-    obtain ⟨r, hkr⟩ := hkF.symm ▸ hxF
-    have h := hRpair i r
-    rw [hkf r x hkr.symm, hkg r y (hxy.symm.trans hkr.symm)] at h
-    exact h
   have hSame : ∀ a b, σ a = σ b → R (μ a) (μ b) := by
     intro a b hab
     cases a with
@@ -86,30 +72,6 @@ theorem Net.separating_map_eqvGen
     intro x
     dsimp [δ]
     split <;> rfl
-  have hLiftPoint : ∀ (a : Curve N.D) (p : Curve T),
-      ((∃ h : ∀ r, a r ∈ A, ∀ r, p r = α ⟨a r, h r⟩) ∨
-       (∃ h : ∀ r, a r ∈ B, ∀ r, p r = β ⟨a r, h r⟩)) →
-      ∀ r, ∃ z, σ z = a r ∧ μ z = p r := by
-    intro a p hp r
-    rcases hp with ⟨hA, hpA⟩ | ⟨hB, hpB⟩
-    · exact ⟨Sum.inl ⟨a r, hA r⟩, rfl, (hpA r).symm⟩
-    · exact ⟨Sum.inr ⟨a r, hB r⟩, rfl, (hpB r).symm⟩
-  have hOldPair : ∀ j r, ∃ a b, σ a = N.f j r ∧ σ b = N.g j r ∧ R (μ a) (μ b) := by
-    intro j r
-    by_cases hji : j = i
-    · subst j
-      let x : A := ⟨N.f i r, hfA (mem_range_self r)⟩
-      let y : B := ⟨N.g i r, hgB (mem_range_self r)⟩
-      have hxy : α x = β y := (hcross x y).mpr ⟨r, rfl, rfl⟩
-      refine ⟨Sum.inl x, Sum.inr y, rfl, rfl, ?_⟩
-      change R (α x) (β y)
-      rw [hxy]
-      exact .refl _
-    · obtain ⟨a, ha, haμ⟩ := hLiftPoint (N.f j) (f j) (hotherf j hji) r
-      obtain ⟨b, hb, hbμ⟩ := hLiftPoint (N.g j) (g j) (hotherg j hji) r
-      refine ⟨a, b, ha, hb, ?_⟩
-      rw [haμ, hbμ]
-      exact hRpair j r
   have hδpair : ∀ j r, R (μ (δ (N.f j r))) (μ (δ (N.g j r))) := by
     intro j r
     obtain ⟨a, b, ha, hb, hab⟩ := hOldPair j r
@@ -151,5 +113,68 @@ theorem Net.separating_map_eqvGen
     | refl a => rfl
     | symm a b _ ih => exact ih.symm
     | trans a b c _ _ ih1 ih2 => exact ih1.trans ih2
+
+/-- The new side family for the separating-pair exchange generates
+exactly the associated map's fibers. This verifies the equivalence
+condition of the new net in VII (2.6), page 218. -/
+theorem Net.separating_map_eqvGen
+    {S T : Type*} [TopologicalSpace S] [TopologicalSpace T]
+    (N : Net S) (i : Fin N.r) {A B F : Set N.D}
+    (hAB : A ∪ B = univ) (hI : A ∩ B = F)
+    (hfA : range (N.f i) ⊆ A) (hgB : range (N.g i) ⊆ B)
+    (α : A → T) (β : B → T) (hT : range α ∪ range β = univ)
+    (hcross : ∀ (x : A) (y : B), α x = β y ↔ ∃ r, x.val = N.f i r ∧ y.val = N.g i r)
+    (φ : T → S) (hφA : ∀ x : A, φ (α x) = N.φ x.val)
+    (hφB : ∀ y : B, φ (β y) = N.φ y.val)
+    (k : Curve N.D) (hkF : range k = F) (f g : Fin N.r → Curve T)
+    (hpair : ∀ j r, φ (f j r) = φ (g j r))
+    (hkf : ∀ r (x : A), x.val = k r → f i r = α x)
+    (hkg : ∀ r (y : B), y.val = k r → g i r = β y)
+    (hotherf : ∀ j, j ≠ i →
+      (∃ h : ∀ r, N.f j r ∈ A, ∀ r, f j r = α ⟨N.f j r, h r⟩) ∨
+      (∃ h : ∀ r, N.f j r ∈ B, ∀ r, f j r = β ⟨N.f j r, h r⟩))
+    (hotherg : ∀ j, j ≠ i →
+      (∃ h : ∀ r, N.g j r ∈ A, ∀ r, g j r = α ⟨N.g j r, h r⟩) ∨
+      (∃ h : ∀ r, N.g j r ∈ B, ∀ r, g j r = β ⟨N.g j r, h r⟩)) :
+    ∀ z w, φ z = φ w ↔ Relation.EqvGen
+      (fun a b : T => ∃ (j : Fin N.r) (r : unitInterval), a = f j r ∧ b = g j r) z w := by
+  classical
+  let R : T → T → Prop := Relation.EqvGen
+    (fun a b : T => ∃ (j : Fin N.r) (r : unitInterval), a = f j r ∧ b = g j r)
+  have hRpair : ∀ j r, R (f j r) (g j r) := fun j r => .rel _ _ ⟨j, r, rfl, rfl⟩
+  let σ : A ⊕ B → N.D := Sum.elim Subtype.val Subtype.val
+  let μ : A ⊕ B → T := Sum.elim α β
+  have hCut : ∀ (x : A) (y : B), x.val = y.val → R (α x) (β y) := by
+    intro x y hxy
+    have hxF : x.val ∈ F := hI ▸ ⟨x.property, hxy.symm ▸ y.property⟩
+    obtain ⟨r, hkr⟩ := hkF.symm ▸ hxF
+    have h := hRpair i r
+    rw [hkf r x hkr.symm, hkg r y (hxy.symm.trans hkr.symm)] at h
+    exact h
+  have hLiftPoint : ∀ (a : Curve N.D) (p : Curve T),
+      ((∃ h : ∀ r, a r ∈ A, ∀ r, p r = α ⟨a r, h r⟩) ∨
+       (∃ h : ∀ r, a r ∈ B, ∀ r, p r = β ⟨a r, h r⟩)) →
+      ∀ r, ∃ z, σ z = a r ∧ μ z = p r := by
+    intro a p hp r
+    rcases hp with ⟨hA, hpA⟩ | ⟨hB, hpB⟩
+    · exact ⟨Sum.inl ⟨a r, hA r⟩, rfl, (hpA r).symm⟩
+    · exact ⟨Sum.inr ⟨a r, hB r⟩, rfl, (hpB r).symm⟩
+  have hOldPair : ∀ j r, ∃ a b, σ a = N.f j r ∧ σ b = N.g j r ∧ R (μ a) (μ b) := by
+    intro j r
+    by_cases hji : j = i
+    · subst j
+      let x : A := ⟨N.f i r, hfA (mem_range_self r)⟩
+      let y : B := ⟨N.g i r, hgB (mem_range_self r)⟩
+      have hxy : α x = β y := (hcross x y).mpr ⟨r, rfl, rfl⟩
+      refine ⟨Sum.inl x, Sum.inr y, rfl, rfl, ?_⟩
+      change R (α x) (β y)
+      rw [hxy]
+      exact .refl _
+    · obtain ⟨a, ha, haμ⟩ := hLiftPoint (N.f j) (f j) (hotherf j hji) r
+      obtain ⟨b, hb, hbμ⟩ := hLiftPoint (N.g j) (g j) (hotherg j hji) r
+      refine ⟨a, b, ha, hb, ?_⟩
+      rw [haμ, hbμ]
+      exact hRpair j r
+  exact N.map_eqvGen_of_cut_lifts hAB α β hT φ hφA hφB f g hpair hCut hOldPair
 
 end GraphMinor.GM07

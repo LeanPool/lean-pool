@@ -14,10 +14,10 @@ public import LeanPool.GraphMinor.GM10.Section6
 /-!
 # Graph Minors XX, Section 6, (6.2)
 
-When `ℒ/W` is linked to `𝒯/W` and the tie-breaker is edge-based, the rooted location `ℒ` isolates
-`𝒯`
-modulo `W ∪ {f}`. Uncrossing a member `(A, B)` of `ℒ⁻` with a distinction `(C, D)` keeps the order,
-because of the linkage, and the tie-breaker then forces `B ⊆ D` and `C ⊆ A`.
+Let `𝒯` have order `θ₀` and let the rooted location `ℒ` have order below `θ`. When `ℒ/W` is linked
+to `𝒯/W` and the tie-breaker is edge-based, `ℒ` isolates `𝒯` at threshold `θ` modulo `W ∪ {f}`.
+Uncrossing a member `(A, B)` of `ℒ⁻` with a distinction `(C, D)` keeps the order by linkage.
+The tie-breaker then forces `B ⊆ D` and `C ⊆ A`.
 -/
 
 @[expose] public section
@@ -166,11 +166,13 @@ theorem linked_order {θ₀ : ℕ} (h𝒯 : IsTangle G.toHypergraph θ₀ 𝒯) 
   omega
 
 /-- Graph Minors XX, (6.2) (page 344): "Let $G$ be a rooted hypergraph, and let $\mathcal{T}$ be a
-tangle in $G$ of order $\ge 1$.
+tangle in $G$ of order $\theta \ge 1$.
 Let $\lambda$ be an edge-based tie-breaker in $G$ defined by $f, v$ say. Let $\mathcal{L}$
 be a rooted location in $G$ with order $< \theta$, and let $W \subseteq V(G)$ be such that
 $W \subseteq \bar{\pi}(A)$ for all $A \in \mathcal{L}$. Let $\mathcal{L}/W$ be linked to
-$\mathcal{T}/W$. Then $\mathcal{L}$ $\theta$-isolates $\mathcal{T}$ modulo $W \cup \{f\}$." -/
+$\mathcal{T}/W$. Then $\mathcal{L}$ $\theta$-isolates $\mathcal{T}$ modulo $W \cup \{f\}$."
+The Lean theorem takes the order `θ₀` of `𝒯` and the isolation threshold `θ` independently.
+The location has order below `θ`, and setting `θ₀ = θ` gives the printed case. -/
 theorem theorem_6_2_proof {θ₀ θ : ℕ} (h𝒯 : IsTangle G.toHypergraph θ₀ 𝒯)
     {lam : Hypergraph α β × Hypergraph α β → ℝ ×ₗ ℝ ×ₗ ℝ} {f : β} {v : α ⊕ β → ℝ}
     (hlam : IsDefinedBy G.toHypergraph lam f v) (hloc : IsRootedLocation G ℒ)

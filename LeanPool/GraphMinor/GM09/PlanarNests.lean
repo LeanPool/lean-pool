@@ -1309,6 +1309,40 @@ private theorem replace_nest_circuit_of_outer_detour
     · subst hmj; rw [Function.update_self]; exact hsub_j
     · rw [Function.update_of_ne hmj]
 
+private theorem detour_replacement_circuits {H C P : Drawing S} {v v' : S}
+    (hC : C.IsCircuit) (hCH : C.IsSubdrawing H) (hPH : P.IsSubdrawing H)
+    (hP : P.IsPathBetween v v') (hvC : v ∈ C.V) (hv'C : v' ∈ C.V) (hvv' : v ≠ v')
+    (hVC : P.V ∩ C.V = {v, v'}) (hEC : Disjoint P.E C.E) :
+    ∃ Q₁ Q₂ : Drawing S, Q₁.IsPathBetween v v' ∧ Q₂.IsPathBetween v v' ∧
+      Q₁.IsSubdrawing C ∧ Q₂.IsSubdrawing C ∧ Q₁.IsSubdrawing H ∧ Q₂.IsSubdrawing H ∧
+      Q₁.V ∩ Q₂.V = {v, v'} ∧ Disjoint Q₁.E Q₂.E ∧ C.U = Q₁.U ∪ Q₂.U ∧
+      P.V ∩ Q₁.V = {v, v'} ∧ Q₂.V ∩ P.V = {v, v'} ∧
+      Disjoint P.E Q₁.E ∧ Disjoint Q₂.E P.E ∧
+      (H.sup P Q₁).IsCircuit ∧ (H.sup P Q₂).IsCircuit := by
+  obtain ⟨Q₁, Q₂, hp₁, hp₂, hs₁, hs₂, _, _, hV, hE, hsup⟩ := hC.exists_two_paths hvC hv'C hvv'
+  have hEnds {Q : Drawing S} (hQ : Q.IsPathBetween v v') : ({v, v'} : Set S) ⊆ Q.V := by
+    obtain ⟨W, _, hW, _⟩ := hQ
+    rw [hW]
+    rintro z (rfl | rfl)
+    · exact W.start_mem_support
+    · exact W.end_mem_support
+  have hMeet {Q : Drawing S} (hQ : Q.IsPathBetween v v') (hs : Q.IsSubdrawing C) :
+      P.V ∩ Q.V = {v, v'} := by
+    refine subset_antisymm ?_ (subset_inter (hEnds hP) (hEnds hQ))
+    rw [← hVC]
+    exact fun _ hx ↦ ⟨hx.1, hs.1 hx.2⟩
+  have hV₁ := hMeet hp₁ hs₁
+  have hV₂ := hMeet hp₂ hs₂
+  have hE₁ := disjoint_of_subset_right hs₁.2 hEC
+  have hE₂ := disjoint_of_subset_right hs₂.2 hEC
+  have hH₁ := hs₁.trans hCH
+  have hH₂ := hs₂.trans hCH
+  refine ⟨Q₁, Q₂, hp₁, hp₂, hs₁, hs₂, hH₁, hH₂, hV, hE, ?_, hV₁,
+    (inter_comm _ _).trans hV₂, hE₁, hE₂.symm, ?_, ?_⟩
+  · rw [← hsup, Drawing.sup_U hs₁ hs₂]
+  · exact Drawing.isCircuit_sup hP hp₁ hPH hH₁ hvv' hV₁ hE₁
+  · exact Drawing.isCircuit_sup hP hp₂ hPH hH₂ hvv' hV₂ hE₂
+
 /-- **Move 2 step (Outer detour replacement, GM03 (4.1) paragraph 4, page 60)**:
 When `0 < j.1`, `j.1 + 1 < s`, `Drawing.inf H (C ⟨j.1 + 1, _⟩) (P i)` is a path, and `P i`
 (oriented from `b_i ∈ C_out.V` to `a_i ∈ C_in.V`) has an outer detour `W_sub` on `C j`
@@ -1438,40 +1472,11 @@ theorem move2_outer_detour {s r : ℕ} (hS : IsClosedSurface S)
       · exact hx_next.2 (hnext_m ▸ hx_mU)
       · have hnext_lt_m : j_next < m := lt_of_le_of_ne hnext_le_m hnext_m
         exact disjoint_left.mp (hC.discIns_subset_diff hS hΔ_out hnext_lt_m).1 hx_next.1 hx_mU
-  obtain ⟨Q₁, Q₂, hQ₁_path, hQ₂_path, hQ₁s, hQ₂s, _, _, hQ_V, hQ_E, hQ_sup⟩ :=
-    (hC.1 j).2.1.exists_two_paths hvC hv'C hvv'
-  have hQ₁_H : Q₁.IsSubdrawing H := hQ₁s.trans (hC.1 j).1
-  have hQ₂_H : Q₂.IsSubdrawing H := hQ₂s.trans (hC.1 j).1
-  have hCj_U_eq : (C j).U = Q₁.U ∪ Q₂.U := by
-    rw [← hQ_sup, Drawing.sup_U hQ₁s hQ₂s]
-  have hV_20 : Q₂.V ∩ P_sub.V = {v, v'} := by
-    apply subset_antisymm
-    · intro x ⟨hx₂, hx₀⟩
-      have : x ∈ P_sub.V ∩ (C j).V := ⟨hx₀, hQ₂s.1 hx₂⟩
-      rwa [hVC] at this
-    · rintro x (rfl | rfl)
-      · exact ⟨by obtain ⟨W₀, _, hV₀, _⟩ := hQ₂_path; rw [hV₀]; exact W₀.start_mem_support,
-          by rw [walkDrawing_V]; exact W_sub.start_mem_support⟩
-      · exact ⟨by obtain ⟨W₀, _, hV₀, _⟩ := hQ₂_path; rw [hV₀]; exact W₀.end_mem_support,
-          by rw [walkDrawing_V]; exact W_sub.end_mem_support⟩
-  have hV_01 : P_sub.V ∩ Q₁.V = {v, v'} := by
-    apply subset_antisymm
-    · intro x ⟨hx₀, hx₁⟩
-      have : x ∈ P_sub.V ∩ (C j).V := ⟨hx₀, hQ₁s.1 hx₁⟩
-      rwa [hVC] at this
-    · rintro x (rfl | rfl)
-      · exact ⟨by rw [walkDrawing_V]; exact W_sub.start_mem_support,
-          by obtain ⟨W₀, _, hV₀, _⟩ := hQ₁_path; rw [hV₀]; exact W₀.start_mem_support⟩
-      · exact ⟨by rw [walkDrawing_V]; exact W_sub.end_mem_support,
-          by obtain ⟨W₀, _, hV₀, _⟩ := hQ₁_path; rw [hV₀]; exact W₀.end_mem_support⟩
-  have hE_20 : Disjoint Q₂.E P_sub.E := disjoint_of_subset_left hQ₂s.2 hEC.symm
-  have hE_01 : Disjoint P_sub.E Q₁.E := disjoint_of_subset_right hQ₁s.2 hEC
+  obtain ⟨Q₁, Q₂, hQ₁_path, hQ₂_path, hQ₁s, hQ₂s, hQ₁_H, hQ₂_H, hQ_V, hQ_E,
+      hCj_U_eq, hV_01, hV_20, hE_01, hE_20, hcirc₁, hcirc₂⟩ :=
+    detour_replacement_circuits (hC.1 j).2.1 (hC.1 j).1 hP_sub_H hP_sub_path hvC hv'C hvv'
+      hVC hEC
   have hv_Pi : v ∈ (P i).V := hP_sub_Pi.1 (by rw [walkDrawing_V]; exact W_sub.start_mem_support)
-  have hcirc₁ : (H.sup P_sub Q₁).IsCircuit :=
-    Drawing.isCircuit_sup hP_sub_path hQ₁_path hP_sub_H hQ₁_H hvv' hV_01 hE_01
-  have hcirc₂ : (H.sup P_sub Q₂).IsCircuit :=
-    Drawing.isCircuit_sup hP_sub_path hQ₂_path hP_sub_H hQ₂_H hvv'
-      (by rw [inter_comm, hV_20]) hE_20.symm
   have hU₁_out : (H.sup P_sub Q₁).U ⊆ Δ_out := by
     rw [Drawing.sup_U hP_sub_H hQ₁_H]
     exact union_subset (hP_sub_Pi.U_subset.trans (hP.1 i).2.1) (hQ₁s.U_subset.trans (hC.1 j).2.2)
@@ -1838,39 +1843,10 @@ theorem move2_or_move3_step {s r : ℕ}
       refine disjoint_of_subset_left ?_ hdisj_rest_0
       rw [walkDrawing_append_U]
       exact subset_union_left
-    obtain ⟨Q₁, Q₂, hQ₁_path, hQ₂_path, hQ₁s, hQ₂s, _, _, hQ_V, hQ_E, hQ_sup⟩ :=
-      (hC.1 j).2.1.exists_two_paths hvC hv'C hvv'
-    have hQ₁_H : Q₁.IsSubdrawing H := hQ₁s.trans (hC.1 j).1
-    have hQ₂_H : Q₂.IsSubdrawing H := hQ₂s.trans (hC.1 j).1
-    have hCj_U_eq : (C j).U = Q₁.U ∪ Q₂.U := by
-      rw [← hQ_sup, Drawing.sup_U hQ₁s hQ₂s]
-    have hV_20 : Q₂.V ∩ P_sub.V = {v, v'} := by
-      apply subset_antisymm
-      · intro x ⟨hx₂, hx₀⟩
-        have : x ∈ P_sub.V ∩ (C j).V := ⟨hx₀, hQ₂s.1 hx₂⟩
-        rwa [hVC] at this
-      · rintro x (rfl | rfl)
-        · exact ⟨by obtain ⟨W₀, _, hV₀, _⟩ := hQ₂_path; rw [hV₀]; exact W₀.start_mem_support,
-            by rw [walkDrawing_V]; exact W_sub.start_mem_support⟩
-        · exact ⟨by obtain ⟨W₀, _, hV₀, _⟩ := hQ₂_path; rw [hV₀]; exact W₀.end_mem_support,
-            by rw [walkDrawing_V]; exact W_sub.end_mem_support⟩
-    have hV_01 : P_sub.V ∩ Q₁.V = {v, v'} := by
-      apply subset_antisymm
-      · intro x ⟨hx₀, hx₁⟩
-        have : x ∈ P_sub.V ∩ (C j).V := ⟨hx₀, hQ₁s.1 hx₁⟩
-        rwa [hVC] at this
-      · rintro x (rfl | rfl)
-        · exact ⟨by rw [walkDrawing_V]; exact W_sub.start_mem_support,
-            by obtain ⟨W₀, _, hV₀, _⟩ := hQ₁_path; rw [hV₀]; exact W₀.start_mem_support⟩
-        · exact ⟨by rw [walkDrawing_V]; exact W_sub.end_mem_support,
-            by obtain ⟨W₀, _, hV₀, _⟩ := hQ₁_path; rw [hV₀]; exact W₀.end_mem_support⟩
-    have hE_20 : Disjoint Q₂.E P_sub.E := disjoint_of_subset_left hQ₂s.2 hEC.symm
-    have hE_01 : Disjoint P_sub.E Q₁.E := disjoint_of_subset_right hQ₁s.2 hEC
-    have hcirc₁ : (H.sup P_sub Q₁).IsCircuit :=
-      Drawing.isCircuit_sup hP_sub_path hQ₁_path hP_sub_H hQ₁_H hvv' hV_01 hE_01
-    have hcirc₂ : (H.sup P_sub Q₂).IsCircuit :=
-      Drawing.isCircuit_sup hP_sub_path hQ₂_path hP_sub_H hQ₂_H hvv'
-        (by rw [inter_comm, hV_20]) hE_20.symm
+    obtain ⟨Q₁, Q₂, hQ₁_path, hQ₂_path, hQ₁s, hQ₂s, hQ₁_H, hQ₂_H, hQ_V, hQ_E,
+        hCj_U_eq, hV_01, hV_20, hE_01, hE_20, hcirc₁, hcirc₂⟩ :=
+      detour_replacement_circuits (hC.1 j).2.1 (hC.1 j).1 hP_sub_H hP_sub_path hvC hv'C hvv'
+        hVC hEC
     have hU₁_in_j : (H.sup P_sub Q₁).U ⊆ GM14.discIns Δ_out (C j) := by
       rw [Drawing.sup_U hP_sub_H hQ₁_H]
       exact union_subset hP_sub_in_j (hQ₁s.U_subset.trans hp_j.2.2.2.2.2)

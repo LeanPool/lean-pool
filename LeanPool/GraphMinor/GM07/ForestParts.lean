@@ -31,50 +31,11 @@ open Set Topology GraphMinor.Surface GraphMinor.GM11
 
 variable {S T : Type} [TopologicalSpace S] [TopologicalSpace T]
 
-/-- A line of a closed surface holds no open set. Unlike `line_subset_closure_compl_of_closed`, the
-surface need not be connected. -/
+/-- Each point of a line in a closed surface is a limit of points outside the line. -/
 theorem line_subset_closure_compl_cap (hT : IsClosedSurface T) {L : Set T} {a b : T}
   (hl : IsLineWithEnds L a b) : L ⊆ closure Lᶜ := by
-  intro p hp
-  rw [closure_compl]
-  intro hi
-  have ht2 : T2Space T := hT.2.1
-  have hO : IsOpen (interior L) := isOpen_interior
-  have : LocallyConnectedSpace T := IsSurface.locallyConnected hT.isSurface
-  set G := connectedComponentIn (interior L) p with hG
-  have hGo : IsOpen G := hO.connectedComponentIn
-  have hGc : IsPreconnected G := isPreconnected_connectedComponentIn
-  have hGL : G ⊆ L := (connectedComponentIn_subset _ _).trans interior_subset
-  have hpG : p ∈ G := mem_connectedComponentIn hi
-  obtain ⟨f, -, -⟩ := hl
-  let g : unitInterval → T := fun t ↦ (f t).1
-  have hgi : IsEmbedding g := IsEmbedding.subtypeVal.comp f.isEmbedding
-  have hrg : ∀ x ∈ L, ∃ t, g t = x := fun x hx ↦ ⟨f.symm ⟨x, hx⟩, by simp [g]⟩
-  have hdn := GM19.dense_compl_finite hT.2.2 (finite_singleton p)
-  obtain ⟨q, hqG, hqp⟩ := hdn.inter_open_nonempty G hGo ⟨p, hpG⟩
-  obtain ⟨s, rfl⟩ := hrg p hp
-  obtain ⟨t, rfl⟩ := hrg q (hGL hqG)
-  have hst : s ≠ t := fun h ↦ hqp (by rw [h]; rfl)
-  have key : ∀ {s t : unitInterval}, s < t → g s ∈ G → g t ∈ G → False := by
-    intro s t hlt hs ht
-    obtain ⟨m, hsm, hmt⟩ := exists_between hlt
-    have him : ∀ {W : Set T}, W ⊆ range g → g '' (g ⁻¹' W) = W := fun h ↦
-      image_preimage_eq_of_subset h
-    have hGr : G ⊆ range g := fun x hx ↦ hrg x (hGL hx)
-    have hJ : IsPreconnected (g ⁻¹' G) := by
-      rw [← hgi.isInducing.isPreconnected_image, him hGr]
-      exact hGc
-    have hmG : g m ∈ G := hJ.ordConnected.out hs ht ⟨hsm.le, hmt.le⟩
-    have hJ' : IsPreconnected (g ⁻¹' (G \ {g m})) := by
-      rw [← hgi.isInducing.isPreconnected_image, him (sdiff_subset.trans hGr)]
-      exact IsPreconnected.diff_point hT hGc hGo _
-    have hmem := hJ'.ordConnected.out (x := s) (y := t)
-      ⟨hs, fun h ↦ hsm.ne (hgi.injective h)⟩ ⟨ht, fun h ↦ hmt.ne' (hgi.injective h)⟩ ⟨hsm.le,
-        hmt.le⟩
-    exact hmem.2 rfl
-  rcases lt_or_gt_of_ne hst with h | h
-  · exact key h hpG hqG
-  · exact key h hqG hpG
+  have : T2Space T := hT.2.1
+  exact GM19.line_subset_closure_compl hT hl
 
 /-- **A forest holds no open set.** Every nonempty open set has a point off the forest. Pass to the
 capped closed surface. The complement of each line there is open and dense, and there are finitely

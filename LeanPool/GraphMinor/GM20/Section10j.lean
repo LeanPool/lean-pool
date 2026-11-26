@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM20.Section10i
 public import LeanPool.GraphMinor.Surface.PlaneDisc
+import LeanPool.GraphMinor.GM07.Defs
 
 /-!
 # Graph Minors XX, Section 10: paintings move along homeomorphisms
@@ -28,69 +29,33 @@ open Set Topology GraphMinor.Surface
 
 variable {S T : Type} [TopologicalSpace S] [TopologicalSpace T] (ψ : S ≃ₜ T)
 
-theorem image_tilde (c : Set S) : tilde (ψ '' c) = ψ '' tilde c := by
-  unfold tilde
-  rw [← ψ.image_closure, image_sdiff ψ.injective]
+theorem image_tilde (c : Set S) : tilde (ψ '' c) = ψ '' tilde c :=
+  Surface.image_tilde_homeomorph ψ c
 
 theorem image_arcComponentsIn (F : Set S) :
-    arcComponentsIn (ψ '' F) = (fun c ↦ ψ '' c) '' arcComponentsIn F := by
-  have key : ∀ {S T : Type} [TopologicalSpace S] [TopologicalSpace T] (ψ : S ≃ₜ T) (F : Set S)
-      (c : Set S), c ∈ arcComponentsIn F → ψ '' c ∈ arcComponentsIn (ψ '' F) := by
-    intro S T _ _ ψ F c ⟨h₁, h₂, h₃, h₄⟩
-    refine ⟨h₁.image _, image_mono h₂, h₃.image ψ.continuous, fun D hD hpath hsub ↦ ?_⟩
-    have hF : ψ.symm '' D ⊆ F := by
-      rintro _ ⟨x, hx, rfl⟩
-      obtain ⟨y, hy, rfl⟩ := hD hx
-      simpa using hy
-    have hc : c ⊆ ψ.symm '' D := fun x hx ↦ ⟨ψ x, hsub ⟨x, hx, rfl⟩, by simp⟩
-    have := h₄ _ hF (hpath.image ψ.symm.continuous) hc
-    rw [← this, ← image_comp]
-    simp
-  ext c
-  constructor
-  · intro hc
-    refine ⟨ψ.symm '' c, ?_, ?_⟩
-    · have := key ψ.symm (ψ '' F) c hc
-      rwa [← image_comp, show (ψ.symm ∘ ψ : S → S) = id from funext (by simp), image_id] at this
-    · change ψ '' (ψ.symm '' c) = c
-      rw [← image_comp]
-      simp
-  · rintro ⟨c', hc', rfl⟩
-    exact key ψ F c' hc'
+    arcComponentsIn (ψ '' F) = (fun c ↦ ψ '' c) '' arcComponentsIn F :=
+  GM07.arcComponentsIn_image_homeo ψ F
 
-theorem image_isClosedDisc {Δ : Set S} (h : IsClosedDisc Δ) : IsClosedDisc (ψ '' Δ) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image Δ)⟩
+theorem image_isClosedDisc {Δ : Set S} (h : IsClosedDisc Δ) : IsClosedDisc (ψ '' Δ) :=
+  Surface.image_isClosedDisc_homeomorph ψ h
 
-theorem image_isOArc {F : Set S} (h : IsOArc F) : IsOArc (ψ '' F) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image F)⟩
+theorem image_isOArc {F : Set S} (h : IsOArc F) : IsOArc (ψ '' F) :=
+  Surface.image_isOArc_homeomorph ψ h
 
-theorem image_isLine {F : Set S} (h : IsLine F) : IsLine (ψ '' F) := by
-  obtain ⟨φ⟩ := h
-  exact ⟨φ.trans (ψ.image F)⟩
+theorem image_isLine {F : Set S} (h : IsLine F) : IsLine (ψ '' F) :=
+  Surface.image_isLine_homeomorph ψ h
 
-theorem image_discBd (Δ : Set S) : discBd (ψ '' Δ) = ψ '' discBd Δ := by
-  unfold discBd
-  rw [← image_bd_homeomorph (ψ.image Δ), ← image_comp, ← image_comp]
-  rfl
+theorem image_discBd (Δ : Set S) : discBd (ψ '' Δ) = ψ '' discBd Δ :=
+  Surface.image_discBd_homeomorph ψ Δ
 
-theorem image_lineEnds_subset (F : Set S) : ψ '' lineEnds F ⊆ lineEnds (ψ '' F) := by
-  rintro _ ⟨u, ⟨v, φ, h₀, h₁⟩, rfl⟩
-  exact ⟨ψ v, φ.trans (ψ.image F), by rw [← h₀]; rfl, by rw [← h₁]; rfl⟩
+theorem image_lineEnds_subset (F : Set S) : ψ '' lineEnds F ⊆ lineEnds (ψ '' F) :=
+  Surface.image_lineEnds_subset_homeomorph ψ F
 
-theorem image_lineEnds (F : Set S) : lineEnds (ψ '' F) = ψ '' lineEnds F := by
-  refine Subset.antisymm ?_ (image_lineEnds_subset ψ F)
-  have h := image_lineEnds_subset ψ.symm (ψ '' F)
-  rw [← image_comp, show (ψ.symm ∘ ψ : S → S) = id from funext (by simp), image_id] at h
-  intro x hx
-  exact ⟨ψ.symm x, h ⟨x, hx, rfl⟩, by simp⟩
+theorem image_lineEnds (F : Set S) : lineEnds (ψ '' F) = ψ '' lineEnds F :=
+  Surface.image_lineEnds_homeomorph ψ F
 
-theorem image_cuffs : cuffs T = (fun c ↦ ψ '' c) '' cuffs S := by
-  unfold cuffs
-  rw [← image_bd_homeomorph ψ]
-  exact componentsIn_image (f' := ψ.symm) ψ.continuous.continuousOn ψ.symm.continuous.continuousOn
-    (fun x _ ↦ by simp)
+theorem image_cuffs : cuffs T = (fun c ↦ ψ '' c) '' cuffs S :=
+  Surface.image_cuffs_homeomorph ψ
 
 theorem image_inOrderOn {Θ : Set S} {n₁ n₂ n₃ n₄ : S} (h : GM19.InOrderOn Θ n₁ n₂ n₃ n₄) :
     GM19.InOrderOn (ψ '' Θ) (ψ n₁) (ψ n₂) (ψ n₃) (ψ n₄) := by

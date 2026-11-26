@@ -109,6 +109,50 @@ theorem componentsIn_image {S : Type u} {T : Type v} [TopologicalSpace S]
   · rintro ⟨_, ⟨x, hx, rfl⟩, rfl⟩
     exact ⟨_, mem_image_of_mem f hx, (image_connectedComponentIn hf hf' hl hx).symm⟩
 
+section Homeomorphisms
+
+variable {S : Type u} {T : Type v} [TopologicalSpace S] [TopologicalSpace T] (ψ : S ≃ₜ T)
+
+theorem image_tilde_homeomorph (c : Set S) : tilde (ψ '' c) = ψ '' tilde c := by
+  unfold tilde
+  rw [← ψ.image_closure, image_sdiff ψ.injective]
+
+theorem image_isClosedDisc_homeomorph {Δ : Set S} (h : IsClosedDisc Δ) : IsClosedDisc (ψ '' Δ) := by
+  obtain ⟨φ⟩ := h
+  exact ⟨φ.trans (ψ.image Δ)⟩
+
+theorem image_isOArc_homeomorph {F : Set S} (h : IsOArc F) : IsOArc (ψ '' F) := by
+  obtain ⟨φ⟩ := h
+  exact ⟨φ.trans (ψ.image F)⟩
+
+theorem image_isLine_homeomorph {F : Set S} (h : IsLine F) : IsLine (ψ '' F) := by
+  obtain ⟨φ⟩ := h
+  exact ⟨φ.trans (ψ.image F)⟩
+
+theorem image_discBd_homeomorph (Δ : Set S) : discBd (ψ '' Δ) = ψ '' discBd Δ := by
+  unfold discBd
+  rw [← image_bd_homeomorph (ψ.image Δ), ← image_comp, ← image_comp]
+  rfl
+
+theorem image_lineEnds_subset_homeomorph (F : Set S) : ψ '' lineEnds F ⊆ lineEnds (ψ '' F) := by
+  rintro _ ⟨u, ⟨v, φ, h₀, h₁⟩, rfl⟩
+  exact ⟨ψ v, φ.trans (ψ.image F), by rw [← h₀]; rfl, by rw [← h₁]; rfl⟩
+
+theorem image_lineEnds_homeomorph (F : Set S) : lineEnds (ψ '' F) = ψ '' lineEnds F := by
+  refine Subset.antisymm ?_ (image_lineEnds_subset_homeomorph ψ F)
+  have h := image_lineEnds_subset_homeomorph ψ.symm (ψ '' F)
+  rw [← image_comp, show (ψ.symm ∘ ψ : S → S) = id from funext (by simp), image_id] at h
+  intro x hx
+  exact ⟨ψ.symm x, h ⟨x, hx, rfl⟩, by simp⟩
+
+theorem image_cuffs_homeomorph : cuffs T = (fun c ↦ ψ '' c) '' cuffs S := by
+  unfold cuffs
+  rw [← image_bd_homeomorph ψ]
+  exact componentsIn_image (f' := ψ.symm) ψ.continuous.continuousOn ψ.symm.continuous.continuousOn
+    (fun x _ ↦ by simp)
+
+end Homeomorphisms
+
 /-- A preconnected subset of the union of two separated sets lies in one of them. -/
 theorem IsPreconnected.subset_or_of_separated {T : Type u} [TopologicalSpace T] {A B C : Set T}
     (hC : IsPreconnected C) (hsub : C ⊆ A ∪ B) (h1 : Disjoint (closure A) B)

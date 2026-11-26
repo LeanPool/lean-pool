@@ -153,55 +153,18 @@ private theorem theorem_5_5_zero :
     obtain ⟨K, -⟩ := hK i hi
     exact ⟨K⟩
   choose! K hK using hK
-  obtain ⟨𝓕, hf, h𝓕⟩ := GraphMinor.GM19.theorem_5_2_proof S hS χ.connected χ.Φ (4 * n + 3)
-  have h𝓕' : ∀ i ∈ A, ∃ K₀ ∈ 𝓕, FeatureEquiv χ.Φ K₀ (K i) :=
-    fun i hi ↦ h𝓕 _ (hK i hi).feature (hK i hi).size
-  choose! G hG hG' using h𝓕'
-  obtain ⟨K₀, -, hinf⟩ := exists_infinite_fiber hA hf G hG
-  set e₁ := Nat.nth (· ∈ A ∩ G ⁻¹' {K₀}) with he₁
-  have he₁s : StrictMono e₁ := Nat.nth_strictMono hinf
-  have he₁m : ∀ m, e₁ m ∈ A ∧ G (e₁ m) = K₀ := fun m ↦ Nat.nth_mem_of_infinite hinf m
-  set Kc := K (e₁ 0) with hKc
-  have hcross := hK _ (he₁m 0).1
-  have hfe : ∀ m, ∃ α : S ≃ₜ S, IsFramePreservingHomeo χ.Φ α ∧ α '' Kc.U = (K (e₁ m)).U ∧
-      α '' Kc.V = (K (e₁ m)).V := by
-    intro m
-    obtain ⟨g₀, hg₀, hU₀, hV₀⟩ := hG' _ (he₁m 0).1
-    obtain ⟨g, hg, hU, hV⟩ := hG' _ (he₁m m).1
-    rw [(he₁m 0).2] at hU₀ hV₀
-    rw [(he₁m m).2] at hU hV
-    refine ⟨g₀.symm.trans g, hg₀.symm.trans hg, ?_, ?_⟩
-    · have : (g₀.symm.trans g) '' Kc.U = g '' (g₀.symm '' Kc.U) := by
-        rw [image_image]
-        rfl
-      rw [this, hKc, ← hU₀, symm_image_image', hU]
-    · have : (g₀.symm.trans g) '' Kc.V = g '' (g₀.symm '' Kc.V) := by
-        rw [image_image]
-        rfl
-      rw [this, hKc, ← hV₀, symm_image_image', hV]
-  choose α hα hαU hαV using hfe
-  let Q : ℕ → ColouredPainting χ := fun m ↦ (P (e₁ m)).image (α m).symm
-    (hα m).symm
+  obtain ⟨e₁, e₂, α, hα, he₁s, he₂s, he₁m, hαU, _, hinter, hRV⟩ :=
+    exists_aligned_feature_subsequence P K hA (4 * n + 3)
+      (fun i hi ↦ (hK i hi).feature) (fun i hi ↦ (hK i hi).size) (fun i hi ↦ (hK i hi).inter)
+  let Kc := K (e₁ 0)
+  have hcross := hK _ (he₁m 0)
+  let Q : ℕ → ColouredPainting χ := fun m ↦ (P (e₁ m)).image (α m).symm (hα m).symm
   have hQ : ∀ m, IsColouredImage (α m).symm (P (e₁ m)) (Q m) := fun m ↦
     ColouredPainting.isImage_image _ _ _
-  have hinter : ∀ m, (Q m).Γ.U ∩ Kc.U ⊆ (Q m).Γ.V ∩ Kc.V := by
-    rintro m x ⟨hx₁, hx₂⟩
-    rw [(hQ m).U] at hx₁
-    obtain ⟨y, hy, rfl⟩ := hx₁
-    have hy' : y ∈ (K (e₁ m)).U := by
-      rw [← hαU m]
-      exact ⟨_, hx₂, (α m).apply_symm_apply y⟩
-    obtain ⟨h₁, h₂⟩ := (hK _ (he₁m m).1).inter ⟨hy, hy'⟩
-    refine ⟨?_, ?_⟩
-    · rw [(hQ m).V]
-      exact mem_image_of_mem _ h₁
-    · rw [← hαV m] at h₂
-      obtain ⟨z, hz, rfl⟩ := h₂
-      rwa [(α m).symm_apply_apply]
+  let R : ℕ → ColouredPainting χ := fun m ↦ Q (e₂ m)
   have htwo : ∀ m, ∃ a ∈ Kc.U ∩ (Q m).Γ.V, ∃ b ∈ Kc.U ∩ (Q m).Γ.V, a ≠ b := by
     intro m
-    obtain ⟨a, ha, b, hb, hab⟩ := (hK _ (he₁m
-      m).1).two
+    obtain ⟨a, ha, b, hb, hab⟩ := (hK _ (he₁m m)).two
     have key : ∀ {a}, a ∈ (K (e₁ m)).U ∩ (P (e₁ m)).Γ.V → (α m).symm a ∈ Kc.U ∩ (Q m).Γ.V
       := fun {a} ha ↦ by
       refine ⟨?_, ?_⟩
@@ -212,23 +175,6 @@ private theorem theorem_5_5_zero :
       · rw [(hQ m).V]
         exact mem_image_of_mem _ ha.2
     exact ⟨_, key ha, _, key hb, fun h ↦ hab ((α m).symm.injective h)⟩
-  let g : ℕ → Set S := fun m ↦ Kc.V ∩ (Q
-    m).Γ.V
-  obtain ⟨W₀, -, hinf₂⟩ := exists_infinite_fiber (A := univ) infinite_univ
-    Kc.finite_V.finite_subsets g
-    (fun m _ ↦ inter_subset_left)
-  set e₂ := Nat.nth (· ∈ univ ∩ g ⁻¹' {W₀}) with he₂
-  have he₂s : StrictMono e₂ := Nat.nth_strictMono hinf₂
-  have he₂m : ∀ m, g (e₂ m) = W₀ := fun m ↦ (Nat.nth_mem_of_infinite hinf₂ m).2
-  let R : ℕ → ColouredPainting χ := fun m ↦ Q (e₂ m)
-  have hRV : ∀ i j, ∀ v ∈ Kc.V, v ∈ (R i).Γ.V ↔ v ∈ (R j).Γ.V := by
-    intro i j v hv
-    have h₁ : g (e₂ i) = g (e₂ j) := (he₂m i).trans (he₂m j).symm
-    constructor
-    · intro h
-      exact (h₁ ▸ (⟨hv, h⟩ : v ∈ g (e₂ i)) : v ∈ g (e₂ j)).2
-    · intro h
-      exact (h₁.symm ▸ (⟨hv, h⟩ : v ∈ g (e₂ j)) : v ∈ g (e₂ i)).2
   have hF := hcross.feature
   have hKne : Kc.V ⊆ ⋃ e ∈ arcComponentsIn (Kc.U \ Kc.V), closure e := fun v hv ↦ by
     obtain ⟨e, he, hve⟩ := hF.no_isolated_vertices v hv

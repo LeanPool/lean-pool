@@ -49,78 +49,14 @@ theorem exists_glue_spoke {Γ' : Drawing S} (hpre : Γ.IsPreRadialDrawing Γ')
     (hno : ∀ f ∈ Γ'.E, closure f ∩ Γ'.V ≠ {x, c}) :
     ∃ G : Drawing S, Γ.IsPreRadialDrawing G ∧ G.V = Γ'.V ∧ G.E = Γ'.E ∪ {K \ {c, x}} ∧
       G.U = Γ'.U ∪ K := by
-  classical
-  obtain ⟨h₁, h₂, h₃, h₄, h₅, h₆⟩ := hpre
   have hVU : Γ.V ⊆ Γ.U := V_subset_U'
-  have hcnV : c ∉ Γ.V := fun h => not_mem_U_of_region hr hcr (hVU h)
+  have hrU : Disjoint r Γ.U :=
+    disjoint_left.mpr fun _ hp hpU => not_mem_U_of_region hr hp hpU
+  have hcnV : c ∉ Γ.V := fun h => disjoint_left.mp hrU hcr (hVU h)
   have hcx : c ≠ x := fun h => hcnV (h ▸ hx)
-  have hxV : x ∈ Γ'.V := h₂ hx
-  have hVsub : (lineDrawing hK hcx).V ⊆ Γ'.V := by
-    rintro y (rfl | rfl)
-    · exact hc
-    · exact hxV
-  have hmeet : Γ'.U ∩ (lineDrawing hK hcx).U ⊆ Γ'.V ∩ (lineDrawing hK hcx).V := by
-    rintro y ⟨hy, hyK⟩
-    have : y ∈ ({c, x} : Set S) := by
-      by_contra hn
-      exact disjoint_left.mp hKU ⟨hyK, hn⟩ hy
-    exact ⟨hVsub this, this⟩
-  let G : Drawing S := Γ'.glue (lineDrawing hK hcx) hmeet
-  have hGV : G.V = Γ'.V := union_eq_left.mpr hVsub
-  have hGE : G.E = Γ'.E ∪ {K \ {c, x}} := by
-    change (Γ'.glue (lineDrawing hK hcx) hmeet).E = _
-    rw [Drawing.glue_E, lineDrawing_E]
-  have hKcl : closure (K \ {c, x}) = K := closure_sdiff_pair hK
-  have hKV : K ∩ Γ'.V = {x, c} := by
-    apply subset_antisymm
-    · rintro y ⟨hyK, hyV⟩
-      by_contra hn
-      have hn' : y ∉ ({c, x} : Set S) := fun h => hn (by rw [pair_comm]; exact h)
-      exact disjoint_left.mp hKU ⟨hyK, hn'⟩ (Γ'.V_subset_U hyV)
-    · have hend : ({c, x} : Set S) ⊆ K := (lineDrawing hK hcx).V_subset_U
-      rintro y (rfl | rfl)
-      · exact ⟨hend (Or.inr rfl), hxV⟩
-      · exact ⟨hend (Or.inl rfl), hc⟩
-  have hiv : ∀ e ∈ G.E, ∀ f ∈ G.E, e ≠ f → ∀ v ∈ Γ.V, ∀ r' ∈ Γ.R, ∀ w ∈ r' ∩ G.V,
-      closure e ∩ G.V = {v, w} → closure f ∩ G.V = {v, w} →
-      ¬ ∃ Δ : Set S, IsClosedDisc Δ ∧ Δ ⊆ r' ∪ {v} ∧ subBd Δ = closure e ∪ closure f := by
-    have key : ∀ f ∈ Γ'.E, ∀ v w : S, K ∩ Γ'.V = {v, w} → closure f ∩ Γ'.V = {v, w} → False :=
-      fun f hf v w hKe hfe => hno f hf (hfe.trans (hKe.symm.trans hKV))
-    rw [hGE, hGV]
-    rintro e (he | rfl) f (hf | rfl) hef v hv r' hr' w hw hee hfe hΔ
-    · exact h₆ e he f hf hef v hv r' hr' w hw hee hfe hΔ
-    · rw [hKcl] at hfe
-      exact key e he v w hfe hee
-    · rw [hKcl] at hee
-      exact key f hf v w hee hfe
-    · exact hef rfl
-  have hpre' : Γ.IsPreRadialDrawing G := by
-    refine ⟨?_, ?_, ?_, ?_, ?_, hiv⟩
-    · apply subset_antisymm
-      · rintro y ⟨hyU, hyG | hyK⟩
-        · rw [← h₁]
-          exact ⟨hyU, hyG⟩
-        · by_cases hym : y ∈ ({c, x} : Set S)
-          · rcases hym with rfl | rfl
-            · exact (not_mem_U_of_region hr hcr hyU).elim
-            · exact hx
-          · exact (not_mem_U_of_region hr (hKr ⟨hyK, hym⟩) hyU).elim
-      · intro y hy
-        rw [← h₁] at hy
-        exact ⟨hy.1, Or.inl hy.2⟩
-    · rw [hGV]
-      exact h₂
-    · rw [hGV]
-      exact h₃
-    · rw [hGV]
-      exact h₄
-    · intro e he
-      rw [hGE] at he
-      rw [hGV]
-      rcases he with he | rfl
-      · exact h₅ e he
-      · exact ⟨x, hx, c, ⟨hc, hcnV⟩, by rw [hKcl]; exact hKV⟩
-  exact ⟨G, hpre', hGV, hGE, rfl⟩
+  have hKV := line_inter_spoke_vertices hc (hpre.2.1 hx) hK hcx hKU
+  exact exists_glue_spoke_of_no_bounded_disc (R := Γ.R) hpre hcr hc hx hK hcx hKr hKU hrU hVU
+    (fun f hf _ _ _ _ _ _ _ hKe hfe _ => hno f hf (hfe.trans (hKe.symm.trans hKV)))
 
 omit [T2Space S] in
 /-- **A drawing that satisfies (i)–(iv) lies in a radial drawing.** Among the drawings that satisfy

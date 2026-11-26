@@ -51,12 +51,8 @@ variable {α : Type u} {β : Type v}
 /-- If `u ≠ v` and `e` is incident with both `u` and `v` in `G : Graph α β`, then `G.IsLink e u v`.
 -/
 theorem isLink_of_inc_of_inc_of_ne {G : Graph α β} {e : β} {u v : α}
-    (hu : G.Inc e u) (hv : G.Inc e v) (huv : u ≠ v) : G.IsLink e u v := by
-  rcases hu with ⟨x, hux⟩
-  rcases hv with ⟨y, hvy⟩
-  rcases G.eq_or_eq_of_isLink_of_isLink hvy hux.symm with rfl | rfl
-  · exact hux
-  · exact (huv rfl).elim
+    (hu : G.Inc e u) (hv : G.Inc e v) (huv : u ≠ v) : G.IsLink e u v :=
+  GM10.isLink_of_inc_of_inc_of_ne hu hv huv
 
 /-- Reachability under `H.Adj` implies reachability in `(Hypergraph.ofGraph H hVH hEH).skeleton`. -/
 theorem skeleton_reachable_of_reflTransGen_adj {H : Graph α β}
@@ -78,12 +74,8 @@ theorem skeleton_reachable_of_reflTransGen_adj {H : Graph α β}
 theorem reflTransGen_adj_of_skeleton_walk {H : Graph α β}
     {hVH : V(H).Finite} {hEH : E(H).Finite} {u v : α}
     (w : (Hypergraph.ofGraph H hVH hEH).skeleton.Walk u v) :
-    Relation.ReflTransGen H.Adj u v := by
-  induction w with
-  | nil => exact Relation.ReflTransGen.refl
-  | @cons a b c hadj _ ih =>
-    rcases hadj with ⟨hab, e, ha_inc, hb_inc⟩
-    exact Relation.ReflTransGen.head ⟨e, isLink_of_inc_of_inc_of_ne ha_inc hb_inc hab⟩ ih
+    Relation.ReflTransGen H.Adj u v :=
+  GM10.reflTransGen_adj_of_skeleton_walk w
 
 /-- Every walk in `(Hypergraph.ofGraph H hVH hEH).skeleton` from `u ∈ V(H)` to `v` lifts to a
 `GraphWalk H u v` with the same vertex support. -/

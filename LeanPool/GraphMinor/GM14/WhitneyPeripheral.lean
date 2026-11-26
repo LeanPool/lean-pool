@@ -322,13 +322,11 @@ theorem symm (hc : Cand J C₀ Δ c g D D' T Q) : Cand J C₀ Δ c g D D' T.reve
   gQ := by rw [GraphWalk.edges_reverse, List.mem_reverse]; exact hc.gQ
   gc := hc.gc
 
-theorem bd_subset (_hc : Cand J C₀ Δ c g D D' T Q) : discBd D ⊆ D := Surface.discBd_subset _
-
 theorem wT_sub (hc : Cand J C₀ Δ c g D D' T Q) : wU J T ⊆ D :=
-  fun _ hp => hc.bd_subset (hc.bd ▸ Or.inl hp)
+  fun _ hp => Surface.discBd_subset D (hc.bd ▸ Or.inl hp)
 
 theorem wQ_sub (hc : Cand J C₀ Δ c g D D' T Q) : wU J Q ⊆ D :=
-  fun _ hp => hc.bd_subset (hc.bd ▸ Or.inr hp)
+  fun _ hp => Surface.discBd_subset D (hc.bd ▸ Or.inr hp)
 
 theorem wQ_sub_C (hc : Cand J C₀ Δ c g D D' T Q) : wU J Q ⊆ C₀.U :=
   fun _ hp => (hc.Qbd ▸ hp : _ ∈ C₀.U ∩ D).1
@@ -373,7 +371,7 @@ theorem MM_not_C (hc : Cand J C₀ Δ c g D D' T Q) {e : Set S} (he : e ∈ MM J
     exact Or.inr (mem_iUnion₂.mpr ⟨e, heC, subset_closure hp⟩)
   exact he.2.2.2 (edge_mem_of_meets he.1 hp (hc.Qbd ▸ ⟨hpU, he.2.1 hp⟩))
 
-theorem off_V (_hE : Env J C₀ Δ c) (hc : Cand J C₀ Δ c g D D' T Q) {p : S} (hp : p ∉ BB T Q)
+theorem off_V (hc : Cand J C₀ Δ c g D D' T Q) {p : S} (hp : p ∉ BB T Q)
     (hpD : p ∈ D) (hpJ : p ∈ J.V) : p ∉ C₀.V := by
   intro hpC
   have hm : p ∈ wU J Q := hc.Qbd ▸ ⟨C₀.V_subset_U hpC, hpD⟩
@@ -387,7 +385,7 @@ theorem cls_sub (hE : Env J C₀ Δ c) (hc : Cand J C₀ Δ c g D D' T Q) {a b :
     obtain ⟨hp, hq, w, hw, i₁, i₂⟩ := hadj
     have hwD : w ∈ D := closure_minimal hp.2.1 hc.disc.isClosed (mem_closure_of_inc i₁)
     exact hE.stepc p q ih ⟨⟨hp.1, hc.MM_not_C hp⟩, ⟨hq.1, hc.MM_not_C hq⟩, w,
-      hc.off_V hE hw hwD i₁.vertex_mem, i₁, i₂⟩
+      hc.off_V hw hwD i₁.vertex_mem, i₁, i₂⟩
 
 /-- A bridge inside `D` that meets the inside of `T` belongs to `c`. -/
 theorem att_c (hE : Env J C₀ Δ c) (hc : Cand J C₀ Δ c g D D' T Q) {a : Set S}
@@ -495,7 +493,7 @@ theorem caseB {G₀ : Graph S (Set S)} {P : Set S → Graph S (Set S)} (hS : IsC
 /-- A path `R` in the bridge `c` from the inside of `T` to the inside of `Q` cuts `D` in two. The
 part
 that holds `g` is a smaller candidate. -/
-theorem shrink (_hE : Env J C₀ Δ c) (hc : Cand J C₀ Δ c g D D' T Q) {z w : S}
+theorem shrink (hc : Cand J C₀ Δ c g D D' T Q) {z w : S}
     {T₁ : GraphWalk J.toGraph x z} {T₂ : GraphWalk J.toGraph z y}
     {Q₁ : GraphWalk J.toGraph x w} {Q₂ : GraphWalk J.toGraph w y} {R : GraphWalk J.toGraph z w}
     (hTu : wU J T = wU J T₁ ∪ wU J T₂) (hQu : wU J Q = wU J Q₁ ∪ wU J Q₂)
@@ -787,7 +785,7 @@ theorem false_aux {G₀ : Graph S (Set S)} {P : Set S → Graph S (Set S)} (hS :
       exact Set.disjoint_of_subset_right (fun p hp => hbdD ▸ Or.inl hp) hgoff
     have hfin : {e | e ∈ J.E ∧ e ⊆ D}.Finite := J.finite_edges.subset fun e he => he.1
     rcases edge_side hS hE₁ hc.gE hgdis with h' | h'
-    · obtain ⟨hc', hss⟩ := hc.shrink hE hTu hQu hsT₁ hsQ₁ hsR
+    · obtain ⟨hc', hss⟩ := hc.shrink hTu hQu hsT₁ hsQ₁ hsR
         (fun p hp => (hTm p).mpr (Or.inl hp)) (fun a ha => (hTe a).mpr (Or.inl ha))
         (fun p hp => (hTm p).mpr (Or.inr hp))
         (fun p hp => (hQm p).mpr (Or.inl hp)) (fun a ha => (hQe a).mpr (Or.inl ha))
@@ -814,7 +812,7 @@ theorem false_aux {G₀ : Graph S (Set S)} {P : Set S → Graph S (Set S)} (hS :
           p ∈ W.reverse.edges → p ∈ W.edges := fun {a b W p} hp => by
         rwa [GraphWalk.edges_reverse, List.mem_reverse] at hp
       obtain ⟨hc', hss⟩ := hc.symm.shrink (T₁ := T₂.reverse) (T₂ := T₁.reverse)
-        (Q₁ := Q₂.reverse) (Q₂ := Q₁.reverse) (R := R) hE
+        (Q₁ := Q₂.reverse) (Q₂ := Q₁.reverse) (R := R)
         (by rw [wU_reverse, wU_reverse, wU_reverse, hTu, union_comm])
         (by rw [wU_reverse, wU_reverse, wU_reverse, hQu, union_comm])
         hsT₂.reverse hsQ₂.reverse hsR

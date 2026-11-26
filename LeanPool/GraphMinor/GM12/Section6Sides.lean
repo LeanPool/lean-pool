@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM12.Section6Order
 public import LeanPool.GraphMinor.GM12.Section2ArcComponents
+import LeanPool.GraphMinor.GM12.Section2DiscChordSplit
 public import LeanPool.GraphMinor.GM11.RadialBasics
 public import LeanPool.GraphMinor.GM11.RadialChord
 public import LeanPool.GraphMinor.GM14.DiscSlope
@@ -95,34 +96,8 @@ theorem split_with_arcs {D L A B : Set S} {a b : S} (hD : IsClosedDisc D)
     (hAB : A ∩ B = {a, b}) (hLA : L ∩ A = {a, b}) (hLB : L ∩ B = {a, b})
     (hbd : discBd D = A ∪ B) (hLD : L ⊆ D) (hab : a ≠ b) :
     ∃ E₁ E₂ : Set S, IsClosedDisc E₁ ∧ IsClosedDisc E₂ ∧ E₁ ∪ E₂ = D ∧ E₁ ∩ E₂ = L ∧
-      discBd E₁ = A ∪ L ∧ discBd E₂ = B ∪ L := by
-  have hcap : L ∩ discBd D = {a, b} := by
-    rw [hbd, inter_union_distrib_left, hLA, hLB, union_self]
-  obtain ⟨C₁, C₂, E₁, E₂, -, hcomponents, hE₁, hE₂, hU, hI, hb₁, hb₂, -⟩ :=
-    disc_iArc D L a b hD hLD hab hL hcap
-  have hcomp : componentsIn (discBd D \ {a, b}) = {A \ {a, b}, B \ {a, b}} := by
-    rw [hbd]
-    exact componentsIn_union_sdiff hA.isCompact.isClosed hB.isCompact.isClosed hAB.subset
-      (GraphMinor.GM11.IsLineWithEnds.isPreconnected_sdiff_pair hA)
-      (GraphMinor.GM11.IsLineWithEnds.isPreconnected_sdiff_pair hB)
-      (line_mid hA) (line_mid hB)
-  have hend : ({a, b} : Set S) ⊆ L := fun x hx => (hLA.symm ▸ hx : x ∈ L ∩ A).1
-  have hrem : ∀ G : Set S, (G \ {a, b}) ∪ L = G ∪ L := fun G => by
-    ext x
-    constructor
-    · rintro (hx | hx)
-      · exact .inl hx.1
-      · exact .inr hx
-    · rintro (hx | hx)
-      · by_cases hxF : x ∈ ({a, b} : Set S)
-        · exact .inr (hend hxF)
-        · exact .inl ⟨hx, hxF⟩
-      · exact .inr hx
-  have hpair : ({C₁, C₂} : Set (Set S)) = {A \ {a, b}, B \ {a, b}} := hcomponents.symm.trans hcomp
-  rcases Set.pair_eq_pair_iff.mp hpair with ⟨h₁, h₂⟩ | ⟨h₁, h₂⟩
-  · exact ⟨E₁, E₂, hE₁, hE₂, hU, hI, hb₁.trans (h₁ ▸ hrem A), hb₂.trans (h₂ ▸ hrem B)⟩
-  · exact ⟨E₂, E₁, hE₂, hE₁, (union_comm _ _).trans hU, (inter_comm _ _).trans hI,
-      hb₂.trans (h₂ ▸ hrem A), hb₁.trans (h₁ ▸ hrem B)⟩
+      discBd E₁ = A ∪ L ∧ discBd E₂ = B ∪ L :=
+  GM12.disc_split_with_boundary_arcs_inter hD hL hA hB hAB hLA hLB hbd hLD hab
 
 /-- A line through a closed disc, meeting the boundary in its two ends, cuts the disc in two, and
 the boundary into two lines. -/
