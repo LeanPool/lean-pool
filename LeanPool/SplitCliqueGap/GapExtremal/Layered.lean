@@ -99,10 +99,6 @@ abbrev F5 := ZMod 5
 
 instance : Fact (Nat.Prime 5) := ⟨by norm_num⟩
 
-/-- The ring parent keeps the additive-group and module instances definitionally compatible. -/
-scoped instance (priority := 10000) addCommGroupZModRing (p : ℕ) :
-    AddCommGroup (ZMod p) := Ring.toAddCommGroup
-
 /-- Label positions: `0 ↦ 0, 1 ↦ 1, 2 ↦ twin, 3 ↦ 2, 4 ↦ 3, 5 ↦ 4`. -/
 def σL : Fin 6 ↪ Option F5 :=
   ⟨![some 0, some 1, none, some 2, some 3, some 4], by decide⟩

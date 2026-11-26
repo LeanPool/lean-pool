@@ -7,6 +7,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.SplitCliqueGap.R434.ResidualIsolates
+public import LeanPool.SplitCliqueGap.R434.RobustHosts
 
 /-! Split realizations whose new core vertices are universal. -/
 

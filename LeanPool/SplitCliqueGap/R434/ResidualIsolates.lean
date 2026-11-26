@@ -6,7 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 /- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
-public import LeanPool.SplitCliqueGap.R434.RobustHosts
+public import LeanPool.SplitCliqueGap.GapExtremal.Bridge
 
 /-! Score certificates extend across isolated residual vertices. -/
 
