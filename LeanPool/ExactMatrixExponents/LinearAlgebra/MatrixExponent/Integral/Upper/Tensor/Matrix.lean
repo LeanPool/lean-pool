@@ -65,18 +65,6 @@ namespace TensorClass
 /-- The class of the actual `n` by `n` matrix multiplication tensor. -/
 abbrev square := MatrixMultiplicationAllFields.TensorSpectrum.TensorClass.square (K := O)
 
-theorem square_mul (n m : ℕ) : square n * square m = square (n * m) :=
-  TensorSpectrum.TensorClass.square_mul n m
-
-theorem square_mono {n m : ℕ} (h : n ≤ m) : square n ≤ square m :=
-  TensorSpectrum.TensorClass.square_mono h
-
-theorem square_one : square 1 = 1 :=
-  TensorSpectrum.TensorClass.square_one
-
-theorem square_pow (n j : ℕ) : square (n ^ j) = square n ^ j :=
-  TensorSpectrum.TensorClass.square_pow n j
-
 theorem rank_square_le (n : ℕ) : rank (square n) ≤ n ^ 3 :=
   TensorSpectrum.TensorClass.rank_square_le n
 

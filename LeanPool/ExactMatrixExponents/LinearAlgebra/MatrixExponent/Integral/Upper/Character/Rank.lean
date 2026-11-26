@@ -33,9 +33,8 @@ theorem dots_power (i j k t : ℕ) :
   TensorSpectrum.TensorClass.dots_power i j k t
 
 theorem rank_of_dots {i j k r : ℕ} (h : dots i j k ≤ (r : TensorClass)) :
-    Rank O i j k r := by
-  obtain ⟨a, b, c, hcoeff⟩ := TensorSpectrum.TensorClass.rank_of_dots h
-  exact ⟨a, b, c, fun x y z => (congrFun (congrFun (congrFun hcoeff x) y) z).symm⟩
+    Rank O i j k r :=
+  TensorSpectrum.TensorClass.rank_of_dots h
 
 export MatrixMultiplicationAllFields.MatrixExponent.Rectangle (rounded_dot)
 

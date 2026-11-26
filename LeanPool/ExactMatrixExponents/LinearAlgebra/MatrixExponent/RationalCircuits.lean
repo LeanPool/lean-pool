@@ -6,6 +6,7 @@ Authors: OpenAI
 /- Modified by Lean Pool contributors for this port. -/
 module
 
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.MatrixRank
 public import Mathlib.Analysis.SpecialFunctions.Pow.Real
 public import Mathlib.Algebra.MvPolynomial.Basic
 public import Mathlib.RingTheory.Localization.FractionRing
@@ -66,11 +67,8 @@ def Admissible (F : Type*) [Field F] (s : ℝ) : Prop :=
 /-- The infimum of `{s | Admissible F s}`. -/
 def omega (F : Type*) [Field F] : ℝ := sInf {s | Admissible F s}
 
-/-- Coefficient equations for a rank decomposition. The last index is an
-output position (row of the left input, column of the right input). -/
-def RankLE (F : Type*) [Field F] (n r : ℕ) : Prop :=
-  ∃ a b c : Fin r → Pos n → F, ∀ x y z : Pos n,
-    ∑ i : Fin r, a i x * b i y * c i z =
-      if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then 1 else 0
+/-- Coefficient rank for square matrix multiplication. -/
+abbrev RankLE (F : Type*) [Field F] (n r : ℕ) : Prop :=
+  TensorSpectrum.MatrixRank F n n n r
 
 end MatrixMultiplicationAllFields.MatrixExponent

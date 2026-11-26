@@ -186,7 +186,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integra
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.SeparationInterpolation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.TagHeterogeneous
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.TagOptimized
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.TagPolynomialBranches
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.TagTensorWords
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Base
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Integral.Upper.Tensor.Blocks
@@ -502,7 +501,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.P
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Separation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.SeparationInterpolation
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagHeterogeneous
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagPolynomialBranches
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagTensorWords
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Base
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Tensor.Blocks
@@ -565,6 +563,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Charact
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.CharacterPower
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Growth
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.GrowthRow
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.MatrixRank
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Multiplicative.Averages
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Multiplicative.Character
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.Multiplicative.Compactness

@@ -81,4 +81,22 @@ theorem triplingPolynomialFamily_degree_le (a h : ℕ) (ha : 1 ≤ a) (hh : 1 �
     (fun _ y z _ => tripling_weights_toNat_le_one a h y.val z.val)
     x (triplingYEquiv a h ha hh y) (triplingZEquiv a h ha hh z)
 
+/-- A weighted restriction yields the same evaluated tensor in the sector bases. -/
+theorem triplingPolynomialFamily_eval_mem_restrictionOrbit
+    (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h) (t : K)
+    (he : (fun x y z => (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val) x y z).eval t) ∈
+        LocalTensor.orbit (polynomialTensor a (triplingWidth a h))) :
+    (fun x y z => (triplingPolynomialFamily a h ha hh x y z).eval t) ∈
+      LocalTensor.orbit (polynomialTensor a (triplingWidth a h)) := by
+  classical
+  let E : Tensor K (Fin a) (Fin (triplingWidth a h)) (Fin (a + triplingWidth a h - 1)) :=
+    fun x y z => (weightedPolynomial (polynomialTensor a (triplingWidth a h))
+      (fun _ => 0) (fun y => triplingYWeight a h y.val)
+      (fun z => triplingZWeight a h z.val) x y z).eval t
+  change Tensor.pullback id (triplingYEquiv a h ha hh) (triplingZEquiv a h ha hh) E ∈ _
+  rw [Tensor.pullback_eq_restrict]
+  exact LocalTensor.restrict_mem he _ _ _
+
 end MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors

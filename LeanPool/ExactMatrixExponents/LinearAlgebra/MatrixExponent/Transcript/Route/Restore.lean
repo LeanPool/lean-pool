@@ -108,91 +108,6 @@ end
 end MatrixMultiplicationAllFields.MatrixExponent.Transcript.Selector
 end
 
-section
-/-
-# Named chains of equalities
-
-Each free bit has a distinguished root. All positions must be connected
-to their named source and no equality may connect different names.
-Redundant checks and changes of edge orientation are harmless.
--/
-
-namespace MatrixMultiplicationAllFields.MatrixExponent.Transcript
-
-variable {X E T : Type}
-
-/-- The data for the copies construction, including `link`, `root`, `origin`, `root_name`,
-`compatible`. -/
-structure Copies (X E T : Type) where
-  /-- The `Copies` component of type `X ⊕ T → X ⊕ T → Prop`. -/
-  link : X ⊕ T → X ⊕ T → Prop
-  /-- The root of type `E → T`. -/
-  root : E → T
-  /-- The starting coordinate of type `T → X ⊕ E`. -/
-  origin : T → X ⊕ E
-  root_name : ∀ i, origin (root i) = .inr i
-  compatible : ∀ a b, link a b → Sum.elim Sum.inl origin a = Sum.elim Sum.inl origin b
-  reaches : ∀ i, Relation.EqvGen link (.inr i) (Sum.map id root (origin i))
-
-namespace Copies
-variable (C : Copies X E T) (x : X → Bool)
-
-/-- Computes the source by the application `Sum.elim Sum.inl C.origin`. -/
-def source := Sum.elim Sum.inl C.origin
-
-/-- Chooses the operation for the left or right summand. -/
-def assign (b : E → Bool) : T → Bool := Sum.elim x b ∘ C.origin
-
-/-- Requires the two endpoints of each copy link to carry the same bit. -/
-def Agrees (t : T → Bool) : Prop := ∀ a b, C.link a b → Sum.elim x t a = Sum.elim x t b
-
-theorem assign_root (b : E → Bool) : C.assign x b ∘ C.root = b := by
-  funext i
-  simp [assign, C.root_name]
-
-theorem read (b : E → Bool) (a : X ⊕ T) :
-    Sum.elim x (C.assign x b) a = Sum.elim x b (C.source a) := by
-  cases a <;> rfl
-
-theorem agrees_assign (b : E → Bool) : C.Agrees x (C.assign x b) := by
-  intro i j he
-  rw [C.read, C.read, show C.source i = C.source j from C.compatible _ _ he]
-
-theorem determines {t : T → Bool} (h : C.Agrees x t) : t = C.assign x (t ∘ C.root) := by
-  have he (i j : X ⊕ T) (hij : Relation.EqvGen C.link i j) : Sum.elim x t i = Sum.elim x t j := by
-    induction hij with
-    | refl => rfl
-    | rel a b hab => exact h a b hab
-    | symm _ _ _ ih => exact ih.symm
-    | trans _ _ _ _ _ ih ih' => exact ih.trans ih'
-  funext i
-  have hi := he _ _ (C.reaches i)
-  unfold assign Function.comp
-  cases ha : C.origin i <;> simpa only [ha, Sum.map_inl, Sum.map_inr, Sum.elim_inl, Sum.elim_inr,
-    id_eq] using hi
-
-/-- Reindexes `(E → Bool)` and `{t // C.Agrees x t} where toFun b` by an equivalence. -/
-def assignments : (E → Bool) ≃ {t // C.Agrees x t} where
-  toFun b := ⟨C.assign x b, C.agrees_assign x b⟩
-  invFun t := t.val ∘ C.root
-  left_inv b := C.assign_root x b
-  right_inv t := Subtype.ext (C.determines x t.2).symm
-
-noncomputable section
-
-open scoped Classical in
-/-- Internal summation over physical tape bits is exactly summation
-over the independent roots. -/
-theorem contract [Fintype E] [Fintype T] {F : Type} [AddCommMonoid F] (f : (T → Bool) → F) :
-    (∑ t, if C.Agrees x t then f t else 0) = ∑ b, f (C.assign x b) := by
-  rw [← Finset.sum_filter, Finset.sum_subtype (p := C.Agrees x) _ Finset.mem_filter_univ f]
-  exact (Fintype.sum_equiv (C.assignments x) _ _ (fun _ => rfl)).symm
-
-end
-end Copies
-end MatrixMultiplicationAllFields.MatrixExponent.Transcript
-end
-
 /- # Transporting diagram ports on a fixed private tape -/
 
 noncomputable section
@@ -235,49 +150,6 @@ theorem sample_wires (G : Diagram F x y) (v : G.V) (a : Val x) (b : Val y) (z : 
   · simp only [Function.comp_apply, wires]
     cases G.dst ⟨v, i⟩ <;> rfl
 
-open scoped Classical in
-/-- Taps name physical bit positions. The origin of each must be the
-specified exterior bit or internal edge of the diagram. -/
-structure Route (G : Diagram F x y) (T : Type) where
-  /-- The `Route` component of type `Copies (Boundary x y) G.E T`. -/
-  copies : Copies (Boundary x y) G.E T
-  /-- The `Route` component of type `∀ v, Ports (G.table v) → Boundary x y ⊕ T`. -/
-  tap : ∀ v, Ports (G.table v) → Boundary x y ⊕ T
-  source : ∀ v i, copies.source (tap v i) = wires G v i
-
-namespace Route
-variable {G : Diagram F x y} {T : Type} (r : Route G T)
-
-open scoped Classical in
-/-- The value specified by `sample (G.table v) (Sum.elim (exterior a b) t ∘ r.tap v)`. -/
-def vertex (a : Val x) (b : Val y) (t : T → Bool) (v : G.V) :=
-  sample (G.table v) (Sum.elim (exterior a b) t ∘ r.tap v)
-
-open scoped Classical in
-theorem vertex_assign (a : Val x) (b : Val y) (z : G.E → Bool) (v : G.V) :
-    r.vertex a b (r.copies.assign (exterior a b) z) v = G.vertex a b z v := by
-  rw [← sample_wires]
-  unfold vertex
-  congr 1
-  funext i
-  simp only [Function.comp_apply, Copies.read, r.source]
-
-variable [Field F]
-
-open scoped Classical in
-/-- Returns `∏ v, r.vertex a b t v` when `r.copies.Agrees (exterior a b) t` holds, and `0`
-otherwise. -/
-def value (a : Val x) (b : Val y) (t : T → Bool) : F :=
-  if r.copies.Agrees (exterior a b) t then ∏ v, r.vertex a b t v else 0
-
-open scoped Classical in
-theorem contract [Fintype T] (a : Val x) (b : Val y) :
-    ∑ t, r.value a b t = G.eval a b := by
-  unfold value
-  rw [Copies.contract]
-  simp only [vertex_assign, Diagram.eval]
-
-end Route
 end MatrixMultiplicationAllFields.MatrixExponent.Transcript
 end
 
@@ -306,64 +178,6 @@ def query (name : Fin d → Bool) (T : Table F) (u : Ports T → Bool) : List Bo
 theorem query_length (name : Fin d → Bool) (T : Table F) (u : Ports T → Bool) :
     (query name T u).length = d + (wd T.1 + wd T.2.1) := by simp [query, wd]
 
-noncomputable section
-
-open scoped Classical in
-/-- Valid labels need only distinguish different station tables. -/
-structure Dictionary (F : Type) (d : ℕ) where
-  /-- The local table at each indexed position carried by `Dictionary`, with type `(Fin d →
-  Bool) → Table F`. -/
-  table : (Fin d → Bool) → Table F
-
-namespace Dictionary
-variable (D : Dictionary F d)
-
-open scoped Classical in
-/-- Indexes the request by the coordinates of `Σ c, Ports (D.table c) → Bool`. -/
-abbrev Request := Σ c, Ports (D.table c) → Bool
-
-open scoped Classical in
-/-- Computes the encode by the application `query u.1 (D.table u.1) u.2`. -/
-def encode (u : D.Request) := query u.1 (D.table u.1) u.2
-
-open scoped Classical in
-private theorem injected : Function.Injective D.encode := by
-  rintro ⟨a, x⟩ ⟨b, y⟩ he
-  unfold encode query at he
-  have h : a = b := by
-    apply List.ofFn_injective
-    simpa using congrArg (List.take d) he
-  subst b
-  have hy := List.ofFn_injective (List.append_cancel_left he)
-  have hxy : x = y := by
-    funext i
-    simpa using congrFun hy (positions (.pair (D.table a).1 (D.table a).2.1) i)
-  subst y
-  rfl
-
-open scoped Classical in
-/-- Extends the specified values along the indexing map, using a default elsewhere. -/
-def eval [Zero F] : List Bool → F :=
-  Function.extend D.encode (fun u => sample (D.table u.1) u.2) (fun _ => 0)
-
-open scoped Classical in
-theorem eval_query [Zero F] (name : Fin d → Bool) (T : Table F)
-    (h : D.table name = T) (u : Ports T → Bool) : D.eval (query name T u) = sample T u := by
-  subst T
-  exact D.injected.extend_apply _ _ ⟨name, u⟩
-
-open scoped Classical in
-theorem of_card [Zero F] (s : Finset (Table F)) (h : s.card ≤ 2 ^ d) :
-    ∃ (D : Dictionary F d) (name : s → Fin d → Bool), ∀ a, D.table (name a) = a.val := by
-  obtain ⟨f⟩ : Nonempty (s ↪ (Fin d → Bool)) := by
-    apply Function.Embedding.nonempty_of_card_le
-    simpa using h
-  let z : Table F := ⟨.unit, .unit, fun _ _ => 0⟩
-  refine ⟨⟨Function.extend f Subtype.val (fun _ => z)⟩, f, ?_⟩
-  exact fun a => f.injective.extend_apply Subtype.val (fun _ => z) a
-
-end Dictionary
-end
 end MatrixMultiplicationAllFields.MatrixExponent.Transcript
 end
 

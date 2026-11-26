@@ -178,60 +178,10 @@ variable {F : Type} [Field F] {S : Scheme F} {h u a Δ D Y w : ℕ} {B' : ℝ}
     {U V : Setup S h u a Δ D Y w B'} {full : Bool}
     (P : U.Reading full) (Q : V.Reading full) (R : Relation U V) (n : ℕ)
 
-open scoped Classical in
-/-- The data for the preview construction, including `widen`, `same`, `next`, `margin`, `flags`. -/
-structure Preview : Prop where
-  widen : ∀ {k j v z}, k ≤ j → R k v z → R j v z
-  same : ∀ {v z v' z'}, R n v z → R n v' z' → (v = v' ↔ z = z')
-  next : ∀ {k v z}, R k v z → ∀ j, R (k + 1) (U.post.nav v j) (V.post.nav z j)
-  margin : U.g = V.g
-  flags : ∀ {v z}, R n v z → P.flags v = Q.flags z
-  counts : ∀ {v z}, R n v z → P.counts v = Q.counts z
-  base : ∀ {v z}, R n v z → U.Z.base v = V.Z.base z
-
-variable {P Q R n}
-
-open scoped Classical in
-theorem Look.preview {σ : Cell a} (p : Look P Q σ R n) : Preview P Q R n :=
-  ⟨p.widen, p.same, p.next, p.margin, p.flags, p.counts, p.base⟩
-
 namespace Preview
 
-variable (p : Preview P Q R n) {v v' : U.G.V} {z z' : V.G.V} {k : ℕ}
+variable {P Q R n} (p : Preview P Q R n) {v v' : U.G.V} {z z' : V.G.V} {k : ℕ}
 include p
-
-open scoped Classical in
-theorem symm : Preview Q P (flip R) n :=
-  ⟨fun h r => p.widen h r, fun r s => (p.same r s).symm, fun r j => p.next r j,
-   p.margin.symm, fun r => (p.flags r).symm, fun r => (p.counts r).symm, fun r => (p.base r).symm⟩
-
-section
-variable (hk : k < n) (hr : R k v z) (ht : R n v' z')
-include hk hr ht
-
-open scoped Classical in
-theorem reach (j : B S.d) : U.post.nav v j = v' ↔ V.post.nav z j = z' :=
-  p.same (p.widen hk (p.next hr j)) ht
-
-open scoped Classical in
-theorem labels : U.chart.label v v' = V.chart.label z z' := by
-  rw [P.chart, Q.chart]
-  exact label_eq (p.same (p.widen hk.le hr) ht) (p.reach hk hr ht)
-
-open scoped Classical in
-theorem columns : hops U.post.nav v v' = hops V.post.nav z z' := by
-  ext j
-  simp only [hops, mem_filter, mem_univ, true_and, p.reach hk hr ht]
-
-open scoped Classical in
-theorem links : v' ∈ U.adj full v ↔ z' ∈ V.adj full z := by
-  simp only [P.links, Q.links, p.reach hk hr ht, p.flags (p.widen hk.le hr)]
-
-open scoped Classical in
-theorem core : v' ∈ U.G.C v ↔ z' ∈ V.G.C z := by
-  simp only [P.core, Q.core, p.reach hk hr ht, p.flags (p.widen hk.le hr)]
-
-end
 
 open scoped Classical in
 theorem neighbor (hk : k < n) (hr : R k v z) (he : v' ∈ U.G.C v) :
@@ -245,20 +195,6 @@ theorem maps (hk : k < n) (hr : R k v z) : U.chart.Maps V.chart v z := by
   intro i hi
   obtain ⟨j, hj, he⟩ := p.neighbor hk hr hi
   exact ⟨j, hj, p.labels hk hr (p.widen hk he)⟩
-
-open scoped Classical in
-theorem capacity {c : CoreContact U.G.C} {c' : CoreContact V.G.C}
-    (hk : k < n) (hr : R k c.val.1 c'.val.1) (ht : R k c.val.2 c'.val.2) :
-    U.Z.capacity c = V.Z.capacity c' := by
-  have ha := p.widen hk.le hr
-  have hb := p.widen hk.le ht
-  have hc : (∑ j, U.amount c j) = (∑ j, V.amount c' j) := by
-    rw [P.total, Q.total, p.columns hk hr hb, p.counts ha]
-  have hd : contactDepth U.Z.base unitEnds c = contactDepth V.Z.base unitEnds c' :=
-    congrArg₂ max (p.base ha) (p.base hb)
-  change (∑ j, U.amount c j) / 2 ^ (contactDepth U.Z.base unitEnds c) + 1 / U.g =
-    (∑ j, V.amount c' j) / 2 ^ (contactDepth V.Z.base unitEnds c') + 1 / V.g
-  rw [hc, hd, p.margin]
 
 open scoped Classical in
 theorem opposite (hk : k + 1 < n) (hr : R k v z) (c : CoreContact U.G.C)

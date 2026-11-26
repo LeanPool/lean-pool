@@ -131,7 +131,6 @@ theorem omega_lt_iff_rank {F : Type*} [Field F] {s : ℝ} : omega F < s ↔
     ∃ n r : ℕ, 2 ≤ n ∧ RankLE F n r ∧ (r : ℝ) < (n : ℝ) ^ s := by
   rw [← Rectangle.square, Rectangle.exponent_lt_iff_rank zero_le_one zero_le_one zero_le_one]
   simp only [Rectangle.side_one]
-  rfl
 
 theorem omega_extension (F K : Type*) [Field F] [Field K] [Algebra F K] :
     omega K = omega F := by

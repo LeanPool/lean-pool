@@ -62,11 +62,9 @@ def exponent (F : Type*) [Field F] (a b c : ℝ) : ℝ := sInf {s | Admissible F
 def dual (F : Type*) [Field F] (a b : ℝ) : ℝ :=
   sSup {c ∈ Set.Icc 0 (min a b) | exponent F a b c = a + b}
 
-/-- The rank le of type `Prop` for the given inputs. -/
-def RankLE (F : Type*) [Field F] (i j k r : ℕ) : Prop :=
-  ∃ (a : Fin r → Pos i k → F) (b : Fin r → Pos k j → F) (c : Fin r → Pos i j → F),
-    ∀ x y z, ∑ l : Fin r, a l x * b l y * c l z =
-      if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then 1 else 0
+/-- Coefficient rank for rectangular matrix multiplication over a field. -/
+abbrev RankLE (F : Type*) [Field F] (i j k r : ℕ) : Prop :=
+  TensorSpectrum.MatrixRank F i j k r
 
 /-- The benchmark on the cone where the last coordinate is smallest. -/
 def benchmark (a b c : ℝ) : ℝ :=

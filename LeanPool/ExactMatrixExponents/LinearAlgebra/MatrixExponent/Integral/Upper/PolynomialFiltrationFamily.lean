@@ -54,11 +54,11 @@ theorem determinantPolynomialFamily_eval_mem_restrictionOrbit (a b : ℕ)
     {t : O} (ht : IsUnit t) :
     (fun i y z => (determinantPolynomialFamily a b i y z).eval t) ∈
       LocalTensor.orbit
-        (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) := by
-  have h := weightedPolynomial_eval_mem_restrictionOrbit
-    (determinantAdaptedTensor a b) (fun _ => 0)
-    (determinantInputWeight b) (determinantOutputWeight a b)
-    (determinant_supported_weight a b) ht
-  exact restrictionOrbit_trans (determinantAdapted_mem_restrictionOrbit a b) h
+        (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) :=
+  TensorSpectrum.PolynomialTensors.determinantPolynomialFamily_eval_mem_restrictionOrbit a b t
+    (weightedPolynomial_eval_mem_restrictionOrbit
+      (determinantAdaptedTensor a b) (fun _ => 0)
+      (determinantInputWeight b) (determinantOutputWeight a b)
+      (determinant_supported_weight a b) ht)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

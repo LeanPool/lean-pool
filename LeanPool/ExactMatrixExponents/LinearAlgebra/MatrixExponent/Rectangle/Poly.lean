@@ -8,7 +8,9 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.Tag
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PolynomialDegeneration
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagPolynomialBranches
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PolynomialValues
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.TagHeterogeneous
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.TagPolynomialBranches
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Upper.Character.PermutationPowers
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Weighted
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.TensorSpectrum.PolynomialGrowth

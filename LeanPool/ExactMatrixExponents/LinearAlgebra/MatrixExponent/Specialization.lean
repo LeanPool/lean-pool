@@ -92,9 +92,9 @@ theorem finiteTypeRank {R : Type u} {K : Type v} [CommRing R] [Field K]
     ∃ (L : Type u) (_ : Field L) (_ : Algebra R L) (_ : Algebra.FiniteType R L),
       RankLE L i j k r := by
   obtain ⟨L, _, _, _, hL⟩ := finiteTypeWeighted φ (fun _ _ _ => 1) (by
-    simpa only [map_one, WeightedRankLE, RankLE] using h)
+    simpa only [map_one, WeightedRankLE, RankLE, TensorSpectrum.MatrixRank] using h)
   exact ⟨L, inferInstance, inferInstance, inferInstance, by
-    simpa only [map_one, WeightedRankLE, RankLE] using hL⟩
+    simpa only [map_one, WeightedRankLE, RankLE, TensorSpectrum.MatrixRank] using hL⟩
 
 /-- Specialization preserves all three side lengths and the number of summands. -/
 theorem specializeRank {F : Type*} [Field F] {i j k r : ℕ} (h : RankLE F i j k r) :

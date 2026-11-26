@@ -51,28 +51,9 @@ on the common first input, after the diagonal maps. -/
 theorem triplingPolynomialFamily_eval_mem_restrictionOrbit
     (a h : ℕ) (ha : 1 ≤ a) (hh : 1 ≤ h) {t : Coeff} (ht : t ≠ 0) :
     (fun x y z => (triplingPolynomialFamily a h ha hh x y z).eval t) ∈
-      LocalTensor.orbit (polynomialTensor a (triplingWidth a h)) := by
-  classical
-  let E : Tensor Coeff (Fin a) (Fin (triplingWidth a h))
-      (Fin (a + triplingWidth a h - 1)) :=
-    fun x y z => (weightedPolynomial (polynomialTensor a (triplingWidth a h))
-      (fun _ => 0) (fun y => triplingYWeight a h y.val)
-      (fun z => triplingZWeight a h z.val) x y z).eval t
-  have hE : E ∈ LocalTensor.orbit (polynomialTensor a (triplingWidth a h)) :=
-    weightedPolynomial_eval_mem_restrictionOrbit _ _ _ _
-      (TensorSpectrum.PolynomialTensors.tripling_source_weights_nonneg a h ha) ht
-  have hr := LocalTensor.restrict_mem hE
-    (fun (x' x : Fin a) => if x = x' then (1 : Coeff) else 0)
-    (fun (y' : TriplingY a h) (y : Fin (triplingWidth a h)) =>
-      if y = triplingYEquiv a h ha hh y' then (1 : Coeff) else 0)
-    (fun (z' : TriplingZ a h) (z : Fin (a + triplingWidth a h - 1)) =>
-      if z = triplingZEquiv a h ha hh z' then (1 : Coeff) else 0)
-  have hp : Tensor.pullback (id : Fin a → Fin a)
-      (triplingYEquiv a h ha hh) (triplingZEquiv a h ha hh) E =
-      (fun x y z => (triplingPolynomialFamily a h ha hh x y z).eval t) := rfl
-  rw [Tensor.pullback_eq_restrict] at hp
-  simp only [id_eq] at hp
-  rw [hp] at hr
-  exact hr
+      LocalTensor.orbit (polynomialTensor a (triplingWidth a h)) :=
+  TensorSpectrum.PolynomialTensors.triplingPolynomialFamily_eval_mem_restrictionOrbit a h ha hh t
+    (weightedPolynomial_eval_mem_restrictionOrbit _ _ _ _
+      (TensorSpectrum.PolynomialTensors.tripling_source_weights_nonneg a h ha) ht)
 
 end MatrixMultiplicationAllFields.MatrixExponent.Upper

@@ -506,38 +506,35 @@ def reading {T : Template F} (U : Setup T.scheme T.scheme.h u a Δ D Y w B')
     rw [← he]
     exact p.column_total U.hu c _
 
+section
+
 variable {U V full} (P : U.Reading full) (Q : V.Reading full)
-  (σ : Cell a) (R : Relation U V) (n : ℕ)
+  (R : Relation U V) (n : ℕ)
 
 open scoped Classical in
-/-- The data for the look construction, including `widen`, `same`, `next`, `margin`, `mix`. -/
-structure Look : Prop where
+/-- Agreements on the reset graph, counts and contact depths. -/
+structure Preview : Prop where
   widen : ∀ {k j v z}, k ≤ j → R k v z → R j v z
   same : ∀ {v z v' z'}, R n v z → R n v' z' → (v = v' ↔ z = z')
   next : ∀ {k v z}, R k v z → ∀ j, R (k + 1) (U.post.nav v j) (V.post.nav z j)
   margin : U.g = V.g
-  mix : U.Z.π = V.Z.π
   flags : ∀ {v z}, R n v z → P.flags v = Q.flags z
   counts : ∀ {v z}, R n v z → P.counts v = Q.counts z
   base : ∀ {v z}, R n v z → U.Z.base v = V.Z.base z
-  tag : ∀ {v z}, R n v z → ∀ j, U.Z.group j = σ → U.tag v j = V.tag z j
-  load : ∀ {v z}, R n v z → ∀ j, U.Z.group j = σ → U.G.load v j = V.G.load z j
 
-namespace Look
-variable {P Q σ R n} (p : Look P Q σ R n)
-  {v v' : U.G.V} {z z' : V.G.V} {k : ℕ}
+variable {P Q R n}
+
+namespace Preview
+
+variable (p : Preview P Q R n) {v v' : U.G.V} {z z' : V.G.V} {k : ℕ}
 include p
 
 open scoped Classical in
-theorem group (x : Cell h) : U.Z.group x = V.Z.group x := by unfold Schedule.group; rw [p.mix]
-
-open scoped Classical in
-theorem symm : Look Q P σ (flip R) n :=
+theorem symm : Preview Q P (flip R) n :=
   ⟨fun h r => p.widen h r, fun r s => (p.same r s).symm, fun r j => p.next r j,
-   p.margin.symm, p.mix.symm, fun r => (p.flags r).symm, fun r => (p.counts r).symm,
-   fun r => (p.base r).symm, fun r x h => (p.tag r x ((p.group x).trans h)).symm,
-   fun r x h => (p.load r x ((p.group x).trans h)).symm⟩
+   p.margin.symm, fun r => (p.flags r).symm, fun r => (p.counts r).symm, fun r => (p.base r).symm⟩
 
+section
 variable (hk : k < n) (hr : R k v z) (ht : R n v' z')
 include hk hr ht
 
@@ -563,6 +560,48 @@ open scoped Classical in
 theorem core : v' ∈ U.G.C v ↔ z' ∈ V.G.C z := by
   simp only [P.core, Q.core, p.reach hk hr ht, p.flags (p.widen hk.le hr)]
 
+end
+
+open scoped Classical in
+theorem capacity {c : CoreContact U.G.C} {c' : CoreContact V.G.C}
+    (hk : k < n) (hr : R k c.val.1 c'.val.1) (ht : R k c.val.2 c'.val.2) :
+    U.Z.capacity c = V.Z.capacity c' := by
+  have ha := p.widen hk.le hr
+  have hb := p.widen hk.le ht
+  have hc : (∑ j, U.amount c j) = (∑ j, V.amount c' j) := by
+    rw [P.total, Q.total, p.columns hk hr hb, p.counts ha]
+  have hd : contactDepth U.Z.base unitEnds c = contactDepth V.Z.base unitEnds c' :=
+    congrArg₂ max (p.base ha) (p.base hb)
+  change (∑ j, U.amount c j) / 2 ^ (contactDepth U.Z.base unitEnds c) + 1 / U.g =
+    (∑ j, V.amount c' j) / 2 ^ (contactDepth V.Z.base unitEnds c') + 1 / V.g
+  rw [hc, hd, p.margin]
+
+end Preview
+
+end
+
+variable {U V full} (P : U.Reading full) (Q : V.Reading full)
+  (σ : Cell a) (R : Relation U V) (n : ℕ)
+
+open scoped Classical in
+/-- The reset graph agreements together with the chosen blocks and their records. -/
+structure Look : Prop extends preview : Preview P Q R n where
+  mix : U.Z.π = V.Z.π
+  tag : ∀ {v z}, R n v z → ∀ j, U.Z.group j = σ → U.tag v j = V.tag z j
+  load : ∀ {v z}, R n v z → ∀ j, U.Z.group j = σ → U.G.load v j = V.G.load z j
+
+namespace Look
+variable {P Q σ R n} (p : Look P Q σ R n)
+include p
+
+open scoped Classical in
+theorem group (x : Cell h) : U.Z.group x = V.Z.group x := by unfold Schedule.group; rw [p.mix]
+
+open scoped Classical in
+theorem symm : Look Q P σ (flip R) n :=
+  ⟨p.preview.symm, p.mix.symm, fun r x h => (p.tag r x ((p.group x).trans h)).symm,
+    fun r x h => (p.load r x ((p.group x).trans h)).symm⟩
+
 end Look
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly.History.Reset.Setup
 end
@@ -584,18 +623,11 @@ theorem amounts (hk : k < n) (hr : R k c.val.1 c'.val.1) (ht : R k c.val.2 c'.va
     U.Z.capacity c = V.Z.capacity c' ∧ ∀ j, U.Z.group j = σ → U.amount c j = V.amount c' j := by
   have ha := p.widen hk.le hr
   have hb := p.widen hk.le ht
-  have hs := p.columns hk hr hb
-  have hc : (∑ j, U.amount c j) = (∑ j, V.amount c' j) := by
-    rw [P.total, Q.total, hs, p.counts ha]
-  have hd : contactDepth U.Z.base unitEnds c = contactDepth V.Z.base unitEnds c' :=
-    congrArg₂ max (p.base ha) (p.base hb)
-  constructor
-  · change (∑ j, U.amount c j) / 2 ^ (contactDepth U.Z.base unitEnds c) + 1 / U.g =
-      (∑ j, V.amount c' j) / 2 ^ (contactDepth V.Z.base unitEnds c') + 1 / V.g
-    rw [hc, hd, p.margin]
-  · intro j hj
-    rw [P.weight, Q.weight, hs]
-    simp only [pat, p.tag ha j hj]
+  have hs := p.preview.columns hk hr hb
+  refine ⟨p.preview.capacity hk hr ht, ?_⟩
+  intro j hj
+  rw [P.weight, Q.weight, hs]
+  simp only [pat, p.tag ha j hj]
 
 include p in
 open scoped Classical in
@@ -605,8 +637,8 @@ theorem siblings (hk : k + 1 < n) (hr : R k v z) : Siblings U V σ R k v z := by
   obtain ⟨j, hj, _⟩ := (P.core _ _).mp hm
   let w := V.post.nav z j
   have ht : R (k + 1) (unitEnds c (!t)) w := hj ▸ p.next hr j
-  have hm' := (p.core (by omega) hr (p.widen hk.le ht)).mp hm
-  have hl := p.labels (by omega) hr (p.widen hk.le ht)
+  have hm' := (p.preview.core (by omega) hr (p.widen hk.le ht)).mp hm
+  have hl := p.preview.labels (by omega) hr (p.widen hk.le ht)
   have hv : R (k + 1) (unitEnds c t) z := he.symm ▸ p.widen (by omega) hr
   cases t
   · let c' : CoreContact V.G.C := ⟨(z, w), hm'⟩
@@ -634,8 +666,8 @@ theorem side (hn : k < n) (hD : 0 < D) (delayed : full = false → h - a ≤ 32 
     let t' := V.post.nav z j
     have ht' : R (i + 1) t t' := hj ▸ p.next hr j
     have hh := p.widen (by omega : i + 1 ≤ n) ht'
-    have he := (p.links (by omega) hr hh).mp hm
-    have hc := p.core (by omega) hr hh
+    have he := (p.preview.links (by omega) hr hh).mp hm
+    have hc := p.preview.core (by omega) hr hh
     refine ⟨?_, t', ?_, ?_, ht'⟩
     · unfold delay resetDelay
       apply Nat.mul_pos (by decide)
@@ -656,7 +688,7 @@ theorem side (hn : k < n) (hD : 0 < D) (delayed : full = false → h - a ≤ 32 
     rw [hv] at eh
     rw [hz] at fh
     rw [eh, he, fh] at ht
-    exact ⟨f, hz, ⟨hb, hs, p.labels (by omega) hr (p.widen (by omega) ht)⟩, ht⟩
+    exact ⟨f, hz, ⟨hb, hs, p.preview.labels (by omega) hr (p.widen (by omega) ht)⟩, ht⟩
 
 include p in
 open scoped Classical in
@@ -665,7 +697,7 @@ theorem region (hn : k < n) (hD : 0 < D) (delayed : full = false → h - a
     Region U V σ R k :=
   ⟨⟨p.side hn hD delayed, p.symm.side hn hD delayed⟩, p.widen,
     fun r s => p.same (p.widen hn.le r) (p.widen hn.le s),
-    fun h r s => p.labels (h.trans hn) r (p.widen hn.le s)⟩
+    fun h r s => p.preview.labels (h.trans hn) r (p.widen hn.le s)⟩
 
 end MatrixMultiplicationAllFields.MatrixExponent.Assembly.History.Reset.Setup.Look
 end

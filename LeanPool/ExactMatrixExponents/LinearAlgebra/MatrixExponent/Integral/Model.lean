@@ -58,10 +58,8 @@ def Admissible (F : Type*) [CommRing F] (a b c s : ℝ) : Prop :=
 /-- The infimum of `{s | Admissible F a b c s}`. -/
 def exponent (F : Type*) [CommRing F] (a b c : ℝ) : ℝ := sInf {s | Admissible F a b c s}
 
-/-- The rank of type `Prop` for the given inputs. -/
-def Rank (F : Type*) [CommRing F] (i j k r : ℕ) : Prop :=
-  ∃ (a : Fin r → Pos i k → F) (b : Fin r → Pos k j → F) (c : Fin r → Pos i j → F),
-    ∀ x y z, ∑ l : Fin r, a l x * b l y * c l z =
-      if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then 1 else 0
+/-- Coefficient rank for rectangular matrix multiplication over a commutative ring. -/
+abbrev Rank (F : Type*) [CommRing F] (i j k r : ℕ) : Prop :=
+  TensorSpectrum.MatrixRank F i j k r
 
 end MatrixMultiplicationAllFields.MatrixExponent.Integral

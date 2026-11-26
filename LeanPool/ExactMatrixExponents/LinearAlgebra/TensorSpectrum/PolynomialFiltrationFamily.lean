@@ -75,4 +75,12 @@ theorem determinantPolynomialFamily_degree_le (a b : ℕ)
   cases y' <;> cases z' <;>
     simp_all [determinantAdaptedTensor, determinantInputWeight, determinantOutputWeight]
 
+theorem determinantPolynomialFamily_eval_mem_restrictionOrbit (a b : ℕ) (t : K)
+    (he : (fun i y z => (determinantPolynomialFamily a b i y z).eval t) ∈
+      LocalTensor.orbit (determinantAdaptedTensor a b)) :
+    (fun i y z => (determinantPolynomialFamily a b i y z).eval t) ∈
+      LocalTensor.orbit
+        (Tensor.product (polynomialTensor (a + 1) (b + 2)) binaryDotTensor) :=
+  LocalTensor.orbit_trans (determinantAdapted_mem_restrictionOrbit a b) he
+
 end MatrixMultiplicationAllFields.TensorSpectrum.PolynomialTensors

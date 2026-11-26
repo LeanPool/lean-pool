@@ -521,7 +521,7 @@ theorem record (h : path v z n i j) (x : Cell A.scheme.h) (hx : U.Z.group x = σ
 
 open scoped Classical in
 theorem look : Setup.Look b.read c.read σ (path v z) n := by
-  refine ⟨?_, e.same, ?_, b.margin.trans c.margin.symm, e.mix, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨⟨?_, e.same, ?_, b.margin.trans c.margin.symm, ?_, ?_, ?_⟩, e.mix, ?_, ?_⟩
   · rintro l m i j hm ⟨p, hp, rfl, rfl⟩
     exact ⟨p, hp.trans hm, rfl, rfl⟩
   · rintro l i j ⟨p, hp, rfl, rfl⟩ q

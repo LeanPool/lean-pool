@@ -52,16 +52,4 @@ theorem weightedPolynomial_eval_mem_restrictionOrbit
   rw [weightedPolynomial_eval]
   exact weightedFamily_mem_restrictionOrbit T wx wy wz h ht
 
-/-- Actual local restriction witnesses compose without a limiting argument. -/
-theorem restrictionOrbit_trans
-    {X' Y' Z' X'' Y'' Z'' : Type*}
-    [Fintype X] [Fintype Y] [Fintype Z]
-    [Fintype X'] [Fintype Y'] [Fintype Z']
-    {T : Tensor O X Y Z} {U : Tensor O X' Y' Z'} {V : Tensor O X'' Y'' Z''}
-    (hTU : U ∈ LocalTensor.orbit T)
-    (hUV : V ∈ LocalTensor.orbit U) :
-    V ∈ LocalTensor.orbit T := by
-  obtain ⟨a, b, c, rfl⟩ := hUV
-  exact LocalTensor.restrict_mem hTU a b c
-
 end MatrixMultiplicationAllFields.MatrixExponent.Integral.Upper

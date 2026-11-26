@@ -40,18 +40,14 @@ theorem dots_power (i j k t : ℕ) : dots (K := K) (i ^ t) (j ^ t) (k ^ t) = (do
     exact (congrArg (· * _) (mul_mul_mul_comm _ _ _ _)).trans (mul_mul_mul_comm _ _ _ _)
 
 theorem rank_of_dots {i j k r : ℕ} (h : dots i j k ≤ (r : TensorClass K)) :
-    Tensor.RankAtMost
-      (fun (x : Fin i × Fin k) (y : Fin k × Fin j) (z : Fin i × Fin j) =>
-        if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then (1 : K) else 0) r := by
+    MatrixRank K i j k r := by
   have hr := (TensorClass.rank_mono h).trans (show TensorClass.rank (r : TensorClass K) ≤ r by
     rw [natCast_eq_ofTensor_natTensor, rank_ofTensor]
     exact (CoefficientTensor.rank_le_iff _ _).mpr (CoefficientTensor.rankAtMost_natTensor r))
   rw [dots, dotX, dotY, dotZ, ofTensor_mul, ofTensor_mul, rank_ofTensor] at hr
   obtain ⟨a, b, c, he⟩ := (CoefficientTensor.rank_le_iff _ _).mp hr
   refine ⟨fun l x => a l (((), x.1), x.2), fun l y => b l ((y.2, ()), y.1),
-    fun l z => c l ((z.2, z.1), ()), ?_⟩
-  funext x y z
-  symm
+    fun l z => c l ((z.2, z.1), ()), fun x y z => ?_⟩
   have hh := congrFun (congrFun (congrFun he (((), x.1), x.2)) ((y.2, ()), y.1)) ((z.2, z.1), ())
   refine hh.symm.trans ?_
   simp [Tensor.product, CoefficientTensor.dotXCoeff,

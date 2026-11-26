@@ -32,9 +32,8 @@ private theorem dots_power (i j k t : ℕ) :
   TensorSpectrum.TensorClass.dots_power i j k t
 
 private theorem rank_of_dots {i j k r : ℕ} (h : dots i j k ≤ (r : TensorClass)) :
-    RankLE Coeff i j k r := by
-  obtain ⟨a, b, c, hcoeff⟩ := TensorSpectrum.TensorClass.rank_of_dots h
-  exact ⟨a, b, c, fun x y z => (congrFun (congrFun (congrFun hcoeff x) y) z).symm⟩
+    RankLE Coeff i j k r :=
+  TensorSpectrum.TensorClass.rank_of_dots h
 
 private theorem price_dots (f : Character) {n : ℕ} (hn : 0 < n) {a b c : ℝ}
     (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :

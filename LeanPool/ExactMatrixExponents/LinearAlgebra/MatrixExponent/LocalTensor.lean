@@ -30,4 +30,10 @@ theorem restrict_mem {X'' Y'' Z'' : Type*} [Fintype X'] [Fintype Y'] [Fintype Z'
   obtain ⟨A, B, C, rfl⟩ := h
   exact ⟨_, _, _, Tensor.restrict_restrict A B C D E F T⟩
 
+theorem orbit_trans {X'' Y'' Z'' : Type*} [Fintype X'] [Fintype Y'] [Fintype Z']
+    {T : Tensor K X Y Z} {U : Tensor K X' Y' Z'} {V : Tensor K X'' Y'' Z''}
+    (hTU : U ∈ orbit T) (hUV : V ∈ orbit U) : V ∈ orbit T := by
+  obtain ⟨a, b, c, rfl⟩ := hUV
+  exact restrict_mem hTU a b c
+
 end MatrixMultiplicationAllFields.MatrixExponent.LocalTensor

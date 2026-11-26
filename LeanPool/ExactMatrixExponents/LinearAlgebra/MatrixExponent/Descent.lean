@@ -44,7 +44,7 @@ theorem descendWeighted {F : Type*} {L : Type*} [Field F] [Field L] [Algebra F L
 theorem descendRank {F : Type*} {L : Type*} [Field F] [Field L] [Algebra F L] [Module.Finite F L]
     {i j k r : ℕ} (h : RankLE L i j k r) : RankLE F i j k (r * Module.finrank F L ^ 2) := by
   have h' : WeightedRankLE (fun (_ : Fin i) (_ : Fin j) (_ : Fin k) => algebraMap F L 1) r := by
-    simpa only [map_one, WeightedRankLE, RankLE] using h
+    simpa only [map_one, WeightedRankLE, RankLE, TensorSpectrum.MatrixRank] using h
   exact descendWeighted (F := F) (W := fun _ _ _ => 1) h'
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rectangle
