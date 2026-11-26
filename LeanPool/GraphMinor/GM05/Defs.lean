@@ -26,8 +26,8 @@ J. Combin. Theory Ser. B **41** (1986), 92–114, Sections 1–7 (pages 92–109
     each vertex of `T` satisfying conditions (i)–(iii).
   - The width of a tree-decomposition (`decompWidth` and the predicate `WidthLE χ w` for width at
     most `w`), and the tree-width of `G` (both as the predicate `TreeWidthLE G w`, stating that `G`
-    has a tree-decomposition of width at most `w`, and as the least finite bound `treeWidth G : ℕ∞`, or
-    `⊤` when no finite bound exists).
+    has a tree-decomposition of width at most `w`, and as `treeWidth G : ℕ∞`, the least finite
+    bound or `⊤` when no finite bound exists).
   - Relabelling of tree-decompositions along an equivalence `e : ι ≃ ι'`
     (`IsTreeDecomposition.relabel`, `treeWidthLE_of_isTreeDecomposition`).
   - Separations `(V₁, V₂)` of a graph `G` (`IsSeparation`).
