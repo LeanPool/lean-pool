@@ -14,14 +14,11 @@ public import LeanPool.GraphMinor.GM14.Defs
 /-!
 # Graph Minors XI, (9.1)
 
-The paper defines `d` on the atoms of a drawing `Γ` with a slope. `theorem_9_1` is its inequality
-(9.1), for
-`twiceDistance`. `tangleMetric_triangle` is the same inequality for the metric of a respectful
-tangle, which later
-papers use: there the slope lives in the radial drawing `K` of `H`, and each atom of `H` has a
-corresponding atom
-of `K`. `tangleMetric_le_one` is the fact that a vertex and a region at it have distance at most
-one.
+The paper states the triangle inequality (9.1) for atoms of a drawing `Γ` with a slope.
+`theorem_9_1_proof` extends it to `twiceDistance` on sets with a nonempty middle set.
+`tangleMetric_triangle` extends the inequality to arbitrary sets using the radial drawing of a
+respectful tangle. On atoms, it uses their corresponding atoms in that drawing.
+`tangleMetric_le_one` bounds the distance from a vertex to an incident region by one.
 -/
 
 @[expose] public section
@@ -36,9 +33,9 @@ universe u
 variable {S : Type u} [TopologicalSpace S] [T2Space S] [ConnectedSpace S] {Γ : Drawing S}
   {K : ℕ} {ins : Drawing S → Set S}
 
-/-- Two restraints that meet lie in a restraint with length at most the sum of their lengths. This
-is the
-step of (9.1), after the two restraints are replaced by extreme ones. -/
+/-- Two intersecting restraints whose combined perimeter is below `K` fit inside a restraint
+whose perimeter is at most their sum. This is the short-distance step of XI (9.1), page 104,
+after enlarging to extreme restraints. The paper's slope order `θ` corresponds to `K = 2 * θ`. -/
 theorem exists_restraint_union (hS : IsClosedSurface S)
     (hs : IsSlope Γ K ins) {X Y : Set S} (hX : IsRestraint Γ ins K X) (hY : IsRestraint Γ ins K Y)
     (hne : (X ∩ Y).Nonempty) (hl : perimeterWalkLength Γ X + perimeterWalkLength Γ Y < K) :
@@ -57,9 +54,8 @@ theorem exists_restraint_union (hS : IsClosedSurface S)
   exact ⟨X' ∪ Y', theorem_8_6_proof hS hs eX.1 eY.1 hunion (lt_of_le_of_lt hle hl),
     sX.trans subset_union_left, sY.trans subset_union_right, hle⟩
 
-/-- **(9.1)** of Graph Minors XI (page 104): "If $a, b, c \in A(\Gamma)$ then $d(a, b) + d(b, c) \ge
-d(a, c)$." Here
-`twiceDistance` is `2d`. -/
+/-- The triangle inequality for `twiceDistance` extends XI (9.1), page 104, from atoms to sets
+with a nonempty middle set. In the paper's atom case `twiceDistance` is twice its distance `d`. -/
 theorem theorem_9_1_proof (hS : IsClosedSurface S)
     (hs : IsSlope Γ K ins) {a b c : Set S} (hb : b.Nonempty) :
     twiceDistance Γ ins K a c ≤ twiceDistance Γ ins K a b + twiceDistance Γ ins K b c := by
@@ -237,7 +233,8 @@ theorem corresponding_meet (hrad : (PaintingOrDrawing.drawing H).IsPreRadialDraw
     have h₄ : w' = c := hu w' ⟨hw'.2, hw'.1⟩
     exact ⟨w, rfl, by rw [h₃, ← h₄]; rfl⟩
 
-/-- **(9.1)** of Graph Minors XI (page 104), for the metric of a respectful tangle. -/
+/-- The triangle inequality from XI (9.1), page 104, extended to arbitrary sets for the radial
+metric of a respectful tangle. The paper states the inequality for atoms. -/
 theorem tangleMetric_triangle (hS : IsClosedSurface S)
     (hrad : (PaintingOrDrawing.drawing H).IsPreRadialDrawing D) (hs : IsSlope D (2 * θ) ins)
       (a b c : Set S) :

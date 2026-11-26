@@ -858,43 +858,70 @@ theorem ncard_arcComponentsIn_bd_sdiff (hS : IsSurface S) (N : Net S) {J : Drawi
           (J.finite_V.subset inter_subset_right)]
   simpa [sUnion_cuffs] using hkey (cuffs S) (cuff_statement S hS).2.1 Subset.rfl
 
-/-- For any seam graph `J` of a net `N` on a surface `S`,
-`J.E.ncard = N.r + (bd S ∩ J.V).ncard`. -/
-theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
+/-! ### Explicit edge decomposition of a seam graph -/
+
+/-- The `i`-th interior seam curve `N.φ ∘ N.f i : C(unitInterval, S)`. -/
+def interiorSeamCurve (N : Net S) (i : Fin N.r) : C(unitInterval, S) :=
+  ⟨N.φ ∘ N.f i, N.quotientMap_φ.continuous.comp (N.f i).continuous⟩
+
+/-- The `i`-th interior seam edge `(N.φ ∘ N.f i) '' Ioo 0 1`. -/
+def interiorSeamEdge (N : Net S) (i : Fin N.r) : Set S :=
+  N.interiorSeamCurve i '' Ioo (0 : unitInterval) 1
+
+theorem e_int_isLink [T2Space S] (N : Net S) {J : Drawing S} (hJ : N.IsSeamGraphFor J)
+    (i : Fin N.r) :
+    J.toGraph.IsLink (N.interiorSeamEdge i) (N.φ (N.f i 0)) (N.φ (N.f i 1)) := by
+  refine (Drawing.eq_edge_of_injOn_Ioo J (N.interiorSeamCurve i) ?_ ?_ ?_ ?_).2
+  · rw [hJ.2.2]
+    exact ⟨i, Or.inl rfl⟩
+  · rw [hJ.2.2]
+    exact ⟨i, Or.inr rfl⟩
+  · intro t ht
+    rw [hJ.2.1, hJ.2.2]
+    exact ⟨⟨N.f i t, N.range_f_subset_bd i ⟨t, rfl⟩, rfl⟩, N.notMem_seamV_of_mem_Ioo i ht⟩
+  · intro t₁ ht₁ t₂ _ h12
+    rcases N.eq_f_or_g_of_φ_eq_of_mem_Ioo i ht₁ h12 with hff | hfg
+    · exact (N.injective_f i hff).symm
+    · exact False.elim (N.internally_disjoint_gf i i t₁ ht₁ ⟨t₂, hfg⟩)
+
+theorem e_int_mem_E [T2Space S] (N : Net S) {J : Drawing S} (hJ : N.IsSeamGraphFor J)
+    (i : Fin N.r) : N.interiorSeamEdge i ∈ J.E :=
+  (N.e_int_isLink hJ i).edge_mem
+
+theorem tilde_e_int [T2Space S] (N : Net S) {J : Drawing S} (hJ : N.IsSeamGraphFor J)
+    (i : Fin N.r) :
+    tilde (N.interiorSeamEdge i) = {N.φ (N.f i 0), N.φ (N.f i 1)} := by
+  rw [tilde_eq_closure_inter_V J (N.e_int_mem_E hJ i)]
+  have hlink := N.e_int_isLink hJ i
+  unfold Drawing.toGraph at hlink
+  exact hlink.2.2.2
+
+theorem e_int_injective (N : Net S) : Function.Injective N.interiorSeamEdge := by
+  intro i j hij
+  let t₀ : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
+  have ht₀ : t₀ ∈ Ioo (0 : unitInterval) 1 := by
+    constructor <;> rw [← Subtype.coe_lt_coe] <;> norm_num [t₀]
+  have hmem : N.interiorSeamCurve i t₀ ∈ N.interiorSeamEdge j := hij ▸ ⟨t₀, ht₀, rfl⟩
+  rcases hmem with ⟨s, _, hs_eq⟩
+  by_contra hne
+  rcases N.eq_f_or_g_of_φ_eq_of_mem_Ioo i ht₀ hs_eq.symm with hff | hfg
+  · exact N.internally_disjoint_ff i j hne t₀ ht₀ ⟨s, hff⟩
+  · exact N.internally_disjoint_gf i j t₀ ht₀ ⟨s, hfg⟩
+
+theorem disjoint_e_int_bd (hS : IsSurface S) (N : Net S) (i : Fin N.r) :
+    Disjoint (N.interiorSeamEdge i) (bd S) := by
+  rw [Set.disjoint_left]
+  rintro _ ⟨t, ht, rfl⟩ hbd
+  exact N.notMem_bd_of_mem_Ioo hS i ht hbd
+
+theorem seamGraph_edges_eq (hS : IsSurface S) (N : Net S) {J : Drawing S}
     (hJ : N.IsSeamGraphFor J) :
-    J.E.ncard = N.r + (bd S ∩ J.V).ncard := by
+    J.E = range N.interiorSeamEdge ∪ arcComponentsIn (bd S \ J.V) ∧
+      Disjoint (range N.interiorSeamEdge) (arcComponentsIn (bd S \ J.V)) := by
   have : T2Space S := hS.2.1
-  let interiorSeamCurve (i : Fin N.r) : C(unitInterval, S) :=
-    ⟨N.φ ∘ N.f i, N.quotientMap_φ.continuous.comp (N.f i).continuous⟩
-  let interiorSeamEdge (i : Fin N.r) : Set S := interiorSeamCurve i '' Ioo (0 : unitInterval) 1
-  have he_int_mem : ∀ i : Fin N.r, interiorSeamEdge i ∈ J.E := by
-    intro i
-    refine (Drawing.eq_edge_of_injOn_Ioo J (interiorSeamCurve i) ?_ ?_ ?_ ?_).1
-    · rw [hJ.2.2]
-      exact ⟨i, Or.inl rfl⟩
-    · rw [hJ.2.2]
-      exact ⟨i, Or.inr rfl⟩
-    · intro t ht
-      rw [hJ.2.1, hJ.2.2]
-      exact ⟨⟨N.f i t, N.range_f_subset_bd i ⟨t, rfl⟩, rfl⟩, N.notMem_seamV_of_mem_Ioo i ht⟩
-    · intro t₁ ht₁ t₂ ht₂ h12
-      rcases N.eq_f_or_g_of_φ_eq_of_mem_Ioo i ht₁ h12 with hff | hfg
-      · exact (N.injective_f i hff).symm
-      · exact False.elim (N.internally_disjoint_gf i i t₁ ht₁ ⟨t₂, hfg⟩)
-  have he_int_inj : Function.Injective interiorSeamEdge := by
-    intro i j hij
-    let t₀ : unitInterval := ⟨1 / 2, by norm_num, by norm_num⟩
-    have ht₀ : t₀ ∈ Ioo (0 : unitInterval) 1 := by
-      constructor <;> rw [← Subtype.coe_lt_coe] <;> norm_num [t₀]
-    have hmem : interiorSeamCurve i t₀ ∈ interiorSeamEdge j := hij ▸ ⟨t₀, ht₀, rfl⟩
-    rcases hmem with ⟨s, hs, hs_eq⟩
-    by_contra hne
-    rcases N.eq_f_or_g_of_φ_eq_of_mem_Ioo i ht₀ hs_eq.symm with hff | hfg
-    · exact N.internally_disjoint_ff i j hne t₀ ht₀ ⟨s, hff⟩
-    · exact N.internally_disjoint_gf i j t₀ ht₀ ⟨s, hfg⟩
   let A : Set S := (J.U \ J.V) \ bd S
   let B : Set S := bd S \ J.V
-  have hA_eq : A = ⋃ i : Fin N.r, interiorSeamEdge i := by
+  have hA_eq : A = ⋃ i : Fin N.r, N.interiorSeamEdge i := by
     ext p
     simp only [A, interiorSeamEdge, interiorSeamCurve, ContinuousMap.coe_mk, Function.comp_apply,
       Set.mem_sdiff,
@@ -911,9 +938,9 @@ theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
       rw [hJ.2.1, hJ.2.2]
       exact ⟨⟨⟨N.f i t, N.range_f_subset_bd i ⟨t, rfl⟩, rfl⟩,
         N.notMem_seamV_of_mem_Ioo i ht⟩, N.notMem_bd_of_mem_Ioo hS i ht⟩
-  let U₁ : Set S := ⋃ i : Fin N.r, range (interiorSeamCurve i)
+  let U₁ : Set S := ⋃ i : Fin N.r, range (N.interiorSeamCurve i)
   have hU₁_closed : IsClosed U₁ :=
-    isClosed_iUnion_of_finite fun i => (isCompact_range (interiorSeamCurve i).continuous).isClosed
+    isClosed_iUnion_of_finite fun i => (isCompact_range (N.interiorSeamCurve i).continuous).isClosed
   have hA_sub_U₁ : A ⊆ U₁ := by
     rw [hA_eq]
     exact iUnion_mono fun i => image_subset_range _ _
@@ -923,7 +950,7 @@ theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
     have hbd_sub : bd S ⊆ J.U := hJ.2.1 ▸ N.bd_subset_seamU
     by_cases hpbd : p ∈ bd S
     · exact ⟨fun ⟨_, hpV⟩ => Or.inr ⟨hpbd, hpV⟩,
-        by rintro (⟨⟨hpU, hpV⟩, _⟩ | ⟨_, hpV⟩) <;> exact ⟨hbd_sub hpbd, hpV⟩⟩
+        by rintro (⟨⟨_, hpV⟩, _⟩ | ⟨_, hpV⟩) <;> exact ⟨hbd_sub hpbd, hpV⟩⟩
     · constructor
       · intro hp
         exact Or.inl ⟨hp, hpbd⟩
@@ -944,7 +971,7 @@ theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
     change arcComponentsIn (J.U \ J.V) = _
     rw [hUV_eq]
     exact GM11.arcComponentsIn_union hU₁_closed (isClosed_bd S) hA_sub_U₁ sdiff_subset hAB_disj
-  have harc_A : arcComponentsIn A = range interiorSeamEdge := by
+  have harc_A : arcComponentsIn A = range N.interiorSeamEdge := by
     ext E
     simp only [mem_range]
     constructor
@@ -954,27 +981,31 @@ theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
       have hpA : p ∈ A := hE.2.1 hpE
       rw [hA_eq, mem_iUnion] at hpA
       obtain ⟨i, hpi⟩ := hpA
-      exact ⟨i, J.edge_eq_of_mem (he_int_mem i) hEJ hpi hpE⟩
+      exact ⟨i, J.edge_eq_of_mem (N.e_int_mem_E hJ i) hEJ hpi hpE⟩
     · rintro ⟨i, rfl⟩
-      rcases harc_union ▸ he_int_mem i with hEA | hEB
+      rcases harc_union ▸ N.e_int_mem_E hJ i with hEA | hEB
       · exact hEA
       · obtain ⟨p, hp⟩ := hEB.1
         have hpA : p ∈ A := by
           rw [hA_eq, mem_iUnion]
           exact ⟨i, hp⟩
-        exact False.elim ( hpA.2 (hEB.2.1 hp).1 )
-  have hdisj_arc : Disjoint (arcComponentsIn A) (arcComponentsIn B) := by
-    rw [Set.disjoint_left]
+        exact False.elim (hpA.2 (hEB.2.1 hp).1)
+  have hdisj_arc : Disjoint (range N.interiorSeamEdge) (arcComponentsIn B) := by
+    rw [← harc_A, Set.disjoint_left]
     intro E hEA hEB
     obtain ⟨p, hp⟩ := hEA.1
     exact (hEA.2.1 hp).2 (hEB.2.1 hp).1
-  obtain ⟨hfin_B, hncard_B⟩ := N.ncard_arcComponentsIn_bd_sdiff hS hJ
-  have hfin_A : (arcComponentsIn A).Finite := by
-    rw [harc_A]
-    exact finite_range interiorSeamEdge
-  have hncard_A : (arcComponentsIn A).ncard = N.r := by
-    rw [harc_A, ncard_range_of_injective he_int_inj, Nat.card_eq_fintype_card, Fintype.card_fin]
-  rw [harc_union, ncard_union_eq hdisj_arc hfin_A hfin_B, hncard_A, hncard_B]
+  exact ⟨harc_A ▸ harc_union, hdisj_arc⟩
+
+/-- For any seam graph `J` of a net `N` on a surface `S`,
+`J.E.ncard = N.r + (bd S ∩ J.V).ncard`. -/
+theorem ncard_E_seamGraph (hS : IsSurface S) (N : Net S) {J : Drawing S}
+    (hJ : N.IsSeamGraphFor J) :
+    J.E.ncard = N.r + (bd S ∩ J.V).ncard := by
+  obtain ⟨hedges, hdisjoint⟩ := N.seamGraph_edges_eq hS hJ
+  obtain ⟨hfin, hcount⟩ := N.ncard_arcComponentsIn_bd_sdiff hS hJ
+  rw [hedges, ncard_union_eq hdisjoint (finite_range _) hfin, hcount,
+    ncard_range_of_injective N.e_int_injective, Nat.card_eq_fintype_card, Fintype.card_fin]
 
 /-! ## 3. Cohomology of a net and Euler's formula ((2.2)) -/
 

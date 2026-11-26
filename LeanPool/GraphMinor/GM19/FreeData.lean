@@ -211,44 +211,19 @@ private theorem pole_edges_form_boundary_line
     {β : Type w}
     {χ : ColourScheme S β}
     {D : TangleDatum cap χ}
-    (F : Drawing Shat)
-    (r : Shat)
-    (hr : r ∈ D.rad.poles)
-    (hri : r ∈ D.ins F)
-    (Θ : Set S)
-    (hreg : D.rad.regionOf r = cap.cuffDisc Θ)
-    (hrd : r ∈ cap.cuffDisc Θ)
-    (hone : ∀ p ∈ D.rad.poles, p ∈ F.V → p = r)
-    (hrF : r ∈ F.V)
-    (e₁ : Set Shat)
-    (e₂ : Set Shat)
-    (v₁ : S)
-    (v₂ : S)
-    (he₁ : e₁ ∈ Drawing.E F)
-    (he₂ : e₂ ∈ Drawing.E F)
-    (hv₁ : v₁ ∈ D.P.Γ.V)
-    (hv₂ : v₂ ∈ D.P.Γ.V)
-    (hedges : ∀ e ∈ Drawing.E F, r ∈ closure e → e = e₁ ∨ e = e₂)
-    (hd₁ : Disjoint e₁ (range cap.emb))
-    (hd₂ : Disjoint e₂ (range cap.emb)) :
-    let G : Drawing Shat := D.rad.G
-    (F.IsCircuitOf G) →
-    (closure e₁ ∩ G.V = {cap.emb v₁, r}) →
-    (closure e₂ ∩ G.V = {cap.emb v₂, r}) →
-    (r ∉ range cap.emb) →
-    (∀ {v : S}, v ∈ D.P.Γ.V → cap.emb v ∈ G.V) →
-    (∀ {v : S}, v ∈ D.P.Γ.V → cap.emb v ≠ r) →
-    (cap.emb v₁ ≠ cap.emb v₂) →
-    (∀ {e : Set Shat} {x : Shat}, e ∈ Drawing.E G → closure e ∩ G.V = {x, r} → closure e
-      ⊆ closure (cap.cuffDisc Θ)) →
-    let Β : Set Shat := closure e₁ ∪ closure e₂
-    (Β = closure e₁ ∪ closure e₂) →
-    (cap.emb v₁ ∈ closure e₁) →
-    (cap.emb v₂ ∈ closure e₂) →
-    (r ∈ closure e₁) →
-    (Β ⊆ F.U) →
-    IsLineWithEnds Β (cap.emb v₁) (cap.emb v₂) := by
-  intro G hFc hs₁ hs₂ hrnr hvG hvp hsne hclE Β hΒ hm₁ hm₂ hr₁ hΒF
+    {F : Drawing Shat} {r : Shat} {e₁ e₂ : Set Shat} {v₁ v₂ : S}
+    (hr : r ∈ D.rad.poles) (he₁ : e₁ ∈ F.E) (he₂ : e₂ ∈ F.E)
+    (hv₁ : v₁ ∈ D.P.Γ.V) (hv₂ : v₂ ∈ D.P.Γ.V)
+    (hFc : F.IsCircuitOf D.rad.G)
+    (hs₁ : closure e₁ ∩ D.rad.G.V = {cap.emb v₁, r})
+    (hs₂ : closure e₂ ∩ D.rad.G.V = {cap.emb v₂, r})
+    (hvG : ∀ {v : S}, v ∈ D.P.Γ.V → cap.emb v ∈ D.rad.G.V)
+    (hvp : ∀ {v : S}, v ∈ D.P.Γ.V → cap.emb v ≠ r)
+    (hsne : cap.emb v₁ ≠ cap.emb v₂) (hm₁ : cap.emb v₁ ∈ closure e₁)
+    (hm₂ : cap.emb v₂ ∈ closure e₂) (hr₁ : r ∈ closure e₁) :
+    IsLineWithEnds (closure e₁ ∪ closure e₂) (cap.emb v₁) (cap.emb v₂) := by
+  let G := D.rad.G
+  let Β := closure e₁ ∪ closure e₂
   have hl₁ : G.toGraph.IsLink e₁ (cap.emb v₁) r := ⟨hFc.1.2 he₁, hvG hv₁, hr.1.1, hs₁⟩
   have hl₂ : G.toGraph.IsLink e₂ r (cap.emb v₂) := ⟨hFc.1.2 he₂, hr.1.1, hvG hv₂, by rw [hs₂,
     pair_comm]⟩
@@ -329,39 +304,14 @@ private theorem flaw_circuit_meets_pole_disc_only_on_boundary_line
     {β : Type w}
     {χ : ColourScheme S β}
     {D : TangleDatum cap χ}
-    (F : Drawing Shat)
-    (r : Shat)
-    (Θ : Set S)
-    (hΘ : Θ ∈ cuffs S)
+    {F : Drawing Shat} {r : Shat} {Θ : Set S} {e₁ e₂ : Set Shat}
+    (hΘ : Θ ∈ cuffs S) (hFc : F.IsCircuitOf D.rad.G)
     (hone : ∀ p ∈ D.rad.poles, p ∈ F.V → p = r)
-    (e₁ : Set Shat)
-    (e₂ : Set Shat)
-    (v₁ : S)
-    (v₂ : S)
-    (he₁ : e₁ ∈ Drawing.E F)
-    (he₂ : e₂ ∈ Drawing.E F)
-    (hedges : ∀ e ∈ Drawing.E F, r ∈ closure e → e = e₁ ∨ e = e₂)
-    (hd₁ : Disjoint e₁ (range cap.emb))
-    (hd₂ : Disjoint e₂ (range cap.emb)) :
-    let G : Drawing Shat := D.rad.G
-    (F.IsCircuitOf G) →
-    (closure e₁ ∩ G.V = {cap.emb v₁, r}) →
-    (closure e₂ ∩ G.V = {cap.emb v₂, r}) →
-    let Β : Set Shat := closure e₁ ∪ closure e₂
-    (Β = closure e₁ ∪ closure e₂) →
-    (cap.emb v₁ ∈ closure e₁) →
-    (cap.emb v₂ ∈ closure e₂) →
-    (r ∈ closure e₁) →
-    (Β ⊆ F.U) →
-    (IsLineWithEnds Β (cap.emb v₁) (cap.emb v₂)) →
-    (∀ {x : Shat}, x ∈ Β → x ∈ range cap.emb → x = cap.emb v₁ ∨ x = cap.emb v₂) →
-    ∀ (u : ↑unitInterval → Shat),
-    (range u = Β) →
-    ∀ (L : Set Shat),
-    (Β ∩ L = {cap.emb v₁, cap.emb v₂}) →
-    (F.U = Β ∪ L) →
-    ∀ {x : Shat}, x ∈ F.U → x ∈ cap.cuffDisc Θ → x ∈ Β := by
-  intro G hFc hs₁ hs₂ Β hΒ hm₁ hm₂ hr₁ hΒF hΒline hΒr u hru L hΒL hFL x hxF hxd
+    (hedges : ∀ e ∈ F.E, r ∈ closure e → e = e₁ ∨ e = e₂)
+    (hr₁ : r ∈ closure e₁) :
+    ∀ {x : Shat}, x ∈ F.U → x ∈ cap.cuffDisc Θ → x ∈ closure e₁ ∪ closure e₂ := by
+  let G := D.rad.G
+  intro x hxF hxd
   have hxr : x ∉ range cap.emb := cap.notMem_range hΘ hxd
   by_cases hxV : x ∈ F.V
   · have hxh : x ∉ D.P.Γ.hatV cap := fun ⟨v, _, hv⟩ ↦ hxr ⟨v, hv⟩
@@ -399,53 +349,21 @@ private theorem cuff_contact_off_pole_edges_follows_from_incidence
     {n : ℕ}
     (hn : n < D.rep)
     (hman : ∀ (x : Shat), IsManifoldPoint x)
-    (F : Drawing Shat)
-    (hF : D.IsFreeCircuit n F)
-    (hmin : ∀ (C : Drawing Shat), D.IsFreeCircuit n C → (Drawing.E F).ncard ≤ (Drawing.E C).ncard
-      ∧ ((Drawing.E F).ncard = (Drawing.E C).ncard → D.insCount C ≤ D.insCount F))
-    (hdisc : IsClosedDisc (D.ins F))
-    (hbd : discBd (D.ins F) = F.U)
-    (r : Shat)
-    (hr : r ∈ D.rad.poles)
-    (Θ : Set S)
-    (hΘ : Θ ∈ cuffs S)
-    (hreg : D.rad.regionOf r = cap.cuffDisc Θ)
-    (hrF : r ∈ F.V)
-    (e₁ : Set Shat)
-    (e₂ : Set Shat)
-    (v₁ : S)
-    (v₂ : S)
-    (he₁ : e₁ ∈ Drawing.E F)
-    (he₂ : e₂ ∈ Drawing.E F)
-    (hedges : ∀ e ∈ Drawing.E F, r ∈ closure e → e = e₁ ∨ e = e₂)
-    (hd₁ : Disjoint e₁ (range cap.emb))
-    (hd₂ : Disjoint e₂ (range cap.emb)) :
-    let G : Drawing Shat := D.rad.G
-    (F.IsCircuitOf G) →
-    (closure e₁ ∩ G.V = {cap.emb v₁, r}) →
-    (closure e₂ ∩ G.V = {cap.emb v₂, r}) →
-    ∀ (Β : Set Shat),
-    (Β = closure e₁ ∪ closure e₂) →
-    (cap.emb v₁ ∈ closure e₁) →
-    (cap.emb v₂ ∈ closure e₂) →
-    (r ∈ closure e₁) →
-    (Β ⊆ F.U) →
-    (IsLineWithEnds Β (cap.emb v₁) (cap.emb v₂)) →
-    (∀ {x : Shat}, x ∈ Β → x ∈ range cap.emb → x = cap.emb v₁ ∨ x = cap.emb v₂) →
-    ∀ (u : ↑unitInterval → Shat),
-    (range u = Β) →
-    ∀ (L : Set Shat),
-    (Β ∩ L = {cap.emb v₁, cap.emb v₂}) →
-    (F.U = Β ∪ L) →
-    (∀ {x : Shat}, x ∈ F.U → x ∈ cap.cuffDisc Θ → x ∈ Β) →
-    (discBd (closure (cap.cuffDisc Θ)) = cap.emb '' Θ) →
-    (cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ))) →
-    (Β ⊆ closure (cap.cuffDisc Θ)) →
-    (Β ∩ discBd (closure (cap.cuffDisc Θ)) = {cap.emb v₁, cap.emb v₂}) →
-    (discInt (closure (cap.cuffDisc Θ)) ∩ discBd (D.ins F) ⊆ Β) →
-    ∀ x ∈ discBd (closure (cap.cuffDisc Θ)) ∩ discBd (D.ins F), x ∉ Β → ∃ C ⊆ discInt (closure
-      (cap.cuffDisc Θ)) \ Β, C ⊆ D.ins F ∧ C.Nonempty ∧ IsPreconnected C ∧ x ∈ closure C := by
-  intro G hFc hs₁ hs₂ Β hΒ hm₁ hm₂ hr₁ hΒF hΒline hΒr u hru L hΒL hFL hFcd hEb hdE hΒE hmeet hoff
+    {F : Drawing Shat} (hF : D.IsFreeCircuit n F)
+    (hmin : ∀ C : Drawing Shat, D.IsFreeCircuit n C → F.E.ncard ≤ C.E.ncard
+      ∧ (F.E.ncard = C.E.ncard → D.insCount C ≤ D.insCount F))
+    (hdisc : IsClosedDisc (D.ins F)) (hbd : discBd (D.ins F) = F.U)
+    {r : Shat} {Θ : Set S} (hr : r ∈ D.rad.poles) (hΘ : Θ ∈ cuffs S)
+    (hreg : D.rad.regionOf r = cap.cuffDisc Θ) (hrF : r ∈ F.V)
+    {e₁ e₂ : Set Shat} (hedges : ∀ e ∈ F.E, r ∈ closure e → e = e₁ ∨ e = e₂)
+    (hFc : F.IsCircuitOf D.rad.G)
+    {Β : Set Shat} (hΒ : Β = closure e₁ ∪ closure e₂) (hΒF : Β ⊆ F.U)
+    (hEb : discBd (closure (cap.cuffDisc Θ)) = cap.emb '' Θ)
+    (hdE : cap.cuffDisc Θ = discInt (closure (cap.cuffDisc Θ))) :
+    ∀ x ∈ discBd (closure (cap.cuffDisc Θ)) ∩ discBd (D.ins F), x ∉ Β →
+      ∃ C ⊆ discInt (closure (cap.cuffDisc Θ)) \ Β,
+        C ⊆ D.ins F ∧ C.Nonempty ∧ IsPreconnected C ∧ x ∈ closure C := by
+  let G := D.rad.G
   rintro x ⟨hxE, hxb⟩ hxΒ
   rw [hEb] at hxE
   obtain ⟨v, hvΘ, rfl⟩ := hxE
@@ -633,11 +551,9 @@ private theorem free_data_when_pole_is_on_circuit
     (hbd : discBd (D.ins F) = F.U)
     (r : Shat)
     (hr : r ∈ D.rad.poles)
-    (hri : r ∈ D.ins F)
     (Θ : Set S)
     (hΘ : Θ ∈ cuffs S)
     (hreg : D.rad.regionOf r = cap.cuffDisc Θ)
-    (hrd : r ∈ cap.cuffDisc Θ)
     (hE : IsClosedDisc (closure (cap.cuffDisc Θ)))
     (hone : ∀ p ∈ D.rad.poles, p ∈ F.V → p = r)
     (hcover : F.U ⊆ range cap.emb ∪ cap.cuffDisc Θ)
@@ -669,9 +585,7 @@ private theorem free_data_when_pole_is_on_circuit
   have hr₁ : r ∈ closure e₁ := (hs₁ ▸ mem_insert_of_mem _ rfl : r ∈ closure e₁ ∩ G.V).1
   have hΒF : Β ⊆ F.U := union_subset (F.closure_subset_U he₁) (F.closure_subset_U he₂)
   have hΒline : IsLineWithEnds Β (cap.emb v₁) (cap.emb v₂) := by
-    exact pole_edges_form_boundary_line (S := S) (Shat := Shat) (cap := cap) (β := β) (χ := χ)
-      (D := D) F r hr hri Θ hreg hrd hone hrF e₁ e₂ v₁ v₂ he₁ he₂ hv₁ hv₂ hedges hd₁ hd₂  hFc
-      hs₁ hs₂ hrnr hvG hvp hsne hclE  hΒ hm₁ hm₂ hr₁ hΒF
+    exact pole_edges_form_boundary_line hr he₁ he₂ hv₁ hv₂ hFc hs₁ hs₂ hvG hvp hsne hm₁ hm₂ hr₁
   have hΒr : ∀ {x}, x ∈ Β → x ∈ range cap.emb → x = cap.emb v₁ ∨ x = cap.emb v₂ := by
     exact pole_edges_meet_embedded_surface_only_at_ends (S := S) (Shat := Shat) (cap := cap) F r
       e₁ e₂ v₁ v₂ he₁ he₂ hd₁ hd₂ G hFc hs₁ hs₂ hrnr
@@ -686,9 +600,7 @@ private theorem free_data_when_pole_is_on_circuit
     rwa [hru, hu0, hu1] at this
   have hFL : F.U = Β ∪ L := by rw [← hun, hru]
   have hFcd : ∀ {x}, x ∈ F.U → x ∈ cap.cuffDisc Θ → x ∈ Β := by
-    exact flaw_circuit_meets_pole_disc_only_on_boundary_line (S := S) (Shat := Shat) (cap :=
-      cap) (β := β) (χ := χ) (D := D) F r Θ hΘ hone e₁ e₂ v₁ v₂ he₁ he₂ hedges hd₁ hd₂  hFc hs₁
-      hs₂  hΒ hm₁ hm₂ hr₁ hΒF hΒline hΒr u hru L hΒL hFL
+    exact flaw_circuit_meets_pole_disc_only_on_boundary_line hΘ hFc hone hedges hr₁
   have hLr : L ⊆ range cap.emb := fun x hx ↦ by
     have hxF : x ∈ F.U := hFL ▸ Or.inr hx
     rcases hcover hxF with h | h
@@ -747,10 +659,8 @@ private theorem free_data_when_pole_is_on_circuit
   have htouch : ∀ x ∈ discBd (closure (cap.cuffDisc Θ)) ∩ discBd (D.ins F), x ∉ Β →
       ∃ C, C ⊆ discInt (closure (cap.cuffDisc Θ)) \ Β ∧ C ⊆ D.ins F ∧ C.Nonempty ∧ IsPreconnected C
         ∧ x ∈ closure C := by
-    exact cuff_contact_off_pole_edges_follows_from_incidence (S := S) (Shat := Shat) (cap :=
-      cap) (β := β) (χ := χ) (D := D) hS h3 (n := n) hn hman F hF hmin hdisc hbd r hr Θ hΘ hreg
-      hrF e₁ e₂ v₁ v₂ he₁ he₂ hedges hd₁ hd₂  hFc hs₁ hs₂ Β hΒ hm₁ hm₂ hr₁ hΒF hΒline hΒr u hru
-      L hΒL hFL hFcd hEb hdE hΒE hmeet hoff
+    exact cuff_contact_off_pole_edges_follows_from_incidence hS h3 hn hman hF hmin hdisc hbd
+      hr hΘ hreg hrF hedges hFc hΒ hΒF hEb hdE
   obtain ⟨Z, A', hZ, hA'b, hA'c, hbZ, hA'd, hAc, hEZ, hΔZ, hZΔ, hiff⟩ :=
     exists_outer_half hT hdisc hE hsne hΒline (hbd ▸ hΒF) hΒE hmeet hoff htouch
   have hemb : ∀ x, cap.emb x ∉ discInt (closure (cap.cuffDisc Θ)) := fun x h ↦ cap.notMem_range hΘ
@@ -843,8 +753,8 @@ theorem exists_free_data {n : ℕ} (hn : n < D.rep) (hd : ∀ r₁ ∈ D.rad.pol
   have hNle := fun {U₀ : Set S} (hU : ∀ x ∈ U₀, cap.emb x ∈ F.U) ↦ D.two_mul_ncard_le hFc hU
   by_cases hrF : r ∈ F.V
   · exact free_data_when_pole_is_on_circuit (S := S) (Shat := Shat) (cap := cap) (β := β) (χ := χ)
-      (D := D) hS h3 (n := n) hn hT hman hj F hF hlink hmin hFc hlt hdisc hbd r hr hri Θ hΘ hreg
-      hrd hE hone hcover hEE hother hNle hrF
+      (D := D) hS h3 (n := n) hn hT hman hj F hF hlink hmin hFc hlt hdisc hbd r hr Θ hΘ hreg
+      hE hone hcover hEE hother hNle hrF
   · have hnp : ∀ z ∈ F.V, z ∉ D.rad.poles := fun z hz hzp ↦ hrF (hone z hzp hz ▸ hz)
     have hrange := subset_range_of_no_pole D.rad hFc.1 hnp
     have hrnr := D.pole_notMem_range hr

@@ -274,59 +274,22 @@ theorem Portrayal.restrictQuotient_cellWarp_le {α : Type u} {β : Type v} {G : 
     (π.restrictQuotient A B hsep c' hc').cellWarp c ≤ π.cellWarp c := by
   apply Nat.sInf_le
   intro n₁ hn₁ n₂ hn₂ hne
-  obtain ⟨u, v, _, htilde, _, _, hu, hv⟩ := π.Γ.border_cell_exists_ends hc hbd
-  have hn₁' : n₁ ∈ ({u, v} : Set π.S) := htilde ▸ hn₁
-  have hn₂' : n₂ ∈ ({u, v} : Set π.S) := htilde ▸ hn₂
-  have hn₁_mem : n₁ ∈ π.Γ.N ∩ bd π.S := by rcases hn₁' with rfl | rfl <;> assumption
-  have hn₂_mem : n₂ ∈ π.Γ.N ∩ bd π.S := by rcases hn₂' with rfl | rfl <;> assumption
-  have hspec := π.cellWarp_spec hc hbd n₁ hn₁ n₂ hn₂ hne
-  refine ⟨(ncard_le_ncard sdiff_subset (π.borderSet_finite hn₁_mem)).trans hspec.1,
-    (ncard_le_ncard sdiff_subset (π.borderSet_finite hn₂_mem)).trans hspec.2.1,
-    fun hcard₁ hcard₂ P hP_disj => ?_⟩
   have hbp₁ := π.restrictQuotient_borderPlus A B hsep c' hc' n₁
   have hbp₂ := π.restrictQuotient_borderPlus A B hsep c' hc' n₂
-  have hcard₁₀ : (π.borderPlus n₁ \ A.vertexSet).ncard = π.cellWarp c + 1 := hbp₁ ▸ hcard₁
-  have hcard₂₀ : (π.borderPlus n₂ \ A.vertexSet).ncard = π.cellWarp c + 1 := hbp₂ ▸ hcard₂
-  have hle₁ : (π.borderPlus n₁).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hn₁_mem).trans (Nat.add_le_add_right hspec.1 1)
-  have hle₂ : (π.borderPlus n₂).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hn₂_mem).trans (Nat.add_le_add_right hspec.2.1 1)
-  have hcard₁' : (π.borderPlus n₁).ncard = π.cellWarp c + 1 := by
-    have := ncard_le_ncard (sdiff_subset : π.borderPlus n₁ \ A.vertexSet ⊆ π.borderPlus n₁)
-      (π.borderPlus_finite hn₁_mem)
-    omega
-  have hcard₂' : (π.borderPlus n₂).ncard = π.cellWarp c + 1 := by
-    have := ncard_le_ncard (sdiff_subset : π.borderPlus n₂ \ A.vertexSet ⊆ π.borderPlus n₂)
-      (π.borderPlus_finite hn₂_mem)
-    omega
-  have hlift : ∀ i : Fin (π.cellWarp c + 1),
-      ∃ Q : PathFromTo (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂),
-        Q.first = (P i).first ∧ Q.last = (P i).last ∧ Q.walk.support = (P i).walk.support := by
-    intro i
-    have hfirst_bp : (P i).first ∈ π.borderPlus n₁ \ A.vertexSet :=
-      (Set.ext_iff.mp hbp₁ (P i).first).mp (P i).first_mem
-    have hlast_bp : (P i).last ∈ π.borderPlus n₂ \ A.vertexSet :=
-      (Set.ext_iff.mp hbp₂ (P i).last).mp (P i).last_mem
-    have hfirst_c : (P i).first ∈ (π.cellGraph c).vertexSet \ A.vertexSet :=
-      ⟨π.borderPlus_subset_cellGraph hc hbd hn₁ hfirst_bp.1, hfirst_bp.2⟩
-    obtain ⟨W₀, hsupp₀, _⟩ :=
-      π.restrictQuotient_walk_lift A B hsep c' hc' hc hfirst_c (P i).walk
-    have hle_c : π.cellGraph c ∩ B ≤ π.cellGraph c :=
+  refine π.cellWarp_pair_of_walk_lift hc hbd hn₁ hn₂ hne sdiff_subset sdiff_subset ?_ ?_ ?_
+  · rw [hbp₁]
+    exact sdiff_subset
+  · rw [hbp₂]
+    exact sdiff_subset
+  · intro a b ha W
+    have ha' : a ∈ π.borderPlus n₁ \ A.vertexSet := hbp₁ ▸ ha
+    have ha_cell : a ∈ (π.cellGraph c).vertexSet \ A.vertexSet :=
+      ⟨π.borderPlus_subset_cellGraph hc hbd hn₁ ha'.1, ha'.2⟩
+    obtain ⟨W₀, hsupp₀, _⟩ := π.restrictQuotient_walk_lift A B hsep c' hc' hc ha_cell W
+    have hle : π.cellGraph c ∩ B ≤ π.cellGraph c :=
       inter_le_left (π.cellGraph_le c hc) hsep.right_le
-    obtain ⟨W', hsupp'⟩ := walk_skeleton_mono hle_c W₀
-    have hsupp : W'.support = (P i).walk.support := hsupp'.trans hsupp₀
-    have hisPath : W'.IsPath := by
-      rw [SimpleGraph.Walk.isPath_def, hsupp]
-      exact SimpleGraph.Walk.IsPath.support_nodup (P i).isPath
-    exact ⟨⟨(P i).first, (P i).last, W', hisPath, hfirst_bp.1, hlast_bp.1⟩, rfl, rfl, hsupp⟩
-  choose Q hQ_first hQ_last hQ_supp using hlift
-  have hQ_disj : Pairwise fun i j =>
-      Disjoint {z | z ∈ (Q i).walk.support} {z | z ∈ (Q j).walk.support} := by
-    intro i j hij
-    rw [hQ_supp i, hQ_supp j]
-    exact hP_disj hij
-  obtain ⟨i, hfirst, hlast⟩ := hspec.2.2 hcard₁' hcard₂' Q hQ_disj
-  exact ⟨i, (hQ_first i).symm.trans hfirst, (hQ_last i).symm.trans hlast⟩
+    obtain ⟨W', hsupp'⟩ := walk_skeleton_mono hle W₀
+    exact ⟨W', hsupp'.trans hsupp₀⟩
 
 theorem Portrayal.restrictQuotient_warpAt_le {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G) (A B : Hypergraph α β) (hsep : IsSeparation G A B)

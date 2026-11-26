@@ -34,14 +34,8 @@ J. Combin. Theory Ser. B **41** (1986), 92–114, Sections 1–7 (pages 92–109
 - **Section 2 (pages 94–95):**
   - The function `α(k, n)` (`α θ k n`) and the parameters `θ₁, …, θ₉` and `φ_k` (`θ₁ θ`, …,
     `θ₉ θ`, `φ θ k`).
-- **Section 3 (pages 95–97):**
-  - `Statement31`, the statement of (3.1) (quoted from Graph Minors I, Theorem (2.9)).
 - **Section 4 (pages 97–100):**
-  - `(m, n)`-webs (`IsWeb`, `HasWeb`), spiders of an `(m, n)`-web (`IsSpider`,
-    `HasWebWithSpiders`), the parameter `ψ_k` (`ψ θ k`), and `Statement43`, the statement of (4.3)
-    (quoted from Graph Minors I, Theorem (2.8)).
-- **Section 5 (pages 100–102):**
-  - `(m, n)`-meshes (`IsMesh`, `HasMesh`).
+  - The parameter `ψ_k` (`ψ θ k`).
 - **Section 6 (pages 102–106):**
   - The vertex-weight sum `w(X)` (`weightSum w X`).
 -/
@@ -240,106 +234,7 @@ def θ₈ (θ : ℕ) : ℕ :=
 def θ₉ (θ : ℕ) : ℕ :=
   θ₇ θ * (θ₈ θ + 1) + 1
 
-/-! ## Section 3: Statement (3.1) -/
-
-/-- Graph Minors V, (3.1) (page 95), quoted from Graph Minors I, Theorem (2.9) (page 49):
-"Let $B_1, \ldots, B_n$ be disjoint connected subgraphs of $G \in \mathscr{F}_\theta$, and
-let $V' \subseteq V(G)$. Let $r \ge 0$ be an integer. Then at least one of the following is
-true:* (i) *there exists $J \subseteq \{1, \ldots, n\}$ with $|J| = r$ such that for each $j
-\in J$ there is a path $P_j$ in $G$ from $B_j$ to $V'$, and the paths $P_j (j \in J)$ are
-disjoint, and each has no internal vertex in $V' \cup \bigcup_{j \in J} V(B_j)$;* (ii)
-*there exists $X \subseteq V(G)$ and $J \subseteq \{1, \ldots, n\}$ with $|X| + |J| \le
-2^{r\theta^4}$ such that $X$ separates $V'$ from every $B_j$ ($j \in \{1, \ldots, n\} - J$)." -/
-def Statement31 : Prop :=
-  ∀ {V : Type*} {G : (⊤ : SimpleGraph V).Subgraph} {θ n : ℕ},
-    6 ≤ θ → Even θ → G.verts.Finite → G ∈ 𝓕 θ →
-    ∀ (B : Fin n → (⊤ : SimpleGraph V).Subgraph),
-      (∀ j, B j ≤ G) → (∀ j, (B j).Connected) →
-      Pairwise (fun j j' ↦ Disjoint (B j).verts (B j').verts) →
-      ∀ (V' : Set V), V' ⊆ G.verts → ∀ (r : ℕ),
-        (∃ (J : Finset (Fin n)) (P : J → Path V),
-          J.card = r ∧
-          (∀ j : J, (P j).IsFromTo G (B j.1).verts V') ∧
-          Pairwise (fun j j' : J ↦ Disjoint (P j).verts (P j').verts) ∧
-          (∀ j : J, Disjoint (P j).internalVerts (V' ∪ ⋃ j' ∈ J, (B j').verts))) ∨
-        (∃ (X : Set V) (J : Finset (Fin n)),
-          X ⊆ G.verts ∧ X.ncard + J.card ≤ 2 ^ (r * θ ^ 4) ∧
-          ∀ j : Fin n, j ∉ J → Separates G X V' (B j).verts)
-
-/-! ## Section 4: Webs, Spiders, `ψ_k`, and Statement (4.3) -/
-
-/-- `((A₁, …, Aₘ), (B₁, …, Bₙ))` is an `(m, n)`-web in `G` (Graph Minors V, Section 4, page 97):
-"Let $G$ be a graph. An ($m, n$)-web in $G$ is a pair $((A_1, \dots, A_m), (B_1, \dots,
-B_n))$, where $A_1, \dots, A_m, B_1, \dots, B_n$ are paths of $G$, such that (i) $A_1,
-\dots, A_m$ are disjoint, and $B_1, \dots, B_n$ are disjoint; (ii) each $A_i$ meets each
-$B_j$; (iii) $A_1, \dots, A_m, B_1, \dots, B_n$ are pairwise edge-disjoint. (We permit $m =
-0$ and $n = 0$.)" -/
-structure IsWeb (G : (⊤ : SimpleGraph V).Subgraph) {m n : ℕ}
-    (A : Fin m → Path V) (B : Fin n → Path V) : Prop where
-  /-- Each `A_i` is a path of `G`. -/
-  isIn_left : ∀ i, (A i).IsIn G
-  /-- Each `B_j` is a path of `G`. -/
-  isIn_right : ∀ j, (B j).IsIn G
-  /-- (i) `A₁, …, Aₘ` are vertex-disjoint. -/
-  disjoint_left : Pairwise fun i i' ↦ Disjoint (A i).verts (A i').verts
-  /-- (i) `B₁, …, Bₙ` are vertex-disjoint. -/
-  disjoint_right : Pairwise fun j j' ↦ Disjoint (B j).verts (B j').verts
-  /-- (ii) Each `A_i` meets each `B_j`. -/
-  meets : ∀ i j, ((A i).verts ∩ (B j).verts).Nonempty
-  /-- (iii) `A₁, …, Aₘ, B₁, …, Bₙ` are pairwise edge-disjoint (since `A₁, …, Aₘ` are vertex-disjoint
-  and `B₁, …, Bₙ` are vertex-disjoint, this is equivalent to each `A_i` and `B_j` being
-  edge-disjoint). -/
-  edge_disjoint : ∀ i j, Disjoint (A i).edgeSet (B j).edgeSet
-
-/-- `G` has an `(m, n)`-web (Graph Minors V, Section 4, page 97). -/
-def HasWeb (G : (⊤ : SimpleGraph V).Subgraph) (m n : ℕ) : Prop :=
-  ∃ (A : Fin m → Path V) (B : Fin n → Path V), IsWeb G A B
-
-/-- `C` is a spider of the `(m, n)`-web `(A, B)` in `G` (Graph Minors V, Section 4, page 98):
-"Let $((A_1, \dots, A_m), (B_1, \dots, B_n))$ be an ($m, n$)-web in a graph $G$. A spider of
-this web is a connected subgraph $C$ of $G$ such that (i) $C$ is edge-disjoint from $B_1,
-\dots, B_n$; (ii) for $1 \le i \le m$, $C$ has a unique vertex in common with $A_i$, and
-that vertex has valency 1 in $C$." -/
-structure IsSpider (G : (⊤ : SimpleGraph V).Subgraph) {m n : ℕ}
-    (A : Fin m → Path V) (B : Fin n → Path V)
-    (C : (⊤ : SimpleGraph V).Subgraph) : Prop where
-  /-- `C` is a subgraph of `G`. -/
-  le : C ≤ G
-  /-- `C` is connected. -/
-  connected : C.Connected
-  /-- (i) `C` is edge-disjoint from `B₁, …, Bₙ`. -/
-  edge_disjoint : ∀ j, Disjoint C.edgeSet (B j).edgeSet
-  /-- (ii) For `1 ≤ i ≤ m`, `C` has a unique vertex in common with `A_i`, and that vertex has
-  valency `1` in `C`. -/
-  unique_leaf : ∀ i, ∃ v : V, C.verts ∩ (A i).verts = {v} ∧ IsLeafOf C v
-
-/-- `G` has an `(m, n)`-web with `k` pairwise edge-disjoint spiders
-(Graph Minors V, Section 4, (4.4)–(4.5), pages 98–99). -/
-def HasWebWithSpiders (G : (⊤ : SimpleGraph V).Subgraph) (m n k : ℕ) : Prop :=
-  ∃ (A : Fin m → Path V) (B : Fin n → Path V) (C : Fin k → (⊤ : SimpleGraph V).Subgraph),
-    IsWeb G A B ∧ (∀ l, IsSpider G A B (C l)) ∧
-      Pairwise fun l l' ↦ Disjoint (C l).edgeSet (C l').edgeSet
-
-/-- Graph Minors V, (4.3) (page 98), quoted from Graph Minors I, Theorem (2.8) (page 48):
-"Let $A_1, A_2 \subseteq V(G)$, where $G \in \mathcal{F}_\theta$, and let $D_1, \dots, D_m$
-be disjoint subgraphs of $G$, each with at most $d$ components. Suppose that there are $n$
-disjoint paths in $G$ from $A_1$ to $A_2$, and for $1 \le k \le m$, $D_k$ separates $A_1$
-and $A_2$. Then either $n < d\theta^2/2$ or $m < 2^{d\theta^2/2}(\theta^2 +
-2d\theta^{2\theta})$."
-
-Note: we include `0 < d + n` to exclude the degenerate `d = 0, n = 0` case (`A₁ = A₂ = ∅`,
-`D_k = ⊥`), where `n < 0` is impossible and `m` can be arbitrary. -/
-def Statement43 : Prop :=
-  ∀ {V : Type*} {G : (⊤ : SimpleGraph V).Subgraph} {θ m n d : ℕ},
-    6 ≤ θ → Even θ → 0 < d + n → G.verts.Finite → G ∈ 𝓕 θ →
-    ∀ (A₁ A₂ : Set V), A₁ ⊆ G.verts → A₂ ⊆ G.verts →
-    ∀ (D : Fin m → (⊤ : SimpleGraph V).Subgraph),
-      (∀ k, D k ≤ G) →
-      Pairwise (fun k k' ↦ Disjoint (D k).verts (D k').verts) →
-      (∀ k, numComponents (D k) ≤ d) →
-      (∃ P : Fin n → Path V, IsDisjointPathFamily G A₁ A₂ P) →
-      (∀ k, Separates G (D k).verts A₁ A₂) →
-      n < d * θ ^ 2 / 2 ∨ m < 2 ^ (d * θ ^ 2 / 2) * (θ ^ 2 + 2 * d * θ ^ (2 * θ))
+/-! ## Section 4: The Parameter `ψ_k` -/
 
 /-- The parameter `ψ_k` (Graph Minors V, Section 4, page 99):
 "Define $\phi_{\theta_1}, \dots, \phi_0$ as in Section 2. Define $\psi_{\theta_1} = 0$, and
@@ -351,35 +246,6 @@ def ψ (θ k : ℕ) : ℕ :=
     φ θ k + (∑ i ∈ Finset.Ico (k + 1) (θ₁ θ), 2 * φ θ i) + φ θ (θ₁ θ)
   else
     0
-
-/-! ## Section 5: Meshes -/
-
-/-- `((A₁, …, Aₘ), (B₁, …, Bₙ))` is an `(m, n)`-mesh in `G` (Graph Minors V, Section 5, page 100):
-"An $(m, n)$-mesh in a graph $G$ is a pair $((A_1, ..., A_m), (B_1, ..., B_n))$, where (i)
-$A_1, ..., A_m, B_1, ..., B_n$ are all connected subgraphs of $G$; (ii) $A_1, ..., A_m$ are
-disjoint, and $B_1, ..., B_n$ are disjoint; (iii) each $A_i$ meets each $B_j$." -/
-structure IsMesh (G : (⊤ : SimpleGraph V).Subgraph) {m n : ℕ}
-    (A : Fin m → (⊤ : SimpleGraph V).Subgraph)
-    (B : Fin n → (⊤ : SimpleGraph V).Subgraph) : Prop where
-  /-- (i) Each `A_i` is a subgraph of `G`. -/
-  le_left : ∀ i, A i ≤ G
-  /-- (i) Each `B_j` is a subgraph of `G`. -/
-  le_right : ∀ j, B j ≤ G
-  /-- (i) Each `A_i` is connected. -/
-  connected_left : ∀ i, (A i).Connected
-  /-- (i) Each `B_j` is connected. -/
-  connected_right : ∀ j, (B j).Connected
-  /-- (ii) `A₁, …, Aₘ` are vertex-disjoint. -/
-  disjoint_left : Pairwise fun i i' ↦ Disjoint (A i).verts (A i').verts
-  /-- (ii) `B₁, …, Bₙ` are vertex-disjoint. -/
-  disjoint_right : Pairwise fun j j' ↦ Disjoint (B j).verts (B j').verts
-  /-- (iii) Each `A_i` meets each `B_j`. -/
-  meets : ∀ i j, ((A i).verts ∩ (B j).verts).Nonempty
-
-/-- `G` has an `(m, n)`-mesh (Graph Minors V, Section 5, page 100). -/
-def HasMesh (G : (⊤ : SimpleGraph V).Subgraph) (m n : ℕ) : Prop :=
-  ∃ (A : Fin m → (⊤ : SimpleGraph V).Subgraph) (B : Fin n → (⊤ : SimpleGraph V).Subgraph),
-    IsMesh G A B
 
 /-! ## Section 6: Vertex Weights -/
 

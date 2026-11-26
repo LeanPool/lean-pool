@@ -48,69 +48,11 @@ theorem line_facts [T2Space S] {L : Set S} {a b : S} (h : IsLineWithEnds L a b) 
     intro he
     have := f.injective (Subtype.ext he)
     exact zero_ne_one this
-  have hL₀ : IsCompact L := by
-    obtain ⟨f, -, -⟩ := h
-    exact isCompact_iff_compactSpace.mpr f.compactSpace
   obtain ⟨f, ha, hb⟩ := id h
-  let g : ℝ → S := fun x ↦ (f (projIcc 0 1 zero_le_one x)).1
-  have hg : Continuous g :=
-    continuous_subtype_val.comp (f.continuous.comp continuous_projIcc)
-  have hgx : ∀ x (hx : x ∈ Icc (0 : ℝ) 1), g x = (f ⟨x, hx⟩).1 := fun x hx ↦ by
-    simp only [g]
-    rw [projIcc_of_mem zero_le_one hx]
-  have hset : L \ {a, b} = g '' Ioo 0 1 := by
-    ext x
-    constructor
-    · rintro ⟨hx, hxn⟩
-      let t := f.symm ⟨x, hx⟩
-      have hft : (f t).1 = x := by simp [t]
-      have ht₀ : t.1 ≠ 0 := fun h₀ ↦ hxn (Or.inl (by
-        rw [← hft, ← ha]
-        congr 2
-        exact Subtype.ext h₀))
-      have ht₁ : t.1 ≠ 1 := fun h₁ ↦ hxn (Or.inr (by
-        rw [← hft, ← hb]
-        congr 2
-        exact Subtype.ext h₁))
-      refine ⟨t.1, ⟨lt_of_le_of_ne t.2.1 ht₀.symm, lt_of_le_of_ne t.2.2 ht₁⟩, ?_⟩
-      rw [hgx _ t.2]
-      exact hft
-    · rintro ⟨x, hx, rfl⟩
-      have hx' : x ∈ Icc (0 : ℝ) 1 := ⟨hx.1.le, hx.2.le⟩
-      rw [hgx _ hx']
-      refine ⟨(f _).2, ?_⟩
-      rintro (h₁ | h₁)
-      · rw [← ha] at h₁
-        have := f.injective (Subtype.ext h₁)
-        have h₂ := congrArg Subtype.val this
-        simp only [Icc.coe_zero] at h₂
-        linarith [hx.1]
-      · have h₁' : (f ⟨x, hx'⟩).1 = b := h₁
-        rw [← hb] at h₁'
-        have := f.injective (Subtype.ext h₁')
-        have h₂ := congrArg Subtype.val this
-        simp only [Icc.coe_one] at h₂
-        linarith [hx.2]
-  have himg : L = g '' Icc 0 1 := by
-    ext x
-    constructor
-    · intro hx
-      let t := f.symm ⟨x, hx⟩
-      refine ⟨t.1, t.2, ?_⟩
-      rw [hgx _ t.2]
-      simp [t]
-    · rintro ⟨x, hx, rfl⟩
-      rw [hgx _ hx]
-      exact (f _).2
-  refine ⟨hab, ?_, ?_, ?_⟩
-  · rw [hset]
-    exact ((convex_Ioo 0 1).isPathConnected ⟨1 / 2, by norm_num, by norm_num⟩).image hg
-  · apply subset_antisymm
-    · exact closure_minimal sdiff_subset hL₀.isClosed
-    · rw [hset]
-      conv_lhs => rw [himg]
-      rw [← closure_Ioo (zero_ne_one' ℝ)]
-      exact image_closure_subset_closure_image hg
+  have hcomp : IsCompact L := isCompact_iff_compactSpace.mpr f.compactSpace
+  refine ⟨hab, h.isPathConnected_interior,
+    Subset.antisymm (closure_minimal sdiff_subset hcomp.isClosed)
+      h.subset_closure_interior, ?_⟩
   · ext u
     constructor
     · rintro ⟨v, g', h₀, -⟩

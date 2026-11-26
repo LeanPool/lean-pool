@@ -442,43 +442,11 @@ theorem off_of_path {G B R : Graph α β} {a b p : α} (hR : IsGraphPathWithEnds
   exact hpb h₂.symm
 
 private theorem first_subpath_has_two_boundary_vertices
-    {α : Type u}
-    {β : Type v}
-    {S₀ : Society α β}
-    (A : Graph α β)
-    (Z₀ : Set β)
-    (u : α)
-    (hu : u ∈ S₀.Ω.bar)
-    (v : α)
-    (hv : v ∈ S₀.Ω.bar)
-    (huv : u ≠ v)
-    (hnotB : ∀ (Q' : Graph α β), IsGraphPathWithEnds (A.restrict Z₀) Q' u v → V(Q') ∩ S₀.Ω.bar ≠
-      {u, v})
-    (Q : Graph α β)
-    (hQ : IsGraphPathWithEnds S₀.G Q u v)
-    (hQbar : V(Q) ∩ S₀.Ω.bar = {u, v})
-    (WQ : GraphWalk Q u v)
-    (hVQ : V(Q) = {x | x ∈ WQ.support})
-    (WQ' : GraphWalk S₀.G u v)
-    (hWQs : WQ'.support = WQ.support)
-    (Y : GraphWalk (A.restrict Z₀) u v)
-    (P : Graph α β)
-    (hP : IsGraphPathWithEnds (A.restrict Z₀) P u v)
-    (w : α)
-    (hwP : w ∈ V(P))
-    (hwbar : w ∈ S₀.Ω.bar)
-    (hwu : w ≠ u)
-    (hwv : w ≠ v)
+    {S₀ : Society α β} {P P₁ P₂ : Graph α β} {u v w : α}
+    (hu : u ∈ S₀.Ω.bar) (hwbar : w ∈ S₀.Ω.bar) (hwv : w ≠ v)
     (hbar : ∀ t ∈ S₀.Ω.bar, t = u ∨ t = v ∨ t = w)
-    (hPA : IsGraphPathWithEnds A P u v)
-    (P₁ : Graph α β)
-    (P₂ : Graph α β)
-    (hP₁ : IsGraphPathWithEnds P P₁ u w)
-    (hP₂ : IsGraphPathWithEnds P P₂ w v)
-    (hcap : V(P₁) ∩ V(P₂) = {w})
-    (𝓒 : Set (Set β))
-    (B : Graph α β)
-    (hmax : ∀ b ∈ 𝓒, {t | Off (A.restrict b) w u t}.ncard ≤ {t | Off B w u t}.ncard) :
+    (hP₁ : IsGraphPathWithEnds P P₁ u w) (hP₂ : IsGraphPathWithEnds P P₂ w v)
+    (hcap : V(P₁) ∩ V(P₂) = {w}) :
     V(P₁) ∩ S₀.Ω.bar = {u, w} := by
   ext t
   constructor
@@ -494,44 +462,11 @@ private theorem first_subpath_has_two_boundary_vertices
     · exact ⟨hP₁.right_mem, hwbar⟩
 
 private theorem last_subpath_has_two_boundary_vertices
-    {α : Type u}
-    {β : Type v}
-    {S₀ : Society α β}
-    (A : Graph α β)
-    (Z₀ : Set β)
-    (u : α)
-    (hu : u ∈ S₀.Ω.bar)
-    (v : α)
-    (hv : v ∈ S₀.Ω.bar)
-    (huv : u ≠ v)
-    (hnotB : ∀ (Q' : Graph α β), IsGraphPathWithEnds (A.restrict Z₀) Q' u v → V(Q') ∩ S₀.Ω.bar ≠
-      {u, v})
-    (Q : Graph α β)
-    (hQ : IsGraphPathWithEnds S₀.G Q u v)
-    (hQbar : V(Q) ∩ S₀.Ω.bar = {u, v})
-    (WQ : GraphWalk Q u v)
-    (hVQ : V(Q) = {x | x ∈ WQ.support})
-    (WQ' : GraphWalk S₀.G u v)
-    (hWQs : WQ'.support = WQ.support)
-    (Y : GraphWalk (A.restrict Z₀) u v)
-    (P : Graph α β)
-    (hP : IsGraphPathWithEnds (A.restrict Z₀) P u v)
-    (w : α)
-    (hwP : w ∈ V(P))
-    (hwbar : w ∈ S₀.Ω.bar)
-    (hwu : w ≠ u)
-    (hwv : w ≠ v)
+    {S₀ : Society α β} {P P₁ P₂ : Graph α β} {u v w : α}
+    (hv : v ∈ S₀.Ω.bar) (hwbar : w ∈ S₀.Ω.bar) (hwu : w ≠ u)
     (hbar : ∀ t ∈ S₀.Ω.bar, t = u ∨ t = v ∨ t = w)
-    (hPA : IsGraphPathWithEnds A P u v)
-    (P₁ : Graph α β)
-    (P₂ : Graph α β)
-    (hP₁ : IsGraphPathWithEnds P P₁ u w)
-    (hP₂ : IsGraphPathWithEnds P P₂ w v)
-    (hcap : V(P₁) ∩ V(P₂) = {w})
-    (𝓒 : Set (Set β))
-    (B : Graph α β)
-    (hmax : ∀ b ∈ 𝓒, {t | Off (A.restrict b) w u t}.ncard ≤ {t | Off B w u t}.ncard)
-    (hbarP₁ : V(P₁) ∩ S₀.Ω.bar = {u, w}) :
+    (hP₁ : IsGraphPathWithEnds P P₁ u w) (hP₂ : IsGraphPathWithEnds P P₂ w v)
+    (hcap : V(P₁) ∩ V(P₂) = {w}) :
     V(P₂) ∩ S₀.Ω.bar = {w, v} := by
   ext t
   constructor
@@ -547,46 +482,11 @@ private theorem last_subpath_has_two_boundary_vertices
     · exact ⟨hP₂.right_mem, hv⟩
 
 private theorem retained_paths_preserve_boundary_pairs
-    {α : Type u}
-    {β : Type v}
-    {S₀ : Society α β}
-    (A : Graph α β)
-    (Z₀ : Set β)
-    (u : α)
-    (hu : u ∈ S₀.Ω.bar)
-    (v : α)
-    (hv : v ∈ S₀.Ω.bar)
-    (huv : u ≠ v)
-    (hnotB : ∀ (Q' : Graph α β), IsGraphPathWithEnds (A.restrict Z₀) Q' u v → V(Q') ∩ S₀.Ω.bar ≠
-      {u, v})
-    (Q : Graph α β)
-    (hQ : IsGraphPathWithEnds S₀.G Q u v)
-    (hQbar : V(Q) ∩ S₀.Ω.bar = {u, v})
-    (WQ : GraphWalk Q u v)
-    (hVQ : V(Q) = {x | x ∈ WQ.support})
-    (WQ' : GraphWalk S₀.G u v)
-    (hWQs : WQ'.support = WQ.support)
-    (Y : GraphWalk (A.restrict Z₀) u v)
-    (P : Graph α β)
-    (hP : IsGraphPathWithEnds (A.restrict Z₀) P u v)
-    (w : α)
-    (hwP : w ∈ V(P))
-    (hwbar : w ∈ S₀.Ω.bar)
-    (hwu : w ≠ u)
-    (hwv : w ≠ v)
+    {S₀ : Society α β} {P P₁ P₂ : Graph α β} {u v w : α}
     (hbar : ∀ t ∈ S₀.Ω.bar, t = u ∨ t = v ∨ t = w)
-    (hPA : IsGraphPathWithEnds A P u v)
-    (P₁ : Graph α β)
-    (P₂ : Graph α β)
-    (hP₁ : IsGraphPathWithEnds P P₁ u w)
-    (hP₂ : IsGraphPathWithEnds P P₂ w v)
-    (hcap : V(P₁) ∩ V(P₂) = {w})
-    (𝓒 : Set (Set β))
-    (B : Graph α β)
-    (hmax : ∀ b ∈ 𝓒, {t | Off (A.restrict b) w u t}.ncard ≤ {t | Off B w u t}.ncard)
+    (hP₁ : IsGraphPathWithEnds P P₁ u w) (hP₂ : IsGraphPathWithEnds P P₂ w v)
     (hbarP₁ : V(P₁) ∩ S₀.Ω.bar = {u, w})
-    (hbarP₂ : V(P₂) ∩ S₀.Ω.bar = {w, v})
-    (hside : ∀ p ∈ V(P), p ≠ w → Off B w u p ∨ Off B w v p) :
+    (hbarP₂ : V(P₂) ∩ S₀.Ω.bar = {w, v}) :
     ∀ {G' : Graph α β}, P ≤ G' → (∃ R, IsGraphPathWithEnds G' R u v ∧ V(R) ∩ S₀.Ω.bar = {u, v}) →
       (∃ R, IsGraphPathWithEnds G' R v u ∧ V(R) ∩ S₀.Ω.bar = {v, u}) → PreservesBarPaths S₀ G' := by
   intro G' hG' h₁ h₂ a ha b hb hab _
@@ -693,13 +593,9 @@ theorem few_circuits_of_forest {S₀ : Society α β} (hF : F ≤ S₀.G) (hBar3
   set B := A.restrict Z with hB
   have hPB : P ≤ B := le_restrict hPA.1 hPZ
   have hbarP₁ : V(P₁) ∩ S₀.Ω.bar = {u, w} := by
-    exact first_subpath_has_two_boundary_vertices (α := α) (β := β) (S₀ := S₀) A Z₀ u hu v hv huv
-      hnotB Q hQ hQbar WQ hVQ WQ' hWQs Y P hP w hwP hwbar hwu hwv hbar hPA P₁ P₂ hP₁ hP₂ hcap 𝓒 B
-      hmax
+    exact first_subpath_has_two_boundary_vertices (S₀ := S₀) hu hwbar hwv hbar hP₁ hP₂ hcap
   have hbarP₂ : V(P₂) ∩ S₀.Ω.bar = {w, v} := by
-    exact last_subpath_has_two_boundary_vertices (α := α) (β := β) (S₀ := S₀) A Z₀ u hu v hv huv
-      hnotB Q hQ hQbar WQ hVQ WQ' hWQs Y P hP w hwP hwbar hwu hwv hbar hPA P₁ P₂ hP₁ hP₂ hcap 𝓒 B
-      hmax hbarP₁
+    exact last_subpath_has_two_boundary_vertices (S₀ := S₀) hv hwbar hwu hbar hP₁ hP₂ hcap
   have hVPun : V(P) = V(P₁) ∪ V(P₂) := by
     rw [← vertexSet_subgraphUnion P P₁ P₂, hun]
   have hside : ∀ p ∈ V(P), p ≠ w → Off B w u p ∨ Off B w v p := by
@@ -712,9 +608,7 @@ theorem few_circuits_of_forest {S₀ : Society α β} (hF : F ≤ S₀.G) (hBar3
       (∃ R, IsGraphPathWithEnds G' R u v ∧ V(R) ∩ S₀.Ω.bar = {u, v}) →
       (∃ R, IsGraphPathWithEnds G' R v u ∧ V(R) ∩ S₀.Ω.bar = {v, u}) →
       PreservesBarPaths S₀ G' := by
-    exact retained_paths_preserve_boundary_pairs (α := α) (β := β) (S₀ := S₀) A Z₀ u hu v hv huv
-      hnotB Q hQ hQbar WQ hVQ WQ' hWQs Y P hP w hwP hwbar hwu hwv hbar hPA P₁ P₂ hP₁ hP₂ hcap 𝓒 B
-      hmax hbarP₁ hbarP₂ hside
+    exact retained_paths_preserve_boundary_pairs (S₀ := S₀) hbar hP₁ hP₂ hbarP₁ hbarP₂
   have hEB : E(B).Nonempty := by
     have huE : E(P).Nonempty := by
       obtain ⟨-, W, -, -, hE⟩ := hP

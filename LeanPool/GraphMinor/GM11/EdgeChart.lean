@@ -320,6 +320,96 @@ theorem edge_chart_avoidance [T2Space S] (H : Drawing S) {e : Set S} (he : e ∈
   · obtain rfl := hpiece hte
     exact ht.elim (not_le.mpr hs) (not_le.mpr hu)
 
+/-- A collared disc gives a chart in which the real diameter traces the edge segment. -/
+theorem exists_edge_chart_in_collared_disc (H : Drawing S)
+    {e : Set S} {γ : I → S} (hγe : γ '' Ioo 0 1 = e)
+    {a₀ b₀ t₀ : I} (ha₀ : a₀ < t₀) (hb₀ : t₀ < b₀)
+    {W A₁ Δ₁ Δ' : Set S} (hW : IsOpen W) (hpW : γ t₀ ∈ W) (hA₁W : Disjoint A₁ W)
+    (hW_avoid : W ⊆ ((H.U \ e) ∪ γ '' {t | t ≤ a₀ ∨ b₀ ≤ t})ᶜ)
+    (hΔ₁ : IsClosedDisc Δ₁) (hΔ' : IsClosedDisc Δ') (hin : Δ₁ ⊆ Δ' \ discBd Δ')
+    (hbd₁ : discBd Δ₁ = A₁ ∪ γ '' Icc a₀ b₀) (hFU : γ '' Icc a₀ b₀ ⊆ H.U) :
+    ∃ G : ℂ → S, ContinuousOn G (closedBall 0 1) ∧ InjOn G (closedBall 0 1) ∧ G 0 = γ t₀ ∧
+      G '' closedBall 0 1 ⊆ W ∧
+      (∀ z ∈ closedBall (0 : ℂ) 1, z.im = 0 → G z ∈ γ '' Ioo a₀ b₀) ∧
+      (∀ z ∈ closedBall (0 : ℂ) 1, G z ∈ H.U ↔ z.im = 0) := by
+  have hpbd : γ t₀ ∈ discBd Δ₁ := by
+    rw [hbd₁]
+    exact Or.inr (mem_image_of_mem γ ⟨ha₀.le, hb₀.le⟩)
+  obtain ⟨p⟩ := hΔ₁.isOArc_discBd
+  obtain ⟨c, c', hc, -, -, -, hl, -, -, -, hcp⟩ :=
+    exists_disc_collar hΔ₁ hΔ' hin p
+  have hcinj : InjOn c (closedBall 0 2) := hl.injOn
+  let w₀ : Circle := p.symm ⟨γ t₀, hpbd⟩
+  have hcw₀ : c w₀ = γ t₀ := by
+    rw [hcp]
+    simp [w₀]
+  obtain ⟨θ₀, hθ₀⟩ : ∃ θ₀ : ℝ, Circle.exp θ₀ = w₀ :=
+    ⟨Complex.arg (w₀ : ℂ), Circle.exp_arg w₀⟩
+  have hw₀c : cis' θ₀ = w₀ := by rw [cis'_eq_exp, hθ₀]
+  obtain ⟨ε, δ, hε, hmn, hmW, hGc, hGi⟩ :=
+    exists_small_polar_chart hW hc hcinj hw₀c (hcw₀.symm ▸ hpW)
+  let m : ℂ → ℂ := fun z => ((1 + ε * z.im : ℝ) : ℂ) * cis' (θ₀ + δ * z.re)
+  have hmball2 : ∀ z ∈ closedBall (0 : ℂ) 1, m z ∈ closedBall (0 : ℂ) 2 := fun z hz =>
+    ball_subset_closedBall (hmW z hz).1
+  let G : ℂ → S := fun z => c (m z)
+  have hG0 : G 0 = γ t₀ := by
+    change c (m 0) = _
+    have : m 0 = w₀ := by simp [m, hw₀c]
+    rw [this, hcw₀]
+  have hreal : ∀ z ∈ closedBall (0 : ℂ) 1, z.im = 0 → G z ∈ γ '' Ioo a₀ b₀ := by
+    intro z hz him
+    have hmz : m z = (Circle.exp (θ₀ + δ * z.re) : ℂ) := by
+      simp only [m, him, mul_zero, add_zero, Complex.ofReal_one, one_mul]
+      exact cis'_eq_exp _
+    have hW' := (hmW z hz).2
+    have hb : G z ∈ discBd Δ₁ := by
+      change c (m z) ∈ _
+      rw [hmz, hcp]
+      exact (p _).2
+    rw [hbd₁] at hb
+    rcases hb with hb | ⟨t, ht, hte⟩
+    · exact absurd hW' (disjoint_left.mp hA₁W hb)
+    · refine ⟨t, ?_, hte⟩
+      refine ⟨lt_of_le_of_ne ht.1 ?_, lt_of_le_of_ne ht.2 ?_⟩
+      · rintro rfl
+        exact hW_avoid hW' (Or.inr ⟨_, Or.inl le_rfl, hte⟩)
+      · rintro rfl
+        exact hW_avoid hW' (Or.inr ⟨_, Or.inr le_rfl, hte⟩)
+  have hUiff : ∀ z ∈ closedBall (0 : ℂ) 1, G z ∈ H.U ↔ z.im = 0 := by
+    intro z hz
+    constructor
+    · intro hzU
+      have hW' := (hmW z hz).2
+      have hze : G z ∈ e := by
+        by_contra hn
+        exact hW_avoid hW' (Or.inl ⟨hzU, hn⟩)
+      obtain ⟨t, ht, hte⟩ : G z ∈ γ '' Ioo 0 1 := hγe ▸ hze
+      have htab : t ∈ Icc a₀ b₀ := by
+        by_contra hn
+        have : t ≤ a₀ ∨ b₀ ≤ t := by
+          by_contra hc'
+          push Not at hc'
+          exact hn ⟨hc'.1.le, hc'.2.le⟩
+        exact hW_avoid hW' (Or.inr ⟨t, this, hte⟩)
+      have hb : G z ∈ discBd Δ₁ := by
+        rw [hbd₁]
+        exact Or.inr ⟨t, htab, hte⟩
+      obtain ⟨w, hw⟩ := (show ∃ w : discBd Δ₁, w.1 = G z from ⟨⟨_, hb⟩, rfl⟩)
+      have hcw : c (p.symm w) = G z := by
+        rw [hcp]
+        simpa using hw
+      have hwn : ((p.symm w : Circle) : ℂ) ∈ closedBall (0 : ℂ) 2 := by simp
+      have heq := hcinj hwn (hmball2 z hz) hcw
+      have hn₁ : ‖m z‖ = 1 + ε * z.im := hmn z hz
+      rw [← heq] at hn₁
+      simp only [Circle.norm_coe] at hn₁
+      have : ε * z.im = 0 := by linarith
+      exact (mul_eq_zero.mp this).resolve_left hε.ne'
+    · intro him
+      obtain ⟨t, ht, hte⟩ := hreal z hz him
+      exact hte ▸ hFU ⟨t, ⟨ht.1.le, ht.2.le⟩, rfl⟩
+  exact ⟨G, hGc, hGi, hG0, by rintro _ ⟨z, hz, rfl⟩; exact (hmW z hz).2, hreal, hUiff⟩
+
 /-- **A chart around a point of an edge.** Here `G` maps the closed unit disc of `ℂ` onto a closed
 disc
 around `γ t₀`. The real part of the disc is the piece of `e` from `γ a` to `γ b`, and there is no
@@ -368,89 +458,14 @@ theorem exists_edge_chart (hS : IsClosedSurface S) (H : Drawing S) {e : Set S} (
   have hW : IsOpen W := hD'.inter hY₁.isOpen_compl
   have hpW : γ t₀ ∈ W := ⟨hpD', hpY₁⟩
   have hWO : ∀ {x}, x ∈ W → x ∉ Y₀ := fun hx => hDO (hD'D hx.1)
-  -- The collar of `Δ₁`.
-  have hpbd : γ t₀ ∈ discBd Δ₁ := by
-    rw [hbd₁]
-    exact Or.inr (mem_image_of_mem γ ⟨ha₀.le, hb₀.le⟩)
-  obtain ⟨p⟩ := hΔ₁.isOArc_discBd
-  obtain ⟨Δ', hΔ', hin, -⟩ := exists_disc_around hman hΔ₁ (fun x _ => hS.2.2 x) isOpen_univ
-    (subset_univ _)
-  obtain ⟨c, c', hc, -, -, -, hl, -, -, -, hcp⟩ := exists_disc_collar hΔ₁ hΔ' hin p
-  have hcinj : InjOn c (closedBall 0 2) := hl.injOn
-  let w₀ : Circle := p.symm ⟨γ t₀, hpbd⟩
-  have hcw₀ : c w₀ = γ t₀ := by
-    rw [hcp]
-    simp [w₀]
-  obtain ⟨θ₀, hθ₀⟩ : ∃ θ₀ : ℝ, Circle.exp θ₀ = w₀ := by
-    refine ⟨Complex.arg (w₀ : ℂ), ?_⟩
-    exact Circle.exp_arg w₀
-  have hw₀c : cis' θ₀ = w₀ := by rw [cis'_eq_exp, hθ₀]
-  obtain ⟨ε, δ, hε, hmn, hmW, hGc, hGi⟩ :=
-    exists_small_polar_chart hW hc hcinj hw₀c (hcw₀.symm ▸ hpW)
-  let m : ℂ → ℂ := fun z => ((1 + ε * z.im : ℝ) : ℂ) * cis' (θ₀ + δ * z.re)
-  have hmball2 : ∀ z ∈ closedBall (0 : ℂ) 1, m z ∈ closedBall (0 : ℂ) 2 := fun z hz =>
-    ball_subset_closedBall (hmW z hz).1
-  let G : ℂ → S := c ∘ m
-  have hG0 : G 0 = γ t₀ := by
-    change c (m 0) = _
-    have : m 0 = w₀ := by simp [m, hw₀c]
-    rw [this, hcw₀]
-  -- The real points map to the piece.
-  have hreal : ∀ z ∈ closedBall (0 : ℂ) 1, z.im = 0 → G z ∈ γ '' Ioo a₀ b₀ := by
-    intro z hz him
-    have hmz : m z = (Circle.exp (θ₀ + δ * z.re) : ℂ) := by
-      simp only [m, him, mul_zero, add_zero, Complex.ofReal_one, one_mul]
-      exact cis'_eq_exp _
-    have hW' := (hmW z hz).2
-    have hb : G z ∈ discBd Δ₁ := by
-      change c (m z) ∈ _
-      rw [hmz, hcp]
-      exact (p _).2
-    rw [hbd₁] at hb
-    rcases hb with hb | ⟨t, ht, hte⟩
-    · exact absurd hW'.1 (disjoint_left.mp hA₁D' hb)
-    · refine ⟨t, ?_, hte⟩
-      refine ⟨lt_of_le_of_ne ht.1 ?_, lt_of_le_of_ne ht.2 ?_⟩
-      · rintro rfl
-        exact hW'.2 (Or.inr ⟨_, Or.inl le_rfl, hte⟩)
-      · rintro rfl
-        exact hW'.2 (Or.inr ⟨_, Or.inr le_rfl, hte⟩)
-  have hUiff : ∀ z ∈ closedBall (0 : ℂ) 1, G z ∈ H.U ↔ z.im = 0 := by
-    intro z hz
-    constructor
-    · intro hzU
-      have hW' := (hmW z hz).2
-      have hze : G z ∈ e := by
-        by_contra hn
-        exact hW'.2 (Or.inl ⟨hzU, hn⟩)
-      obtain ⟨t, ht, hte⟩ : G z ∈ γ '' Ioo 0 1 := hγe ▸ hze
-      have htab : t ∈ Icc a₀ b₀ := by
-        by_contra hn
-        have : t ≤ a₀ ∨ b₀ ≤ t := by
-          by_contra hc'
-          push Not at hc'
-          exact hn ⟨hc'.1.le, hc'.2.le⟩
-        exact hW'.2 (Or.inr ⟨t, this, hte⟩)
-      have hb : G z ∈ discBd Δ₁ := by
-        rw [hbd₁]
-        exact Or.inr ⟨t, htab, hte⟩
-      obtain ⟨w, hw⟩ := (show ∃ w : discBd Δ₁, w.1 = G z from ⟨⟨_, hb⟩, rfl⟩)
-      have hcw : c (p.symm w) = G z := by
-        rw [hcp]
-        simpa using hw
-      have hwn : ((p.symm w : Circle) : ℂ) ∈ closedBall (0 : ℂ) 2 := by simp
-      have heq := hcinj hwn (hmball2 z hz) hcw
-      have hn₁ : ‖m z‖ = 1 + ε * z.im := hmn z hz
-      rw [← heq] at hn₁
-      simp only [Circle.norm_coe] at hn₁
-      have : ε * z.im = 0 := by linarith
-      exact (mul_eq_zero.mp this).resolve_left hε.ne'
-    · intro him
-      obtain ⟨t, ht, hte⟩ := hreal z hz him
-      exact hte ▸ hFU ⟨t, ⟨ht.1.le, ht.2.le⟩, rfl⟩
+  obtain ⟨Δ', hΔ', hin, -⟩ :=
+    exists_disc_around hman hΔ₁ (fun x _ => hS.2.2 x) isOpen_univ (subset_univ _)
+  obtain ⟨G, hGc, hGi, hG0, hGW, hreal, hUiff⟩ :=
+    exists_edge_chart_in_collared_disc H hγe ha₀ hb₀ hW hpW
+      (hA₁D'.mono_right inter_subset_left) inter_subset_right hΔ₁ hΔ' hin hbd₁ hFU
   obtain ⟨a, b, hsa, hat, htb, hbu, hball, hclosed, hends⟩ :=
     edge_chart_endpoints hγ hinj hIcc hpiece hGc hGi hG0 hreal
-      (fun z hz t ht heq => hWO (hmW z hz).2 (Or.inr ⟨t, ht, heq⟩))
+      (fun z hz t ht heq => hWO (hGW (mem_image_of_mem G hz)) (Or.inr ⟨t, ht, heq⟩))
   exact ⟨G, a, b, hGc, hGi, hsa, hat, htb, hbu, hG0, hUiff, hball, hclosed, hends⟩
 
 end GraphMinor.GM11

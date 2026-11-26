@@ -14,10 +14,11 @@ public import LeanPool.GraphMinor.GM19.Section7e
 /-!
 # Graph Minors XIX, Section 12: the metric, (12.2) and (12.3)
 
-Section 12 uses the triangle inequality, supplied by XI (9.1) for a tangle in a drawing.
-Here the radial drawing belongs to a painting. Two restraints through a point of the
-middle atom have a union in a restraint, by the restraint-union step in the proof of XI (9.1)
-(`exists_restraint_union`). This gives the triangle inequality in this setting.
+Section 12 uses the triangle inequality for the radial drawing of a painting. In the
+short-distance case the two distances sum to less than the representativeness `D.rep`.
+The corresponding restraints meet at an anchor in the middle atom and have combined perimeter
+below `2 * D.rep`. They fit in one restraint by `exists_restraint_union`, the short-distance
+step of XI (9.1). If the sum is at least `D.rep`, the bound on `D.dist a c` gives the inequality.
 
 The results (12.2) and (12.3) then pick a small set of far apart vertices of `Γ*` near all edges
 with a large label. The results used later are `TangleDatum.dist_triangle`,
@@ -111,9 +112,10 @@ section Restraints
 
 
 
-/-- **The triangle inequality.** Closed walks for `d(a, b)` and `d(b, c)` have insides through a
-common point of `b`, by `exists_anchor`. So these insides are in one restraint of length at most the
-sum of the lengths, and this restraint is the inside of a closed walk. -/
+/-- The triangle inequality for the radial distance of a painting. Below the representativeness
+cutoff, `exists_anchor` supplies a common point of the two walk insides, and their combined
+perimeter is less than `2 * D.rep`. A single restraint covers both with perimeter at most their
+sum, and its perimeter walk provides the distance bound. -/
 theorem dist_triangle (D : TangleDatum cap χ) (hrep : 4 ≤ D.rep) {a b c : Set Shat}
     (hb : b ∈ D.P.Γ.atoms cap) : D.dist a c ≤ D.dist a b + D.dist b c := by
   have hT := cap.isClosedSurface

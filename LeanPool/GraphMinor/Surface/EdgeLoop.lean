@@ -180,6 +180,104 @@ theorem IsOArc.exists_iota {P : Set X} (hP : IsOArc P) {v : X} (hv : v ∈ P) :
         rw [show 2 * Real.pi * (t / (2 * Real.pi)) = t by field_simp, ← e]
         simp
 
+/-- The consecutive vertex preimages of a parametrized graph arc bound entire oriented edges.
+For a loop, the presence of an interior vertex excludes the interval with equal endpoints. -/
+theorem IsGraph.exists_edge_intervals (hg : IsGraph V E) (A : Set X → 𝕀 → X)
+    (hA : ∀ e ∈ E, IsArcMap (A e) ∧ range (A e) = e ∧ e ∩ V = {A e 0, A e 1})
+    {ι : ℝ → X} (hιc : Continuous ι) (hinj : InjOn ι (Ico 0 1)) (hinj' : InjOn ι (Ioc 0 1))
+    (hG : ι '' Icc 0 1 ⊆ gr V E) (h0 : ι 0 ∈ V) (h1 : ι 1 ∈ V)
+    (hne : ι 0 ≠ ι 1 ∨ ∃ x ∈ Ioo (0 : ℝ) 1, ι x ∈ V) :
+    ∃ (m : ℕ) (t : ℕ → ℝ) (s : ℕ → Set X) (ε : ℕ → Bool), 0 < m ∧ t 0 = 0 ∧ t m = 1 ∧
+      (∀ p < m, t p < t (p + 1)) ∧
+      (∀ p ≤ m, t p ∈ Icc (0 : ℝ) 1 ∩ ι ⁻¹' V) ∧
+      (∀ x ∈ Icc (0 : ℝ) 1 ∩ ι ⁻¹' V, ∃ p ≤ m, t p = x) ∧
+      ∀ p < m, s p ∈ E ∧ ι '' Icc (t p) (t (p + 1)) = s p ∧
+        ι (t p) = extI (A (s p)) (if ε p then 0 else 1) ∧
+        ι (t (p + 1)) = extI (A (s p)) (if ε p then 1 else 0) := by
+  classical
+  have hcl : ∀ f ∈ E, IsClosed f := fun f hf => by
+    obtain ⟨u, v, -, hl, -⟩ := hg.edge f hf
+    exact hl.isCompact.isClosed
+  have hline : ∀ e ∈ E, IsLineWithEnds e (A e 0) (A e 1) := fun e he => by
+    have := (hA e he).1.isLineWithEnds
+    rwa [(hA e he).2.1] at this
+  let T : Set ℝ := Icc 0 1 ∩ ι ⁻¹' V
+  have hTf : T.Finite := by
+    have h1 : (Ico 0 1 ∩ ι ⁻¹' V : Set ℝ).Finite :=
+      Set.Finite.of_finite_image (hg.fin.subset (by rintro _ ⟨x, hx, rfl⟩; exact hx.2))
+        (hinj.mono inter_subset_left)
+    refine (h1.union (finite_singleton (1 : ℝ))).subset ?_
+    rintro x ⟨hx, hxV⟩
+    rcases eq_or_lt_of_le hx.2 with rfl | h2
+    · exact .inr rfl
+    · exact .inl ⟨⟨hx.1, h2⟩, hxV⟩
+  have h0T : (0 : ℝ) ∈ T := ⟨⟨le_rfl, zero_le_one⟩, h0⟩
+  have h1T : (1 : ℝ) ∈ T := ⟨⟨zero_le_one, le_rfl⟩, h1⟩
+  obtain ⟨m, t, hm, ht0, htm, hlt, hmem, hgap, hall⟩ := exists_sorted hTf inter_subset_left h0T h1T
+  have key : ∀ p, ∃ (e : Set X) (b : Bool), p < m → e ∈ E ∧ ι '' Icc (t p) (t (p + 1)) = e ∧
+      ι (t p) = extI (A e) (if b then 0 else 1) ∧ ι (t (p + 1)) = extI (A e) (if b then 1 else 0)
+        := by
+    intro p
+    by_cases hp : p < m
+    swap
+    · exact ⟨∅, true, fun h => absurd h hp⟩
+    have hab := hlt p hp
+    have ha1 := hmem p hp.le
+    have hb1 := hmem (p + 1) hp
+    have hopen : ∀ x ∈ Ioo (t p) (t (p + 1)), ι x ∉ V := fun x hx hxV =>
+      hgap p hp x ⟨⟨ha1.1.1.trans hx.1.le, hx.2.le.trans hb1.1.2⟩, hxV⟩ hx
+    have hsubI : Ioo (t p) (t (p + 1)) ⊆ Icc 0 1 := fun x hx => ⟨ha1.1.1.trans hx.1.le,
+      hx.2.le.trans hb1.1.2⟩
+    have hJP : ι '' Ioo (t p) (t (p + 1)) ⊆ ι '' Icc 0 1 := image_mono hsubI
+    have hconn : IsPreconnected (ι '' Ioo (t p) (t (p + 1))) := isPreconnected_Ioo.image _
+      hιc.continuousOn
+    have hdisj : Disjoint (ι '' Ioo (t p) (t (p + 1))) V := Set.disjoint_left.mpr fun z hz hzV => by
+      obtain ⟨x, hx, rfl⟩ := hz
+      exact hopen x hx hzV
+    obtain ⟨x0, hx0⟩ : (Ioo (t p) (t (p + 1))).Nonempty := nonempty_Ioo.mpr hab
+    have hJG : ι '' Ioo (t p) (t (p + 1)) ⊆ ⋃₀ E := fun z hz =>
+      (hG (hJP hz)).resolve_left (Set.disjoint_left.mp hdisj hz)
+    obtain ⟨e, he, hxe⟩ := hJG (mem_image_of_mem ι hx0)
+    have hJe := hg.subset_edge hconn hJG hdisj he ⟨_, mem_image_of_mem ι hx0, hxe⟩
+    have hIe : ι '' Icc (t p) (t (p + 1)) ⊆ e := by
+      rw [← closure_Ioo hab.ne]
+      exact (image_closure_subset_closure_image hιc).trans (closure_minimal hJe (hcl e he))
+    have hea : ι (t p) ∈ e ∩ V := ⟨hIe ⟨_, ⟨le_rfl, hab.le⟩, rfl⟩, ha1.2⟩
+    have heb : ι (t (p + 1)) ∈ e ∩ V := ⟨hIe ⟨_, ⟨hab.le, le_rfl⟩, rfl⟩, hb1.2⟩
+    have hne' : ι (t p) ≠ ι (t (p + 1)) := by
+      intro he'
+      have ha0 : t p = 0 := by
+        by_contra hc
+        have h1 : t p ∈ Ioc (0 : ℝ) 1 := ⟨lt_of_le_of_ne ha1.1.1 (Ne.symm hc), ha1.1.2⟩
+        exact hab.ne (hinj' h1 ⟨ha1.1.1.trans_lt hab, hb1.1.2⟩ he')
+      have hb2 : t (p + 1) = 1 := by
+        by_contra hc
+        have h1 : t (p + 1) ∈ Ico (0 : ℝ) 1 := ⟨hb1.1.1, lt_of_le_of_ne hb1.1.2 hc⟩
+        exact hab.ne (hinj ⟨ha1.1.1, hab.trans h1.2⟩ h1 he')
+      rw [ha0, hb2] at he' hopen
+      rcases hne with h3 | ⟨x, hx, hxV⟩
+      · exact h3 he'
+      · exact hopen x hx hxV
+    have hpair : e ∩ V = {A e 0, A e 1} := (hA e he).2.2
+    rw [hpair] at hea heb
+    have hval0 : extI (A e) 0 = A e 0 := extI_coe (A e) 0
+    have hval1 : extI (A e) 1 = A e 1 := extI_coe (A e) 1
+    have hconnI : IsPreconnected (ι '' Icc (t p) (t (p + 1))) := isPreconnected_Icc.image _
+      hιc.continuousOn
+    rcases hea with hea | hea <;> rcases heb with heb | heb
+    · exact absurd (hea.trans heb.symm) hne'
+    · have heb' : ι (t (p + 1)) = A e 1 := heb
+      refine ⟨e, true, fun _ => ⟨he, ?_, by simp [hea, hval0], by simp [heb', hval1]⟩⟩
+      exact (hline e he).eq_of_subset hconnI hIe ⟨_, ⟨le_rfl, hab.le⟩, hea⟩ ⟨_, ⟨hab.le, le_rfl⟩,
+        heb⟩
+    · have hea' : ι (t p) = A e 1 := hea
+      refine ⟨e, false, fun _ => ⟨he, ?_, by simp [hea', hval1], by simp [heb, hval0]⟩⟩
+      exact (hline e he).eq_of_subset hconnI hIe ⟨_, ⟨hab.le, le_rfl⟩, heb⟩ ⟨_, ⟨le_rfl, hab.le⟩,
+        hea⟩
+    · exact absurd (hea.trans heb.symm) hne'
+  choose s ε hs using key
+  exact ⟨m, t, s, ε, hm, ht0, htm, hlt, hmem, hall, hs⟩
+
 /-- The sides of the loop around `P`, before gluing them. -/
 theorem exists_edge_sides (hg : IsGraph V E) {P : Set X} (hP : IsOArc P) (hPG : P ⊆ ⋃₀ E)
   (A : Set X → 𝕀 → X)
@@ -191,9 +289,6 @@ theorem exists_edge_sides (hg : IsGraph V E) {P : Set X} (hP : IsOArc P) (hPG : 
         ι (t (p + 1)) = extI (A (s p)) (if ε p then 1 else 0) ∧ ι '' Icc (t p) (t (p + 1)) = s p
           := by
   classical
-  have hcl : ∀ f ∈ E, IsClosed f := fun f hf => by
-    obtain ⟨u, v, -, hl, -⟩ := hg.edge f hf
-    exact hl.isCompact.isClosed
   have hPg : P ⊆ gr V E := hPG.trans subset_union_right
   have hends : ∀ e ∈ E, A e 0 ≠ A e 1 := fun e he he' => by
     have h1 := (hA e he).1.2 he'
@@ -224,93 +319,33 @@ theorem exists_edge_sides (hg : IsGraph V E) {P : Set X} (hP : IsOArc P) (hPG : 
         exact hv0P
       · exact hιim ▸ mem_image_of_mem ι ⟨hx.1, h1⟩
     · exact hιim ▸ image_mono Ico_subset_Icc_self
-  let T : Set ℝ := Icc 0 1 ∩ ι ⁻¹' V
-  have hTf : T.Finite := by
-    have h1 : (Ico 0 1 ∩ ι ⁻¹' V : Set ℝ).Finite :=
-      Set.Finite.of_finite_image (hg.fin.subset (by rintro _ ⟨x, hx, rfl⟩; exact hx.2))
-        (hinj.mono inter_subset_left)
-    refine (h1.union (finite_singleton (1 : ℝ))).subset ?_
-    rintro x ⟨hx, hxV⟩
-    rcases eq_or_lt_of_le hx.2 with rfl | h2
-    · exact .inr rfl
-    · exact .inl ⟨⟨hx.1, h2⟩, hxV⟩
-  have h0T : (0 : ℝ) ∈ T := ⟨⟨le_rfl, zero_le_one⟩, by rw [mem_preimage, hι0]; exact hv0V⟩
-  have h1T : (1 : ℝ) ∈ T := ⟨⟨zero_le_one, le_rfl⟩, by rw [mem_preimage, hι1]; exact hv0V⟩
-  obtain ⟨m, t, hm, ht0, htm, hlt, hmem, hgap, -⟩ := exists_sorted hTf inter_subset_left h0T h1T
-  have key : ∀ p, ∃ (e : Set X) (b : Bool), p < m → e ∈ E ∧ e ⊆ P ∧ ι (t p) = extI (A e)
-    (if b then 0 else 1) ∧
-      ι (t (p + 1)) = extI (A e) (if b then 1 else 0) ∧ ι '' Icc (t p) (t (p + 1)) = e := by
-    intro p
-    by_cases hp : p < m
-    swap
-    · exact ⟨∅, true, fun h => absurd h hp⟩
-    have hab := hlt p hp
-    have ha1 := hmem p hp.le
-    have hb1 := hmem (p + 1) hp
-    have hopen : ∀ x ∈ Ioo (t p) (t (p + 1)), ι x ∉ V := fun x hx hxV =>
-      hgap p hp x ⟨⟨ha1.1.1.trans hx.1.le, hx.2.le.trans hb1.1.2⟩, hxV⟩ hx
-    have hsubI : Ioo (t p) (t (p + 1)) ⊆ Icc 0 1 := fun x hx => ⟨ha1.1.1.trans hx.1.le,
-      hx.2.le.trans hb1.1.2⟩
-    have hJP : ι '' Ioo (t p) (t (p + 1)) ⊆ P := hIcc ▸ image_mono hsubI
-    have hconn : IsPreconnected (ι '' Ioo (t p) (t (p + 1))) := isPreconnected_Ioo.image _
-      hιc.continuousOn
-    have hdisj : Disjoint (ι '' Ioo (t p) (t (p + 1))) V := Set.disjoint_left.mpr fun z hz hzV => by
-      obtain ⟨x, hx, rfl⟩ := hz
-      exact hopen x hx hzV
-    obtain ⟨x0, hx0⟩ : (Ioo (t p) (t (p + 1))).Nonempty := nonempty_Ioo.mpr hab
-    obtain ⟨e, he, hxe⟩ := hPG (hJP (mem_image_of_mem ι hx0))
-    have hJe := hg.subset_edge hconn (hJP.trans hPG) hdisj he ⟨_, mem_image_of_mem ι hx0, hxe⟩
-    have hIe : ι '' Icc (t p) (t (p + 1)) ⊆ e := by
-      rw [← closure_Ioo hab.ne]
-      exact (image_closure_subset_closure_image hιc).trans (closure_minimal hJe (hcl e he))
+  have hinterior : ∃ x ∈ Ioo (0 : ℝ) 1, ι x ∈ V := by
+    have hmid : (1 / 2 : ℝ) ∈ Ioo 0 1 := by norm_num
+    have hmidP : ι (1 / 2) ∈ P := hIcc ▸ mem_image_of_mem ι (Ioo_subset_Icc_self hmid)
+    by_cases hmidV : ι (1 / 2) ∈ V
+    · exact ⟨1 / 2, hmid, hmidV⟩
+    obtain ⟨e, he, hme⟩ := hPG hmidP
     have heP : e ⊆ P := by
-      rcases hg.edge_or hP hPg he with h1 | h1
-      · exact h1
-      · exact absurd (hJP (mem_image_of_mem ι hx0)) (Set.disjoint_left.mp h1 ⟨hxe,
-          fun h => hopen x0 hx0 h⟩)
-    have hea : ι (t p) ∈ e ∩ V := ⟨hIe ⟨_, ⟨le_rfl, hab.le⟩, rfl⟩, ha1.2⟩
-    have heb : ι (t (p + 1)) ∈ e ∩ V := ⟨hIe ⟨_, ⟨hab.le, le_rfl⟩, rfl⟩, hb1.2⟩
-    have hne : ι (t p) ≠ ι (t (p + 1)) := by
-      intro he'
-      have ha0 : t p = 0 := by
-        by_contra hc
-        have h1 : t p ∈ Ioc (0 : ℝ) 1 := ⟨lt_of_le_of_ne ha1.1.1 (Ne.symm hc), ha1.1.2⟩
-        exact hab.ne (hinj' h1 ⟨ha1.1.1.trans_lt hab, hb1.1.2⟩ he')
-      have hb2 : t (p + 1) = 1 := by
-        by_contra hc
-        have h1 : t (p + 1) ∈ Ico (0 : ℝ) 1 := ⟨hb1.1.1, lt_of_le_of_ne hb1.1.2 hc⟩
-        exact hab.ne (hinj ⟨ha1.1.1, hab.trans h1.2⟩ h1 he')
-      have hother : ∃ w ∈ e ∩ V, w ≠ v0 := by
-        by_cases h3 : A e 0 = v0
-        · exact ⟨A e 1, ⟨(hline e he).right_mem, hmemV1 e he⟩, fun h4 => hends e he
-          (h3.trans h4.symm)⟩
-        · exact ⟨A e 0, ⟨(hline e he).left_mem, hmemV0 e he⟩, h3⟩
-      obtain ⟨w, ⟨hwe, hwV⟩, hwne⟩ := hother
-      have hwP : w ∈ P := heP hwe
-      rw [← hιim] at hwP
-      obtain ⟨x, hx, rfl⟩ := hwP
-      have hx0' : x ≠ 0 := fun h => hwne (by rw [h, hι0])
-      exact hopen x ⟨by rw [ha0]; exact lt_of_le_of_ne hx.1 (Ne.symm hx0'), by rw [hb2]; exact
-        hx.2⟩ hwV
-    have hpair : e ∩ V = {A e 0, A e 1} := (hA e he).2.2
-    rw [hpair] at hea heb
-    have hval0 : extI (A e) 0 = A e 0 := extI_coe (A e) 0
-    have hval1 : extI (A e) 1 = A e 1 := extI_coe (A e) 1
-    have hconnI : IsPreconnected (ι '' Icc (t p) (t (p + 1))) := isPreconnected_Icc.image _
-      hιc.continuousOn
-    rcases hea with hea | hea <;> rcases heb with heb | heb
-    · exact absurd (hea.trans heb.symm) hne
-    · have heb' : ι (t (p + 1)) = A e 1 := heb
-      refine ⟨e, true, fun _ => ⟨he, heP, by simp [hea, hval0], by simp [heb', hval1], ?_⟩⟩
-      exact (hline e he).eq_of_subset hconnI hIe ⟨_, ⟨le_rfl, hab.le⟩, hea⟩ ⟨_, ⟨hab.le, le_rfl⟩,
-        heb⟩
-    · have hea' : ι (t p) = A e 1 := hea
-      refine ⟨e, false, fun _ => ⟨he, heP, by simp [hea', hval1], by simp [heb, hval0], ?_⟩⟩
-      exact (hline e he).eq_of_subset hconnI hIe ⟨_, ⟨hab.le, le_rfl⟩, heb⟩ ⟨_, ⟨le_rfl, hab.le⟩,
-        hea⟩
-    · exact absurd (hea.trans heb.symm) hne
-  choose s ε hs using key
-  exact ⟨ι, m, t, s, ε, hιc, hm, ht0, htm, hlt, hι0.trans hι1.symm, hinj, hιim, hs⟩
+      rcases hg.edge_or hP hPg he with heP | hdisjoint
+      · exact heP
+      · exact (Set.disjoint_left.mp hdisjoint ⟨hme, hmidV⟩ hmidP).elim
+    obtain ⟨w, hwP, hwV, hwne⟩ : ∃ w ∈ P, w ∈ V ∧ w ≠ v0 := by
+      by_cases h : A e 0 = v0
+      · exact ⟨A e 1, heP (hline e he).right_mem, hmemV1 e he,
+          fun h' => hends e he (h.trans h'.symm)⟩
+      · exact ⟨A e 0, heP (hline e he).left_mem, hmemV0 e he, h⟩
+    rw [← hιim] at hwP
+    obtain ⟨x, hx, rfl⟩ := hwP
+    exact ⟨x, ⟨lt_of_le_of_ne hx.1 (Ne.symm fun h => hwne (h ▸ hι0)), hx.2⟩, hwV⟩
+  obtain ⟨m, t, s, ε, hm, ht0, htm, hlt, hmem, _, hs⟩ :=
+    hg.exists_edge_intervals A hA hιc hinj hinj' (hIcc.symm ▸ hPg)
+      (hι0.symm ▸ hv0V) (hι1.symm ▸ hv0V) (Or.inr hinterior)
+  refine ⟨ι, m, t, s, ε, hιc, hm, ht0, htm, hlt, hι0.trans hι1.symm, hinj, hιim,
+    fun p hp => ?_⟩
+  obtain ⟨he, himage, hleft, hright⟩ := hs p hp
+  refine ⟨he, ?_, hleft, hright, himage⟩
+  rw [← himage, ← hIcc]
+  exact image_mono (Icc_subset_Icc (hmem p hp.le).1.1 (hmem (p + 1) hp).1.2)
 
 /-- The side of the edge with arc `a`, in the direction of `b`, with parameter `x ∈ [0, 1]`. -/
 noncomputable def sd (a : 𝕀 → X) (b : Bool) (x : ℝ) : X := extI a (if b then x else 1 - x)

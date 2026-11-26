@@ -883,6 +883,37 @@ private noncomputable abbrev removeDiscPortrayal
       · exact Or.inr (Or.inl h4)
       · exact Or.inr (Or.inr ⟨⟨h4, hn₄.1⟩, rfl⟩) }
 
+/-- If an unchanged cell keeps the enlarged border sets of its ends, its warp bounds agree. -/
+private theorem cellWarpLE_iff_of_borderPlus_eq {α : Type u} {β : Type v} {G : Hypergraph α β}
+    (π : Portrayal G) {c : Set π.S} {q : ℕ} {borderPlus : π.S → Set α}
+    (hplus : ∀ n ∈ tilde c, borderPlus n = π.borderPlus n) :
+    (∀ n₁ ∈ tilde c, ∀ n₂ ∈ tilde c, n₁ ≠ n₂ →
+      (π.borderSet n₁).ncard ≤ q ∧ (π.borderSet n₂).ncard ≤ q ∧
+      ((borderPlus n₁).ncard = q + 1 → (borderPlus n₂).ncard = q + 1 →
+        Portrayal.LinkagePairs (π.cellGraph c).skeleton (borderPlus n₁) (borderPlus n₂) (q + 1)
+          (π.nodeVertex n₁) (π.nodeVertex n₂))) ↔ π.CellWarpLE c q := by
+  constructor <;> intro h n₁ hn₁ n₂ hn₂ hne <;>
+    simpa only [hplus n₁ hn₁, hplus n₂ hn₂] using h n₁ hn₁ n₂ hn₂ hne
+
+/-- Equal warp bounds on corresponding cells give equal suprema of their minimum bounds. -/
+private theorem cuffWarp_eq_of_cellWarpLE_iff {X : Type u} {C C' : Set (Set X)} {Θ : Set X}
+    {P P' : Set X → ℕ → Prop}
+    (hmem : ∀ c, (c ∩ Θ).Nonempty → (c ∈ C' ↔ c ∈ C))
+    (hcell : ∀ c q, c ∈ C' → (c ∩ Θ).Nonempty → (P' c q ↔ P c q)) :
+    sSup {p : ℕ | ∃ c ∈ C', (c ∩ Θ).Nonempty ∧ p = sInf {q | P' c q}} =
+      sSup {p : ℕ | ∃ c ∈ C, (c ∩ Θ).Nonempty ∧ p = sInf {q | P c q}} := by
+  have hwarp (c) (hc : c ∈ C') (hne : (c ∩ Θ).Nonempty) :
+      sInf {q | P' c q} = sInf {q | P c q} :=
+    congrArg sInf (Set.ext fun q => hcell c q hc hne)
+  congr 1
+  ext p
+  constructor
+  · rintro ⟨c, hc, hne, rfl⟩
+    exact ⟨c, (hmem c hne).mp hc, hne, hwarp c hc hne⟩
+  · rintro ⟨c, hc, hne, rfl⟩
+    have hc' := (hmem c hne).mpr hc
+    exact ⟨c, hc', hne, (hwarp c hc' hne).symm⟩
+
 private theorem removeDiscWarpAt
     {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G)
@@ -1019,60 +1050,14 @@ private theorem removeDiscWarpAt
         have hli := (restrictPathFromToLeft (π.cellGraph_le c' hc') hI₁_le hcard_inter
           hS₁ hS₂ (P i)).2.2.1
         exact ⟨i, hfi.symm.trans hi3, hli.symm.trans hi4⟩
-    · constructor
-      · intro h n₁ hn₁ n₂ hn₂ hne
-        obtain ⟨h1, h2, h3⟩ := h n₁ hn₁ n₂ hn₂ hne
-        refine ⟨h1, h2, fun hb₁ hb₂ P hP => ?_⟩
-        have hb₁' : (π'.borderPlus n₁).ncard = q + 1 := by
-          rwa [hborderPlus_eq n₁ (htilde_bd hn₁)]
-        have hb₂' : (π'.borderPlus n₂).ncard = q + 1 := by
-          rwa [hborderPlus_eq n₂ (htilde_bd hn₂)]
-        let P' : Fin (q + 1) →
-            PathFromTo (π.cellGraph c).skeleton (π'.borderPlus n₁) (π'.borderPlus n₂) := fun i =>
-          { first := (P i).first
-            last := (P i).last
-            walk := (P i).walk
-            isPath := (P i).isPath
-            first_mem := by rw [hborderPlus_eq n₁ (htilde_bd hn₁)]; exact (P i).first_mem
-            last_mem := by rw [hborderPlus_eq n₂ (htilde_bd hn₂)]; exact (P i).last_mem }
-        exact h3 hb₁' hb₂' P' hP
-      · intro h n₁ hn₁ n₂ hn₂ hne
-        obtain ⟨h1, h2, h3⟩ := h n₁ hn₁ n₂ hn₂ hne
-        refine ⟨h1, h2, fun hb₁' hb₂' P hP => ?_⟩
-        have hb₁ : (π.borderPlus n₁).ncard = q + 1 := by
-          rwa [← hborderPlus_eq n₁ (htilde_bd hn₁)]
-        have hb₂ : (π.borderPlus n₂).ncard = q + 1 := by
-          rwa [← hborderPlus_eq n₂ (htilde_bd hn₂)]
-        let P' : Fin (q + 1) →
-            PathFromTo (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂) := fun i =>
-          { first := (P i).first
-            last := (P i).last
-            walk := (P i).walk
-            isPath := (P i).isPath
-            first_mem := by rw [← hborderPlus_eq n₁ (htilde_bd hn₁)]; exact (P i).first_mem
-            last_mem := by rw [← hborderPlus_eq n₂ (htilde_bd hn₂)]; exact (P i).last_mem }
-        exact h3 hb₁ hb₂ P' hP
-  have hcellWarp_eq : ∀ c ∈ Γ'.C, (c ∩ Θ).Nonempty → π'.cellWarp c = π.cellWarp c := by
-    intro c hc hne_Θ
-    change sInf {q : ℕ | π'.CellWarpLE c q} = sInf {q : ℕ | π.CellWarpLE c q}
-    congr 1
-    ext q
-    exact hcell_iff c q hc hne_Θ
-  have hset_eq : {p : ℕ | ∃ c ∈ Γ'.C, (c ∩ Θ).Nonempty ∧ p = π'.cellWarp c} =
-      {p : ℕ | ∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ p = π.cellWarp c} := by
-    ext p
-    constructor
-    · rintro ⟨c, hc, hne_Θ, rfl⟩
-      exact ⟨c, (hC' ▸ hc).1, hne_Θ, hcellWarp_eq c hc hne_Θ⟩
-    · rintro ⟨c, hc, hne_Θ, rfl⟩
+    · exact cellWarpLE_iff_of_borderPlus_eq π (fun n hn => hborderPlus_eq n (htilde_bd hn))
+  exact cuffWarp_eq_of_cellWarpLE_iff
+    (C' := Γ'.C) (C := π.Γ.C) (Θ := Θ) (P' := π'.CellWarpLE) (P := π.CellWarpLE)
+    (fun c hne_Θ => by
+      rw [hC']
       have hbd_c : (c ∩ bd π.S).Nonempty := hne_Θ.mono (inter_subset_inter_right c hΘ_sub)
-      have hc' : c ∈ Γ'.C := by
-        rw [hC']
-        exact ⟨hc, hbd_cells c hc hbd_c⟩
-      exact ⟨c, hc', hne_Θ, (hcellWarp_eq c hc' hne_Θ).symm⟩
-  change sSup {p : ℕ | ∃ c ∈ Γ'.C, (c ∩ Θ).Nonempty ∧ p = π'.cellWarp c} =
-    sSup {p : ℕ | ∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ p = π.cellWarp c}
-  rw [hset_eq]
+      exact ⟨fun hc => hc.1, fun hc => ⟨hc, hbd_cells c hc hbd_c⟩⟩)
+    hcell_iff
 
 private theorem removeDiscTruth
     {α : Type u} {β : Type v} {G : Hypergraph α β}
@@ -1789,65 +1774,18 @@ private theorem replaceDiscWarpAt
         ((π'.borderPlus n₁).ncard = q + 1 → (π'.borderPlus n₂).ncard = q + 1 →
           Portrayal.LinkagePairs (cellG c).skeleton (π'.borderPlus n₁) (π'.borderPlus n₂)
             (q + 1) (π.nodeVertex n₁) (π.nodeVertex n₂))) ↔
-      (∀ n₁ ∈ tilde c, ∀ n₂ ∈ tilde c, n₁ ≠ n₂ →
-        (π.borderSet n₁).ncard ≤ q ∧ (π.borderSet n₂).ncard ≤ q ∧
-        ((π.borderPlus n₁).ncard = q + 1 → (π.borderPlus n₂).ncard = q + 1 →
-          Portrayal.LinkagePairs (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂)
-            (q + 1) (π.nodeVertex n₁) (π.nodeVertex n₂)))
-    have hcellG_c : cellG c = π.cellGraph c := ite_eq_right hne_c'
-    rw [hcellG_c]
-    constructor <;> intro h n₁ hn₁ n₂ hn₂ hne
-    · obtain ⟨h1, h2, h3⟩ := h n₁ hn₁ n₂ hn₂ hne
-      refine ⟨h1, h2, fun hb₁ hb₂ P hP => ?_⟩
-      have hb₁' : (π'.borderPlus n₁).ncard = q + 1 := by
-        rwa [hborderPlus_eq n₁ (htilde_bd hn₁)]
-      have hb₂' : (π'.borderPlus n₂).ncard = q + 1 := by
-        rwa [hborderPlus_eq n₂ (htilde_bd hn₂)]
-      let P' : Fin (q + 1) →
-          PathFromTo (π.cellGraph c).skeleton (π'.borderPlus n₁) (π'.borderPlus n₂) := fun i =>
-        { first := (P i).first
-          last := (P i).last
-          walk := (P i).walk
-          isPath := (P i).isPath
-          first_mem := by rw [hborderPlus_eq n₁ (htilde_bd hn₁)]; exact (P i).first_mem
-          last_mem := by rw [hborderPlus_eq n₂ (htilde_bd hn₂)]; exact (P i).last_mem }
-      exact h3 hb₁' hb₂' P' hP
-    · obtain ⟨h1, h2, h3⟩ := h n₁ hn₁ n₂ hn₂ hne
-      refine ⟨h1, h2, fun hb₁' hb₂' P hP => ?_⟩
-      have hb₁ : (π.borderPlus n₁).ncard = q + 1 := by
-        rwa [← hborderPlus_eq n₁ (htilde_bd hn₁)]
-      have hb₂ : (π.borderPlus n₂).ncard = q + 1 := by
-        rwa [← hborderPlus_eq n₂ (htilde_bd hn₂)]
-      let P' : Fin (q + 1) →
-          PathFromTo (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂) := fun i =>
-        { first := (P i).first
-          last := (P i).last
-          walk := (P i).walk
-          isPath := (P i).isPath
-          first_mem := by rw [← hborderPlus_eq n₁ (htilde_bd hn₁)]; exact (P i).first_mem
-          last_mem := by rw [← hborderPlus_eq n₂ (htilde_bd hn₂)]; exact (P i).last_mem }
-      exact h3 hb₁ hb₂ P' hP
-  have hcellWarp_eq : ∀ c ∈ Γ'.C, (c ∩ Θ).Nonempty → π'.cellWarp c = π.cellWarp c := by
-    intro c hc hne_Θ
-    change sInf {q : ℕ | π'.CellWarpLE c q} = sInf {q : ℕ | π.CellWarpLE c q}
-    congr 1
-    ext q
-    exact hcell_iff c q hc hne_Θ
-  have hset_eq : {p : ℕ | ∃ c ∈ Γ'.C, (c ∩ Θ).Nonempty ∧ p = π'.cellWarp c} =
-      {p : ℕ | ∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ p = π.cellWarp c} := by
-    ext p
-    constructor
-    · rintro ⟨c, hc, hne_Θ, rfl⟩
-      have hne_c' : c ≠ c' := fun h =>
-        hc'_not_bd (h ▸ hne_Θ.mono (inter_subset_inter_right _ hΘ_sub))
-      exact ⟨c, ((hC' ▸ hc).resolve_left hne_c').1, hne_Θ, hcellWarp_eq c hc hne_Θ⟩
-    · rintro ⟨c, hc, hne_Θ, rfl⟩
+      π.CellWarpLE c q
+    rw [show cellG c = π.cellGraph c from ite_eq_right hne_c']
+    exact cellWarpLE_iff_of_borderPlus_eq π (fun n hn => hborderPlus_eq n (htilde_bd hn))
+  exact cuffWarp_eq_of_cellWarpLE_iff
+    (C' := Γ'.C) (C := π.Γ.C) (Θ := Θ) (P' := π'.CellWarpLE) (P := π.CellWarpLE)
+    (fun c hne_Θ => by
+      rw [hC']
       have hbd_c : (c ∩ bd π.S).Nonempty := hne_Θ.mono (inter_subset_inter_right c hΘ_sub)
-      have hc' : c ∈ Γ'.C := hC'.symm ▸ mem_insert_of_mem c' ⟨hc, hbd_cells c hc hbd_c⟩
-      exact ⟨c, hc', hne_Θ, (hcellWarp_eq c hc' hne_Θ).symm⟩
-  change sSup {p : ℕ | ∃ c ∈ Γ'.C, (c ∩ Θ).Nonempty ∧ p = π'.cellWarp c} =
-    sSup {p : ℕ | ∃ c ∈ π.Γ.C, (c ∩ Θ).Nonempty ∧ p = π.cellWarp c}
-  rw [hset_eq]
+      have hne_c' : c ≠ c' := fun h => hc'_not_bd (h ▸ hbd_c)
+      exact ⟨fun hc => (hc.resolve_left hne_c').1,
+        fun hc => mem_insert_of_mem c' ⟨hc, hbd_cells c hc hbd_c⟩⟩)
+    hcell_iff
 
 private theorem replaceDiscTruth
     {α : Type u} {β : Type v} {G : Hypergraph α β}

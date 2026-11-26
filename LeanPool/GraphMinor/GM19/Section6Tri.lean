@@ -31,13 +31,9 @@ local notation "K" => ZMod 2
 variable {S : Type*} [TopologicalSpace S] [T2Space S]
 
 omit [T2Space S] in
-theorem isPathConnected_edge {L : Set S} {u v : S} (h : IsLineWithEnds L u v) (_huv : u ≠ v) (_hne :
-  (L \ {u, v}).Nonempty) : IsPathConnected (L \ {u, v}) := by
-  obtain ⟨a, ha, hr, h0, h1⟩ := h.exists_arc
-  rw [IsLineWithEnds.diff_eq ha hr h0 h1]
-  have hc : IsPathConnected (Ioo (0 : ℝ) 1) := (convex_Ioo 0 1).isPathConnected
-    (nonempty_Ioo.mpr zero_lt_one)
-  exact hc.image' (continuous_extI ha.1).continuousOn
+theorem isPathConnected_edge {L : Set S} {u v : S} (h : IsLineWithEnds L u v) :
+    IsPathConnected (L \ {u, v}) :=
+  h.isPathConnected_interior
 
 namespace IsGraphD
 
@@ -72,13 +68,13 @@ theorem closure_diff (h : IsGraph V E) {e : Set S} (he : e ∈ E) : closure (e \
 theorem arcComponents_eq (h : IsGraph V E) : arcComponentsIn (gr V E \ V) = (fun e => e \ V) '' E
   := by
   have hmem : ∀ e ∈ E, e \ V ∈ arcComponentsIn (gr V E \ V) := fun e he => by
-    obtain ⟨u, v, huv, hl, hi⟩ := h.edge e he
+    obtain ⟨u, v, _, hl, hi⟩ := h.edge e he
     have hne := inner_nonempty h
       he
     have hs : e \ V ⊆ gr V E \ V := fun x hx => ⟨.inr ⟨e, he, hx.1⟩, hx.2⟩
     refine ⟨hne, hs, ?_, fun D hD hc hsub => ?_⟩
     · rw [diff_eq h hi]
-      exact isPathConnected_edge hl huv (diff_eq h hi ▸ hne)
+      exact isPathConnected_edge hl
     have hclosed : ∀ f ∈ E, IsClosed f := fun f hf => by
       obtain ⟨p, q, -, hl', -⟩ := h.edge f hf
       exact hl'.isCompact.isClosed

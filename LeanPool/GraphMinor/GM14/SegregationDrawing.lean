@@ -146,6 +146,112 @@ theorem exists_glued_drawing {G : Graph α β} {S_seg : Set (Society α β)}
     exact ⟨Γ, h₁.trans hU₀, h₂, fun S₀ h e he => (h₃ S₀ h e he).trans (hEs S₀ h e)⟩
   exact this _ hpart Γ hU hv he
 
+/-- Compatible drawings of the members of a segregation assemble into a drawing that preserves
+the vertices and edges of the embedded drawing and records how vertices lie in the discs. -/
+theorem exists_drawing_of_compatible_members {H : Drawing S} {G : Graph α β}
+    {η : SpanEmbedding H G} {S_seg : Set (Society α β)} {α_disc : Society α β → Set S}
+    {α_pt : α → S} (hs : IsGraphSegregation G S_seg)
+    (harr : IsSurfaceArrangement S_seg α_disc α_pt)
+    (hcompat : IsCompatibleWith G H η S_seg α_disc α_pt)
+    (Γs : ∀ S₀ ∈ S_seg, GraphDrawing S₀.G S)
+    (h₁ : ∀ S₀ (h : S₀ ∈ S_seg), (Γs S₀ h).drawing.U ⊆ α_disc S₀)
+    (h₂ : ∀ S₀ (h : S₀ ∈ S_seg), (Γs S₀ h).drawing.U ∩ subBd (α_disc S₀) = α_pt '' S₀.Ω.bar)
+    (h₃ : ∀ S₀ (h : S₀ ∈ S_seg) (v : V(S₀.G)),
+      v.1 ∈ S₀.Ω.bar → ((Γs S₀ h).iso.vertexEquiv v).1 = α_pt v.1)
+    (h₄ : ∀ S₀ (h : S₀ ∈ S_seg), ∀ v ∈ H.V,
+      v ∈ α_disc S₀ → graphDrawingVertexSet (Γs S₀ h) (η.vMap v) = {v})
+    (h₅ : ∀ S₀ (h : S₀ ∈ S_seg), ∀ e ∈ H.E,
+      e ⊆ α_disc S₀ → graphDrawingEdgeSet (Γs S₀ h) (η.eMap e) = e) :
+    ∃ (Γ : GraphDrawing G S) (ν : α → S), Γ.drawing.U ⊆ ⋃ S₀ ∈ S_seg, α_disc S₀ ∧
+      (∀ v : V(G), (Γ.iso.vertexEquiv v).1 = ν v.1) ∧
+      (∀ v ∈ segregationVertices S_seg, ν v = α_pt v) ∧
+      (∀ v ∈ H.V, ν (η.vMap v) = v) ∧
+      (∀ e ∈ H.E, graphDrawingEdgeSet Γ (η.eMap e) = e) ∧
+      ∀ v ∈ V(G), ∃ S₀ ∈ S_seg, ν v ∈ α_disc S₀ ∧ (ν v ∈ subBd (α_disc S₀) → v ∈ S₀.Ω.bar) := by
+  classical
+  have hpick : ∀ v : α, ∃ p : S, ∀ S₀ (h : S₀ ∈ S_seg) (hv : v ∈ V(S₀.G)),
+      ((Γs S₀ h).iso.vertexEquiv ⟨v, hv⟩).1 = p := by
+    intro v
+    by_cases hv : ∃ S₀ ∈ S_seg, v ∈ V(S₀.G)
+    · obtain ⟨S₀, h, hv₀⟩ := hv
+      refine ⟨((Γs S₀ h).iso.vertexEquiv ⟨v, hv₀⟩).1, fun S₁ h' hv₁ => ?_⟩
+      by_cases he : S₁ = S₀
+      · subst he
+        rfl
+      · obtain ⟨hb₁, hb₀⟩ := hs.vertex_inter_subset S₁ h' S₀ h he ⟨hv₁, hv₀⟩
+        rw [h₃ S₁ h' ⟨v, hv₁⟩ hb₁, h₃ S₀ h ⟨v, hv₀⟩ hb₀]
+    · refine ⟨α_pt v, fun S₀ h hv₀ => absurd ⟨S₀, h, hv₀⟩ hv⟩
+  choose ν hν using hpick
+  have hVG : V(G) = ⋃ S₁ ∈ S_seg, V(S₁.G) := by
+    conv_lhs => rw [← hs.union_eq]
+    simp [vertexSet_subgraphSUnion]
+  have hEG : E(G) = ⋃ S₁ ∈ S_seg, E(S₁.G) := by
+    conv_lhs => rw [← hs.union_eq]
+    rw [edgeSet_subgraphSUnion (by rintro _ ⟨S₁, hS₁, rfl⟩; exact hs.le S₁ hS₁)]
+    simp
+  have hbarν : ∀ S₀ (h : S₀ ∈ S_seg), ∀ b ∈ S₀.Ω.bar, ν b = α_pt b := fun S₀ h b hb =>
+    (hν b S₀ h (S₀.bar_subset hb)).symm.trans (h₃ S₀ h ⟨b, S₀.bar_subset hb⟩ hb)
+  have hνU : ∀ S₀ (h : S₀ ∈ S_seg) (v : α), v ∈ V(S₀.G) → ν v ∈ (Γs S₀ h).drawing.U := by
+    intro S₀ h v hv
+    rw [← hν v S₀ h hv]
+    exact (Γs S₀ h).drawing.V_subset_U ((Γs S₀ h).iso.vertexEquiv ⟨v, hv⟩).2
+  have hinj₀ : ∀ S₀ (h : S₀ ∈ S_seg), InjOn ν V(S₀.G) := by
+    intro S₀ h a ha b hb hab
+    rw [← hν a S₀ h ha, ← hν b S₀ h hb] at hab
+    exact congrArg Subtype.val ((Γs S₀ h).iso.vertexEquiv.injective (Subtype.ext hab))
+  have hinj : InjOn ν V(G) := by
+    intro a ha b hb hab
+    rw [hVG] at ha hb
+    obtain ⟨S₁, h₁', ha'⟩ := mem_iUnion₂.mp ha
+    obtain ⟨S₂, h₂', hb'⟩ := mem_iUnion₂.mp hb
+    by_cases he : S₁ = S₂
+    · subst he
+      exact hinj₀ S₁ h₁' ha' hb' hab
+    · have hp : ν a ∈ α_disc S₁ ∩ α_disc S₂ :=
+        ⟨h₁ S₁ h₁' (hνU S₁ h₁' a ha'), hab ▸ h₁ S₂ h₂' (hνU S₂ h₂' b hb')⟩
+      obtain ⟨c, ⟨hc₁, hc₂⟩, hc⟩ := harr.inter_discs S₁ h₁' S₂ h₂' he hp
+      have e₁ : a = c := hinj₀ S₁ h₁' ha' (S₁.bar_subset hc₁)
+        ((hc.symm.trans (hbarν S₁ h₁' c hc₁).symm).symm ▸ rfl)
+      have e₂ : b = c := hinj₀ S₂ h₂' hb' (S₂.bar_subset hc₂)
+        (by rw [← hab, ← hc, hbarν S₂ h₂' c hc₂])
+      rw [e₁, e₂]
+  obtain ⟨Γ, hU, hv, he⟩ := exists_glued_drawing hs hinj Γs
+    (fun S₀ h v => hν v.1 S₀ h v.2)
+    (fun S₁ h₁' S₂ h₂' hne x hx => by
+      have hp : x ∈ α_disc S₁ ∩ α_disc S₂ := ⟨h₁ S₁ h₁' hx.1, h₁ S₂ h₂' hx.2⟩
+      obtain ⟨c, ⟨hc₁, hc₂⟩, rfl⟩ := harr.inter_discs S₁ h₁' S₂ h₂' hne hp
+      exact ⟨c, ⟨S₁.bar_subset hc₁, S₂.bar_subset hc₂⟩, hbarν S₁ h₁' c hc₁⟩)
+  refine ⟨Γ, ν, ?_, hv, ?_, ?_, ?_, ?_⟩
+  · rw [hU]
+    refine iUnion₂_subset fun S₀ h => ?_
+    exact (h₁ S₀ h).trans (subset_biUnion_of_mem (u := α_disc) h)
+  · intro v hv'
+    obtain ⟨S₀, h, hb⟩ := mem_iUnion₂.mp hv'
+    exact hbarν S₀ h v hb
+  · intro v hv'
+    have hx := η.imageGraph_le.vertexSet_mono (η.bijOn_v.mapsTo hv')
+    rw [hVG] at hx
+    obtain ⟨S₀, h, hx⟩ := mem_iUnion₂.mp hx
+    have hvd := (hcompat.inter_V_iff S₀ h v hv').mpr hx
+    have h₆ := h₄ S₀ h v hv' hvd
+    rw [graphDrawingVertexSet_eq_singleton (Γs S₀ h) hx, hν _ S₀ h hx] at h₆
+    exact singleton_eq_singleton_iff.mp h₆
+  · intro e he'
+    have hx := η.imageGraph_le.edgeSet_mono (η.bijOn_e.mapsTo he')
+    rw [hEG] at hx
+    obtain ⟨S₀, h, hx⟩ := mem_iUnion₂.mp hx
+    rw [he S₀ h _ hx]
+    exact h₅ S₀ h e he' ((hcompat.inter_E_iff S₀ h e he').mpr hx)
+  · intro v hv'
+    rw [hVG] at hv'
+    obtain ⟨S₀, h, hx⟩ := mem_iUnion₂.mp hv'
+    refine ⟨S₀, h, h₁ S₀ h (hνU S₀ h v hx), fun hb => ?_⟩
+    have hm : ν v ∈ (Γs S₀ h).drawing.U ∩ subBd (α_disc S₀) := ⟨hνU S₀ h v hx, hb⟩
+    rw [h₂ S₀ h] at hm
+    obtain ⟨c, hc, hce⟩ := hm
+    have := hinj₀ S₀ h hx (S₀.bar_subset hc) (by rw [← hce, hbarν S₀ h c hc])
+    exact this ▸ hc
+
 /-- The subgraph `H ∩ A` of `A`, for a subgraph `H = η(H)` of `G`. -/
 def pieceGraph {H : Drawing S} {G : Graph α β} (η : SpanEmbedding H G) (A : Graph α β) :
     Graph α β :=

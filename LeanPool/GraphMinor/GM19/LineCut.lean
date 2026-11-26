@@ -83,11 +83,8 @@ def IsMarkedArc (N e : Set T) : Prop :=
 
 omit [T2Space T] in
 theorem line_isPathConnected_sdiff {L : Set T} {a b : T} (h : IsLineWithEnds L a b) :
-  IsPathConnected (L \ {a, b}) := by
-  obtain ⟨c, hc, hr, h0, h1⟩ := h.exists_arc
-  rw [IsLineWithEnds.diff_eq hc hr h0 h1]
-  exact ((convex_Ioo (0 : ℝ) 1).isPathConnected (nonempty_Ioo.2 zero_lt_one)).image'
-    (continuous_extI hc.1).continuousOn
+  IsPathConnected (L \ {a, b}) :=
+  h.isPathConnected_interior
 
 /-- **A line cut at a finite set.** -/
 theorem arcs_of_line : ∀ (m : ℕ) {N L : Set T} {a b : T}, N.Finite → N.ncard = m

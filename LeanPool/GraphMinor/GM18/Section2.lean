@@ -740,21 +740,8 @@ theorem theorem_2_6_proof {Λ : Type w} [LinearOrder Λ] {n : ℕ}
 
 theorem isSeparation_left_split {G A B C D : Hypergraph α β}
     (hAB : G.IsSeparation A B) (hCD : A.IsSeparation C D) :
-    G.IsSeparation C (B ∪ D) := by
-  have hC_G : C ≤ G := hCD.left_le.trans hAB.left_le
-  have hD_G : D ≤ G := hCD.right_le.trans hAB.left_le
-  rw [GM10.isSeparation_iff_of_le hC_G (GM10.union_le hAB.right_le hD_G)]
-  refine ⟨?_, ?_, ?_⟩
-  · rw [GM10.union_vertexSet, Set.union_comm B.vertexSet, ← Set.union_assoc,
-      hCD.vertexSet_union, hAB.vertexSet_union]
-  · rw [GM10.union_edgeSet, Set.union_comm B.edgeSet, ← Set.union_assoc,
-      hCD.edgeSet_union, hAB.edgeSet_union]
-  · ext e
-    simp only [GM10.union_edgeSet, Set.mem_inter_iff, Set.mem_union,
-      Set.mem_empty_iff_false, iff_false]
-    rintro ⟨heC, heB | heD⟩
-    · exact hAB.notMem_edgeSet_right (hCD.left_le.edgeSet_subset heC) heB
-    · exact hCD.notMem_edgeSet_right heC heD
+    G.IsSeparation C (B ∪ D) :=
+  GM10.isSeparation_of_isSeparation_left hAB hCD
 
 /-- Any `λ`-robust separation in `G` (for a tie-breaker `λ`) is robust. -/
 theorem isRobust_of_isLambdaRobust {Λ : Type w} [LinearOrder Λ]

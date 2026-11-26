@@ -148,34 +148,13 @@ theorem exists_line_param (hK : IsLineWithEnds K c x) :
     · exact ht1.ne (f.injective (Subtype.ext (h.trans h1.symm)))
 
 omit [T2Space S] in
-theorem isPathConnected_sdiff_pair (hK : IsLineWithEnds K c x) : IsPathConnected (K \ {c, x}) := by
-  obtain ⟨g, hg, -, hEq⟩ := exists_line_param hK
-  rw [hEq]
-  have hI : Ioo (0 : I) 1 = projIcc 0 1 zero_le_one '' Ioo (0 : ℝ) 1 := by
-    ext t
-    constructor
-    · intro ht
-      refine ⟨t, ⟨ht.1, ht.2⟩, ?_⟩
-      exact projIcc_val _ t
-    · rintro ⟨u, hu, rfl⟩
-      rw [mem_Ioo, ← Subtype.coe_lt_coe, ← Subtype.coe_lt_coe,
-        projIcc_of_mem zero_le_one (Ioo_subset_Icc_self hu)]
-      exact hu
-  have hcon : IsPathConnected (Ioo (0 : I) 1) := by
-    rw [hI]
-    exact ((convex_Ioo (0 : ℝ) 1).isPathConnected (by norm_num)).image continuous_projIcc
-  exact hcon.image hg
+theorem isPathConnected_sdiff_pair (hK : IsLineWithEnds K c x) : IsPathConnected (K \ {c, x}) :=
+  hK.isPathConnected_interior
 
 theorem closure_sdiff_pair (hK : IsLineWithEnds K c x) : closure (K \ {c, x}) = K := by
-  obtain ⟨g, hg, hr, hEq⟩ := exists_line_param hK
+  obtain ⟨g, hg, hr, _⟩ := exists_line_param hK
   have hKc : IsClosed K := hr ▸ (isCompact_range hg).isClosed
-  apply subset_antisymm (closure_minimal sdiff_subset hKc)
-  rw [hEq, ← hr]
-  rintro _ ⟨t, rfl⟩
-  have ht : t ∈ closure (Ioo (0 : I) 1) := by
-    rw [closure_Ioo zero_ne_one]
-    exact ⟨t.2.1, t.2.2⟩
-  exact map_mem_closure hg ht fun s hs => ⟨s, hs, rfl⟩
+  exact Subset.antisymm (closure_minimal sdiff_subset hKc) hK.subset_closure_interior
 
 /-- A line, as a drawing with one edge. -/
 noncomputable def lineDrawing (hK : IsLineWithEnds K c x) (hcx : c ≠ x) : Drawing S where

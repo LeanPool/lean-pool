@@ -390,12 +390,18 @@ theorem Portrayal.quotientBy_areaGraph {α : Type u} {β : Type v} {G : Hypergra
       quotientVertices (π.areaGraph Δ) (Z ∩ (π.areaGraph Δ).vertexSet) :=
   π.quotientBy_cellsUnion Z {c ∈ π.Γ.C | c ⊆ Δ}
 
-theorem Portrayal.quotientBy_cellWarp_le {α : Type u} {β : Type v} {G : Hypergraph α β}
-    (π : Portrayal G) (Z : Set α)
-    {c : Set π.S} (hc : c ∈ π.Γ.C) (hbd : (c ∩ bd π.S).Nonempty) :
-    (π.quotientBy Z).cellWarp c ≤ π.cellWarp c := by
-  apply Nat.sInf_le
-  intro n₁ hn₁ n₂ hn₂ hne
+/-- A walk lift preserving support transports the warp condition to smaller border sets. -/
+theorem Portrayal.cellWarp_pair_of_walk_lift {α : Type u} {β : Type v} {G : Hypergraph α β}
+    (π : Portrayal G) {c : Set π.S} (hc : c ∈ π.Γ.C) (hbd : (c ∩ bd π.S).Nonempty)
+    {n₁ n₂ : π.S} (hn₁ : n₁ ∈ tilde c) (hn₂ : n₂ ∈ tilde c) (hne : n₁ ≠ n₂)
+    {K : SimpleGraph α} {B₁ B₂ U₁ U₂ : Set α}
+    (hB₁ : B₁ ⊆ π.borderSet n₁) (hB₂ : B₂ ⊆ π.borderSet n₂)
+    (hU₁ : U₁ ⊆ π.borderPlus n₁) (hU₂ : U₂ ⊆ π.borderPlus n₂)
+    (hlift : ∀ {a b : α}, a ∈ U₁ → (W : K.Walk a b) →
+      ∃ W' : (π.cellGraph c).skeleton.Walk a b, W'.support = W.support) :
+    B₁.ncard ≤ π.cellWarp c ∧ B₂.ncard ≤ π.cellWarp c ∧
+      (U₁.ncard = π.cellWarp c + 1 → U₂.ncard = π.cellWarp c + 1 →
+        Portrayal.LinkagePairs K U₁ U₂ (π.cellWarp c + 1) (π.nodeVertex n₁) (π.nodeVertex n₂)) := by
   obtain ⟨u, v, _, htilde, _, _, hu, hv⟩ := π.Γ.border_cell_exists_ends hc hbd
   have hn₁' : n₁ ∈ ({u, v} : Set π.S) := htilde ▸ hn₁
   have hn₂' : n₂ ∈ ({u, v} : Set π.S) := htilde ▸ hn₂
@@ -404,46 +410,45 @@ theorem Portrayal.quotientBy_cellWarp_le {α : Type u} {β : Type v} {G : Hyperg
   have hn₂_mem : n₂ ∈ π.Γ.N ∩ bd π.S := by
     rcases hn₂' with rfl | rfl <;> assumption
   have hspec := π.cellWarp_spec hc hbd n₁ hn₁ n₂ hn₂ hne
-  refine ⟨(ncard_le_ncard sdiff_subset (π.borderSet_finite hn₁_mem)).trans hspec.1,
-    (ncard_le_ncard sdiff_subset (π.borderSet_finite hn₂_mem)).trans hspec.2.1,
+  refine ⟨(ncard_le_ncard hB₁ (π.borderSet_finite hn₁_mem)).trans hspec.1,
+    (ncard_le_ncard hB₂ (π.borderSet_finite hn₂_mem)).trans hspec.2.1,
     fun hcard₁ hcard₂ P hP_disj => ?_⟩
-  have hbp₁ : (π.quotientBy Z).borderPlus n₁ = π.borderPlus n₁ \ Z := π.quotientBy_borderPlus Z n₁
-  have hbp₂ : (π.quotientBy Z).borderPlus n₂ = π.borderPlus n₂ \ Z := π.quotientBy_borderPlus Z n₂
-  have hcard₁₀ : (π.borderPlus n₁ \ Z).ncard = π.cellWarp c + 1 := hbp₁ ▸ hcard₁
-  have hcard₂₀ : (π.borderPlus n₂ \ Z).ncard = π.cellWarp c + 1 := hbp₂ ▸ hcard₂
-  have hle₁ : (π.borderPlus n₁).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hn₁_mem).trans (Nat.add_le_add_right hspec.1 1)
-  have hle₂ : (π.borderPlus n₂).ncard ≤ π.cellWarp c + 1 :=
-    (π.ncard_borderPlus_le hn₂_mem).trans (Nat.add_le_add_right hspec.2.1 1)
   have hcard₁' : (π.borderPlus n₁).ncard = π.cellWarp c + 1 := by
-    have := ncard_le_ncard (sdiff_subset : π.borderPlus n₁ \ Z ⊆ π.borderPlus n₁)
-      (π.borderPlus_finite hn₁_mem)
+    have hle := (π.ncard_borderPlus_le hn₁_mem).trans (Nat.add_le_add_right hspec.1 1)
+    have hge := ncard_le_ncard hU₁ (π.borderPlus_finite hn₁_mem)
     omega
   have hcard₂' : (π.borderPlus n₂).ncard = π.cellWarp c + 1 := by
-    have := ncard_le_ncard (sdiff_subset : π.borderPlus n₂ \ Z ⊆ π.borderPlus n₂)
-      (π.borderPlus_finite hn₂_mem)
+    have hle := (π.ncard_borderPlus_le hn₂_mem).trans (Nat.add_le_add_right hspec.2.1 1)
+    have hge := ncard_le_ncard hU₂ (π.borderPlus_finite hn₂_mem)
     omega
-  have hlift : ∀ i : Fin (π.cellWarp c + 1),
-      ∃ Q : PathFromTo (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂),
-        Q.first = (P i).first ∧ Q.last = (P i).last ∧ Q.walk.support = (P i).walk.support := by
-    intro i
-    obtain ⟨W', hsupp⟩ := walk_skeleton_of_quotientVertices (P i).walk
-    have hisPath : W'.IsPath := by
-      rw [SimpleGraph.Walk.isPath_def, hsupp]
-      exact SimpleGraph.Walk.IsPath.support_nodup (P i).isPath
-    have hfirst_mem : (P i).first ∈ π.borderPlus n₁ :=
-      ((Set.ext_iff.mp hbp₁ (P i).first).mp (P i).first_mem).1
-    have hlast_mem : (P i).last ∈ π.borderPlus n₂ :=
-      ((Set.ext_iff.mp hbp₂ (P i).last).mp (P i).last_mem).1
-    exact ⟨⟨(P i).first, (P i).last, W', hisPath, hfirst_mem, hlast_mem⟩, rfl, rfl, hsupp⟩
-  choose Q hQ_first hQ_last hQ_supp using hlift
+  choose W hW using fun i => hlift (P i).first_mem (P i).walk
+  let Q (i : Fin (π.cellWarp c + 1)) :
+      PathFromTo (π.cellGraph c).skeleton (π.borderPlus n₁) (π.borderPlus n₂) :=
+    ⟨(P i).first, (P i).last, W i,
+      (by rw [SimpleGraph.Walk.isPath_def, hW i]; exact (P i).isPath.support_nodup),
+      hU₁ (P i).first_mem, hU₂ (P i).last_mem⟩
   have hQ_disj : Pairwise fun i j =>
       Disjoint {z | z ∈ (Q i).walk.support} {z | z ∈ (Q j).walk.support} := by
     intro i j hij
-    rw [hQ_supp i, hQ_supp j]
+    change Disjoint {z | z ∈ (W i).support} {z | z ∈ (W j).support}
+    rw [hW i, hW j]
     exact hP_disj hij
   obtain ⟨i, hfirst, hlast⟩ := hspec.2.2 hcard₁' hcard₂' Q hQ_disj
-  exact ⟨i, (hQ_first i).symm.trans hfirst, (hQ_last i).symm.trans hlast⟩
+  exact ⟨i, hfirst, hlast⟩
+
+theorem Portrayal.quotientBy_cellWarp_le {α : Type u} {β : Type v} {G : Hypergraph α β}
+    (π : Portrayal G) (Z : Set α)
+    {c : Set π.S} (hc : c ∈ π.Γ.C) (hbd : (c ∩ bd π.S).Nonempty) :
+    (π.quotientBy Z).cellWarp c ≤ π.cellWarp c := by
+  apply Nat.sInf_le
+  intro n₁ hn₁ n₂ hn₂ hne
+  refine π.cellWarp_pair_of_walk_lift hc hbd hn₁ hn₂ hne sdiff_subset sdiff_subset ?_ ?_ ?_
+  · rw [π.quotientBy_borderPlus Z n₁]
+    exact sdiff_subset
+  · rw [π.quotientBy_borderPlus Z n₂]
+    exact sdiff_subset
+  · intro _ _ _ W
+    exact walk_skeleton_of_quotientVertices W
 
 theorem Portrayal.quotientBy_warpAt_le {α : Type u} {β : Type v} {G : Hypergraph α β}
     (π : Portrayal G) (Z : Set α) {Θ : Set π.S} (hΘ : Θ ∈ cuffs π.S) :
