@@ -75,3 +75,4 @@ public import LeanPool.SplitCliqueGap.R434.TripartiteSlack
 public import LeanPool.SplitCliqueGap.R434.UniformOrder
 public import LeanPool.SplitCliqueGap.R434.UniversalHosts
 public import LeanPool.SplitCliqueGap.R434.UniversalR434
+public import LeanPool.SplitCliqueGap.SplitPartition

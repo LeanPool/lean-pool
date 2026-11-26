@@ -6,7 +6,7 @@ Authors: Juan Pablo Traverso Gianini
 /- Modified by Lean Pool contributors for the current Lean and Mathlib toolchain. -/
 module
 
-public import LeanPool.SplitCliqueGap.GapExtremal.ExactOrder
+public import LeanPool.SplitCliqueGap.GapExtremal.ExponentTwo
 
 /-! The GraphBase bridge and leaf padding at an arbitrary order. -/
 
