@@ -1,0 +1,24 @@
+slug: c145
+title: Exact single-port graph identification from two response derivatives
+entry_module: LeanPool.C145
+authors: [Mark Gladden]
+provenance: AI
+license: Apache-2.0
+source:
+  url: https://github.com/VanGogh7777/c145-lean/blob/75d25568c084c8aab4faee30bd94905a6d20c3ad/paper/C145_v0.6.pdf
+  github_repo: VanGogh7777/c145-lean
+status: verified
+summary: Formalizes the C145 v0.6 original-graph inverse and one explicit six-vertex identification.
+branch: main
+main_declarations:
+  - C145.PaperActualResponse.selected_response_theoremA_graph
+  - C145N6Frame.literal_N6_original_graph_identification
+main_results:
+  - declaration: C145.PaperActualResponse.selected_response_theoremA_graph
+    source_ref: "C145 v0.6, Theorem 1 (§2.1, p. 2; Theorem A in Lean) and Appendix D (pp. 14–15)"
+    informal: Theorem 1 determines the source graph and signed port up to simultaneous relabeling.
+  - declaration: C145N6Frame.literal_N6_original_graph_identification
+    source_ref: "C145 v0.6, §10 (pp. 10–11), explicit six-vertex source"
+    informal: The verified explicit six-vertex source is identified against the stated competitors.
+msc: ['93B30', '05C50']
+tags: [graph identification, inverse problems, reaction diffusion]
