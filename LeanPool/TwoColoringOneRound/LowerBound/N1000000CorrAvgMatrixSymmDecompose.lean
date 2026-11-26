@@ -216,10 +216,27 @@ theorem varOfDirIdx_eq_none_iff (d : DirIdx) : varOfDirIdx d = none ↔ d = idDi
   classical
   fin_cases d <;> decide
 
+-- Check the orbit condition once for the table entry at each directed index.
+private theorem varOfDirIdx_pointsToOrbit :
+    ∀ d : DirIdx,
+      ((varOfDirIdx d).all fun i => decide (d = varOrbit i ∨ d = invDir (varOrbit i))) = true := by
+  decide +kernel
+
+-- Both representatives of each variable must map back to that variable.
+private theorem varOfDirIdx_orbitEntries :
+    ∀ i : Var, varOfDirIdx (varOrbit i) = some i ∧ varOfDirIdx (invDir (varOrbit i)) = some i := by
+  decide +kernel
+
 theorem varOfDirIdx_eq_some_iff (d : DirIdx) (i : Var) :
     varOfDirIdx d = some i ↔ d = varOrbit i ∨ d = invDir (varOrbit i) := by
-  classical
-  fin_cases d <;> fin_cases i <;> decide
+  constructor
+  · intro h
+    have check := varOfDirIdx_pointsToOrbit d
+    rw [h] at check
+    exact of_decide_eq_true check
+  · rintro (rfl | rfl)
+    · exact (varOfDirIdx_orbitEntries i).1
+    · exact (varOfDirIdx_orbitEntries i).2
 
 theorem varOfDirIdx_spec (d : DirIdx) (hd : d ≠ idDirIdx) :
     ∃ i : Var, varOfDirIdx d = some i ∧ (d = varOrbit i ∨ d = invDir (varOrbit i)) := by

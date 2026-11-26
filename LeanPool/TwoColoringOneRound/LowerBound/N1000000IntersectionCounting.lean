@@ -324,7 +324,12 @@ private lemma availFor_ge_three {k : DirIdx} (u : BaseOrbit k) (x : AvailFor u) 
 private theorem rowMatch_maskAt_inj (d : DirIdx) {i₁ i₂ j : Fin 3} :
     rowMatch (maskAt d) i₁ = some j → rowMatch (maskAt d) i₂ = some j → i₁ = i₂ := by
   intro h1 h2
-  fin_cases d <;> fin_cases i₁ <;> fin_cases i₂ <;> fin_cases j <;> cases h1 <;> cases h2 <;> rfl
+  have columnMatch (i : Fin 3) (h : rowMatch (maskAt d) i = some j) :
+      colMatch (maskAt d) j = some i := by
+    apply of_decide_eq_true
+    rw [← maskAt_testBit_eq_decide_colMatch, maskAt_testBit_eq_decide_rowMatch, h]
+    exact decide_eq_true rfl
+  exact Option.some.inj ((columnMatch i₁ h1).symm.trans (columnMatch i₂ h2))
 
 /-- Imported auxiliary declaration for the 2-coloring one-round formalization. -/
 noncomputable def encodeInter {k : DirIdx} (u : BaseOrbit k) (a d : DirIdx) (w : Inter u a d) :
