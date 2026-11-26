@@ -27,7 +27,7 @@ section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F : Type*} [Field F] {i j k i' j' k' I J K r s : ℕ}
+variable {F : Type*} [CommSemiring F] {i j k i' j' k' I J K r s : ℕ}
 
 /-- One term for every row, column and inner index. -/
 theorem weighted_volume (w : Fin i → Fin j → Fin k → F) : WeightedRankLE w (i * j * k) := by
@@ -89,16 +89,16 @@ section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F : Type*} [Field F] {i j k r : ℕ}
+variable {F : Type*} {i j k r : ℕ}
 
-theorem RankLE.cycle (h : RankLE F i j k r) : RankLE F j k i r := by
+theorem RankLE.cycle [CommSemiring F] (h : RankLE F i j k r) : RankLE F j k i r := by
   obtain ⟨a, b, c, h⟩ := h
   refine ⟨fun l x => c l x.swap, a, fun l z => b l z.swap, ?_⟩
   intro x y z
   simpa only [Prod.fst_swap, Prod.snd_swap, mul_assoc, mul_comm, mul_left_comm,
     and_assoc, and_comm, and_left_comm, eq_comm] using h y z.swap x.swap
 
-theorem RankLE.transpose (h : RankLE F i j k r) : RankLE F j i k r := by
+theorem RankLE.transpose [CommSemiring F] (h : RankLE F i j k r) : RankLE F j i k r := by
   obtain ⟨a, b, c, h⟩ := h
   refine ⟨fun l x => b l x.swap, fun l y => a l y.swap, fun l z => c l z.swap, ?_⟩
   intro x y z
@@ -106,7 +106,7 @@ theorem RankLE.transpose (h : RankLE F i j k r) : RankLE F j i k r := by
     eq_comm] using h y.swap x.swap z.swap
 
 /-- Fixing the inner index gives an identity submatrix of the output flattening. -/
-theorem RankLE.area (h : RankLE F i j k r) (hk : 0 < k) : i * j ≤ r := by
+theorem RankLE.area [Field F] (h : RankLE F i j k r) (hk : 0 < k) : i * j ≤ r := by
   obtain ⟨a, b, c, h⟩ := h
   let v : Fin k := ⟨0, hk⟩
   let A : Matrix (Pos i j) (Fin r) F := fun x l => a l (x.1, v) * b l (v, x.2)
@@ -119,7 +119,7 @@ theorem RankLE.area (h : RankLE F i j k r) (hk : 0 < k) : i * j ≤ r := by
   simpa only [hAB, Matrix.rank_one, Pos, Fintype.card_prod, Fintype.card_fin] using this
 
 /-- One product per row, column and inner index. -/
-theorem rank_volume (F : Type*) [Field F] (i j k : ℕ) : RankLE F i j k (i * j * k) :=
+theorem rank_volume (F : Type*) [CommSemiring F] (i j k : ℕ) : RankLE F i j k (i * j * k) :=
   weighted_volume (fun (_ : Fin i) (_ : Fin j) (_ : Fin k) => (1 : F))
 
 end MatrixMultiplicationAllFields.MatrixExponent.Rectangle
@@ -130,17 +130,21 @@ section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F K : Type*} [Field F] [Field K] {i j k i' j' k' r s : ℕ}
+variable {F K : Type*} {i j k i' j' k' r s : ℕ}
 
-theorem RankLE.map (h : RankLE F i j k r) (f : F →+* K) : RankLE K i j k r := by
-  obtain ⟨a, b, c, h⟩ := h
-  refine ⟨fun l x => f (a l x), fun l y => f (b l y), fun l z => f (c l z), ?_⟩
-  intro x y z
-  simpa only [map_sum, map_mul, apply_ite f, map_one, map_zero] using congrArg f (h x y z)
+theorem RankLE.map [CommSemiring F] [CommSemiring K]
+    (h : RankLE F i j k r) (f : F →+* K) : RankLE K i j k r := by
+  have weighted : WeightedRankLE (ordinary F i j k) r := h
+  have mapOrdinary : (fun x y z => f (ordinary F i j k x y z)) = ordinary K i j k := by
+    funext x y z
+    exact map_one f
+  change WeightedRankLE (ordinary K i j k) r
+  rw [← mapOrdinary]
+  exact weighted.map f
 
 /-- Split each matrix index into two digits and multiply the corresponding
 coefficients. Summing over pairs of terms factors the coefficient identity. -/
-theorem RankLE.tensor (h : RankLE F i j k r) (h' : RankLE F i' j' k' s) :
+theorem RankLE.tensor [CommSemiring F] (h : RankLE F i j k r) (h' : RankLE F i' j' k' s) :
     RankLE F (i * i') (j * j') (k * k') (r * s) := by
   have hw : WeightedRankLE (fun (_ : Fin i) (_ : Fin j) (_ : Fin k) => (1 : F)) r := h
   have hv : WeightedRankLE (fun (_ : Fin i') (_ : Fin j') (_ : Fin k') => (1 : F)) s := h'
@@ -148,14 +152,15 @@ theorem RankLE.tensor (h : RankLE F i j k r) (h' : RankLE F i' j' k' s) :
   simp only [one_mul] at ht
   exact ht
 
-theorem RankLE.pow (h : RankLE F i j k r) (p : ℕ) :
+theorem RankLE.pow [CommSemiring F] (h : RankLE F i j k r) (p : ℕ) :
     RankLE F (i ^ p) (j ^ p) (k ^ p) (r ^ p) := by
   induction p with
   | zero => simpa using rank_volume F 1 1 1
   | succ p ih => simpa only [pow_succ] using ih.tensor h
 
 /-- Tensoring the three cyclic arrangements makes all sides equal to the volume. -/
-theorem RankLE.symmetrize (h : RankLE F i j k r) : MatrixExponent.RankLE F (i * j * k) (r ^ 3) := by
+theorem RankLE.symmetrize [Field F] (h : RankLE F i j k r) :
+    MatrixExponent.RankLE F (i * j * k) (r ^ 3) := by
   change RankLE F (i * j * k) (i * j * k) (i * j * k) (r ^ 3)
   simpa only [pow_succ, pow_zero, mul_one, one_mul, mul_assoc, mul_comm, mul_left_comm] using
     (h.tensor h.cycle).tensor h.cycle.cycle
@@ -173,15 +178,16 @@ digits, so support sizes multiply and rank bounds are submultiplicative.
 noncomputable section
 namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
-variable {F : Type*} [Field F] {i j k r : ℕ}
+variable {F : Type*} {i j k r : ℕ}
 
-theorem rankW_spec (w : Fin i → Fin j → Fin k → F) : WeightedRankLE w (rankW w) :=
+theorem rankW_spec [CommSemiring F] (w : Fin i → Fin j → Fin k → F) : WeightedRankLE w (rankW w) :=
   Nat.sInf_mem (show {r : ℕ | WeightedRankLE w r}.Nonempty from ⟨_, weighted_volume w⟩)
 
-theorem rankW_le {w : Fin i → Fin j → Fin k → F} (h : WeightedRankLE w r) : rankW w ≤ r :=
+theorem rankW_le [CommSemiring F] {w : Fin i → Fin j → Fin k → F} (h : WeightedRankLE w r) :
+    rankW w ≤ r :=
   Nat.sInf_le h
 
-@[simp] theorem WPower_one (n : ℕ) :
+@[simp] theorem WPower_one [CommMonoid F] (n : ℕ) :
     WPower (fun (_ : Fin i) (_ : Fin j) (_ : Fin k) => (1 : F)) n = fun _ _ _ => 1 := by
   funext a b c
   simp [WPower]
@@ -190,7 +196,7 @@ private def split (d n m : ℕ) : Fin (d ^ (n + m)) ≃ Fin (d ^ n) × Fin (d ^ 
   finFunctionFinEquiv.symm.trans ((Fin.appendEquiv n m).symm.trans
     (Equiv.prodCongr finFunctionFinEquiv finFunctionFinEquiv))
 
-theorem rankW_add (w : Fin i → Fin j → Fin k → F) (n m : ℕ) :
+theorem rankW_add [CommSemiring F] (w : Fin i → Fin j → Fin k → F) (n m : ℕ) :
     rankW (WPower w (n + m)) ≤ rankW (WPower w n) * rankW (WPower w m) := by
   apply rankW_le
   have h := (rankW_spec (WPower w n)).tensor (rankW_spec (WPower w m))
@@ -207,7 +213,7 @@ private theorem sum_words {n d : ℕ} (f : Fin n → Fin d → ℕ) :
   simp only [Equiv.symm_apply_apply]
 
 open Classical in
-private theorem indicator_prod {n : ℕ} (f : Fin n → F) :
+private theorem indicator_prod [Field F] {n : ℕ} (f : Fin n → F) :
     (if ∏ l, f l = 0 then 0 else 1) = ∏ l, if f l = 0 then (0 : ℕ) else 1 := by
   by_cases h : ∃ l, f l = 0
   · obtain ⟨l, hl⟩ := h
@@ -216,7 +222,7 @@ private theorem indicator_prod {n : ℕ} (f : Fin n → F) :
   · push Not at h
     simp [h, Finset.prod_ne_zero_iff]
 
-theorem supportSize_power (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
+theorem supportSize_power [Field F] (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
     supportSize (WPower w n) = (supportSize w) ^ n := by
   classical
   unfold supportSize WPower
@@ -231,7 +237,7 @@ theorem supportSize_power (w : Fin i → Fin j → Fin k → F) (n : ℕ) :
   simp_rw [h₁, h₂, h₃]
   simp only [Finset.prod_const, Finset.card_univ, Fintype.card_fin]
 
-theorem rankW_mul (w : Fin i → Fin j → Fin k → F) (n m : ℕ) (hm : 1 ≤ m) :
+theorem rankW_mul [CommSemiring F] (w : Fin i → Fin j → Fin k → F) (n m : ℕ) (hm : 1 ≤ m) :
     rankW (WPower w (n * m)) ≤ (rankW (WPower w n)) ^ m := by
   induction m, hm using Nat.le_induction with
   | base => rw [mul_one, pow_one]

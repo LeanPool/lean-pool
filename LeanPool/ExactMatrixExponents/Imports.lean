@@ -295,6 +295,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectang
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Multi.Radial
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Poly
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Arms
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Binary
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Pairing
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Root
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rectangle.Profile.Scale

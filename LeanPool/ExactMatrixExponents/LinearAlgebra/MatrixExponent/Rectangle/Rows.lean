@@ -603,13 +603,6 @@ namespace MatrixMultiplicationAllFields.MatrixExponent.Rectangle
 
 variable {F K : Type*} [Field F] [Field K] {i j k r : ℕ} {w : Fin i → Fin j → Fin k → F}
 
-theorem WeightedRankLE.map (h : WeightedRankLE w r) (φ : F →+* K) :
-    WeightedRankLE (fun x y z => φ (w x y z)) r := by
-  obtain ⟨a, b, c, h⟩ := h
-  refine ⟨fun l x => φ (a l x), fun l y => φ (b l y), fun l z => φ (c l z), ?_⟩
-  intro x y z
-  simpa only [map_sum, map_mul, apply_ite φ, map_zero] using congrArg φ (h x y z)
-
 theorem supportSize_map (φ : F →+* K) (w : Fin i → Fin j → Fin k → F) :
     supportSize (fun x y z => φ (w x y z)) = supportSize w := by
   classical

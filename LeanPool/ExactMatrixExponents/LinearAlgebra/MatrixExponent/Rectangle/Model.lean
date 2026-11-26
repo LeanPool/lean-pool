@@ -62,8 +62,8 @@ def exponent (F : Type*) [Field F] (a b c : ℝ) : ℝ := sInf {s | Admissible F
 def dual (F : Type*) [Field F] (a b : ℝ) : ℝ :=
   sSup {c ∈ Set.Icc 0 (min a b) | exponent F a b c = a + b}
 
-/-- Coefficient rank for rectangular matrix multiplication over a field. -/
-abbrev RankLE (F : Type*) [Field F] (i j k r : ℕ) : Prop :=
+/-- Coefficient rank for rectangular matrix multiplication over a commutative semiring. -/
+abbrev RankLE (F : Type*) [CommSemiring F] (i j k r : ℕ) : Prop :=
   TensorSpectrum.MatrixRank F i j k r
 
 /-- The benchmark on the cone where the last coordinate is smallest. -/

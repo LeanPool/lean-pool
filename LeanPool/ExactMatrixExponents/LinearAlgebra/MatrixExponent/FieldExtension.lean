@@ -89,8 +89,11 @@ theorem exponent_lt_iff_rank (ha : 0 ≤ a) (hb : 0 ≤ b) (hc : 0 ≤ c) :
     apply hts.not_ge (le_admissible_of_cost ht ?_)
     intro n m hn' hm
     by_contra! hm'
+    let L := Rat F (side n a) (side n b) (side n c)
+    have rank : RankLE L (side n a) (side n b) (side n c) (2 * m) := bilinearize hm
+    have saving : ((2 * m : ℕ) : ℝ) < (n : ℝ) ^ s := by exact_mod_cast hm'
     obtain ⟨N, R, hN, hR, hsave⟩ :=
-      descend_saving (F := F) (s := s) hn' (bilinearize hm) (by exact_mod_cast hm')
+      descend_saving (F := F) (K := L) (a := a) (b := b) (c := c) hn' rank saving
     exact hsave.not_ge (hn N R hN hR)
   · rintro ⟨n, r, hn, hr, hs⟩
     exact exponent_lt_of_rank ha hb hc hn hr hs

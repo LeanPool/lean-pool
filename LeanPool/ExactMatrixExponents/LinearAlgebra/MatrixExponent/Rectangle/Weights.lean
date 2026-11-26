@@ -21,6 +21,14 @@ def WeightedRankLE [CommSemiring F] (w : Fin i → Fin j → Fin k → F) (r : �
     ∀ x y z, ∑ l : Fin r, a l x * b l y * c l z =
       if x.1 = z.1 ∧ x.2 = y.1 ∧ y.2 = z.2 then w x.1 y.2 x.2 else 0
 
+theorem WeightedRankLE.map {K : Type*} [CommSemiring F] [CommSemiring K]
+    {w : Fin i → Fin j → Fin k → F} {r : ℕ} (h : WeightedRankLE w r) (φ : F →+* K) :
+    WeightedRankLE (fun x y z => φ (w x y z)) r := by
+  obtain ⟨a, b, c, h⟩ := h
+  refine ⟨fun l x => φ (a l x), fun l y => φ (b l y), fun l z => φ (c l z), ?_⟩
+  intro x y z
+  simpa only [map_sum, map_mul, apply_ite φ, map_zero] using congrArg φ (h x y z)
+
 open Classical in
 /-- The value specified by `∑ c, ∑ a, ∑ b, if w a c b = 0 then 0 else 1`. -/
 noncomputable def supportSize [Zero F] (w : Fin i → Fin j → Fin k → F) : ℕ :=
