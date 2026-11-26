@@ -76,6 +76,14 @@ theorem ends_at (v : G.V) (p : G.Port v) :
     a.ends (G.portEquiv ⟨v, p⟩) = S.port r (a.vertex v) (a.pin v p) := by
   simp [ends, atPin]
 
+
+open scoped Classical in
+theorem ends_eq_of_port {v : G.V} {i : G.Port v} {e : G.End} {q : S.Pin r}
+    (location : G.portEquiv ⟨v, i⟩ = e)
+    (pin : S.port r (a.vertex v) (a.pin v i) = q) : a.ends e = q := by
+  rw [← location, a.ends_at]
+  exact pin
+
 end Seating
 
 variable (S r G)

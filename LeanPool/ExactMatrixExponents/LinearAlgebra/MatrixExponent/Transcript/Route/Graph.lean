@@ -12,7 +12,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Install
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Route.Restore
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Route.Choices
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.RAM.Calls
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Cost
+public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Route.Packets
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Shaving.Defs
 
 /-! # Verifying a deterministic controller on two named tapes -/

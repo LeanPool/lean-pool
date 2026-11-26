@@ -70,6 +70,11 @@ theorem width : D.format.width = 2 ^ D.scheme.m *
   rw [Format.width_bit]
   ring
 
+open scoped Classical in
+theorem scheme_width_le : D.scheme.format.width ≤ D.format.width := by
+  rw [Format.width_pair]
+  exact Nat.le_add_right ..
+
 variable (r : D.format.obj)
 
 open scoped Classical in

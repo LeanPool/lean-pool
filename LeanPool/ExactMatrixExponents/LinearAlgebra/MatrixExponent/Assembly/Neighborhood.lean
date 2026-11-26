@@ -198,6 +198,44 @@ def Proper : Prop := ∀ p q, S.peer r p = some q →
   S.peer r q = some p ∧ S.width r p = S.width r q ∧ S.direction r p ≠ S.direction r q
 
 open scoped Classical in
+theorem span_mem_of_pos {A : Type*} (span : A → S.Span)
+    (idle : ∀ s ∉ Set.range span, S.width r s = 0) {s : S.Span} (positive : 0 < S.width r s) :
+    s ∈ Set.range span := by
+  by_contra h
+  rw [idle s h] at positive
+  exact (Nat.lt_irrefl _) positive
+
+open scoped Classical in
+theorem peer_of_link {p q : S.Span} {src dst : B S.m} {block : B S.h} {layer : B S.k}
+    {index : B S.d} (source : p.1 = (src, block, layer)) (target : q.1 = (dst, block, layer))
+    (link : (S.pattern r p.1).peer p.1.2.2 p.2 = some (index, layer, q.2))
+    (nav : (r src).1 index = dst) : S.peer r p = some q := by
+  rw [peer, link, Option.map_some, source]
+  dsimp only
+  rw [nav]
+  exact congrArg some (Prod.ext target.symm rfl)
+
+open scoped Classical in
+theorem proper_of_span {J E : Type*} (span : J ⊕ (E × Bool) → S.Span) (edgeWidth : ℕ)
+    (idle : ∀ s ∉ Set.range span, S.peer r s = none)
+    (outside : ∀ j, S.peer r (span (.inl j)) = none)
+    (peerEnd : ∀ e t, S.peer r (span (.inr (e, t))) = some (span (.inr (e, !t))))
+    (widthEnd : ∀ e t, S.width r (span (.inr (e, t))) = edgeWidth)
+    (direction : ∀ e t, S.direction r (span (.inr (e, t))) = t) : S.Proper r := by
+  intro a b h
+  by_cases he : a ∈ Set.range span
+  swap
+  · rw [idle _ he] at h
+    cases h
+  obtain ⟨j|⟨e, t⟩, rfl⟩ := he
+  · rw [outside] at h
+    cases h
+  rw [peerEnd, Option.some.injEq] at h
+  subst b
+  rw [peerEnd, Bool.not_not, widthEnd, widthEnd, direction, direction]
+  exact ⟨rfl, rfl, by cases t <;> decide⟩
+
+open scoped Classical in
 /-- Indexes the pin by the coordinates of `Σ p : S.Span, Fin (S.width r p)`. -/
 abbrev Pin := Σ p : S.Span, Fin (S.width r p)
 open scoped Classical in

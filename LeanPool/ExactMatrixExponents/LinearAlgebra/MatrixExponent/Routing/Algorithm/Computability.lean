@@ -8,7 +8,6 @@ module
 
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coloring.Vector
 public import Mathlib.Data.Fintype.EquivFin
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Algorithm.Code
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coloring.Shift
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coloring.Formula
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Control.Decor
@@ -16,22 +15,7 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Coloring.VectorSort
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transport.System
 
-/-!
-# Straight-line word programs with indexed loads
-
-Data are single bits, bounded unsigned words, pairs, and dyadic
-arrays. Pairs and arrays are immutable and can be shared by address.
-A program is independent of its input. Tabulation writes a fresh
-array in increasing index order, with the program for each index
-included in the instruction count. A literal, including a static
-index, occupies one word. Boolean gates have four-bit truth tables.
-
-The rules give the denotation and charge of a program simultaneously.
-The width bounds apply to arithmetic operands and literals. To address
-storage one may take the maximum of this width and the binary length
-of the input and the allocated words. There is no unit-cost primitive
-for evaluating large tables, searching, or sorting.
--/
+/-! # Numeric budgets and finite tests for local routing -/
 
 @[expose] public section
 
@@ -56,40 +40,6 @@ theorem budget_width (h c : ℕ) :
     2 ^ h * (100 + (3 * h + 10)) ^ c ≤ 2 ^ h * (100 + h) ^ (2 * c) := by
   rw [pow_mul]
   exact Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (by ring_nf; omega) _)
-
-end MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm
-end
-
-section
-/- # Code tabulation and bounds on advice and working memory -/
-
-namespace MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm
-open Coloring
-
-namespace Code
-variable {w h : ℕ} {A D : Type}
-
-theorem tabulate_eq (hh : h ≤ w) (f : B h → Code w A D) : tabulate hh f = tab hh f := by
-  unfold tabulate
-  apply congrArg (tab hh)
-  funext i
-  exact Vector.getElem_ofFn i.isLt
-
-/-- The time allowance covers both the program words and the scratch
-allocation, including the extra words of all tabulations. -/
-theorem advice_scratch (c : Code w A D) : c.advice + c.scratch ≤ c.time := by
-  change charge 8 1 c + charge 8 1 c ≤ charge 16 4 c
-  rw [← two_mul]
-  induction c <;> try {simp only [charge]; omega}
-  case tab hh f ih =>
-    simp only [charge, mul_add, Finset.mul_sum]
-    apply Nat.add_le_add le_rfl
-    apply Finset.sum_le_sum
-    intro i _
-    have := ih i
-    omega
-
-end Code
 
 end MatrixMultiplicationAllFields.MatrixExponent.Routing.Algorithm
 end

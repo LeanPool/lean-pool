@@ -26,7 +26,7 @@ theorem seat_factor : Short (fun i : I => 2 ^ (i.n + i.T.scheme.e)) :=
 
 theorem radius_factor : Short (fun i : I => 2 ^ (Tile.radius i.T.scheme.d)) :=
   (short_const (2 ^ (Tile.radius d))).mono fun i =>
-    Nat.pow_le_pow_right (by decide) (Nat.mul_le_mul_right _ (Nat.add_le_add_right i.h.degree 1))
+    Tile.exp_radius_mono i.h.degree
 
 theorem mask_factor : Short (fun i : I => 2 ^ (Tile.radius i.T.scheme.d + (i.n + 1))) :=
   (radius_factor Q d B).exp_add (child_factor Q d B).short

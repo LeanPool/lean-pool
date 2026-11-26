@@ -797,11 +797,8 @@ def seating : U.Seating out (g.contract m P G.units hz i) where
   vertex := A.vertex
   pin := A.pin l hz
   cover v := by
-    obtain ⟨j, he⟩ : v.1 ∈ Set.range A.span := by
-      by_contra h
-      have := l.idle _ h
-      have := v.2.isLt
-      omega
+    obtain ⟨j, he⟩ := U.span_mem_of_pos out A.span l.idle (s := v.1)
+      (Nat.zero_le v.2.val |>.trans_lt v.2.isLt)
     exact ⟨_, congrArg Prod.fst he⟩
   sample := H.sample
   vacant := H.vacant
@@ -815,8 +812,7 @@ theorem end_pin (j : Face g m P i p) (b : Fin (visibleWidth g m P i p z j)) :
   let o := visibleBits g m P G.units hz i p v ⟨r, b⟩
   have he := visible_pin g m P G.units hz i p v ⟨r, b⟩
   change (g.contract m P G.units hz i).portEquiv ⟨v, o⟩ = faceBits g m P G.units hz i p ⟨j, b⟩ at he
-  dsimp only
-  rw [← he, Scheme.Seating.ends_at]
+  apply (A.seating l hz H).ends_eq_of_port he
   change U.port out (A.vertex v) (A.pin l hz v o) = _
   rw [show A.pin l hz v o = _ from A.pin_at l hz v r b]
   rfl
@@ -824,28 +820,14 @@ theorem end_pin (j : Face g m P i p) (b : Fin (visibleWidth g m P i p z j)) :
 include H in
 open scoped Classical in
 theorem peer_end (e : g.Survivors m P i) (t : Bool) :
-    U.peer out (A.span (.inr (e, t))) = some (A.span (.inr (e, !t))) := by
-  rw [Scheme.peer, H.link, Option.map_some, A.site_end]
-  dsimp only
-  rw [H.nav]
-  apply congrArg some
-  exact Prod.ext (A.site_end e (!t)).symm rfl
+    U.peer out (A.span (.inr (e, t))) = some (A.span (.inr (e, !t))) :=
+  U.peer_of_link out (A.site_end e t) (A.site_end e (!t)) (H.link e t) (H.nav e t)
 
 include H in
 open scoped Classical in
-theorem proper : U.Proper out := by
-  intro a b h
-  by_cases he : a ∈ Set.range A.span
-  swap
-  · rw [H.idle _ he] at h
-    cases h
-  obtain ⟨j|⟨e, t⟩, rfl⟩ := he
-  · rw [H.outside] at h
-    cases h
-  rw [A.peer_end l hz H, Option.some.injEq] at h
-  subst b
-  rw [A.peer_end l hz H, Bool.not_not, l.used, l.used, H.dir, H.dir]
-  exact ⟨rfl, rfl, by cases t <;> decide⟩
+theorem proper : U.Proper out :=
+  U.proper_of_span out A.span z H.idle H.outside (A.peer_end l hz H)
+    (fun e t => l.used (.inr (e, t))) H.dir
 
 open scoped Classical in
 theorem exposed_pin (j : p.BorderBit) :

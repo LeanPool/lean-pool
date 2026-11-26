@@ -413,13 +413,6 @@ variable {F : Type} [Field F] (P : Gadget F) (Δ d : ℕ)
 local notation "I" => Case F P.b d
 
 open scoped Classical in
-private theorem log_bound (x y z : ℕ) (h : z ≤ (x + 1) * (1 + y)) :
-    Nat.clog 2 z ≤ x + Nat.clog 2 (1 + y) := by
-  apply (Nat.clog_le_iff_le_pow (by decide)).mpr
-  rw [pow_add]
-  exact h.trans (Nat.mul_le_mul Nat.lt_two_pow_self (Nat.le_pow_clog (by decide) _))
-
-open scoped Classical in
 theorem spans_bound : Base (fun i : I => 2 ^ e Δ i.R) :=
   ((base_const (gain Δ)).mul load).exp_clog
 
@@ -430,18 +423,18 @@ theorem history_factor : Base (fun i : I => 2 ^ i.S.discount * (gain Δ * i.R.lo
 open scoped Classical in
 theorem meter_bound : Base (fun i : I => (meter i.S Δ i.R).count) := by
   refine (base_const 3).mul (((history_factor P Δ d).add Case.units).mono fun i => ?_)
-  exact log_bound _ _ _ (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
+  exact BatchDescent.Phase.clog_le_add_of_le_mul_succ _ _ _
+    (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
 
 open scoped Classical in
 /-- The quantity computed by `(d + Nat.clog 2 ((4 * Δ) ^ 300) + 1) * 3`. -/
-def maxDegree := (d + Nat.clog 2 ((4 * Δ) ^ 300) + 1) * 3
+abbrev maxDegree := Assembly.Child.degreeLimit Δ d
 
 open scoped Classical in
 theorem child_degree (i : I) :
     i.T.degree i.a Δ (degreeBound i.S i.T Δ) ≤ maxDegree Δ d := by
-  simp only [Template.degree, Template.bound, i.h.core, Bool.false_eq_true, ↓reduceIte]
-  exact Nat.mul_le_mul_right 3 (Nat.add_le_add_right (Nat.add_le_add i.h.degree (min_le_right ..))
-    1)
+  simpa only [Template.degree, Template.bound, i.h.core, Bool.false_eq_true, ↓reduceIte] using
+    Assembly.Child.nextWidth_le_degreeLimit (i.T.scheme.h - i.a) Δ i.h.degree
 
 open scoped Classical in
 theorem child_slots : Base (fun i : I => 2 ^ i.T.degree i.a Δ (degreeBound i.S i.T Δ)) :=
@@ -469,7 +462,7 @@ theorem overhead_bound : Rate (fun i : I => (book P i.S i.T i.v i.h.vpos).overhe
   have hl : Rate (fun i : I => Dense.used (i.T.scheme.ℓ + Kind.width i.T.scheme P (i.T.scheme.e
     + 2))) :=
     (hr.add lengths).mono fun i => by
-      refine log_bound _ _ _ ?_
+      refine BatchDescent.Phase.clog_le_add_of_le_mul_succ _ _ _ ?_
       simp only [add_mul, mul_add, one_mul, mul_one]
       omega
   have hw := (he.mul hd).add (he.mul ((rate_const 1).add
@@ -531,7 +524,7 @@ theorem seat_factor : Short (fun i : I => 2 ^ (i.n + i.T.scheme.e)) :=
 
 theorem radius_factor : Short (fun i : I => 2 ^ (Tile.radius i.T.scheme.d)) :=
   (short_const (2 ^ (Tile.radius d))).mono fun i =>
-    Nat.pow_le_pow_right (by decide) (Nat.mul_le_mul_right _ (Nat.add_le_add_right i.h.degree 1))
+    Tile.exp_radius_mono i.h.degree
 
 theorem mask_factor : Short (fun i : I => 2 ^ (Tile.radius i.T.scheme.d + (i.n + 1))) :=
   (radius_factor P d).exp_add (child_factor P d)

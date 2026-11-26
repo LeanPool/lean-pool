@@ -19,6 +19,12 @@ section
 
 namespace MatrixMultiplicationAllFields.MatrixExponent.BatchDescent.Phase
 
+theorem clog_le_add_of_le_mul_succ (x y z : ℕ) (h : z ≤ (x + 1) * (1 + y)) :
+    Nat.clog 2 z ≤ x + Nat.clog 2 (1 + y) := by
+  apply (Nat.clog_le_iff_le_pow (by decide)).mpr
+  rw [pow_add]
+  exact h.trans (Nat.mul_le_mul Nat.lt_two_pow_self (Nat.le_pow_clog (by decide) _))
+
 /-- The data for the poly construction, including `two`, `bound`. -/
 structure Poly {I : Type*} (s f : I → ℕ) : Prop where
   two : ∀ i, 2 ≤ s i
@@ -96,6 +102,12 @@ theorem mono (h : MixedCost large small height j f) (hg : ∀ i, g i ≤ f i) :
     MixedCost large small height j g :=
   let ⟨k, hk⟩ := h
   ⟨k, fun i => (hg i).trans (hk i)⟩
+
+theorem exp_mul_mono {actual upper : I → ℕ}
+    (h : MixedCost large small height j (fun i => 2 ^ upper i * f i))
+    (bound : ∀ i, actual i ≤ upper i) :
+    MixedCost large small height j (fun i => 2 ^ actual i * f i) :=
+  h.mono fun i => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) (bound i))
 
 theorem add (h : MixedCost large small height j f) (h' : MixedCost large small height j g)
     (largeTwo : ∀ i, 2 ≤ large i) (smallTwo : ∀ i, 2 ≤ small i) :

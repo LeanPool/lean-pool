@@ -347,7 +347,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Scale
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Stack.Mates
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Rounds.Sweep
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Algorithm.Code
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Algorithm.Computability
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Control.Compatible
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Routing.Control.Decor
@@ -468,7 +467,6 @@ public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.SortBack
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.SortOne
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Tagged.Tags
-public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Cost
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Match.Reciprocal
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.Match.Runs
 public import LeanPool.ExactMatrixExponents.LinearAlgebra.MatrixExponent.Transcript.RAM.Calls

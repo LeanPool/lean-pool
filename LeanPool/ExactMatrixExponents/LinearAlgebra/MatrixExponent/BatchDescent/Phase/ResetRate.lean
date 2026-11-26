@@ -412,12 +412,10 @@ variable {N : Case F b d → Template F} {δ f : Case F b d → ℕ} (H : Child 
 include H
 
 theorem layer (h : Short f) : Row (fun i : I => 2 ^ (N i).scheme.h * f i) :=
-  h.blocks.mono (fun i : I => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) (H.extent
-    i)))
+  MixedCost.exp_mul_mono h.blocks H.extent
 
 theorem cost (h : Row f) : Cost (fun i : I => 2 ^ (N i).scheme.m * f i) :=
-  (h.expand H.growth).mono
-    (fun i : I => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) (H.allocation i)))
+  MixedCost.exp_mul_mono (h.expand H.growth) H.allocation
 
 theorem address : Long (fun i : I => (N i).scheme.m) :=
   (hosts.add H.growth.long.of_exp).mono H.allocation
@@ -428,10 +426,8 @@ theorem format : Cost (fun i : I => (N i).format.width) := by
   refine (H.cost (top.add body)).mono fun i : I => ?_
   rw [Template.width]
 
-theorem scheme : Cost (fun i : I => (N i).scheme.format.width) := by
-  refine H.format.mono fun i : I => ?_
-  rw [Format.width_pair]
-  exact Nat.le_add_right ..
+theorem scheme : Cost (fun i : I => (N i).scheme.format.width) :=
+  H.format.mono fun i => (N i).scheme_width_le
 
 theorem row : Row (fun i : I => (Trail.rowFormat (N i).scheme i.S.h i.S.d i.S.e).width) := by
   have body := H.layer (H.spans.mul (lanes.rate.short.add levels.rate.short))

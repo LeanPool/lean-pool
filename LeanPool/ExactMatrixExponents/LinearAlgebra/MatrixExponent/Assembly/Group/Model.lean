@@ -477,6 +477,13 @@ open scoped Classical in
 /-- The quantity computed by `(d + width h D + 1) * 3`. -/
 abbrev nextWidth (h D d : ℕ) := (d + width h D + 1) * 3
 
+/-- A uniform upper bound on the degree of a child with bounded parent degree. -/
+abbrev degreeLimit (budget degree : ℕ) := (degree + Nat.clog 2 ((4 * budget) ^ 300) + 1) * 3
+
+theorem nextWidth_le_degreeLimit (height budget : ℕ) {degree upper : ℕ} (h : degree ≤ upper) :
+    nextWidth height budget degree ≤ degreeLimit budget upper :=
+  Nat.mul_le_mul_right 3 (Nat.add_le_add_right (Nat.add_le_add h (min_le_right ..)) 1)
+
 open scoped Classical in
 /-- The construction uses `Match.rowIndex m (h + 1) i` for its intermediate `p`. -/
 def step (h D : ℕ) (x : (Input m d).obj) (i : B (m + (h + 1))) (j : B (d + width h D)) :=

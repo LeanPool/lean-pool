@@ -30,6 +30,10 @@ open Coloring
 
 /-- The quantity computed by `(d + 1) * 8`. -/
 abbrev radius (d : ℕ) := (d + 1) * 8
+
+theorem exp_radius_mono {d upper : ℕ} (h : d ≤ upper) : 2 ^ radius d ≤ 2 ^ radius upper :=
+  Nat.pow_le_pow_right (by decide) (Nat.mul_le_mul_right _ (Nat.add_le_add_right h 1))
+
 /-- The quantity computed by `Format.vec (radius d + (n + 1)) (.vec k (.vec (radius d + (n + 1))
 .bit))`. -/
 abbrev mask (d n k : ℕ) := Format.vec (radius d + (n + 1)) (.vec k (.vec (radius d + (n + 1)) .bit))

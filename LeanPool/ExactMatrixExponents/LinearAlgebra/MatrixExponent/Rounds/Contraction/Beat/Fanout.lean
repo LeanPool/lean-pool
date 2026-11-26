@@ -460,12 +460,10 @@ variable {N : (i : Case κ b d B) → Template i.F} {δ f : Case κ b d B → �
 include H
 
 theorem layer (h : Block f) : Row (fun i : I => 2 ^ (N i).scheme.h * f i) :=
-  h.blocks.mono (fun i : I => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) (H.extent
-    i)))
+  BatchDescent.Phase.MixedCost.exp_mul_mono h.blocks H.extent
 
 theorem cost (h : Row f) : Cost (fun i : I => 2 ^ (N i).scheme.m * f i) :=
-  (h.expand H.growth.block).mono
-    (fun i : I => Nat.mul_le_mul_right _ (Nat.pow_le_pow_right (by decide) (H.allocation i)))
+  BatchDescent.Phase.MixedCost.exp_mul_mono (h.expand H.growth.block) H.allocation
 
 theorem address : Long (fun i : I => (N i).scheme.m) :=
   (hosts.add H.growth.long.of_exp).mono H.allocation
@@ -476,10 +474,8 @@ theorem format : Cost (fun i : I => (N i).format.width) := by
   refine (H.cost (top.add body)).mono fun i : I => ?_
   rw [Template.width]
 
-theorem scheme : Cost (fun i : I => (N i).scheme.format.width) := by
-  refine H.format.mono fun i : I => ?_
-  rw [Format.width_pair]
-  exact Nat.le_add_right ..
+theorem scheme : Cost (fun i : I => (N i).scheme.format.width) :=
+  H.format.mono fun i => (N i).scheme_width_le
 
 variable {j v : Case κ b d B → ℕ} (hj : Short (fun i => 2 ^ j i)) (hv : Row v)
 

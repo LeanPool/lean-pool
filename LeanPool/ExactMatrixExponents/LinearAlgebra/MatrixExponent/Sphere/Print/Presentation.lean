@@ -529,96 +529,19 @@ open Classical in
 /-- The quantity computed by `Node (Bench V M D k) (Sharing.radius k * d)`. -/
 abbrev Host (V : Type) (M D k d : ℕ) := Node (Bench V M D k) (Sharing.radius k * d)
 
-variable {F U X E V K J A : Type} {M r t : ℕ}
-  {C : V → Surface.Cell F (M * r) (M * t) U E X} {a b : Wire} {Y : Alphabet K}
-  {S : Sharing C a b Y} {h D T R g k d z : ℕ} {W : ℝ} {P : Input F a b h D T R g W}
-  (G : S.Geo P k) (m : Marking S J (Number D k) A)
-
-open Classical in
-/-- The data for the compass construction, including `color`, `distinct`, `cell`, `row`. -/
-structure Compass where
-  /-- The `Compass` component of type `P.V → J`. -/
-  color : P.V → J
-  distinct : ∀ v, Set.InjOn color (insert v (P.adj v) : Finset P.V)
-  cell : ∀ v, m.mark v = color (G.site v).1
-  row : ∀ i, m.number i = (decide (G.frozen i), Fin.castLE (G.count i.1) i.2)
-
 namespace Compass
-variable {G m} (B : Compass G m)
 
-open Classical in
-/-- Returns `h.choose` when `h : ∃ w ∈ insert v (P.adj v), B.color w = j` holds, and `v`
-otherwise. -/
-def find (v : P.V) (j : J) :=
-  if h : ∃ w ∈ insert v (P.adj v), B.color w = j then h.choose else v
-
-open Classical in
-theorem location (v w : P.V) (hw : w ∈ insert v (P.adj v)) : B.find v (B.color w) = w := by
-  have h : ∃ i ∈ insert v (P.adj v), B.color i = B.color w := ⟨w, hw, rfl⟩
-  rw [find, dite_eq_left h]
-  exact B.distinct v h.choose_spec.1 hw h.choose_spec.2
-
-open Classical in
-/-- Computes the paint by the application `Prod.map B.color id`. -/
-abbrev paint : Bench P.V M D k → Spot J (Number D k) M := Prod.map B.color id
-open Classical in
-/-- Computes the resolve by the application `Prod.map (B.find v) id`. -/
-abbrev resolve (v : P.V) : Spot J (Number D k) M → Bench P.V M D k := Prod.map (B.find v) id
-
-open Classical in
-/-- Computes the seat by the application `lift B.paint v`. -/
-def seat (v : Host P.V M D k d) := lift B.paint v
-
-open Classical in
-theorem spot (i : S.Position) : m.spot i = B.paint (G.place i).1 := by
-  rcases i with ((i|v|v)|(⟨v, j⟩|⟨v, j⟩))
-  all_goals simp [Marking.spot, paint, Sharing.Geo.place, Sharing.Geo.slot, Sharing.home,
-    Layout.Grid.point, B.row, B.cell]
-
-variable (hD : D = 2 ^ d) (hd : 4 ≤ D)
-  (idx : Host P.V M D k d → Host P.V M D k d → Coloring.B z)
-
-open Classical in
-/-- Computes the guide by the application `Guide.make (G.tree hD hd) idx (B.resolve v)`. -/
-def guide (v : P.V) := Guide.make (G.tree hD hd) idx (B.resolve v)
-
-variable [Field F] [Fintype E] [Fintype V] [Fintype K]
+variable {F U X E V K : Type} {M r t : ℕ}
+  {C : V → Surface.Cell F (M * r) (M * t) U E X} {a b : Wire} {Y : Alphabet K}
+  {S : Sharing C a b Y} {h D T R g k d : ℕ} {W : ℝ} {P : Input F a b h D T R g W}
+  {G : S.Geo P k} (hD : D = 2 ^ d) (hd : 4 ≤ D)
+  [Field F] [Fintype E] [Fintype V] [Fintype K]
   {e : E → ℕ} (p : Profile C e) (L : ℕ)
-
-open Classical in
-theorem seat_eq (v : Node S.Position (Sharing.radius k * d)) :
-    B.seat ((G.layout hD hd p L).place v).1 = lift m.spot v := by
-  cases v with
-  | inl v => exact congrArg Sum.inl (B.spot v).symm
-  | inr v => exact congrArg (fun i => Sum.inr (i, v.2)) (B.spot v.1).symm
 
 open Classical in
 theorem home_eq (v : Node S.Position (Sharing.radius k * d)) :
     ((root ((G.layout hD hd p L).place v).1).1, ((G.layout hD hd p L).place v).2) =
       G.site (S.home (root v)) := by cases v <;> rfl
-
-open Classical in
-theorem locates (v : S.Position) :
-    Locates (G.layout hD hd p L) m.spot (B.resolve (G.site (S.home v)).1) v := by
-  intro w hw
-  have hnear {x y : S.Position} (i : (S.backdrop.emitted p L).E)
-      (hx : (S.backdrop.emitted p L).src i = x) (hy : (S.backdrop.emitted p L).dst i = y) :
-      (G.site (S.home y)).1 ∈ insert (G.site (S.home x)).1 (P.adj (G.site (S.home x)).1) := by
-    have h := (G.layout hD hd p L).near i
-    change (G.place _).1 ∈ G.neighbors (G.place _).1 at h
-    rw [hx, hy] at h
-    exact (Finset.mem_product.mp h).1
-  have hit : (G.site (S.home w)).1 ∈ insert (G.site (S.home v)).1 (P.adj (G.site (S.home v)).1)
-    := by
-    rcases hw with rfl | ⟨i, hv, hv'⟩
-    · simp
-    rcases hv with hv|hv <;> rcases hv' with hw|hw
-    · rw [← hw, hv]; simp
-    · exact hnear i hv hw
-    · exact Finset.mem_insert.mpr ((Finset.mem_insert.mp (hnear i hw hv)).imp Eq.symm (P.sym _ _))
-    · rw [← hw, hv]; simp
-  rw [B.spot]
-  exact Prod.ext (B.location _ _ hit) rfl
 
 end Compass
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print
@@ -636,76 +559,6 @@ open Classical in
 /-- Indexes the page by the coordinates of `Sheet F J Z A M r t × Finset (J × A)`. -/
 abbrev Page (F J Z A : Type) (M r t : ℕ) := Sheet F J Z A M r t × Finset (J × A)
 
-namespace Compass
-variable {F U X E V K J A : Type} {M r t : ℕ}
-  {C : V → Surface.Cell F (M * r) (M * t) U E X} {a b : Wire} {Y : Alphabet K}
-  {S : Sharing C a b Y} {h D T R g k d z : ℕ} {W : ℝ} {P : Input F a b h D T R g W}
-  {G : S.Geo P k} {m : Marking S J (Number D k) A}
-  (B : Compass G m) (hD : D = 2 ^ d) (hd : 4 ≤ D)
-  (idx : Host P.V M D k d → Host P.V M D k d → Coloring.B z)
-
-open Classical in
-/-- Uses `⟨pg.1, pg.2, B.guide hD hd idx (root v).1, B.seat v⟩` as the representation. -/
-def request (v : Host P.V M D k d) (pg : Page F J (Number D k) A M r t) :
-    Request F J (Number D k) A M r t (Sharing.radius k * d) z :=
-  ⟨pg.1, pg.2, B.guide hD hd idx (root v).1, B.seat v⟩
-
-open Classical in
-/-- Transforms the indexed data by `(pages ((root v.1).1, v.2)).map (B.request hD hd idx v.1)`. -/
-def requestAt (pages : P.V × Packing.Cell h → Option (Page F J (Number D k) A M r t))
-    (v : Host P.V M D k d × Packing.Cell h) :=
-  (pages ((root v.1).1, v.2)).map (B.request hD hd idx v.1)
-
-open Classical in
-private theorem seat_inj {x y : Host P.V M D k d} (hh : (root x).1 = (root y).1)
-    (he : B.seat x = B.seat y) : x = y :=
-  lift_eq (fun h => Prod.ext hh (congrArg (fun i : Spot J (Number D k) M => i.2) h)) he
-
-variable [Field F] [Fintype E] [Fintype V] [Fintype K]
-  {e : E → ℕ} (p : Profile C e) (L u : ℕ) (q : Order.Rules S)
-  (pages : P.V × Packing.Cell h → Option (Page F J (Number D k) A M r t))
-
-open Classical in
-/-- The data for the ready construction, including `active`, `inactive`. -/
-structure Ready : Prop where
-  active : ∀ v, ∃ f, pages (G.site v) = some (m.sheet q p v, f) ∧
-    m.Observes v (fun j a => (j, a) ∈ f)
-  inactive : ∀ v ∉ Set.range G.site, pages v = none
-
-local notation "H" => G.layout hD hd p L
-
-open Classical in
-theorem print_active (hs : Ready (G := G) (m := m) p q pages) (v : Node S.Position (Sharing.radius
-    k * d)) :
-    ((B.requestAt hD hd idx pages ((H).place v)).bind fun a => a.emit L u) =
-      some ((m.names p L u H idx).star ((H).routed (q.script p L) u) v) := by
-  obtain ⟨f, hf, ha⟩ := hs.active (S.home (root v))
-  have hh := home_eq (G := G) hD hd p L v
-  rw [requestAt, hh, hf, Option.map_some, Option.bind_some]
-  apply m.emit_eq q p L u H idx v (B.request hD hd idx ((H).place v).1 (_,
-    f)) rfl ha (B.seat_eq hD hd p L v)
-    _ (B.locates hD hd p L (root v))
-  exact congrArg (B.guide hD hd idx) (congrArg Prod.fst hh)
-
-open Classical in
-theorem print_vacant (hs : Ready (G := G) (m := m) p q pages)
-    (x : Host P.V M D k d × Packing.Cell h) (hx : x ∉ Set.range (H).place) :
-    ((B.requestAt hD hd idx pages x).bind fun a => a.emit L u) = none := by
-  by_cases hv : ((root x.1).1, x.2) ∈ Set.range G.site
-  swap
-  · simp [requestAt, hs.inactive _ hv]
-  obtain ⟨v, he⟩ := hv
-  obtain ⟨f, hf, _⟩ := hs.active v
-  rw [requestAt, ← he, hf, Option.map_some, Option.bind_some]
-  by_contra hne
-  obtain ⟨w, hw, ha⟩ := m.emit_live q p L u v (B.request hD hd idx x.1 (m.sheet q p v, f))
-    rfl (Option.isSome_iff_ne_none.mpr hne)
-  have hh := home_eq (G := G) hD hd p L w
-  rw [hw, he] at hh
-  exact hx ⟨w, Prod.ext (B.seat_inj (Prod.mk.inj hh).1 ((B.seat_eq hD hd p L w).trans ha))
-    (Prod.mk.inj hh).2⟩
-
-end Compass
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print
 end
 
@@ -728,7 +581,7 @@ namespace Compass
 variable {F T X E V K J A : Type} [Field F] [Fintype E] [Fintype V] [Fintype K] {M r t : ℕ}
   {C : V → Surface.Cell F (M * r) (M * t) T E X} {a b : Wire} {Y : Alphabet K}
   {S : Sharing C a b Y} {h D W₀ R g k d : ℕ} {W : ℝ} {P : Input F a b h D W₀ R g W}
-  {G : S.Geo P k} {m : Marking S J (Number D k) A} (T : Compass G m)
+  {G : S.Geo P k}
   (hD : D = 2 ^ d) (hd : 4 ≤ D) {e : E → ℕ} (p : Profile C e) (L u : ℕ) (q : Order.Rules S)
 
 open Classical in
@@ -749,51 +602,6 @@ open Classical in
 def vertex : Node S.Position (Sharing.radius k * d) ↪ U.scheme.Vtx :=
   (show Node S.Position (Sharing.radius k * d) ↪ _ from ⟨(H).place, (H).injective⟩).trans
     (U.seat host block)
-
-open Classical in
-/-- The data for the prints construction, including `pattern`, `padding`, `nav`. -/
-structure Prints : Prop where
-  pattern : ∀ i, U.scheme.pattern rows (U.seat host block i) =
-    Print.pattern (T.requestAt hD hd idx pages i) L u U.ix
-  padding : ∀ i ∉ Set.range (U.seat host block), U.scheme.pattern rows i = Star.vacant
-  nav : ∀ v w, w ∈ (G.tree hD hd).adj v → (rows (host v)).1 (idx v w) = host w
-
-open Classical in
-/-- The frame of type `Frame U rows (m.names p L u H idx) ((H).routed (q.script p L) u) u where
-vertex`, constructed using `(H).place (side ((H).pad u).route.net s i)`. -/
-def frame (hu : 0 < u) (hw : ∀ i, Diagram.padWidth u ((S.backdrop.emitted p L).width i) / u ≤ U.cap)
-    (hs : Ready (G := G) (m := m) p q pages)
-    (hr : T.Prints hD hd L u host block idx rows pages) :
-    Frame U rows (m.names p L u H idx) ((H).routed (q.script p L) u) u where
-  vertex := vertex (G := G) hD hd p L host block
-  pos := hu
-  width i := Diagram.dvd_padWidth hu _
-  bound i := hw i.1
-  active v := by
-    change U.scheme.pattern rows (U.seat host block ((H).place v)) = _
-    rw [hr.pattern, Print.pattern, T.print_active hD hd idx p L u q pages hs]
-    rfl
-  inactive v hv := by
-    by_cases hx : v ∈ Set.range (U.seat host block)
-    · obtain ⟨z, rfl⟩ := hx
-      have hz : z ∉ Set.range (H).place := fun ⟨w, h⟩ => hv ⟨w, congrArg (U.seat host block) h⟩
-      rw [hr.pattern, Print.pattern, T.print_vacant hD hd idx p L u q pages hs _ hz]
-      rfl
-    · exact hr.padding v hx
-  address s i := by
-    let x := (H).place (side ((H).pad u).route.net s i)
-    let y := (H).place (side ((H).pad u).route.net (!s) i)
-    have he : x.2 = y.2 ∧ y.1 ∈ (G.tree hD hd).adj x.1 := by
-      have hi := ((H).pad u).edges i
-      have hp (v : Node S.Position (Sharing.radius k * d)) : ((H).pad u).place v = (H).place v := by
-        cases v <;> rfl
-      simp only [Layout.Fanout.linked, hp] at hi
-      unfold x y
-      cases s
-      · exact hi
-      · exact ⟨hi.1.symm, (G.tree hD hd).adj_symm hi.2⟩
-    change ((rows (host x.1)).1 (idx x.1 y.1), block x.2, (0 : B 0)) = (host y.1, block y.2, 0)
-    rw [hr.nav _ _ he.2, he.1]
 
 end Compass
 end MatrixMultiplicationAllFields.MatrixExponent.Sphere.Print

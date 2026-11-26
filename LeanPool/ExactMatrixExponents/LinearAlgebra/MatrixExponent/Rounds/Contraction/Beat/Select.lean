@@ -790,26 +790,19 @@ abbrev added (i : I) := (Post.headerFmt (i.T.degree i.a Δ C) E (menu Q d B i).d
   (menu Q d B i).overhead E
 
 open scoped Classical in
-private theorem log_bound (x y z : ℕ) (h : z ≤ (x + 1) * (1 + y)) :
-    Nat.clog 2 z ≤ x + Nat.clog 2 (1 + y) := by
-  apply (Nat.clog_le_iff_le_pow (by decide)).mpr
-  rw [pow_add]
-  exact h.trans (Nat.mul_le_mul Nat.lt_two_pow_self (Nat.le_pow_clog (by decide) _))
-
-open scoped Classical in
 theorem meter_bound : Base (fun i : I => (meter i.L i.z Δ B).count) := by
   refine (base_const 3).mul (((base_const (copies Δ B)).add units).mono fun i => ?_)
-  exact log_bound _ _ _ (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
+  exact BatchDescent.Phase.clog_le_add_of_le_mul_succ _ _ _
+    (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
 
 open scoped Classical in
 /-- The quantity computed by `(d + Nat.clog 2 ((4 * C) ^ 300) + 1) * 3`. -/
-def maxDegree := (d + Nat.clog 2 ((4 * C) ^ 300) + 1) * 3
+abbrev maxDegree := Assembly.Child.degreeLimit C d
 
 open scoped Classical in
 theorem child_degree (i : I) : i.T.degree i.a Δ C ≤ maxDegree C d := by
-  simp only [Template.degree, Template.bound, i.h.full, ↓reduceIte]
-  exact Nat.mul_le_mul_right 3 (Nat.add_le_add_right (Nat.add_le_add i.h.degree (min_le_right ..))
-    1)
+  simpa only [Template.degree, Template.bound, i.h.full, ↓reduceIte] using
+    Assembly.Child.nextWidth_le_degreeLimit (i.T.scheme.h - i.a) C i.h.degree
 
 open scoped Classical in
 theorem child_slots : Base (fun i : I => 2 ^ i.T.degree i.a Δ C) :=
@@ -829,7 +822,8 @@ private theorem length_bound : Base (fun i : I => (menu Q d B i).d) := by
   refine ((base_const (B + 4)).add units).mono fun i => ?_
   change Nat.clog 2 ((Finset.range (B * i.z + 1)).card + 3) ≤ _
   rw [Finset.card_range]
-  exact log_bound _ _ _ (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
+  exact BatchDescent.Phase.clog_le_add_of_le_mul_succ _ _ _
+    (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
 
 open scoped Classical in
 private theorem role_bound : Base (fun i : I => Kind.width i.T.scheme (Q.extend i.F) (i.T.scheme.e
@@ -852,7 +846,8 @@ private theorem overhead_bound : Base (fun i : I => (menu Q d B i).overhead E) :
     + Kind.width i.T.scheme (Q.extend i.F) (i.T.scheme.e + 2))) := by
     refine (hr.add lengths).mono fun i => ?_
     rw [add_assoc 1]
-    exact log_bound _ _ _ (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
+    exact BatchDescent.Phase.clog_le_add_of_le_mul_succ _ _ _
+      (by simp only [add_mul, mul_add, one_mul, mul_one]; omega)
   have hw := (he.mul hd).add (he.mul ((base_const 1).add
     ((base_const 0).add (hs.mul ((base_const 1).add ((base_const E).add hd))))))
   refine ((hw.add (he.mul hl)).add (he.mul hr)).mono fun i => ?_
