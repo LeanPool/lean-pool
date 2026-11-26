@@ -94,9 +94,6 @@ theorem rounded_order_witness (H : ℕ → ℕ) (A c : ℝ) (hA : 1 ≤ A)
   have hLt : L = c * t ^ 2 := by
     dsimp [t]
     rw [sq_sqrt (by positivity), mul_div_cancel₀ _ hc.ne']
-  have hsqrt : sqrt L = sqrt c * t := by
-    have he : L = c * (L / c) := by field_simp
-    conv_lhs => rw [he, sqrt_mul hc.le]
   let j := ⌊t⌋₊
   have hj₁ : 1 ≤ j := Nat.le_floor (by norm_cast; linarith)
   have hjU : (j : ℝ) ≤ t := Nat.floor_le ht₀.le
@@ -183,8 +180,7 @@ theorem uniform_order_parameters (H : ℕ → ℕ) (A K c η : ℝ) (hA : 1 ≤ 
         exp (-c * (j : ℝ)) * (m : ℝ) ^ (4 * j) /
           (27 * (1 + K * (j : ℝ) * (m : ℝ) ^ 2)) := by
   let C := 27 * (1 + K)
-  have hC : 1 ≤ C := by dsimp [C]; linarith
-  have hC₀ : 0 < C := by linarith
+  have hC₀ : 0 < C := by dsimp [C]; positivity
   let b := 2 * log A + 2 + 2 * c + log C
   obtain ⟨T₂,hT₂,h₂⟩ := log_linear_error 3 b (η * sqrt c) (by norm_num)
     (mul_pos hη (sqrt_pos.mpr hc))

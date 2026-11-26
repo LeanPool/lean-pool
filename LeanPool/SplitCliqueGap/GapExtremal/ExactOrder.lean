@@ -60,25 +60,13 @@ variable {W : Type*} [AddCommGroup W] [Module F W] [Fintype W] [DecidableEq W]
 variable {V P : Type*} [Fintype V] [DecidableEq V] [Fintype P] [DecidableEq P]
 variable {U : Type*} [AddCommGroup U] [Module F U] [Fintype U] [DecidableEq U]
 
-instance instDecEqPadIdx (k : ℕ) : DecidableEq (PHostIdx F W P U ⊕ Fin k) :=
-  @instDecidableEqSum _ _ instDecEqPHostIdx inferInstance
-
-instance instDecEqSumPadIdx (k : ℕ) : DecidableEq (V ⊕ (PHostIdx F W P U ⊕ Fin k)) :=
-  @instDecidableEqSum _ _ inferInstance (instDecEqPadIdx k)
-
 /-- **Cor. 16.4, padded.** -/
 theorem pgap_ge_third_pad (D : PData F W V P) {C : Finset W} (hC : IsSCap (actCol D) (C : Set W))
     (hC0 : C.Nonempty) (S : SepFam F C U)
     (hsame : ∀ v v', D.base v = D.base v' → ∀ i j, D.σ i = D.pos v → D.σ j = D.pos v' →
       ¬ H12.graph.Adj i j) (x0 : V) (k : ℕ) :
     ((C.card * Fintype.card W : ℕ) : ℝ) / 3 ≤ gap (hostGraph (padN (ppalette D C S) x0 k)) := by
-  have h := gap_ge ((phostHyp (S := S) hC0 hsame).pad x0 k) (8 * (pblocks D C).card)
-    (fun T hT => pI_le_s D hC hT) (presPack (D := D) (C := C))
-  have hv := pvalue (D := D) (C := C)
-  have hb : ((pblocks D C).card : ℝ) ≤ C.card * Fintype.card W := by
-    exact_mod_cast card_pblocks_le D
-  push_cast at h ⊢
-  linarith
+  exact positioned_gap_ge_third D ((phostHyp (S := S) hC0 hsame).pad x0 k) (fun _ => pI_le_s D hC)
 
 end PPad
 
@@ -104,9 +92,6 @@ theorem tp_single_s_exact (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsSCap (Set.ra
         c * (n : ℝ) ^ (1 + Real.log A.card / Real.log (Fintype.card U)) ≤ gap G' := by
   classical
   set M := Fintype.card U
-  have hcapne : ∀ j, (capPow A j).Nonempty := fun j => by
-    obtain ⟨a0, ha0⟩ := hA0
-    exact ⟨fun _ => a0, by simp [capPow, ha0]⟩
   refine exponent_of_family_exact hM hA0.card_pos (by positivity) (SVk F U)
     (fun j k => hostGraph (padN (ppalette (single (W := Fin j → U) σ) (capPow A j) (prodSep A he j))
       ((0 : F), (0 : Fin j → U)) k))
@@ -114,13 +99,38 @@ theorem tp_single_s_exact (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsSCap (Set.ra
     (fun j k => card_pad k) (fun j k => isSplit_hostGraph _)
     (fun j k => connected_hostGraph _ ((0 : F), (0 : Fin j → U)) (padN_nonempty _ _ _)) (fun j k
       => ?_)
-  have h := pgap_ge_third_pad (single (W := Fin j → U) σ) (isSCap_capPow hA j) (hcapne j)
-    (prodSep A he j) (single_same σ) ((0 : F), (0 : Fin j → U)) k
-  rw [card_capPow] at h
-  have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
-  rw [hW] at h
-  push_cast at h
-  exact h
+  have h := pgap_ge_third_pad (single (W := Fin j → U) σ) (isSCap_capPow hA j)
+    (capPow_nonempty hA0 j) (prodSep A he j) (single_same σ) ((0 : F), (0 : Fin j → U)) k
+  exact capPow_gap_le h
+
+omit [DecidableEq F] [DecidableEq U] in
+/-- **TP-cond for S-caps** (ledger §17): the exponent `1 + log |A| / log |U|` for every S-cap `A`,
+`S` the
+active colours `range σ`. -/
+theorem tp_single_s (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsSCap (Set.range σ) (A : Set U)) (hA0 :
+  A.Nonempty) {e : U}
+    (he : e ≠ 0) (hM : 2 ≤ Fintype.card U) :
+    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ,
+      3 * (Fintype.card F + 1) ^ 4 * Fintype.card U * Fintype.card U ≤ n →
+      ∃ (V' : Type) (_ : Fintype V') (_ : DecidableEq V') (G' : SimpleGraph V'),
+        Fintype.card V' ≤ n ∧ IsSplit G' ∧
+        c * (n : ℝ) ^ (1 + Real.log A.card / Real.log (Fintype.card U)) ≤ gap G' := by
+  obtain ⟨c, hc, h⟩ := tp_single_s_exact σ hA hA0 he hM
+  refine ⟨c, hc, fun n hn => ?_⟩
+  obtain ⟨V, fV, dV, G, hcard, hsplit, _, hgap⟩ := h n hn
+  exact ⟨V, fV, dV, G, hcard.le, hsplit, hgap⟩
+
+omit [DecidableEq F] [DecidableEq U] in
+/-- **TP-cond without SEP.** -/
+theorem tp_single (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hA0 : A.Nonempty) {e
+  : U}
+    (he : e ≠ 0) (hM : 2 ≤ Fintype.card U) :
+    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ,
+      3 * (Fintype.card F + 1) ^ 4 * Fintype.card U * Fintype.card U ≤ n →
+      ∃ (V' : Type) (_ : Fintype V') (_ : DecidableEq V') (G' : SimpleGraph V'),
+        Fintype.card V' ≤ n ∧ IsSplit G' ∧
+        c * (n : ℝ) ^ (1 + Real.log A.card / Real.log (Fintype.card U)) ≤ gap G' := by
+  exact tp_single_s σ hA.isSCap hA0 he hM
 
 end Single
 
@@ -229,7 +239,6 @@ theorem exponent_two_exact {ε : ℝ} (hε : 0 < ε) :
     have hA : ((K + 1 : ℕ) : ℝ) ^ N ≤ ((N : ℝ) * R' + 1) * A.card := by
       rw [hAcard]; exact_mod_cast hr
     have hlog : (N : ℝ) * Real.log (K + 1) ≤ Real.log ((N : ℝ) * R' + 1) + Real.log A.card := by
-      have hK0 : (0 : ℝ) < ((K + 1 : ℕ) : ℝ) := by positivity
       rw [← Real.log_mul (by positivity) (by exact_mod_cast hApos.ne')]
       have := Real.log_le_log (by positivity) hA
       rw [Real.log_pow] at this

@@ -5,7 +5,7 @@ Authors: Lean Pool contributors
 -/
 module
 
-public import LeanPool.SplitCliqueGap.GapExtremal.Main
+public import LeanPool.SplitCliqueGap.GapExtremal.GraphPadding
 public import LeanPool.StructuralGraphClasses.Split
 
 /-! The split witnesses in this development give split partitions in the shared graph API. -/

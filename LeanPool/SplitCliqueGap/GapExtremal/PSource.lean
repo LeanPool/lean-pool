@@ -68,7 +68,8 @@ omit [DecidableEq F] [DecidableEq P] [DecidableEq W] [Fintype F] [Fintype V] [Fi
 theorem mem_ppiece {x : (W × W) × Finset (Fin 6)} {v : V} :
     v ∈ ppiece D x ↔ ∃ i ∈ x.2, pvx D x.1.2 x.1.1 i = v := Finset.mem_image
 
-omit [DecidableEq F] [DecidableEq P] [DecidableEq V] [DecidableEq W] [Fintype F] [Fintype V]
+omit [Field F] [AddCommGroup W] [Module F W]
+    [DecidableEq F] [DecidableEq P] [DecidableEq V] [DecidableEq W] [Fintype F] [Fintype V]
     [Fintype W] in
 /-- Colours of two labels of a source piece are distinct. -/
 theorem col_ne_of_src {K : Finset (Fin 6)} (hK : K ∈ src) {i j : Fin 6} (hi : i ∈ K) (hj : j ∈ K)

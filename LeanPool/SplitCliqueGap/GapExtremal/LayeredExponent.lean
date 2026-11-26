@@ -61,9 +61,6 @@ theorem tp_layered {A : Finset U} (hA : IsCap F5 (A : Set U)) (hA0 : A.Nonempty)
         c * (n : ℝ) ^ (1 + Real.log A.card / Real.log (Fintype.card U)) ≤ gap G' := by
   classical
   set M := Fintype.card U
-  have hcapne : ∀ j, (capPow A j).Nonempty := fun j => by
-    obtain ⟨a0, ha0⟩ := hA0
-    exact ⟨fun _ => a0, by simp [capPow, ha0]⟩
   refine exponent_of_family hM hA0.card_pos (by positivity) (LV U)
     (fun j => hostGraph (ppalette (layered (W := Fin j → U)) (capPow A j) (prodSep A he j)))
     (fun j => ?_) (fun j => isSplit_hostGraph _) (fun j => ?_)
@@ -76,12 +73,8 @@ theorem tp_layered {A : Finset U} (hA : IsCap F5 (A : Set U)) (hA0 : A.Nonempty)
     have hp : Fintype.card U ^ j ≤ Fintype.card U * Fintype.card U ^ j :=
       Nat.le_mul_of_pos_left _ (by omega)
     nlinarith
-  · have h := pgap_ge_third (layered (W := Fin j → U)) (isCap_capPow hA j) (hcapne j)
+  · have h := pgap_ge_third (layered (W := Fin j → U)) (isCap_capPow hA j) (capPow_nonempty hA0 j)
       (prodSep A he j) layered_same
-    rw [card_capPow] at h
-    have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
-    rw [hW] at h
-    push_cast at h
-    exact h
+    exact capPow_gap_le h
 
 end GapExtremal

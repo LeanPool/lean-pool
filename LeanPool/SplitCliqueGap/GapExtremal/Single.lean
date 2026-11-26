@@ -19,7 +19,7 @@ import Mathlib.Tactic.Ring
 `single σ` is the positioned core `V = F × W` with positions = colours. Together with `prodSep` it
 gives, for
 every cap `A` in a finite `F`-module `U` (no separability), the exponent `1 + log |A| / log |U|`
-(`tp_single`). This removes SEP from TP-cond.
+for the one-layer cap construction.
 -/
 
 @[expose] public section
@@ -98,32 +98,5 @@ theorem card_SV_le [Nonempty U] (j : ℕ) :
       ≤ (q + 1) ^ 4 * (M * X) + (q + 1) ^ 4 * (M * X) + (q + 1) ^ 4 * (M * X) := by
         rw [e2, e3]; exact Nat.add_le_add (Nat.add_le_add e1 e5) e4
     _ = 3 * (q + 1) ^ 4 * M * X := by ring
-
-omit [DecidableEq F] [DecidableEq U] in
-/-- **TP-cond without SEP.** -/
-theorem tp_single (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hA0 : A.Nonempty) {e
-  : U}
-    (he : e ≠ 0) (hM : 2 ≤ Fintype.card U) :
-    ∃ c : ℝ, 0 < c ∧ ∀ n : ℕ,
-      3 * (Fintype.card F + 1) ^ 4 * Fintype.card U * Fintype.card U ≤ n →
-      ∃ (V' : Type) (_ : Fintype V') (_ : DecidableEq V') (G' : SimpleGraph V'),
-        Fintype.card V' ≤ n ∧ IsSplit G' ∧
-        c * (n : ℝ) ^ (1 + Real.log A.card / Real.log (Fintype.card U)) ≤ gap G' := by
-  classical
-  set M := Fintype.card U
-  have hcapne : ∀ j, (capPow A j).Nonempty := fun j => by
-    obtain ⟨a0, ha0⟩ := hA0
-    exact ⟨fun _ => a0, by simp [capPow, ha0]⟩
-  refine exponent_of_family hM hA0.card_pos (by positivity) (SV F U)
-    (fun j => hostGraph (ppalette (single (W := Fin j → U) σ) (capPow A j) (prodSep A he j)))
-    (fun j => ?_) (fun j => isSplit_hostGraph _) (fun j => ?_)
-  · exact card_SV_le j
-  · have h := pgap_ge_third (single (W := Fin j → U) σ) (isCap_capPow hA j) (hcapne j)
-      (prodSep A he j) (single_same σ)
-    rw [card_capPow] at h
-    have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
-    rw [hW] at h
-    push_cast at h
-    exact h
 
 end GapExtremal

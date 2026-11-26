@@ -26,9 +26,8 @@ If every block satisfies the reserved local bound `∑ (4 w - e) ≤ 4c - e(ℓ)
 then every
 packing of the whole vertex set has `∑ w ≤ c · #blocks`.
 
-The proof fragments every column (`exists_pieces`), charges local pieces to their block and
-triangle-free
-pieces to the unused `B`-edges of the blocks (Mantel with reserve).
+The global bound follows from the twin-tolerant bound. The separate theorem `exists_pieces` bounds
+one column's unadjusted score using pieces in blocks and triangle-free pieces.
 -/
 
 @[expose] public section

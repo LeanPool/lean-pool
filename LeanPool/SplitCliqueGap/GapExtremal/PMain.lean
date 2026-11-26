@@ -32,6 +32,21 @@ variable {W : Type*} [AddCommGroup W] [Module F W] [Fintype W] [DecidableEq W]
 variable {V P : Type*} [Fintype V] [DecidableEq V] [Fintype P] [DecidableEq P]
 variable {U : Type*} [AddCommGroup U] [Module F U] [Fintype U] [DecidableEq U]
 
+omit [Fintype P] in
+/-- Transfer a positioned packing score through any suitable host certificate. -/
+theorem positioned_gap_ge_third (D : PData F W V P) {C : Finset W}
+    {H : Type*} [Fintype H] [DecidableEq H] {N : H → Finset V} {φ : V → V → H}
+    (host : HostHyp (PB D C) N φ)
+    (integral : ∀ T : Finset (Finset V), IsPack T →
+      ∑ Q ∈ T, w (PB D C) Q ≤ 8 * (pblocks D C).card) :
+    ((C.card * Fintype.card W : ℕ) : ℝ) / 3 ≤ gap (hostGraph N) := by
+  have h := gap_ge host (8 * (pblocks D C).card) integral (presPack (D := D) (C := C))
+  have hv := pvalue (D := D) (C := C)
+  have hb : ((pblocks D C).card : ℝ) ≤ C.card * Fintype.card W := by
+    exact_mod_cast card_pblocks_le D
+  push_cast at h ⊢
+  linarith
+
 /-- **Cor. 16.4.** -/
 theorem pgap_ge_third (D : PData F W V P) {C : Finset W} (hC : IsCap F (C : Set W)) (hC0 :
   C.Nonempty)
@@ -39,13 +54,8 @@ theorem pgap_ge_third (D : PData F W V P) {C : Finset W} (hC : IsCap F (C : Set 
     (hsame : ∀ v v', D.base v = D.base v' → ∀ i j, D.σ i = D.pos v → D.σ j = D.pos v' →
       ¬ H12.graph.Adj i j) :
     ((C.card * Fintype.card W : ℕ) : ℝ) / 3 ≤ gap (hostGraph (ppalette D C S)) := by
-  have h := gap_ge (phostHyp (S := S) hC0 hsame) (8 * (pblocks D C).card)
-    (fun T hT => pI_le D hC hT) (presPack (D := D) (C := C))
-  have hv := pvalue (D := D) (C := C)
-  have hb : ((pblocks D C).card : ℝ) ≤ C.card * Fintype.card W := by
-    exact_mod_cast card_pblocks_le D
-  push_cast at h ⊢
-  linarith
+  exact positioned_gap_ge_third D (phostHyp (S := S) hC0 hsame) (fun _ => pI_le D hC)
+
 
 omit [AddCommGroup U] [AddCommGroup W] [DecidableEq F] [DecidableEq P] [DecidableEq U]
     [DecidableEq V] [DecidableEq W] [Field F] [Module F U] [Module F W] in

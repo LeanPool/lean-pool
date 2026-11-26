@@ -7,7 +7,7 @@ Authors: Juan Pablo Traverso Gianini
 module
 
 public import LeanPool.SplitCliqueGap.GapExtremal.Completion
-public import LeanPool.SplitCliqueGap.GapExtremal.Global
+public import LeanPool.SplitCliqueGap.GapExtremal.GlobalLemmas
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.Push

@@ -155,7 +155,7 @@ def layered : PData F5 W ((F5 × W) ⊕ W) (Option F5) where
       rw [hy]
   colσ := by decide
 
-omit [DecidableEq W] [Fintype W] in
+omit [AddCommGroup W] [Module F5 W] [DecidableEq W] [Fintype W] in
 theorem layered_same :
     ∀ v v' : (F5 × W) ⊕ W, (layered (W := W)).base v = (layered (W := W)).base v' →
       ∀ i j, σL i = (layered (W := W)).pos v → σL j = (layered (W := W)).pos v' →

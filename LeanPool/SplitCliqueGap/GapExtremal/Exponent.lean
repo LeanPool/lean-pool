@@ -56,6 +56,22 @@ omit [AddCommGroup U] [DecidableEq U] [Fintype U] in
 theorem card_capPow (A : Finset U) (j : ℕ) : (capPow A j).card = A.card ^ j := by
   simp [capPow]
 
+omit [AddCommGroup U] [DecidableEq U] [Fintype U] in
+/-- A nonempty cap has a nonempty finite power. -/
+theorem capPow_nonempty {A : Finset U} (hA : A.Nonempty) (j : ℕ) :
+    (capPow A j).Nonempty := by
+  obtain ⟨a, ha⟩ := hA
+  exact ⟨fun _ => a, by simp [capPow, ha]⟩
+
+/-- Express the score of a powered cap in terms of the original cap and ambient type. -/
+theorem capPow_gap_le {U V : Type} [Fintype U] [Fintype V] [vertexDecidable : DecidableEq V]
+    {G : SimpleGraph V} {A : Finset U} {j : ℕ}
+    (h : (((capPow A j).card * Fintype.card (Fin j → U) : ℕ) : ℝ) / 3 ≤ gap G) :
+    (A.card : ℝ) ^ j * (Fintype.card U : ℝ) ^ j / 3 ≤ gap G := by
+  rw [card_capPow, Fintype.card_pi, Finset.prod_const, Finset.card_univ, Fintype.card_fin] at h
+  push_cast at h
+  exact h
+
 /-- `(M^j)^α = a^j · M^j` for `α = 1 + log a / log M`. -/
 theorem pow_rpow_alpha {a M : ℕ} (ha : 1 ≤ a) (hM : 2 ≤ M) (j : ℕ) :
     ((M : ℝ) ^ j) ^ (1 + Real.log a / Real.log M) = (a : ℝ) ^ j * (M : ℝ) ^ j := by
@@ -139,9 +155,6 @@ theorem tp_cond (σ : Fin 6 ↪ F) {A : Finset U} (hA : IsCap F (A : Set U)) (hS
     calc _ ≤ K * M ^ j := this
       _ ≤ n := hsize
   · have hgap := gap_ge_third (W := Fin j → U) σ (isCap_capPow hA j) (isSep_capPow hS j)
-    have hW : Fintype.card (Fin j → U) = M ^ j := by simp [M]
-    rw [card_capPow, hW] at hgap
-    push_cast at hgap
-    exact hscale.trans hgap
+    exact hscale.trans (capPow_gap_le (vertexDecidable := instDecidableEqSum) hgap)
 
 end GapExtremal

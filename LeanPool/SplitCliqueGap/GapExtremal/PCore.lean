@@ -38,7 +38,7 @@ variable {W : Type*} [AddCommGroup W] [Module F W] [Fintype W] [DecidableEq W]
 /-! ### Positioned cores -/
 
 /-- Data of a positioned core. -/
-structure PData (F W V P : Type*) [Field F] [AddCommGroup W] [Module F W] where
+structure PData (F W V P : Type*) where
   /-- The field and vector coordinates of each core vertex. -/
   base : V → F × W
   /-- The position of each vertex within its base fibre. -/
@@ -112,7 +112,8 @@ section ActiveCap
 /-- Active colours of a positioned core. -/
 def actCol : Set F := Set.range fun i => D.col (D.σ i)
 
-omit [DecidableEq F] [DecidableEq P] [DecidableEq V] [DecidableEq W] [Fintype F] [Fintype V]
+omit [Field F] [AddCommGroup W] [Module F W]
+    [DecidableEq F] [DecidableEq P] [DecidableEq V] [DecidableEq W] [Fintype F] [Fintype V]
     [Fintype W] in
 theorem fst_mem_actCol {v : V} (h : ∃ i, D.σ i = D.pos v) : (D.base v).1 ∈ actCol D := by
   obtain ⟨i, hi⟩ := h
