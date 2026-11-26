@@ -10,6 +10,7 @@ module
 
 public import LeanPool.GraphMinor.GM12.Section2EntryExistence
 import LeanPool.GraphMinor.GM12.Section2SectorCover
+import LeanPool.GraphMinor.GM12.Section2TerminalSectors
 
 /-!
 # An entering edge for a normal approach at a vertex of degree at least two
@@ -41,59 +42,10 @@ theorem exists_entersLike_of_two_halfEdges {S : Type*} [TopologicalSpace S]
     ∃ e ∈ K.E, EntersLike f a c e r v w := by
   obtain ⟨next, ρ, P, W, Q, τ, hsec, hcover⟩ :=
     exists_sectors_with_cover hS Γ hγ hv h2
-  let h₀ := (a + c) / 2
-  have hh₀ : h₀ ∈ Ioo a c := ⟨by dsimp [h₀]; linarith, by dsimp [h₀]; linarith⟩
-  have hpos : 0 < c - h₀ := sub_pos.mpr hh₀.2
-  let g : unitInterval → S := fun t => f (c - t.val * (c - h₀))
-  have hg : Continuous g := hf.comp (by fun_prop)
-  have hg0 : g 0 = v := by simpa only [g, Icc.coe_zero, zero_mul, sub_zero] using hfc
-  have hginside : ∀ t, 0 < t → g t ∈ r := by
-    intro t ht
-    apply hinside
-    constructor
-    · have hle := mul_le_of_le_one_left hpos.le t.property.2
-      linarith [hh₀.1]
-    · have hp := mul_pos (show (0 : ℝ) < t.val from ht) hpos
-      linarith
-  have hgoff : ∀ t, 0 < t → g t ∉ Γ.U := fun t ht => region_subset hr (hginside t ht)
-  obtain ⟨k, ε, hε, hεQ, hερ⟩ := initially_in_given_corner hsec hcover hg hg0 hgoff
-  obtain ⟨δ, hδ, hδε, hδW⟩ := GM11.exists_pos_le hg hsec.isOpen
-    (hg0.symm ▸ hsec.mem) hε
+  obtain ⟨k, h, hh, hlocal⟩ := exists_terminal_sector_of_approach hsec hcover hf hac hfc
+    (fun t ht => region_subset hr (hinside t ht))
   have hρr : ρ k = r := region_eq_of_mem (hsec.corners.region k) hr
-    (hερ δ hδ hδε) (hginside δ hδ)
-  let h := c - δ.val * (c - h₀)
-  have hh : h ∈ Ioo a c := by
-    constructor
-    · have hle := mul_le_of_le_one_left hpos.le δ.property.2
-      dsimp only [h]
-      linarith [hh₀.1]
-    · have hp := mul_pos (show (0 : ℝ) < δ.val from hδ) hpos
-      dsimp only [h]
-      linarith
-  have hlocal : ∀ t ∈ Ico h c, f t ∈ ρ k ∩ (Q k \ discBd (Q k)) := by
-    intro t ht
-    let s : unitInterval := ⟨(c - t) / (c - h₀),
-      div_nonneg (sub_nonneg.mpr ht.2.le) hpos.le, by
-        apply (div_le_one hpos).mpr
-        have hle := mul_le_of_le_one_left hpos.le δ.property.2
-        dsimp only [h] at ht
-        linarith [ht.1]⟩
-    have hs : 0 < s := div_pos (sub_pos.mpr ht.2) hpos
-    have hsδ : s ≤ δ := by
-      change (c - t) / (c - h₀) ≤ δ.val
-      apply (div_le_iff₀ hpos).mpr
-      dsimp only [h] at ht
-      linarith [ht.1]
-    have hgs : g s = f t := by
-      change f (c - (c - t) / (c - h₀) * (c - h₀)) = f t
-      congr 1
-      field_simp [ne_of_gt hpos]
-      ring
-    have hQ : g s ∈ Q k := hεQ s (hsδ.trans hδε)
-    have hnot : g s ∉ discBd (Q k) := fun hbd =>
-      hgoff s hs (hsec.bdU k ⟨hδW s hsδ, hbd⟩)
-    rw [← hgs]
-    exact ⟨hερ s hs (hsδ.trans hδε), hQ, hnot⟩
+    (hlocal h ⟨le_rfl, hh.2⟩).1 (hinside h hh)
   have hwρ : w ∈ ρ k := hρr.symm ▸ hw
   obtain ⟨e, he, hentry⟩ := exists_entersLike_of_sector hS hrad hmax hE hv hsec hcover k hwρ hwV
     hh hf.continuousOn hfc hlocal

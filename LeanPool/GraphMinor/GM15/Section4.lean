@@ -518,7 +518,8 @@ theorem edge_closure_inter_V_nonempty {S : Type w} [TopologicalSpace S]
   · exact ⟨u, by rw [hcl]; simp⟩
   · exact ⟨u, by rw [hcl]; simp⟩
 
-/-- Graph Minors XI, (9.1), proved from `GM11.gm15_theorem_9_1` and `Surface.epstein`. -/
+/-- Metric facts for a respectful tangle, including the triangle inequality from Graph Minors XI,
+(9.1), supplied by `GM11.gm15_theorem_9_1`. -/
 theorem gm11_theorem_9_1 : GM11Theorem91Statement.{w} :=
   GM11.gm15_theorem_9_1
 

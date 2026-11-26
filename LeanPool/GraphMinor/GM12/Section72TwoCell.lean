@@ -50,19 +50,9 @@ theorem theorem_7_2_twoCell (hS : IsClosedSurface S)
   have hYo : IsOpenDisc Y := isOpenDisc_union_disc_sdiff_point hS (htwo.2 r hr) hΔ
     (hdb.symm ▸ hvFV.1) (fun hvr => region_subset hr hvr (Γ.V_subset_U hvFV.2))
     (by rw [hdb]; exact hFr)
-  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
-    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
-    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
-  have hcover : Γ.U ⊆ Γ'.U ∪ Y := by
-    intro x hx
-    by_cases hxout : x ∈ closure (univ \ Δ)
-    · exact Or.inl (hUeq.symm ▸ ⟨hx, hxout⟩)
-    · have hxi : x ∈ interior Δ := by
-        by_contra h
-        exact hxout (by rw [← compl_eq_univ_sdiff, closure_compl]; exact h)
-      exact Or.inr (Or.inr ⟨interior_subset hxi, fun hxv =>
-        (hfr.symm ▸ hvFV.1).2 (mem_singleton_iff.mp hxv ▸ hxi)⟩)
+  have hcover : Γ.U ⊆ Γ'.U ∪ Y :=
+    (drawing_U_subset_outside_normal_disc_union hfr hn hvFV.1).trans
+      (union_subset_union subset_rfl subset_union_right)
   refine ⟨inferInstance, fun s hs => ?_⟩
   by_cases hsY : s = Y
   · exact hsY.symm ▸ hYo

@@ -55,19 +55,9 @@ theorem theorem_7_2_lost_atoms (hS : IsClosedSurface S) [ConnectedSpace S]
   have hdb : discBd Δ = F := (IsClosedDisc.frontier_eq_discBd hS hΔ).symm.trans hfr
   have hvFV : v ∈ F ∩ Γ.V := hFV.symm ▸ mem_singleton v
   have hvD : v ∈ Δ := Surface.discBd_subset Δ (hdb.symm ▸ hvFV.1)
-  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
-    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
-    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
-  have hcover : Γ.U ⊆ Γ'.U ∪ Y := by
-    intro x hx
-    by_cases hxout : x ∈ closure (univ \ Δ)
-    · exact Or.inl (hUeq.symm ▸ ⟨hx, hxout⟩)
-    · have hxi : x ∈ interior Δ := by
-        by_contra h
-        exact hxout (by rw [← compl_eq_univ_sdiff, closure_compl]; exact h)
-      exact Or.inr (Or.inr ⟨interior_subset hxi, fun hxv =>
-        (hfr.symm ▸ hvFV.1).2 (mem_singleton_iff.mp hxv ▸ hxi)⟩)
+  have hcover : Γ.U ⊆ Γ'.U ∪ Y :=
+    (drawing_U_subset_outside_normal_disc_union hfr hn hvFV.1).trans
+      (union_subset_union subset_rfl subset_union_right)
   obtain ⟨a', ha', haa'⟩ := exists_atom_superset_of_isSubdrawing hsub ha
   have haY : a ⊆ Y := by
     rcases atom_eq_or_eq_region_of_U_subset hsub hY hcover ha ha' haa' with

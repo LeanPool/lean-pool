@@ -36,8 +36,8 @@ This file formalizes Section 3 ("Rigidity", pages 119–124) of N. Robertson and
   `η(H)`-paths whose ends are in order on `H ∩ bd(Λ)` and free with respect to `T`.
 - **Graph Minors XV, (3.4)** (`GM15Theorem34Statement`, page 122): a drawing $H'$ that adds
   `k - 1` parallel paths across a region `Λ` of `H` has regions `r₁, r₂` with
-  `d'(r₁, r₂) ≥ 2k - 6` and `d'({v_k}, {v_{2k}}) ≥ 2k - 8`. `GM15Theorem34DrawnStatement` is the
-  same for paths of `G`, drawn first.
+  `d'(r₁, r₂) ≥ 2k - 6` and `d'({v_k}, {v_{2k}}) ≥ 2k - 8`. The formal statement also records
+  distance monotonicity and boundary order. `GM15Theorem34DrawnStatement` first draws paths of `G`.
 - **Graph Minors XV, (3.5)** (`GM15Theorem35Statement`, page 123): adding a handle between two
   distinct regions `Λ₁, Λ₂` of `H` using `φ` disjoint `η(H)`-paths.
 -/
@@ -2406,7 +2406,8 @@ theorem theorem_3_3_claim_3 {S : Type w} [TopologicalSpace S] [T2Space S]
     hFree_sub.2.2 hMemT hSubA
   exact ⟨Δ, hDial, hDial.2.1 ▸ hOrd ▸ hLe⟩
 
-/-- Statement of Graph Minors XV, (3.4) (page 122):
+/-- Graph Minors XV, (3.4) (page 122), with auxiliary conclusions.
+
 "Let $\Sigma$ be a surface and let $k \ge 3$ be an integer. Let $\mathscr{T}^*$ be a tangle
 in a graph $G$, and let $H, \mathscr{T}$ be a $\Sigma$-span of order $\theta$. Let $\Lambda
 \subseteq \Sigma$ be a region of $H$ such that $H \cap bd(\Lambda)$ is a circuit, and let
@@ -2422,7 +2423,12 @@ $d'(v_k, v_{2k}) \ge 2k - 8$, where $d'$ is the metric of $\mathscr{T}'."
 Here "$H' \subseteq G$" means that the span embedding `η'` of $H'$ agrees with `η` on $H$. The
 printed statement is false unless each $P_i$ meets $H$ only in its ends and the paths are disjoint
 (see the correction to (3.4) in `corrections/GM15.md`), so we add these two hypotheses. The proof
-uses both ("the disjoint paths $P_1, \dots, P_{k-1}$"), and so do the uses in Section 7. -/
+uses both ("the disjoint paths $P_1, \dots, P_{k-1}$"), and so do the uses in Section 7.
+
+The formal statement also identifies the old drawing outside $\Lambda$ and the induced tangle,
+gives monotonicity of distance on atoms of $H$, and describes each new region boundary as a circuit
+drawn on an $O$-arc. It records membership and cyclic order of specified sets of four vertices on
+these boundaries. Section 7 uses the boundary conclusions. -/
 def GM15Theorem34Statement : Prop :=
   ∀ {S : Type w} [TopologicalSpace S] [T2Space S] {α : Type u} {β : Type v}
     (G : Graph α β) (H : Drawing S) (η : SpanEmbedding H G)
@@ -2481,7 +2487,8 @@ def GM15Theorem34Statement : Prop :=
         OccurInCircuitOrder (H'.interSet (subBd r₂)) u₁ u₂ u₃ u₄) ∧
       2 * k - 6 ≤ d' r₁ r₂ ∧ 2 * k - 8 ≤ d' {v i_k} {v i_last}
 
-/-- Graph Minors XV, (3.4) (page 122), applied to a drawing $H'$ that is built: given paths
+/-- Graph Minors XV, (3.4) (page 122), with the auxiliary conclusions of
+`GM15Theorem34Statement`, applied to a constructed drawing $H'$. Given paths
 $P_1, \dots, P_{k-1}$ of $G$ that meet $\eta(H)$ only in their ends, there is a drawing
 $H' = H \cup P_1 \cup \dots \cup P_{k-1}$ in $\Sigma$ with the paths drawn across $\Lambda$, and
 (3.4) applies to it. This is the form used in Section 7; it is proved from

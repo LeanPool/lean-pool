@@ -34,44 +34,8 @@ variable {S Shat : Type} [TopologicalSpace S] [T2Space S] [TopologicalSpace Shat
 /-- The set of a walk is connected. -/
 theorem isPreconnected_walkDrawing_U {T : Type} [TopologicalSpace T] [T2Space T] {G : Drawing T} {u
   v : T}
-    (W : GraphWalk G.toGraph u v) : IsPreconnected (walkDrawing G W).U := by
-  induction W with
-  | @nil a h =>
-    have : (walkDrawing G (GraphWalk.nil h)).U = {a} := by
-      ext x
-      rw [mem_walkDrawing_U]
-      simp [GraphWalk.support, GraphWalk.edges]
-    rw [this]
-    exact isPreconnected_singleton
-  | @cons a b c e h r ih =>
-    have heq : (walkDrawing G (GraphWalk.cons h r)).U = closure e ∪ (walkDrawing G r).U := by
-      ext x
-      simp only [mem_union, mem_walkDrawing_U, GraphWalk.support_cons, GraphWalk.edges_cons,
-        List.mem_cons]
-      have hab : a ∈ closure e ∧ b ∈ closure e := by
-        have h₁ : a ∈ closure e ∩ G.V := by
-          rw [h.2.2.2]
-          exact .inl rfl
-        have h₂ : b ∈ closure e ∩ G.V := by
-          rw [h.2.2.2]
-          exact .inr rfl
-        exact ⟨h₁.1, h₂.1⟩
-      constructor
-      · rintro ((rfl | hx) | ⟨f, rfl | hf, hx⟩)
-        · exact .inl hab.1
-        · exact .inr (.inl hx)
-        · exact .inl hx
-        · exact .inr (.inr ⟨f, hf, hx⟩)
-      · rintro (hx | hx | ⟨f, hf, hx⟩)
-        · exact .inr ⟨e, .inl rfl, hx⟩
-        · exact .inl (.inr hx)
-        · exact .inr ⟨f, .inr hf, hx⟩
-    rw [heq]
-    have hbc : IsPreconnected (closure e) := h.1.2.2.1.isConnected.isPreconnected.closure
-    have hb : b ∈ closure e ∩ G.V := by
-      rw [h.2.2.2]
-      exact .inr rfl
-    exact hbc.union b hb.1 ((mem_walkDrawing_U G r).mpr (.inl r.start_mem_support)) ih
+    (W : GraphWalk G.toGraph u v) : IsPreconnected (walkDrawing G W).U :=
+  GraphWalk.drawing_U_isPreconnected G W
 
 /-- Two vertices of a closed walk are joined by a walk of at most half its length, with its vertices
 on the closed walk. -/

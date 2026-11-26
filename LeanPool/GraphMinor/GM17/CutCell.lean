@@ -279,16 +279,12 @@ theorem disc_diff_two [T2Space Y] {D : Set Y} {u v : Y} (hD : IsClosedDisc D) (h
   (hv : v ∈ discBd D) :
     closure (D \ {u, v}) = D ∧ tilde (D \ {u, v}) = {u, v} ∧ IsPathConnected (D \ {u, v}) ∧
       (D \ {u, v}).Nonempty := by
-  have hcl : IsClosed D := hD.isClosed
   have hbd : discBd D ⊆ D := discBd_subset D
-  have h1 : closure (D \ {u, v}) = D := by
-    apply subset_antisymm (closure_minimal sdiff_subset hcl)
-    refine hD.subset_closure_discInt.trans (closure_mono ?_)
-    rintro x ⟨hx, hn⟩
-    refine ⟨hx, ?_⟩
-    rintro (rfl | rfl)
-    · exact hn hu
-    · exact hn hv
+  obtain ⟨hne, hpc, h1⟩ := hD.sdiff_of_inter_subset_discBd
+    (F := {u, v}) (by
+      rintro x ⟨rfl | rfl, -⟩
+      · exact hu
+      · exact hv)
   have h2 : tilde (D \ {u, v}) = {u, v} := by
     rw [tilde, h1]
     ext x
@@ -301,13 +297,6 @@ theorem disc_diff_two [T2Space Y] {D : Set Y} {u v : Y} (hD : IsClosedDisc D) (h
       rcases h3 with rfl | rfl
       · exact hbd hu
       · exact hbd hv
-  refine ⟨h1, h2, isPathConnected_of_isClosedDisc_finite_diff hD sdiff_subset
-    ((finite_singleton _ |>.insert _).subset fun x hx => by
-      by_contra h
-      exact hx.2 ⟨hx.1, h⟩), ?_⟩
-  by_contra hn
-  rw [not_nonempty_iff_eq_empty] at hn
-  rw [hn, closure_empty] at h1
-  exact (h1 ▸ hbd hu : u ∈ (∅ : Set Y))
+  exact ⟨h1, h2, hpc, hne⟩
 
 end GraphMinor.GM17

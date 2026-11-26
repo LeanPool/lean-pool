@@ -125,14 +125,12 @@ theorem normalIArcReplaceDisc : NormalIArcReplaceDiscPaintingStatement := by
     exact nodes_outside_cut_disc S Γ n₁ n₂ F Δ hFN hnb hFΔ hnF
   let c' : Set S := Δ \ {n₁, n₂}
   let N' : Set S := (Γ.N \ Δ) ∪ {n₁, n₂}
-  have hc'cl : closure c' = Δ := by
-    apply subset_antisymm (closure_minimal sdiff_subset hcl)
-    refine hΔ.subset_closure_discInt.trans (closure_mono ?_)
-    rintro x ⟨hx, hn⟩
-    refine ⟨hx, ?_⟩
-    rintro (rfl | rfl)
-    · exact hn (h1 hn₁F)
-    · exact hn (h1 hn₂F)
+  obtain ⟨hc'ne, hc'pc, hc'cl⟩ :
+      c'.Nonempty ∧ IsPathConnected c' ∧ closure c' = Δ := by
+    refine hΔ.sdiff_of_inter_subset_discBd ?_
+    rintro x ⟨rfl | rfl, -⟩
+    · exact h1 hn₁F
+    · exact h1 hn₂F
   have hc't : tilde c' = {n₁, n₂} := by
     rw [tilde, hc'cl]
     ext x
@@ -160,11 +158,6 @@ theorem normalIArcReplaceDisc : NormalIArcReplaceDiscPaintingStatement := by
     exact h3
   obtain ⟨z, hzI⟩ := hIne
   have hzc' : z ∈ c' := ⟨hIΔ hzI.1, hzI.2⟩
-  have hc'ne : c'.Nonempty := ⟨z, hzc'⟩
-  have hc'pc : IsPathConnected c' := isPathConnected_of_isClosedDisc_finite_diff hΔ sdiff_subset
-    ((finite_singleton _ |>.insert _).subset fun x hx => by
-      by_contra h
-      exact hx.2 ⟨hx.1, h⟩)
   let J : Set (Set S) := insert c' {c ∈ Γ.C | c ⊆ Δᶜ}
   have hJ_finite : J.Finite := by
     have hfinite : {c ∈ Γ.C | c ⊆ Δᶜ}.Finite :=

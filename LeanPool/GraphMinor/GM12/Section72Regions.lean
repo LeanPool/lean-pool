@@ -51,6 +51,39 @@ theorem interSet_U_eq_of_normal_frontier {Γ : Drawing S} {X : Set S}
         subset_of_disjoint_frontier he.2.2.1.isConnected.isPreconnected hX hd hxe hxX
       exact ((mem_interSet_E_iff.mpr ⟨he, heX⟩).2.1 hxe).1
 
+/-- Restricting a drawing to the outside of a normal disc keeps its points outside the interior. -/
+theorem outside_normal_disc_drawing_U {Γ : Drawing S} {Δ F : Set S}
+    (hF : frontier Δ = F) (hn : (PaintingOrDrawing.drawing Γ).IsNormal F) :
+    (Γ.interSet (closure (univ \ Δ))).U = Γ.U ∩ closure (univ \ Δ) := by
+  apply interSet_U_eq_of_normal_frontier isClosed_closure
+  rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
+  exact fun x hx => hn ⟨hF ▸ frontier_interior_subset hx.1, hx.2⟩
+
+/-- The drawing outside a normal disc meets the disc only at its sole boundary vertex. -/
+theorem outside_normal_disc_drawing_inter_subset {Γ : Drawing S} {Δ F : Set S} {v : S}
+    (hF : frontier Δ = F) (hn : (PaintingOrDrawing.drawing Γ).IsNormal F)
+    (hv : F ∩ Γ.V = {v}) :
+    (Γ.interSet (closure (univ \ Δ))).U ∩ Δ ⊆ {v} := by
+  rw [outside_normal_disc_drawing_U hF hn]
+  rintro x ⟨⟨hxU, hxOut⟩, hxΔ⟩
+  have hxF : x ∈ F := by
+    rw [← hF, frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
+    exact ⟨subset_closure hxΔ, hxOut⟩
+  exact hv ▸ ⟨hxF, hn ⟨hxF, hxU⟩⟩
+
+/-- The outside drawing and the punctured disc cover the original drawing when the puncture
+lies on the disc frontier. -/
+theorem drawing_U_subset_outside_normal_disc_union {Γ : Drawing S} {Δ F : Set S} {v : S}
+    (hF : frontier Δ = F) (hn : (PaintingOrDrawing.drawing Γ).IsNormal F)
+    (hv : v ∈ F) :
+    Γ.U ⊆ (Γ.interSet (closure (univ \ Δ))).U ∪ (Δ \ {v}) := by
+  rw [outside_normal_disc_drawing_U hF hn, ← compl_eq_univ_sdiff, closure_compl]
+  intro x hx
+  by_cases hxi : x ∈ interior Δ
+  · exact Or.inr ⟨interior_subset hxi, fun hxv =>
+      (hF.symm ▸ hv).2 (mem_singleton_iff.mp hxv ▸ hxi)⟩
+  · exact Or.inl ⟨hx, hxi⟩
+
 omit [T2Space S] in
 private theorem frontier_region_subset_drawing [LocallyConnectedSpace S]
     {Γ : Drawing S} {r : Set S} (hr : r ∈ Γ.R) : frontier r ⊆ Γ.U := by
@@ -93,10 +126,7 @@ theorem theorem_7_2_region (hS : IsClosedSurface S)
   have hvb : v ∈ discBd Δ := hdb.symm ▸ hvFV.1
   have hX : closure (univ \ Δ) = (interior Δ)ᶜ := by
     rw [← compl_eq_univ_sdiff, closure_compl]
-  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
-    rw [hX, frontier_compl]
-    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hU := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
+  have hU := outside_normal_disc_drawing_U hfr hn
   let Γ' := Γ.interSet (closure (univ \ Δ))
   let Y := r ∪ (Δ \ {v})
   have hYeq : Y = r ∪ interior Δ := by

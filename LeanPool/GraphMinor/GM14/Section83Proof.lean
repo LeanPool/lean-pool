@@ -702,153 +702,6 @@ private theorem paths_split_at_last_circuit
   rw [vertexSet_subgraphUnion]
   exact union_subset (hMI.trans hIP).vertexSet_mono hTP.vertexSet_mono
 
-private theorem transaction_path_extension
-    {α : Type u}
-    {β : Type v}
-    {S_comp : Society α β}
-    {X : Set α}
-    (x : Fin X.ncard → α)
-    (y : Fin X.ncard → α)
-    (R : Fin X.ncard → Graph α β)
-    (hy_inj : Injective y)
-    (hRd : ∀ {i j : Fin X.ncard}, i ≠ j → Disjoint V(R i) V(R j))
-    (S₁ : Society α β) (hS₁S : S₁.G ≤ S_comp.G)
-    (T : Set (Graph α β))
-    (hT : S₁.IsCrookedTransaction T)
-    (hS₁T : ∀ Q ∈ T, Q ≤ S₁.G)
-    (hRSN : ∀ (i : Fin X.ncard), IsGraphPathWithEnds S_comp.G (R i) (x i) (y i))
-    (hRV : ∀ {Q : Graph α β} {i : Fin X.ncard}, Q ≤ S₁.G → y i ∈ V(Q) → V(R i) ∩ V(Q) = {y i})
-    (hTY : ∀ {Q : Graph α β} {a b : α}, Q ∈ T → S₁.IsOmegaPathWithEnds Q a b → ∃ i j, a = y i ∧ b
-      = y j ∧ i ≠ j) :
-    ∀ Q ∈ T, ∃ Qe, ∀ (i j : Fin X.ncard), S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      IsGraphPathWithEnds S_comp.G Qe (x i) (x j) ∧ V(Qe) = V(R i) ∪ V(Q) ∪ V(R j) := by
-  intro Q hQ
-  obtain ⟨A, B, hf⟩ := hT.1
-  obtain ⟨a, -, b, -, hQp⟩ := hf.2.2 Q hQ
-  obtain ⟨i₀, j₀, rfl, rfl, hne⟩ := hTY hQ hQp
-  have hQS : Q ≤ S₁.G := hS₁T Q hQ
-  have hpS : IsGraphPathWithEnds S_comp.G Q (y i₀) (y j₀) :=
-    hQp.1.mono hS₁S
-  obtain ⟨Qe, hQe, hVQ⟩ := exists_extended_path hpS (hRSN i₀) (hRSN j₀)
-    (hRV hQS hQp.1.left_mem) (hRV hQS hQp.1.right_mem) (hRd hne)
-  refine ⟨Qe, fun i j hij => ?_⟩
-  rcases Society.IsOmegaPathWithEnds.ends_eq S₁ hQp hij with ⟨e₁, e₂⟩ | ⟨e₁, e₂⟩
-  · obtain rfl := hy_inj e₁
-    obtain rfl := hy_inj e₂
-    exact ⟨hQe, hVQ⟩
-  · obtain rfl := hy_inj e₁
-    obtain rfl := hy_inj e₂
-    refine ⟨hQe.symm, ?_⟩
-    rw [hVQ]
-    ext v
-    simp only [mem_union]
-    tauto
-
-private theorem extensions_pairwise_disjoint
-    {α : Type u}
-    {β : Type v}
-    {S_comp : Society α β}
-    {X : Set α}
-    (x : Fin X.ncard → α)
-    (y : Fin X.ncard → α)
-    (R : Fin X.ncard → Graph α β)
-    (hRd : ∀ {i j : Fin X.ncard}, i ≠ j → Disjoint V(R i) V(R j))
-    (S₁ : Society α β)
-    (T : Set (Graph α β))
-    (hT : S₁.IsCrookedTransaction T)
-    (hTY : ∀ {Q : Graph α β} {a b : α}, Q ∈ T → S₁.IsOmegaPathWithEnds Q a b → ∃ i j, a = y i ∧ b
-      = y j ∧ i ≠ j)
-    (f : Graph α β → Graph α β)
-    (hf : ∀ Q ∈ T, ∀ (i j : Fin X.ncard), S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      IsGraphPathWithEnds S_comp.G (f Q) (x i) (x j) ∧ V(f Q) = V(R i) ∪ V(Q) ∪ V(R j))
-    (hTdisj : ∀ {Q Q' : Graph α β}, Q ∈ T → Q' ∈ T → Q ≠ Q' → Disjoint V(Q) V(Q'))
-    (hRQ : ∀ {Q Q' : Graph α β} {i j : Fin X.ncard}, Q ∈ T → Q' ∈ T → Q ≠ Q' →
-      S₁.IsOmegaPathWithEnds Q (y i) (y j) → Disjoint V(R i) V(Q')) :
-    ∀ Q ∈ T, ∀ Q' ∈ T, Q ≠ Q' → Disjoint V(f Q) V(f Q') := by
-  intro Q hQ Q' hQ' hne
-  obtain ⟨A, B, hfence⟩ := hT.1
-  obtain ⟨a, -, b, -, hQp⟩ := hfence.2.2 Q hQ
-  obtain ⟨a', -, b', -, hQ'p⟩ := hfence.2.2 Q' hQ'
-  obtain ⟨i, j, rfl, rfl, -⟩ := hTY hQ hQp
-  obtain ⟨i', j', rfl, rfl, -⟩ := hTY hQ' hQ'p
-  rw [(hf Q hQ i j hQp).2, (hf Q' hQ' i' j' hQ'p).2]
-  have hdQ := hTdisj hQ hQ' hne
-  have h₁ := hRQ hQ hQ' hne hQp
-  have h₂ := hRQ hQ hQ' hne (Society.IsOmegaPathWithEnds.symm S₁ hQp)
-  have h₃ := hRQ hQ' hQ hne.symm hQ'p
-  have h₄ := hRQ hQ' hQ hne.symm (Society.IsOmegaPathWithEnds.symm S₁ hQ'p)
-  have hne' : ∀ {u w}, y u ∈ V(Q) → y w ∈ V(Q') → u ≠ w := by
-    rintro u w hu hw rfl
-    exact Set.disjoint_left.mp hdQ hu hw
-  have hu₁ := hQp.1.left_mem
-  have hu₂ := hQp.1.right_mem
-  have hw₁ := hQ'p.1.left_mem
-  have hw₂ := hQ'p.1.right_mem
-  rw [Set.disjoint_left]
-  rintro v ((h | h) | h) ((h' | h') | h')
-  · exact Set.disjoint_left.mp (hRd (hne' hu₁ hw₁)) h h'
-  · exact Set.disjoint_left.mp h₁ h h'
-  · exact Set.disjoint_left.mp (hRd (hne' hu₁ hw₂)) h h'
-  · exact Set.disjoint_left.mp h₃ h' h
-  · exact Set.disjoint_left.mp hdQ h h'
-  · exact Set.disjoint_left.mp h₄ h' h
-  · exact Set.disjoint_left.mp (hRd (hne' hu₂ hw₁)) h h'
-  · exact Set.disjoint_left.mp h₂ h h'
-  · exact Set.disjoint_left.mp (hRd (hne' hu₂ hw₂)) h h'
-
-private theorem extended_transaction_is_crooked
-    {α : Type u}
-    {β : Type v}
-    {S_comp : Society α β}
-    {X : Set α}
-    (x : Fin X.ncard → α)
-    (N₂ : Neighborhood α β) (hΩ : N₂.Ω = S_comp.Ω)
-    (hrural₂ : N₂.IsRural)
-    (y : Fin X.ncard → α)
-    (R : Fin X.ncard → Graph α β)
-    (hyK : ∀ (i : Fin X.ncard), y i ∈ N₂.Ω₀.bar)
-    (hR : ∀ (i : Fin X.ncard), IsGraphPathWithEnds N₂.G (R i) (x i) (y i))
-    (hx_inj : Injective x)
-    (hRd : ∀ {i j : Fin X.ncard}, i ≠ j → Disjoint V(R i) V(R j))
-    (S₁ : Society α β) (hΩ₀ : N₂.Ω₀ = S₁.Ω)
-    (T : Set (Graph α β))
-    (hT : S₁.IsCrookedTransaction T)
-    (hTends : S₁.transactionEnds T ⊆ range y)
-    (ψ : α → α)
-    (hψ : ∀ (i : Fin X.ncard), ψ (y i) = x i)
-    (hTY : ∀ {Q : Graph α β} {a b : α}, Q ∈ T → S₁.IsOmegaPathWithEnds Q a b → ∃ i j, a = y i ∧ b
-      = y j ∧ i ≠ j)
-    (f : Graph α β → Graph α β)
-    (hxb : ∀ (i : Fin X.ncard), x i ∈ S_comp.Ω.bar)
-    (hendsT : ∀ Q ∈ T, ∀ (i j : Fin X.ncard), S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      S_comp.IsOmegaPathWithEnds (f Q) (x i) (x j))
-    (hd : ∀ Q ∈ T, ∀ Q' ∈ T, Q ≠ Q' → Disjoint V(f Q) V(f Q')) :
-    S_comp.IsCrookedTransaction (f '' T) := by
-  refine Society.isCrookedTransaction_image (ψ := ψ) hT ?_ hd ?_ ?_
-  · intro Q hQ a b hab
-    obtain ⟨i, j, rfl, rfl, -⟩ := hTY hQ hab
-    rw [hψ, hψ]
-    exact hendsT Q hQ i j hab
-  · intro a ha b hb e
-    obtain ⟨i, rfl⟩ := hTends ha
-    obtain ⟨j, rfl⟩ := hTends hb
-    rw [hψ, hψ] at e
-    exact congrArg y (hx_inj e)
-  · intro a ha b hb c hc d' hd' h12 h13 h14 h23 h24 h34
-    obtain ⟨i₁, rfl⟩ := hTends ha
-    obtain ⟨i₂, rfl⟩ := hTends hb
-    obtain ⟨i₃, rfl⟩ := hTends hc
-    obtain ⟨i₄, rfl⟩ := hTends hd'
-    have hne : ∀ {u w}, y u ≠ y w → u ≠ w := fun h e => h (congrArg y e)
-    have hN (k : Fin X.ncard) : x k ∈ N₂.Ω.bar := hΩ.symm ▸ hxb k
-    have h := crosses_outer_iff_crosses_inner_of_disjoint_paths hrural₂ (hR i₁) (hN i₁) (hyK i₁)
-      (hR i₃) (hN i₃) (hyK i₃) (hR i₂) (hN i₂) (hyK i₂) (hR i₄) (hN i₄) (hyK i₄)
-      (hRd (hne h13)) (hRd (hne h12)) (hRd (hne h14)) (hRd (hne h23.symm)) (hRd (hne h34))
-      (hRd (hne h24))
-    rw [hψ, hψ, hψ, hψ]
-    rw [hΩ, hΩ₀] at h
-    exact h.symm
-
 private theorem inner_segments_form_weak_linkage
     {α : Type u}
     {β : Type v}
@@ -892,85 +745,6 @@ private theorem inner_segments_form_weak_linkage
         exact ⟨(hW i).right_mem, hΩ₀.symm ▸ this.2⟩
   · refine (hPd fun e => hij ?_).mono (hWP _) (hWP _)
     exact Fin.cast_injective hYcard e
-
-private theorem extended_transaction_preserves_size_and_endpoints
-    {α : Type u}
-    {β : Type v}
-    {S_comp : Society α β}
-    {N : Neighborhood α β}
-    {X : Set α}
-    (C : Fin 2 → Graph α β)
-    (P : Fin X.ncard → Graph α β)
-    (x : Fin X.ncard → α)
-    (t : Fin X.ncard → α)
-    (hCbar : ∀ (j : Fin 2), Disjoint V(C j) N.Ω.bar)
-    (hP : ∀ (i : Fin X.ncard), IsFromToPathWithEnds N.G (P i) X N.Ω₀.bar (x i) (t i) ∧ V(P i) ∩
-      N.Ω.bar = {x i})
-    (hΩ : N.Ω = S_comp.Ω)
-    (last : Fin 2)
-    (H₂ : Graph α β)
-    (hbarH₂ : N.Ω.bar ⊆ V(H₂))
-    (y : Fin X.ncard → α)
-    (R : Fin X.ncard → Graph α β)
-    (hRP : ∀ (i : Fin X.ncard), V(R i) ⊆ V(P i))
-    (S₁ : Society α β)
-    (hcutU : V(H₂) ∩ V(S₁.G) = V(C last))
-    (T : Set (Graph α β))
-    (hT : S₁.IsCrookedTransaction T)
-    (hpT : T.ncard = 2)
-    (hS₁T : ∀ Q ∈ T, Q ≤ S₁.G)
-    (hTY : ∀ {Q : Graph α β} {a b : α}, Q ∈ T → S₁.IsOmegaPathWithEnds Q a b → ∃ i j, a = y i ∧ b
-      = y j ∧ i ≠ j)
-    (f : Graph α β → Graph α β)
-    (hf : ∀ Q ∈ T, ∀ (i j : Fin X.ncard), S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      IsGraphPathWithEnds S_comp.G (f Q) (x i) (x j) ∧ V(f Q) = V(R i) ∪ V(Q) ∪ V(R j))
-    (hendsT : ∀ Q ∈ T, ∀ (i j : Fin X.ncard), S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      S_comp.IsOmegaPathWithEnds (f Q) (x i) (x j))
-    (hd : ∀ Q ∈ T, ∀ Q' ∈ T, Q ≠ Q' → Disjoint V(f Q) V(f Q'))
-    (hcrook : S_comp.IsCrookedTransaction (f '' T)) :
-    ∃ P', S_comp.IsCrookedTransaction P' ∧ P'.ncard = 2 ∧ S_comp.transactionEnds P' ⊆ X ∧ ∀ P ∈
-      P', Disjoint (pathInternalVerts S_comp.G P) S_comp.Ω.bar := by
-  have hnonempty : ∀ Q ∈ T, V(f Q).Nonempty := by
-    intro Q hQ
-    obtain ⟨A, B, hfence⟩ := hT.1
-    obtain ⟨a, -, b, -, hQp⟩ := hfence.2.2 Q hQ
-    obtain ⟨i, j, rfl, rfl, -⟩ := hTY hQ hQp
-    exact ⟨_, (hf Q hQ i j hQp).1.left_mem⟩
-  have hinjf : InjOn f T := by
-    intro Q hQ Q' hQ' e
-    by_contra hne
-    obtain ⟨v, hv⟩ := hnonempty Q hQ
-    exact Set.disjoint_left.mp (hd Q hQ Q' hQ' hne) hv (e ▸ hv)
-  refine ⟨f '' T, hcrook, ?_, ?_, ?_⟩
-  · rw [hinjf.ncard_image]
-    exact hpT
-  · rintro v ⟨_, ⟨Q, hQ, rfl⟩, b, hvb⟩
-    obtain ⟨A, B, hfence⟩ := hT.1
-    obtain ⟨a', -, b', -, hQp⟩ := hfence.2.2 Q hQ
-    obtain ⟨i, j, rfl, rfl, -⟩ := hTY hQ hQp
-    have hxX : ∀ k, x k ∈ X := fun k =>
-      ((hP k).1.2.1.symm ▸ mem_singleton _ : x k ∈ V(P k) ∩ X).2
-    rcases Society.IsOmegaPathWithEnds.ends_eq S_comp (hendsT Q hQ i j hQp) hvb with ⟨e, -⟩ | ⟨e, -⟩
-    · exact e ▸ hxX i
-    · exact e ▸ hxX j
-  · rintro _ ⟨Q, hQ, rfl⟩
-    rw [Set.disjoint_left]
-    rintro v ⟨hv, hvE⟩ hvb
-    obtain ⟨A, B, hfence⟩ := hT.1
-    obtain ⟨a', -, b', -, hQp⟩ := hfence.2.2 Q hQ
-    obtain ⟨i, j, rfl, rfl, -⟩ := hTY hQ hQp
-    obtain ⟨hpath, hVe⟩ := hf Q hQ i j hQp
-    have hend : ∀ {k}, v ∈ V(R k) → v = x k := by
-      intro k hk
-      have : v ∈ V(P k) ∩ N.Ω.bar := ⟨hRP k hk, hΩ ▸ hvb⟩
-      rwa [(hP k).2] at this
-    rw [hVe] at hv
-    rcases hv with (h | h) | h
-    · exact hvE ⟨_, hend h ▸ hpath⟩
-    · have hK : v ∈ V(H₂) ∩ V(S₁.G) := ⟨hbarH₂ (hΩ ▸ hvb), (hS₁T Q hQ).vertexSet_mono h⟩
-      rw [hcutU] at hK
-      exact Set.disjoint_left.mp (hCbar last) hK (hΩ ▸ hvb)
-    · exact hvE ⟨_, hend h ▸ hpath.symm⟩
 
 /-- Refinement of Graph Minors IX, `(10.4)` for `p = 2` under breadth `≥ 3` and `4 ≤ X.ncard`. -/
 private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood α β} {X : Set α}
@@ -1023,72 +797,27 @@ private theorem theorem_10_4_p2 {S_comp S₀ : Society α β} {N : Neighborhood 
   obtain ⟨T₀, hT₀, hpT₀⟩ := GraphMinor.GM09.theorem_9_1_proof hcomp₂ hrural₂ hP₀ hp
   obtain ⟨T, hT, hpT, hTends⟩ := theorem_10_3_p2 hrural₁ ⟨P₁, C, hnest₁⟩ hweak_after_split
     (by rw [hYcard]; exact hcard) hcomp₁ hT₀ hpT₀
-  have hne_idx : Nonempty (Fin X.ncard) := ⟨⟨0, by omega⟩⟩
-  let ψ : α → α := fun v => x (invFun y v)
-  have hψ : ∀ i, ψ (y i) = x i := fun i => congrArg x (leftInverse_invFun hy_inj i)
-  have hS₁T : ∀ Q ∈ T, Q ≤ S₁.G := by
-    intro Q hQ
-    obtain ⟨A, B, hf⟩ := hT.1
-    obtain ⟨a, -, b, -, hQp⟩ := hf.2.2 Q hQ
-    exact hQp.1.le
-  have hRS : ∀ {i v}, v ∈ V(R i) → v ∈ V(S₁.G) → v = y i := by
-    intro i v hv hv₁
-    have : v ∈ V(R i) ∩ V(C last) := ⟨hv, hcutU ▸ ⟨(hR i).le.vertexSet_mono hv, hv₁⟩⟩
-    rwa [hRK] at this
-  have hRSN : ∀ i, IsGraphPathWithEnds S_comp.G (R i) (x i) (y i) := fun i =>
-    (hR i).mono (hsep.2.1.trans hNG)
-  have hRV : ∀ {Q : Graph α β} {i}, Q ≤ S₁.G → y i ∈ V(Q) → V(R i) ∩ V(Q) = {y i} := by
-    intro Q i hQ hyQ
+  have hxb : ∀ i, x i ∈ S_comp.Ω.bar := by
+    intro i
+    have hx : x i ∈ V(P i) ∩ N.Ω.bar := (hP i).2.symm ▸ mem_singleton _
+    exact hΩ ▸ hx.2
+  have hxX : ∀ i, x i ∈ X := fun i =>
+    ((hP i).1.2.1.symm ▸ mem_singleton _ : x i ∈ V(P i) ∩ X).2
+  have hRbar : ∀ i, V(R i) ∩ S_comp.Ω.bar = {x i} := by
+    intro i
     apply Subset.antisymm
-    · rintro v ⟨hv, hvQ⟩
-      exact hRS hv (hQ.vertexSet_mono hvQ)
+    · intro v hv
+      have hmem : v ∈ V(P i) ∩ N.Ω.bar := ⟨hRP i hv.1, hΩ ▸ hv.2⟩
+      rwa [(hP i).2] at hmem
     · rintro _ rfl
-      exact ⟨hyR i, hyQ⟩
-  have hTY : ∀ {Q a b}, Q ∈ T → S₁.IsOmegaPathWithEnds Q a b → ∃ i j, a = y i ∧ b = y j ∧ i ≠ j
-    := by
-    intro Q a b hQ hab
-    obtain ⟨i, rfl⟩ := hTends ⟨Q, hQ, b, hab⟩
-    obtain ⟨j, rfl⟩ := hTends ⟨Q, hQ, _, Society.IsOmegaPathWithEnds.symm S₁ hab⟩
-    exact ⟨i, j, rfl, rfl, fun e => hab.2.1 (congrArg y e)⟩
-  have hex : ∀ Q ∈ T, ∃ Qe : Graph α β, ∀ i j, S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      IsGraphPathWithEnds S_comp.G Qe (x i) (x j) ∧ V(Qe) = V(R i) ∪ V(Q) ∪ V(R j) := by
-    exact transaction_path_extension (α := α) (β := β) (S_comp := S_comp) (X := X) x
-      y R hy_inj hRd S₁ hS₁S T hT hS₁T hRSN hRV hTY
-  choose! f hf using hex
-  have hTdisj : ∀ {Q Q'}, Q ∈ T → Q' ∈ T → Q ≠ Q' → Disjoint V(Q) V(Q') := by
-    intro Q Q' hQ hQ' hne
-    obtain ⟨A, B, hfence⟩ := hT.1
-    exact hfence.1.2 hQ hQ' hne
-  have hxb : ∀ i, x i ∈ S_comp.Ω.bar := fun i => by
-    have : x i ∈ V(P i) ∩ N.Ω.bar := (hP i).2.symm ▸ mem_singleton _
-    exact hΩ ▸ this.2
-  have hendsT : ∀ Q ∈ T, ∀ i j, S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      S_comp.IsOmegaPathWithEnds (f Q) (x i) (x j) := fun Q hQ i j hij =>
-    ⟨(hf Q hQ i j hij).1, fun e => hij.2.1 (congrArg y (hx_inj e)), hxb i, hxb j⟩
-  have hRQ : ∀ {Q Q' i j}, Q ∈ T → Q' ∈ T → Q ≠ Q' → S₁.IsOmegaPathWithEnds Q (y i) (y j) →
-      Disjoint V(R i) V(Q') := by
-    intro Q Q' i j hQ hQ' hne hij
-    rw [Set.disjoint_left]
-    intro v hv hvQ
-    have e := hRS hv ((hS₁T Q' hQ').vertexSet_mono hvQ)
-    subst e
-    exact Set.disjoint_left.mp (hTdisj hQ hQ' hne) hij.1.left_mem hvQ
-  have hd : ∀ Q ∈ T, ∀ Q' ∈ T, Q ≠ Q' → Disjoint V(f Q) V(f Q') := by
-    exact extensions_pairwise_disjoint (α := α) (β := β) (S_comp := S_comp) (X := X) x y R hRd S₁
-      T hT hTY f hf hTdisj hRQ
-  have hcrook : S_comp.IsCrookedTransaction (f '' T) := by
-    have hΩinner : N₂.Ω₀ = N₁.Ω := hcomp₂.2.2.1.trans hcomp₁.2.1.symm
-    exact extended_transaction_is_crooked (α := α) (β := β) (S_comp := S_comp) (X := X)
-      x N₂ hcomp₂.2.1 hrural₂ y R (fun i => hΩinner.symm ▸ (hΩ₁.symm ▸ hyK i))
-      hR hx_inj hRd S₁ hcomp₂.2.2.1 T hT hTends ψ hψ hTY f hxb hendsT hd
-  have hDelivered :
-      ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ P'.ncard = 2 ∧
-        S_comp.transactionEnds P' ⊆ X ∧
-        ∀ P ∈ P', Disjoint (pathInternalVerts S_comp.G P) S_comp.Ω.bar := by
-    exact extended_transaction_preserves_size_and_endpoints (α := α) (β := β) (S_comp := S_comp)
-      (N := N) (X := X) C P x t hCbar hP hΩ last H₂ hbarH₂ y R hRP S₁ hcutU T hT hpT hS₁T hTY f hf
-      hendsT hd hcrook
-  exact hDelivered
+      exact ⟨(hR i).left_mem, hxb i⟩
+  obtain ⟨T', hT', hsize, hends, hinternal⟩ :=
+    extend_crooked_transaction_across_neighborhood (N₂ := N₂) (K := C last) (by omega)
+      hS₁S (hsep.2.1.trans hNG) hcutU hcomp₂.2.1 hcomp₂.2.2.1
+      hrural₂ (fun v hv => hbarH₂ (hΩ ▸ hv)) (hΩ ▸ hCbar last)
+      hR hRK hy_inj hx_inj hRd (fun i => hcomp₁.2.1 ▸ (hΩ₁.symm ▸ hyK i))
+      hxb hxX hRbar hT hTends
+  exact ⟨T', hT', hsize.trans hpT, hends, hinternal⟩
 
 /-! ## 3. Proof of Graph Minors XIV, (8.3) (pages 40–41) -/
 

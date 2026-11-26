@@ -713,38 +713,8 @@ theorem isDivision_dualDivision {S : Type u} [TopologicalSpace S]
     {C U : Set S} {Δ : Set (Set S)}
     (hC : IsOArc C) (hV_fin : (divisionUnion Δ).Finite) (hV_sub : divisionUnion Δ ⊆ C)
     (hU : IsDualPointSet C (divisionUnion Δ) U) :
-    IsDivision (dualDivision C U Δ) := by
-  have hU_sub : U ⊆ C \ divisionUnion Δ := isDualPointSet_subset_diff hU
-  obtain ⟨φ⟩ := hC
-  have hinj := injective_oArcMap φ
-  have hrange := range_oArcMap φ
-  let U₀ := oArcMap φ ⁻¹' U
-  let Δ₀ := (preimage (oArcMap φ)) '' Δ
-  have hU_eq : oArcMap φ '' U₀ = U :=
-    image_preimage_eq_of_subset (hU_sub.trans (sdiff_subset.trans hrange.symm.subset))
-  have hΔ_eq : (image (oArcMap φ)) '' Δ₀ = Δ := by
-    ext δ
-    simp only [Δ₀, mem_image, exists_exists_and_eq_and]
-    constructor
-    · rintro ⟨δ', hδ', rfl⟩
-      have hsub : δ' ⊆ range (oArcMap φ) := by
-        rw [hrange]
-        exact (subset_sUnion_of_mem hδ').trans hV_sub
-      rwa [image_preimage_eq_of_subset hsub]
-    · intro hδ
-      have hsub : δ ⊆ range (oArcMap φ) := by
-        rw [hrange]
-        exact (subset_sUnion_of_mem hδ).trans hV_sub
-      exact ⟨δ, hδ, image_preimage_eq_of_subset hsub⟩
-  have hV₀_fin : (divisionUnion Δ₀).Finite := by
-    refine Finite.of_finite_image ?_ hinj.injOn
-    rw [← divisionUnion_oArcMap φ, hΔ_eq]
-    exact hV_fin
-  have hU₀ : IsDualPointSet (univ : Set Circle) (divisionUnion Δ₀) U₀ := by
-    rw [← isDualPointSet_oArcMap_iff φ, ← divisionUnion_oArcMap φ, hΔ_eq, hU_eq]
-    exact hU
-  rw [← hU_eq, ← hΔ_eq, dualDivision_oArcMap, isDivision_oArcMap_iff]
-  exact isDivision_dualDivision_univ hV₀_fin hU₀
+    IsDivision (dualDivision C U Δ) :=
+  isDivision_dualDivision_of_isOArc hC hV_fin hV_sub hU
 
 theorem isFeasible_empty {α β : Type*} (G : Graph α β) :
     IsFeasible G (∅ : Set (Set α)) := by

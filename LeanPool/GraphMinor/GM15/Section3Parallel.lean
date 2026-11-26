@@ -3046,8 +3046,9 @@ private theorem parallel_chord_cap_regions
     fun u₁ u₂ u₃ u₄ hu₁ hu₂ hu₃ hu₄ _ hOrd_u => hOrd_r₂ hU_r₂ u₁ u₂ u₃ u₄ hu₁ hu₂ hu₃ hu₄ hOrd_u,
     hd'_r₁_r₂, hd'_vk_vlast⟩
 
-/-- The proof of Graph Minors XV, (3.4), pages 122–123, in a chart of $\bar\Lambda$ in which the
-paths $P_1, \dots, P_{k-1}$ are the vertical chords at `parallelX k j`. The chart `g` maps the unit
+/-- The proof of Graph Minors XV, (3.4), pages 122–123, and the auxiliary conclusions of
+`GM15Theorem34Statement` in a chart of $\bar\Lambda$ in which the paths $P_1, \dots, P_{k-1}$
+are the vertical chords at `parallelX k j`. The chart `g` maps the unit
 circle onto $bd(\Lambda)$ by `p_circ`, with $v_i$ at the angle `parallelModelAngle k i`.
 `theorem_3_4_proof` (`GraphMinor/GM15/Section3Given.lean`) moves any paths across $\Lambda$ onto
 these chords and then applies this. -/

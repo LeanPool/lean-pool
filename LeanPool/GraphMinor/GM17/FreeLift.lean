@@ -34,10 +34,7 @@ theorem cutMap_of_cutting {ψ : Y → T} {F : Set T} (h : IsCutting ψ F)
 
 theorem disc_diff_finite [T2Space T] {D P : Set T} (hD : IsClosedDisc D)
   (hP : P ∩ D ⊆ discBd D) : closure (D \ P) = D ∧ tilde (D \ P) ⊆ P ∩ D := by
-  have hcl : closure (D \ P) = D := by
-    apply subset_antisymm (closure_minimal sdiff_subset hD.isClosed)
-    refine hD.subset_closure_discInt.trans (closure_mono fun x hx => ⟨hx.1, fun h => hx.2 (hP ⟨h,
-      hx.1⟩)⟩)
+  have hcl := (hD.sdiff_of_inter_subset_discBd hP).2.2
   refine ⟨hcl, ?_⟩
   rintro x ⟨hx, hn⟩
   rw [hcl] at hx

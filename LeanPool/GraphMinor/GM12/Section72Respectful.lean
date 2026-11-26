@@ -58,17 +58,8 @@ theorem theorem_7_2_respectful_of_incident (hS : IsClosedSurface S)
   have hdb : discBd Δ = F := (IsClosedDisc.frontier_eq_discBd hS hΔ).symm.trans hfr
   have hvFV : v ∈ F ∩ Γ.V := hFV.symm ▸ mem_singleton v
   have hvb : v ∈ discBd Δ := hdb.symm ▸ hvFV.1
-  have hnorm : frontier (closure (univ \ Δ)) ∩ Γ.U ⊆ Γ.V := by
-    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
-    exact fun x hx => hn ⟨hfr ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
-  have hGD : Γ'.U ∩ Δ ⊆ {v} := by
-    rintro x ⟨hxU, hxD⟩
-    rw [hUeq] at hxU
-    have hxfr : x ∈ frontier Δ := by
-      rw [frontier_eq_closure_inter_closure, compl_eq_univ_sdiff]
-      exact ⟨subset_closure hxD, hxU.2⟩
-    exact hFV ▸ ⟨hfr ▸ hxfr, hn ⟨hfr ▸ hxfr, hxU.1⟩⟩
+  have hUeq := outside_normal_disc_drawing_U hfr hn
+  have hGD : Γ'.U ∩ Δ ⊆ {v} := outside_normal_disc_drawing_inter_subset hfr hn hFV
   have hvnew : v ∈ Γ'.V := (mem_interSet_V_iff isClosed_closure).mpr
     ⟨hvFV.2, by
       have hvfr : v ∈ frontier Δ := hfr.symm ▸ hvFV.1

@@ -37,7 +37,8 @@ This file states as `Prop`s the results from *Graph Minors IX. Disjoint crossed 
   - `GM09Theorem1111Statement`: (11.11) (page 74), used to deduce (6.1) of Graph Minors XV
     (page 134).
 - **From Graph Minors XI:**
-  - `GM11Theorem91Statement`: (9.1) (page 104), basic metric properties of `HasTangleMetric`.
+  - `GM11Theorem91Statement`: metric facts for `HasTangleMetric`, including the triangle
+    inequality from (9.1) (page 104).
 - **From Graph Minors XII:**
   - `GM12Theorem41Statement`: (4.1) (page 248), used in (4.7) of Graph Minors XV (page 127).
   - `GM12Theorem45Statement`: (4.5) (page 252), used in (8.1) of Graph Minors XV (page 145).
@@ -109,17 +110,17 @@ def GM09Theorem1111Statement : Prop :=
 
 /-! ## 2. Results from Graph Minors XI -/
 
-/-- Statement of Graph Minors XI, Section 9, (9.1) (page 104):
+/-- Metric facts for a respectful tangle, including the triangle inequality from Graph Minors XI,
+(9.1) (page 104), transferred from the radial slope distance.
+
 For a respectful tangle `T` of order `θ` in a 2-cell drawing `H` in `Σ` with metric `d`:
 (i) `A(H)` partitions `Σ`;
-(ii) `d` is a metric on `A(H)` bounded by `θ` (`d(a, a) = 0`, `d(a, b) = d(b, a)`,
+(ii) `d` satisfies the following laws on `A(H)` (`d(a, b) ≤ θ`, `d(a, a) = 0`, `d(a, b) = d(b, a)`,
 `d(a, b) + d(b, c) ≥ d(a, c)`);
 (iii) if `E(H) ≠ ∅`, `v ∈ V(H)`, `r ∈ R(H)` and `v ∈ closure r`, then `d(v, r) ≤ 1`;
 (iv) if `v ∈ V(H)`, `e ∈ E(H)` and `v ∈ closure e`, then `d(v, e) ≤ 2`.
-Parts (iii) and (iv) are not in XI. They follow from the definition of the metric in Graph Minors
-XIV,
-page 27. The bound in (iv) cannot be lowered to 1, although XIV writes this on page 36: the atom of
-`K`
+Parts (iii) and (iv) follow from the definition of the metric in Graph Minors XIV, page 27.
+The bound in (iv) cannot be lowered to 1, although XIV writes this on page 36. The atom of `K`
 for `e` is a region bounded by a circuit of length 4, and on a grid `K` has no circuit of length 2.
 -/
 def GM11Theorem91Statement : Prop :=
@@ -285,9 +286,9 @@ $\theta_1 > \theta$, respectful towards $\Sigma$. Let $\mathscr{T}$ be the tangl
 induced by $\mathscr{T}_1$; then $\mathscr{T}$ is clearly respectful towards $\Sigma$. Let $d$ be
 the metric derived from $\mathscr{T}$. Finally, let $F \cap V(\Gamma_1)$ be free with respect to
 $\mathscr{T}_1$. ... (6.1) In these circumstances, $d(e_1, e_{\theta/2}) \ge \theta$."
-The paper allows `k = 1`, which is false, as then `e₁ = e_k` and `d(e₁, e₁) = 0`. So we assume `2 ≤
-k`. Its use in the proof of XV (3.4), page 123, concludes `d'(v₁, v₂) ≥ 2k - 8`,
-which needs nothing when there are few paths. -/
+We assume `2 ≤ k` since `k = 1` would give `e₁ = e_k` and `d(e₁, e₁) = 0`. Its use in
+the proof of XV (3.4) gives `d'(v_k, v_{2k}) ≥ 2k - 8`, as stated on page 122.
+The proof on page 123 misprints those vertices as `v₁` and `v₂`. -/
 def GM12Theorem61Statement : Prop :=
   ∀ {S : Type w} [TopologicalSpace S] [T2Space S]
     (Γ : Drawing S) (F Δ : Set S) (k θ₁ : ℕ)

@@ -560,7 +560,7 @@ private theorem exists_path_of_radial_link {Γ K : Drawing S}
 /-- Every walk `W` of positive length in a radial drawing `K` is traced by a continuous path
 `p : Path u v` with `range p = (walkDrawing K W).U` whose hits with `Γ.V` in `[0, 1)` have
 cardinality at most `(W.length + 1) / 2` if `u ∈ Γ.V` and `W.length / 2` if `u ∉ Γ.V`. -/
-private theorem exists_path_of_radial_walk {Γ K : Drawing S}
+theorem exists_path_of_radial_walk {Γ K : Drawing S}
     (hrad : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
     {u v : S} (W : GraphWalk K.toGraph u v) (hpos : 0 < W.length) :
     ∃ p : Path u v,

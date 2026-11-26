@@ -1139,41 +1139,8 @@ theorem atom_isPreconnected {S : Type w} [TopologicalSpace S] {Γ : Drawing S} {
 /-- For any walk `W` of `Γ.toGraph`, `(walkDrawing Γ W).U` is preconnected. -/
 theorem isPreconnected_walkDrawing_U {S : Type w} [TopologicalSpace S] [T1Space S]
     (Γ : Drawing S) {u v : S} (W : GraphWalk Γ.toGraph u v) :
-    IsPreconnected (walkDrawing Γ W).U := by
-  induction W with
-  | @nil a ha =>
-    have hEq : (walkDrawing Γ (.nil ha)).U = {a} := by
-      rw [Drawing.U_eq, walkDrawing_V, walkDrawing_E]
-      ext x
-      simp [GraphWalk.support_nil]
-    rw [hEq]
-    exact isPreconnected_singleton
-  | @cons a w b e hlink r ih =>
-    have hEq : (walkDrawing Γ (.cons hlink r)).U = closure e ∪ (walkDrawing Γ r).U := by
-      rw [Drawing.U_eq, Drawing.U_eq, walkDrawing_V, walkDrawing_E, walkDrawing_V, walkDrawing_E]
-      ext x
-      simp only [GraphWalk.support_cons, List.mem_cons, GraphWalk.edges_cons, mem_union,
-        mem_ofPred_eq, mem_iUnion, exists_prop]
-      constructor
-      · rintro ((rfl | hxr) | ⟨f, rfl | hfr, hxf⟩)
-        · left
-          have : x ∈ closure e ∩ Γ.V := by rw [hlink.2.2.2]; simp
-          exact this.1
-        · exact Or.inr (Or.inl hxr)
-        · exact Or.inl hxf
-        · exact Or.inr (Or.inr ⟨f, hfr, hxf⟩)
-      · rintro (hxe | (hxr | ⟨f, hfr, hxf⟩))
-        · exact Or.inr ⟨e, Or.inl rfl, hxe⟩
-        · exact Or.inl (Or.inr hxr)
-        · exact Or.inr ⟨f, Or.inr hfr, hxf⟩
-    rw [hEq]
-    have he_pre : IsPreconnected (closure e) := hlink.1.2.2.1.isConnected.isPreconnected.closure
-    have hw_e : w ∈ closure e := by
-      have : w ∈ closure e ∩ Γ.V := by rw [hlink.2.2.2]; simp
-      exact this.1
-    have hw_r : w ∈ (walkDrawing Γ r).U :=
-      (walkDrawing Γ r).V_subset_U (by rw [walkDrawing_V]; exact r.start_mem_support)
-    exact he_pre.union' ⟨w, hw_e, hw_r⟩ ih
+    IsPreconnected (walkDrawing Γ W).U :=
+  GraphWalk.drawing_U_isPreconnected Γ W
 
 /-- For a derived slope `ins` of `(H, K, θ, T)` and a closed walk `W` of `K` with
 `W.length < 2 * θ`, `insWalk ins K W` is closed and preconnected. -/

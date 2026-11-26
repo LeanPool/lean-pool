@@ -12,6 +12,7 @@ public import LeanPool.GraphMinor.GM17.Section6
 public import LeanPool.GraphMinor.Surface.DiscsInSurface
 
 import LeanPool.GraphMinor.Surface.Cuffs
+import LeanPool.GraphMinor.Surface.DiscGrow
 
 /-!
 # Graph Minors XVII, Section 7: Some Constructions
@@ -1302,62 +1303,7 @@ path-connected, and has closure $\overline{\Delta \setminus F} = \Delta$. -/
 theorem isClosedDisc_sdiff_subset_discBd [T2Space S] {Δ F : Set S}
     (hΔ : IsClosedDisc Δ) (hF : F ⊆ discBd Δ) :
     (Δ \ F).Nonempty ∧ IsPathConnected (Δ \ F) ∧ closure (Δ \ F) = Δ := by
-  obtain ⟨h, g, c⟩ := hΔ.exists_isChart
-  have hball_sub : g '' ball 0 1 ⊆ Δ \ F := by
-    rintro _ ⟨z, hz, rfl⟩
-    refine ⟨c.gm (ball_subset_closedBall hz), fun hxF => ?_⟩
-    exact Set.disjoint_left.mp c.union_ball.2 ⟨z, hz, rfl⟩ (hF hxF)
-  have h0_mem : (0 : ℂ) ∈ ball (0 : ℂ) 1 := mem_ball_self zero_lt_one
-  have hx₀ : g 0 ∈ Δ \ F := hball_sub ⟨0, h0_mem, rfl⟩
-  have hpc : IsPathConnected (Δ \ F) := by
-    refine ⟨g 0, hx₀, fun {y} hy => ?_⟩
-    let z : ℂ := h y
-    have hz_cb : z ∈ closedBall (0 : ℂ) 1 := c.hm hy.1
-    have hgz : g z = y := c.gh hy.1
-    let φ : unitInterval → ℂ := fun t => (t : ℝ) • z
-    have hφ_cont : Continuous φ := continuous_subtype_val.smul continuous_const
-    have hφ_mem : ∀ t : unitInterval, φ t ∈ closedBall (0 : ℂ) 1 := by
-      intro t
-      rw [mem_closedBall_zero_iff] at hz_cb ⊢
-      change ‖(t : ℝ) • z‖ ≤ 1
-      rw [norm_smul, Real.norm_of_nonneg t.2.1]
-      calc (t : ℝ) * ‖z‖ ≤ (t : ℝ) * 1 := mul_le_mul_of_nonneg_left hz_cb t.2.1
-        _ ≤ 1 := by linarith [t.2.2]
-    let γ : Path (g 0) y :=
-      { toFun := g ∘ φ
-        continuous_toFun := c.gc.comp_continuous hφ_cont hφ_mem
-        source' := by change g ((0 : ℝ) • z) = g 0; simp
-        target' := by change g ((1 : ℝ) • z) = y; simp [hgz] }
-    refine ⟨γ, fun t => ?_⟩
-    by_cases ht1 : (t : ℝ) = 1
-    · have : γ t = y := by
-        change g ((t : ℝ) • z) = y
-        rw [ht1, one_smul, hgz]
-      rw [this]
-      exact hy
-    · have ht_lt : (t : ℝ) < 1 := lt_of_le_of_ne t.2.2 ht1
-      have hφ_ball : φ t ∈ ball (0 : ℂ) 1 := by
-        rw [mem_ball_zero_iff]
-        rw [mem_closedBall_zero_iff] at hz_cb
-        change ‖(t : ℝ) • z‖ < 1
-        rw [norm_smul, Real.norm_of_nonneg t.2.1]
-        calc (t : ℝ) * ‖z‖ ≤ (t : ℝ) * 1 := mul_le_mul_of_nonneg_left hz_cb t.2.1
-          _ < 1 := by linarith
-      exact hball_sub ⟨φ t, hφ_ball, rfl⟩
-  have hcl : closure (Δ \ F) = Δ := by
-    refine Subset.antisymm (closure_minimal sdiff_subset hΔ.isCompact.isClosed) ?_
-    intro x hx
-    have hzx : h x ∈ closure (ball (0 : ℂ) 1) := by
-      rw [closure_ball (0 : ℂ) one_ne_zero]
-      exact c.hm hx
-    have hgc_cl : ContinuousOn g (closure (ball (0 : ℂ) 1)) := by
-      rw [closure_ball (0 : ℂ) one_ne_zero]
-      exact c.gc
-    have hg_cl : g (h x) ∈ closure (g '' ball 0 1) :=
-      hgc_cl.image_closure ⟨h x, hzx, rfl⟩
-    rw [c.gh hx] at hg_cl
-    exact closure_mono hball_sub hg_cl
-  exact ⟨⟨g 0, hx₀⟩, hpc, hcl⟩
+  exact hΔ.sdiff_of_inter_subset_discBd (inter_subset_left.trans hF)
 
 /-- The modified painting $\Gamma' = (U(\Gamma) \cup \Delta, N(\Gamma) \cap \overline{\Sigma
 \setminus \Delta})$

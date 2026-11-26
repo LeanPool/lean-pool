@@ -487,6 +487,86 @@ theorem mem_walkDrawing_U (Γ : Drawing S) {u v : S} (W : GraphWalk Γ.toGraph u
   rw [Drawing.U_eq, walkDrawing_V, walkDrawing_E]
   simp
 
+/-- The point set of a concatenated walk is the union of the point
+sets of the two walks. -/
+theorem _root_.GraphMinor.Surface.GraphWalk.drawing_U_append
+    (K : Drawing S) {u v w : S}
+    (P : GraphWalk K.toGraph u v) (Q : GraphWalk K.toGraph v w) :
+    (walkDrawing K (P.append Q)).U = (walkDrawing K P).U ∪ (walkDrawing K Q).U := by
+  ext x
+  simp only [mem_walkDrawing_U, GraphWalk.mem_support_append, GraphWalk.edges_append,
+    List.mem_append, mem_union]
+  constructor
+  · rintro ((h | h) | ⟨e, (he | he), hxe⟩)
+    · exact Or.inl (Or.inl h)
+    · exact Or.inr (Or.inl h)
+    · exact Or.inl (Or.inr ⟨e, he, hxe⟩)
+    · exact Or.inr (Or.inr ⟨e, he, hxe⟩)
+  · rintro ((h | ⟨e, he, hxe⟩) | (h | ⟨e, he, hxe⟩))
+    · exact Or.inl (Or.inl h)
+    · exact Or.inr ⟨e, Or.inl he, hxe⟩
+    · exact Or.inl (Or.inr h)
+    · exact Or.inr ⟨e, Or.inr he, hxe⟩
+
+/-- A zero-edge walk has just its vertex as point set. -/
+theorem _root_.GraphMinor.Surface.GraphWalk.drawing_U_nil
+    (K : Drawing S) {u : S} (hu : u ∈ K.V) :
+    (walkDrawing K (GraphWalk.nil hu)).U = {u} := by
+  ext x
+  simp only [mem_walkDrawing_U, GraphWalk.support, GraphWalk.edges, List.mem_singleton,
+    List.not_mem_nil, false_and, exists_false, or_false, mem_singleton_iff]
+
+/-- An edge step adds exactly its edge closure to the point set. -/
+theorem _root_.GraphMinor.Surface.GraphWalk.drawing_U_cons
+    (K : Drawing S) {u v w : S} {e : Set S}
+    (hl : K.toGraph.IsLink e u v) (P : GraphWalk K.toGraph v w) :
+    (walkDrawing K (GraphWalk.cons hl P)).U = closure e ∪ (walkDrawing K P).U := by
+  have hu : u ∈ closure e := by
+    have h : u ∈ closure e ∩ K.V := hl.2.2.2.symm ▸ Or.inl rfl
+    exact h.1
+  ext x
+  simp only [mem_walkDrawing_U, GraphWalk.support, GraphWalk.edges, List.mem_cons, mem_union]
+  constructor
+  · rintro ((rfl | h) | ⟨f, (rfl | hf), hxf⟩)
+    · exact Or.inl hu
+    · exact Or.inr (Or.inl h)
+    · exact Or.inl hxf
+    · exact Or.inr (Or.inr ⟨f, hf, hxf⟩)
+  · rintro (h | h | ⟨f, hf, hxf⟩)
+    · exact Or.inr ⟨e, Or.inl rfl, h⟩
+    · exact Or.inl (Or.inr h)
+    · exact Or.inr ⟨f, Or.inr hf, hxf⟩
+
+/-- A two-edge region visit has the two edge closures as its whole
+point set. -/
+theorem _root_.GraphMinor.Surface.GraphWalk.drawing_U_two_edges
+    (K : Drawing S)
+    {u v w : S} {e e' : Set S} (hl : K.toGraph.IsLink e u v) (hl' : K.toGraph.IsLink e' v w) :
+    (walkDrawing K (GraphWalk.cons hl (GraphWalk.cons hl' (.nil hl'.right_mem)))).U =
+      closure e ∪ closure e' := by
+  rw [GraphWalk.drawing_U_cons, GraphWalk.drawing_U_cons,
+    GraphWalk.drawing_U_nil K (u := w) hl'.right_mem]
+  have hw : w ∈ closure e' := by
+    have h : w ∈ closure e' ∩ K.V := hl'.2.2.2.symm ▸ Or.inr rfl
+    exact h.1
+  rw [union_eq_left.mpr (singleton_subset_iff.mpr hw)]
+
+/-- A walk drawing has a preconnected point set. -/
+theorem _root_.GraphMinor.Surface.GraphWalk.drawing_U_isPreconnected
+    (Γ : Drawing S) {u v : S} (W : GraphWalk Γ.toGraph u v) :
+    IsPreconnected (walkDrawing Γ W).U := by
+  induction W with
+  | nil ha =>
+    rw [GraphWalk.drawing_U_nil Γ ha]
+    exact isPreconnected_singleton
+  | @cons a b c e h R ih =>
+    rw [GraphWalk.drawing_U_cons]
+    have hclosure : IsPreconnected (closure e) := h.1.2.2.1.isConnected.isPreconnected.closure
+    have hb : b ∈ closure e ∩ Γ.V := by
+      rw [h.2.2.2]
+      exact .inr rfl
+    exact hclosure.union b hb.1 ((mem_walkDrawing_U Γ R).mpr (.inl R.start_mem_support)) ih
+
 /-- `Γ | W` is a path, for a simple walk `W`. -/
 theorem walkDrawing_isPathBetween (Γ : Drawing S) {u v : S} {W : GraphWalk Γ.toGraph u v}
     (hW : W.IsSimple) : (walkDrawing Γ W).IsPathBetween u v := by

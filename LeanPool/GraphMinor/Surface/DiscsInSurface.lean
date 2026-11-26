@@ -223,11 +223,10 @@ theorem exists_sphere_map {Δ₁ Δ₂ : Set S} (h₁ : IsClosedDisc Δ₁) (h�
         rw [n4 (c₂.hm hx)]
         exact c₂.gh hx
 
-/-- An injective map of the sphere into a surface is onto a connected surface, so the surface is a
-sphere. -/
-theorem isSphere_of_map [T2Space S] [PreconnectedSpace S]
+/-- The image of a continuous injective sphere map fills a preconnected manifold. -/
+theorem isSphereMap_range_eq_univ [T2Space S] [PreconnectedSpace S]
     (hman : ∀ x : S, IsManifoldPoint x) {T : OnePoint EuclideanPlane → S} (hT : Continuous T)
-    (hi : Function.Injective T) : IsSphere S := by
+    (hi : Function.Injective T) : range T = univ := by
   have hopen : IsOpen (range T) := by
     refine isOpen_iff_forall_mem_open.mpr ?_
     rintro _ ⟨p, rfl⟩
@@ -251,17 +250,22 @@ theorem isSphere_of_map [T2Space S] [PreconnectedSpace S]
           change T (H.symm (sph z)) = T p
           rw [← hz, H.symm_apply_apply]⟩
   have hcl : IsClosed (range T) := (isCompact_range hT).isClosed
-  have hu : range T = univ := IsClopen.eq_univ ⟨hcl, hopen⟩ (range_nonempty T)
+  exact IsClopen.eq_univ ⟨hcl, hopen⟩ (range_nonempty T)
+
+/-- An injective map of the sphere into a surface is onto a connected surface, so the surface is a
+sphere. -/
+theorem isSphere_of_map [T2Space S] [PreconnectedSpace S]
+    (hman : ∀ x : S, IsManifoldPoint x) {T : OnePoint EuclideanPlane → S} (hT : Continuous T)
+    (hi : Function.Injective T) : IsSphere S := by
+  have hu := isSphereMap_range_eq_univ hman hT hi
   have hb : Function.Bijective T := ⟨hi, range_eq_univ.mp hu⟩
   exact ⟨(Continuous.homeoOfEquivCompactToT2 (f := Equiv.ofBijective T hb) hT).symm⟩
 
-/-- In a connected surface that is not a sphere, a closed disc is determined by its boundary. This
-is
-the third part of `EpsteinStatement`. -/
-theorem eq_of_discBd_eq (hS : IsSurface S) [PreconnectedSpace S] (hns : ¬ IsSphere S) {Δ₁ Δ₂ : Set
-  S}
-    (h₁ : IsClosedDisc Δ₁) (h₂ : IsClosedDisc Δ₂) (hb : discBd Δ₁ = discBd Δ₂) : Δ₁ = Δ₂ := by
-  obtain ⟨hcpt, ht2, hman⟩ := hS
+/-- Closed discs with the same boundary either coincide or meet exactly along that boundary. -/
+theorem eq_or_inter_eq_discBd_of_discBd_eq [T2Space S]
+    (hman : ∀ x : S, IsManifoldPoint x) {Δ₁ Δ₂ : Set S}
+    (h₁ : IsClosedDisc Δ₁) (h₂ : IsClosedDisc Δ₂) (hb : discBd Δ₁ = discBd Δ₂) :
+    Δ₁ = Δ₂ ∨ Δ₁ ∩ Δ₂ = discBd Δ₁ := by
   obtain ⟨h₁', g₁, c₁⟩ := h₁.exists_isChart
   obtain ⟨h₂', g₂, c₂⟩ := h₂.exists_isChart
   obtain ⟨u1, d1⟩ := c₁.union_ball
@@ -281,20 +285,30 @@ theorem eq_of_discBd_eq (hS : IsSurface S) [PreconnectedSpace S] (hns : ¬ IsSph
   by_cases hne : (g₁ '' ball 0 1 ∩ g₂ '' ball 0 1).Nonempty
   · have s1 := subset_of_side p1 o2 cl2 d1 hne
     have s2 := subset_of_side p2 o1 cl1 (hb ▸ d2) (by rwa [inter_comm])
+    left
     rw [← u1, ← u2, Subset.antisymm s1 s2, hb]
-  · exfalso
-    have hm : Δ₁ ∩ Δ₂ = discBd Δ₁ := by
-      refine Subset.antisymm ?_ fun x hx => ⟨discBd_subset _ hx, discBd_subset _ (hb ▸ hx)⟩
-      rintro x ⟨hx1, hx2⟩
-      rw [← u1] at hx1
-      rw [← u2] at hx2
-      rcases hx1 with h1 | h1
-      · rcases hx2 with h2 | h2
-        · exact absurd ⟨x, h1, h2⟩ hne
-        · exact hb ▸ h2
-      · exact h1
-    obtain ⟨T, hT, hi, -⟩ := exists_sphere_map h₁ h₂ hb hm
-    exact hns (isSphere_of_map hman hT hi)
+  · right
+    refine Subset.antisymm ?_ fun x hx => ⟨discBd_subset _ hx, discBd_subset _ (hb ▸ hx)⟩
+    rintro x ⟨hx1, hx2⟩
+    rw [← u1] at hx1
+    rw [← u2] at hx2
+    rcases hx1 with h1 | h1
+    · rcases hx2 with h2 | h2
+      · exact absurd ⟨x, h1, h2⟩ hne
+      · exact hb ▸ h2
+    · exact h1
+
+/-- In a connected surface that is not a sphere, a closed disc is determined by its boundary. This
+is
+the third part of `EpsteinStatement`. -/
+theorem eq_of_discBd_eq (hS : IsSurface S) [PreconnectedSpace S] (hns : ¬ IsSphere S) {Δ₁ Δ₂ : Set
+  S}
+    (h₁ : IsClosedDisc Δ₁) (h₂ : IsClosedDisc Δ₂) (hb : discBd Δ₁ = discBd Δ₂) : Δ₁ = Δ₂ := by
+  have : T2Space S := hS.2.1
+  rcases eq_or_inter_eq_discBd_of_discBd_eq hS.2.2 h₁ h₂ hb with heq | hinter
+  · exact heq
+  · obtain ⟨T, hT, hi, -⟩ := exists_sphere_map h₁ h₂ hb hinter
+    exact (hns (isSphere_of_map hS.2.2 hT hi)).elim
 
 /-- An `O`-arc in a closed disc inside `Z` is null-homotopic in `Z`. This is the second part of
 `EpsteinStatement`. -/

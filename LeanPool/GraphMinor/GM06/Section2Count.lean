@@ -73,37 +73,7 @@ theorem theorem_2_4_self {S : Type u} [TopologicalSpace S] (C U : Set S) (Δ : S
         (divisionCount C Δ x x : ℤ) - (divisionCount C (dualDivision C U Δ) x x : ℤ) = 0)) := by
   have hU_sub : U ⊆ C \ divisionUnion Δ := isDualPointSet_subset_diff hU
   have hΔ_star_union : divisionUnion (dualDivision C U Δ) = U := divisionUnion_dualDivision C U Δ
-  have hΔ_star_div : IsDivision (dualDivision C U Δ) := by
-    obtain ⟨φ⟩ := hC
-    have hinj := injective_oArcMap φ
-    have hrange := range_oArcMap φ
-    let U₀ := oArcMap φ ⁻¹' U
-    let Δ₀ := (preimage (oArcMap φ)) '' Δ
-    have hU_eq : oArcMap φ '' U₀ = U :=
-      image_preimage_eq_of_subset (hU_sub.trans (sdiff_subset.trans hrange.symm.subset))
-    have hΔ_eq : (image (oArcMap φ)) '' Δ₀ = Δ := by
-      ext δ
-      simp only [Δ₀, mem_image, exists_exists_and_eq_and]
-      constructor
-      · rintro ⟨δ', hδ', rfl⟩
-        have hsub : δ' ⊆ range (oArcMap φ) := by
-          rw [hrange]
-          exact (subset_sUnion_of_mem hδ').trans hV_sub
-        rwa [image_preimage_eq_of_subset hsub]
-      · intro hδ
-        have hsub : δ ⊆ range (oArcMap φ) := by
-          rw [hrange]
-          exact (subset_sUnion_of_mem hδ).trans hV_sub
-        exact ⟨δ, hδ, image_preimage_eq_of_subset hsub⟩
-    have hV₀_fin : (divisionUnion Δ₀).Finite := by
-      refine Finite.of_finite_image ?_ hinj.injOn
-      rw [← divisionUnion_oArcMap φ, hΔ_eq]
-      exact hV_fin
-    have hU₀ : IsDualPointSet (univ : Set Circle) (divisionUnion Δ₀) U₀ := by
-      rw [← isDualPointSet_oArcMap_iff φ, ← divisionUnion_oArcMap φ, hΔ_eq, hU_eq]
-      exact hU
-    rw [← hU_eq, ← hΔ_eq, dualDivision_oArcMap, isDivision_oArcMap_iff]
-    exact isDivision_dualDivision_univ hV₀_fin hU₀
+  have hΔ_star_div := isDivision_dualDivision_of_isOArc hC hV_fin hV_sub hU
   refine ⟨?_, ?_, ?_⟩
   · rintro ⟨hxV, _⟩
     have hxU : x ∉ divisionUnion (dualDivision C U Δ) := by
@@ -874,36 +844,13 @@ theorem theorem_2_4_proof : Statement24 := by
   intro S _ C U Δ x y hC hΔ hV_fin hV_sub hU hCF hx hy
   obtain ⟨φ⟩ := hC
   have hinj := injective_oArcMap φ
-  have hrange := range_oArcMap φ
   let U₀ := oArcMap φ ⁻¹' U
   let Δ₀ := (preimage (oArcMap φ)) '' Δ
   have hU_sub : U ⊆ C \ divisionUnion Δ := isDualPointSet_subset_diff hU
-  have hU_eq : oArcMap φ '' U₀ = U :=
-    image_preimage_eq_of_subset (hU_sub.trans (sdiff_subset.trans hrange.symm.subset))
-  have hΔ_eq : (image (oArcMap φ)) '' Δ₀ = Δ := by
-    ext δ
-    simp only [Δ₀, mem_image, exists_exists_and_eq_and]
-    constructor
-    · rintro ⟨δ', hδ', rfl⟩
-      have hsub : δ' ⊆ range (oArcMap φ) := by
-        rw [hrange]
-        exact (subset_sUnion_of_mem hδ').trans hV_sub
-      rwa [image_preimage_eq_of_subset hsub]
-    · intro hδ
-      have hsub : δ ⊆ range (oArcMap φ) := by
-        rw [hrange]
-        exact (subset_sUnion_of_mem hδ).trans hV_sub
-      exact ⟨δ, hδ, image_preimage_eq_of_subset hsub⟩
+  obtain ⟨hU_eq, hΔ_eq, hV₀_fin, hU₀⟩ := oArcMap_division_data φ hV_fin hV_sub hU
   have hΔ₀ : IsDivision Δ₀ := by
     rw [← isDivision_oArcMap_iff φ, hΔ_eq]
     exact hΔ
-  have hV₀_fin : (divisionUnion Δ₀).Finite := by
-    refine Finite.of_finite_image ?_ hinj.injOn
-    rw [← divisionUnion_oArcMap φ, hΔ_eq]
-    exact hV_fin
-  have hU₀ : IsDualPointSet (univ : Set Circle) (divisionUnion Δ₀) U₀ := by
-    rw [← isDualPointSet_oArcMap_iff φ, ← divisionUnion_oArcMap φ, hΔ_eq, hU_eq]
-    exact hU
   have hCF₀ : IsCrossFree (univ : Set Circle) Δ₀ := by
     rw [← isCrossFree_oArcMap_iff φ, hΔ_eq]
     exact hCF

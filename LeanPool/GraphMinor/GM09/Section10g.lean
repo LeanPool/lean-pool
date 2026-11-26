@@ -398,8 +398,10 @@ private theorem weakLinkingAlongOuterPaths {N₁ : Neighborhood α β} {n : ℕ}
   · refine (hPd fun e => hij ?_).mono (hWP _) (hWP _)
     exact Fin.cast_injective hYcard e
 
-private theorem extendTransactionAcrossNeighborhood
-    {S_comp S₁ : Society α β} {N₂ : Neighborhood α β} {K : Graph α β} {X : Set α} {p : ℕ}
+/-- Extend a crooked transaction through a rural neighborhood along disjoint paths.
+The extended transaction has the original cardinality and ends in the prescribed boundary set. -/
+theorem extend_crooked_transaction_across_neighborhood
+    {S_comp S₁ : Society α β} {N₂ : Neighborhood α β} {K : Graph α β} {X : Set α}
     (hXpos : 0 < X.ncard) (hInner : S₁.G ≤ S_comp.G) (hOuter : N₂.G ≤ S_comp.G)
     (hcutU : V(N₂.G) ∩ V(S₁.G) = V(K)) (hΩ : N₂.Ω = S_comp.Ω) (hΩ₀ : N₂.Ω₀ = S₁.Ω)
     (hrural₂ : N₂.IsRural) (hbarH₂ : S_comp.Ω.bar ⊆ V(N₂.G))
@@ -411,9 +413,9 @@ private theorem extendTransactionAcrossNeighborhood
     (hRd : ∀ {i j}, i ≠ j → Disjoint V(R i) V(R j))
     (hybar : ∀ i, y i ∈ S₁.Ω.bar) (hxb : ∀ i, x i ∈ S_comp.Ω.bar)
     (hxX : ∀ i, x i ∈ X) (hRbar : ∀ i, V(R i) ∩ S_comp.Ω.bar = {x i})
-    {T : Set (Graph α β)} (hT : S₁.IsCrookedTransaction T) (hpT : p ≤ T.ncard)
+    {T : Set (Graph α β)} (hT : S₁.IsCrookedTransaction T)
     (hTends : S₁.transactionEnds T ⊆ range y) :
-    ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ p ≤ P'.ncard ∧
+    ∃ P' : Set (Graph α β), S_comp.IsCrookedTransaction P' ∧ P'.ncard = T.ncard ∧
       S_comp.transactionEnds P' ⊆ X ∧
       ∀ Q ∈ P', Disjoint (pathInternalVerts S_comp.G Q) S_comp.Ω.bar := by
   classical
@@ -553,8 +555,7 @@ private theorem extendTransactionAcrossNeighborhood
     obtain ⟨v, hv⟩ := hnonempty Q hQ
     exact Set.disjoint_left.mp (hd Q hQ Q' hQ' hne) hv (e ▸ hv)
   refine ⟨f '' T, hcrook, ?_, ?_, ?_⟩
-  · rw [hinjf.ncard_image]
-    exact hpT
+  · exact hinjf.ncard_image
   · rintro v ⟨_, ⟨Q, hQ, rfl⟩, b, hvb⟩
     obtain ⟨A, B, hfence⟩ := hT.1
     obtain ⟨a', -, b', -, hQp⟩ := hfence.2.2 Q hQ
@@ -826,22 +827,26 @@ theorem theorem_10_4_proof {S_comp S₀ : Society α β} {N : Neighborhood α β
   obtain ⟨T₀, hT₀, hpT₀⟩ := theorem_9_1_proof hcomp₂ hrural₂ hP₀ hp
   obtain ⟨T, hT, hpT, hTends⟩ := theorem_10_3_proof hp2 hp3 hrural₁ ⟨P₁, C, hnest₁⟩ hweak
     (by rw [hYcard]; exact hcard) hcomp₁ hT₀ hpT₀
-  refine extendTransactionAcrossNeighborhood (N₂ := N₂) (K := C last) (by omega)
-    hS₁S (hsep.2.1.trans hNG) hcutU hcomp₂.2.1 hcomp₂.2.2.1
-    hrural₂ (fun v hv => hbarH₂ (hΩ ▸ hv)) (hΩ ▸ hCbar last)
-    hR hRK hy_inj hx_inj hRd (fun i => hcomp₁.2.1 ▸ (hΩ₁.symm ▸ hyK i)) ?_ ?_ ?_ hT hpT hTends
-  · intro i
+  have hxb : ∀ i, x i ∈ S_comp.Ω.bar := by
+    intro i
     have hx : x i ∈ V(P i) ∩ N.Ω.bar := (hP i).2.symm ▸ mem_singleton _
     exact hΩ ▸ hx.2
-  · intro i
-    exact ((hP i).1.2.1.symm ▸ mem_singleton _ : x i ∈ V(P i) ∩ X).2
-  · intro i
+  have hxX : ∀ i, x i ∈ X := fun i =>
+    ((hP i).1.2.1.symm ▸ mem_singleton _ : x i ∈ V(P i) ∩ X).2
+  have hRbar : ∀ i, V(R i) ∩ S_comp.Ω.bar = {x i} := by
+    intro i
     apply Subset.antisymm
     · intro v hv
       have hmem : v ∈ V(P i) ∩ N.Ω.bar := ⟨hRP i hv.1, hΩ ▸ hv.2⟩
       rwa [(hP i).2] at hmem
     · rintro _ rfl
-      exact ⟨(hR i).left_mem, hΩ ▸ ((hP i).2.symm ▸ mem_singleton _ :
-        x i ∈ V(P i) ∩ N.Ω.bar).2⟩
+      exact ⟨(hR i).left_mem, hxb i⟩
+  obtain ⟨T', hT', hsize, hends, hinternal⟩ :=
+    extend_crooked_transaction_across_neighborhood (N₂ := N₂) (K := C last) (by omega)
+      hS₁S (hsep.2.1.trans hNG) hcutU hcomp₂.2.1 hcomp₂.2.2.1
+      hrural₂ (fun v hv => hbarH₂ (hΩ ▸ hv)) (hΩ ▸ hCbar last)
+      hR hRK hy_inj hx_inj hRd (fun i => hcomp₁.2.1 ▸ (hΩ₁.symm ▸ hyK i))
+      hxb hxX hRbar hT hTends
+  exact ⟨T', hT', hsize.symm ▸ hpT, hends, hinternal⟩
 
 end GraphMinor.GM09

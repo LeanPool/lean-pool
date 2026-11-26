@@ -11,6 +11,7 @@ module
 public import LeanPool.GraphMinor.GM06.Section3Dual
 import LeanPool.GraphMinor.GM06.Section3InduceSingleton
 import LeanPool.GraphMinor.GM06.RegionCurve
+import LeanPool.GraphMinor.GM12.Section3DiscChainCarrier
 import LeanPool.GraphMinor.Surface.JordanDomain
 import Mathlib.Analysis.Convex.PathConnected
 
@@ -42,59 +43,6 @@ universe u
 
 /-! ## 1. Separating Sets of $(x, y)$-Chains and Necessity in (3.6) -/
 
-/-- Finite union of a non-empty list of connected sets where consecutive sets intersect is
-connected. -/
-private theorem isConnected_biUnion_fin {S : Type u} [TopologicalSpace S]
-    (m : ℕ) (hm : 0 < m) (K : Fin m → Set S)
-    (hconn : ∀ i : Fin m, IsConnected (K i))
-    (hinter : ∀ i : Fin m, ∀ h : i.1 + 1 < m, (K i ∩ K ⟨i.1 + 1, h⟩).Nonempty) :
-    IsConnected (⋃ i : Fin m, K i) := by
-  induction m with
-  | zero => omega
-  | succ n ih =>
-    rcases Nat.eq_zero_or_pos n with rfl | hn
-    · have h_eq : (⋃ i : Fin 1, K i) = K ⟨0, zero_lt_one⟩ := by
-        ext z
-        simp only [mem_iUnion]
-        constructor
-        · rintro ⟨i, hi⟩
-          have : i = ⟨0, zero_lt_one⟩ := Fin.ext (by omega)
-          rwa [← this]
-        · intro hz
-          exact ⟨⟨0, zero_lt_one⟩, hz⟩
-      rw [h_eq]
-      exact hconn ⟨0, zero_lt_one⟩
-    · let K' : Fin n → Set S := fun j => K ⟨j.1, Nat.lt_succ_of_lt j.2⟩
-      have hconn' : ∀ j : Fin n, IsConnected (K' j) := fun j => hconn _
-      have hinter' : ∀ j : Fin n, ∀ h : j.1 + 1 < n, (K' j ∩ K' ⟨j.1 + 1, h⟩).Nonempty := by
-        intro j h
-        exact hinter ⟨j.1, Nat.lt_succ_of_lt j.2⟩ (Nat.lt_succ_of_lt h)
-      have ih_res := ih hn K' hconn' hinter'
-      have hunion : (⋃ i : Fin (n + 1), K i) = (⋃ j : Fin n, K' j) ∪ K ⟨n, Nat.lt_succ_self n⟩ := by
-        ext z
-        simp only [mem_iUnion, mem_union, K']
-        constructor
-        · rintro ⟨i, hi⟩
-          rcases Nat.lt_or_eq_of_le (Nat.le_of_lt_succ i.2) with hlt | heq
-          · exact Or.inl ⟨⟨i.1, hlt⟩, hi⟩
-          · right
-            have : i = ⟨n, Nat.lt_succ_self n⟩ := Fin.ext heq
-            rwa [← this]
-        · rintro (⟨j, hj⟩ | hn_mem)
-          · exact ⟨⟨j.1, Nat.lt_succ_of_lt j.2⟩, hj⟩
-          · exact ⟨⟨n, Nat.lt_succ_self n⟩, hn_mem⟩
-      rw [hunion]
-      refine IsConnected.union ?_ ih_res (hconn ⟨n, Nat.lt_succ_self n⟩)
-      let j_last : Fin n := ⟨n - 1, Nat.sub_lt hn zero_lt_one⟩
-      have h_step : j_last.1 + 1 < n + 1 := by
-        dsimp [j_last]; omega
-      have h_non := hinter ⟨j_last.1, Nat.lt_succ_of_lt j_last.2⟩ h_step
-      rcases h_non with ⟨z, hz1, hz2⟩
-      refine ⟨z, mem_iUnion.mpr ⟨j_last, hz1⟩, ?_⟩
-      have h_idx : (⟨j_last.1 + 1, h_step⟩ : Fin (n + 1)) = ⟨n, Nat.lt_succ_self n⟩ := by
-        ext; dsimp [j_last]; omega
-      rwa [← h_idx]
-
 /-- Every $(x, y)$-chain $A$ in a proper drawing $G$ on a closed disc space $S$ yields a compact
 connected set $F \subseteq S$ containing $x$ and $y$ such that
 $F \cap U(G) \subseteq \{v \in V(G) \mid \text{Sum.inl } v \in A\}$. -/
@@ -104,90 +52,9 @@ theorem exists_separatingSet_of_isXYChain
     (hChain : IsXYChain G x y A) :
     ∃ F : Set S, IsCompact F ∧ IsConnected F ∧ x ∈ F ∧ y ∈ F ∧
       F ∩ G.U ⊆ {v ∈ G.V | Sum.inl v ∈ A} := by
-  have hm : 0 < A.length := List.length_pos_of_ne_nil hChain.ne_nil
-  -- For each index i : Fin A.length, define its left endpoint p(i) and right endpoint q(i)
-  let leftPt := ChainTerm.leftEndpoint A x
-  let rightPt := ChainTerm.rightEndpoint A y
-  have h_left_closure := hChain.leftEndpoint_mem_closure
-  have h_right_closure := hChain.rightEndpoint_mem_closure
-  -- Now construct K(i) for each i : Fin A.length
-  have hK_exists : ∀ i : Fin A.length,
-      ∃ K : Set S, IsCompact K ∧ IsConnected K ∧ leftPt i ∈ K ∧ rightPt i ∈ K ∧
-        K ∩ G.U ⊆ {v ∈ G.V | Sum.inl v ∈ A} := by
-    intro i
-    rcases hir : A[i.1]'i.2 with v | r
-    · refine ⟨{v}, isCompact_singleton, isConnected_singleton, ?_, ?_, ?_⟩
-      · simp [leftPt, ChainTerm.leftEndpoint, hir]
-      · simp [rightPt, ChainTerm.rightEndpoint, hir]
-      · intro z hz
-        have hzv : z = v := mem_singleton_iff.mp hz.1
-        subst hzv
-        have hvV : z ∈ G.V := by
-          have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
-          simpa [hir, ChainTerm.IsValid] using hv
-        refine ⟨hvV, ?_⟩
-        have hmem : A[i.1]'i.2 ∈ A := List.getElem_mem i.2
-        rwa [hir] at hmem
-    · have hrR : r ∈ G.R := by
-        have hv := hChain.valid (A[i.1]'i.2) (List.getElem_mem i.2)
-        simpa [hir, ChainTerm.IsValid] using hv
-      obtain ⟨hl_cl, hl_U⟩ := h_left_closure i r hir
-      obtain ⟨hr_cl, hr_U⟩ := h_right_closure i r hir
-      obtain ⟨γ, hγ0, hγ1, hγ_int⟩ :=
-        exists_region_curve G hDisc hProper r hrR (leftPt i) hl_cl (rightPt i) hr_cl
-      refine ⟨range γ, isCompact_range γ.continuous, isConnected_range γ.continuous,
-        ⟨0, hγ0⟩, ⟨1, hγ1⟩, ?_⟩
-      rintro z ⟨⟨t, rfl⟩, htU⟩
-      by_cases ht0 : (t : ℝ) = 0
-      · have hteq : t = 0 := Subtype.ext ht0
-        rw [hteq, hγ0] at htU ⊢
-        exact hl_U htU
-      · by_cases ht1 : (t : ℝ) = 1
-        · have hteq : t = 1 := Subtype.ext ht1
-          rw [hteq, hγ1] at htU ⊢
-          exact hr_U htU
-        · have h_ioo : (t : ℝ) ∈ Ioo (0 : ℝ) 1 :=
-            ⟨lt_of_le_of_ne t.2.1 (Ne.symm ht0), lt_of_le_of_ne t.2.2 ht1⟩
-          have h_in_r : γ t ∈ r := hγ_int t h_ioo
-          exfalso
-          exact not_mem_U_of_mem_region G hrR h_in_r htU
-  choose K hK_comp hK_conn hK_left hK_right hK_sub using hK_exists
-  refine ⟨⋃ i : Fin A.length, K i, isCompact_iUnion hK_comp, ?_, ?_, ?_, ?_⟩
-  · refine isConnected_biUnion_fin A.length hm K hK_conn ?_
-    intro i hi
-    refine ⟨rightPt i, hK_right i, ?_⟩
-    change ChainTerm.rightEndpoint A y i ∈ K ⟨i.1 + 1, hi⟩
-    rw [hChain.endpoints_eq i hi]
-    exact hK_left ⟨i.1 + 1, hi⟩
-  · refine mem_iUnion.mpr ⟨⟨0, hm⟩, ?_⟩
-    have hhead : A.head hChain.ne_nil = A[0]'hm := List.head_eq_getElem_zero _
-    have hmatch := hChain.head_matches
-    rw [hhead] at hmatch
-    rcases hir0 : A[0]'hm with v | r
-    · rw [hir0] at hmatch
-      change v = x at hmatch
-      have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, ChainTerm.leftEndpoint, hir0, hmatch]
-      rw [← hleft]; exact hK_left ⟨0, hm⟩
-    · have hleft : leftPt ⟨0, hm⟩ = x := by simp [leftPt, ChainTerm.leftEndpoint, hir0]
-      rw [← hleft]; exact hK_left ⟨0, hm⟩
-  · let i_last : Fin A.length := ⟨A.length - 1, Nat.sub_lt hm zero_lt_one⟩
-    refine mem_iUnion.mpr ⟨i_last, ?_⟩
-    have hlast : A.getLast hChain.ne_nil = A[i_last.1]'i_last.2 := by
-      rw [List.getLast_eq_getElem]
-    have hmatch := hChain.last_matches
-    rw [hlast] at hmatch
-    rcases hir_last : A[i_last.1]'i_last.2 with v | r
-    · rw [hir_last] at hmatch
-      change v = y at hmatch
-      have hright : rightPt i_last = y := by
-        simp [rightPt, ChainTerm.rightEndpoint, hir_last, hmatch]
-      rw [← hright]; exact hK_right i_last
-    · have hi1 : i_last.1 + 1 = A.length := by dsimp [i_last]; omega
-      have hright : rightPt i_last = y := by simp [rightPt, ChainTerm.rightEndpoint, hir_last, hi1]
-      rw [← hright]; exact hK_right i_last
-  · rintro z ⟨hz_u, hzU⟩
-    rcases mem_iUnion.mp hz_u with ⟨i, hzi⟩
-    exact hK_sub i ⟨hzi, hzU⟩
+  obtain ⟨F, hcompact, hpath, hx, hy, hmeet, -⟩ :=
+    GM12.exists_path_connected_carrier_of_disc_chain hDisc hProper hChain
+  exact ⟨F, hcompact, hpath.isConnected, hx, hy, hmeet⟩
 
 /-- Necessity of (3.6)(i): If $\Delta$ is feasible in $G$ on a closed disc space $S$, then $\Delta$
 is cross-free on $\operatorname{bd}(S)$. -/

@@ -457,21 +457,8 @@ theorem GraphWalk.append_assoc {α β : Type*} {G : Graph α β} {a b c d : α}
 
 theorem walkDrawing_append_U (H : Drawing S) {a b c : S}
     (W₁ : GraphWalk H.toGraph a b) (W₂ : GraphWalk H.toGraph b c) :
-    (walkDrawing H (W₁.append W₂)).U = (walkDrawing H W₁).U ∪ (walkDrawing H W₂).U := by
-  ext x
-  simp only [mem_walkDrawing_U, mem_union, GraphWalk.mem_support_append, GraphWalk.edges_append,
-    List.mem_append]
-  constructor
-  · rintro ((hx | hx) | ⟨e, he | he, hxe⟩)
-    · exact Or.inl (Or.inl hx)
-    · exact Or.inr (Or.inl hx)
-    · exact Or.inl (Or.inr ⟨e, he, hxe⟩)
-    · exact Or.inr (Or.inr ⟨e, he, hxe⟩)
-  · rintro ((hx | ⟨e, he, hxe⟩) | (hx | ⟨e, he, hxe⟩))
-    · exact Or.inl (Or.inl hx)
-    · exact Or.inr ⟨e, Or.inl he, hxe⟩
-    · exact Or.inl (Or.inr hx)
-    · exact Or.inr ⟨e, Or.inr he, hxe⟩
+    (walkDrawing H (W₁.append W₂)).U = (walkDrawing H W₁).U ∪ (walkDrawing H W₂).U :=
+  GraphWalk.drawing_U_append H W₁ W₂
 
 omit [T2Space S] in
 /-- For a line `L` with ends `a ≠ b`, `L \ {a}` is preconnected and contains `b`. -/

@@ -58,16 +58,6 @@ private theorem mapPathFixed_homotopic
   (hpq.map f).pathCast ha.symm hb.symm
 
 open Classical in
-private theorem replacement_length {S : Type*} {x y v : S} (hxy : x ≠ y) :
-    (if x = v ∨ y = v then 2 else 1) =
-      1 + (if x = v then 1 else 0) + (if y = v then 1 else 0) := by
-  by_cases hx : x = v <;> by_cases hy : y = v
-  · exact False.elim (hxy (hx.trans hy.symm))
-  · simp only [hx, hy, true_or, ite_true, ite_false]
-  · simp only [hx, hy, or_true, ite_true, ite_false]
-  · simp only [hx, hy, false_or, ite_false]
-
-open Classical in
 /-- The realized lifted walk maps to a path homotopic to the
 realized new walk, with the exact length increase in XII (7.3),
 page 261. Edge images lie in lines, so their endpoint-preserving
@@ -116,10 +106,7 @@ theorem exists_closed_walk_path_lift
         · intro t
           exact hq e x y h (mem_range_self t)
       refine ⟨P.append Q', ?_, ?_⟩
-      · have hPlen : P.length = 1 + I x + I y := hP.trans (replacement_length (hloopless e x y h))
-        rw [GraphWalk.length_append, GraphWalk.length_cons, walkVertexCount]
-        change P.length + Q'.length + I x = Q.length + 1 + 2 * (I x + walkVertexCount v Q) + I z
-        omega
+      · exact replacement_append_length (h := h) (hloopless e x y h) hP hQlen
       · have happend := mapPathFixed_homotopic f (hfix x hx) (hfix z hz)
           (walkPath_append_homotopic p P Q')
         rw [mapPathFixed_trans f (hfix x hx) (hfix y hy) (hfix z hz)] at happend

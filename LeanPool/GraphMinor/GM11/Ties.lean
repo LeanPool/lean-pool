@@ -470,19 +470,7 @@ theorem walk_U_cases {u v : S} {W : GraphWalk Γ.toGraph u v} {z : S} (hz : z �
 theorem mem_U_append {u v w : S} {P : GraphWalk Γ.toGraph u v} {Q : GraphWalk Γ.toGraph v w} {x :
   S} :
     x ∈ (walkDrawing Γ (P.append Q)).U ↔ x ∈ (walkDrawing Γ P).U ∨ x ∈ (walkDrawing Γ Q).U := by
-  simp only [mem_walkDrawing_U, GraphWalk.edges_append, List.mem_append]
-  rw [GraphWalk.mem_support_append]
-  constructor
-  · rintro ((h | h) | ⟨e, he | he, hx⟩)
-    · exact Or.inl (Or.inl h)
-    · exact Or.inr (Or.inl h)
-    · exact Or.inl (Or.inr ⟨e, he, hx⟩)
-    · exact Or.inr (Or.inr ⟨e, he, hx⟩)
-  · rintro ((h | ⟨e, he, hx⟩) | (h | ⟨e, he, hx⟩))
-    · exact Or.inl (Or.inl h)
-    · exact Or.inr ⟨e, Or.inl he, hx⟩
-    · exact Or.inl (Or.inr h)
-    · exact Or.inr ⟨e, Or.inr he, hx⟩
+  rw [GraphWalk.drawing_U_append, mem_union]
 
 theorem mem_U_reverse {u v : S} {P : GraphWalk Γ.toGraph u v} {x : S} :
     x ∈ (walkDrawing Γ P.reverse).U ↔ x ∈ (walkDrawing Γ P).U := by

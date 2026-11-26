@@ -225,32 +225,20 @@ theorem IsSurfaceForest.addIsolated [T1Space S] (hS : IsSurface S) [ConnectedSpa
 private theorem pulled_vertices_on_shifted_cuff
     (S : Type u)
     [TopologicalSpace S]
-    [T1Space S]
     (G : Drawing S)
     (C : Set S)
     (T : Type u)
     [TopologicalSpace T]
     (j : S → T)
     (Δ : Set T)
-    (Y : Set T)
     (a₁ : S)
     (a₂ : S)
     (x₀ : S)
-    (x₁ : S)
-    (W : GraphWalk G.toGraph x₁ a₁)
-    (Q : Path x₀ a₁)
     (hset : G.V ∩ j ⁻¹' discBd Δ = {a₁, a₂})
     (hx₀C : x₀ ∈ C)
-    (hQY : ∀ (t : ↑unitInterval), j (Q t) ∈ Y)
-    (hsC : ∀ s ∈ G.V ∩ C, s = x₀ ∧ x₁ = x₀)
-    (hQL : x₀ ∈ G.V → ∀ (t : ↑unitInterval), Q t ∈ (walkDrawing G W).U)
     (h : S → S)
-    (Φ : ↑unitInterval × S → S)
     (hhi : Injective h)
     (hh0 : h x₀ = a₁)
-    (P : Path x₀ a₁)
-    (hP : ∀ (t : ↑unitInterval), P t = Φ (t, x₀))
-    (hPQ : P.Homotopic Q)
     (c₂ : S)
     (hc₂C : c₂ ∈ C)
     (hc₂ : h c₂ = a₂)
@@ -258,8 +246,7 @@ private theorem pulled_vertices_on_shifted_cuff
     (hG'V : G'.V = h ⁻¹' G.V)
     (hCA : ∀ x ∈ C, j (h x) ∈ discBd Δ)
     (hx₀V : x₀ ∈ G'.V)
-    (hc₂V : c₂ ∈ G'.V)
-    (hx₀c₂ : x₀ ≠ c₂) :
+    (hc₂V : c₂ ∈ G'.V) :
     G'.V ∩ C = {x₀, c₂} := by
   apply subset_antisymm
   · rintro x ⟨hxV, hxC⟩
@@ -309,50 +296,30 @@ private theorem isolated_vertices_restore_boundary_agreement
     (H : Drawing S)
     (hVeq : G.V ∩ bd S = H.V ∩ bd S)
     (C : Set S)
-    (T : Type u)
-    (j : S → T)
-    (Y : Set T)
-    (a₁ : S)
-    (a₂ : S)
     (x₀ : S)
-    (x₁ : S)
-    (W : GraphWalk G.toGraph x₁ a₁)
-    (Q : Path x₀ a₁)
-    (hx₀C : x₀ ∈ C)
-    (hQY : ∀ (t : ↑unitInterval), j (Q t) ∈ Y)
-    (hsC : ∀ s ∈ G.V ∩ C, s = x₀ ∧ x₁ = x₀)
-    (hQL : x₀ ∈ G.V → ∀ (t : ↑unitInterval), Q t ∈ (walkDrawing G W).U)
+    (hsC : ∀ s ∈ G.V ∩ C, s = x₀)
     (h : S → S)
     (Φ : ↑unitInterval × S → S)
-    (hh0 : h x₀ = a₁)
-    (P : Path x₀ a₁)
-    (hP : ∀ (t : ↑unitInterval), P t = Φ (t, x₀))
-    (hPQ : P.Homotopic Q)
     (hs : IsCuffShift C h Φ)
     (c₂ : S)
-    (hc₂C : c₂ ∈ C)
-    (hc₂ : h c₂ = a₂)
     (G' : Drawing S)
     (hG'V : G'.V = h ⁻¹' G.V)
     (hx₀V : x₀ ∈ G'.V)
     (hc₂V : c₂ ∈ G'.V)
-    (hx₀c₂ : x₀ ≠ c₂)
     (hG'C : G'.V ∩ C = {x₀, c₂}) :
     let B : Set S := {x₀, c₂} \ H.V
     ∀ (hBf : B.Finite),
     ∀ (hB : Disjoint B H.U),
-    (IsSurfaceForest (addIsolated H B hBf hB)) →
-    ((addIsolated H B hBf hB).V = H.V ∪ B) →
     (addIsolated H B hBf hB).V ∩ bd S = G'.V ∩ bd S := by
-  intro B hBf hB hHf' hH'V
-  rw [hH'V]
+  intro B hBf hB
+  change (H.V ∪ B) ∩ bd S = G'.V ∩ bd S
   ext x
   constructor
   · rintro ⟨hx | hx, hb⟩
     · refine ⟨?_, hb⟩
       have hxG : x ∈ G.V ∩ bd S := hVeq.symm ▸ (⟨hx, hb⟩ : x ∈ H.V ∩ bd S)
       by_cases hxC : x ∈ C
-      · rw [(hsC x ⟨hxG.1, hxC⟩).1]
+      · rw [hsC x ⟨hxG.1, hxC⟩]
         exact hx₀V
       · rw [hG'V, mem_preimage, (hs.fix x hb hxC).1]
         exact hxG.1
@@ -516,8 +483,8 @@ theorem smallCuffReductionStep (S : Type u) [TopologicalSpace S] [T1Space S] (hS
     exact ha₂.1
   have hx₀c₂ : x₀ ≠ c₂ := fun e => hne₁₂ (by rw [← hh0, e, hc₂])
   have hG'C : G'.V ∩ C = {x₀, c₂} := by
-    exact pulled_vertices_on_shifted_cuff S G C T j Δ Y a₁ a₂ x₀ x₁ W Q hset hx₀C hQY hsC hQL h Φ
-      hhi hh0 P hP hPQ c₂ hc₂C hc₂ G' hG'V hCA hx₀V hc₂V hx₀c₂
+    exact pulled_vertices_on_shifted_cuff S G C T j Δ a₁ a₂ x₀ hset hx₀C h
+      hhi hh0 c₂ hc₂C hc₂ G' hG'V hCA hx₀V hc₂V
   have hG'C2 : (G'.V ∩ C).ncard = 2 := by
     rw [hG'C]
     exact ncard_pair hx₀c₂
@@ -563,10 +530,9 @@ theorem smallCuffReductionStep (S : Type u) [TopologicalSpace S] [T1Space S] (hS
       · exact hc₂C
     exact hxV (hHf.1 ⟨hCsub hC hxC, hxU⟩)
   have hHf' : IsSurfaceForest (addIsolated H B hBf hB) := hHf.addIsolated hS hBf hB
-  have hH'V : (addIsolated H B hBf hB).V = H.V ∪ B := rfl
   have hVb' : (addIsolated H B hBf hB).V ∩ bd S = G'.V ∩ bd S := by
-    exact isolated_vertices_restore_boundary_agreement S G H hVeq C T j Y a₁ a₂ x₀ x₁ W Q hx₀C hQY
-      hsC hQL h Φ hh0 P hP hPQ hs c₂ hc₂C hc₂ G' hG'V hx₀V hc₂V hx₀c₂ hG'C  hBf hB hHf' hH'V
+    exact isolated_vertices_restore_boundary_agreement S G H hVeq C x₀
+      (fun s hs => (hsC s hs).1) h Φ hs c₂ G' hG'V hx₀V hc₂V hG'C hBf hB
   have hLm : (walkDrawing G W).U ∩ h '' G'.U ⊆ {a₁} := by
     rintro x ⟨hx, y, -, rfl⟩
     rcases hLint _ hx with h1 | h1

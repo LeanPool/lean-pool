@@ -213,105 +213,6 @@ theorem exists_closedCurve_union_path (φ : C(Circle, S)) (z₀ : Circle) {y : S
   refine ⟨φ', ?_⟩
   rw [hran', Path.trans_range, Path.trans_range, Path.symm_range, Set.union_self, hran₀]
 
-omit [T2Space S] in
-/-- Given a single radial link `K.toGraph.IsLink e u w`, there is a path `p : Path u w` with
-`range p = closure e`. -/
-private theorem exists_path_of_radial_link' {Γ K : Drawing S}
-    (hrad : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
-    {e : Set S} {u w : S} (hlink : K.toGraph.IsLink e u w) :
-    ∃ p : Path u w, range p = closure e := by
-  have heK : e ∈ K.E := hlink.1
-  have hcap : closure e ∩ K.V = {u, w} := hlink.2.2.2
-  obtain ⟨v₀, hv₀, w₀, hw₀, hcap₀⟩ := hrad.2.2.2.2.1 e heK
-  have hpair : ({u, w} : Set S) = {v₀, w₀} := hcap.symm.trans hcap₀
-  have hvw_ne : v₀ ≠ w₀ := fun h => hw₀.2 (h ▸ hv₀)
-  have huw_ne : u ≠ w := by
-    intro h
-    subst h
-    have hsing : ({v₀, w₀} : Set S) = {u} := by
-      rw [← hpair, pair_eq_singleton]
-    have hv₀_u : v₀ = u := mem_singleton_iff.mp (hsing ▸ mem_insert v₀ {w₀})
-    have hw₀_u : w₀ = u := mem_singleton_iff.mp (hsing ▸ mem_insert_of_mem v₀ (mem_singleton w₀))
-    exact hvw_ne (hv₀_u.trans hw₀_u.symm)
-  have hline : IsLineWithEnds (closure e) u w := by
-    rcases K.edge_cond e heK with ⟨u₁, w₁, _, hcap₁, hl₁⟩ | ⟨u₁, hcap₁, _⟩
-    · have hp₁ : ({u, w} : Set S) = {u₁, w₁} := hcap.symm.trans hcap₁
-      have hu₁ : u ∈ ({u₁, w₁} : Set S) := hp₁ ▸ mem_insert u {w}
-      have hw₁ : w ∈ ({u₁, w₁} : Set S) := hp₁ ▸ mem_insert_of_mem u (mem_singleton w)
-      rcases hu₁ with rfl | rfl <;> rcases hw₁ with rfl | rfl
-      · exact (huw_ne rfl).elim
-      · exact hl₁
-      · exact hl₁.symm
-      · exact (huw_ne rfl).elim
-    · exfalso
-      have hp₁ : ({u, w} : Set S) = {u₁} := hcap.symm.trans hcap₁
-      have hu₁ : u = u₁ := mem_singleton_iff.mp (hp₁ ▸ mem_insert u {w})
-      have hw₁ : w = u₁ := mem_singleton_iff.mp (hp₁ ▸ mem_insert_of_mem u (mem_singleton w))
-      exact huw_ne (hu₁.trans hw₁.symm)
-  obtain ⟨a, ha, hran, ha0, ha1⟩ := hline.exists_arc
-  exact ⟨⟨⟨a, ha.1⟩, ha0, ha1⟩, hran⟩
-
-/-- Every walk `W` of positive length in a radial drawing `K` is traced by a continuous path
-`p : Path u v` with `range p = (walkDrawing K W).U`. -/
-private theorem exists_path_of_radial_walk' {Γ K : Drawing S}
-    (hrad : (PaintingOrDrawing.drawing Γ).IsPreRadialDrawing K)
-    {u v : S} (W : GraphWalk K.toGraph u v) (hpos : 0 < W.length) :
-    ∃ p : Path u v, range p = (walkDrawing K W).U := by
-  induction W with
-  | nil _ => simp [GraphWalk.length, GraphWalk.edges] at hpos
-  | @cons u w v e hlink rest ih =>
-    obtain ⟨p₁, hran₁⟩ := exists_path_of_radial_link' hrad hlink
-    cases hrest : rest with
-    | nil hw =>
-      subst hrest
-      have hU : (walkDrawing K (.cons hlink (.nil hw))).U = closure e := by
-        have hV : (walkDrawing K (.cons hlink (.nil hw))).V = {u, w} := by
-          rw [walkDrawing_V]
-          ext x
-          simp [GraphWalk.support]
-        have hE : (walkDrawing K (.cons hlink (.nil hw))).E = {e} := by
-          rw [walkDrawing_E]
-          ext f
-          simp [GraphWalk.edges]
-        rw [Drawing.U_eq, hV, hE, biUnion_singleton]
-        refine Subset.antisymm (union_subset ?_ subset_rfl) subset_union_right
-        rw [← hlink.2.2.2]
-        exact inter_subset_left
-      exact ⟨p₁, hran₁.trans hU.symm⟩
-    | cons hl₂ rest₂ =>
-      subst hrest
-      have hpos₂ : 0 < (GraphWalk.cons hl₂ rest₂).length := by
-        simp [GraphWalk.length, GraphWalk.edges]
-      obtain ⟨p₂, hran₂⟩ := ih hpos₂
-      refine ⟨p₁.trans p₂, ?_⟩
-      rw [Path.trans_range, hran₁, hran₂]
-      have hV : (walkDrawing K (.cons hlink (.cons hl₂ rest₂))).V =
-          insert u (walkDrawing K (.cons hl₂ rest₂)).V := by
-        rw [walkDrawing_V, walkDrawing_V]
-        ext x
-        simp [GraphWalk.support]
-      have hE : (walkDrawing K (.cons hlink (.cons hl₂ rest₂))).E =
-          insert e (walkDrawing K (.cons hl₂ rest₂)).E := by
-        rw [walkDrawing_E, walkDrawing_E]
-        ext f
-        simp [GraphWalk.edges]
-      have hu_cl : u ∈ closure e := by
-        have : u ∈ closure e ∩ K.V := hlink.2.2.2 ▸ mem_insert u {w}
-        exact this.1
-      rw [Drawing.U_eq, Drawing.U_eq, hV, hE]
-      ext x
-      simp only [mem_union, mem_insert_iff, mem_iUnion, exists_prop]
-      constructor
-      · rintro (hx | hx | ⟨f, hf, hxf⟩)
-        · exact Or.inr ⟨e, Or.inl rfl, hx⟩
-        · exact Or.inl (Or.inr hx)
-        · exact Or.inr ⟨f, Or.inr hf, hxf⟩
-      · rintro ((rfl | hx) | ⟨f, rfl | hf, hxf⟩)
-        · exact Or.inl hu_cl
-        · exact Or.inr (Or.inl hx)
-        · exact Or.inl hxf
-        · exact Or.inr (Or.inr ⟨f, hf, hxf⟩)
-
 /-- Every closed walk `W` of positive length `≤ 2 * m` in a radial drawing `K` of `Γ` is traced by
 a closed curve `φ : C(Circle, S)` with `range φ = (walkDrawing K W).U` and
 `(range φ ∩ Γ.U).encard ≤ m`. -/
@@ -322,7 +223,7 @@ theorem exists_closedCurve_of_radial_walk_ncard {Γ K : Drawing S}
     ∃ φ : C(Circle, S),
       range φ = (walkDrawing K W).U ∧ (range φ ∩ Γ.U).encard ≤ m := by
   classical
-  obtain ⟨p, hran⟩ := exists_path_of_radial_walk' hrad W hpos
+  obtain ⟨p, hran, -, -⟩ := GM12.exists_path_of_radial_walk hrad W hpos
   obtain ⟨φ, hranφ⟩ := exists_closedCurve_of_loop p
   have hran_W : range φ = (walkDrawing K W).U := hranφ.trans hran
   refine ⟨φ, hran_W, ?_⟩

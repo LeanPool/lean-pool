@@ -194,8 +194,7 @@ private theorem second_boundary_arcs_meet_at_ends
     (hKA₂ : K ∩ A₂ = {n₂})
     (E₁ : Set S)
     (hE₁ : IsLineWithEnds E₁ n₁ n')
-    (hE₁b : E₁ ∩ discBd B = {n₁, n'})
-    (hn₂E₁ : n₂ ∉ E₁) :
+    (hE₁b : E₁ ∩ discBd B = {n₁, n'}) :
     A₂ ∩ (E₁ ∪ K) = {n', n₂} := by
   refine Subset.antisymm ?_ ?_
   · rintro x ⟨hx, (h | h)⟩
@@ -597,8 +596,7 @@ private theorem first_boundary_arcs_meet_at_ends
     (hA₁ : IsLineWithEnds A₁ n₁ n')
     (hA₂ : IsLineWithEnds A₂ n' n₂)
     (hAi : A₁ ∩ A₂ = {n'})
-    (hA₁A : A₁ ⊆ A)
-    (hC₁ : IsLineWithEnds (K ∪ A₂) n₁ n') :
+    (hA₁A : A₁ ⊆ A) :
     A₁ ∩ (K ∪ A₂) = {n₁, n'} := by
   refine Subset.antisymm ?_ ?_
   · rintro x ⟨hx, (h | h)⟩
@@ -694,7 +692,7 @@ theorem indented_of_disc [ConnectedSpace S] (hS : IsSurface S) (Γ : Painting S)
     tauto
   have hiB : A₁ ∩ (K ∪ A₂) = {n₁, n'} := by
     exact first_boundary_arcs_meet_at_ends (S := S) (A := A) (n₁ := n₁) (n₂ := n₂) (n' := n')
-      K hK hKnotA hn'2 A₁ A₂ hA₁ hA₂ hAi hA₁A hC₁
+      K hK hKnotA hn'2 A₁ A₂ hA₁ hA₂ hAi hA₁A
   obtain ⟨E₁, T₁, R₁, hE₁, hE₁b, hE₁B, hT₁, hR₁, huB, hiB₁, hbT₁, hbR₁⟩
     := split_disc hB hA₁ hC₁ hn'1.symm hsplitB hiB
   have hKE₁ : E₁ ∩ K = {n₁} := by
@@ -711,7 +709,7 @@ theorem indented_of_disc [ConnectedSpace S] (hS : IsSurface S) (Γ : Painting S)
     · exact hn'2 h3.symm
   have hiR : A₂ ∩ (E₁ ∪ K) = {n', n₂} := by
     exact second_boundary_arcs_meet_at_ends (S := S) (A := A) (n₁ := n₁) (n₂ := n₂) (n'
-      := n') B hAdB K hK hn'1 A₁ A₂ hA₁ hA₂ hAi hA₂A hKA₂ E₁ hE₁ hE₁b hn₂E₁
+      := n') B hAdB K hK hn'1 A₁ A₂ hA₁ hA₂ hAi hA₂A hKA₂ E₁ hE₁ hE₁b
   obtain ⟨E₂, T₂, Q', hE₂, hE₂b, hE₂R, hT₂, hQ', huR, hiR₂, hbT₂, hbQ'⟩
     := split_disc hR₁ hA₂ hC₂ hn'2 hbR hiR
   have hE₁Q' : E₁ ⊆ Q' := fun x hx => discBd_subset _ (hbQ' ▸ .inl (.inl hx))

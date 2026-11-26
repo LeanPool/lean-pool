@@ -71,19 +71,9 @@ theorem radialDiscDeletion_isRadial
   have hpre : (PaintingOrDrawing.drawing Γ').IsPreRadialDrawing K' :=
     radialDiscDeletion_isPreRadial hS hK.2.1 hC hD hb hCV hr hv hur huK hCZ hmeet hfC hf
   have hY : Y ∈ Γ'.R := theorem_7_2_region hS hD hbd hn hFV hr hFr
-  have hnorm : frontier (closure (univ \ D)) ∩ Γ.U ⊆ Γ.V := by
-    rw [← compl_eq_univ_sdiff, closure_compl, frontier_compl]
-    exact fun x hx => hn ⟨hb ▸ frontier_interior_subset hx.1, hx.2⟩
-  have hUeq := interSet_U_eq_of_normal_frontier isClosed_closure hnorm
-  have hcover : Γ.U ⊆ Γ'.U ∪ Y := by
-    intro x hx
-    by_cases hxo : x ∈ closure (univ \ D)
-    · exact Or.inl (hUeq.symm ▸ ⟨hx, hxo⟩)
-    · have hxi : x ∈ interior D := by
-        by_contra hnxi
-        exact hxo (by rw [← compl_eq_univ_sdiff, closure_compl]; exact hnxi)
-      exact Or.inr (Or.inr ⟨interior_subset hxi, fun hxv =>
-        (hb.symm ▸ hvC).2 (mem_singleton_iff.mp hxv ▸ hxi)⟩)
+  have hcover : Γ.U ⊆ Γ'.U ∪ Y :=
+    (drawing_U_subset_outside_normal_disc_union hb hn hvC).trans
+      (union_subset_union subset_rfl subset_union_right)
   have huNew : u ∈ K'.V := by
     have huf : u ∈ frontier D := hb.symm ▸ C.V_subset_U (hCV.symm ▸ Or.inr rfl)
     rw [frontier_eq_closure_inter_closure] at huf

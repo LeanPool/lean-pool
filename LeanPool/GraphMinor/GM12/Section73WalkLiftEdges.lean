@@ -54,27 +54,8 @@ theorem exists_closed_walk_lift_with_edges
       f '' (walkDrawing K W').U = (walkDrawing J W).U ∧
       (walkDrawing K W').U \ r' = (walkDrawing J W).U \ r' ∧
       ∀ e ∈ W.edges, ∀ g ∈ spokeReplacementEdges K J v f e, g ∈ W'.edges := by
-  have hV : ∀ x ∈ J.V, x ∈ K.V := by
-    intro x hx
-    rw [hJV, image_radial_vertices_eq hS hK hE hv hr' hvr' hfix hcollapse] at hx
-    rcases hx with hx | hxv
-    · exact hx.1
-    · exact hxv ▸ hK.2.1.2.1 hv
-  have hloopless : ∀ e x y, J.toGraph.IsLink e x y → x ≠ y := by
-    intro e x y hel hxy
-    subst y
-    have hb := bipartite_of_preRadial hJpre e x x hel
-    by_cases hx : x ∈ (deleteVertices Γ {v}).V
-    · exact (hb.mp hx) hx
-    · exact hx (hb.mpr hx)
-  have hfixV : ∀ x ∈ J.V, f x = x := by
-    intro x hx
-    rw [hJV, image_radial_vertices_eq hS hK hE hv hr' hvr' hfix hcollapse] at hx
-    rcases hx with hx | hxv
-    · exact hfix x hx.2
-    · have hxv' : x = v := hxv
-      rw [hxv']
-      exact hcollapse v (Or.inl rfl)
+  obtain ⟨hV, hfixV, hloopless⟩ :=
+    walk_lift_vertex_properties hS hK hE hv hr' hvr' f hfix hcollapse hJV hJpre
   have hpaths : ∀ e x y, J.toGraph.IsLink e x y →
       ∃ P : GraphWalk K.toGraph x y,
         P.length = (if x = v ∨ y = v then 2 else 1) ∧

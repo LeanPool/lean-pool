@@ -101,7 +101,8 @@ theorem isChart_comp_ballHomeo {S : Type w} [TopologicalSpace S] {D : Set S} {h 
     conv_rhs => rw [← image_id (sphere (0 : ℂ) 1)]
     exact image_congr fun z hz => hΦ.fix' hz
 
-/-- **Graph Minors XV, (3.4)** (pages 122–123), for a given drawing $H'$. -/
+/-- **Graph Minors XV, (3.4)** (pages 122–123), for a given drawing $H'$, with the distance
+monotonicity and boundary-order conclusions of `GM15Theorem34Statement`. -/
 theorem theorem_3_4_proof : GM15Theorem34Statement.{u, v, w} := by
   classical
   intro S _ _ α β G H η θ_star θ k T_star T d Λ v H' η' P i_k i_last
@@ -288,8 +289,8 @@ theorem theorem_3_4_proof : GM15Theorem34Statement.{u, v, w} := by
   exact ⟨T', d', r₁, r₂, h₁, h₂, h₃, h₄, h₅, h₆, h₈, h₉, h₁₀, h₁₁, h₁₂, h₁₃, h₁₄, h₁₅, h₁₆, h₁₇,
     h₁₈, h₁₉, h₂₀⟩
 
-/-- Graph Minors XV, (3.4), applied to paths of `G`: the paths are drawn along chords of a chart of
-$\bar\Lambda$, and `theorem_3_4_proof` applies to the drawing so built. -/
+/-- Graph Minors XV, (3.4), with auxiliary conclusions, applied to paths of `G`. The paths are
+drawn along chords of a chart of $\bar\Lambda$, and `theorem_3_4_proof` applies to the drawing. -/
 theorem theorem_3_4_drawn : GM15Theorem34DrawnStatement.{u, v, w} := by
   classical
   intro S _ _ α β G H η θ_star θ k T_star T d Λ v P i_k i_last

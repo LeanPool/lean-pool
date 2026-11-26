@@ -13,6 +13,7 @@ import LeanPool.GraphMinor.GM12.Section2EntryComparison
 import LeanPool.GraphMinor.GM12.Section2EntryConstruction
 import LeanPool.GraphMinor.GM12.Section2PathHomotopy
 import LeanPool.GraphMinor.Surface.Disc
+import LeanPool.GraphMinor.GM12.Section2EntryPaths
 
 /-!
 # The entry edge does not depend on its starting point
@@ -47,34 +48,9 @@ theorem entersLike_witness_at {S : Type*} [TopologicalSpace S] [T2Space S]
   have h₀a : a < h₀ := lt_min hh.1 hNewIn.1
   have h₀c : h₀ < c := lt_of_le_of_lt (min_le_left _ _) hh.2
   have hpos : 0 < c - h₀ := sub_pos.mpr h₀c
-  have hFinside : ∀ t : unitInterval, t < 1 → f (h₀ + t.val * (c - h₀)) ∈ r := by
-    intro t ht
-    apply hfr
-    refine ⟨?_, ?_⟩
-    · exact h₀a.trans_le (le_add_of_nonneg_right (mul_nonneg t.property.1 hpos.le))
-    · have ht' : (t : ℝ) < 1 := ht
-      nlinarith
-  have hFmem : ∀ t : unitInterval, f (h₀ + t.val * (c - h₀)) ∈ r ∪ {v} := by
-    intro t
-    by_cases ht : t = 1
-    · subst t
-      right
-      change f (h₀ + 1 * (c - h₀)) = v
-      convert hfc using 1
-      congr 1
-      ring
-    · exact Or.inl (hFinside t (lt_of_le_of_ne t.property.2 ht))
-  let F : Path (⟨f h₀, Or.inl (hfr h₀ ⟨h₀a, h₀c⟩)⟩ : (r ∪ {v} : Set S))
-      ⟨v, Or.inr (mem_singleton v)⟩ := {
-    toFun := fun t => ⟨f (h₀ + t.val * (c - h₀)), hFmem t⟩
-    continuous_toFun := (hf.comp (by fun_prop)).subtype_mk _
-    source' := Subtype.ext (by simp only [Icc.coe_zero, zero_mul, add_zero])
-    target' := Subtype.ext (by
-      change f (h₀ + 1 * (c - h₀)) = v
-      convert hfc using 1
-      congr 1
-      ring) }
-  have hFval : ∀ t, (F t).val = f (h₀ + t.val * (c - h₀)) := fun _ => rfl
+  obtain ⟨F, hFval, hFinside⟩ :=
+    exists_affine_approach_path h₀c hf.continuousOn hfc
+      (fun t ht => hfr t ⟨h₀a.trans_le ht.1, ht.2⟩)
   let s : unitInterval := ⟨(h - h₀) / (c - h₀),
     div_nonneg (sub_nonneg.mpr (min_le_left _ _)) hpos.le,
     (div_le_one hpos).mpr (by linarith [hh.2])⟩
@@ -103,12 +79,9 @@ theorem entersLike_witness_at {S : Type*} [TopologicalSpace S] [T2Space S]
   let q := β.map (show Continuous j from continuous_subtype_val)
   have hp : ∀ t : unitInterval, p t = f (hNew + t.val * (c - hNew)) := by
     intro t
-    change (F (Icc.convexComb s' 1 t)).val = _
-    rw [hFval]
-    congr 1
-    simp only [Icc.coe_convexComb, Icc.coe_one]
+    change (F.subpath s' 1 t).val = _
     rw [hstart']
-    ring
+    exact affine_approach_subpath_apply F hFval s' t
   have hentryNew := isEntryCurve_trans p q hp hβinj hβint
   let ξNew : Curve S := (((F.subpath s' 1).trans β).map
     (show Continuous j from continuous_subtype_val)).toContinuousMap

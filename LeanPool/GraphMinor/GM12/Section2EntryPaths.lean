@@ -27,6 +27,60 @@ namespace GraphMinor.GM12
 
 open Set Topology Surface
 
+/-- The affine parameter of a unit-interval path lies in its real interval. -/
+theorem affine_approach_parameter_mem_Icc {h c : ℝ} (hh : h ≤ c) (t : unitInterval) :
+    h + t.val * (c - h) ∈ Icc h c := by
+  have hpos := sub_nonneg.mpr hh
+  refine ⟨le_add_of_nonneg_right (mul_nonneg t.property.1 hpos), ?_⟩
+  have hle := mul_le_of_le_one_left hpos t.property.2
+  linarith
+
+/-- Before the final time the affine parameter lies strictly before the endpoint. -/
+theorem affine_approach_parameter_mem_Ico {h c : ℝ} (hh : h < c)
+    {t : unitInterval} (ht : t < 1) : h + t.val * (c - h) ∈ Ico h c := by
+  refine ⟨(affine_approach_parameter_mem_Icc hh.le t).1, ?_⟩
+  have hlt := mul_lt_of_lt_one_left (sub_pos.mpr hh) ht
+  linarith
+
+/-- An approach in a region with a terminal boundary vertex gives a path in their union. -/
+theorem exists_affine_approach_path {S : Type*} [TopologicalSpace S] {r : Set S} {v : S}
+    {f : ℝ → S} {h c : ℝ} (hh : h < c) (hf : ContinuousOn f (Icc h c)) (hfc : f c = v)
+    (hinside : ∀ q ∈ Ico h c, f q ∈ r) :
+    ∃ F : Path (⟨f h, Or.inl (hinside h ⟨le_rfl, hh⟩)⟩ : (r ∪ {v} : Set S))
+      ⟨v, Or.inr (mem_singleton v)⟩,
+      (∀ t : unitInterval, (F t).val = f (h + t.val * (c - h))) ∧
+      ∀ t : unitInterval, t < 1 → (F t).val ∈ r := by
+  let m : unitInterval → ℝ := fun t => h + t.val * (c - h)
+  have hm : Continuous m := by fun_prop
+  have hmI : ∀ t, m t ∈ Icc h c := affine_approach_parameter_mem_Icc hh.le
+  have hmR : ∀ t : unitInterval, t < 1 → f (m t) ∈ r :=
+    fun t ht => hinside _ (affine_approach_parameter_mem_Ico hh ht)
+  have hmem : ∀ t : unitInterval, f (m t) ∈ r ∪ {v} := by
+    intro t
+    rcases eq_or_lt_of_le t.2.2 with ht | ht
+    · have ht1 : t = 1 := Subtype.ext ht
+      exact Or.inr (by simp [m, ht1, hfc])
+    · exact Or.inl (hmR t ht)
+  let F : Path (⟨f h, Or.inl (hinside h ⟨le_rfl, hh⟩)⟩ : (r ∪ {v} : Set S))
+      ⟨v, Or.inr (mem_singleton v)⟩ := {
+    toFun := fun t => ⟨f (m t), hmem t⟩
+    continuous_toFun := (hf.comp_continuous hm hmI).subtype_mk _
+    source' := Subtype.ext (by simp [m])
+    target' := Subtype.ext (by simpa only [m, Icc.coe_one, one_mul, add_sub_cancel] using hfc) }
+  exact ⟨F, fun _ => rfl, hmR⟩
+
+/-- A terminal subpath has the same affine parametrization starting at the chosen time. -/
+theorem affine_approach_subpath_apply {S X : Type*} [TopologicalSpace X] {a b : X}
+    (F : Path a b) {j : X → S} {f : ℝ → S} {h₀ c : ℝ}
+    (hF : ∀ t : unitInterval, j (F t) = f (h₀ + t.val * (c - h₀))) (s t : unitInterval) :
+    let h := h₀ + s.val * (c - h₀)
+    j ((F.subpath s 1) t) = f (h + t.val * (c - h)) := by
+  change j (F (Icc.convexComb s 1 t)) = _
+  rw [hF]
+  congr 1
+  simp only [Icc.coe_convexComb, Icc.coe_one]
+  ring
+
 private theorem convexComb_tail_image_Ioo {s : unitInterval} (hs : s < 1) :
     Icc.convexComb s 1 '' Ioo (0 : unitInterval) 1 = Ioo s 1 := by
   ext u

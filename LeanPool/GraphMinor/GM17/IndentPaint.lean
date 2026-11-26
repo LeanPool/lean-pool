@@ -410,21 +410,15 @@ theorem indented_of_push (Γ : Painting S) {W D T₁ T₂ A₁ A₂ Θ c₀ : Se
   have hn₂T : n₂ ∈ discBd T₂ := hA₂b hA₂.left_mem
   have hn'T₂ : n' ∈ discBd T₂ := hA₂b hA₂.right_mem
   have hcl₁ : closure c₁ = T₁ := by
-    refine Subset.antisymm (closure_minimal sdiff_subset hT₁.isClosed) ?_
-    refine hT₁.subset_closure_discInt.trans (closure_mono ?_)
-    rintro x ⟨hx, hn⟩
-    refine ⟨hx, ?_⟩
-    rintro (rfl | rfl)
-    · exact hn hn₁T
-    · exact hn hn'T₁
+    refine (hT₁.sdiff_of_inter_subset_discBd ?_).2.2
+    rintro x ⟨rfl | rfl, -⟩
+    · exact hn₁T
+    · exact hn'T₁
   have hcl₂ : closure c₂ = T₂ := by
-    refine Subset.antisymm (closure_minimal sdiff_subset hT₂.isClosed) ?_
-    refine hT₂.subset_closure_discInt.trans (closure_mono ?_)
-    rintro x ⟨hx, hn⟩
-    refine ⟨hx, ?_⟩
-    rintro (rfl | rfl)
-    · exact hn hn₂T
-    · exact hn hn'T₂
+    refine (hT₂.sdiff_of_inter_subset_discBd ?_).2.2
+    rintro x ⟨rfl | rfl, -⟩
+    · exact hn₂T
+    · exact hn'T₂
   have ht₁ : tilde c₁ = {n₁, n'} := by
     rw [tilde, hcl₁]
     ext x

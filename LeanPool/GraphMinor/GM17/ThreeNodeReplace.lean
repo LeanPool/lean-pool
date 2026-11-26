@@ -152,55 +152,6 @@ private theorem replacement_discs_intersect_at_arc_ends
     · exact ⟨discBd_subset _ (hb₁ ▸ .inr hL₁.right_mem), discBd_subset _
       (hb₂ ▸ .inr hL₂.right_mem)⟩
 
-private theorem first_replacement_cell_closure
-    (S : Type)
-    [TopologicalSpace S]
-    (n₁ : S)
-    (n₂ : S)
-    (n₃ : S)
-    [T2Space S]
-    (Δ₁ : Set S)
-    (hd₁ : IsClosedDisc Δ₁)
-    (Δ₂ : Set S)
-    (hn₃Δ₁ : n₃ ∈ discBd Δ₁)
-    (hn₁Δ₁ : n₁ ∈ discBd Δ₁)
-    (hn₂Δ₁ : n₂ ∈ discBd Δ₁)
-    (hn₃out : n₃ ∉ Δ₂) :
-    closure (Δ₁ \ {n₁, n₂, n₃}) = Δ₁ := by
-  let c₁ := Δ₁ \ {n₁, n₂, n₃}
-  refine Subset.antisymm (closure_minimal sdiff_subset hd₁.isClosed) ?_
-  refine hd₁.subset_closure_discInt.trans (closure_mono ?_)
-  rintro x ⟨hx, hn⟩
-  refine ⟨hx, ?_⟩
-  rintro (rfl | rfl | rfl)
-  · exact hn hn₁Δ₁
-  · exact hn hn₂Δ₁
-  · exact hn hn₃Δ₁
-
-private theorem second_replacement_cell_closure
-    (S : Type)
-    [TopologicalSpace S]
-    (n₁ : S)
-    (n₂ : S)
-    (n₃ : S)
-    [T2Space S]
-    (Δ₁ : Set S)
-    (Δ₂ : Set S)
-    (hd₂ : IsClosedDisc Δ₂)
-    (hn₁Δ₂ : n₁ ∈ discBd Δ₂)
-    (hn₂Δ₂ : n₂ ∈ discBd Δ₂)
-    (hcl₁ : closure (Δ₁ \ {n₁, n₂, n₃}) = Δ₁) :
-    closure (Δ₂ \ {n₁, n₂}) = Δ₂ := by
-  let c₁ := Δ₁ \ {n₁, n₂, n₃}
-  let c₂ := Δ₂ \ {n₁, n₂}
-  refine Subset.antisymm (closure_minimal sdiff_subset hd₂.isClosed) ?_
-  refine hd₂.subset_closure_discInt.trans (closure_mono ?_)
-  rintro x ⟨hx, hn⟩
-  refine ⟨hx, ?_⟩
-  rintro (rfl | rfl)
-  · exact hn hn₁Δ₂
-  · exact hn hn₂Δ₂
-
 private theorem first_replacement_cell_nodes
     (S : Type)
     [TopologicalSpace S]
@@ -463,26 +414,16 @@ theorem threeNodeIArcReplaceDisc : ThreeNodeIArcReplaceDiscPaintingStatement := 
   let c₁ : Set S := Δ₁ \ {n₁, n₂, n₃}
   let c₂ : Set S := Δ₂ \ {n₁, n₂}
   let N' : Set S := (Γ.N \ Δ) ∪ {n₁, n₂, n₃}
-  have hcl₁ : closure c₁ = Δ₁ := by
-    exact first_replacement_cell_closure S n₁ n₂ n₃ Δ₁ hd₁ Δ₂ hn₃Δ₁ hn₁Δ₁ hn₂Δ₁ hn₃out
-  have hcl₂ : closure c₂ = Δ₂ := by
-    exact second_replacement_cell_closure S n₁ n₂ n₃ Δ₁ Δ₂ hd₂ hn₁Δ₂ hn₂Δ₂ hcl₁
+  obtain ⟨hne₁, -, hcl₁⟩ := hd₁.sdiff_of_inter_subset_discBd
+    (inter_subset_left.trans (insert_subset hn₁Δ₁ (pair_subset hn₂Δ₁ hn₃Δ₁)))
+  obtain ⟨hne₂, -, hcl₂⟩ := hd₂.sdiff_of_inter_subset_discBd
+    (inter_subset_left.trans (pair_subset hn₁Δ₂ hn₂Δ₂))
   have ht₁ : tilde c₁ = {n₁, n₂, n₃} := by
     exact first_replacement_cell_nodes S n₁ n₂ n₃ Δ₁ Δ₂ hn₃Δ₁ hn₁Δ₁ hn₂Δ₁ hcl₁ hcl₂
   have ht₂ : tilde c₂ = {n₁, n₂} := by
     exact second_replacement_cell_nodes S n₁ n₂ n₃ Δ₁ Δ₂ hn₁Δ₂ hn₂Δ₂ hcl₂ ht₁
   have hc₁Δ : c₁ ⊆ Δ := sdiff_subset.trans hsub₁
   have hc₂Δ : c₂ ⊆ Δ := sdiff_subset.trans (hsub₂.trans hsubM)
-  have hne₁ : c₁.Nonempty := by
-    obtain ⟨x, hx⟩ : (closure c₁).Nonempty := by
-      rw [hcl₁]
-      exact ⟨_, discBd_subset _ hn₁Δ₁⟩
-    exact closure_nonempty_iff.mp ⟨x, hx⟩
-  have hne₂ : c₂.Nonempty := by
-    obtain ⟨x, hx⟩ : (closure c₂).Nonempty := by
-      rw [hcl₂]
-      exact ⟨_, discBd_subset _ hn₁Δ₂⟩
-    exact closure_nonempty_iff.mp ⟨x, hx⟩
   have hdisj12 : Disjoint c₁ c₂ := disjoint_left.mpr fun x hx hx' => by
     have h3 : x ∈ Δ₁ ∩ Δ₂ := ⟨hx.1, hx'.1⟩
     rw [hinter] at h3

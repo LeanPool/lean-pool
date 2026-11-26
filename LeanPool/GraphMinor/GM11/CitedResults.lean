@@ -232,7 +232,8 @@ theorem gm19_theorem_9_2 : GM19.GM11Theorem92Statement.{u} := by
   have : T2Space S := hS.2.1
   exact theorem_9_2_proof hS hs ha hb hY haY hbY
 
-/-- (9.1), for the metric of a respectful tangle, in the form that Graph Minors XV and XIX cite. -/
+/-- Metric facts for a respectful tangle used in Graph Minors XV and XIX, including the triangle
+inequality from Graph Minors XI, (9.1). -/
 theorem gm15_theorem_9_1 : GM15.GM11Theorem91Statement.{u} := by
   intro S _ _ H θ T d hS hc hM
   obtain ⟨hResp, K, ins, hK, hd, hdeq⟩ := hM

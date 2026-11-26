@@ -226,6 +226,70 @@ theorem loop_comps_aux [T2Space S] (hS : IsSurface Y) (hψ : IsCutting ψ F) {X 
 
 end
 
+/-- A single cuff over the cut arc determines the presentation obtained by gluing the two lifts
+on that cuff. The presentation also records the arc traversal used in the homotopy argument. -/
+theorem connected_one_cuff_presentation
+    {Y S : Type uu} [TopologicalSpace Y] [TopologicalSpace S] [T2Space S] [ConnectedSpace S]
+    {ψ : Y → S} {F Z₁ Z₂ : Set S} {u c : S} {X₁ Y₁ X₂ Y₂ : Set Y}
+    (hY : IsSurface Y) (hψ : IsCutting ψ F) (hQ : IsOArc (ψ ⁻¹' F))
+    (h7 : LiftPair ψ Z₁ u c X₁ Y₁) (h8 : LiftPair ψ Z₂ c u X₂ Y₂)
+    (hi : Z₁ ∩ Z₂ = {u, c}) (hun : Z₁ ∪ Z₂ = F) (huc : u ≠ c)
+    (hfu : (ψ ⁻¹' {u}).encard ≤ 2) (hfc : (ψ ⁻¹' {c}).encard ≤ 2) :
+    ConnectedSpace Y ∧
+    ∃ (a b c' : ℕ) (_ : Y ≃ₜ SurfaceModel a b c') (i : ℕ) (g : ℕ × ℂ → Y) (ρ : ℝ → S),
+      i < c' ∧
+      let word := sW (blkD a b i ++ rW a b c' ((List.range' 0 c').erase i))
+      Presents word (ψ ∘ g) ∧ SideVal word (ψ ∘ g) (rL a b i).1 ρ ∧
+        (∀ t ∈ Icc (0 : ℝ) 1, ρ t ∈ F) ∧ ρ 1 = ρ 0 ∧ ContinuousOn ρ (Icc 0 1) := by
+  have : T2Space Y := hY.2.1
+  have : CompactSpace Y := hY.1
+  have ne₀ : (ψ ⁻¹' F).Nonempty := by
+    obtain ⟨e⟩ := id hQ
+    exact ⟨_, (e 1).2⟩
+  have hYc := connected_of_cut hψ hY hQ.isPreconnected rfl ne₀
+  obtain ⟨a, b, c', ⟨e⟩⟩ := classification.{uu} Y hY hYc
+  obtain ⟨x, hx⟩ := ne₀
+  have hdcuff := cuff_statement.{uu} Y hY
+  have hQb := hψ.2.2.2.2
+  have hC : connectedComponentIn (bd Y) x ∈ cuffs Y := ⟨_, hQb hx, rfl⟩
+  obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
+  have eQ := oarc_eq φ₀ hQ (hQ.isPreconnected.subset_connectedComponentIn hx hQb)
+  obtain ⟨i, hi', φ, g, hg, hs⟩ := exists_one_hole e hC
+  have hLf := (erase_facts c' i).2
+  obtain ⟨a₀, ξ, η, c1, c2, c3, c4, c5, c6, c7, c8, c9⟩ := h7.paths h8 hi huc hfu hfc hψ.1
+  rw [hun] at c5 c6
+  have L : ArcLift ψ F a₀ ξ η := ⟨c1, c2, c3, c4, c5, fun y y' he hne' => by
+    by_cases hy : ψ y ∈ F
+    · exact c6 y y' he hne' hy
+    · exact absurd (hψ.2.2.1 hy (show ψ y' ∈ Fᶜ from he ▸ hy) he) hne'⟩
+  have m0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
+  have hξ : ∀ t ∈ Icc (0 : ℝ) 1, ξ t ∈ connectedComponentIn (bd Y) x := fun t ht => by
+    rw [← eQ]
+    change ψ (ξ t) ∈ F
+    rw [c3 t ht, ← c5]
+    exact mem_image_of_mem _ ht
+  have hη : ∀ t ∈ Icc (0 : ℝ) 1, η t ∈ connectedComponentIn (bd Y) x := fun t ht => by
+    rw [← eQ]
+    change ψ (η t) ∈ F
+    rw [c4 t ht, ← c5]
+    exact mem_image_of_mem _ ht
+  rcases c9 with ⟨e1, e2⟩ | ⟨e1, e2⟩
+  · exfalso
+    have injξ : InjOn ξ (Ico 0 1) := fun p hp q hq he => c7 hp hq (by
+      rw [← c3 p (Ico_subset_Icc_self hp), ← c3 q (Ico_subset_Icc_self hq), he])
+    have him := loop_image φ c1 hξ injξ e1.symm
+    obtain ⟨v, hv, hve⟩ := him.symm.subset (hη 0 m0)
+    have ha : a₀ v = a₀ 0 := by rw [← c3 v hv, hve, c4 0 m0]
+    rcases eq_or_lt_of_le hv.2 with rfl | hv1
+    · exact c8 0 m0 (e1.symm.trans hve)
+    · have := c7 ⟨hv.1, hv1⟩ ⟨le_rfl, zero_lt_one⟩ ha
+      subst this
+      exact c8 0 m0 hve
+  · obtain ⟨g', a', hp, hside, hmem, hclosed, hcontinuous⟩ :=
+      loop_one_aux hY L hψ.1 hψ.2.1 hC φ hi' hLf hg hs hξ hη
+        (conc_inj c3 c4 c7 c8 e1 e2) e1 e2
+    exact ⟨hYc, a, b, c', e, i, g', a', hi', hp, hside, hmem, hclosed, hcontinuous⟩
+
 /-- **Cutting along an `O`-arc.** The classical cut and paste proof: Massey, *Algebraic Topology: an
 Introduction*, Chapter 1,
 Section 7. -/
@@ -237,7 +301,6 @@ theorem cutOArc : CutOArcStatement.{u} := by
     hfc⟩ := exists_cut_loop hS hO hd
   have hcY : CompactSpace Y := hY.1
   refine ⟨Y, tY, ψ, hY, hψ, ?_, hcase⟩
-  have hdcuff := cuff_statement.{u} Y hY
   obtain ⟨s⟩ : Nonempty S := inferInstance
   have hne : Nonempty S := ⟨s⟩
   rcases hcase with ⟨X, X', hdX, hunX, hOX, hOX', b1, b2⟩ | hQ
@@ -301,53 +364,12 @@ theorem cutOArc : CutOArcStatement.{u} := by
         (by omega) ?_)
       · omega
       · omega
-  · have ne₀ : (ψ ⁻¹' F).Nonempty := by
-      obtain ⟨e⟩ := id hQ
-      exact ⟨_, (e 1).2⟩
-    have hYc := connected_of_cut hψ hY hQ.isPreconnected rfl ne₀
-    obtain ⟨a, b, c', ⟨e⟩⟩ := classification.{u} Y hY hYc
-    obtain ⟨x, hx⟩ := ne₀
-    have hQb := hψ.2.2.2.2
-    have hC : connectedComponentIn (bd Y) x ∈ cuffs Y := ⟨_, hQb hx, rfl⟩
-    obtain ⟨φ₀⟩ := hdcuff.2.2 _ hC
-    have eQ := oarc_eq φ₀ hQ (hQ.isPreconnected.subset_connectedComponentIn hx hQb)
-    obtain ⟨i, hi', φ, g, hg, hs⟩ := exists_one_hole e hC
+  · obtain ⟨hYc, a, b, c', e, i, g, ρ, hi', hp, -⟩ :=
+      connected_one_cuff_presentation hY hψ hQ h7 h8 hi hun huc hfu hfc
     obtain ⟨hN, hLf⟩ := erase_facts c' i
-    obtain ⟨a₀, ξ, η, c1, c2, c3, c4, c5, c6, c7, c8, c9⟩ := h7.paths h8 hi huc hfu hfc hψ.1
-    rw [hun] at c5 c6
-    have L : ArcLift ψ F a₀ ξ η := ⟨c1, c2, c3, c4, c5, fun y y' he hne' => by
-      by_cases hy : ψ y ∈ F
-      · exact c6 y y' he hne' hy
-      · exact absurd (hψ.2.2.1 hy (show ψ y' ∈ Fᶜ from he ▸ hy) he) hne'⟩
-    have m0 : (0 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
-    have m1 : (1 : ℝ) ∈ Icc (0 : ℝ) 1 := by simp
-    have hξ : ∀ t ∈ Icc (0 : ℝ) 1, ξ t ∈ connectedComponentIn (bd Y) x := fun t ht => by
-      rw [← eQ]
-      change ψ (ξ t) ∈ F
-      rw [c3 t ht, ← c5]
-      exact mem_image_of_mem _ ht
-    have hη : ∀ t ∈ Icc (0 : ℝ) 1, η t ∈ connectedComponentIn (bd Y) x := fun t ht => by
-      rw [← eQ]
-      change ψ (η t) ∈ F
-      rw [c4 t ht, ← c5]
-      exact mem_image_of_mem _ ht
-    rcases c9 with ⟨e1, e2⟩ | ⟨e1, e2⟩
-    · exfalso
-      have injξ : InjOn ξ (Ico 0 1) := fun p hp q hq he => c7 hp hq (by
-        rw [← c3 p (Ico_subset_Icc_self hp), ← c3 q (Ico_subset_Icc_self hq), he])
-      have him := loop_image φ c1 hξ injξ e1.symm
-      obtain ⟨v, hv, hve⟩ := him.symm.subset (hη 0 m0)
-      have ha : a₀ v = a₀ 0 := by rw [← c3 v hv, hve, c4 0 m0]
-      rcases eq_or_lt_of_le hv.2 with rfl | hv1
-      · exact c8 0 m0 (e1.symm.trans hve)
-      · have := c7 ⟨hv.1, hv1⟩ ⟨le_rfl, zero_lt_one⟩ ha
-        subst this
-        exact c8 0 m0 hve
-    · obtain ⟨g', -, hp, -⟩ := loop_one_aux hY L hψ.1 hψ.2.1 hC φ hi' hLf hg hs hξ hη
-        (conc_inj c3 c4 c7 c8 e1 e2) e1 e2
-      obtain ⟨w, h5, h6⟩ := nf_blkD (a := a) (b := b) (c := c') hi' hN hLf
-      obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
-      rw [length_erase_range hi'] at e'
-      exact .inl (cutIsSimpler_of_connected e e' (by omega) (by omega) (by omega))
+    obtain ⟨w, h5, h6⟩ := nf_blkD (a := a) (b := b) (c := c') hi' hN hLf
+    obtain ⟨e'⟩ := homeo_of_nf hp h5 h6
+    rw [length_erase_range hi'] at e'
+    exact .inl (cutIsSimpler_of_connected e e' (by omega) (by omega) (by omega))
 
 end GraphMinor.Surface

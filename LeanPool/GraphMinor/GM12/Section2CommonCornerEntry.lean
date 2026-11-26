@@ -14,6 +14,7 @@ import LeanPool.GraphMinor.GM12.Section2CommonPatchSpokes
 import LeanPool.GraphMinor.GM12.Section2SpokeUniqueness
 import LeanPool.GraphMinor.GM12.Section2EntryEnds
 import LeanPool.GraphMinor.GM11.Regions
+import LeanPool.GraphMinor.GM12.Section2EntryPaths
 
 /-!
 # Entry edges agree for approaches in the same corner
@@ -87,32 +88,13 @@ private theorem normalized_terminal_path
       (F : Path x (⟨v, Or.inr rfl⟩ : (r ∪ {v} : Set S))),
       (∀ z, (F z).val = f (s + z.val * (c - s))) ∧
       (∀ z, (F z).val ∈ X) ∧ x.val ∈ X \ {v} := by
-  have hpos : 0 < c - s := sub_pos.mpr hs.2
-  have hm : ∀ z : unitInterval, s + z.val * (c - s) ∈ Icc s c := by
-    intro z
-    refine ⟨le_add_of_nonneg_right (mul_nonneg z.property.1 hpos.le), ?_⟩
-    have := mul_le_of_le_one_left hpos.le z.property.2
-    linarith
-  have hmem : ∀ z : unitInterval, f (s + z.val * (c - s)) ∈ r ∪ {v} := by
-    intro z
-    by_cases hz : z = 1
-    · subst z
-      right
-      simpa only [Icc.coe_one, one_mul, add_sub_cancel, hfc] using mem_singleton v
-    · left
-      apply hfr
-      refine ⟨hs.1.trans_le (hm z).1, ?_⟩
-      have := mul_lt_of_lt_one_left hpos (unitInterval.lt_one_iff_ne_one.mpr hz)
-      linarith
-  let x : (r ∪ {v} : Set S) := ⟨f s, Or.inl (hfr s hs)⟩
-  let F : Path x (⟨v, Or.inr rfl⟩ : (r ∪ {v} : Set S)) := {
-    toFun := fun z => ⟨f (s + z.val * (c - s)), hmem z⟩
-    continuous_toFun := (hf.comp (by fun_prop)).subtype_mk _
-    source' := Subtype.ext (by simp only [Icc.coe_zero, zero_mul, add_zero]; rfl)
-    target' := Subtype.ext (by simpa only [Icc.coe_one, one_mul, add_sub_cancel] using hfc) }
-  refine ⟨x, F, fun _ => rfl, fun z => hX _ (hm z), hX s ⟨le_rfl, hs.2.le⟩, ?_⟩
-  intro heq
-  exact hv (heq ▸ hfr s hs)
+  obtain ⟨F, hF, -⟩ := exists_affine_approach_path hs.2 hf.continuousOn hfc
+    (fun t ht => hfr t ⟨hs.1.trans_le ht.1, ht.2⟩)
+  refine ⟨_, F, hF, fun t => ?_, hX s ⟨le_rfl, hs.2.le⟩, ?_⟩
+  · rw [hF]
+    exact hX _ (affine_approach_parameter_mem_Icc hs.2.le t)
+  · intro heq
+    exact hv (heq ▸ hfr s hs)
 
 /-- The common-corner comparison expressed directly on terminal real
 intervals. Only the terminal parts of the two approaches need to lie
