@@ -1,0 +1,42 @@
+slug: iwaniec-beurling-ahlfors
+title: Iwaniec's conjecture on the Beurling–Ahlfors norm
+summary: Proves quasiconvexity of the Agazzi et al. integrand on real 2-by-2
+  matrices and the resulting sharp norm of the Beurling–Ahlfors transform.
+  The proof develops scalar projection under a gradient constraint and relates
+  the sharp planar estimate to periodic test functions and higher integrability.
+branch: harmonic analysis and calculus of variations
+entry_module: LeanPool.IwaniecBeurlingAhlfors
+authors:
+- The-Anh Vu-Le
+source:
+  arxiv: '2609.28311'
+  url: https://github.com/vltanh/lean4-iwaniec/tree/f310788a42a6935fd9e24092f9df95e2682afb3b
+  github_repo: vltanh/lean4-iwaniec
+  commit: f310788a42a6935fd9e24092f9df95e2682afb3b
+  paper_url: https://arxiv.org/pdf/2609.28311v2
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Agazzi.theorem1
+- Agazzi.corollary2_norm
+main_results:
+- declaration: Agazzi.theorem1
+  informal: The Agazzi et al. integrand is quasiconvex under smooth periodic
+    perturbations of real 2-by-2 matrices.
+- declaration: Agazzi.corollary2_norm
+  informal: For every real p > 1, the Beurling–Ahlfors Fourier multiplier has
+    sharp Lp norm equal to max(p, p / (p − 1)) − 1.
+- declaration: Agazzi.theorem1_hessian_iff
+  informal: The Hessian inequality for smooth periodic scalar test functions
+    is equivalent to the formulation for compactly supported smooth scalar
+    test functions on the plane.
+tags:
+- singular-integrals
+- quasiconvexity
+- fourier-multipliers
+- beltrami-equation
+msc:
+- 42B20
+- 49J45
+- 30C62
