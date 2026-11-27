@@ -121,9 +121,16 @@ noncomputable def shadowF₁Iso :
     R.F₁ hR ⋙ R.shadow ≅ indJIncl J D ⋙ rho0 D ⋙ singleFunctor (Rep k I) 0 :=
   NatIso.ofComponents (shadowComponent R hR) (fun _ => shadowComponent_naturality R hR _)
 
+private lemma matLift_comp_mapMat_lift {𝒞 𝒟 ℰ 𝒯 : Type*}
+    [Category.{u} 𝒞] [Category.{u} 𝒟] [Category.{u} ℰ] [Category 𝒯]
+    [Preadditive 𝒞] [Preadditive 𝒟] [Preadditive ℰ] [HasFiniteBiproducts ℰ]
+    (F : 𝒞 ⥤ 𝒟) (G : 𝒟 ⥤ ℰ) [F.Additive] [G.Additive] (H : ℰ ⥤ 𝒯) :
+    matLift (F ⋙ G) ⋙ H = F.mapMat_ ⋙ (G.mapMat_ ⋙ Mat_.lift (𝟭 ℰ)) ⋙ H := rfl
+
 lemma matLift_realization_target :
     matLift (indJIncl J D ⋙ rho0 D) ⋙ singleFunctor (Rep k I) 0 =
-      cdjIncl J D ⋙ rho D ⋙ singleFunctor (Rep k I) 0 := rfl
+      cdjIncl J D ⋙ rho D ⋙ singleFunctor (Rep k I) 0 :=
+  matLift_comp_mapMat_lift (indJIncl J D) (rho0 D) (singleFunctor (Rep k I) 0)
 
 /-- `Γ ∘ F ≅ single ∘ ρ` on `C_J`. -/
 noncomputable def shadowRealIso :

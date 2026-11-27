@@ -5,15 +5,14 @@ Authors: Haruhisa Enomoto
 -/
 module
 
-public import LeanPool.ExtriangulatedRealization.Realization.ShadowHom
+public import LeanPool.ExtriangulatedRealization.Realization.ExtensionMaps
 
 /-!
-# The connecting maps `η : E(C, A) → K(Q)(F C, (F A)⟦1⟧)` (Proposition 2.3, Step 3)
+# Naturality and bijectivity of the connecting maps (Proposition 2.3, Step 3)
 
-The realization functor on `C_J` is `F = (CDJ ≌ C_J)⁻¹ ⋙ realF`. Since
-`Γ ∘ F ≅ single ∘ ρ` and `Γ` is bijective on `K(Q)(F C, (F A)⟦1⟧)`, every class
-`δ ∈ E(C, A) = Ext¹(ρC, ρA) = D(ρC, ρA⟦1⟧)` has a unique preimage `η δ`. Additivity,
-naturality and bijectivity of `η` follow from the corresponding properties of `Ext¹`.
+Pulling back or pushing forward an extension corresponds to composition with the
+realization of the inducing morphism. The connecting maps are bijective by the
+comparison with the derived category.
 -/
 
 @[expose] public section
@@ -32,39 +31,13 @@ namespace RealizationData
 
 variable {D : Iᵒᵖ ⥤ ModuleCat.{u} k} {J : Set I} (R : RealizationData D J) (hR : R.IsCompatible)
 
-/-- The realization functor on `C_J`. -/
-noncomputable abbrev realP :
-    (labelsIn D J).FullSubcategory ⥤ HomotopyCategory R.Q (ComplexShape.up ℤ) :=
-  (cdjEquiv J D).inverse ⋙ R.realF hR
-
 instance : (cdjEquiv J D).functor.Additive := inferInstanceAs (cdjLift J D).Additive
 
 instance : (R.realF hR).Additive := by
   unfold realF
   infer_instance
 
-/-- `Γ ∘ F ≅ single ∘ ρ` on `C_J`. -/
-noncomputable def shadowRealPIso :
-    R.realP hR ⋙ R.shadow ≅ (labelsIn D J).ι ⋙ rho D ⋙ singleFunctor (Rep k I) 0 :=
-  Functor.associator _ _ _ ≪≫ Functor.isoWhiskerLeft (cdjEquiv J D).inverse (R.shadowRealIso hR) ≪≫
-    (Functor.associator (cdjEquiv J D).inverse (cdjEquiv J D).functor
-      ((labelsIn D J).ι ⋙ rho D ⋙ singleFunctor (Rep k I) 0)).symm ≪≫
-    Functor.isoWhiskerRight (cdjEquiv J D).counitIso
-      ((labelsIn D J).ι ⋙ rho D ⋙ singleFunctor (Rep k I) 0)
-    ≪≫ Functor.leftUnitor _
-
-lemma shadow_bijective_realP (C A : (labelsIn D J).FullSubcategory) :
-    Function.Bijective (R.shadow.map :
-      ((R.realP hR).obj C ⟶ ((R.realP hR).obj A)⟦(1 : ℤ)⟧) → _) :=
-  R.shadow_bijective_realF hR _ _
-
-/-! ### The maps `η` -/
-
 attribute [local instance] HasExt.standard
-
-/-- The extriangulated data of `C_J`. -/
-noncomputable abbrev dataJ : ExtriangulatedData.{u + 1} k (labelsIn D J).FullSubcategory :=
-  (cdData D).restrict (labelsIn D J)
 
 omit R hR in
 lemma dataJ_push {C A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ A')
@@ -79,35 +52,6 @@ lemma dataJ_pull {C'' C A : (labelsIn D J).FullSubcategory} (c : C'' ⟶ C)
     ((dataJ (D := D) (J := J)).pull c δ : Abelian.Ext.{u + 1} _ _ 1) =
       (Abelian.Ext.mk₀ ((rho D).map c.hom)).comp
         (δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1) (zero_add 1) := rfl
-
-/-- The image under `Γ` of `η δ`. -/
-noncomputable def etaTarget (C A : (labelsIn D J).FullSubcategory) :
-    (dataJ (D := D) (J := J)).Ext C A →+
-      (R.shadow.obj ((R.realP hR).obj C) ⟶ R.shadow.obj (((R.realP hR).obj A)⟦(1 : ℤ)⟧)) :=
-  (Preadditive.leftComp _ ((R.shadowRealPIso hR).app C).hom).comp
-    ((Preadditive.rightComp _ ((((R.shadowRealPIso hR).app A).inv)⟦(1 : ℤ)⟧' ≫
-      ((R.shadow.commShiftIso (1 : ℤ)).app _).inv)).comp
-      (Abelian.Ext.homAddEquiv (X := (rho D).obj C.obj) (Y := (rho D).obj A.obj)
-        (n := 1)).toAddMonoidHom)
-
-lemma etaTarget_apply (C A : (labelsIn D J).FullSubcategory)
-    (δ : (dataJ (D := D) (J := J)).Ext C A) :
-    R.etaTarget hR C A δ = ((R.shadowRealPIso hR).app C).hom ≫
-      (δ : Abelian.Ext.{u + 1} ((rho D).obj C.obj) ((rho D).obj A.obj) 1).hom ≫
-      (((R.shadowRealPIso hR).app A).inv)⟦(1 : ℤ)⟧' ≫
-        ((R.shadow.commShiftIso (1 : ℤ)).app _).inv := rfl
-
-/-- The map `η : E(C, A) → K(Q)(F C, (F A)⟦1⟧)`. -/
-noncomputable def eta (C A : (labelsIn D J).FullSubcategory) :
-    (dataJ (D := D) (J := J)).Ext C A →+ ((R.realP hR).obj C ⟶ ((R.realP hR).obj A)⟦(1 : ℤ)⟧) :=
-  ((AddEquiv.ofBijective R.shadow.mapAddHom
-    (R.shadow_bijective_realP hR C A)).symm.toAddMonoidHom).comp
-    (R.etaTarget hR C A)
-
-lemma shadow_map_eta (C A : (labelsIn D J).FullSubcategory)
-    (δ : (dataJ (D := D) (J := J)).Ext C A) :
-    R.shadow.map (R.eta hR C A δ) = R.etaTarget hR C A δ :=
-  (AddEquiv.ofBijective R.shadow.mapAddHom (R.shadow_bijective_realP hR C A)).apply_symm_apply _
 
 lemma shadow_map_shift_realP {A A' : (labelsIn D J).FullSubcategory} (a : A ⟶ A') :
     ((R.shadow.commShiftIso (1 : ℤ)).app ((R.realP hR).obj A)).inv ≫
