@@ -7,6 +7,7 @@ license: Apache-2.0
 source:
   url: https://github.com/VanGogh7777/c196-lean/blob/4f45e33dc5376b362e13601adee77a0a76358387/paper/C196_v0.3.pdf
   github_repo: VanGogh7777/c196-lean
+  commit: f14c11cca549acba4a3fcf832e7af005d2afd8ee
 status: verified
 summary: >-
   Proves matching logarithmic-order bounds for the two-layer observation gap on normalized

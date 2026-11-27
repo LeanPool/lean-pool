@@ -4,6 +4,19 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
 
+/-
+Upstream NOTICE for the matching-rates subproject
+
+C196 v0.3 manuscript and Lean formalization
+Copyright 2026 Mark Gladden
+
+The included manuscript PDF and the Lean code are distributed under the Apache License, Version 2.0.
+Mark Gladden is the responsible maintainer. AI produced the Lean proofs under his direction.
+
+Lean source: VanGogh7777/c196-lean, matching-rates subproject.
+Commit: f14c11cca549acba4a3fcf832e7af005d2afd8ee
+-/
+
 module
 
 public import LeanPool.VenNullClockRoundRates.Filter

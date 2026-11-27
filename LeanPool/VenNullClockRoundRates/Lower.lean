@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
 
+/- Modified for Lean Pool: adapt imports and reformat the lower-rate proof. -/
+
 module
 public import LeanPool.VenNullClockRoundRates.Finite
 public import Mathlib.Analysis.SpecialFunctions.Log.Basic
