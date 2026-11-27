@@ -15,8 +15,8 @@ public import LeanPool.CatalyticRegisters.ThreeRegisterBreakthrough
 /-!
 # Theorem T3h: Machine-Checked Four-Register Passive Powering (`x^N` for All `N ≥ 1`)
 
-Formalizes **Corollary 5.2** of Donahue's manuscript, which sharpens Corollary 4.3.1
-of Vinciguerra (`arXiv:2609.18692v1`).
+Formalizes **Corollary 5.2** of Donahue's manuscript, which lowers the exponent in the
+four-register bound of Vinciguerra (`arXiv:2609.18692v1`, Corollary 4.3.1).
 
   1. **Concrete 3-work-register model (`Work3Instr R`)** on `(r0, r1, r2)` with concrete bivariate
      polynomial updates `r_dst ← r_dst + ∑ c * r_other1^a * r_other2^b` (never reading `r_dst`) and
@@ -1201,10 +1201,10 @@ theorem four_reg_powering_x13 {R : Type u} [CRing R] (N : Nat) (hN : 1 ≤ N)
 
 /--
 **Theorem `T3h` (Part 2 — Low-Characteristic `prog5Power7` 4-Register Passive Powering for All `N ≥ 1`):**
-For EVERY commutative ring `R` and EVERY `N ≥ 1` with `ℓ = (baseDigits 7 N).length - 1`,
-whenever `6!` and `(ℓ + 1)!` are invertible in `R` (e.g. `char = 0` or `p > max(6, ℓ + 1)` —
-note `6! = 720` invertible automatically makes `576 = 2^6 * 3^2` invertible!), there is an explicit
-passive 4-register program computing `O ← O + x^N` cleanly with `7^ℓ ≤ N` and
+For a commutative ring `R` and `N ≥ 1` with `ℓ = (baseDigits 7 N).length - 1`, suppose `6!` and
+`(ℓ + 1)!` are invertible in `R`. This holds in characteristic-zero fields and in prime fields
+with `p > max(6, ℓ + 1)`. Invertibility of `6! = 720` also makes `576 = 2^6 * 3^2` invertible.
+Then an explicit passive 4-register program computes `O ← O + x^N` cleanly with `7^ℓ ≤ N` and
 `3 * accesses < 70 * 5^ℓ` (i.e. `< (10/3) * 7 * N^{log_7 5} = O(N^{0.82709})`).
 -/
 theorem four_reg_powering_x7 {R : Type u} [CRing R] (N : Nat) (hN : 1 ≤ N)

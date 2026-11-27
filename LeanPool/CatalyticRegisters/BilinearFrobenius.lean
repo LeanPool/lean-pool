@@ -21,9 +21,9 @@ cleanly computes `R_0 ← R_0 + x^(2^k)` using:
   * `4 * k - 2` bilinear instructions,
   * **EXACTLY 2 input accesses to `x`**!
 
-This shows that the characteristic-2 collapse of Vinciguerra's 4-access lower bound
-(`arXiv:2609.18692`, Theorems 3.2–3.3) persists even under the strictest bilinear
-instruction restriction. Moreover, **Theorem T2b** (`frobDistinctProg`) eliminates all
+For `k ≥ 2`, the degree reaches the threshold of Vinciguerra's four-access lower bound
+for characteristic-zero fields (`arXiv:2609.18692v1`, Corollary 3.3.1). The characteristic-2
+program above needs two accesses. **Theorem T2b** (`frobDistinctProg`) eliminates all
 self-squares `R_a * R_a` using one swap catalyst (`k + 2` registers, strictly pairwise-distinct
 bilinear operands plus passive linear copies) while keeping exact cleanliness and 2 accesses.
 -/

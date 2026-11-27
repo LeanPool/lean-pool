@@ -950,9 +950,10 @@ theorem rp_pass_two_iff (p t : Nat) (hp : IsPrime p) (ht : 1 ≤ t) (f : List Na
         digitSum p d ≤ min (p - 1) (t - 1) :=
   ⟨rp_pass_two_necessary hp ht f, rp_pass_two_sufficient hp ht f⟩
 
-/-- **Corollary T1a (Unbounded-Degree 2-Access Collapse in Characteristic `p`):**
+/-- **Corollary T1a (Unbounded degree with two accesses in characteristic `p`):**
 For EVERY prime `p` and EVERY `m : Nat`, `x^(p^m) ∈ RP^{pass}_{𝔽_p}(2, 2)`.
-Thus `D^{pass}_{2, 𝔽_p}(2) = +∞`, collapsing Vinciguerra's Theorems 3.2, 3.3, and 3.5! -/
+Thus `D^{pass}_{2, 𝔽_p}(2) = +∞`. Vinciguerra's bounds for two or more accesses in
+Theorems 3.2, 3.3, and 3.5 assume characteristic zero. -/
 theorem char_p_two_access_unbounded_degree (p m : Nat) (hp : IsPrime p) :
     InRPPass2 p 2 (monomial (p ^ m)) := by
   rw [rp_pass_two_iff p 2 hp (by decide)]
@@ -994,8 +995,9 @@ theorem char_p_impossibility_threshold (p d t : Nat) (hp : IsPrime p) (hd : 2 �
   have hle := (rp_pass_two_iff p t hp ht (monomial d)).mp hmem d hd hne
   have := hp.1; omega
 
-/-- **Corollary T1d (Characteristic-0 Limit Recovering Vinciguerra Theorem 3.5):**
-Whenever `2 ≤ d < p`, `x^d ∈ RP^{pass}_{𝔽_p}(2, t) ↔ d + 1 ≤ t`! -/
+/-- **Corollary T1d (Large-characteristic analogue of Vinciguerra's Theorem 3.5):**
+For a prime `p`, a fixed degree `2 ≤ d < p`, and a budget `1 ≤ t`, the formal monomial
+`x^d` belongs to `RP^{pass}_{𝔽_p}(2, t)` exactly when `d + 1 ≤ t`. -/
 theorem char_p_large_recovers_vinciguerra_thm35 (p d t : Nat) (hp : IsPrime p)
     (hd2 : 2 ≤ d) (hdp : d < p) (ht : 1 ≤ t) :
     InRPPass2 p t (monomial d) ↔ d + 1 ≤ t := by
