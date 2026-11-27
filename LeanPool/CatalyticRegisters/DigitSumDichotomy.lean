@@ -40,7 +40,7 @@ namespace Catalytic
 
 @[expose] public section
 
-/-! ## 1. Literal 2-Register Passive-Output Model over `𝔽_p` (Vinciguerra Def. 2.2) -/
+/-! ## 1. Passive-output instructions and formal polynomial semantics over `𝔽_p` -/
 
 /--
 A primitive instruction of a passive-output 2-register program over `𝔽_p`
@@ -965,8 +965,9 @@ theorem char_p_two_access_unbounded_degree (p m : Nat) (hp : IsPrime p) :
     have := hp.1; omega
   · simp [hdm] at hne
 
-/-- **Corollary T1b (Exact `𝔽_2` Saturation — `x^3` is Uncomputable in 2 Registers for ALL `t`):**
-Over `𝔽_2`, `x^3 ∉ RP^{pass}_{𝔽_2}(2, t)` for EVERY `t : Nat`! -/
+/-- **Corollary T1b (Exact `𝔽_2` Saturation — formal `x^3` is impossible in two registers):**
+Over `𝔽_2`, `x^3 ∉ RP^{pass}_{𝔽_2}(2, t)` as a formal polynomial for every `t : Nat`.
+As a function on `𝔽_2`, `x^3` agrees with `x`. -/
 theorem char_2_two_reg_x3_impossible (t : Nat) : ¬ InRPPass2 2 t (monomial 3) := by
   intro hmem
   have hs3 : digitSum 2 3 = 2 := by

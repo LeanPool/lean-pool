@@ -13,22 +13,22 @@ public import LeanPool.CatalyticRegisters.PrimeFieldTools
 /-!
 # Theorem T1e: Sharpness of the Prime-Field Hypothesis over `𝔽_4`
 
-Theorem `T1` (`Catalytic.DigitSumDichotomy`) proves that over every **prime field** `𝔽_p`,
-`f ∈ RP^{pass}_{𝔽_p}(2, t)` iff every monomial degree `d ≥ 2` in `f` satisfies
-`s_p(d) ≤ min (p - 1) (t - 1)`. In particular, over `𝔽_2` (`p = 2`), BOTH `x^3` (`s_2(3) = 2`)
-and `x^5` (`s_2(5) = 2`) are impossible for every `t`.
+Theorem `T1` (`Catalytic.DigitSumDichotomy`) proves that over every **prime field** `𝔽_p`
+and for each access budget `t ≥ 1`, `f ∈ RP^{pass}_{𝔽_p}(2, t)` exactly when every monomial
+degree `d ≥ 2` in `f` satisfies `s_p(d) ≤ min (p - 1) (t - 1)`. Over `𝔽_2`, `x^3` and `x^5`
+are impossible as formal polynomial outputs at any budget.
 
 This module constructs the finite extension field `𝔽_4 = 𝔽_2[ω] / (ω^2 + ω + 1)` as a
-concrete 4-element `Char2CRing` and formalizes the literal Vinciguerra Def. 2.2 passive-output
-2-register model over `𝔽_4[O, R, x]`, proving **Theorem T1e (Extension-Field Separation)**:
+concrete four-element `Char2CRing`. It uses the passive-output instruction set of
+Vinciguerra's Definition 2.2 with formal polynomial identities in `𝔽_4[O, R, x]`.
+**Theorem T1e (Extension-Field Separation)** gives:
   1. `x^5 ∈ RP^{pass}_{𝔽_4}(2, 3)` AND `x^5 ∉ RP^{pass}_{𝔽_4}(2, 2)` (exact `t_min = 3`, via `ω^2 u^5 + ω (u + x)^5 + (u + ω x)^5 = x^5`),
   2. `x^3 ∈ RP^{pass}_{𝔽_4}(2, 4)` AND `x^3 ∉ RP^{pass}_{𝔽_4}(2, 3)` (exact `t_min = 4`, via `u^3 + (u + x)^3 + (u + ω x)^3 + (u + ω^2 x)^3 = x^3`),
   3. `∀ t : Nat, x^7 ∉ RP^{pass}_{𝔽_4}(2, t)` (because `α^7 = α` for every `α ∈ 𝔽_4`, so any clean
      program necessarily has `[x^7] ΔO = [R^6 x] ΔO = 0`).
 
-This proves inside Lean 4.35 (with zero Mathlib and zero extra axioms) that the prime-field
-restriction in Theorem `T1` is sharp while extension fields still exhibit absolute impossibility
-barriers.
+The prime-field restriction in Theorem `T1` is sharp. The exclusion of `x^7` over `𝔽_4`
+is about formal polynomials. As a function on `𝔽_4`, `x^7` agrees with `x`.
 -/
 
 namespace Catalytic
@@ -103,10 +103,10 @@ theorem GF4.z_pow_succ (n : Nat) : GF4.pow .z (n + 1) = .z := rfl
 theorem GF4.pow7_eq_self (a : GF4) : GF4.pow a 7 = a := by
   cases a <;> rfl
 
-/-! ## 2. Literal 2-Register Passive-Output Model over `𝔽_4[O, R, x]` -/
+/-! ## 2. Formal 2-Register Passive-Output Model over `𝔽_4[O, R, x]` -/
 
 /--
-Literal Vinciguerra Def. 2.2 passive-output 2-register instruction over `𝔽_4`
+Passive-output 2-register instruction over `𝔽_4` from Vinciguerra's Definition 2.2
 (identical instruction set to `Pass2Instr` in `Catalytic.DigitSumDichotomy`):
   * `addOut poly`:      `O ← O + ∑_k poly[k] * R^k`  (0 input accesses)
   * `addWorkConst c`:   `R ← R + c`                  (0 input accesses)

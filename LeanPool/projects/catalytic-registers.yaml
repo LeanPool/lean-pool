@@ -1,7 +1,7 @@
 slug: catalytic-registers
 title: Passive catalytic register programs over finite fields and commutative rings
-summary: Characterizes polynomials computable with two passive catalytic
-  registers over a prime field using digit sums of their formal exponents.
+summary: Characterizes formal polynomial identities computable with two
+  passive catalytic registers and prime-field constants using base-p digit sums.
   It verifies explicit three-register powering programs, composes them into
   a four-register construction, and proves exact costs and clean restoration
   for a balanced multilinear product program with a sufficiently large pool of
@@ -25,14 +25,15 @@ main_declarations:
 main_results:
 - declaration: Catalytic.rp_pass_two_iff
   informal: For a prime p and input-access budget t ≥ 1, a formal polynomial
-    over the prime field is computable by a clean passive two-register program
-    exactly when each exponent at least two with nonzero coefficient has
+    over the prime field is computable as a formal identity by a clean passive
+    two-register program with prime-field constants exactly when each exponent
+    at least two with nonzero coefficient has
     base-p digit sum at most min(p − 1, t − 1).
 - declaration: Catalytic.four_reg_powering_x13
   informal: For N ≥ 1, under the stated invertibility conditions on the
     certificate coefficient and two factorials, the radix-13 construction
-    computes the Nth power with four registers. For ℓ the number of base-13
-    digits of N minus one, three times the access count is less than 104 · 8^ℓ.
+    computes the Nth power with four registers. Let ℓ be one less than the
+    number of base-13 digits of N. Three times the access count is less than 104 · 8^ℓ.
 - declaration: Catalytic.balancedProdProg_clean
   informal: With sign +1, the balanced product program adds the product of
     2^k inputs to its target and restores every other register. The work
