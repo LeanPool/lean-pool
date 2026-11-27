@@ -58,6 +58,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Bruck                     https://github.com/QuanyuTang/bruck-conjecture-formalization
   LeanPool/BruhatTits                https://github.com/chrisflav/bruhat-tits
   LeanPool/Burkholder                https://github.com/SmaniaD/Burkholder
+  LeanPool/C145                      https://github.com/VanGogh7777/c145-lean
   LeanPool/CCDN                      https://github.com/jasondavies/ccdn-dimension-growth
   LeanPool/CIVAxisymmetric           https://github.com/scottnarmstrong/CIVAxisymmetric
   LeanPool/CaffarelliKohnNirenberg   https://github.com/scottnarmstrong/CaffarelliKohnNirenberg
@@ -131,6 +132,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Erdos367                  https://github.com/scottdhughes/erdos367
   LeanPool/Erdos403                  https://github.com/gotrevor/erdos-403
   LeanPool/Erdos548                  https://github.com/tadamcz/erdos548
+  LeanPool/Erdos711                  https://github.com/nil-commits/erdos711-half-cauchy
   LeanPool/Erdos81PaperIContrib      https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/Erdos81PaperIIContrib     https://github.com/jtraverso/lean-pool
   LeanPool/Erdos81PaperIIIContrib    https://github.com/jtraverso/erdos-81-chordal-clique-partitions
@@ -142,6 +144,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/EuclideanJordan           https://github.com/ehrlich-b/euclidean-jordan
   LeanPool/EvenGraphCycles           https://github.com/jtraverso/erdos-81-chordal-clique-partitions
   LeanPool/EventStructures           https://github.com/vikraman/event-structures
+  LeanPool/ExactMatrixExponents      https://github.com/openai/math
   LeanPool/ExpChaotic                https://github.com/LR-UK/exp-chaotic
   LeanPool/ExtriangulatedRealization https://github.com/haruhisa-enomoto/extriangulated-triangulated-embedding
   LeanPool/FBLOrderContinuity        https://github.com/pedrotradacete/FBLOrderContinuousLH
@@ -152,6 +155,8 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/Fineqs                    https://github.com/nasqret/fineqs
   LeanPool/FiniteGraphFundamentalGroup
                                      https://github.com/Arthur742Ramos/finite-graph-fundamental-group
+  LeanPool/FiniteIntegralRelationAlgebras
+                                     https://github.com/chenson2018/finite-integral-ra
   LeanPool/FiniteRamsey              https://github.com/Egly443/lean-ramsey
   LeanPool/FiveEighthsTheorem        https://github.com/ldct/lean-monorepo
   LeanPool/Flean                     https://github.com/josephmckinsey/flean
@@ -166,12 +171,14 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/FundamentalInequality     https://github.com/linzialessandro/FundamentalInequality
   LeanPool/GKPCarry                  https://github.com/lyfar/gkp-carry-lean
   LeanPool/GapCVP                    https://github.com/openai/ten-proofs
+  LeanPool/Giambelli                 https://github.com/DataDotFoundation/RMTlib
   LeanPool/GoemansFlow               https://github.com/jyh/dinitz-verify
   LeanPool/GoldbergSeymour           https://github.com/wpegden/goldberg_seymour
   LeanPool/GoodmanSupersaturation    https://github.com/Egly443/lean-goodman-supersaturation
   LeanPool/GranvilleMoore            https://github.com/AxiomMath/GranvilleMoore
   LeanPool/GraphColouringMatching    https://github.com/jtraverso/lean-pool
   LeanPool/GraphExtremal             https://github.com/Egly443/lean-graph-extremal
+  LeanPool/GraphMinor                https://github.com/mahdi-jfri/GraphMinor
   LeanPool/GrothendieckBessel        https://github.com/lukasliehr/GrothendieckBessel
   LeanPool/GrothendieckInfinityGroupoids
                                      https://github.com/mycaule/lean-pool
@@ -359,6 +366,7 @@ Apache License, Version 2.0, and are redistributed here under the same license.
   LeanPool/SpectralPositivity        https://github.com/mrdouglasny/spectral-positivity
   LeanPool/SpectralTheory            https://github.com/savarin/lean-spectral-theory
   LeanPool/SpherePacking             https://github.com/openai/ten-proofs
+  LeanPool/SplitCliqueGap            https://github.com/jtraverso/split-clique-partition-gap
   LeanPool/StableManifold            https://github.com/vltanh/lean4-stable-manifold
   LeanPool/StableMatching            https://github.com/mycaule/lean-pool
   LeanPool/Stafford38                https://github.com/itpplasma/stafford38-formal
