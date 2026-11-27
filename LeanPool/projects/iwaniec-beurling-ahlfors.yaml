@@ -1,7 +1,8 @@
 slug: iwaniec-beurling-ahlfors
 title: Iwaniec's conjecture on the Beurling–Ahlfors norm
-summary: Proves quasiconvexity of the Agazzi et al. integrand on real 2-by-2
-  matrices and the resulting sharp norm of the Beurling–Ahlfors transform.
+summary: Formalizes Agazzi et al.'s quasiconvexity theorem for the
+  Burkholder–Šverák integrand on real 2-by-2 matrices and the resulting sharp
+  norm of the Beurling–Ahlfors transform.
   The proof develops scalar projection under a gradient constraint and relates
   the sharp planar estimate to periodic test functions and higher integrability.
 branch: harmonic analysis and calculus of variations
@@ -22,8 +23,9 @@ main_declarations:
 - Agazzi.corollary2_norm
 main_results:
 - declaration: Agazzi.theorem1
-  informal: The Agazzi et al. integrand is quasiconvex under smooth periodic
-    perturbations of real 2-by-2 matrices.
+  informal: Agazzi et al.'s Theorem 1 proves that the Burkholder–Šverák
+    integrand is quasiconvex under smooth periodic perturbations of real
+    2-by-2 matrices.
 - declaration: Agazzi.corollary2_norm
   informal: For every real p > 1, the Beurling–Ahlfors Fourier multiplier has
     sharp Lp norm equal to max(p, p / (p − 1)) − 1.
