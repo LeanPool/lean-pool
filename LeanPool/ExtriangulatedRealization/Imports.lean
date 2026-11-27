@@ -48,6 +48,7 @@ public import LeanPool.ExtriangulatedRealization.InverseSystems.Omega1
 public import LeanPool.ExtriangulatedRealization.MainTheorems
 public import LeanPool.ExtriangulatedRealization.Realization.Comparison
 public import LeanPool.ExtriangulatedRealization.Realization.Complexes
+public import LeanPool.ExtriangulatedRealization.Realization.ExtensionMaps
 public import LeanPool.ExtriangulatedRealization.Realization.Extensions
 public import LeanPool.ExtriangulatedRealization.Realization.Extriangulated
 public import LeanPool.ExtriangulatedRealization.Realization.FullyFaithful
@@ -61,6 +62,7 @@ public import LeanPool.ExtriangulatedRealization.Realization.Shadow
 public import LeanPool.ExtriangulatedRealization.Realization.ShadowHom
 public import LeanPool.ExtriangulatedRealization.Realization.Subcategory
 public import LeanPool.ExtriangulatedRealization.Realization.Transfer
+public import LeanPool.ExtriangulatedRealization.Realization.TriangleProofs
 public import LeanPool.ExtriangulatedRealization.Realization.Triangles
 public import LeanPool.ExtriangulatedRealization.Realization.XPart
 public import LeanPool.ExtriangulatedRealization.Statement
