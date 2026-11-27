@@ -3,6 +3,9 @@ Copyright (c) 2026 Yuma Mizuno. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Yuma Mizuno
 -/
+
+/- Modified for Lean Pool: keep powers symbolic in the low-order certificate. -/
+
 module
 
 
@@ -565,15 +568,17 @@ theorem explicit_lowOrder_forces_corvajaZannier_cube
       _ = 2 * B ^ 2 * T ^ 8 := by ring
   have hmoment : T ^ 9 ≤ explicitDivisorMomentConstant * p := by
     simpa [T] using explicit_divisor_sum_pow_nine_le hpTwo
+  -- Keep the divisor-moment coefficient symbolic during the power comparisons.
   have hpPowLe : p ^ 9 ≤
       (2 ^ 9 * B ^ 18 * explicitDivisorMomentConstant ^ 8) * p ^ 8 := by
     calc
       p ^ 9 ≤ (2 * B ^ 2 * T ^ 8) ^ 9 := Nat.pow_le_pow_left hpLeCoarse _
-      _ = 2 ^ 9 * B ^ 18 * (T ^ 9) ^ 8 := by ring
+      _ = 2 ^ 9 * B ^ 18 * (T ^ 9) ^ 8 := by
+        rw [mul_pow, mul_pow, ← pow_mul B 2 9, ← pow_mul T 8 9, ← pow_mul T 9 8]
       _ ≤ 2 ^ 9 * B ^ 18 *
           (explicitDivisorMomentConstant * p) ^ 8 := by gcongr
       _ = (2 ^ 9 * B ^ 18 * explicitDivisorMomentConstant ^ 8) * p ^ 8 := by
-        ring
+        rw [mul_pow, ← Nat.mul_assoc]
   have hconstant :
       2 ^ 9 * B ^ 18 * explicitDivisorMomentConstant ^ 8 < p := by
     simpa [B] using explicitCutoff_constant_lt hp
@@ -584,7 +589,7 @@ theorem explicit_lowOrder_forces_corvajaZannier_cube
       (2 ^ 9 * B ^ 18 * explicitDivisorMomentConstant ^ 8) * p ^ 8 <
           p * p ^ 8 :=
         mul_lt_mul_of_pos_right hconstant (pow_pos (by omega) 8)
-      _ = p ^ 9 := by ring
+      _ = p ^ 9 := (pow_succ' p 8).symm
   exact (not_lt_of_ge hpPowLe) hstrict
 
 /-- Assembly-facing alias for the divisor-sensitive cube certificate. -/
