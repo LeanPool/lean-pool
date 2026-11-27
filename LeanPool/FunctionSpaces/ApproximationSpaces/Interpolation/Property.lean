@@ -24,10 +24,10 @@ arbitrary `θ` and `q`, including `q = 0`. If an additive map `T` satisfies
 The proof has two steps.  The measure `dt/t` on `(0, ∞)` is invariant under every dilation
 `t ↦ c t`, `c > 0` (`ApproximationScheme.measurePreserving_mul_left_kMethodMeasure`), so that
 `Φ_{θ,q}(φ(c ·)) = c^θ Φ_{θ,q}(φ)` (`ApproximationScheme.phiFunctional_comp_mul`, Bergh–Löfström
-(3.1.7)); and `K(t, T u) ≤ M₀ K((M₁/M₀) t, u)` (`InterpCouple.kFunctional_map_le`, Bergh–Löfström
-(3.1.8)).  The second inequality needs additivity of `T` only on the decompositions
-`u = (u - b) + b` into pieces of finite norm (`InterpCouple.kFunctional_map_le_of_additiveOn`,
-the Remark after Bergh–Löfström, Theorem 3.1.2).
+(3.1.7)). The bound `K(t, T u) ≤ M₀ K((M₁/M₀) t, u)` (`InterpCouple.kFunctional_map_le`)
+extends (3.1.8) to the extended-valued couples and endpoint scales. At positive scales, the
+proof only needs additivity of `T` on decompositions into pieces of finite norm
+(`InterpCouple.kFunctional_map_le_of_additiveOn`), as in the remark after Theorem 3.1.2.
 
 Consequences: the discrete K-norms transform with the extra factor `2^(2ρθ)`
 (`InterpCouple.discreteKMethodNorm_map_le`); couples with comparable norms have comparable
@@ -36,7 +36,7 @@ K-norms and the same interpolation spaces (`InterpCouple.kMethodNorm_le_of_le`,
 interpolation space (`InterpCouple.memKMethod_iff_of_retract`,
 `InterpCouple.memKMethod_iff_exists_map_eq`). This is the additive-couple version of the
 real-interpolation part of Bergh–Löfström, Theorem 6.4.2, for compatible normed linear couples.
-and for bounded linear maps `T : X → X'`, `S : Y → Y'` with `T ι = ι' S`, the map `T` is bounded
+For bounded linear maps `T : X → X'`, `S : Y → Y'` with `T ι = ι' S`, the map `T` is bounded
 between the spaces of `ApproximationSpaces.Interpolation.KMethod`
 (`ApproximationScheme.kMethodNorm_map_le_of_comp_eq`, `ApproximationScheme.MemInterp.map`).
 -/
@@ -180,8 +180,9 @@ theorem kFunctional_map_le_of_decomp {T : U → V} {u b : U} (hTu : T u = T (u -
     _ = B.norm0 (T (u - b)) + t * B.norm1 (T b) := by rw [hTu, add_sub_cancel_right]
     _ ≤ M₀ * A.norm0 (u - b) + t * (M₁ * A.norm1 b) := by gcongr
 
-/-- **The K-functional under an additive map** (Bergh–Löfström (3.1.8)): if `T : U → V` is
-additive with `N₀'(T a) ≤ M₀ N₀(a)` and `N₁'(T a) ≤ M₁ N₁(a)` for every `a`, and `0 < M₀ < ∞`,
+/-- **The K-functional under an additive map**. This extends Bergh–Löfström (3.1.8) to
+extended-valued couples and to endpoint scales. If `T : U → V` is additive with
+`N₀'(T a) ≤ M₀ N₀(a)` and `N₁'(T a) ≤ M₁ N₁(a)` for every `a`, and `0 < M₀ < ∞`,
 then `K'(t, T u) ≤ M₀ K((M₁/M₀) t, u)` for every `t` and `u`. -/
 theorem kFunctional_map_le (T : U →+ V) (hM₀ : M₀ ≠ 0) (hM₀' : M₀ ≠ ∞)
     (h₀ : ∀ a, B.norm0 (T a) ≤ M₀ * A.norm0 a) (h₁ : ∀ a, B.norm1 (T a) ≤ M₁ * A.norm1 a)

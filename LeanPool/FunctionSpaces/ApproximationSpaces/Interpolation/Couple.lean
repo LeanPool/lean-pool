@@ -14,11 +14,14 @@ Modified for Lean Pool: module names and imports adapted.
 /-!
 # Couples of extended quasi-norms and their K-method
 
-A **couple** on an additive commutative group `U` is a pair of functions `N₀, N₁ : U → [0, ∞]`
-(`InterpCouple`); its two spaces are `X_i = {N_i < ∞}`, and their sum and intersection stay
-implicit.  The axioms of extended quasi-norms (`InterpCouple.IsQuasiNormed`) and homogeneity
-(`InterpCouple.IsHomogeneous`) are separate propositions, assumed only where they are used.
-This is the setting of quasi-normed abelian groups in Bergh–Löfström, Sections 3.10 and 3.11.
+A **couple** on an additive commutative group `U` consists of two extended-valued functions
+`N₀, N₁ : U → [0, ∞]` (`InterpCouple`). The laws in `InterpCouple.IsQuasiNormed` make the
+finite loci `X_i = {N_i < ∞}` additive subgroups. With definite restrictions of the two
+functions to these subgroups, they have the component quasi-norms of Bergh–Löfström,
+Section 3.10, using a quasi-triangle constant at least one. Classical compatibility also
+uses continuous embeddings into a common Hausdorff topological group, as in Sections
+2.3 and 3.10. The Lean results state the quasi-norm laws and any homogeneity
+(`InterpCouple.IsHomogeneous`) where they are needed.
 
 The **K-functional** is `K(t, u) = inf_b (N₀(u - b) + t N₁(b))` (`InterpCouple.kFunctional`), the
 **continuous K-method** is `‖u‖_{K,θ,q} = Φ_{θ,q}(K(·, u))` with the functional
@@ -55,16 +58,17 @@ open MeasureTheory Set Function
 open scoped ENNReal
 open ENNReal (lqNorm dyadicWeight LpAddConst dyadicGeomConst)
 
-/-- A **couple** on an additive commutative group `U`: two functions `N₀, N₁ : U → [0, ∞]`,
-whose spaces are `X_i = {u : N_i(u) < ∞}`.  This is a couple of quasi-normed abelian groups of
-Bergh–Löfström, Section 3.10, with the compatibility of Section 2.3 built in, since both spaces
-lie in `U`; the axioms are the separate propositions `InterpCouple.IsQuasiNormed` and
-`InterpCouple.IsHomogeneous`.  `EQuasinorm.Couple` of the project *MultilinearInterpolation*
-(Bonn, Apache 2.0) carries the axioms in its data. -/
+/-- An extended-valued encoding of a **couple** on an additive commutative group `U`.
+Its two functions `N₀, N₁ : U → [0, ∞]` are arbitrary. Under `InterpCouple.IsQuasiNormed` the
+finite loci are subgroups. With definite restrictions and a quasi-triangle constant at least
+one they are quasi-normed abelian groups as in Bergh–Löfström, Section 3.10. The common
+topological space for classical compatibility is described in Section 2.3.
+`EQuasinorm.Couple` of *MultilinearInterpolation* (Bonn, Apache 2.0) carries its quasi-norm
+axioms in the data. -/
 structure InterpCouple (U : Type*) [AddCommGroup U] where
-  /-- The first extended quasi-norm `N₀`. -/
+  /-- The first extended-valued function `N₀`. -/
   norm0 : U → ℝ≥0∞
-  /-- The second extended quasi-norm `N₁`. -/
+  /-- The second extended-valued function `N₁`. -/
   norm1 : U → ℝ≥0∞
 
 namespace InterpCouple
@@ -89,10 +93,10 @@ theorem swap_norm1 (A : InterpCouple U) : A.swap.norm1 = A.norm0 := rfl
 theorem swap_swap (A : InterpCouple U) : A.swap.swap = A := rfl
 
 /-- The couple is **quasi-normed with constant `C`**: `C < ∞`, and both `N_i` vanish at `0`,
-are even and satisfy the quasi-triangle inequality `N_i(a + b) ≤ C (N_i(a) + N_i(b))`.  These are
-the axioms of a quasi-normed abelian group (Bergh–Löfström, Section 3.10) except definiteness;
-the zero and quasi-triangle axioms are those of `EQuasinorm` in *MultilinearInterpolation*, which
-lives on a monoid and asks `C ≥ 1`. -/
+are even and satisfy the quasi-triangle inequality `N_i(a + b) ≤ C (N_i(a) + N_i(b))`.
+On the finite loci, adding definiteness and replacing `C` by `max 1 C` gives the axioms in
+Bergh–Löfström, Section 3.10. The zero and quasi-triangle axioms also appear in
+`EQuasinorm` in *MultilinearInterpolation*, which uses a monoid and assumes `C ≥ 1`. -/
 structure IsQuasiNormed (A : InterpCouple U) (C : ℝ≥0∞) : Prop where
   /-- The quasi-triangle constant is finite. -/
   ne_top : C ≠ ∞
@@ -135,9 +139,12 @@ theorem IsHomogeneous.norm1_zero [Module ℝ U] {A : InterpCouple U} (hH : A.IsH
 
 /-! ### The K-functional -/
 
-/-- The **K-functional** of the couple, `K(t, u) = inf_b (N₀(u - b) + t N₁(b))` for
-`t ∈ [0, ∞]` (Bergh–Löfström, Section 3.1).  It is `kNorm` of the project
-*MultilinearInterpolation*, there an infimum over the pairs `u = a + b`. -/
+/-- The **K-functional** of the couple, `K(t, u) = inf_b (N₀(u - b) + t N₁(b))`.
+For a classical compatible couple and `0 < t < ∞`, the finite contributions are exactly
+the decompositions used in Bergh–Löfström, Section 3.1. The Lean definition also allows
+`t = 0` and `t = ∞`. At `t = 0`, `0 * ∞ = 0` allows a candidate with `N₁(b) = ∞` to
+contribute. At `t = ∞`, the penalty vanishes exactly when `N₁(b) = 0`.
+This formula is `kNorm` in *MultilinearInterpolation*, expressed there using `u = a + b`. -/
 noncomputable def kFunctional (A : InterpCouple U) (t : ℝ≥0∞) (u : U) : ℝ≥0∞ :=
   ⨅ b : U, A.norm0 (u - b) + t * A.norm1 b
 
@@ -178,8 +185,10 @@ theorem kFunctional_mono (h : t ≤ s) (u : U) : A.kFunctional t u ≤ A.kFuncti
 theorem monotone_kFunctional (u : U) : Monotone fun t => A.kFunctional t u :=
   fun _ _ h => kFunctional_mono h u
 
-/-- **The K-functional under a finite change of scale** (Bergh–Löfström, Lemma 3.1.1; Bonn's
-`kNorm_le_mul`): `K(c t, u) ≤ max(1, c) K(t, u)` for `c < ∞`. -/
+/-- **The K-functional under a finite change of scale**. The bound
+`K(c t, u) ≤ max(1, c) K(t, u)` extends Bergh–Löfström, Lemma 3.1.1, to `c = 0` and to
+the endpoint scales `t = 0, ∞` of the extended-valued definition. See also Bonn's
+`kNorm_le_mul`. -/
 theorem kFunctional_mul_le_of_ne_top (hc : c ≠ ∞) (t : ℝ≥0∞) (u : U) :
     A.kFunctional (c * t) u ≤ max 1 c * A.kFunctional t u := by
   have hM0 : max 1 c ≠ 0 := (zero_lt_one.trans_le (le_max_left _ _)).ne'
@@ -207,9 +216,10 @@ theorem kFunctional_add_le_of_decomp (hA : A.IsQuasiNormed C) (u v b b' : U) :
         · exact hA.norm1_add_le _ _
     _ = _ := by ring
 
-/-- **The quasi-triangle inequality of the K-functional** (Bergh–Löfström, Lemma 3.11.1; Bonn's
-`kNorm_add_le_mul`): `K(t, u + v) ≤ C (K(t, u) + K(t, v))` for a couple quasi-normed with
-constant `C`. -/
+/-- **The quasi-triangle inequality of the K-functional**. For a couple quasi-normed with
+constant `C`, the bound `K(t, u + v) ≤ C (K(t, u) + K(t, v))` includes the extended-valued
+endpoints. The common-constant case at positive finite scales is in Bergh–Löfström,
+Lemma 3.11.1. See also Bonn's `kNorm_add_le_mul`. -/
 theorem kFunctional_add_le (hA : A.IsQuasiNormed C) (u v : U) :
     A.kFunctional t (u + v) ≤ C * (A.kFunctional t u + A.kFunctional t v) := by
   rcases eq_or_ne C 0 with rfl | hC0
