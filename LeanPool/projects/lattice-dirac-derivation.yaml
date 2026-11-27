@@ -4,12 +4,15 @@ summary: >-
   Derives the linearized free Dirac equation for a reciprocal two-field action
   on the C19 cubic stencil at an exact zero-energy vacuum. V3.2 keeps that
   action unchanged and adds the exact scalar C19 spectrum, continuum spectral
-  projectors, a no-doubler theorem, the classification of the two cubical
+  projectors, a unique-zero theorem for the scalar transport symbol, the
+  classification of the two cubical
   four-component copies, a scoped irreducibility result for the massive rest
-  spin sector, finite boosts, discrete symmetries, the nonrelativistic
-  reduction, separated spatial and centered-time continuum defects, explicit
-  finite-lattice artifacts, and transport observables. It proves native rest
-  mass 19 while also proving that the physical energy conversion is not fixed.
+  spin sector, axial finite-boost group laws, discrete symmetries, the
+  nonrelativistic reduction, and explicit finite-lattice artifacts. Its
+  cumulative certificate collects the spatial and centered-time continuum
+  defect bounds and transport results. In the native normalization the rest
+  mass is 19. The physical rest-energy formula takes the conversion factor
+  as an explicit input.
   It explicitly distinguishes the exact finite-C19 scalar spectrum from the
   continuum Clifford factorization instead of promoting the latter to a global
   exact finite-lattice root.
@@ -69,13 +72,12 @@ main_results:
 - declaration: LeanDirac.V2.v32_native_rest_mass
   informal: >-
     The unchanged native normalization fixes rest mass 19, rest-branch gap 38,
-    two positive-energy rest spinors, and their native density and inertial
-    coefficient statements.
+    the native inertial coefficient, and the unit density of two explicit
+    positive-energy rest spinors.
 - declaration: LeanDirac.V2.v32_absolute_energy_scale_not_selected
   informal: >-
-    The native action does not select an absolute physical energy unit, so the
-    theorem deliberately does not infer an electron MeV value from rest mass
-    19.
+    The modeled physical rest energy is 19 times the supplied conversion
+    factor. The theorem exhibits two choices of factor yielding different values.
 tags:
 - mathematical-physics
 - dirac-operator
