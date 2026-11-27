@@ -120,7 +120,7 @@ theorem eLpNorm_conv_le_of_hasWeakLineDeriv {p p' : ℝ≥0} (hp : 1 ≤ p) (hn 
   have he : (fun x => fderiv ℝ (conv K h volume) x (gridBasis V k)) = conv K (g k) volume :=
     funext fun x => fderiv_conv_apply_eq_conv hK hKs (hhg k) x
   rw [he]
-  exact eLpNorm_conv_le hp1 ENNReal.coe_ne_top hK.continuous.aestronglyMeasurable
+  exact eLpNorm_conv_le hp1 hK.continuous.aestronglyMeasurable
     (hhg k).locallyIntegrable_deriv.aestronglyMeasurable
 
 /-- **The Gagliardo–Nirenberg–Sobolev inequality with compact support**: let `n ≥ 1`, `1 ≤ p`,

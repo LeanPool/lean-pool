@@ -48,8 +48,10 @@ for `t ≥ ‖ι‖` (`ApproximationScheme.enorm_le_kFunctional`).
 The functional `ApproximationScheme.phiFunctional` is the formula of `EQuasinorm.phiFunctional`
 in the project *MultilinearInterpolation* (Bonn; van Doorn, Portegies, Rothgang, Viana Reis;
 Apache 2.0).  That project states the equivalence `discreteKMethod_equiv_kmethod`
-(Bergh–Löfström, Lemma 3.1.3) for general couples of quasi-normed spaces on the grid `2^n`,
-`n ∈ ℤ`.  For `ρ = 1` and `θ ≥ 0`, the comparison of `phiFunctional` with its discrete version
+for general quasi-normed couples on the grid `2^n`, `n ∈ ℤ`. The comparison below extends
+Bergh–Löfström, Lemma 3.1.3, to a one-sided grid with arbitrary positive spacing, supplemented
+by the ambient norm.  For `ρ = 1` and `θ ≥ 0`, the comparison of `phiFunctional` with its
+discrete version
 for increasing `φ` (`ApproximationScheme.phiFunctional_le_lqNorm_discretePhiSeq`,
 `ApproximationScheme.lqNorm_discretePhiSeq_le_phiFunctional`) gives the two inequalities of that
 equivalence for every couple whose K-functional is increasing in `t`.  This file applies it to
@@ -553,8 +555,8 @@ theorem kMethodUpperConst_ne_top (hθ : 0 < θ) (hρ : 0 < ρ) (q : ℝ≥0∞) 
     (ENNReal.mul_ne_top (ENNReal.LpAddConst_lt_top q).ne
       (ENNReal.dyadicGeomConst_ne_top (mul_pos hρ hθ) q))
 
-/-- **The continuous K-norm by the discrete one** (Bergh–Löfström, Lemma 3.1.3): for `θ ≥ 0`
-and `ρ > 0`, `‖f‖_{K,θ,q} ≤ kMethodUpperConst θ ρ q · ‖f‖_{θ,q}`, where `‖f‖_{θ,q}` is the
+/-- **The continuous K-norm by the one-sided discrete norm**. For `θ ≥ 0` and `ρ > 0`,
+`‖f‖_{K,θ,q} ≤ kMethodUpperConst θ ρ q · ‖f‖_{θ,q}`, where `‖f‖_{θ,q}` is the
 discrete K-method on the grid `2^(-kρ)`.  The constant is finite for `θ > 0`
 (`kMethodUpperConst_ne_top`). -/
 theorem kMethodNorm_le_interpNorm (hθ : 0 ≤ θ) (hρ : 0 < ρ) (f : X) :
@@ -627,8 +629,8 @@ theorem kMethodLowerConst_ne_top (hρ : 0 < ρ) (q : ℝ≥0∞) : kMethodLowerC
     (ENNReal.mul_ne_top (ENNReal.two_rpow_ne_top _)
       (ENNReal.inv_ne_top.2 (ofReal_mul_log_two_rpow_ne_zero hρ q)))
 
-/-- **The discrete K-norm by the continuous one** (Bergh–Löfström, Lemma 3.1.3): for `θ ≥ 0`,
-`ρ > 0` and `q ≠ 0`, `‖f‖_{θ,q} ≤ kMethodLowerConst ι θ ρ q · ‖f‖_{K,θ,q}`, where `‖f‖_{θ,q}`
+/-- **The one-sided discrete K-norm by the continuous norm**. For `θ ≥ 0`, `ρ > 0` and `q ≠ 0`,
+`‖f‖_{θ,q} ≤ kMethodLowerConst ι θ ρ q · ‖f‖_{K,θ,q}`, where `‖f‖_{θ,q}`
 is the discrete K-method on the grid `2^(-kρ)`. -/
 theorem interpNorm_le_kMethodNorm (hθ : 0 ≤ θ) (hρ : 0 < ρ) (hq : q ≠ 0) (f : X) :
     interpNorm ι θ ρ q f ≤ kMethodLowerConst ι θ ρ q * kMethodNorm ι θ q f := by
@@ -660,8 +662,10 @@ theorem memInterp_zero_and_memKMethod_zero (f : X) :
   · simp [MemKMethod, kMethodNorm_eq,
       eLpNorm_exponent_zero (measurable_kMethodIntegrand (ι := ι) (θ := θ) f).aestronglyMeasurable]
 
-/-- **The discrete and the continuous K-method agree** (Bergh–Löfström, Lemma 3.1.3): for
-`θ > 0`, `ρ > 0` and every `q`, `f` lies in the interpolation space of the discrete K-method on
+/-- **The one-sided discrete and continuous K-methods agree**, extending the two-sided
+comparison of Bergh–Löfström, Lemma 3.1.3, for a bounded linear map. For
+`θ > 0`, `ρ > 0` and every `q`, including the zero-exponent convention, `f` lies in the
+interpolation space of the discrete K-method on
 the grid `t = 2^(-kρ)` if and only if `‖f‖_{K,θ,q} < ∞`, that is
 `∫_0^∞ (t^(-θ) K(t, f))^q dt/t < ∞` for `0 < q < ∞` and `t^(-θ) K(t, f)` essentially bounded
 for `q = ∞`.  This is, for the couple given by a bounded linear map `ι`, the analogue of the

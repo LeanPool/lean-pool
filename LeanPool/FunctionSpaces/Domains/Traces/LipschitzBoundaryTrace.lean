@@ -33,7 +33,9 @@ Let `Ω` be a bounded Lipschitz domain with boundary `Γ`: finitely many balls `
   it is the trace of the graph domain (`Rd.BoundedLipschitzDomain.boundaryTrace_graphMap`), by the
   change of chart; hence it does not depend on the resolution of unity, and it is the restriction
   for continuous functions.
-* **The trace space** (Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1`,
+* **The trace space via ambient functions.** The intrinsic trace-space equality below is the
+  range `1 ≤ p < ∞`, `1 ≤ q ≤ ∞` of Schneider–Vybíral, Theorem 4.11, on bounded Lipschitz
+  domains. The construction here gives an ambient representative. For `1 ≤ p < ∞`, `0 < s < 1`,
   `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff `g = Tr_Γ F` almost everywhere on `Γ` for some
   `F ∈ L_p(V)` with `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
   (`Rd.BoundedLipschitzDomain.exists_boundaryTrace_eq_iff`). The chart pieces of `Tr_Γ F` are the
@@ -390,8 +392,8 @@ theorem trace_mulLp_ae_boundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞
   · rw [ψ.toComplex_of_eq_zero hψ, zero_mul, zero_mul]
   · rw [h2 (ψ.mem_ball_of_ne_zero hψ)]
 
-/-- **The boundary trace lies in `B^s_{p,q}(Γ)`** (Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`,
-the bound): for `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞`, `s + 1/p < L` and `F` with
+/-- **The trace of an ambient Besov function lies in `B^s_{p,q}(Γ)`**. For `1 ≤ p < ∞`, `0 < s <
+1`, `1 ≤ q ≤ ∞`, `s + 1/p < L` and `F` with
 `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} < ∞`. The chart pieces are the traces of `ψ_j F`
 on the graph domains (`Rd.LipschitzGraph.modNorm_trace_le`). -/
 theorem memBoundaryBesov_boundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞) {L : ℕ}
@@ -488,8 +490,8 @@ theorem boundaryTrace_extensionSum_eventuallyEq (ψ : Ω.BoundaryPartition) (hp 
   rw [h1 hk, htr, h2, Finset.sum_congr rfl fun j _ => hterm j, ← Finset.sum_mul,
     ψ.sum_toComplex_eq_one hΓ, one_mul]
 
-/-- **Every function of `B^s_{p,q}(Γ)` is a boundary trace** (Schneider–Vybíral, Theorem 4.11, for
-`p ≥ 1`, the extension): for `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, every
+/-- **Every function of `B^s_{p,q}(Γ)` is the trace of an ambient representative**. For `1 ≤ p <
+∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, every
 `g ∈ B^s_{p,q}(Γ)` is `Tr_Γ F` almost everywhere on `Γ` for some `F` with
 `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} < ∞`. With the chart pieces `G_j` of `g`,
 `F = ∑_j ζ_j E_j G_j` with the extensions `E_j` of the graph domains
@@ -508,8 +510,8 @@ theorem exists_boundaryTrace_eq (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞) {L 
   exact ⟨_, Ω.modNorm_extensionSum_lt_top hp hL hs hs1 hq hζs hC G hGfin,
     Ω.boundaryTrace_extensionSum_eventuallyEq ψ hp hL hs hs1 hq hζs hζB hζ1 hC G hG hGfin⟩
 
-/-- **The trace space of a bounded Lipschitz domain** (Schneider–Vybíral, Theorem 4.11, for
-`p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff
+/-- **The trace space of a bounded Lipschitz domain, specified using ambient functions**. For `1
+≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff
 `g = Tr_Γ F` almost everywhere on `Γ` for some `F` with
 `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} < ∞`. -/
 theorem exists_boundaryTrace_eq_iff (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞) {L : ℕ}
@@ -546,7 +548,9 @@ def IsBoundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞) (L : ℕ) (σ :
     ‖F‖ₑ + lqNorm q (fun k => dyadicWeight σ k * lpModulus p L F k) < ∞ →
       Ω.boundaryTrace ψ hp L F =ᶠ[Ω.aeBoundary] g
 
-/-- **The trace space of `B^{s+1/p}_{p,q}(Ω)`** (Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`): for
+/-- **The intrinsic trace space of `B^{s+1/p}_{p,q}(Ω)`**. In the range below this is the
+trace-space equality of Schneider–Vybíral, Theorem 4.11, with the trace defined via ambient
+extensions. For
 `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff `g` is the boundary trace
 of some `f` with `‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q} < ∞`. -/
 theorem memBoundaryBesov_iff_exists_isBoundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞)

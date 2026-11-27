@@ -82,7 +82,7 @@ theorem lpModulus_convLp_le (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K 
   rw [lpModulus, modulus_congr_ae (convLp_apply_ae hp hK h)]
   refine iSup₂_le fun v hv => ?_
   rw [eLpNorm_congr_ae (higherDiff_conv_ae Fact.out hp hK (Lp.memLp h) r v), Lp.eNorm_def]
-  exact (eLpNorm_conv_le Fact.out hp (integrable_higherDiff hK r v).aestronglyMeasurable
+  exact (eLpNorm_conv_le Fact.out (integrable_higherDiff hK r v).aestronglyMeasurable
     (Lp.aestronglyMeasurable h)).trans (by gcongr; exact hB v hv)
 
 end Rd

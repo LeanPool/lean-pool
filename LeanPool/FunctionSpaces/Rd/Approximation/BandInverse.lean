@@ -328,7 +328,7 @@ theorem lpModulus_le_of_mem_bandSpace (hp : p ≠ ∞) (r : ℕ) {j k : ℕ}
         eLpNorm ((fwdDiff h)^[r] (Theta (V := V) j)) 1 volume * ‖a‖ₑ := by
       rw [eLpNorm_congr_ae (higherDiff_conv_ae Fact.out hp (integrable_Theta j) (Lp.memLp a) r h),
         Lp.eNorm_def]
-      exact eLpNorm_conv_le Fact.out hp
+      exact eLpNorm_conv_le Fact.out
         (integrable_higherDiff (integrable_Theta j) r h).aestronglyMeasurable
         (Lp.aestronglyMeasurable a)
     have h2 : ENNReal.ofReal (2 ^ j * ‖h‖) ^ r ≤ dyadicWeight (-(r : ℝ)) (k - j) := by

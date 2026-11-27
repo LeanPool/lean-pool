@@ -212,21 +212,21 @@ Mathlib's Bessel potential maps the tempered distribution of `η ⋆ F` to that 
 (`Rd.besselPotential_apply_apply`, `Rd.integral_besselSchwartz_mul_conv`). -/
 theorem besselPotential_toLp_conv (hp : p ≠ ∞) (t : ℝ) (η : 𝓢(V, ℂ)) {F : V → ℂ}
     (hF : MemLp F p volume) :
-    besselPotential V ℂ t ((memLp_conv Fact.out hp η.integrable hF).toLp _ : 𝓢'(V, ℂ)) =
-      ((memLp_conv Fact.out hp (besselSchwartz t η).integrable hF).toLp _ : 𝓢'(V, ℂ)) := by
+    besselPotential V ℂ t ((memLp_conv Fact.out η.integrable hF).toLp _ : 𝓢'(V, ℂ)) =
+      ((memLp_conv Fact.out (besselSchwartz t η).integrable hF).toLp _ : 𝓢'(V, ℂ)) := by
   ext u
   rw [besselPotential_apply_apply, Lp.toTemperedDistribution_apply,
     Lp.toTemperedDistribution_apply]
-  calc ∫ x, besselSchwartz t u x • (memLp_conv Fact.out hp η.integrable hF).toLp _ x
+  calc ∫ x, besselSchwartz t u x • (memLp_conv Fact.out η.integrable hF).toLp _ x
       = ∫ x, besselSchwartz t u x * conv η F volume x := by
         refine integral_congr_ae ?_
-        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hp η.integrable hF)] with x hx
+        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out η.integrable hF)] with x hx
         rw [hx, smul_eq_mul]
     _ = ∫ x, u x * conv (besselSchwartz t η) F volume x :=
         integral_besselSchwartz_mul_conv Fact.out hp hF t η u
-    _ = ∫ x, u x • (memLp_conv Fact.out hp (besselSchwartz t η).integrable hF).toLp _ x := by
+    _ = ∫ x, u x • (memLp_conv Fact.out (besselSchwartz t η).integrable hF).toLp _ x := by
         refine integral_congr_ae ?_
-        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hp (besselSchwartz t η).integrable
+        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out (besselSchwartz t η).integrable
           hF)] with x hx
         rw [hx, smul_eq_mul]
 
@@ -243,15 +243,15 @@ theorem besselPotential_eq_of_tendsto (hp : p ≠ ∞) (t : ℝ) {η : ℕ → �
       conv (besselSchwartz t (η j)) (F j) volume x) - ⇑g) p volume) atTop (𝓝 0)) :
     besselPotential V ℂ t (f : 𝓢'(V, ℂ)) = g := by
   set P : (ℕ → 𝓢(V, ℂ)) → ℕ → Lp ℂ p (volume : Measure V) := fun K J =>
-    ∑ j ∈ Finset.range J, (memLp_conv Fact.out hp (K j).integrable (hF j)).toLp _ with hPdef
+    ∑ j ∈ Finset.range J, (memLp_conv Fact.out (K j).integrable (hF j)).toLp _ with hPdef
   have hcoe : ∀ (K : ℕ → 𝓢(V, ℂ)) (J : ℕ),
       ⇑(P K J) =ᵐ[volume] fun x => ∑ j ∈ Finset.range J, conv (K j) (F j) volume x := by
     intro K J
     have h1 : ∀ᵐ x ∂volume, ∀ j,
-        (memLp_conv Fact.out hp (K j).integrable (hF j)).toLp _ x = conv (K j) (F j) volume x :=
+        (memLp_conv Fact.out (K j).integrable (hF j)).toLp _ x = conv (K j) (F j) volume x :=
       ae_all_iff.2 fun j => MemLp.coeFn_toLp _
     filter_upwards [h1, Lp.coeFn_fun_finsetSum (Finset.range J) fun j =>
-      (memLp_conv Fact.out hp (K j).integrable (hF j)).toLp _] with x hx1 hx2
+      (memLp_conv Fact.out (K j).integrable (hF j)).toLp _] with x hx1 hx2
     rw [hPdef, hx2]
     exact Finset.sum_congr rfl fun j _ => hx1 j
   have hlim : ∀ (K : ℕ → 𝓢(V, ℂ)) (k : Lp ℂ p (volume : Measure V)),
@@ -396,9 +396,9 @@ theorem exists_besselPotential_eq_of_memTriebelLizorkin [Nontrivial V] (hp1 : 1 
   refine ⟨czConst V p B H, czConst_ne_top hp1 hp hB hH, fun f hf => ?_⟩
   obtain ⟨h, hlim, hnorm⟩ := exists_tendsto_sum_conv_blockFun hp
     (K := fun j => besselSchwartz s (psiDualS j)) (czConst_ne_top hp1 hp hB hH) hf
-    fun t => eLpNorm_sum_conv_besselSchwartz_le hp1 hp hθ t fun j => memLp_blockFun hp j f
+    fun t => eLpNorm_sum_conv_besselSchwartz_le hp1 hp hθ t fun j => memLp_blockFun j f
   refine ⟨h, besselPotential_eq_of_tendsto hp s (η := psiDualS)
-    (fun j => memLp_blockFun hp j f) ?_ hlim, hnorm⟩
+    (fun j => memLp_blockFun j f) ?_ hlim, hnorm⟩
   simpa only [coe_psiDualS] using tendsto_eLpNorm_sum_conv_psiDual_blockFun_sub hp f
 
 /-- **`F^s_{p,2} ⊆ H^{s,p}`**: in dimension `n ≥ 1`, for `1 < p < ∞` and real `s`, every

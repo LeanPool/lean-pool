@@ -25,8 +25,9 @@ with the local means `k_j` and dual kernels `η_j` of the cone bump; by the supp
 `f` on `Ω` enters. More generally `Rd.LipschitzGraph.traceSeries` restricts `∑_j η_j ⋆ h_j` for
 any `h_j ∈ L_p(V)`.
 
-**The trace theorem** (`Rd.LipschitzGraph.modNorm_trace_le`; Schneider–Vybíral, Theorem 4.2,
-for `p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1` and `1 ≤ q ≤ ∞`,
+**The trace estimate on the whole Lipschitz epigraph** (`Rd.LipschitzGraph.modNorm_trace_le`)
+is a graph-domain variant of Schneider–Vybíral, Theorem 4.2, for bounded Lipschitz domains.
+For `1 ≤ p < ∞`, `0 < s < 1` and `1 ≤ q ≤ ∞`,
 
 `‖Tr f‖_{L_p(H)} + ‖(2^(ks) ω_1(Tr f, 2^(-k))_p)_k‖_{ℓ_q}
   ≤ K (‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q})`.
@@ -377,8 +378,8 @@ theorem modNorm_traceSeries_le_of_atoms (hp : p ≠ ∞) (L : ℕ) {r : ℕ} {s 
         congr 2
         ring
 
-/-- **The trace of a series** (Schneider–Vybíral, Theorem 4.2): for `0 < s < 1`
-there is `K < ∞` such that the trace `Tr = ∑_j (η_j ⋆ h_j) ∘ γ` has
+/-- **The trace of a series** on a Lipschitz graph. For `0 < s < 1` there is `K < ∞` such that
+the trace `Tr = ∑_j (η_j ⋆ h_j) ∘ γ` has
 `‖Tr‖_{L_p(H)} + ‖(2^(ks) ω_1(Tr, 2^(-k))_p)_k‖_{ℓ_q} ≤ K ‖(2^(j(s+1/p)) ‖h_j‖_p)_j‖_{ℓ_q}`,
 by the atomic synthesis on `H` with the trace atoms of order `1`
 (`Rd.LipschitzGraph.exists_trace_atoms`, `Rd.LipschitzGraph.modNorm_traceSeries_le_of_atoms`). -/
@@ -408,8 +409,8 @@ noncomputable def trace (hp : p ≠ ∞) (L : ℕ) (f : Lp ℂ p (volume : Measu
     Lp ℂ p (volume : Measure Ω.hyperplane) :=
   Ω.traceSeries Ω.coneBump hp L fun j => Ω.cutoff (Ω.coneBump.localMean hp L j f)
 
-/-- **The trace theorem on Lipschitz graph domains** (Schneider–Vybíral, Theorem 4.2,
-for `p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1` and `1 ≤ q ≤ ∞` there is `K < ∞` with
+/-- **The trace estimate on Lipschitz graph domains**. For `1 ≤ p < ∞`, `0 < s < 1` and
+`1 ≤ q ≤ ∞` there is `K < ∞` with
 `‖Tr f‖_{L_p(H)} + ‖(2^(ks) ω_1(Tr f, 2^(-k))_p)_k‖_{ℓ_q} ≤
 K (‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q})`. -/
 theorem modNorm_trace_le (hp : p ≠ ∞) (L : ℕ) {s : ℝ} (hs : 0 < s) (hs1 : s < 1) {q : ℝ≥0∞}

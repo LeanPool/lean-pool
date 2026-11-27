@@ -324,14 +324,14 @@ theorem IsCZFamily.enorm_sum_integral_conv_mul_conj_le [Nontrivial V] (h : IsCZF
   have hp : p ≠ ∞ := ((ENNReal.HolderConjugate.lt_top_iff_one_lt p q).2 hq1).ne
   have hq : q ≠ ∞ := ne_top_of_lt hq2
   have hS : MemLp (fun y => ∑ j ∈ s, conv (fun z => conj (θ j (-z))) (g j) volume y) q volume :=
-    memLp_finsetSum s fun j _ => memLp_conv hq1.le hq (h.adjoint.integrable j) (hg j)
+    memLp_finsetSum s fun j _ => memLp_conv hq1.le (h.adjoint.integrable j) (hg j)
   calc ‖∑ j ∈ s, ∫ x, conv (θ j) f volume x * conj (g j x)‖ₑ
       = ‖∫ y, f y * conj (∑ j ∈ s, conv (fun z => conj (θ j (-z))) (g j) volume y)‖ₑ := by
         rw [Finset.sum_congr rfl fun j _ => integral_conv_mul_conj hp (h.integrable j) hf (hg j),
           ← integral_finsetSum (f := fun j y =>
             f y * conj (conv (fun z => conj (θ j (-z))) (g j) volume y)) s fun j _ =>
             hf.integrable_mul
-            (memLp_conv hq1.le hq (h.adjoint.integrable j) (hg j)).star]
+            (memLp_conv hq1.le (h.adjoint.integrable j) (hg j)).star]
         simp only [map_sum, Finset.mul_sum]
     _ ≤ ∫⁻ y, ‖f y‖ₑ * ‖∑ j ∈ s, conv (fun z => conj (θ j (-z))) (g j) volume y‖ₑ := by
         refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
@@ -376,7 +376,7 @@ theorem IsCZFamily.enorm_integral_sum_conv_mul_conj_le [Nontrivial V] (h : IsCZF
         simp_rw [Finset.sum_mul]
         rw [integral_finsetSum (f := fun j x => conv (θ j) (g j) volume x * conj (u x)) s
           fun j _ =>
-          (memLp_conv hp1 hp (h.integrable j) (hg j)).integrable_mul hu.star]
+          (memLp_conv hp1 (h.integrable j) (hg j)).integrable_mul hu.star]
         rw [Finset.sum_congr rfl fun j _ => integral_conv_mul_conj hp (h.integrable j) (hg j) hu]
     _ ≤ ∑ j ∈ s, ∫⁻ y, ‖g j y‖ₑ * ‖conv (fun z => conj (θ j (-z))) u volume y‖ₑ := by
         refine (eNorm_sum_le _ _).trans (Finset.sum_le_sum fun j _ => ?_)
@@ -419,7 +419,7 @@ theorem IsCZFamily.eLpNorm_lqNorm_conv_le_of_two_lt [Nontrivial V] (h : IsCZFami
       (u := fun j x => if j < J then conv (θ j) f volume x else 0) (fun j => ?_)
       (fun j hj => ?_) fun g hg => ?_
     · by_cases hj : j < J
-      · simpa only [hj, ↓reduceIte] using memLp_conv hp1.le hp (h.integrable j) hf
+      · simpa only [hj, ↓reduceIte] using memLp_conv hp1.le (h.integrable j) hf
       · simp [hj]
     · funext x
       simp only [Finset.mem_range.not.1 hj, ↓reduceIte, Pi.zero_apply]
@@ -465,7 +465,7 @@ theorem IsCZFamily.eLpNorm_sum_conv_le_of_two_lt [Nontrivial V] (h : IsCZFamily 
   have hq1 : 1 < p.conjExponent := (ENNReal.HolderConjugate.lt_top_iff_one_lt p _).1 hp.lt_top
   have hq2 : p.conjExponent < 2 := ENNReal.HolderConjugate.lt_two_of_two_lt hp2
   exact eLpNorm_le_of_forall_enorm_integral_mul_conj_le hp1 hp
-    (memLp_finsetSum s fun j _ => memLp_conv hp1.le hp (h.integrable j) (hg j)) fun u hu =>
+    (memLp_finsetSum s fun j _ => memLp_conv hp1.le (h.integrable j) (hg j)) fun u hu =>
       h.enorm_integral_sum_conv_mul_conj_le hq1 hq2 s hg hu
 
 /-! ### All `1 < p < ∞` -/

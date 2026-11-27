@@ -198,7 +198,7 @@ theorem conv_Theta_blockFun (hp : p ≠ ∞) (j : ℕ) (f : Lp ℂ p (volume : M
     exact h.symm
   refine (Continuous.ae_eq_iff_eq volume ?_ (continuous_blockFun hp j f)).1 hae
   rw [← coe_schwartzDilate_bandKernelS]
-  exact continuous_conv_schwartz Fact.out hp _ (memLp_blockFun hp j f)
+  exact continuous_conv_schwartz Fact.out hp _ (memLp_blockFun j f)
 
 /-- **The Nikolskii inequality for blocks at every point**: for `1 ≤ p < ∞`, `f ∈ L_p(V)` and
 every `x`, `|(ψ_j ⋆ f)(x)| ≤ N_p 2^(jn/p) ‖ψ_j ⋆ f‖_p`. The block is `Θ_j ⋆ (ψ_j ⋆ f)`
@@ -266,7 +266,7 @@ theorem memLp_blockFun_of_le (hp : p ≠ ∞) {r : ℝ≥0∞} (hpr : p ≤ r) (
   memLp_iff.2 <| (eLpNorm_blockFun_le_nikolskii hp hpr j f).trans_lt
     (ENNReal.mul_lt_top (ENNReal.mul_lt_top (ENNReal.rpow_lt_top_of_nonneg
       (ENNReal.one_sub_toReal_div_nonneg hpr) nikolskiiBlockConst_ne_top)
-      (ENNReal.dyadicWeight_lt_top _ _)) (memLp_blockFun hp j f).eLpNorm_lt_top)
+      (ENNReal.dyadicWeight_lt_top _ _)) (memLp_blockFun j f).eLpNorm_lt_top)
 
 /-! ### Besov embeddings -/
 

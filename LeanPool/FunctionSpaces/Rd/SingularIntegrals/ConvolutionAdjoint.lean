@@ -142,7 +142,7 @@ theorem integrable_kernel_mul_mul {p q : ℝ≥0∞} [p.HolderConjugate q] (hp :
     simpa only [ContinuousLinearMap.mul_apply', sub_sub_cancel, Function.uncurry_apply_pair]
       using h
   · have hH : MemLp (conv (fun z => ((‖K z‖ : ℝ) : ℂ)) (fun z => ((‖f z‖ : ℝ) : ℂ)) volume) p
-        volume := memLp_conv hp1 hp hK.norm.ofReal hf.norm.ofReal
+        volume := memLp_conv hp1 hK.norm.ofReal hf.norm.ofReal
     refine ((hH.integrable_mul hg).norm).congr (ae_of_all _ fun x => ?_)
     have hHx : conv (fun z => ((‖K z‖ : ℝ) : ℂ)) (fun z => ((‖f z‖ : ℝ) : ℂ)) volume x =
         ((∫ y, ‖K (x - y)‖ * ‖f y‖ : ℝ) : ℂ) := by
@@ -344,7 +344,7 @@ theorem hasWeakLineDeriv_conv {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) 
       LocallyIntegrableOn (conv G f volume) ((⊤ : Opens V) : Set V) volume := fun G =>
     locallyIntegrableOn_of_memLp hp1 (by
       rw [volume_restrict_top]
-      exact memLp_conv hp1 hp G.integrable hf)
+      exact memLp_conv hp1 G.integrable hf)
   refine (hasWeakLineDeriv_iff_integral (hloc η) (hloc _)).2 fun φ => ?_
   have hA := integral_conv_iteratedLineDerivOp_mul hp1 hp hf η (testSchwartz φ) v
   rw [iteratedLineDerivOp_testSchwartz] at hA
@@ -358,8 +358,8 @@ Schwartz function `η` and `v ∈ V^k`, the class of `(∂^v η) ⋆ f` in `L_p`
 `∂^v` of the class of `η ⋆ f` (`Rd.hasWeakLineDeriv_conv`). -/
 theorem hasWeakLineDeriv_toLp_conv {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {f : V → ℂ}
     (hf : MemLp f p) (η : 𝓢(V, ℂ)) {k : ℕ} (v : Fin k → V) :
-    HasWeakLineDeriv ⊤ v (memLp_conv hp1 hp η.integrable hf).toLp
-      (memLp_conv hp1 hp (∂^{v} η : 𝓢(V, ℂ)).integrable hf).toLp := by
+    HasWeakLineDeriv ⊤ v (memLp_conv hp1 η.integrable hf).toLp
+      (memLp_conv hp1 (∂^{v} η : 𝓢(V, ℂ)).integrable hf).toLp := by
   refine (hasWeakLineDeriv_conv hp1 hp hf η v).congr_ae ?_ ?_ <;> rw [volume_restrict_top]
   exacts [(MemLp.coeFn_toLp _).symm, (MemLp.coeFn_toLp _).symm]
 

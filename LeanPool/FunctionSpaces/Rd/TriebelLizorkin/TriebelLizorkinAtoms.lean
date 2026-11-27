@@ -727,7 +727,7 @@ theorem tl_atomic_decomposition {L : ℕ} (hL : 1 ≤ L) (K : ℕ) (hp : p ≠ �
       convLp hp (b.integrable_dual L j) (b.localMean hp L j F)) atTop (𝓝 F) := by
   have hcell : ∀ j m, MemLp ((cell j m).indicator (conv (b.kernel L j) F volume)) 1 volume :=
     fun j m => memLp_one_indicator_cell Fact.out
-      (memLp_conv Fact.out hp (b.integrable_kernel L j) (Lp.memLp F)) j m
+      (memLp_conv Fact.out (b.integrable_kernel L j) (Lp.memLp F)) j m
   refine ⟨fun j m => ?_, fun j x => ?_, b.tendsto_sum_dual_localMean hp hL F⟩
   · have h := b.isSmoothAtom_cellAtom le_rfl L K j (hcell j m) m
     rw [cellAtom_indicator] at h

@@ -136,18 +136,18 @@ theorem aestronglyMeasurable_blockFun (j : ℕ) (f : Lp ℂ p (volume : Measure 
     AEStronglyMeasurable (blockFun j f) volume :=
   aestronglyMeasurable_conv (integrable_psi j).aestronglyMeasurable (Lp.aestronglyMeasurable f)
 
-/-- The pointwise blocks `ψ_j ⋆ f` of `f ∈ L_p(V)` lie in `L_p(V)`, for `1 ≤ p < ∞`, by Young's
+/-- The pointwise blocks `ψ_j ⋆ f` of `f ∈ L_p(V)` lie in `L_p(V)`, for `1 ≤ p ≤ ∞`, by Young's
 inequality (`Rd.memLp_conv`). -/
-theorem memLp_blockFun (hp : p ≠ ∞) (j : ℕ) (f : Lp ℂ p (volume : Measure V)) :
+theorem memLp_blockFun (j : ℕ) (f : Lp ℂ p (volume : Measure V)) :
     MemLp (blockFun j f) p volume :=
-  memLp_conv Fact.out hp (integrable_psi j) (Lp.memLp f)
+  memLp_conv Fact.out (integrable_psi j) (Lp.memLp f)
 
-/-- **The first block**: `‖ψ_0 ⋆ f‖_p ≤ ‖Φ‖_1 ‖f‖_p` for `1 ≤ p < ∞`, by Young's inequality,
+/-- **The first block**: `‖ψ_0 ⋆ f‖_p ≤ ‖Φ‖_1 ‖f‖_p` for `1 ≤ p ≤ ∞`, by Young's inequality,
 since `ψ_0 = Φ_0` and `‖Φ_0‖_1 = ‖Φ‖_1`. -/
-theorem eLpNorm_blockFun_zero_le (hp : p ≠ ∞) (f : Lp ℂ p (volume : Measure V)) :
+theorem eLpNorm_blockFun_zero_le (f : Lp ℂ p (volume : Measure V)) :
     eLpNorm (blockFun 0 f) p volume ≤ eLpNorm (lpKernel (V := V)) 1 volume * ‖f‖ₑ := by
   rw [Lp.eNorm_def, ← eLpNorm_Phi_one 0]
-  exact eLpNorm_conv_le Fact.out hp (integrable_Phi 0).aestronglyMeasurable
+  exact eLpNorm_conv_le Fact.out (integrable_Phi 0).aestronglyMeasurable
     (Lp.aestronglyMeasurable f)
 
 /-- `‖Δ_j f‖_p` is the `L_p` norm of the pointwise block `ψ_j ⋆ f`. -/

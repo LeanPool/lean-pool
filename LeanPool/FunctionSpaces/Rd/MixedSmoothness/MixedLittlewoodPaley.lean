@@ -170,7 +170,7 @@ theorem exists_eLpNorm_conv_psi_dual_le (L : ℕ) :
   refine ⟨(C₀ + C₁) * dyadicWeight L 3, ENNReal.mul_ne_top (ENNReal.add_ne_top.2 ⟨hC₀, hC₁⟩)
     (ENNReal.dyadicWeight_ne_top _ _), fun m k => ?_⟩
   have htriv : eLpNorm (conv (psi (V := ℝ) m) (b.dual L k) volume) 1 volume ≤ C₀ :=
-    (eLpNorm_conv_le le_rfl h1 (integrable_psi m).aestronglyMeasurable
+    (eLpNorm_conv_le le_rfl (integrable_psi m).aestronglyMeasurable
       (b.integrable_dual L k).aestronglyMeasurable).trans
       (mul_le_mul' (eLpNorm_psi_one_le m) (b.eLpNorm_dual_one_le L k))
   by_cases hkm : k + 3 ≤ m
@@ -264,7 +264,7 @@ theorem exists_eLpNorm_conv_kernel_Theta_le (L : ℕ) :
       · rw [show m - k = 0 by omega, ENNReal.dyadicWeight_zero_right]
       · rfl
     rw [hc, mul_one]
-    refine (eLpNorm_conv_le le_rfl h1 (b.integrable_kernel L m).aestronglyMeasurable
+    refine (eLpNorm_conv_le le_rfl (b.integrable_kernel L m).aestronglyMeasurable
       (integrable_Theta k).aestronglyMeasurable).trans ?_
     rw [eLpNorm_Theta_one]
     exact (mul_le_mul' (b.eLpNorm_kernel_one_le L m) le_rfl).trans le_self_add

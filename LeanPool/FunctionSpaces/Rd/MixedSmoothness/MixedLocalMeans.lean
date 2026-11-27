@@ -465,7 +465,7 @@ theorem lpMixedModulus_convLp_mixedDual_le (hp : p ≠ ∞) (L : ℕ) (m k : Fin
     split_ifs
     · exact integrable_higherDiff (b.integrable_dual L (k i)) L _
     · exact b.integrable_dual L (k i)
-  refine (eLpNorm_conv_le hp1 hp
+  refine (eLpNorm_conv_le hp1
     (integrable_mixedDiff (b.integrable_mixedDual L k) L e v).aestronglyMeasurable
     (Lp.aestronglyMeasurable h)).trans ?_
   rw [Lp.eNorm_def]

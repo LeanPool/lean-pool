@@ -21,13 +21,17 @@ constant (`InterpCouple.discreteKMethodNorm_add_le` of `ApproximationSpaces.Inte
 and they form the **couple of K-spaces**
 `(‖·‖_{θ₀,q₀}, ‖·‖_{θ₁,q₁})` (`InterpCouple.kCouple`) and the endpoint couples
 `(N₀, ‖·‖_{θ₁,q₁})` and `(‖·‖_{θ₀,q₀}, N₁)` (`InterpCouple.leftKCouple`,
-`InterpCouple.rightKCouple`).  The **reiteration theorem** (Bergh–Löfström, Theorems 3.5.3 and
-3.11.5) says that for `0 < θ₀ < θ₁ < 1`, `0 < η < 1` and `θ = (1 - η) θ₀ + η θ₁`,
+`InterpCouple.rightKCouple`).  The classical reiteration results are in Bergh–Löfström,
+Theorems 3.5.3 and 3.11.5, for complete intermediate spaces and an interior outer parameter.
+Their quasi-normed result uses finite outer `q`. The membership comparison below uses the
+stated quasi-norm laws and also permits infinite outer `q`. For `0 < θ₀ < θ₁ < 1`,
+`0 < η < 1` and `θ = (1 - η) θ₀ + η θ₁`, it gives
 `((X₀, X₁)_{θ₀,q₀}, (X₀, X₁)_{θ₁,q₁})_{η,q} = (X₀, X₁)_{θ,q}`
 (`InterpCouple.memKMethod_kCouple_iff`), also for the continuous K-norms
 (`InterpCouple.memKMethod_kMethodCouple_iff`), the endpoint couples
-(`InterpCouple.memKMethod_leftKCouple_iff`, `InterpCouple.memKMethod_rightKCouple_iff`) and the
-couples of bounded linear maps (`ApproximationScheme.memKMethod_reiteration`).
+(`InterpCouple.memKMethod_leftKCouple_iff`, `InterpCouple.memKMethod_rightKCouple_iff`),
+including `η = 0` on the left and `η = 1`
+on the right, and the couples of bounded linear maps (`ApproximationScheme.memKMethod_reiteration`).
 
 The inclusion `⊆` is the class `C_K` (Bergh–Löfström, Definition 3.5.1):
 `K(2^n, a) ≤ 2^(nθ_i) ‖a‖_{θ_i,q_i}` gives `‖u‖_{θ,q} ≤ C ‖u‖_{η,q}` termwise
@@ -586,8 +590,8 @@ theorem reiterationConst_ne_top (hC : C ≠ ∞) (hθ₀ : 0 < θ₀) (hθ : θ�
       (mul_pos hη (sub_pos.2 hθ)),
       ENNReal.one_sub_two_rpow_neg_inv_ne_top (mul_pos (sub_pos.2 hη') (sub_pos.2 hθ))⟩)
 
-/-- **The reiteration bound** (the hard inclusion of Bergh–Löfström, Theorems 3.5.3 and
-3.11.5): for a couple quasi-normed with constant `C`, `q₀, q₁, q ≥ 1`, `0 < θ₀, θ₁ < 1` and
+/-- **The discrete reiteration bound**, via the Holmstedt estimate above. For a couple
+quasi-normed with constant `C`, `q₀, q₁, q ≥ 1`, `0 < θ₀, θ₁ < 1` and
 `θ = (1 - η) θ₀ + η θ₁`, the discrete K-norm of the couple of K-spaces on the grid
 `t = 2^(n(θ₁-θ₀))` satisfies `‖u‖_{η,q} ≤ reiterationConst C θ₀ θ₁ η · ‖u‖_{θ,q}`. -/
 theorem kCouple_discreteKMethodNorm_le (hA : A.IsQuasiNormed C) (hq₀ : 1 ≤ q₀) (hq₁ : 1 ≤ q₁)
@@ -695,8 +699,8 @@ theorem memKMethod_iff_of_discreteKMethodNorm_le {B : InterpCouple U} {c c' : �
   exact ⟨fun hB => h'.trans_lt (ENNReal.mul_lt_top hc'.lt_top hB),
     fun hA => h.trans_lt (ENNReal.mul_lt_top hc.lt_top hA)⟩
 
-/-- **The reiteration theorem** (Bergh–Löfström, Theorems 3.5.3 and 3.11.5): for a couple
-quasi-normed with constant `C`, `0 < θ₀ < θ₁ < 1`, `0 < η < 1` and `q₀, q₁, q ≥ 1`,
+/-- **Reiteration for discrete K-norms**, a variant of Bergh–Löfström, Theorems 3.5.3 and 3.11.5.
+For a couple quasi-normed with constant `C`, `0 < θ₀ < θ₁ < 1`, `0 < η < 1` and `q₀, q₁, q ≥ 1`,
 `((X₀, X₁)_{θ₀,q₀}, (X₀, X₁)_{θ₁,q₁})_{η,q} = (X₀, X₁)_{θ,q}` with `θ = (1 - η) θ₀ + η θ₁`, for
 the discrete K-norms of the two K-spaces. -/
 theorem memKMethod_kCouple_iff (hA : A.IsQuasiNormed C) (hθ₀ : 0 < θ₀) (hθ : θ₀ < θ₁)
@@ -709,8 +713,8 @@ theorem memKMethod_kCouple_iff (hA : A.IsQuasiNormed C) (hθ₀ : 0 < θ₀) (h�
     (discreteKMethodNorm_le_kCouple hA (one_pos.trans_le hq₀).ne'
       (one_pos.trans_le hq₁).ne' η q u)
 
-/-- **The reiteration theorem for the left endpoint** (Bergh–Löfström, Theorem 3.5.3): for a
-couple quasi-normed with constant `C`, `0 < θ₁ < 1`, `0 ≤ η < 1` and `q₁, q ≥ 1`,
+/-- **Reiteration with the left endpoint space**, including the outer endpoint `η = 0`.
+For a couple quasi-normed with constant `C`, `0 < θ₁ < 1`, `0 ≤ η < 1` and `q₁, q ≥ 1`,
 `(X₀, (X₀, X₁)_{θ₁,q₁})_{η,q} = (X₀, X₁)_{ηθ₁,q}`. -/
 theorem memKMethod_leftKCouple_iff (hA : A.IsQuasiNormed C) (hθ₁ : 0 < θ₁) (hθ₁' : θ₁ < 1)
     (hη : 0 ≤ η) (hη' : η < 1) (hq₁ : 1 ≤ q₁) (hq : 1 ≤ q) {u : U} :
@@ -720,8 +724,8 @@ theorem memKMethod_leftKCouple_iff (hA : A.IsQuasiNormed C) (hθ₁ : 0 < θ₁)
     (mul_nonneg hη hθ₁.le) (leftKCouple_discreteKMethodNorm_le hA hq₁ hq hθ₁ hθ₁' η u)
     (discreteKMethodNorm_le_leftKCouple hA (one_pos.trans_le hq₁).ne' η q u)
 
-/-- **The reiteration theorem for the right endpoint** (Bergh–Löfström, Theorem 3.5.3): for a
-couple quasi-normed with constant `C`, `0 < θ₀ < 1`, `η > 0` and `q₀, q ≥ 1`,
+/-- **Reiteration with the right endpoint space**, including the outer endpoint `η = 1`.
+For a couple quasi-normed with constant `C`, `0 < θ₀ < 1`, `η > 0` and `q₀, q ≥ 1`,
 `((X₀, X₁)_{θ₀,q₀}, X₁)_{η,q} = (X₀, X₁)_{(1-η)θ₀+η,q}`. -/
 theorem memKMethod_rightKCouple_iff (hA : A.IsQuasiNormed C) (hθ₀ : 0 < θ₀) (hθ₀' : θ₀ < 1)
     (hη : 0 < η) (hq₀ : 1 ≤ q₀) (hq : 1 ≤ q) {u : U} :

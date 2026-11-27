@@ -43,8 +43,9 @@ On a Lipschitz graph the extended atoms form a package of order `2`
 (`Rd.LipschitzGraph.exists_extension_atoms`). This gives the bound for `0 < s < 1`
 (`Rd.LipschitzGraph.modNorm_graphExtension_le`, `Rd.LipschitzGraph.modNorm_graphExtension_lt_top`),
 `Tr (E g) = g` (`Rd.LipschitzGraph.trace_graphExtension`), and with the boundedness of the trace
-the trace space (`Rd.LipschitzGraph.exists_trace_eq_iff`; Schneider–Vybíral, Theorem 4.11 for
-graph domains and `p ≥ 1`): `g` is the trace of a function with finite intrinsic
+the trace space (`Rd.LipschitzGraph.exists_trace_eq_iff`). This is a variant of
+Schneider–Vybíral, Theorem 4.11, on the whole Lipschitz epigraph with `p ≥ 1`.
+In this variant, `g` is the trace of a function with finite intrinsic
 `B^{s+1/p}_{p,q}`-norm on `Ω` iff `g ∈ B^s_{p,q}(H)`. On the half-space the extended atoms form
 packages of every order (`FunctionSpaces.Domains.Traces.HalfSpaceTrace`).
 
@@ -528,8 +529,9 @@ theorem modNorm_graphExtension_le_of_atoms (hp : p ≠ ∞) (Lh : ℕ) {r : ℕ}
     (ENNReal.mul_lt_top (Ω.graphBump.upperConst_ne_top Lh s).lt_top hg))).trans
     (mul_le_mul' le_rfl hLM)
 
-/-- **The extension is bounded** (Schneider–Vybíral, Theorem 4.10, for `p ≥ 1`): for `0 < s < 1`
-there is `K < ∞` with
+/-- **The extension is bounded in the ambient space**. This is the graph-domain variant of
+Schneider–Vybíral, Theorem 4.10, whose estimate is on a bounded Lipschitz domain.
+For `0 < s < 1` there is `K < ∞` with
 `‖E g‖_p + ‖(2^(k(s+1/p)) ω_2(E g, 2^(-k))_p)_k‖_{ℓ_q} ≤
 K (‖g‖_{L_p(H)} + ‖(2^(ks) ω_1(g, 2^(-k))_p)_k‖_{ℓ_q})` for the extension of moment order `1`, by
 the atomic synthesis on `V` with the extended atoms of order `2`. -/
@@ -735,8 +737,8 @@ theorem trace_graphExtension_of_atoms (hp : p ≠ ∞) {Lh : ℕ} (hLh : 1 ≤ L
   simp_rw [← hpart] at hlim
   exact tendsto_nhds_unique hconv hlim
 
-/-- **The trace of the extension** (Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`): for
-`0 < s < 1`, `L ≥ 2` and `g ∈ L_p(H)` with `‖g‖_p + ‖(2^(ks) ω_1(g, 2^(-k))_p)_k‖_{ℓ_q} < ∞`,
+/-- **The trace of the constructed extension on a Lipschitz graph**. For `0 < s < 1`, `L ≥ 2`
+and `g ∈ L_p(H)` with `‖g‖_p + ‖(2^(ks) ω_1(g, 2^(-k))_p)_k‖_{ℓ_q} < ∞`,
 the extension of moment order `1` has `Tr (E g) = g`, from the extended atoms of order `2`
 (`Rd.LipschitzGraph.exists_extension_atoms`, `Rd.LipschitzGraph.trace_graphExtension_of_atoms`). -/
 theorem trace_graphExtension (hp : p ≠ ∞) {L : ℕ} (hL : 2 ≤ L) {s : ℝ} (hs : 0 < s) (hs1 : s < 1)
@@ -749,8 +751,9 @@ theorem trace_graphExtension (hp : p ≠ ∞) {L : ℕ} (hL : 2 ≤ L) {s : ℝ}
     ((Ω.graphBump.localMeansNorm_le hp 1 s hq g).trans_lt
       (ENNReal.mul_lt_top (Ω.graphBump.upperConst_ne_top 1 s).lt_top hg))
 
-/-- **The trace space of a Lipschitz graph domain** (Schneider–Vybíral, Theorem 4.11, for
-`p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ L_p(H)` is the trace of some
+/-- **The trace space on the whole Lipschitz epigraph**, a graph-domain variant of
+Schneider–Vybíral, Theorem 4.11. For `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈
+L_p(H)` is the trace of some
 `f` with `‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q} < ∞` iff
 `‖g‖_p + ‖(2^(ks) ω_1(g, 2^(-k))_p)_k‖_{ℓ_q} < ∞`. The trace is bounded
 (`Rd.LipschitzGraph.modNorm_trace_le`), and `E g` is such an `f`

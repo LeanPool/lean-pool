@@ -19,8 +19,9 @@ Modified for Lean Pool: module names and imports adapted.
 
 On a measurable group `G` with a right-invariant s-finite measure `μ` (a Haar measure on `ℝ^d` or
 on the torus), the convolution `(K ⋆ f)(x) = ∫ K(y) f(x - y) dμ(y)` with the multiplication of
-`ℂ` satisfies **Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p` for `1 ≤ p < ∞`
-(`MeasureTheory.eLpNorm_complexConvolution_le`). It comes from the weighted Jensen inequality
+`ℂ` satisfies **Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p` for `1 ≤ p ≤ ∞`
+(`MeasureTheory.eLpNorm_complexConvolution_le`). For finite `p`, the integral estimate below uses
+the weighted Jensen inequality
 
 `(∫ a g)^p ≤ (∫ a)^(p-1) ∫ a g^p`
 
@@ -171,7 +172,7 @@ theorem lintegral_rpow_lintegral_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠
     eLpNorm_rpow_eq hf hp0 hp]
 
 /-- Young's inequality for complex-valued convolution with an integrable kernel. -/
-theorem eLpNorm_complexConvolution_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (_hp : p ≠ ∞) {K f : G → ℂ}
+theorem eLpNorm_complexConvolution_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K f : G → ℂ}
     (hK : AEStronglyMeasurable K μ) (hf : AEStronglyMeasurable f μ) :
     eLpNorm (K ⋆[ContinuousLinearMap.mul ℂ ℂ, μ] f) p μ ≤ eLpNorm K 1 μ * eLpNorm f p μ := by
   have hmul : ‖ContinuousLinearMap.mul ℂ ℂ‖ₑ = 1 := by
@@ -179,12 +180,12 @@ theorem eLpNorm_complexConvolution_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (_hp : p 
   simpa only [hmul, one_mul] using eLpNorm_convolution_le (ContinuousLinearMap.mul ℂ ℂ) hK hf hp1
 
 /-- The convolution of an integrable kernel with an `L_p` function is in `L_p`. -/
-theorem memLp_convolution {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : G → ℂ}
+theorem memLp_convolution {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K f : G → ℂ}
     (hK : Integrable K μ) (hf : MemLp f p μ) :
     MemLp (K ⋆[ContinuousLinearMap.mul ℂ ℂ, μ] f) p μ :=
   lt_top_iff_ne_top.2 (ne_top_of_le_ne_top (ENNReal.mul_ne_top
     (memLp_one_iff_integrable.2 hK).eLpNorm_ne_top hf.eLpNorm_ne_top)
-    (eLpNorm_complexConvolution_le hp1 hp hK.aestronglyMeasurable hf.aestronglyMeasurable))
+    (eLpNorm_complexConvolution_le hp1 hK.aestronglyMeasurable hf.aestronglyMeasurable))
 
 /-- **The convolution integral converges absolutely almost everywhere** for an integrable
 kernel and `f ∈ L_p`, `1 ≤ p < ∞`: the integral form of Young's inequality is finite. -/

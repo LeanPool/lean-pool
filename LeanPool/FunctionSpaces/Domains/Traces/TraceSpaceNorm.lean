@@ -200,9 +200,10 @@ theorem exists_enorm_le_boundaryBesovNorm_extend (ψ : Ω.BoundaryPartition) :
   obtain ⟨t', ht', hle'⟩ := hle _ (Ω.memBoundaryBesov_extend ψ t)
   rwa [(Ω.boundaryTrace_extend_eventuallyEq_iff ψ t' t).1 ht'] at hle'
 
-/-- **`H^{1/2}(Γ)` and `B^{1/2}_{2,2}(Γ)` have equivalent norms** (McLean, Theorem 3.37;
-following Schneider–Vybíral, Theorem 4.11, for `p = q = 2`): for every resolution of unity `ψ`
-there is
+/-- **`H^{1/2}(Γ)` and `B^{1/2}_{2,2}(Γ)` have equivalent norms**. The comparison uses the
+Sobolev trace space, in the setting of McLean, Theorem 3.37, and the Besov trace-space
+characterization with `p = q = 2`, as in Schneider–Vybíral, Theorem 4.11.
+For every resolution of unity `ψ` there is
 `C < ∞` with `‖t‖ ≤ C ‖τ t‖_{B^{1/2}_{2,2}(Γ)}` and `‖τ t‖_{B^{1/2}_{2,2}(Γ)} ≤ C ‖t‖`
 for every `t ∈ H^{1/2}(Γ)`, with the trace `τ : H^{1/2}(Γ) → L_2(Γ)`
 (`Rd.BoundedLipschitzDomain.traceL2`). -/

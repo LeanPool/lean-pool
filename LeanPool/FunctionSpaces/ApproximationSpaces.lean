@@ -182,8 +182,8 @@ in the root namespace.
   `A^s_q = (X, Y)_{s/r,q}` under Jackson's and Bernstein's inequalities of order `r`
   (`approxSpace_eq_interpSpace`).
 * `ApproximationSpaces.Interpolation.KMethod`: the continuous K-method `kMethodNorm` and its
-  equivalence with the discrete K-method on every dyadic grid (Bergh–Löfström, Lemma 3.1.3;
-  `memInterp_iff_memKMethod`).
+  equivalence with the discrete K-method on one-sided dyadic grids with an ambient-norm term
+  (`memInterp_iff_memKMethod`), extending the classical two-sided comparison.
 * `ApproximationSpaces.Interpolation.Couple`: couples `InterpCouple` of two extended quasi-norms
   on an abelian group, their K-functional and K-methods, and the couple `InterpCouple.ofMap ι`
   of a bounded linear map.

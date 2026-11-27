@@ -26,7 +26,7 @@ The **K-functional** is `K(t, u) = inf_b (N₀(u - b) + t N₁(b))` (`InterpCoup
 the **discrete K-method** on the grid `t = 2^(nρ)`, `n ∈ ℤ`, is
 `‖(2^(-nρθ) K(2^(nρ), u))_n‖_{ℓ_q}` (`InterpCouple.discreteKMethodNorm`).  For `θ ≥ 0` and
 `ρ > 0` both give the same space (`InterpCouple.memKMethod_iff_discreteKMethodNorm_lt_top`,
-Bergh–Löfström, Lemma 3.1.3); swapping the couple replaces `θ` by `1 - θ`
+an extension of Bergh–Löfström, Lemma 3.1.3). Swapping the couple replaces `θ` by `1 - θ`
 (`InterpCouple.discreteKMethodNorm_swap`); for a quasi-normed couple both K-norms satisfy a
 quasi-triangle inequality (`InterpCouple.kMethodNorm_add_le`,
 `InterpCouple.discreteKMethodNorm_add_le`), and for a quasi-normed homogeneous couple the space is
@@ -369,9 +369,11 @@ theorem discreteKMethodNorm_le_mul_kMethodNorm (hθ : 0 ≤ θ) (u : U) :
   simpa only [one_mul] using discreteKMethodNorm_le_inv_mul_kMethodNorm (A := A) (q := q) hθ
     one_pos u
 
-/-- **The discrete and the continuous K-method agree** (Bergh–Löfström, Lemma 3.1.3; Bonn's
-`discreteKMethod_equiv_kmethod`): for `θ ≥ 0`, `ρ > 0` and every `q`, `‖u‖_{K,θ,q} < ∞` if and
-only if `‖(2^(-nρθ) K(2^(nρ), u))_{n ∈ ℤ}‖_{ℓ_q} < ∞`. -/
+/-- **The discrete and the continuous K-method agree**. Bergh–Löfström, Lemma 3.1.3,
+uses the two-sided grid `2^n` in the classical interpolation range. This version allows
+`θ ≥ 0`, any two-sided grid `2^(nρ)` with `ρ > 0`, and every `q`, including the zero-exponent
+convention. Then `‖u‖_{K,θ,q} < ∞` iff `‖(2^(-nρθ) K(2^(nρ), u))_{n ∈ ℤ}‖_{ℓ_q} < ∞`.
+See also Bonn's `discreteKMethod_equiv_kmethod`. -/
 theorem memKMethod_iff_discreteKMethodNorm_lt_top (hθ : 0 ≤ θ) (hρ : 0 < ρ) {u : U} :
     A.MemKMethod θ q u ↔ A.discreteKMethodNorm θ ρ q u < ∞ := by
   have hc0 := ApproximationScheme.ofReal_mul_log_two_rpow_ne_zero hρ q

@@ -148,7 +148,7 @@ theorem enorm_le_triebelLizorkinNorm_zero_two [Nontrivial V] (hp1 : 1 < p) (hp :
   refine le_of_tendsto' h fun J => ?_
   rw [Lp.eNorm_def, ← eLpNorm_congr_ae (sum_conv_psiDual_blockFun_ae hp _ f),
     triebelLizorkinNorm_zero_left]
-  exact isCZFamily_psiDual.eLpNorm_sum_conv_le hp1 hp _ fun j => memLp_blockFun hp j f
+  exact isCZFamily_psiDual.eLpNorm_sum_conv_le hp1 hp _ fun j => memLp_blockFun j f
 
 /-- **The square function theorem `L_p = F^0_{p,2}`**: in dimension `n ≥ 1`, for `1 < p < ∞`,
 the subspace `F^0_{p,2}` of `L_p(V)` is all of `L_p(V)`. The norms are equivalent by

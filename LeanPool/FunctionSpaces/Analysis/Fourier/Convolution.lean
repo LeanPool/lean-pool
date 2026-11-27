@@ -22,7 +22,7 @@ On a finite-dimensional real vector space `V` with a Haar measure `μ`, the **co
 integrable kernel `K` with `f ∈ L_p` is `(K ⋆ f)(x) = ∫ K(y) f(x - y) dy` (`Rd.conv`, Mathlib's
 `MeasureTheory.convolution` with the multiplication of `ℂ`).
 
-**Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p < ∞` (`Rd.eLpNorm_conv_le`), is the case
+**Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p ≤ ∞` (`Rd.eLpNorm_conv_le`), is the case
 of the group `V` of `MeasureTheory.eLpNorm_complexConvolution_le`. The integral of the convolution
 converges absolutely at almost every point (`MeasureTheory.ae_convolutionExistsAt`), so
 convolution is linear in `f` almost everywhere (`Rd.conv_add_ae`, `Rd.conv_sub_ae`,
@@ -75,19 +75,17 @@ theorem enorm_conv_le_lintegral (K f : V → ℂ) (x : V) :
   refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
   exact lintegral_congr fun y => eNorm_mul _ _
 
-/-- **Young's inequality** for an integrable kernel: `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p < ∞`
+/-- **Young's inequality** for an integrable kernel: `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p ≤ ∞`
 (`MeasureTheory.eLpNorm_complexConvolution_le` on the group `V`). -/
-theorem eLpNorm_conv_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : V → ℂ}
+theorem eLpNorm_conv_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K f : V → ℂ}
     (hK : AEStronglyMeasurable K μ) (hf : AEStronglyMeasurable f μ) :
     eLpNorm (conv K f μ) p μ ≤ eLpNorm K 1 μ * eLpNorm f p μ :=
-  eLpNorm_complexConvolution_le hp1 hp hK hf
+  eLpNorm_complexConvolution_le hp1 hK hf
 
 /-- Convolution of an integrable kernel with an `L_p` function is in `L_p`. -/
-theorem memLp_conv {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : V → ℂ} (hK : Integrable K μ)
+theorem memLp_conv {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K f : V → ℂ} (hK : Integrable K μ)
     (hf : MemLp f p μ) : MemLp (conv K f μ) p μ :=
-  lt_top_iff_ne_top.2 (ne_top_of_le_ne_top (ENNReal.mul_ne_top
-    (memLp_one_iff_integrable.2 hK).eLpNorm_ne_top hf.eLpNorm_ne_top)
-    (eLpNorm_conv_le hp1 hp hK.aestronglyMeasurable hf.aestronglyMeasurable))
+  memLp_convolution hp1 hK hf
 
 /-- **Convolution is additive** almost everywhere, in the two-exponent form: for `f ∈ L_p` and
 `g ∈ L_r` with `1 ≤ p, r < ∞`, `K ⋆ (f + g) = K ⋆ f + K ⋆ g` almost everywhere, since both
@@ -272,12 +270,12 @@ variable {p : ℝ≥0∞} [Fact (1 ≤ p)]
 
 /-- **Young's inequality for the classes in `L_p`**:
 `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p` for `f ∈ L_p`. -/
-theorem norm_toLp_conv_le (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K μ) (f : Lp ℂ p μ) :
-    ‖(memLp_conv Fact.out hp hK (Lp.memLp f)).toLp (conv K f μ)‖ ≤
+theorem norm_toLp_conv_le {K : V → ℂ} (hK : Integrable K μ) (f : Lp ℂ p μ) :
+    ‖(memLp_conv Fact.out hK (Lp.memLp f)).toLp (conv K f μ)‖ ≤
       (eLpNorm K 1 μ).toReal * ‖f‖ := by
   rw [Lp.norm_toLp, Lp.norm_def, ← ENNReal.toReal_mul]
   exact ENNReal.toReal_mono (ENNReal.mul_ne_top (memLp_one_iff_integrable.2 hK).eLpNorm_ne_top
-    (Lp.eLpNorm_ne_top f)) (eLpNorm_conv_le Fact.out hp hK.aestronglyMeasurable
+    (Lp.eLpNorm_ne_top f)) (eLpNorm_conv_le Fact.out hK.aestronglyMeasurable
       (Lp.aestronglyMeasurable f))
 
 /-- **Convolution with an integrable kernel as a bounded operator on `L_p`**, `1 ≤ p < ∞`, of
@@ -285,42 +283,42 @@ norm at most `‖K‖_1` (Young's inequality). -/
 noncomputable def convLp (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K μ) :
     Lp ℂ p μ →L[ℂ] Lp ℂ p μ :=
   LinearMap.mkContinuous
-    { toFun := fun f => (memLp_conv Fact.out hp hK (Lp.memLp f)).toLp (conv K f μ)
+    { toFun := fun f => (memLp_conv Fact.out hK (Lp.memLp f)).toLp (conv K f μ)
       map_add' := fun f g => by
         refine Lp.ext ?_
         have hc : conv K (⇑(f + g)) μ = conv K (⇑f + ⇑g) μ := conv_congr_ae (Lp.coeFn_add f g)
-        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp (f + g))),
-          MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp f)),
-          MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp g)),
-          Lp.coeFn_add ((memLp_conv Fact.out hp hK (Lp.memLp f)).toLp (conv K f μ))
-            ((memLp_conv Fact.out hp hK (Lp.memLp g)).toLp (conv K g μ)),
+        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp (f + g))),
+          MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp f)),
+          MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp g)),
+          Lp.coeFn_add ((memLp_conv Fact.out hK (Lp.memLp f)).toLp (conv K f μ))
+            ((memLp_conv Fact.out hK (Lp.memLp g)).toLp (conv K g μ)),
           conv_add_ae Fact.out hp hK (Lp.memLp f) (Lp.memLp g)] with x h1 h2 h3 h4 h5
         rw [h1, h4, Pi.add_apply, h2, h3, hc, h5, Pi.add_apply]
       map_smul' := fun c f => by
         refine Lp.ext ?_
         have hc : conv K (⇑(c • f)) μ = conv K (c • ⇑f) μ := conv_congr_ae (Lp.coeFn_smul c f)
-        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp (c • f))),
-          MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp f)),
-          Lp.coeFn_smul c ((memLp_conv Fact.out hp hK (Lp.memLp f)).toLp (conv K f μ))]
+        filter_upwards [MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp (c • f))),
+          MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp f)),
+          Lp.coeFn_smul c ((memLp_conv Fact.out hK (Lp.memLp f)).toLp (conv K f μ))]
           with x h1 h2 h3
         rw [h1, RingHom.id_apply, h3, Pi.smul_apply, h2, hc, conv_smul, Pi.smul_apply] }
-    (eLpNorm K 1 μ).toReal (norm_toLp_conv_le hp hK)
+    (eLpNorm K 1 μ).toReal (norm_toLp_conv_le hK)
 
 /-- The operator `convLp` is convolution, almost everywhere. -/
 theorem convLp_apply_ae (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K μ) (f : Lp ℂ p μ) :
     convLp hp hK f =ᵐ[μ] conv K f μ :=
-  MemLp.coeFn_toLp (memLp_conv Fact.out hp hK (Lp.memLp f))
+  MemLp.coeFn_toLp (memLp_conv Fact.out hK (Lp.memLp f))
 
 /-- **Young's inequality on `L_p`**: `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`. -/
 theorem norm_convLp_le (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K μ) (f : Lp ℂ p μ) :
     ‖convLp hp hK f‖ ≤ (eLpNorm K 1 μ).toReal * ‖f‖ :=
-  norm_toLp_conv_le hp hK f
+  norm_toLp_conv_le hK f
 
 /-- **Young's inequality on `L_p`** in extended norms: `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`. -/
 theorem enorm_convLp_le (hp : p ≠ ∞) {K : V → ℂ} (hK : Integrable K μ) (f : Lp ℂ p μ) :
     ‖convLp hp hK f‖ₑ ≤ eLpNorm K 1 μ * ‖f‖ₑ := by
   rw [Lp.eNorm_def, Lp.eNorm_def, eLpNorm_congr_ae (convLp_apply_ae hp hK f)]
-  exact eLpNorm_conv_le Fact.out hp hK.aestronglyMeasurable (Lp.aestronglyMeasurable f)
+  exact eLpNorm_conv_le Fact.out hK.aestronglyMeasurable (Lp.aestronglyMeasurable f)
 
 /-- **Convolution operators compose like their kernels**: `K ⋆ (L ⋆ f) = (K ⋆ L) ⋆ f` in `L_p`
 (`Rd.conv_conv_ae`). -/

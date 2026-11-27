@@ -172,7 +172,7 @@ theorem triebelLizorkinNorm_le_of_hasWeakLineDeriv [Nontrivial V] (hp1 : 1 < p) 
     fun j => (aestronglyMeasurable_blockFun j f).eNorm).trans ?_
   gcongr
   · rw [eLpNorm_eNorm _ (aestronglyMeasurable_blockFun 0 f)]
-    exact eLpNorm_blockFun_zero_le hp f
+    exact eLpNorm_blockFun_zero_le f
   · exact eLpNorm_lqNorm_blockFun_succ_le hp1 hp hg
 
 /-- **The weak derivatives of order `m` along the basis vectors give `f ∈ F^m_{p,2}`**: in
@@ -260,7 +260,7 @@ theorem IsCZFamily.eLpNorm_sum_conv_smul_blockFun_le [Nontrivial V] {θ : ℕ �
     eLpNorm (fun x => ∑ j ∈ t, conv (θ j) (c j • blockFun j f) volume x) p volume ≤
       czConst V p B H * eLpNorm (fun x => lqNorm 2 fun j =>
         if j ∈ t then dyadicWeight σ j * ‖blockFun j f x‖ₑ else 0) p volume :=
-  hθ.eLpNorm_sum_conv_smul_le hp1 hp hc t fun j => memLp_blockFun hp j f
+  hθ.eLpNorm_sum_conv_smul_le hp1 hp hc t fun j => memLp_blockFun j f
 
 /-- **The synthesis bound for derivatives of the synthesis kernels**: in dimension `n ≥ 1`, for
 `1 < p < ∞`, directions `w ∈ V^k`, every finite set `s ⊆ ℕ` and `f ∈ L_p(V)`,
@@ -288,11 +288,11 @@ theorem eLpNorm_sum_conv_derivDual_le [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ �
     (fun j => by rw [ENNReal.dyadicWeight_natCast]; exact enorm_two_pow_complex _) s f
 
 /-- The **synthesis sums** `∑_{j ∈ t} K_j ⋆ (ψ_j ⋆ f)` of Schwartz kernels `K_j` and the blocks of
-`f ∈ L_p(V)` lie in `L_p(V)` for `1 ≤ p < ∞`, by Young's inequality. -/
-theorem memLp_sum_conv_blockFun (hp : p ≠ ∞) (K : ℕ → 𝓢(V, ℂ))
+`f ∈ L_p(V)` lie in `L_p(V)` for `1 ≤ p ≤ ∞`, by Young's inequality. -/
+theorem memLp_sum_conv_blockFun (K : ℕ → 𝓢(V, ℂ))
     (f : Lp ℂ p (volume : Measure V)) (t : Finset ℕ) :
     MemLp (fun x => ∑ j ∈ t, conv (K j) (blockFun j f) volume x) p volume :=
-  memLp_finsetSum _ fun j _ => memLp_conv Fact.out hp (K j).integrable (memLp_blockFun hp j f)
+  memLp_finsetSum _ fun j _ => memLp_conv Fact.out (K j).integrable (memLp_blockFun j f)
 
 omit [Fact (1 ≤ p)] in
 /-- **Differences of synthesis sums**: let `σ` be real and `K_j` Schwartz kernels with
@@ -334,7 +334,7 @@ theorem cauchySeq_toLp_sum_conv_blockFun (hp : p ≠ ∞) {σ : ℝ} {K : ℕ �
     (hK : ∀ t : Finset ℕ, eLpNorm (fun x => ∑ j ∈ t, conv (K j) (blockFun j f) volume x)
       p volume ≤ C * eLpNorm (fun x => lqNorm 2 fun j =>
         if j ∈ t then dyadicWeight σ j * ‖blockFun j f x‖ₑ else 0) p volume) :
-    CauchySeq fun J => (memLp_sum_conv_blockFun hp K f (Finset.range J)).toLp _ :=
+    CauchySeq fun J => (memLp_sum_conv_blockFun K f (Finset.range J)).toLp _ :=
   cauchySeq_of_edist_le_lqNorm_ite (p := p) (q := 2)
     (g := fun j x => dyadicWeight σ j * ‖blockFun j f x‖ₑ) hC
     (zero_lt_one.trans_le Fact.out).ne' hp two_ne_zero ENNReal.ofNat_ne_top
@@ -370,11 +370,11 @@ noncomputable def derivSynthesisSum {k : ℕ} (w : Fin k → V) (f : Lp ℂ p (v
     (J : ℕ) : V → ℂ :=
   fun x => ∑ j ∈ Finset.range J, conv (∂^{w} (psiDualS j) : 𝓢(V, ℂ)) (blockFun j f) volume x
 
-/-- The partial sums of the derivative lie in `L_p(V)` for `1 ≤ p < ∞`, by Young's inequality
+/-- The partial sums of the derivative lie in `L_p(V)` for `1 ≤ p ≤ ∞`, by Young's inequality
 (`Rd.memLp_sum_conv_blockFun`). -/
-theorem memLp_derivSynthesisSum (hp : p ≠ ∞) {k : ℕ} (w : Fin k → V)
+theorem memLp_derivSynthesisSum {k : ℕ} (w : Fin k → V)
     (f : Lp ℂ p (volume : Measure V)) (J : ℕ) : MemLp (derivSynthesisSum w f J) p volume :=
-  memLp_sum_conv_blockFun hp (fun j => ∂^{w} (psiDualS j)) f (Finset.range J)
+  memLp_sum_conv_blockFun (fun j => ∂^{w} (psiDualS j)) f (Finset.range J)
 
 /-- **Differences of partial sums**: in dimension `n ≥ 1`, for `1 < p < ∞` and `N ≤ N'`, the
 difference of the partial sums `Rd.derivSynthesisSum` at `N'` and at `N` has `L_p` norm at most
@@ -394,7 +394,7 @@ theorem eLpNorm_derivSynthesisSum_sub_le [Nontrivial V] (hp1 : 1 < p) (hp : p �
 the synthesis bound `Rd.eLpNorm_sum_conv_derivDual_le`). -/
 theorem cauchySeq_toLp_derivSynthesisSum [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ ∞) {k : ℕ}
     (w : Fin k → V) {f : Lp ℂ p (volume : Measure V)} (hf : MemTriebelLizorkin (k : ℝ) 2 f) :
-    CauchySeq fun J => (memLp_derivSynthesisSum hp w f J).toLp :=
+    CauchySeq fun J => (memLp_derivSynthesisSum w f J).toLp :=
   cauchySeq_toLp_sum_conv_blockFun hp (K := fun j => (∂^{w} (psiDualS j) : 𝓢(V, ℂ)))
     (tlToSobolevConst_ne_top hp1 hp w) hf fun t => eLpNorm_sum_conv_derivDual_le hp1 hp w t f
 
@@ -408,7 +408,7 @@ theorem hasWeakLineDeriv_sum_conv_psiDual (hp : p ≠ ∞) {k : ℕ} (w : Fin k 
       (fun x => ∑ j ∈ Finset.range J, conv (psiDual j) (blockFun j f) volume x)
       (derivSynthesisSum w f J) := by
   have h := HasWeakLineDeriv.sum (s := Finset.range J) fun j _ =>
-    hasWeakLineDeriv_conv Fact.out hp (memLp_blockFun hp j f) (psiDualS j) w
+    hasWeakLineDeriv_conv Fact.out hp (memLp_blockFun j f) (psiDualS j) w
   simp only [coe_psiDualS] at h
   rw [Finset.sum_fn, Finset.sum_fn] at h
   exact h

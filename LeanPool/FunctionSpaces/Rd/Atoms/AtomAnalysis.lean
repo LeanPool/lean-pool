@@ -14,8 +14,9 @@ Modified for Lean Pool: module names and imports adapted.
 /-!
 # Atomic decompositions
 
-Every `F ∈ L_p(V)`, `1 ≤ p < ∞`, is a sum of atoms built from its local means
-(Schneider–Vybíral, Theorem 2.6, direction ⇒). For a kernel `K` and `g ∈ L_p`, the dyadic cells
+Each local-means term of `F ∈ L_p(V)`, `1 ≤ p < ∞`, has a cell-atom expansion. This
+construction proves the forward direction of the regular-atom characterization below.
+For a kernel `K` and `g ∈ L_p`, the dyadic cells
 `P_{j,m}` split the convolution into **cell atoms** (`Rd.cellAtom`):
 
 `K ⋆ g = ∑_m λ_{j,m} a_{j,m}`,  `λ_{j,m} = 2^(jn/p) ‖1_{P_{j,m}} g‖_p`,
@@ -538,8 +539,9 @@ theorem exists_cellAtom_pointwise_bound {p : ℝ≥0∞} (hp1 : 1 ≤ p) (L r : 
 
 variable {p : ℝ≥0∞} [Fact (1 ≤ p)]
 
-/-- **Atomic decomposition** (Schneider–Vybíral, Theorem 2.6, direction ⇒): for every order `r`
-there is `C < ∞` such that for every `F ∈ L_p` the terms of the reproducing formula
+/-- **Cell-atom decomposition of the local-means terms**. This gives the analysis step in
+`Rd.LocalMeansBump.besov_iff_atomic`. For every order `r` there is `C < ∞` such that for
+every `F ∈ L_p` the terms of the reproducing formula
 `F = ∑_j η_j ⋆ (k_j ⋆ F)` (`Rd.LocalMeansBump.tendsto_sum_dual_localMean`) are
 `η_j ⋆ (k_j ⋆ F) = ∑_m λ_{j,m} a_{j,m}` with the cell atoms, regular atoms of order and exponent
 `r` with radius factor `2LR + n` and constant `C`; the coefficients have

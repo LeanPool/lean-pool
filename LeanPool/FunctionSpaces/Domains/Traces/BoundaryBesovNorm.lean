@@ -37,7 +37,8 @@ resolution of unity `(ψ_j)` on `Γ` (`Rd.BoundedLipschitzDomain.BoundaryPartiti
   of unity give equivalent quasi-norms.
 
 The constants depend on `Ω`, `ψ`, `p`, `s`, `q` and `L` and are fixed before the functions; the
-bounds follow Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`.
+bounds give ambient-space estimates for the chart construction of the trace and its extension.
+Schneider–Vybíral, Theorems 4.2 and 4.10, give the bounded-domain estimates.
 -/
 
 @[expose] public section
@@ -280,7 +281,7 @@ theorem chart_ae_eq_zero_of_boundaryBesovNorm_eq_zero (ψ : Ω.BoundaryPartition
 
 /-! ### The bounded trace and the bounded extension -/
 
-/-- **The boundary trace is bounded** (following Schneider–Vybíral, Theorem 4.11, for `p ≥ 1`): for
+/-- **The boundary trace is bounded by the ambient Besov norm**. For
 `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `s + 1/p < L` (so `L ≥ 1`), there is `C < ∞` with
 `‖Tr_Γ F‖_{B^s_{p,q}(Γ)} ≤ C (‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q})` for every `F`
 with a finite right side. The chart pieces of `Tr_Γ F` are the traces `Tr_j(ψ_j F)`
@@ -305,8 +306,8 @@ theorem exists_boundaryBesovNorm_boundaryTrace_le (ψ : Ω.BoundaryPartition) (h
     Ω.trace_mulLp_ae_boundaryTrace ψ hp hL hs hsL hq hF j (hM j)).trans
     (Finset.sum_le_sum fun j _ => hle j F hF)
 
-/-- **A bounded extension from the boundary** (following Schneider–Vybíral, Theorem 4.11, for
-`p ≥ 1`): for `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, there is `C < ∞` such that every
+/-- **A bounded extension from the boundary to the ambient space**. For `1 ≤ p < ∞`, `0 < s <
+1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, there is `C < ∞` such that every
 `g ∈ B^s_{p,q}(Γ)` is `Tr_Γ F` almost everywhere on `Γ` for some `F` with
 `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} ≤ C ‖g‖_{B^s_{p,q}(Γ)}`. The function is
 `F = ∑_j ζ_j E_j G_j` for the chart pieces `G_j` and the cut-offs `ζ_j`

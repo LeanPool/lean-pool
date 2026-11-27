@@ -419,9 +419,8 @@ theorem multiplierConst_ne_top (hp : p ≠ ∞) {r : ℕ} {s : ℝ} (hsr : s < r
     exact ENNReal.mul_ne_top (ENNReal.pow_ne_top ENNReal.ofNat_ne_top)
       (ENNReal.one_sub_two_rpow_neg_inv_ne_top (by linarith))
 
-/-- **The terms of order `l`**: `‖(2^(k(s-l)) ω_(r-l)(F, 2^(-k))_p)_k‖_{ℓ_q} ≤ K_l ‖F‖_{s,r}` for
-`l ≤ r`. -/
-theorem lqNorm_lpModulus_le_multiplierConst (hp : p ≠ ∞) {r l : ℕ} (hlr : l ≤ r) {s : ℝ}
+/-- **The terms of order `l`**: `‖(2^(k(s-l)) ω_(r-l)(F, 2^(-k))_p)_k‖_{ℓ_q} ≤ K_l ‖F‖_{s,r}`. -/
+theorem lqNorm_lpModulus_le_multiplierConst (hp : p ≠ ∞) {r l : ℕ} {s : ℝ}
     (hsr : s < r) {q : ℝ≥0∞} (hq : 1 ≤ q) (F : Lp ℂ p (volume : Measure V)) :
     lqNorm q (fun k => dyadicWeight (s - l) k * lpModulus p (r - l) F k) ≤
       multiplierConst (V := V) hp r s l *
@@ -495,9 +494,8 @@ theorem modNorm_mulLp_le (hp : p ≠ ∞) {ψ : V → ℂ} (hψ : ContDiff ℝ (
           Finset.sum_congr rfl fun l _ => ENNReal.lqNorm_const_mul _ _
       _ ≤ ∑ l ∈ Finset.range (r + 1), (r.choose l : ℝ≥0∞) * ENNReal.ofReal C *
             (multiplierConst (V := V) hp r s l * N) :=
-          Finset.sum_le_sum fun l hl => mul_le_mul' le_rfl
-            (lqNorm_lpModulus_le_multiplierConst hp (Nat.lt_succ_iff.1 (Finset.mem_range.1 hl))
-              hsr hq F)
+          Finset.sum_le_sum fun l _ => mul_le_mul' le_rfl
+            (lqNorm_lpModulus_le_multiplierConst hp hsr hq F)
   calc ‖G‖ₑ + lqNorm q (fun k => dyadicWeight s k * lpModulus p r G k)
       ≤ ENNReal.ofReal C * N + ∑ l ∈ Finset.range (r + 1), (r.choose l : ℝ≥0∞) *
           ENNReal.ofReal C * (multiplierConst (V := V) hp r s l * N) :=
