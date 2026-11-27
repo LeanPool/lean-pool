@@ -6,19 +6,19 @@ Authors: G. D. Partin
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V34CompleteCovariantFreeSpinor
+public import LeanPool.LatticeDiracDerivation.V35CompleteCovariantObservables
 
 /-!
-# Free Dirac dynamics and covariant spinors from a reciprocal C19 lattice action
+# Free Dirac covariance and observables from a reciprocal C19 lattice action
 
-Source: url:https://github.com/gpartin/LeanDiracDerivation/tree/7b2a51cf933798eeb931731609fda0ffa81123fe
+Source: url:https://github.com/gpartin/LeanDiracDerivation/tree/43859849eb6ed37e16c802fbae3fd50dd731665c
 Authors: G. D. Partin
 Status: verified
-Main declarations: `LeanDirac.V2.v34_complete_covariant_free_spinor`,
-  `LeanDirac.V2.v34_every_spinor_has_unique_two_plus_two_coordinates`,
-  `LeanDirac.V2.v34_positive_covariant_spin_sum`, `LeanDirac.V2.v34_momentum_helicity`,
-  `LeanDirac.V2.v34_nonforward_gordon_for_native_spinors`,
-  `LeanDirac.V2.v34_resolvent_spectral_decomposition`,
+Main declarations: `LeanDirac.V2.v35_complete_covariant_observables`,
+  `LeanDirac.V2.v35_antiparticle_spin_sum_is_negative_pole`,
+  `LeanDirac.V2.v35_lorentz_word_covariant`, `LeanDirac.V2.v35_lorentz_word_preserves_solutions`,
+  `LeanDirac.V2.v35_fierz_completeness`, `LeanDirac.V2.v35_on_shell_pauli_lubanski_spin_half`,
+  `LeanDirac.V2.v35_helicity_is_normalized_pauli_lubanski_time`,
   `LeanDirac.V2.v32_no_global_exact_local_oriented_root`,
   `LeanDirac.V2.v32_absolute_energy_scale_not_selected`
 Tags: mathematical-physics, dirac-operator, clifford-algebra, lattice, fourier-analysis
