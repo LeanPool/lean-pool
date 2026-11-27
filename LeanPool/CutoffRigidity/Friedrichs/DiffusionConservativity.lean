@@ -9,6 +9,7 @@ Authors: Djalil Chafaï
 module
 
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionPositivity
+import LeanPool.CutoffRigidity.RealL2Identities
 import LeanPool.CutoffRigidity.RiemannianSplitting.Riemann.WeightedCutoffs
 
 /-! # Conservativity of the weighted diffusion semigroup -/
@@ -21,27 +22,6 @@ open scoped ContDiff InnerProductSpace Manifold NNReal Topology
 namespace CutoffRigidity.Riemann.Diff
 
 open CutCur
-
-namespace FormData
-
-variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℝ H] [CompleteSpace H]
-  (S : FormData H)
-
-/-- A vector of zero closed energy is fixed by the unit-parameter resolvent. -/
-theorem R_apply_of_energy_eq_zero (u : S.Q) (hu : S.E u u = 0) : S.R (u : H) = u := by
-  obtain ⟨v, rfl⟩ := S.qEquiv.surjective u
-  rw [E_eq, real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq, sub_eq_zero] at hu
-  have hadj : ContinuousLinearMap.adjoint S.ι (S.ι v) = v := by
-    have hnorm := S.norm_adjoint_ι_le (S.ι v)
-    have hsq := pow_le_pow_left₀ (norm_nonneg _) hnorm 2
-    have hdiff : ‖v - ContinuousLinearMap.adjoint S.ι (S.ι v)‖ ^ 2 ≤ 0 := by
-      rw [norm_sub_sq_real, ContinuousLinearMap.adjoint_inner_right, real_inner_self_eq_norm_sq,
-        hu]
-      linarith only [hsq]
-    exact (sub_eq_zero.mp (norm_eq_zero.mp ((sq_nonpos_iff _).mp hdiff))).symm
-  rw [qEquiv_apply, R_apply, hadj]
-
-end FormData
 
 section Constants
 
@@ -78,12 +58,10 @@ private theorem tendsto_cutoffs_testToL2 (χ : ℕ → testSub F M)
   rw [tendsto_iff_norm_sub_tendsto_zero]
   have hsq (n : ℕ) : ‖testToL2 F μ (χ n) - oneL2 μ‖ ^ 2 =
       ∫ x, ((χ n : M → ℝ) x - 1) ^ 2 ∂μ := by
-    rw [← real_inner_self_eq_norm_sq, L2.inner_def]
-    refine integral_congr_ae ?_
+    apply CutoffRigidity.lp_real_norm_sq_eq_integral
     filter_upwards [Lp.coeFn_sub (testToL2 F μ (χ n)) (oneL2 μ), coeFn_oneL2 μ,
       coeFn_testToL2 F μ (χ n)] with x hsub hone hχ
     rw [hsub, Pi.sub_apply, hone, hχ]
-    simp [sq]
   have hint : Tendsto (fun n => ∫ x, ((χ n : M → ℝ) x - 1) ^ 2 ∂μ) atTop (𝓝 0) := by
     have h := tendsto_integral_of_dominated_convergence (μ := μ) (fun _ => (1 : ℝ))
       (F := fun n x => ((χ n : M → ℝ) x - 1) ^ 2) (f := fun _ => 0)
