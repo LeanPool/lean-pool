@@ -37,23 +37,6 @@ inductive V35BilinearChannel where
   | tensor (pair : Fin 6)
   deriving DecidableEq, Fintype
 
-/-- Enumerate the six unordered pairs of distinct four-dimensional indices. -/
-def v35TensorPair : Fin 6 → Fin 4 × Fin 4
-  | 0 => (0, 1)
-  | 1 => (0, 2)
-  | 2 => (0, 3)
-  | 3 => (1, 2)
-  | 4 => (1, 3)
-  | _ => (2, 3)
-
-/-- Return the Clifford operator associated with a bilinear channel. -/
-def v35BilinearOperator : V35BilinearChannel → CubicalCell4 → CubicalCell4
-  | .scalar => fun z => z
-  | .pseudoscalar => v35GammaFive
-  | .vector mu => v34Gamma mu
-  | .axial mu => fun z => v34Gamma mu (v35GammaFive z)
-  | .tensor pair => v34Sigma (v35TensorPair pair).1 (v35TensorPair pair).2
-
 /-- Gamma operator with its spatial index lowered in the chosen signature. -/
 def v35GammaLower (mu : Fin 4) (z : CubicalCell4) : CubicalCell4 :=
   if mu = 0 then v34Gamma mu z else fun component => -v34Gamma mu z component

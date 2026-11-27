@@ -69,15 +69,13 @@ theorem v35_on_shell_pauli_lubanski_spin_half
 `(px,py,pz)` labels that ordering is `(-pz,-py,px)`; the signs and permutation
 are therefore derived from the existing cubical generators, not selected to
 change the spectrum. -/
-theorem v35_helicity_is_normalized_pauli_lubanski_time
-    (radius px py pz : ℝ) (hpositive : 0 < radius)
-    (_hradius : radius ^ 2 = px ^ 2 + py ^ 2 + pz ^ 2)
+theorem v35_helicity_is_pauli_lubanski_time_at_nonzero_scale
+    (radius px py pz : ℝ) (hne : radius ≠ 0)
     (z : CubicalCell4) :
     cubicalPauliLubanskiTime (v35Momentum3 px py pz) z =
       fun component =>
         (radius : ℂ) *
           v34MomentumHelicity radius (-pz) (-py) px z component := by
-  have hne : radius ≠ 0 := ne_of_gt hpositive
   funext component
   fin_cases component <;>
     simp [cubicalPauliLubanskiTime, v35Momentum3,
@@ -91,6 +89,19 @@ theorem v35_helicity_is_normalized_pauli_lubanski_time
   all_goals ring_nf
   all_goals norm_num [Complex.I_sq]
   all_goals ring
+
+/-- Specialize the nonzero-scale helicity identity to a positive radius whose
+square is the momentum norm. -/
+theorem v35_helicity_is_normalized_pauli_lubanski_time
+    (radius px py pz : ℝ) (hpositive : 0 < radius)
+    (_hradius : radius ^ 2 = px ^ 2 + py ^ 2 + pz ^ 2)
+    (z : CubicalCell4) :
+    cubicalPauliLubanskiTime (v35Momentum3 px py pz) z =
+      fun component =>
+        (radius : ℂ) *
+          v34MomentumHelicity radius (-pz) (-py) px z component := by
+  exact v35_helicity_is_pauli_lubanski_time_at_nonzero_scale
+    radius px py pz (ne_of_gt hpositive) z
 
 /-- Certificate for the arbitrary-momentum Pauli--Lubanski square, its on-shell
 value, and the helicity bridge. -/
