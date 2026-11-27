@@ -14,9 +14,11 @@ Modified for Lean Pool: module names and imports adapted.
 /-!
 # The interpolation property of the K-method
 
-The real interpolation spaces of the K-method are **exact of exponent `θ`** (Bergh–Löfström,
-Theorems 3.1.2 and 3.11.2): if an additive map `T` from a couple `(N₀, N₁)` on `U` to a couple
-`(N₀', N₁')` on `V` satisfies `N_i'(T a) ≤ M_i N_i(a)` with `0 < M_i < ∞`, then
+Bergh–Löfström, Theorems 3.1.2 and 3.11.2, give **exactness of exponent `θ`** in their
+interpolation ranges for normed linear spaces and quasi-normed abelian groups, respectively.
+Here the same bound holds for couples of extended-valued functions on additive groups and
+arbitrary `θ` and `q`, including `q = 0`. If an additive map `T` satisfies
+`N_i'(T a) ≤ M_i N_i(a)` with `0 < M_i < ∞`, then
 `‖T u‖_{K,θ,q} ≤ M₀^(1-θ) M₁^θ ‖u‖_{K,θ,q}` (`InterpCouple.kMethodNorm_map_le`).
 
 The proof has two steps.  The measure `dt/t` on `(0, ∞)` is invariant under every dilation
@@ -32,7 +34,8 @@ Consequences: the discrete K-norms transform with the extra factor `2^(2ρθ)`
 K-norms and the same interpolation spaces (`InterpCouple.kMethodNorm_le_of_le`,
 `InterpCouple.memKMethod_congr`); the interpolation space of a retract is the image of the
 interpolation space (`InterpCouple.memKMethod_iff_of_retract`,
-`InterpCouple.memKMethod_iff_exists_map_eq`, Bergh–Löfström, Theorem 6.4.2);
+`InterpCouple.memKMethod_iff_exists_map_eq`). This is the additive-couple version of the
+real-interpolation part of Bergh–Löfström, Theorem 6.4.2, for compatible normed linear couples.
 and for bounded linear maps `T : X → X'`, `S : Y → Y'` with `T ι = ι' S`, the map `T` is bounded
 between the spaces of `ApproximationSpaces.Interpolation.KMethod`
 (`ApproximationScheme.kMethodNorm_map_le_of_comp_eq`, `ApproximationScheme.MemInterp.map`).
@@ -189,8 +192,9 @@ theorem kFunctional_map_le (T : U →+ V) (hM₀ : M₀ ≠ 0) (hM₀' : M₀ �
   rw [ENNReal.mul_add_div_mul_mul hM₀ hM₀']
   exact kFunctional_map_le_of_decomp (by rw [← map_add, sub_add_cancel]) (h₀ _) (h₁ _)
 
-/-- **The K-functional under a map that is additive on pieces of finite norm** (the Remark after
-Bergh–Löfström, Theorem 3.1.2): if `T u = T (u - b) + T b` whenever `N₀(u - b) < ∞` and
+/-- **The K-functional under a map that is additive on pieces of finite norm**. The proof
+uses the finite-piece argument as in the remark after Bergh–Löfström, Theorem 3.1.2.
+If `T u = T (u - b) + T b` whenever `N₀(u - b) < ∞` and
 `N₁(b) < ∞`, `N_i'(T a) ≤ M_i N_i(a)` for every `a`, `0 < M₀ < ∞`, `M₁ ≠ 0` and `t ≠ 0`, then
 `K'(t, T u) ≤ M₀ K((M₁/M₀) t, u)`.  The decompositions with a piece of infinite norm give the
 term `∞`. -/
@@ -235,8 +239,9 @@ theorem kMethodNorm_le_of_kFunctional_le {v : V} {u : U} (hM₀ : M₀ ≠ 0) (h
     _ = M₀ ^ (1 - θ) * M₁ ^ θ * A.kMethodNorm θ q u := by
         rw [← mul_assoc, ENNReal.mul_div_rpow_eq hM₀ hM₀']
 
-/-- **The interpolation property of the K-method** (Bergh–Löfström, Theorems 3.1.2 and 3.11.2):
-the K-method is exact of exponent `θ`.  If `T : U → V` is additive with `N₀'(T a) ≤ M₀ N₀(a)`
+/-- **The interpolation property of the K-method**. This extends the exactness estimate in
+Bergh–Löfström, Theorems 3.1.2 and 3.11.2, to extended-valued couples and arbitrary parameters.
+If `T : U → V` is additive with `N₀'(T a) ≤ M₀ N₀(a)`
 and `N₁'(T a) ≤ M₁ N₁(a)` for every `a`, and `0 < M₀, M₁ < ∞`, then
 `‖T u‖_{K,θ,q} ≤ M₀^(1-θ) M₁^θ ‖u‖_{K,θ,q}` for every `θ`, `q` and `u`.  Bounds with `M_i = 0`
 can be enlarged. -/
@@ -327,8 +332,9 @@ theorem kMethodNorm_le_of_retract (R : U →+ V) (E : V → U) (hRE : ∀ v, R (
     (v : V) : B.kMethodNorm θ q v ≤ M₀ ^ (1 - θ) * M₁ ^ θ * A.kMethodNorm θ q (E v) := by
   simpa only [hRE] using kMethodNorm_map_le R hM₀ hM₀' hM₁ hM₁' hR₀ hR₁ (E v)
 
-/-- **Interpolation of retracts** (Bergh–Löfström, Theorem 6.4.2): if `R : U → V` and
-`E : V → U` are additive with `R (E v) = v`, `N_i'(R a) ≤ M_i N_i(a)` and
+/-- **Interpolation of retracts on additive couples**. This is the real K-method
+version of Bergh–Löfström, Theorem 6.4.2, with extended-valued norms and additive maps.
+If `R : U → V` and `E : V → U` are additive with `R (E v) = v`, `N_i'(R a) ≤ M_i N_i(a)` and
 `N_i(E v) ≤ L_i N_i'(v)` with finite `M_i, L_i`, then `v ∈ (X₀', X₁')_{θ,q}` if and only if
 `E v ∈ (X₀, X₁)_{θ,q}`. -/
 theorem memKMethod_iff_of_retract (R : U →+ V) (E : V →+ U) (hRE : ∀ v, R (E v) = v)
@@ -339,7 +345,7 @@ theorem memKMethod_iff_of_retract (R : U →+ V) (E : V →+ U) (hRE : ∀ v, R 
   ⟨fun h => h.map E hL₀ hL₁ hE₀ hE₁,
     fun h => by simpa only [hRE] using h.map R hM₀ hM₁ hR₀ hR₁⟩
 
-/-- **The space of a retract is the image of the space** (Bergh–Löfström, Theorem 6.4.2): under
+/-- **The K-method space of a retract is the image of the space**. Under
 the hypotheses of `memKMethod_iff_of_retract`, `(X₀', X₁')_{θ,q} = R((X₀, X₁)_{θ,q})`, that is,
 `v ∈ (X₀', X₁')_{θ,q}` if and only if `v = R u` for some `u ∈ (X₀, X₁)_{θ,q}`. -/
 theorem memKMethod_iff_exists_map_eq (R : U →+ V) (E : V →+ U) (hRE : ∀ v, R (E v) = v)

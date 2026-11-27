@@ -18,8 +18,9 @@ Let `Ω` be a bounded Lipschitz domain with boundary `Γ`, charts `γ_j : H_j �
 resolution of unity `(ψ_j)` on `Γ` (`Rd.BoundedLipschitzDomain.BoundaryPartition`). Let
 `1 ≤ p < ∞`, `0 < s < 1` and `1 ≤ q ≤ ∞`.
 
-* **The quasi-norm** (`Rd.BoundedLipschitzDomain.boundaryBesovNorm`; Schneider–Vybíral,
-  Definition 3.3; Triebel 2002): `‖g‖_{B^s_{p,q}(Γ)}` is the sum over the charts of
+* **The quasi-norm** (`Rd.BoundedLipschitzDomain.boundaryBesovNorm`): the chart definition
+  on domains of dimension at least two is in Schneider–Vybíral, Definition 3.3. See also Triebel
+  2002. Here `‖g‖_{B^s_{p,q}(Γ)}` is the sum over the charts of
   `‖G_j‖_{L_p(H_j)} + ‖(2^(ks) ω_1(G_j, 2^(-k))_p)_k‖_{ℓ_q}` for the chart pieces
   `G_j = (ψ_j g) ∘ γ_j` (`Rd.BoundedLipschitzDomain.boundaryBesovNorm_eq_sum`). It is finite
   exactly on `B^s_{p,q}(Γ)`
@@ -38,7 +39,7 @@ resolution of unity `(ψ_j)` on `Γ` (`Rd.BoundedLipschitzDomain.BoundaryPartiti
 
 The constants depend on `Ω`, `ψ`, `p`, `s`, `q` and `L` and are fixed before the functions; the
 bounds give ambient-space estimates for the chart construction of the trace and its extension.
-Schneider–Vybíral, Theorems 4.2 and 4.10, give the bounded-domain estimates.
+Schneider–Vybíral, Theorems 4.2 and 4.10, give bounded-domain estimates in dimension at least two.
 -/
 
 @[expose] public section
@@ -101,8 +102,9 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDim
 /-! ### The quasi-norm -/
 
 variable (p) in
-/-- **The Besov quasi-norm on the boundary** (Schneider–Vybíral, Definition 3.3; Triebel 2002, with
-Lebesgue measure on the hyperplanes): for a resolution of unity `ψ`,
+/-- **The Besov quasi-norm on the boundary**. This uses the chart formula of
+Schneider–Vybíral, Definition 3.3, with Lebesgue measure on the hyperplanes and also
+allows dimension one for the domain. For a resolution of unity `ψ`,
 `‖g‖_{B^s_{p,q}(Γ)} = ∑_j (‖G_j‖_{L_p(H_j)} + ‖(2^(ks) ω_1(G_j, 2^(-k))_p)_k‖_{ℓ_q})` for the
 chart pieces `G_j ∈ L_p(H_j)` with `G_j = (ψ_j g) ∘ γ_j` almost everywhere on `H_j`. Each infimum
 runs over at most one element of `L_p(H_j)`, the class of the chart piece, and is `∞` if the chart

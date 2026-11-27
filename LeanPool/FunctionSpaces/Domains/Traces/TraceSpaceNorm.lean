@@ -202,7 +202,8 @@ theorem exists_enorm_le_boundaryBesovNorm_extend (ψ : Ω.BoundaryPartition) :
 
 /-- **`H^{1/2}(Γ)` and `B^{1/2}_{2,2}(Γ)` have equivalent norms**. The comparison uses the
 Sobolev trace space, in the setting of McLean, Theorem 3.37, and the Besov trace-space
-characterization with `p = q = 2`, as in Schneider–Vybíral, Theorem 4.11.
+characterization with `p = q = 2`. Schneider–Vybíral, Theorem 4.11, treats domains of dimension
+at least two. The characterization used here also covers dimension one.
 For every resolution of unity `ψ` there is
 `C < ∞` with `‖t‖ ≤ C ‖τ t‖_{B^{1/2}_{2,2}(Γ)}` and `‖τ t‖_{B^{1/2}_{2,2}(Γ)} ≤ C ‖t‖`
 for every `t ∈ H^{1/2}(Γ)`, with the trace `τ : H^{1/2}(Γ) → L_2(Γ)`
@@ -483,10 +484,8 @@ theorem norm_traceSpaceLinearEquiv_symm_le (b : Ω.BoundaryBesovHalf) :
   exact ENNReal.toReal_mono (ENNReal.mul_ne_top Ω.traceNormConst_ne_top
     b.boundaryBesovNorm_lt_top.ne) h
 
-/-- **`H^{1/2}(Γ) ≅ B^{1/2}_{2,2}(Γ)`** (McLean, Theorem 3.37; following Schneider–Vybíral,
-Theorem 4.11, for `p = q = 2`): the trace `t ↦ τ t` is an isomorphism of normed spaces from the
-trace space
-onto `B^{1/2}_{2,2}(Γ)` with the norm by chart pieces (Mathlib's
+/-- **`H^{1/2}(Γ) ≅ B^{1/2}_{2,2}(Γ)`**. The trace `t ↦ τ t` is an isomorphism of normed spaces
+from the trace space onto `B^{1/2}_{2,2}(Γ)` with the norm by chart pieces (Mathlib's
 `LinearEquiv.toContinuousLinearEquivOfBounds`), with the bounds of
 `Rd.BoundedLipschitzDomain.exists_traceL2_norm_equiv` in both directions. -/
 noncomputable def traceSpaceEquivBoundaryBesovHalf : Ω.TraceSpace ≃L[ℂ] Ω.BoundaryBesovHalf :=

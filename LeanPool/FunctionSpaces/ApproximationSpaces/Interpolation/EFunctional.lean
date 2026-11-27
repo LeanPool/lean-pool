@@ -31,15 +31,17 @@ homogeneity is needed, so the couple may consist of quasi-norms such as `‖·�
 
 The **approximation space** `E_{α,q}` consists of the `u` with
 `‖u‖_{α,q;E} = Φ_{-α,q}(E(·, u)) = (∫_0^∞ (t^α E(t, u))^q dt/t)^(1/q) < ∞`
-(Bergh–Löfström, Definition 7.1.5; `InterpCouple.eMethodNorm`, `InterpCouple.MemEMethod`). Its
-dyadic form is `N₀(u) + ‖(2^(kα) E(2^k, u))_k‖_{ℓ_q}` (`InterpCouple.eNormDyadic`). When
+(`InterpCouple.eMethodNorm`, `InterpCouple.MemEMethod`). Bergh–Löfström, Definition 7.1.5,
+uses compatible quasi-normed couples, with `α > 0` and `q > 0` or with `α ≥ 0` and `q = ∞`.
+The definitions here also use the `eLpNorm` convention for `q = 0`.
+The dyadic form is `N₀(u) + ‖(2^(kα) E(2^k, u))_k‖_{ℓ_q}` (`InterpCouple.eNormDyadic`). When
 `N₁(0) = 0` and only `0` has complexity below `1`, the two give the same space for `α > 0` and
 `q ≠ 0`, and for `α = 0` and `q = ∞`, with explicit constants
 (`InterpCouple.memEMethod_iff_eNormDyadic_lt_top`); the comparison holds for every decreasing
 function in place of `E(·, u)` (`ApproximationScheme.phiFunctional_neg_le_of_antitone`,
 `ApproximationScheme.lqNorm_le_phiFunctional_neg_of_antitone`). The dyadic norm satisfies a
-quasi-triangle inequality (Bergh–Löfström, Lemma 7.1.6, in dyadic form;
-`InterpCouple.eNormDyadic_add_le`).
+quasi-triangle inequality (`InterpCouple.eNormDyadic_add_le`), the counterpart with the added
+ambient norm of the continuous estimate in Bergh–Löfström, Lemma 7.1.6.
 
 The **complexity couple** of a sequence of sets `S n` is `(N, min {n : b ∈ S n})`
 (`InterpCouple.complexity`); for increasing sets its E-functional at `t = n` is the error of best
@@ -316,10 +318,11 @@ theorem eFunctional_add_rpow_le (hρ : 0 < ρ)
 
 /-! ### The spaces `E_{α,q}` -/
 
-/-- The norm of the **approximation space** `E_{α,q}` of the couple (Bergh–Löfström,
-Definition 7.1.5): `‖u‖_{α,q;E} = Φ_{-α,q}(E(·, u))`, that is
+/-- The norm of the **approximation space** `E_{α,q}` of the couple extends the formula
+in Bergh–Löfström, Definition 7.1.5, to all real `α` and includes the case `q = 0`.
+It is `‖u‖_{α,q;E} = Φ_{-α,q}(E(·, u))`, that is
 `(∫_0^∞ (t^α E(t, u))^q dt/t)^(1/q)` for `0 < q < ∞` and the essential supremum of
-`t^α E(t, u)` for `q = ∞`. -/
+`t^α E(t, u)` for `q = ∞`, and `0` for `q = 0`. -/
 noncomputable def eMethodNorm (A : InterpCouple U) (α : ℝ) (q : ℝ≥0∞) (u : U) : ℝ≥0∞ :=
   ApproximationScheme.phiFunctional (-α) q fun t => A.eFunctional t u
 
@@ -457,8 +460,9 @@ theorem dyadicWeight_succ_mul_eFunctional_add_le (hA : A.IsQuasiNormed C)
         exact eFunctional_add_le hA.ne_top hA.norm1_zero hA.norm0_add_le h1 _ _ u v
     _ = _ := by ring
 
-/-- **The quasi-triangle inequality of the dyadic norm** (Bergh–Löfström, Lemma 7.1.6, in dyadic
-form): for a couple quasi-normed with constant `C` whose complexity is subadditive,
+/-- **The quasi-triangle inequality of the dyadic norm**. This is the dyadic estimate with the
+added ambient norm, analogous to the continuous estimate in Bergh–Löfström, Lemma 7.1.6.
+For a couple quasi-normed with constant `C` whose complexity is subadditive,
 `‖u + v‖ ≤ C C_q (2 + 2^s C_q) (‖u‖ + ‖v‖)` for the norm `N₀(u) + ‖(2^(ks) E(2^k, u))_k‖_{ℓ_q}`,
 by `E(2^(k+1), u + v) ≤ C (E(2^k, u) + E(2^k, v))` and the shift by one level. -/
 theorem eNormDyadic_add_le (hA : A.IsQuasiNormed C)

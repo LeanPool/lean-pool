@@ -285,8 +285,9 @@ variable {θ ρ : ℝ} {q : ℝ≥0∞}
 
 /-- The norm of the **continuous K-method** of the couple, `‖u‖_{K,θ,q} = Φ_{θ,q}(K(·, u))`,
 that is `(∫_0^∞ (t^(-θ) K(t, u))^q dt/t)^(1/q)` for `0 < q < ∞`, the essential supremum of
-`t^(-θ) K(t, u)` for `q = ∞`, and `0` for `q = 0` (Bergh–Löfström, Sections 3.1 and 3.11; the
-norm of Bonn's `kMethod`). -/
+`t^(-θ) K(t, u)` for `q = ∞`, and `0` for `q = 0` by the `eLpNorm` convention.
+Bergh–Löfström, Sections 3.1 and 3.11, describe the classical norm and quasi-norm ranges.
+The definition here takes arbitrary real `θ` and uses the functional of Bonn's `kMethod`. -/
 noncomputable def kMethodNorm (A : InterpCouple U) (θ : ℝ) (q : ℝ≥0∞) (u : U) : ℝ≥0∞ :=
   ApproximationScheme.phiFunctional θ q fun t => A.kFunctional t u
 
@@ -436,8 +437,9 @@ theorem aestronglyMeasurable_phiIntegrand_kFunctional (u : U) :
       ApproximationScheme.kMethodMeasure :=
   (ApproximationScheme.measurable_phiIntegrand (monotone_kFunctional u)).aestronglyMeasurable
 
-/-- **The quasi-triangle inequality of the continuous K-norm** (Bergh–Löfström, Section 3.11):
-for a couple quasi-normed with constant `C`,
+/-- **The quasi-triangle inequality of the continuous K-norm** extends the estimate from
+Bergh–Löfström, Section 3.11, to arbitrary real `θ` and includes the case `q = 0`.
+For a couple quasi-normed with constant `C`,
 `‖u + v‖_{K,θ,q} ≤ C_q C (‖u‖_{K,θ,q} + ‖v‖_{K,θ,q})`, where `C_q` is Mathlib's constant
 `LpAddConst q` (`1` for `q ≥ 1`). -/
 theorem kMethodNorm_add_le (hA : A.IsQuasiNormed C) (u v : U) :

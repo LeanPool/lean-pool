@@ -27,9 +27,11 @@ measures `f ∈ X` by
 
 `‖f‖_{K,θ,q} = (∫_0^∞ (t^(-θ) K(t, f))^q dt/t)^(1/q)`   (`ApproximationScheme.kMethodNorm`),
 
-the essential supremum of `t^(-θ) K(t, f)` for `q = ∞`, and `(X, Y)_{θ,q}` is the space of the
-`f` with `‖f‖_{K,θ,q} < ∞` (`ApproximationScheme.MemKMethod`), as in Bergh–Löfström,
-Section 3.1. The main theorem (`ApproximationScheme.memInterp_iff_memKMethod`) extends the
+the essential supremum of `t^(-θ) K(t, f)` for `q = ∞`. The space `(X, Y)_{θ,q}` consists
+of the `f` with `‖f‖_{K,θ,q} < ∞` (`ApproximationScheme.MemKMethod`). Bergh–Löfström,
+Section 3.1, uses `0 < θ < 1` and `1 ≤ q ≤ ∞`, with `θ = 0, 1` also allowed when
+`q = ∞`. The Lean definition admits all real `θ` and uses `eLpNorm`, which is zero for
+`q = 0`. The main theorem (`ApproximationScheme.memInterp_iff_memKMethod`) extends the
 two-sided comparison of their Lemma 3.1.3. For a bounded linear map, every one-sided grid
 `t = 2^(-kρ)` with `ρ > 0` and the added ambient norm give the same space, with explicit
 comparison constants
@@ -188,7 +190,8 @@ theorem phiFunctional_congr {ψ : ℝ≥0∞ → ℝ≥0∞} (h : ∀ t, t ≠ 0
 variable (ι) in
 /-- The norm of the **continuous K-method**, `‖f‖_{K,θ,q} = Φ_{θ,q}(K(·, f))`, that is
 `(∫_0^∞ (t^(-θ) K(t, f))^q dt/t)^(1/q)` for `0 < q < ∞`, the essential supremum of
-`t^(-θ) K(t, f)` for `q = ∞`, and `0` for `q = 0` (Bergh–Löfström, Section 3.1). -/
+`t^(-θ) K(t, f)` for `q = ∞`, and `0` for `q = 0` by the `eLpNorm` convention. This
+extends the classical range of Bergh–Löfström, Section 3.1, described above. -/
 noncomputable def kMethodNorm (θ : ℝ) (q : ℝ≥0∞) (f : X) : ℝ≥0∞ :=
   phiFunctional θ q fun t => kFunctional ι t f
 

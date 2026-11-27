@@ -290,8 +290,10 @@ theorem memKMethod_sobolevCouple_iff [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ �
 
 /-! ### Operators bounded on `L_p` and on `W^m_p` -/
 
-/-- **An operator bounded on `L_p` and on `W^m_p` is bounded on the interpolation space**
-(Bergh–Löfström, Theorem 3.1.2): if `T : L_p(V) → L_p(V)` is additive with `‖T f‖_p ≤ M₀ ‖f‖_p`
+/-- **An operator bounded on `L_p` and on `W^m_p` is bounded in the K-norm**. This applies
+`InterpCouple.kMethodNorm_map_le` in its full parameter range, extending the classical
+exactness estimate of Bergh–Löfström, Theorem 3.1.2.
+If `T : L_p(V) → L_p(V)` is additive with `‖T f‖_p ≤ M₀ ‖f‖_p`
 and `‖T f‖_{W^m_p} ≤ M₁ ‖f‖_{W^m_p}` in the grid norm for every `f`, and `0 < M₀, M₁ < ∞`, then
 `‖T f‖_{K,θ,q} ≤ M₀^(1-θ) M₁^θ ‖f‖_{K,θ,q}` in the K-norm of `(L_p, W^m_p)`, whose space is
 `B^{θm}_{p,q}` for `n ≥ 1`, `1 < p < ∞`, `m ≥ 1`, `0 < θ < 1` and `1 ≤ q ≤ ∞`

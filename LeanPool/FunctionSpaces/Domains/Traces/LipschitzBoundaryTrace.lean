@@ -24,8 +24,9 @@ Let `Ω` be a bounded Lipschitz domain with boundary `Γ`: finitely many balls `
   almost everywhere on `Γ` if, for every `j`, it holds at `γ_j(x')` for almost every `x' ∈ H_j` with
   `γ_j(x') ∈ B_j`. The exceptional sets are the null sets of the surface measure, described in the
   charts.
-* **Besov spaces on the boundary** (`Rd.BoundedLipschitzDomain.MemBoundaryBesov`,
-  Schneider–Vybíral, Definition 3.3): for a smooth resolution of unity `(ψ_j)` on `Γ` subordinate to
+* **Besov spaces on the boundary** (`Rd.BoundedLipschitzDomain.MemBoundaryBesov`): the chart
+  construction follows Schneider–Vybíral, Definition 3.3, which assumes dimension at least two.
+  Here, for a smooth resolution of unity `(ψ_j)` on `Γ` subordinate to
   `(B_j)` (`Rd.BoundedLipschitzDomain.BoundaryPartition`), `g ∈ B^s_{p,q}(Γ)` if every chart piece
   `(ψ_j g) ∘ γ_j` lies in `B^s_{p,q}(H_j)`, with first differences for `0 < s < 1`.
 * **The boundary trace** (`Rd.BoundedLipschitzDomain.boundaryTrace`):
@@ -33,9 +34,10 @@ Let `Ω` be a bounded Lipschitz domain with boundary `Γ`: finitely many balls `
   it is the trace of the graph domain (`Rd.BoundedLipschitzDomain.boundaryTrace_graphMap`), by the
   change of chart; hence it does not depend on the resolution of unity, and it is the restriction
   for continuous functions.
-* **The trace space via ambient functions.** The intrinsic trace-space equality below is the
-  range `1 ≤ p < ∞`, `1 ≤ q ≤ ∞` of Schneider–Vybíral, Theorem 4.11, on bounded Lipschitz
-  domains. The construction here gives an ambient representative. For `1 ≤ p < ∞`, `0 < s < 1`,
+* **The trace space via ambient functions.** Schneider–Vybíral, Theorem 4.11, gives the
+  corresponding intrinsic equality on bounded Lipschitz domains in dimension at least two.
+  Here the equality extends to dimension one and the construction gives an ambient
+  representative. For `1 ≤ p < ∞`, `0 < s < 1`,
   `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff `g = Tr_Γ F` almost everywhere on `Γ` for some
   `F ∈ L_p(V)` with `‖F‖_p + ‖(2^(k(s+1/p)) ω_L(F, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
   (`Rd.BoundedLipschitzDomain.exists_boundaryTrace_eq_iff`). The chart pieces of `Tr_Γ F` are the
@@ -254,8 +256,9 @@ variable {p : ℝ≥0∞} [Fact (1 ≤ p)]
 /-! ### Besov spaces on the boundary -/
 
 variable (p) in
-/-- **Besov spaces on the boundary** (Schneider–Vybíral, Definition 3.3, with Lebesgue measure on
-the hyperplanes): `g ∈ B^s_{p,q}(Γ)` if every chart piece `(ψ_j g) ∘ γ_j` agrees almost everywhere
+/-- **Besov spaces on the boundary**. The charts follow Schneider–Vybíral, Definition 3.3, in
+dimension at least two. The construction uses Lebesgue measure and also covers dimension one.
+Here `g ∈ B^s_{p,q}(Γ)` if every chart piece `(ψ_j g) ∘ γ_j` agrees almost everywhere
 on `H_j` with some `G_j ∈ L_p(H_j)` with `‖G_j‖_p + ‖(2^(ks) ω_1(G_j, 2^(-k))_p)_k‖_{ℓ_q} < ∞`.
 First differences suffice for `0 < s < 1`, the range of the trace theorem. -/
 def MemBoundaryBesov (ψ : Ω.BoundaryPartition) (s : ℝ) (q : ℝ≥0∞) (g : V → ℂ) : Prop :=
@@ -548,11 +551,12 @@ def IsBoundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞) (L : ℕ) (σ :
     ‖F‖ₑ + lqNorm q (fun k => dyadicWeight σ k * lpModulus p L F k) < ∞ →
       Ω.boundaryTrace ψ hp L F =ᶠ[Ω.aeBoundary] g
 
-/-- **The intrinsic trace space of `B^{s+1/p}_{p,q}(Ω)`**. In the range below this is the
-trace-space equality of Schneider–Vybíral, Theorem 4.11, with the trace defined via ambient
-extensions. For
-`1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff `g` is the boundary trace
-of some `f` with `‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q} < ∞`. -/
+/-- **The intrinsic trace space of `B^{s+1/p}_{p,q}(Ω)`**. This is the ambient-extension
+form of the trace-space equality of Schneider–Vybíral, Theorem 4.11, in the range below.
+Their theorem assumes dimension at least two. The Lean result also covers dimension one.
+For `1 ≤ p < ∞`, `0 < s < 1`, `1 ≤ q ≤ ∞` and `L ≥ 2`, `g ∈ B^s_{p,q}(Γ)` iff `g` is the
+boundary trace of some `f` with
+`‖f‖_{L_p(Ω)} + ‖(2^(k(s+1/p)) ω_L(f, 2^(-k), Ω)_p)_k‖_{ℓ_q} < ∞`. -/
 theorem memBoundaryBesov_iff_exists_isBoundaryTrace (ψ : Ω.BoundaryPartition) (hp : p ≠ ∞)
     {L : ℕ} (hL : 2 ≤ L) {s : ℝ} (hs : 0 < s) (hs1 : s < 1) {q : ℝ≥0∞} (hq : 1 ≤ q)
     (g : V → ℂ) :
