@@ -36,6 +36,10 @@ public import LeanPool.FunctionSpaces.Wavelets.Examples.Daubechies.D4Besov
 public import LeanPool.FunctionSpaces.Wavelets.Examples.Daubechies.OrderThree
 public import LeanPool.FunctionSpaces.Wavelets.Examples.DyadicStepsQuasiBanach
 
+/-
+Modified for Lean Pool by adapting the module names and reducing direct imports.
+-/
+
 /-!
 # Characterizations of Besov, Triebel–Lizorkin and Sobolev spaces
 

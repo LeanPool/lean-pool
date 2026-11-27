@@ -37,7 +37,7 @@ main_results:
 - declaration: Rd.memSobolev_bessel_iff_memTriebelLizorkinDistr
   informal: In positive dimension and for 1 < p < infinity, Mathlib's Bessel potential space agrees with the distributional Triebel–Lizorkin space with second index two for every real smoothness.
 - declaration: Daubechies.besov_iff_coeff_d4
-  informal: For 1 ≤ p < infinity, q ≥ 1 and 0 < s < 2 − log₂(1 + √3), finiteness of the Besov difference norm on the real line is equivalent to finiteness of the norm of the D4 wavelet coefficients.
+  informal: For complex-valued Lp functions on the real line with 1 ≤ p < infinity, q ≥ 1 and 0 < s < 2 − log₂(1 + √3), the Besov difference norm is finite exactly when the combined norm of the D4 scaling and wavelet coefficients is finite.
 - declaration: Haar.memEMethod_stepCouple_iff_modulus
   informal: For 0 < p ≤ 1, positive q and 0 < s < 1/p, approximation by dyadic steps in Lp on the unit interval characterizes the space given by the first-order modulus of smoothness.
 - declaration: ApproximationScheme.memKMethod_reiteration

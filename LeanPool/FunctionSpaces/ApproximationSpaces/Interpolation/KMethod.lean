@@ -11,6 +11,12 @@ public import Mathlib.Order.SuccPred.IntervalSucc
 
 /-
 Modified for Lean Pool: module names and imports adapted.
+
+The adapted `phiFunctional` definition is from `MultilinearInterpolation/KMethod.lean`
+at commit a351feafa218223404e53711861dd986822cd270.
+Copyright (c) 2026 Lua Viana Reis. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Floris van Doorn, Jim Potergies, Michael Rothgang, Lua Viana Reis
 -/
 
 /-!
@@ -23,9 +29,10 @@ measures `f ∈ X` by
 
 the essential supremum of `t^(-θ) K(t, f)` for `q = ∞`, and `(X, Y)_{θ,q}` is the space of the
 `f` with `‖f‖_{K,θ,q} < ∞` (`ApproximationScheme.MemKMethod`), as in Bergh–Löfström,
-Section 3.1.  The main theorem (`ApproximationScheme.memInterp_iff_memKMethod`, Bergh–Löfström,
-Lemma 3.1.3) says that the discrete K-method on every dyadic grid `t = 2^(-kρ)`, `ρ > 0`, gives
-the same space, with equivalent norms and explicit constants
+Section 3.1. The main theorem (`ApproximationScheme.memInterp_iff_memKMethod`) extends the
+two-sided comparison of their Lemma 3.1.3. For a bounded linear map, every one-sided grid
+`t = 2^(-kρ)` with `ρ > 0` and the added ambient norm give the same space, with explicit
+comparison constants
 (`ApproximationScheme.kMethodNorm_le_interpNorm`, `ApproximationScheme.interpNorm_le_kMethodNorm`).
 Hence the grid does not matter, and the representation theorem reads `A^s_q = (X, Y)_{s/r,q}`
 for the continuous K-method (`ApproximationScheme.memApprox_iff_memKMethod`).

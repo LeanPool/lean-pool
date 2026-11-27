@@ -12,6 +12,11 @@ public import TauCeti.Analysis.InnerProductSpace.Spectrum
 
 /-
 Modified for Lean Pool: module names and imports adapted.
+
+The adapted orthogonal-span proof is from `TauCeti/Analysis/InnerProductSpace/Spectrum.lean`.
+Copyright (c) 2026 The Tau Ceti contributors. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: The Tau Ceti contributors
 -/
 
 /-!
