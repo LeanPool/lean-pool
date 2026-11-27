@@ -1,0 +1,58 @@
+slug: kl-randomness
+title: Kolmogorov–Loveland and Martin–Löf randomness
+summary: >-
+  Formalizes the separation of Martin–Löf randomness from Kolmogorov–Loveland
+  randomness for binary sequences under Liu and Meng's convention of total
+  fresh scans and uniformly computable real capital. It also proves that
+  randomness for base-four strategies need not imply binary
+  Kolmogorov–Loveland randomness under adjacent-bit grouping. The proof
+  develops effective open tests, methods for conditioning on parity
+  constraints, and success-preserving transformations of betting strategies.
+branch: computability theory
+entry_module: LeanPool.KLRandomness
+authors:
+- Bjørn Kjos-Hanssen
+source:
+  title: Separating Kolmogorov–Loveland randomness from Martin–Löf randomness
+  arxiv: 2611.31004v1
+  url: https://github.com/bjoernkjoshanssen/klr/tree/81f5fef2de3142aad714624033a5aa4f12031a6b
+  github_repo: bjoernkjoshanssen/klr
+  commit: 81f5fef2de3142aad714624033a5aa4f12031a6b
+  announcement_url: https://palomar-registry.org/entry.html?id=PALOMAR-2026-11-26-000060&version=1
+  announcement_date: '2026-11-26'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The upstream formalization manifest credits Bjørn Kjos-Hanssen with
+  research direction, mathematical feedback and maintenance, and AI agents
+  with writing and revising the Lean proofs.
+main_declarations:
+- Klr.martinLofRandom_ssubset_kolmogorovLovelandRandom
+- Klr.exists_not_martinLofRandom_no_partial_rational_success
+- Klr.binary_random_ssubset_baseFour_random
+main_results:
+- declaration: Klr.martinLofRandom_ssubset_kolmogorovLovelandRandom
+  informal: >-
+    The binary sequences avoiding all Martin–Löf tests form a proper subset
+    of those on which every total fresh computable betting strategy with
+    nonnegative fair and uniformly computable real capital has bounded capital.
+- declaration: Klr.exists_not_martinLofRandom_no_partial_rational_success
+  informal: >-
+    Some binary sequence fails a Martin–Löf test while every infinite fresh
+    run of a partial rational-wager program on that sequence has bounded capital.
+- declaration: Klr.binary_random_ssubset_baseFour_random
+  informal: >-
+    The binary Kolmogorov–Loveland random sequences form a proper subset of
+    the sequences whose adjacent-bit pairs are Kolmogorov–Loveland random
+    digits in base four, with total computable-real strategies in both bases.
+    This is an additional upstream result from pull request 3, separate
+    from the result registered with Palomar.
+tags:
+- algorithmic randomness
+- computability
+- martingales
+- effective measure theory
+msc:
+- '03D32'
+- '03B35'
