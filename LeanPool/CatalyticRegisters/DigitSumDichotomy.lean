@@ -254,6 +254,14 @@ private theorem traceWorkA_length (p : Nat) (prog : List Pass2Instr) (a : Nat) :
   | cons i rest ih =>
     cases i <;> simp only [traceWorkA, Pass2Prog.workAccesses, List.length_cons, ih] <;> omega
 
+private theorem execFrom_inputCoefficient_eq (p : Nat) (program : List Pass2Instr)
+    {first second : State2} (coefficientEquality : first.a = second.a) :
+    (Pass2Prog.execFrom p program first).a = (Pass2Prog.execFrom p program second).a := by
+  induction program generalizing first second with
+  | nil => exact coefficientEquality
+  | cons instruction remaining inductionHypothesis =>
+    cases instruction <;> exact inductionHypothesis (by simp [Pass2Instr.exec, coefficientEquality])
+
 private theorem degTerms_mem_traceWorkA (p d : Nat) (prog : List Pass2Instr) (b a : Nat)
     (hclosed : (Pass2Prog.execFrom p prog ⟨b, a, fun _ _ => 0⟩).a = a) :
     ∀ x h, (x, h) ∈ degTerms p d prog b a →
@@ -271,15 +279,7 @@ private theorem degTerms_mem_traceWorkA (p d : Nat) (prog : List Pass2Instr) (b 
         simp only [degTerms, List.mem_cons] at hm
         have hexec : (Pass2Prog.execFrom p (.addOut poly :: rest) ⟨b0, a0, fun _ _ => 0⟩).a =
             (Pass2Prog.execFrom p rest ⟨b0, a0, fun _ _ => 0⟩).a := by
-          have ha_indep : ∀ (r : List Pass2Instr) (s1 s2 : State2),
-              s1.a = s2.a → (Pass2Prog.execFrom p r s1).a = (Pass2Prog.execFrom p r s2).a := by
-            intro r
-            induction r with
-            | nil => intro s1 s2 heq; exact heq
-            | cons i2 r2 ih2 =>
-              intro s1 s2 heq
-              cases i2 <;> exact ih2 _ _ (by simp [Pass2Instr.exec, heq])
-          exact ha_indep rest _ _ rfl
+          exact execFrom_inputCoefficient_eq p rest rfl
         rw [hexec]
         rcases hm with heq | hrest
         · rcases heq with ⟨rfl, rfl⟩
@@ -292,25 +292,13 @@ private theorem degTerms_mem_traceWorkA (p d : Nat) (prog : List Pass2Instr) (b 
             | addOut poly2 =>
               have hsame : (Pass2Prog.execFrom p (.addOut poly2 :: r2) ⟨b0, a0, fun _ _ => 0⟩).a =
                   (Pass2Prog.execFrom p r2 ⟨b0, a0, fun _ _ => 0⟩).a := by
-                have ha_indep : ∀ (r : List Pass2Instr) (s1 s2 : State2),
-                    s1.a = s2.a → (Pass2Prog.execFrom p r s1).a = (Pass2Prog.execFrom p r s2).a := by
-                  intro r; induction r with
-                  | nil => intro s1 s2 heq; exact heq
-                  | cons i3 r3 ih3 =>
-                    intro s1 s2 heq; cases i3 <;> exact ih3 _ _ (by simp [Pass2Instr.exec, heq])
-                exact ha_indep r2 _ _ rfl
+                exact execFrom_inputCoefficient_eq p r2 rfl
               rw [hsame]; exact ih2 b0 a0
             | addWorkConst c => exact ih2 ((b0 + c) % p) a0
             | addInputOut lam =>
               have hsame : (Pass2Prog.execFrom p (.addInputOut lam :: r2) ⟨b0, a0, fun _ _ => 0⟩).a =
                   (Pass2Prog.execFrom p r2 ⟨b0, a0, fun _ _ => 0⟩).a := by
-                have ha_indep : ∀ (r : List Pass2Instr) (s1 s2 : State2),
-                    s1.a = s2.a → (Pass2Prog.execFrom p r s1).a = (Pass2Prog.execFrom p r s2).a := by
-                  intro r; induction r with
-                  | nil => intro s1 s2 heq; exact heq
-                  | cons i3 r3 ih3 =>
-                    intro s1 s2 heq; cases i3 <;> exact ih3 _ _ (by simp [Pass2Instr.exec, heq])
-                exact ha_indep r2 _ _ rfl
+                exact execFrom_inputCoefficient_eq p r2 rfl
               rw [hsame]; exact ih2 b0 a0
         · exact ih b0 a0 x h hrest
       | addWorkConst c =>
@@ -320,13 +308,7 @@ private theorem degTerms_mem_traceWorkA (p d : Nat) (prog : List Pass2Instr) (b 
         simp only [degTerms] at hm
         have hexec : (Pass2Prog.execFrom p (.addInputOut lam :: rest) ⟨b0, a0, fun _ _ => 0⟩).a =
             (Pass2Prog.execFrom p rest ⟨b0, a0, fun _ _ => 0⟩).a := by
-          have ha_indep : ∀ (r : List Pass2Instr) (s1 s2 : State2),
-              s1.a = s2.a → (Pass2Prog.execFrom p r s1).a = (Pass2Prog.execFrom p r s2).a := by
-            intro r; induction r with
-            | nil => intro s1 s2 heq; exact heq
-            | cons i3 r3 ih3 =>
-              intro s1 s2 heq; cases i3 <;> exact ih3 _ _ (by simp [Pass2Instr.exec, heq])
-          exact ha_indep rest _ _ rfl
+          exact execFrom_inputCoefficient_eq p rest rfl
         rw [hexec]; exact ih b0 a0 x h hm
       | addInputWork lam =>
         simp only [degTerms] at hm
