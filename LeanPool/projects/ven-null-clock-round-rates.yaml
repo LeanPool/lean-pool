@@ -1,0 +1,36 @@
+slug: ven-null-clock-round-rates
+title: Matching masking rates for two-layer scans on normalized round area
+entry_module: LeanPool.VenNullClockRoundRates
+authors: [Mark Gladden]
+provenance: AI
+license: Apache-2.0
+source:
+  url: https://github.com/VanGogh7777/c196-lean/blob/4f45e33dc5376b362e13601adee77a0a76358387/paper/C196_v0.3.pdf
+  github_repo: VanGogh7777/c196-lean
+status: verified
+summary: >-
+  Proves matching logarithmic-order bounds for the two-layer observation gap on normalized
+  round area, together with a smooth common-profile upper witness. The rate fixes two positive
+  control strengths and a positive separation scale at most one. The broad class permits
+  two independently chosen profiles with individual integral budgets. The smooth witness
+  uses one ambient-smooth profile at a fixed nonaligned angle, with a pointwise floor and cap.
+branch: main
+main_declarations:
+  - VenRateUpper.matching_round_class_rates
+  - VenRateUpper.smooth_round_common_profile_error
+main_results:
+  - declaration: VenRateUpper.matching_round_class_rates
+    source_ref: "C196 v0.3, §5, p. 5, Eqs. (33)–(34)"
+    informal: >-
+      With fixed positive control strengths and separation scale 0 < d ≤ 1,
+      the broad and ambient-smooth class gaps on normalized round area have the
+      same two-sided exp(−Θ(log M log log M)) rate for sufficiently large budget M.
+      The class gap uses the maximum of two absolute layer discrepancies on the full read interval.
+  - declaration: VenRateUpper.smooth_round_common_profile_error
+    source_ref: "C196 v0.3, §5, p. 5, Proposition 5, Eq. (31)"
+    informal: >-
+      At fixed positive control strengths and any fixed nonaligned angle, every
+      sufficiently large budget M admits one smooth profile for both hypotheses,
+      satisfying 2 ≤ w_M ≤ M everywhere and giving error at most exp(−c log M log log M).
+msc: ['28A25', '44A10']
+tags: [inverse problems, spherical measure, moment cancellation, Laplace transforms]
