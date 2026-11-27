@@ -4,6 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Chris Henson
 -/
 
+-- Modified for Lean Pool, including adaptations to its Lean module layout.
+
 module
 
 public import LeanPool.FiniteIntegralRelationAlgebras.Atoms7.S2N2.C3.Defs
