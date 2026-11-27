@@ -57,9 +57,10 @@ main_results:
     positive- and negative-frequency sectors.
 - declaration: LeanDirac.V2.v34_positive_covariant_spin_sum
   informal: >-
-    On the mass shell, with energy plus mass positive, the covariantly
-    normalized positive-frequency spinors sum to half the Dirac momentum
-    slash plus half the mass times the identity.
+    On the mass shell, with energy plus mass positive, the sum of the two
+    positive-frequency spinors' outer products with their Dirac adjoints
+    equals half the sum of the Dirac momentum slash and the mass times the
+    identity.
 - declaration: LeanDirac.V2.v34_momentum_helicity
   informal: >-
     For arbitrary nonzero momentum, the derived helicity operator squares to
