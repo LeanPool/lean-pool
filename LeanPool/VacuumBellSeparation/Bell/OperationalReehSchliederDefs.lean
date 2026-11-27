@@ -28,7 +28,8 @@ open scoped InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-/-- The literal vector-state numerator and success denominator in VW05 (6.1). -/
+/-- The selected vector-state expectation in Lemma 6.1(1) of
+[Verch and Werner](https://arxiv.org/pdf/quant-ph/0403089v3#page=13). -/
 def operationalSelectedValue (Ω : H) (a R : H →L[ℂ] H) : ℂ :=
   ⟪Ω, (star a * R * a) Ω⟫_ℂ / ⟪Ω, (star a * a) Ω⟫_ℂ
 
