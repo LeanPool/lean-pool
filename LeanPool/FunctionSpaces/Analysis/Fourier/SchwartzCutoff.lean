@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.Analysis.Fourier.LittlewoodPaleyKernels
+public import TauCeti.Analysis.Distribution.SchwartzSpace.Deriv
 public import Mathlib.Analysis.Calculus.FDeriv.Symmetric
 public import Mathlib.Analysis.Distribution.Distribution
 public import Mathlib.Analysis.Distribution.TemperedDistribution
@@ -65,18 +66,6 @@ namespace SchwartzMap
 
 variable {E F : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E] [NormedAddCommGroup F]
   [NormedSpace ℝ F]
-
-/-- Directional derivatives of a Schwartz function commute: `∂_a ∂_b u = ∂_b ∂_a u`. This is the
-symmetry of the second derivative of a `C^2` function (Mathlib's
-`ContDiffAt.isSymmSndFDerivAt`), read through `∂^{(a, b)} u(x) = D^2 u(x)(a, b)`
-(`SchwartzMap.iteratedLineDerivOp_eq_iteratedFDeriv`). -/
-theorem lineDerivOp_comm (u : 𝓢(E, F)) (a b : E) : ∂_{a} (∂_{b} u) = ∂_{b} (∂_{a} u) := by
-  ext x
-  have h1 : ∂_{a} (∂_{b} u) x = ∂^{![a, b]} u x := rfl
-  have h2 : ∂_{b} (∂_{a} u) x = ∂^{![b, a]} u x := rfl
-  rw [h1, h2, iteratedLineDerivOp_eq_iteratedFDeriv, iteratedLineDerivOp_eq_iteratedFDeriv]
-  exact IsSymmSndFDerivAt.iteratedFDeriv_cons
-    (hf := ((u.smooth ⊤).contDiffAt).isSymmSndFDerivAt (by simp))
 
 /-- A directional derivative commutes with every iterated directional derivative of a Schwartz
 function: `∂_a ∂^v u = ∂^v ∂_a u`. -/

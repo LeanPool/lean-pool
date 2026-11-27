@@ -23,7 +23,7 @@ integrable kernel `K` with `f ∈ L_p` is `(K ⋆ f)(x) = ∫ K(y) f(x - y) dy` 
 `MeasureTheory.convolution` with the multiplication of `ℂ`).
 
 **Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p < ∞` (`Rd.eLpNorm_conv_le`), is the case
-of the group `V` of `MeasureTheory.eLpNorm_convolution_le`. The integral of the convolution
+of the group `V` of `MeasureTheory.eLpNorm_complexConvolution_le`. The integral of the convolution
 converges absolutely at almost every point (`MeasureTheory.ae_convolutionExistsAt`), so
 convolution is linear in `f` almost everywhere (`Rd.conv_add_ae`, `Rd.conv_sub_ae`,
 `Rd.conv_finsetSum_ae`, and `Rd.conv_add_ae_of_memLp` for `f ∈ L_p`, `g ∈ L_r`) and defines a
@@ -76,11 +76,11 @@ theorem enorm_conv_le_lintegral (K f : V → ℂ) (x : V) :
   exact lintegral_congr fun y => eNorm_mul _ _
 
 /-- **Young's inequality** for an integrable kernel: `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p < ∞`
-(`MeasureTheory.eLpNorm_convolution_le` on the group `V`). -/
+(`MeasureTheory.eLpNorm_complexConvolution_le` on the group `V`). -/
 theorem eLpNorm_conv_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : V → ℂ}
     (hK : AEStronglyMeasurable K μ) (hf : AEStronglyMeasurable f μ) :
     eLpNorm (conv K f μ) p μ ≤ eLpNorm K 1 μ * eLpNorm f p μ :=
-  eLpNorm_convolution_le hp1 hp hK hf
+  eLpNorm_complexConvolution_le hp1 hp hK hf
 
 /-- Convolution of an integrable kernel with an `L_p` function is in `L_p`. -/
 theorem memLp_conv {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : V → ℂ} (hK : Integrable K μ)

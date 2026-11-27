@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.Analysis.Lp.LintegralForm
+public import TauCeti.Analysis.Convolution.Young
 public import Mathlib.Analysis.Convolution
 public import Mathlib.MeasureTheory.Integral.Prod
 
@@ -19,7 +20,7 @@ Modified for Lean Pool: module names and imports adapted.
 On a measurable group `G` with a right-invariant s-finite measure `μ` (a Haar measure on `ℝ^d` or
 on the torus), the convolution `(K ⋆ f)(x) = ∫ K(y) f(x - y) dμ(y)` with the multiplication of
 `ℂ` satisfies **Young's inequality** `‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p` for `1 ≤ p < ∞`
-(`MeasureTheory.eLpNorm_convolution_le`). It comes from the weighted Jensen inequality
+(`MeasureTheory.eLpNorm_complexConvolution_le`). It comes from the weighted Jensen inequality
 
 `(∫ a g)^p ≤ (∫ a)^(p-1) ∫ a g^p`
 
@@ -169,25 +170,13 @@ theorem lintegral_rpow_lintegral_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠
   rw [ENNReal.mul_rpow_of_nonneg _ _ (by linarith), eLpNorm_one_eq_lintegral_eNorm hK,
     eLpNorm_rpow_eq hf hp0 hp]
 
-omit [MeasurableAdd₂ G] [MeasurableNeg G] [SFinite μ] [μ.IsAddRightInvariant] in
-/-- The pointwise bound `|(K ⋆ f)(x)| ≤ ∫ |K(y)| |f(x - y)| dy`. -/
-theorem enorm_convolution_le_lintegral (K f : G → ℂ) (x : G) :
-    ‖(K ⋆[ContinuousLinearMap.mul ℂ ℂ, μ] f) x‖ₑ ≤ ∫⁻ y, ‖K y‖ₑ * ‖f (x - y)‖ₑ ∂μ := by
-  rw [convolution_def]
-  refine (eNorm_integral_le_lintegral_eNorm _).trans (le_of_eq ?_)
-  exact lintegral_congr fun y => eNorm_mul _ _
-
-/-- **Young's inequality** for an integrable kernel on a measurable group:
-`‖K ⋆ f‖_p ≤ ‖K‖_1 ‖f‖_p`, `1 ≤ p < ∞`. -/
-theorem eLpNorm_convolution_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : G → ℂ}
+/-- Young's inequality for complex-valued convolution with an integrable kernel. -/
+theorem eLpNorm_complexConvolution_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) (_hp : p ≠ ∞) {K f : G → ℂ}
     (hK : AEStronglyMeasurable K μ) (hf : AEStronglyMeasurable f μ) :
     eLpNorm (K ⋆[ContinuousLinearMap.mul ℂ ℂ, μ] f) p μ ≤ eLpNorm K 1 μ * eLpNorm f p μ := by
-  have hp0 : p ≠ 0 := (lt_of_lt_of_le zero_lt_one hp1).ne'
-  have hq : 0 < p.toReal := ENNReal.toReal_pos hp0 hp
-  refine eLpNorm_le_of_lintegral_le
-    (hK.convolution_integrand (ContinuousLinearMap.mul ℂ ℂ) hf).integral_prod_right' hp0 hp ?_
-  exact (lintegral_mono fun x => ENNReal.rpow_le_rpow (enorm_convolution_le_lintegral K f x)
-    hq.le).trans (lintegral_rpow_lintegral_le hp1 hp hK hf)
+  have hmul : ‖ContinuousLinearMap.mul ℂ ℂ‖ₑ = 1 := by
+    rw [← ofReal_norm, ContinuousLinearMap.opNorm_mul, ENNReal.ofReal_one]
+  simpa only [hmul, one_mul] using eLpNorm_convolution_le (ContinuousLinearMap.mul ℂ ℂ) hK hf hp1
 
 /-- The convolution of an integrable kernel with an `L_p` function is in `L_p`. -/
 theorem memLp_convolution {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f : G → ℂ}
@@ -195,7 +184,7 @@ theorem memLp_convolution {p : ℝ≥0∞} (hp1 : 1 ≤ p) (hp : p ≠ ∞) {K f
     MemLp (K ⋆[ContinuousLinearMap.mul ℂ ℂ, μ] f) p μ :=
   lt_top_iff_ne_top.2 (ne_top_of_le_ne_top (ENNReal.mul_ne_top
     (memLp_one_iff_integrable.2 hK).eLpNorm_ne_top hf.eLpNorm_ne_top)
-    (eLpNorm_convolution_le hp1 hp hK.aestronglyMeasurable hf.aestronglyMeasurable))
+    (eLpNorm_complexConvolution_le hp1 hp hK.aestronglyMeasurable hf.aestronglyMeasurable))
 
 /-- **The convolution integral converges absolutely almost everywhere** for an integrable
 kernel and `f ∈ L_p`, `1 ≤ p < ∞`: the integral form of Young's inequality is finite. -/

@@ -180,7 +180,7 @@ theorem periodicPairing_iteratedLineDerivOp_mFourierLp
     (m : d → ℤ) :
     periodicPairing p (∂^{v} φ) (mFourierLp p m) =
       (-1) ^ k * lineSymbol v m * periodicPairing p φ (mFourierLp p m) := by
-  have h := SchwartzMap.fourier_iteratedLineDerivOp_apply v (Rd.testSchwartz φ) (latticeVec (-m))
+  have h := SchwartzMap.fourier_iteratedLineDerivOp_apply (Rd.testSchwartz φ) v (latticeVec (-m))
   rw [Rd.iteratedLineDerivOp_testSchwartz] at h
   rw [periodicPairing_mFourierLp, periodicPairing_mFourierLp, ← SchwartzMap.fourier_coe, h,
     ← SchwartzMap.fourier_coe, smul_eq_mul]

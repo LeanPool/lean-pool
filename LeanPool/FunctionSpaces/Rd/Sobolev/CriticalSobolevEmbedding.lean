@@ -182,7 +182,7 @@ theorem eLpNorm_tsum_dyadicWeight_enorm_blockFun_le [Nontrivial V] (hp₀₁ : p
           (ENNReal.rpow_le_rpow hB (sub_nonneg.2 hθ1.le)))) le_rfl
     _ = criticalEmbeddingConst V p₀ p₁ * T := by
         rw [criticalEmbeddingConst, mul_assoc, mul_assoc, mul_assoc, mul_comm (T ^ (1 - θ)),
-          ENNReal.rpow_mul_rpow_one_sub hθ0.le hθ1.le]
+          ENNReal.rpow_mul_rpow_one_sub _ hθ0.le hθ1.le]
 
 /-! ### The embeddings -/
 

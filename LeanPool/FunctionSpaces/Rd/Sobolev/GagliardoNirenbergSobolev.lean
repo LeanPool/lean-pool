@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.Rd.Sobolev.CriticalSobolevEmbedding
+public import TauCeti.Analysis.InnerProductSpace.Orthonormal.Multilinear
 public import LeanPool.FunctionSpaces.Rd.Sobolev.WeakDerivativeChangeOfVariables
 public import Mathlib.Analysis.FunctionalSpaces.SobolevInequality
 
@@ -58,22 +59,6 @@ theorem MeasureTheory.eLpNorm_le_of_ae_tendsto_of_tendsto {α E : Type*} [Measur
     (hB : Tendsto B atTop (𝓝 b)) (hle : ∀ i, eLpNorm (u i) p μ ≤ B i) : eLpNorm f p μ ≤ b :=
   (Lp.eLpNorm_lim_le_liminf_eLpNorm hu f (aestronglyMeasurable_of_tendsto_ae atTop hu hlim)
     hlim).trans ((liminf_le_liminf (Eventually.of_forall hle)).trans_eq hB.liminf_eq)
-
-/-- **The operator norm through an orthonormal basis**: for an orthonormal basis `b` of a real
-inner product space `E` and a continuous linear map `L : E → F`, `‖L‖ ≤ ∑_i ‖L b_i‖`, since
-`x = ∑_i ⟪b_i, x⟫ b_i` (Mathlib's `OrthonormalBasis.sum_repr'`) and `|⟪b_i, x⟫| ≤ ‖x‖`. -/
-theorem ContinuousLinearMap.opNorm_le_sum_norm_apply_orthonormalBasis {ι E F : Type*}
-    [Fintype ι] [NormedAddCommGroup E] [InnerProductSpace ℝ E] [NormedAddCommGroup F]
-    [NormedSpace ℝ F] (L : E →L[ℝ] F) (b : OrthonormalBasis ι ℝ E) :
-    ‖L‖ ≤ ∑ i, ‖L (b i)‖ := by
-  refine L.opNorm_le_bound (Finset.sum_nonneg fun i _ => norm_nonneg _) fun x => ?_
-  conv_lhs => rw [← b.sum_repr' x]
-  rw [map_sum, Finset.sum_mul]
-  refine (norm_sum_le _ _).trans (Finset.sum_le_sum fun i _ => ?_)
-  rw [map_smul, norm_smul, mul_comm]
-  refine mul_le_mul_of_nonneg_left ?_ (norm_nonneg _)
-  calc ‖inner ℝ (b i) x‖ ≤ ‖b i‖ * ‖x‖ := norm_inner_le_norm _ _
-    _ = ‖x‖ := by rw [b.orthonormal.1 i, one_mul]
 
 namespace Rd
 

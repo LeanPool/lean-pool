@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.ApproximationSpaces.Sequences.Lq
+public import TauCeti.Analysis.SpecialFunctions.Pow.NNReal
 public import Mathlib.Algebra.BigOperators.Intervals
 public import Mathlib.Algebra.Order.Ring.GeomSum
 public import Mathlib.Analysis.PSeries
@@ -67,14 +68,6 @@ open Finset Filter
 open scoped ENNReal
 
 namespace ENNReal
-
-/-- For a nonpositive exponent, `x ↦ x ^ z` is decreasing on `ℝ≥0∞`. -/
-theorem rpow_le_rpow_of_nonpos {x y : ℝ≥0∞} {z : ℝ} (hxy : x ≤ y) (hz : z ≤ 0) :
-    y ^ z ≤ x ^ z := by
-  have hy : y ^ z = (y ^ (-z))⁻¹ := by rw [← ENNReal.rpow_neg, neg_neg]
-  have hx : x ^ z = (x ^ (-z))⁻¹ := by rw [← ENNReal.rpow_neg, neg_neg]
-  rw [hy, hx]
-  exact ENNReal.inv_le_inv.2 (ENNReal.rpow_le_rpow hxy (neg_nonneg.2 hz))
 
 /-- The initial segment `[0, 2^K)` of `ℕ` is `{0}` together with the dyadic blocks
 `[2^k, 2^(k+1))`, `k < K`. -/
@@ -483,11 +476,6 @@ theorem dyadicInterpConst_ne_top {δ θ : ℝ} (hδ : 0 < δ) (hθ0 : 0 < θ) (h
 theorem one_le_dyadicInterpConst (δ θ : ℝ) : 1 ≤ dyadicInterpConst δ θ :=
   (one_le_one_sub_two_rpow_neg_inv _).trans le_add_self
 
-/-- `Y = Y^θ Y^(1-θ)` in `[0, ∞]` for `0 ≤ θ ≤ 1` (Mathlib's `ENNReal.rpow_add_of_nonneg`). -/
-theorem rpow_mul_rpow_one_sub {θ : ℝ} (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) (Y : ℝ≥0∞) :
-    Y ^ θ * Y ^ (1 - θ) = Y := by
-  rw [← ENNReal.rpow_add_of_nonneg _ _ hθ0 (sub_nonneg.2 hθ1), add_sub_cancel, ENNReal.rpow_one]
-
 variable {δ θ : ℝ} {X Y : ℝ≥0∞}
 
 /-- **The low-index bound**: if `Y ≤ 2^(-Kδ) X`, then `2^(Kθδ) Y ≤ X^θ Y^(1-θ)` for
@@ -502,7 +490,7 @@ theorem dyadicWeight_mul_le_rpow_mul_rpow (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1) {K
           congr 2
           ring
   calc dyadicWeight (θ * δ) K * Y = dyadicWeight (θ * δ) K * Y ^ θ * Y ^ (1 - θ) := by
-        rw [mul_assoc, rpow_mul_rpow_one_sub hθ0 hθ1]
+        rw [mul_assoc, rpow_mul_rpow_one_sub _ hθ0 hθ1]
     _ ≤ dyadicWeight (θ * δ) K * (dyadicWeight (-(θ * δ)) K * X ^ θ) * Y ^ (1 - θ) := by
         gcongr
     _ = X ^ θ * Y ^ (1 - θ) := by
@@ -522,7 +510,7 @@ theorem dyadicWeight_neg_mul_le_rpow_mul_rpow (hθ0 : 0 ≤ θ) (hθ1 : θ ≤ 1
       _ ≤ Y ^ (1 - θ) := ENNReal.rpow_le_rpow hJ (sub_nonneg.2 hθ1)
   calc dyadicWeight (-((1 - θ) * δ)) J * X
       = X ^ θ * (dyadicWeight (-((1 - θ) * δ)) J * X ^ (1 - θ)) := by
-        conv_lhs => rw [← rpow_mul_rpow_one_sub hθ0 hθ1 X]
+        conv_lhs => rw [← rpow_mul_rpow_one_sub X hθ0 hθ1]
         ring
     _ ≤ X ^ θ * Y ^ (1 - θ) := by gcongr
 

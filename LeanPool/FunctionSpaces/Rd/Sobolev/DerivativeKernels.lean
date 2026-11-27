@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.Rd.SingularIntegrals.DilationFamilies
+public import TauCeti.Analysis.Distribution.SchwartzSpace.Fourier
 
 /-
 Modified for Lean Pool: module names and imports adapted.
@@ -42,30 +43,6 @@ Fourier transform `𝓕η_i(ξ) = ∏_k ⟪ξ, e_{i_k}⟫ / ((2πi)^m ‖ξ‖^{
 
 open MeasureTheory Module Metric Filter
 open scoped ENNReal SchwartzMap FourierTransform LineDeriv Real
-
-namespace SchwartzMap
-
-variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDimensional ℝ V]
-  [MeasurableSpace V] [BorelSpace V]
-
-/-- **The Fourier transform of an iterated derivative**: for every Schwartz function `G` on `V`
-with values in a complex normed space `E` and directions `w ∈ V^k`, with
-`∂^w = ∂_{w_0} ⋯ ∂_{w_{k-1}}`, `𝓕(∂^w G)(ξ) = (∏_l 2πi ⟪ξ, w_l⟫) 𝓕G(ξ)`, by induction from
-Mathlib's `SchwartzMap.fourier_lineDerivOp_eq`. -/
-theorem fourier_iteratedLineDerivOp_apply {E : Type*} [NormedAddCommGroup E] [NormedSpace ℂ E]
-    {k : ℕ} (w : Fin k → V) (G : 𝓢(V, E)) (ξ : V) :
-    𝓕 (∂^{w} G) ξ = (∏ l, 2 * π * Complex.I * (inner ℝ ξ (w l) : ℂ)) • 𝓕 G ξ := by
-  induction k with
-  | zero => simp
-  | succ k ih =>
-    have h : (fun x : V => inner ℝ x (w 0)).HasTemperateGrowth := by fun_prop
-    rw [LineDeriv.iteratedLineDerivOp_succ_left, SchwartzMap.fourier_lineDerivOp_eq,
-      smul_apply, SchwartzMap.smulLeftCLM_apply_apply h, ih, Fin.prod_univ_succ]
-    simp only [Fin.tail, ← Complex.coe_smul, smul_smul]
-    congr 1
-    ring
-
-end SchwartzMap
 
 namespace Rd
 

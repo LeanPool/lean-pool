@@ -6,6 +6,7 @@ Authors: Mario Ullrich
 module
 
 public import LeanPool.FunctionSpaces.Rd.SingularIntegrals.DilationFamilies
+public import TauCeti.Analysis.Distribution.SchwartzSpace.Deriv
 public import LeanPool.FunctionSpaces.Rd.Sobolev.WeakDerivatives
 public import LeanPool.FunctionSpaces.Analysis.Lp.Young
 
@@ -53,15 +54,6 @@ namespace SchwartzMap
 /-! ### Translates of Schwartz functions -/
 
 variable {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
-
-/-- **Derivatives commute with translations**: `∂_v (η(· - y)) = (∂_v η)(· - y)` for a Schwartz
-function `η` (Mathlib's `SchwartzMap.compSubConstCLM` and `fderiv_comp_sub`). -/
-theorem lineDerivOp_compSubConstCLM (η : 𝓢(E, ℂ)) (y v : E) :
-    ∂_{v} (η.compSubConstCLM ℂ y) = (∂_{v} η).compSubConstCLM ℂ y := by
-  ext x
-  rw [lineDerivOp_apply_eq_fderiv, compSubConstCLM_apply, lineDerivOp_apply_eq_fderiv]
-  change fderiv ℝ (fun z => η (z - y)) x v = _
-  rw [fderiv_comp_sub]
 
 /-- Iterated derivatives commute with translations: `∂^w (η(· - y)) = (∂^w η)(· - y)`. -/
 theorem iteratedLineDerivOp_compSubConstCLM {k : ℕ} (η : 𝓢(E, ℂ)) (y : E) (w : Fin k → E) :
