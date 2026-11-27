@@ -60,11 +60,14 @@ private theorem scale_pos : (0 : ℚ) < (M : ℚ) := by norm_num [M]
 /-- Round a rational down in grid units by dividing its scaled numerator. -/
 def gridFloor (value : ℚ) : ℤ := (M * value.num) / (value.den : ℤ)
 
-private theorem gridFloor_eq (value : ℚ) : gridFloor value = ⌊(M : ℚ) * value⌋ := by
+private theorem floor_scaled_fraction (scale : ℤ) (value : ℚ) :
+    (scale * value.num) / (value.den : ℤ) = ⌊(scale : ℚ) * value⌋ := by
   have fraction : (value.num : ℚ) / (value.den : ℚ) = value := by
     rw [← Int.cast_natCast, Rat.intCast_div_eq_divInt, Rat.num_divInt_den]
-  unfold gridFloor
   rw [← Rat.floor_intCast_div_natCast, Int.cast_mul, mul_div_assoc, fraction]
+
+private theorem gridFloor_eq (value : ℚ) : gridFloor value = ⌊(M : ℚ) * value⌋ :=
+  floor_scaled_fraction M value
 
 /-- Convert to the grid with outward rounding. -/
 def fromRat (interval : IntervalRat) : SI :=
@@ -320,6 +323,111 @@ def residualsWithProduct
       (SI.neg sinePhiProduct)) cosinePhiProduct
   (first, second)
 
+/-- Evaluate the two residuals using the supplied grid operations. -/
+def residualsFromGrid (scalar : ℚ → SI) (pi : SI) (scale : ℚ → SI → SI)
+    (multiply : SI → SI → SI) (phi theta cosinePhi sinePhi cosineTheta sineTheta : SI) :
+    SI × SI :=
+  let subtract := fun a b => SI.add a (SI.neg b)
+  let one := scalar 1
+  let half := scalar (1 / 2)
+  let delta := subtract theta phi
+  let halfDelta := scale (1 / 2) delta
+  let base := SI.add
+    (SI.add (subtract (subtract (scale (1 / 2) pi) phi) theta)
+      halfDelta) (scale (1 / 4) (multiply delta delta))
+  let onePlusHalfDelta := SI.add one halfDelta
+  let denominator := subtract cosinePhi
+    (multiply onePlusHalfDelta sinePhi)
+  let numerator := SI.add
+    (SI.add (SI.add sinePhi half) (SI.neg (scale (1 / 2) cosinePhi)))
+    (multiply base sinePhi)
+  let numeratorB := SI.add
+    (multiply numerator onePlusHalfDelta)
+    (multiply base denominator)
+  let cosinePhiProduct := multiply cosinePhi denominator
+  let sinePhiProduct := multiply sinePhi denominator
+  let first := SI.add
+    (SI.add (SI.add (SI.add
+      (subtract (multiply numerator (subtract cosineTheta cosinePhi))
+        (multiply (scale 2 numeratorB) sinePhi))
+      (multiply (multiply (subtract delta one) cosineTheta) denominator))
+      (SI.neg (multiply sineTheta denominator)))
+      cosinePhiProduct) sinePhiProduct
+  let second := SI.add
+    (SI.add (SI.add (SI.add
+      (subtract (multiply numerator (SI.add (scale 3 sineTheta) sinePhi))
+        (multiply (scale 2 numeratorB) cosinePhi))
+      (multiply (multiply (scale 3 (subtract delta one)) sineTheta) denominator))
+      (multiply (scale 3 cosineTheta) denominator))
+      (SI.neg sinePhiProduct)) cosinePhiProduct
+  (first, second)
+
+private theorem residualsFromGrid_encloses {Covered : SI → IntervalRat → Prop}
+    (scalar : ℚ → SI) (pi : SI) (scale : ℚ → SI → SI) (multiply : SI → SI → SI)
+    (scalarEncloses : ∀ value, Covered (scalar value) (singleton value))
+    (piEncloses : Covered pi kernelPiInterval)
+    (scaleEncloses : ∀ {value : ℚ} {outer : SI} {inner : IntervalRat}, 0 ≤ value →
+      Covered outer inner → Covered (scale value outer) ((singleton value).mul inner))
+    (addEncloses : ∀ {a b : SI} {x y : IntervalRat}, Covered a x → Covered b y →
+      Covered (SI.add a b) (x.add y))
+    (negEncloses : ∀ {a : SI} {x : IntervalRat}, Covered a x → Covered (SI.neg a) x.neg)
+    (multiplyEncloses : ∀ {a b : SI} {x y : IntervalRat}, Covered a x → Covered b y →
+      Covered (multiply a b) (x.mul y))
+    {phi theta cosinePhi sinePhi cosineTheta sineTheta : IntervalRat}
+    {gridPhi gridTheta gridCosinePhi gridSinePhi gridCosineTheta gridSineTheta : SI}
+    (phiEnclosed : Covered gridPhi phi) (thetaEnclosed : Covered gridTheta theta)
+    (cosinePhiEnclosed : Covered gridCosinePhi cosinePhi)
+    (sinePhiEnclosed : Covered gridSinePhi sinePhi)
+    (cosineThetaEnclosed : Covered gridCosineTheta cosineTheta)
+    (sineThetaEnclosed : Covered gridSineTheta sineTheta) :
+    let outer := residualsFromGrid scalar pi scale multiply gridPhi gridTheta
+      gridCosinePhi gridSinePhi gridCosineTheta gridSineTheta
+    let inner := FastIntervals.residualIntervals mul phi theta
+      cosinePhi sinePhi cosineTheta sineTheta
+    Covered outer.1 inner.1 ∧ Covered outer.2 inner.2 := by
+  let halfScale {outer : SI} {inner : IntervalRat} (covered : Covered outer inner) :=
+    scaleEncloses (value := 1 / 2) (by norm_num) covered
+  let quarterScale {outer : SI} {inner : IntervalRat} (covered : Covered outer inner) :=
+    scaleEncloses (value := 1 / 4) (by norm_num) covered
+  let twice {outer : SI} {inner : IntervalRat} (covered : Covered outer inner) :=
+    scaleEncloses (value := 2) (by norm_num) covered
+  let thrice {outer : SI} {inner : IntervalRat} (covered : Covered outer inner) :=
+    scaleEncloses (value := 3) (by norm_num) covered
+  let delta := addEncloses thetaEnclosed (negEncloses phiEnclosed)
+  let halfDelta := halfScale delta
+  let unit := scalarEncloses 1
+  let base := addEncloses
+    (addEncloses (addEncloses (halfScale piEncloses) (negEncloses phiEnclosed))
+      (negEncloses thetaEnclosed)) halfDelta
+  let base := addEncloses base (quarterScale (multiplyEncloses delta delta))
+  let onePlusHalfDelta := addEncloses unit halfDelta
+  let denominator := addEncloses cosinePhiEnclosed
+    (negEncloses (multiplyEncloses onePlusHalfDelta sinePhiEnclosed))
+  let numerator := addEncloses
+    (addEncloses (addEncloses sinePhiEnclosed (scalarEncloses (1 / 2)))
+      (negEncloses (halfScale cosinePhiEnclosed))) (multiplyEncloses base sinePhiEnclosed)
+  let numeratorB := addEncloses (multiplyEncloses numerator onePlusHalfDelta)
+    (multiplyEncloses base denominator)
+  let centered := addEncloses delta (negEncloses unit)
+  let firstDifference := addEncloses cosineThetaEnclosed (negEncloses cosinePhiEnclosed)
+  let first := addEncloses (multiplyEncloses numerator firstDifference)
+    (negEncloses (multiplyEncloses (twice numeratorB) sinePhiEnclosed))
+  let centeredCosine := multiplyEncloses (multiplyEncloses centered cosineThetaEnclosed) denominator
+  let sineThetaProduct := multiplyEncloses sineThetaEnclosed denominator
+  let cosinePhiProduct := multiplyEncloses cosinePhiEnclosed denominator
+  let sinePhiProduct := multiplyEncloses sinePhiEnclosed denominator
+  let first := addEncloses (addEncloses (addEncloses (addEncloses first centeredCosine)
+    (negEncloses sineThetaProduct)) cosinePhiProduct) sinePhiProduct
+  let secondSum := addEncloses (thrice sineThetaEnclosed) sinePhiEnclosed
+  let second := addEncloses (multiplyEncloses numerator secondSum)
+    (negEncloses (multiplyEncloses (twice numeratorB) cosinePhiEnclosed))
+  let centeredSine := multiplyEncloses
+    (multiplyEncloses (thrice centered) sineThetaEnclosed) denominator
+  let scaledCosineTheta := multiplyEncloses (thrice cosineThetaEnclosed) denominator
+  let second := addEncloses (addEncloses (addEncloses (addEncloses second centeredSine)
+    scaledCosineTheta) (negEncloses sinePhiProduct)) cosinePhiProduct
+  exact ⟨first, second⟩
+
 private theorem residualsWithProduct_encloses
     (multiply : SI → SI → SI)
     (multiplyEncloses : ∀ {a b : SI} {x y : IntervalRat}, Encloses a x → Encloses b y →
@@ -335,42 +443,13 @@ private theorem residualsWithProduct_encloses
       gridCosineTheta gridSineTheta
     let inner := FastIntervals.residualIntervals mul phi theta
       cosinePhi sinePhi cosineTheta sineTheta
-    Encloses outer.1 inner.1 ∧ Encloses outer.2 inner.2 := by
-  let scalar (value : ℚ) := fromRat_encloses (singleton value)
-  let scale (value : ℚ) {outer : SI} {inner : IntervalRat} (covered : Encloses outer inner) :=
-    multiplyEncloses (scalar value) covered
-  let delta := thetaEnclosed.add phiEnclosed.neg
-  let halfDelta := scale (1 / 2) delta
-  let unit := scalar 1
-  let base := (((scale (1 / 2) (fromRat_encloses kernelPiInterval)).add phiEnclosed.neg).add
-    thetaEnclosed.neg).add halfDelta
-  let base := base.add (scale (1 / 4) (multiplyEncloses delta delta))
-  let onePlusHalfDelta := unit.add halfDelta
-  let denominator := cosinePhiEnclosed.add
-    (multiplyEncloses onePlusHalfDelta sinePhiEnclosed).neg
-  let numerator := ((sinePhiEnclosed.add (scalar (1 / 2))).add
-    (scale (1 / 2) cosinePhiEnclosed).neg).add (multiplyEncloses base sinePhiEnclosed)
-  let numeratorB := (multiplyEncloses numerator onePlusHalfDelta).add
-    (multiplyEncloses base denominator)
-  let centered := delta.add unit.neg
-  let firstDifference := cosineThetaEnclosed.add cosinePhiEnclosed.neg
-  let first := (multiplyEncloses numerator firstDifference).add
-    (multiplyEncloses (scale 2 numeratorB) sinePhiEnclosed).neg
-  let centeredCosine := multiplyEncloses (multiplyEncloses centered cosineThetaEnclosed) denominator
-  let sineThetaProduct := multiplyEncloses sineThetaEnclosed denominator
-  let cosinePhiProduct := multiplyEncloses cosinePhiEnclosed denominator
-  let sinePhiProduct := multiplyEncloses sinePhiEnclosed denominator
-  let first := (((first.add centeredCosine).add sineThetaProduct.neg).add cosinePhiProduct).add
-    sinePhiProduct
-  let secondSum := (scale 3 sineThetaEnclosed).add sinePhiEnclosed
-  let second := (multiplyEncloses numerator secondSum).add
-    (multiplyEncloses (scale 2 numeratorB) cosinePhiEnclosed).neg
-  let centeredSine := multiplyEncloses
-    (multiplyEncloses (scale 3 centered) sineThetaEnclosed) denominator
-  let scaledCosineTheta := multiplyEncloses (scale 3 cosineThetaEnclosed) denominator
-  let second := (((second.add centeredSine).add scaledCosineTheta).add sinePhiProduct.neg).add
-    cosinePhiProduct
-  exact ⟨first, second⟩
+    Encloses outer.1 inner.1 ∧ Encloses outer.2 inner.2 :=
+  residualsFromGrid_encloses (fun value => fromRat (singleton value)) (fromRat kernelPiInterval)
+    (fun value outer => multiply (fromRat (singleton value)) outer) multiply
+    (fun value => fromRat_encloses (singleton value)) (fromRat_encloses kernelPiInterval)
+    (fun {_ _ _} _ covered => multiplyEncloses (fromRat_encloses (singleton _)) covered)
+    Encloses.add Encloses.neg multiplyEncloses phiEnclosed thetaEnclosed
+    cosinePhiEnclosed sinePhiEnclosed cosineThetaEnclosed sineThetaEnclosed
 
 private theorem residuals_enclose
     {phi theta cosinePhi sinePhi cosineTheta sineTheta : IntervalRat}
@@ -635,5 +714,345 @@ private theorem rejected_of_fast (cell : AngleCell) (checked : rejectsFast cell 
     isTrue (by exact rejected_of_fast cell checked)
   else
     FastIntervals.decidableRejectedSparse cell
+
+/-! ## Binary-grid replay
+
+The binary grid uses smaller integers for a first pass. The enclosure proofs
+use the same depth-ten Taylor polynomials and residual formulas as the finer
+grid. If rounding makes the sign inconclusive, replay continues on the finer
+grid.
+-/
+
+namespace BinaryGrid
+
+/-- One grid unit is 2⁻³⁰, so most endpoint products fit in small integers. -/
+def denominator : ℤ := 1073741824
+
+private theorem denominator_pos : (0 : ℚ) < (denominator : ℚ) := by
+  norm_num [denominator]
+
+/-- Round a rational down to an integer number of binary grid units. -/
+def floor (value : ℚ) : ℤ :=
+  (denominator * value.num) / (value.den : ℤ)
+
+/-- Enclose a rational interval by rounding its endpoints outwards. -/
+def ofRat (interval : IntervalRat) : SI :=
+  ⟨floor interval.lo, floor interval.hi + 1⟩
+
+private def Encloses (outer : SI) (inner : IntervalRat) : Prop :=
+  (outer.lo : ℚ) / denominator ≤ inner.lo ∧ inner.hi ≤ (outer.hi : ℚ) / denominator
+
+private theorem ofRat_encloses (interval : IntervalRat) :
+    Encloses (ofRat interval) interval := by
+  constructor
+  · change (floor interval.lo : ℚ) / denominator ≤ interval.lo
+    rw [floor, floor_scaled_fraction]
+    exact (div_le_iff₀' denominator_pos).2 (Int.floor_le _)
+  · change interval.hi ≤ ((floor interval.hi + 1 : ℤ) : ℚ) / denominator
+    apply (le_div_iff₀' denominator_pos).2
+    rw [floor, floor_scaled_fraction, Int.cast_add, Int.cast_one]
+    exact (Int.lt_floor_add_one _).le
+
+private theorem Encloses.add {a b : SI} {x y : IntervalRat}
+    (left : Encloses a x) (right : Encloses b y) :
+    Encloses (SI.add a b) (x.add y) := by
+  simpa only [Encloses, SI.add, IntervalRat.add, Int.cast_add, add_div]
+    using And.intro (add_le_add left.1 right.1) (add_le_add left.2 right.2)
+
+private theorem Encloses.neg {a : SI} {x : IntervalRat} (h : Encloses a x) :
+    Encloses (SI.neg a) x.neg := by
+  simpa only [Encloses, SI.neg, IntervalRat.neg, Int.cast_neg, neg_div]
+    using And.intro (neg_le_neg h.2) (neg_le_neg h.1)
+
+private theorem Encloses.trans {outer : SI} {middle inner : IntervalRat}
+    (first : Encloses outer middle) (second : Covers middle inner) :
+    Encloses outer inner :=
+  ⟨first.1.trans second.lower, second.upper.trans first.2⟩
+
+/-- Enclose a product using all four pairs of endpoints. -/
+def mulFull (left right : SI) : SI :=
+  let ll := left.lo * right.lo
+  let lh := left.lo * right.hi
+  let hl := left.hi * right.lo
+  let hh := left.hi * right.hi
+  ⟨SI.imin (SI.imin ll lh) (SI.imin hl hh) / denominator,
+    -((-SI.imax (SI.imax ll lh) (SI.imax hl hh)) / denominator)⟩
+
+private theorem round_product_down (product : ℤ) :
+    ((product / denominator : ℤ) : ℚ) / denominator ≤
+      (product : ℚ) / (denominator : ℚ) ^ 2 := by
+  rw [pow_two, ← div_div]
+  apply div_le_div_of_nonneg_right _ denominator_pos.le
+  apply (le_div_iff₀ denominator_pos).2
+  exact_mod_cast Int.ediv_mul_le product (by norm_num [denominator])
+
+private theorem round_product_up (product : ℤ) :
+    (product : ℚ) / (denominator : ℚ) ^ 2 ≤
+      ((-((-product) / denominator) : ℤ) : ℚ) / denominator := by
+  rw [Int.cast_neg, neg_div, ← neg_le_neg_iff]
+  simp only [neg_neg, ← neg_div, ← Int.cast_neg]
+  exact round_product_down (-product)
+
+private def decode (outer : SI) (h : (outer.lo : ℚ) / denominator ≤
+    (outer.hi : ℚ) / denominator) : IntervalRat :=
+  ⟨(outer.lo : ℚ) / denominator, (outer.hi : ℚ) / denominator, h⟩
+
+private theorem Encloses.mulFull {a b : SI} {x y : IntervalRat}
+    (left : Encloses a x) (right : Encloses b y) :
+    Encloses (mulFull a b) (x.mul y) := by
+  let leftInterval := decode a (left.1.trans (x.le.trans left.2))
+  let rightInterval := decode b (right.1.trans (y.le.trans right.2))
+  have leftCovered : Covers leftInterval x := ⟨left.1, left.2⟩
+  have rightCovered : Covers rightInterval y := ⟨right.1, right.2⟩
+  have multiplied := leftCovered.mul rightCovered
+  constructor
+  · apply le_trans _ multiplied.lower
+    simp only [BinaryGrid.mulFull, imin_eq_min, leftInterval, rightInterval, IntervalRat.mul,
+      decode, IntervalRat.min4, div_mul_div_comm, ← pow_two, ← Int.cast_mul,
+      min_div_div_right (sq_nonneg (denominator : ℚ)), ← Int.cast_min]
+    exact round_product_down _
+  · apply le_trans multiplied.upper
+    simp only [BinaryGrid.mulFull, imax_eq_max, leftInterval, rightInterval, IntervalRat.mul,
+      decode, IntervalRat.max4, div_mul_div_comm, ← pow_two, ← Int.cast_mul,
+      max_div_div_right (sq_nonneg (denominator : ℚ)), ← Int.cast_max]
+    exact round_product_up _
+
+/-- Enclose a product with a nonnegative right operand using two endpoint products. -/
+def mulNonnegativeRight (left right : SI) : SI :=
+  let lower := left.lo * (if 0 ≤ left.lo then right.lo else right.hi)
+  let upper := left.hi * (if 0 ≤ left.hi then right.hi else right.lo)
+  ⟨lower / denominator, -((-upper) / denominator)⟩
+
+private theorem mulNonnegativeRight_eq (left right : SI)
+    (leftOrdered : left.lo ≤ left.hi) (rightOrdered : right.lo ≤ right.hi)
+    (nonnegative : 0 ≤ right.lo) :
+    mulNonnegativeRight left right = mulFull left right := by
+  have lower := mul_le_mul_of_nonneg_right leftOrdered nonnegative
+  have upper := mul_le_mul_of_nonneg_right leftOrdered (nonnegative.trans rightOrdered)
+  simp only [mulNonnegativeRight, mulFull, imin_eq_min, imax_eq_max,
+    lowerProduct_eq _ _ _ rightOrdered, upperProduct_eq _ _ _ rightOrdered,
+    min_eq_left (min_le_min lower upper), max_eq_right (max_le_max lower upper)]
+
+private theorem Encloses.ordered {a : SI} {x : IntervalRat}
+    (enclosed : Encloses a x) : a.lo ≤ a.hi := by
+  exact_mod_cast (div_le_div_iff_of_pos_right denominator_pos).1
+    (enclosed.1.trans (x.le.trans enclosed.2))
+
+/-- Enclose a product, using the two-product formula when either operand is nonnegative. -/
+def mul (left right : SI) : SI :=
+  if 0 ≤ right.lo then mulNonnegativeRight left right
+  else if 0 ≤ left.lo then mulNonnegativeRight right left
+  else mulFull left right
+
+private theorem mulFull_comm (left right : SI) :
+    mulFull left right = mulFull right left := by
+  simp only [mulFull, imin_eq_min, imax_eq_max]
+  congr 2 <;> ac_rfl
+
+private theorem Encloses.mul {a b : SI} {x y : IntervalRat}
+    (left : Encloses a x) (right : Encloses b y) :
+    Encloses (mul a b) (x.mul y) := by
+  unfold BinaryGrid.mul
+  split_ifs with rightNonnegative leftNonnegative
+  · rw [mulNonnegativeRight_eq _ _ left.ordered right.ordered rightNonnegative]
+    exact left.mulFull right
+  · rw [mulNonnegativeRight_eq _ _ right.ordered left.ordered leftNonnegative,
+      mulFull_comm]
+    exact left.mulFull right
+  · exact left.mulFull right
+
+/-- Scale by a nonnegative rational, rounding both endpoints outwards. -/
+def scaleNonnegative (value : ℚ) (interval : SI) : SI :=
+  SI.divn ⟨value.num * interval.lo, value.num * interval.hi⟩ (value.den : ℤ)
+
+private theorem Encloses.scaleNonnegative {value : ℚ} {outer : SI} {inner : IntervalRat}
+    (nonnegative : 0 ≤ value) (covered : Encloses outer inner) :
+    Encloses (scaleNonnegative value outer) ((singleton value).mul inner) := by
+  have fraction : (value.num : ℚ) / (value.den : ℚ) = value := by
+    rw [← Int.cast_natCast, Rat.intCast_div_eq_divInt, Rat.num_divInt_den]
+  have floor_bound (endpoint : ℤ) :
+      ((value.num * endpoint / (value.den : ℤ) : ℤ) : ℚ) ≤ value * (endpoint : ℚ) := by
+    rw [← Rat.floor_intCast_div_natCast, Int.cast_mul, mul_div_right_comm, fraction]
+    exact Int.floor_le _
+  have ceil_bound (endpoint : ℤ) :
+      value * (endpoint : ℚ) ≤ ((-((-(value.num * endpoint)) / (value.den : ℤ)) : ℤ) : ℚ) := by
+    simpa only [Int.cast_neg, Int.mul_neg, mul_neg, neg_neg] using
+      neg_le_neg (floor_bound (-endpoint))
+  have ordered := mul_le_mul_of_nonneg_left inner.le nonnegative
+  simp only [Encloses, BinaryGrid.scaleNonnegative, SI.divn, IntervalRat.mul,
+    IntervalRat.singleton,
+    IntervalRat.min4, IntervalRat.max4, min_eq_left ordered, max_eq_right ordered,
+    min_self, max_self]
+  constructor
+  · exact (div_le_div_of_nonneg_right (floor_bound _) denominator_pos.le).trans
+      (by rw [mul_div_assoc]; exact mul_le_mul_of_nonneg_left covered.1 nonnegative)
+  · refine le_trans (mul_le_mul_of_nonneg_left covered.2 nonnegative) ?_
+    rw [← mul_div_assoc]
+    exact div_le_div_of_nonneg_right (ceil_bound _) denominator_pos.le
+
+/-- Enclose a rational point on the binary grid. -/
+def point (value : ℚ) : SI := ofRat (singleton value)
+
+private theorem point_encloses (value : ℚ) :
+    Encloses (point value) (singleton value) :=
+  ofRat_encloses _
+
+/-- Evaluate an interval polynomial by Horner iteration in ascending coefficient order. -/
+def horner (coefficients : List SI) (input : SI) : SI :=
+  coefficients.foldr (fun coefficient value => SI.add coefficient (mul value input))
+    (point 0)
+
+private theorem horner_encloses (coefficients : List ℚ) {outer : SI}
+    {inner : IntervalRat} (covered : Encloses outer inner) :
+    Encloses (horner (coefficients.map point) outer)
+      (evalTaylorSeries coefficients inner) := by
+  induction coefficients with
+  | nil => exact point_encloses _
+  | cons coefficient rest ih =>
+    exact (point_encloses coefficient).add (ih.mul covered)
+
+/-- Outward-rounded even cosine coefficients, in ascending degree. -/
+def cosineCoefficients : List SI :=
+  [⟨1073741824, 1073741825⟩, ⟨-536870912, -536870911⟩, ⟨44739242, 44739243⟩,
+    ⟨-1491309, -1491308⟩, ⟨26630, 26631⟩, ⟨-296, -295⟩]
+
+/-- Outward-rounded coefficients of the sine polynomial after factoring out the input. -/
+def sineCoefficients : List SI :=
+  [⟨1073741824, 1073741825⟩, ⟨-178956971, -178956970⟩, ⟨8947848, 8947849⟩,
+    ⟨-213045, -213044⟩, ⟨2958, 2959⟩]
+
+private theorem cosineCoefficients_eq : cosineCoefficients =
+    FastIntervals.cosineEvenCoefficients.map point := by
+  decide +kernel
+
+private theorem sineCoefficients_eq : sineCoefficients =
+    FastIntervals.sineEvenCoefficients.map point := by
+  decide +kernel
+
+/-- Divisor for converting the eleventh power of a grid endpoint to a grid error radius. -/
+def remainderDenominator : ℤ := denominator ^ 10 * 39916800
+
+/-- Bound the Taylor remainder symmetrically using the upper grid endpoint. -/
+def remainder (upper : ℤ) : SI :=
+  let radius := upper ^ 11 / remainderDenominator + 1
+  ⟨-radius, radius⟩
+
+private theorem remainder_bound (upper : ℤ) :
+    ((upper : ℚ) / denominator) ^ 11 / 39916800 ≤
+      ((remainder upper).hi : ℚ) / denominator := by
+  have positive : 0 < remainderDenominator := by
+    norm_num [remainderDenominator, denominator]
+  have divided : (upper : ℚ) ^ 11 / (remainderDenominator : ℚ) ≤
+      ((remainder upper).hi : ℚ) := by
+    apply (div_le_iff₀ (by exact_mod_cast positive)).2
+    simp only [remainder]
+    exact_mod_cast (Int.lt_ediv_add_one_mul_self (upper ^ (11 : ℕ)) positive).le
+  calc
+    _ = ((upper : ℚ) ^ 11 / (remainderDenominator : ℚ)) / denominator := by
+      rw [div_pow, div_div, div_div]
+      simp only [remainderDenominator, Int.cast_mul, Int.cast_pow, Int.cast_ofNat]
+      rw [show (denominator : ℚ) ^ 11 = (denominator : ℚ) ^ 10 * denominator from pow_succ _ _]
+      rw [mul_right_comm ((denominator : ℚ) ^ 10) (denominator : ℚ) 39916800]
+    _ ≤ _ := div_le_div_of_nonneg_right divided denominator_pos.le
+
+private theorem remainder_encloses {input : SI} {interval : IntervalRat}
+    (enclosed : Encloses input interval) (nonnegative : 0 ≤ interval.lo) :
+    Encloses (remainder input.hi) (sinRemainderBoundComputable interval 10) := by
+  have upperNonnegative := nonnegative.trans interval.le
+  have maxAbs_eq : maxAbs interval = interval.hi := by
+    rw [maxAbs, abs_of_nonneg nonnegative, abs_of_nonneg upperNonnegative,
+      max_eq_right interval.le]
+  have factorial : ratFactorial 11 = 39916800 := by decide +kernel
+  have upper : (sinRemainderBoundComputable interval 10).hi ≤
+      ((remainder input.hi).hi : ℚ) / denominator := by
+    change maxAbs interval ^ 11 / ratFactorial 11 ≤ _
+    rw [maxAbs_eq, factorial]
+    exact (div_le_div_of_nonneg_right (pow_le_pow_left₀ upperNonnegative enclosed.2 11)
+      (by norm_num)).trans (remainder_bound _)
+  refine ⟨?_, upper⟩
+  change ((-(remainder input.hi).hi : ℤ) : ℚ) / denominator ≤
+    -(sinRemainderBoundComputable interval 10).hi
+  simpa only [Int.cast_neg, neg_div] using neg_le_neg upper
+
+/-- Enclose the depth-ten cosine and sine approximations on a positive interval. -/
+def trig (input : SI) : SI × SI :=
+  let square := mul input input
+  let remainder := remainder input.hi
+  (SI.add (horner cosineCoefficients square) remainder,
+    SI.add (mul (horner sineCoefficients square) input) remainder)
+
+private theorem trig_encloses {input : SI} {interval : IntervalRat}
+    (enclosed : Encloses input interval) (positive : 0 < interval.lo) :
+    Encloses (trig input).1 (cosComputable interval 10) ∧
+    Encloses (trig input).2 (sinComputable interval 10) := by
+  let square := enclosed.mul enclosed
+  let remainder := remainder_encloses enclosed positive.le
+  have cosineTaylor := horner_encloses FastIntervals.cosineEvenCoefficients square
+  have sineTaylor := horner_encloses FastIntervals.sineEvenCoefficients square
+  rw [← FastIntervals.cosineSparse_eq, ← FastIntervals.sineSparse_eq]
+  simp only [FastIntervals.cosineSparse, FastIntervals.sineSparse, ite_eq_left positive,
+    FastIntervals.multiplyForTaylor_eq_mul, FastIntervals.evalTaylor_eq_evalTaylorSeries,
+    trig, cosineCoefficients_eq, sineCoefficients_eq]
+  exact ⟨(cosineTaylor.add remainder).trans (covers_clip _),
+    ((sineTaylor.mul enclosed).add remainder).trans (covers_clip _)⟩
+
+private theorem Encloses.excludesZero {outer : SI} {inner : IntervalRat}
+    (enclosed : Encloses outer inner) (excluded : excludesZero outer = true) :
+    intervalExcludesZero inner = true := by
+  simp only [FixedPointResiduals.excludesZero, intervalExcludesZero,
+    decide_eq_true_eq] at excluded ⊢
+  rcases excluded with negative | positive
+  · exact Or.inl (enclosed.2.trans_lt (div_neg_of_neg_of_pos (by exact_mod_cast negative)
+      denominator_pos))
+  · exact Or.inr ((div_pos (by exact_mod_cast positive) denominator_pos).trans_le enclosed.1)
+
+/-- Check both residuals on the coarse grid when both angles are positive. -/
+def rejects (cell : AngleCell) : Bool :=
+  let phi := ofRat cell.phiI
+  let theta := ofRat cell.thetaI
+  if 0 < phi.lo ∧ 0 < theta.lo then
+    let phiTrig := trig phi
+    let thetaTrig := trig theta
+    let bounds := residualsFromGrid point (ofRat kernelPiInterval) scaleNonnegative
+      mul phi theta
+      phiTrig.1 phiTrig.2 thetaTrig.1 thetaTrig.2
+    excludesZero bounds.1 || excludesZero bounds.2
+  else false
+
+private theorem rejected_of_check (cell : AngleCell) (checked : rejects cell = true) :
+    cell.rejected = true := by
+  simp only [rejects] at checked
+  split at checked
+  next positive =>
+    let phi := ofRat_encloses cell.phiI
+    let theta := ofRat_encloses cell.thetaI
+    have positiveAngle {outer : SI} {inner : IntervalRat} (covered : Encloses outer inner)
+        (positiveGrid : 0 < outer.lo) : 0 < inner.lo :=
+      (div_pos (by exact_mod_cast positiveGrid) denominator_pos).trans_le covered.1
+    have phiTrig := trig_encloses phi (positiveAngle phi positive.1)
+    have thetaTrig := trig_encloses theta (positiveAngle theta positive.2)
+    have covered := residualsFromGrid_encloses point (ofRat kernelPiInterval)
+      scaleNonnegative mul point_encloses (ofRat_encloses _) Encloses.scaleNonnegative
+      Encloses.add Encloses.neg
+      Encloses.mul phi theta phiTrig.1 phiTrig.2 thetaTrig.1 thetaTrig.2
+    have original : FastIntervals.rejectWith IntervalRat.mul cell
+        (cosComputable cell.phiI 10) (sinComputable cell.phiI 10)
+        (cosComputable cell.thetaI 10) (sinComputable cell.thetaI 10) =
+        cell.rejected := rfl
+    rw [← original]
+    simp only [Bool.or_eq_true] at checked
+    simp only [FastIntervals.rejectWith, Bool.or_eq_true]
+    exact checked.imp covered.1.excludesZero covered.2.excludesZero
+  next => cases checked
+
+/-- Decide rejection on a binary grid first, using the finer evaluator when the sign is
+inconclusive. -/
+@[instance_reducible] def decidableRejected (cell : AngleCell) :
+    Decidable (cell.rejected = true) :=
+  if checked : rejects cell = true then
+    isTrue (by exact rejected_of_check cell checked)
+  else decidableRejectedFast cell
+
+end BinaryGrid
 
 end GerverSofa.PartE.FixedPointResiduals

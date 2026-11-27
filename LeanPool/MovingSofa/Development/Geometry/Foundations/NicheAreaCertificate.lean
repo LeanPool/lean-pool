@@ -7,6 +7,7 @@ module
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
 import Mathlib.Tactic.NormNum
+import LeanPool.MovingSofa.KernelCertificate -- shake: keep
 
 /-!
 # Gerver niche area certificate
@@ -40,10 +41,10 @@ private theorem rowSumZ_halves (row : ℕ) :
   rw [← List.range'_append_1, List.map_append, List.sum_append]
 
 private theorem nicheRow0First : rectangleBlock 0 0 32 =
-    8845072297334670692780361894254852519218486529319646026 := by decide +kernel
+    8845072297334670692780361894254852519218486529319646026 := by gerver_kernel_decide
 
 private theorem nicheRow0Second : rectangleBlock 0 32 32 =
-    10752236294326036672164393239780156419552540129712170180 := by decide +kernel
+    10752236294326036672164393239780156419552540129712170180 := by gerver_kernel_decide
 
 private theorem nicheRow0 : rowSumZ 0 =
     19597308591660707364944755134035008938771026659031816206 := by
@@ -52,10 +53,10 @@ private theorem nicheRow0 : rowSumZ 0 =
     norm_num
 
 private theorem nicheRow1First : rectangleBlock 1 0 32 =
-    2708481671659416488318451183130789065356171958140593962722 := by decide +kernel
+    2708481671659416488318451183130789065356171958140593962722 := by gerver_kernel_decide
 
 private theorem nicheRow1Second : rectangleBlock 1 32 32 =
-    3148393386337382996932062165253589891900815488753870997235 := by decide +kernel
+    3148393386337382996932062165253589891900815488753870997235 := by gerver_kernel_decide
 
 private theorem nicheRow1 : rowSumZ 1 =
     5856875057996799485250513348384378957256987446894464959957 := by
@@ -64,10 +65,10 @@ private theorem nicheRow1 : rowSumZ 1 =
     norm_num
 
 private theorem nicheRow2First : rectangleBlock 2 0 32 =
-    191523535334679161804488598779785897537327239225707555957215 := by decide +kernel
+    191523535334679161804488598779785897537327239225707555957215 := by gerver_kernel_decide
 
 private theorem nicheRow2Second : rectangleBlock 2 32 32 =
-    51328754338028147159125423090329492584212088714001961310693 := by decide +kernel
+    51328754338028147159125423090329492584212088714001961310693 := by gerver_kernel_decide
 
 private theorem nicheRow2 : rowSumZ 2 =
     242852289672707308963614021870115390121539327939709517267908 := by
@@ -76,10 +77,10 @@ private theorem nicheRow2 : rowSumZ 2 =
     norm_num
 
 private theorem nicheRow3First : rectangleBlock 3 0 32 =
-    81474276046697370875279695655475247556136298288961395005276 := by decide +kernel
+    81474276046697370875279695655475247556136298288961395005276 := by gerver_kernel_decide
 
 private theorem nicheRow3Second : rectangleBlock 3 32 32 =
-    81490956689206417184402184961614353672909509498587467472045 := by decide +kernel
+    81490956689206417184402184961614353672909509498587467472045 := by gerver_kernel_decide
 
 private theorem nicheRow3 : rowSumZ 3 =
     162965232735903788059681880617089601229045807787548862477321 := by
@@ -88,10 +89,10 @@ private theorem nicheRow3 : rowSumZ 3 =
     norm_num
 
 private theorem nicheRow4First : rectangleBlock 4 0 32 =
-    50079494598729017197543153120492313635811476661823528347987 := by decide +kernel
+    50079494598729017197543153120492313635811476661823528347987 := by gerver_kernel_decide
 
 private theorem nicheRow4Second : rectangleBlock 4 32 32 =
-    190183517655836219033961961816287091634915426165266255974843 := by decide +kernel
+    190183517655836219033961961816287091634915426165266255974843 := by gerver_kernel_decide
 
 private theorem nicheRow4 : rowSumZ 4 =
     240263012254565236231505114936779405270726902827089784322830 := by
@@ -100,10 +101,10 @@ private theorem nicheRow4 : rowSumZ 4 =
     norm_num
 
 private theorem nicheRow5First : rectangleBlock 5 0 32 =
-    3618779434301211958834651458191232116562583828408130271885 := by decide +kernel
+    3618779434301211958834651458191232116562583828408130271885 := by gerver_kernel_decide
 
 private theorem nicheRow5Second : rectangleBlock 5 32 32 =
-    4516492021203496747054582183245040379669236461074921576051 := by decide +kernel
+    4516492021203496747054582183245040379669236461074921576051 := by gerver_kernel_decide
 
 private theorem nicheRow5 : rowSumZ 5 =
     8135271455504708705889233641436272496231820289483051847936 := by
@@ -112,10 +113,10 @@ private theorem nicheRow5 : rowSumZ 5 =
     norm_num
 
 private theorem nicheRow6First : rectangleBlock 6 0 32 =
-    25315253832865482835763120035682201616329557215732924368 := by decide +kernel
+    25315253832865482835763120035682201616329557215732924368 := by gerver_kernel_decide
 
 private theorem nicheRow6Second : rectangleBlock 6 32 32 =
-    23591897766380357431191554304016073974642122274495787564 := by decide +kernel
+    23591897766380357431191554304016073974642122274495787564 := by gerver_kernel_decide
 
 private theorem nicheRow6 : rowSumZ 6 =
     48907151599245840266954674339698275590971679490228711932 := by

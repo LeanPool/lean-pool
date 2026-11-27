@@ -16,8 +16,8 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch028`.
 -/
 
--- Use sparse Horner evaluation for the closed rejection checks.
-attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.decidableRejectedFast
+-- Try the binary-grid enclosure first for closed cell rejections.
+attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.BinaryGrid.decidableRejected
 
 @[expose] public section
 
