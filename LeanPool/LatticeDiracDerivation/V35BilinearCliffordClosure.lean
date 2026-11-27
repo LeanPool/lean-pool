@@ -16,9 +16,9 @@ public import LeanPool.LatticeDiracDerivation.V35CompleteBilinears
 /-!
 # V3.5 Stage 6: sixteen-channel Clifford closure
 
-The five covariant classes contain 1 + 1 + 4 + 4 + 6 channels.  The six
-tensor labels below are the unordered index pairs; antisymmetry from Stage 5
-supplies every reversed pair and makes the diagonal vanish.
+The five covariant classes contain 1 + 1 + 4 + 4 + 6 channels. The six tensor
+labels count the independent antisymmetric components. The matrix-entry
+identity sums over both orderings and uses a factor of `1/2`.
 -/
 
 @[expose] public section
@@ -101,17 +101,91 @@ def v35FierzEntry (a b c d : Fin 4) : Prop :=
             v34OperatorEntry (v34Sigma mu nu) a b *
               v34OperatorEntry (v35SigmaLower mu nu) c d)
 
-/-- Discharge a fully enumerated Fierz matrix-entry identity. -/
+private def gammaColumn (mu : Fin 4) : Fin 4 → Fin 4 :=
+  match mu with
+  | 0 => ![0, 1, 2, 3]
+  | 1 => ![3, 2, 1, 0]
+  | 2 => ![3, 2, 1, 0]
+  | _ => ![2, 3, 0, 1]
+
+private def gammaCoefficient (mu : Fin 4) : Fin 4 → ℂ :=
+  match mu with
+  | 0 => ![1, 1, -1, -1]
+  | 1 => ![1, 1, -1, -1]
+  | 2 => ![-Complex.I, Complex.I, Complex.I, -Complex.I]
+  | _ => ![1, -1, -1, 1]
+
+private def gammaFiveColumn : Fin 4 → Fin 4 := ![2, 3, 0, 1]
+
+private def gammaSignature (mu : Fin 4) : ℂ := if mu = 0 then 1 else -1
+
+-- Evaluate the inherited monomial operators once, with arbitrary spinor
+-- entries. The entry lemmas below reuse these identities for every basis state.
+private theorem gamma_apply (mu row : Fin 4) (z : CubicalCell4) :
+    v34Gamma mu z row = gammaCoefficient mu row * z (gammaColumn mu row) := by
+  fin_cases mu <;> fin_cases row <;>
+    simp [v34Gamma, cubicalGammaTime, cubicalGammaSpace, cubicalAlpha,
+      cubicalStandardBeta, cubicalStandardAlphaX, cubicalStandardAlphaY,
+      cubicalStandardAlphaZ, gammaColumn, gammaCoefficient]
+
+private theorem gamma_five_apply (row : Fin 4) (z : CubicalCell4) :
+    v35GammaFive z row = z (gammaFiveColumn row) := by
+  fin_cases row <;>
+    simp [v35GammaFive, gamma_apply, gammaColumn, gammaCoefficient,
+      gammaFiveColumn, ← mul_assoc]
+
+private theorem gamma_entry (mu a b : Fin 4) :
+    v34OperatorEntry (v34Gamma mu) a b =
+      gammaCoefficient mu a * standardCell4Basis b (gammaColumn mu a) :=
+  gamma_apply mu a (standardCell4Basis b)
+
+private theorem gamma_five_entry (a b : Fin 4) :
+    v34OperatorEntry v35GammaFive a b =
+      standardCell4Basis b (gammaFiveColumn a) :=
+  gamma_five_apply a (standardCell4Basis b)
+
+private theorem gamma_lower_entry (mu a b : Fin 4) :
+    v34OperatorEntry (v35GammaLower mu) a b =
+      gammaSignature mu * v34OperatorEntry (v34Gamma mu) a b := by
+  by_cases timeIndex : mu = 0 <;>
+    simp [v34OperatorEntry, v35GammaLower, gammaSignature, timeIndex]
+
+private theorem axial_upper_entry (mu a b : Fin 4) :
+    v34OperatorEntry (v35AxialUpper mu) a b =
+      gammaCoefficient mu a * standardCell4Basis b (gammaFiveColumn (gammaColumn mu a)) := by
+  simp only [v34OperatorEntry, v35AxialUpper, gamma_apply, gamma_five_apply]
+
+private theorem axial_lower_entry (mu a b : Fin 4) :
+    v34OperatorEntry (v35AxialLower mu) a b =
+      gammaSignature mu * v34OperatorEntry (v35AxialUpper mu) a b := by
+  by_cases timeIndex : mu = 0 <;>
+    simp [v34OperatorEntry, v35AxialLower, v35AxialUpper, v35GammaLower,
+      gammaSignature, timeIndex]
+
+private theorem sigma_entry (mu nu a b : Fin 4) :
+    v34OperatorEntry (v34Sigma mu nu) a b =
+      (Complex.I / 2) *
+        (gammaCoefficient mu a * gammaCoefficient nu (gammaColumn mu a) *
+            standardCell4Basis b (gammaColumn nu (gammaColumn mu a)) -
+          gammaCoefficient nu a * gammaCoefficient mu (gammaColumn nu a) *
+            standardCell4Basis b (gammaColumn mu (gammaColumn nu a))) := by
+  simp only [v34OperatorEntry, v34Sigma, gamma_apply, mul_assoc]
+
+private theorem sigma_lower_entry (mu nu a b : Fin 4) :
+    v34OperatorEntry (v35SigmaLower mu nu) a b =
+      gammaSignature mu * gammaSignature nu * v34OperatorEntry (v34Sigma mu nu) a b := by
+  by_cases muTime : mu = 0 <;> by_cases nuTime : nu = 0 <;>
+    simp [v34OperatorEntry, v35SigmaLower, gammaSignature, muTime, nuTime]
+
+/-- Discharge a Fierz entry using the proved coordinate formulas. -/
 macro "v35FierzFinish" : tactic =>
   `(tactic|
-    simp [v35FierzEntry, v35SpinorChannelNormalization,
-      v35TensorPairNormalization, standardCell4Basis, v34OperatorEntry,
-      v35GammaFive,
-      v35GammaLower, v35AxialUpper, v35AxialLower, v35SigmaLower,
-      v34Sigma, v34Gamma, cubicalGammaTime, cubicalGammaSpace,
-      cubicalAlpha, cubicalStandardBeta, cubicalStandardAlphaX,
-      cubicalStandardAlphaY, cubicalStandardAlphaZ,
-      Fin.sum_univ_four] <;>
+    simp only [v35FierzEntry, v35_spinor_channel_normalization_eq_quarter,
+      v35_tensor_pair_normalization_eq_half, Fin.sum_univ_four, gamma_lower_entry,
+      axial_lower_entry, sigma_lower_entry, gamma_entry, gamma_five_entry,
+      axial_upper_entry, sigma_entry] <;>
+    norm_num [gammaColumn, gammaCoefficient, gammaFiveColumn,
+      gammaSignature, standardCell4Basis, Complex.I_sq] <;>
     ring_nf <;> norm_num [Complex.I_sq])
 
 private theorem v35_fierz_000 (d : Fin 4) : v35FierzEntry 0 0 0 d := by

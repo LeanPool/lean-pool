@@ -11,7 +11,6 @@ Upstream source is dual-licensed under MIT or CC0 1.0; used here under MIT.
 
 module
 
-public import LeanPool.LatticeDiracDerivation.V35BilinearCliffordClosure
 public import LeanPool.LatticeDiracDerivation.V34MomentumHelicity
 
 /-!
