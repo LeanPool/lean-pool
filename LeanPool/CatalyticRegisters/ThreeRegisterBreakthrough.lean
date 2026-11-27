@@ -86,22 +86,6 @@ theorem exponent_strict_improvement_chain :
     (15 ^ 30 < 9 ^ 37) := by
   decide
 
-private theorem nat_pow_le_pow_left {a b : Nat} (h : a ≤ b) : ∀ n : Nat, a ^ n ≤ b ^ n
-  | 0 => Nat.le_refl 1
-  | n + 1 => by
-    simp only [Nat.pow_succ]
-    exact Nat.mul_le_mul (nat_pow_le_pow_left h n) h
-
-private theorem nat_mul_pow (a b : Nat) : ∀ n : Nat, (a * b) ^ n = a ^ n * b ^ n
-  | 0 => rfl
-  | n + 1 => by
-    simp only [Nat.pow_succ, nat_mul_pow a b n]
-    calc
-      a ^ n * b ^ n * (a * b) = a ^ n * (b ^ n * a * b) := by
-        rw [Nat.mul_assoc, ← Nat.mul_assoc (b ^ n) a b]
-      _ = a ^ n * (a * b ^ n * b) := by rw [Nat.mul_comm (b ^ n) a]
-      _ = (a ^ n * a) * (b ^ n * b) := by rw [Nat.mul_assoc, Nat.mul_assoc]
-
 /--
 **Theorem T3f (Unique Integer Minimizer `t = 8` of `log_{2t - 3} t` for All `t ≥ 4`):**
 Pure integer-arithmetic inequality (no register program in statement): via `30 / 37`,
@@ -121,10 +105,10 @@ theorem exponent_global_integer_optimality :
         t = 13 ∨ t = 14 ∨ t = 15 ∨ t = 16 ∨ t = 17 ∨ t = 18 ∨ t = 19 := by omega
     rcases hcases with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
   · have ht20 : 20 ≤ t := by omega
-    have h1 : (2 * t - 3) ^ 30 ≤ (2 * t) ^ 30 := nat_pow_le_pow_left (by omega) 30
-    have h2 : (2 * t) ^ 30 = 2 ^ 30 * t ^ 30 := nat_mul_pow 2 t 30
+    have h1 : (2 * t - 3) ^ 30 ≤ (2 * t) ^ 30 := Nat.pow_le_pow_left (by omega) 30
+    have h2 : (2 * t) ^ 30 = 2 ^ 30 * t ^ 30 := Nat.mul_pow 2 t 30
     have h3 : 2 ^ 30 < 20 ^ 7 := by decide
-    have h4 : 20 ^ 7 ≤ t ^ 7 := nat_pow_le_pow_left ht20 7
+    have h4 : 20 ^ 7 ≤ t ^ 7 := Nat.pow_le_pow_left ht20 7
     have h5 : 0 < t ^ 30 := Nat.pow_pos (by omega)
     have h6 : 2 ^ 30 * t ^ 30 < t ^ 7 * t ^ 30 :=
       Nat.mul_lt_mul_of_pos_right (Nat.lt_of_lt_of_le h3 h4) h5

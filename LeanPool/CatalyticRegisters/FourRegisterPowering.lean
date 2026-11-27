@@ -15,18 +15,19 @@ public import LeanPool.CatalyticRegisters.ThreeRegisterBreakthrough
 /-!
 # Theorem T3h: Machine-Checked Four-Register Passive Powering (`x^N` for All `N ≥ 1`)
 
-Promotes **Corollary 5.2** (sharpening Vinciguerra `arXiv:2609.18692`, Corollary 4.3.1) from a
-paper-level Tier-3 reduction to a fully machine-checked Tier-1 Lean 4.35.0 theorem (zero Mathlib):
+Formalizes **Corollary 5.2** of Donahue's manuscript, which sharpens Corollary 4.3.1
+of Vinciguerra (`arXiv:2609.18692v1`).
 
   1. **Concrete 3-work-register model (`Work3Instr R`)** on `(r0, r1, r2)` with concrete bivariate
      polynomial updates `r_dst ← r_dst + ∑ c * r_other1^a * r_other2^b` (never reading `r_dst`) and
      input accesses `r_dst ← r_dst + α * x`.
-  2. **Clean non-passive 3-register composition (`Work3Prog.compose`, Alekseev et al. MFCS 2025,
-     Composition Lemma — Lemma 8 in `arXiv:2609.18692`, Lemma 2.1 in `arXiv:2504.17412v1`):** cyclic shift lets any passive block `Q` (such as
-     `prog8Power13` or `prog5Power7`) be substituted into every input access of `P`, achieving
+  2. **Clean non-passive 3-register composition (`Work3Prog.compose`):** a specialization of
+     Alekseev et al., MFCS 2025, Lemma 8 (Lemma 2.1 of `arXiv:2504.17412v1`). Cyclic shift lets
+     a clean passive block `Q` (such as `prog8Power13` or `prog5Power7`) be substituted into every
+     input access of `P`, achieving
      `Work3Prog.exec x (compose P Q) st = Work3Prog.exec (g x) P st` and exact access product
      `accesses (compose P Q) = accesses P * tQ` within **3 work registers** (avoiding the extra
-     register required by passive composition Lemma 2.2).
+     register required by the passive composition in Vinciguerra's Lemma 2.2).
   3. **Exact 2-register forward-difference digit programs (`digitPowProg`):** using `iterDiff_pow`
      from `PrimeFieldTools` and `CRing.add_pow` from `Pass2Soundness`, computes `x^b` cleanly in
      `≤ b + 1` input accesses over any `CRing R` in which `b!` is invertible.

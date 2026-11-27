@@ -4,7 +4,8 @@ summary: Characterizes polynomials computable with two passive catalytic
   registers over a prime field using digit sums of their formal exponents.
   It verifies explicit three-register powering programs, composes them into
   a four-register construction, and proves exact costs and clean restoration
-  for a balanced multilinear product program.
+  for a balanced multilinear product program with a sufficiently large pool of
+  distinct work registers.
 branch: algebraic complexity theory
 entry_module: LeanPool.CatalyticRegisters
 authors:
@@ -34,10 +35,15 @@ main_results:
     computes the Nth power with four registers. For ℓ the number of base-13
     digits of N minus one, three times the access count is less than 104 · 8^ℓ.
 - declaration: Catalytic.balancedProdProg_clean
-  informal: A balanced product of 2^k inputs can be added to an output
-    register while restoring every other register.
+  informal: With sign +1, the balanced product program adds the product of
+    2^k inputs to its target and restores every other register. The work
+    registers must be pairwise distinct and disjoint from the target, with
+    at least k + 1 work registers for k > 0. The pool may be empty at k = 0.
+- declaration: Catalytic.balancedProdProg_length
+  informal: The balanced product program has length balancedOpCount k if
+    k = 0 or the work-register pool has at least k + 1 entries.
 - declaration: Catalytic.balancedOpCount_formula
-  informal: The balanced product program has exactly (7 · 4^k − 4) / 3
+  informal: The exact count balancedOpCount k is (7 · 4^k − 4) / 3
     primitives, including input accesses.
 tags:
 - catalytic-computation

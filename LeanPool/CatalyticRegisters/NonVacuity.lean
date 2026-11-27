@@ -146,12 +146,6 @@ instance : Char2CRing F2 where
     have hlt := a.lt
     omega
 
-private theorem prime_2 : IsPrime 2 := ⟨by omega, fun d hd => by
-  have hle : d ≤ 2 := Nat.le_of_dvd (by omega) hd
-  rcases hd with ⟨q, hq⟩
-  have : d = 0 ∨ d = 1 ∨ d = 2 := by omega
-  rcases this with rfl | rfl | rfl <;> omega⟩
-
 private theorem prime_3 : IsPrime 3 := ⟨by omega, fun d hd => by
   have hle : d ≤ 3 := Nat.le_of_dvd (by omega) hd
   rcases hd with ⟨q, hq⟩
@@ -178,7 +172,7 @@ theorem nonvac_T1_witnesses :
     InRPPass2 5 3 (monomial 2) ∧
     ¬ InRPPass2 5 2 (monomial 2) := by
   have hx4 : InRPPass2 2 2 (monomial 4) :=
-    char_p_two_access_unbounded_degree 2 2 prime_2
+    char_p_two_access_unbounded_degree 2 2 IsPrime.two
   have hx3 : ¬ InRPPass2 2 10 (monomial 3) :=
     char_2_two_reg_x3_impossible 10
   have hx2_pos : InRPPass2 5 3 (monomial 2) :=
@@ -187,7 +181,7 @@ theorem nonvac_T1_witnesses :
     intro h
     have := (char_p_large_recovers_vinciguerra_thm35 5 2 2 prime_5 (by omega) (by omega) (by omega)).1 h
     omega
-  exact ⟨prime_2, prime_3, prime_5, prime_7, hx4, hx3, hx2_pos, hx2_neg⟩
+  exact ⟨IsPrime.two, prime_3, prime_5, prime_7, hx4, hx3, hx2_pos, hx2_neg⟩
 
 /-- **Non-Vacuity Witness for T2:** `𝔽_2` is a non-trivial `Char2CRing` (`0 ≠ 1`) and `frobBilinProg 2`
 cleanly adds `1^4 = 1 ≠ 0` to `R_0` while restoring `R_1, R_2`. -/

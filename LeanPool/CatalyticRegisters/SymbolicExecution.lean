@@ -12,9 +12,11 @@ public import LeanPool.CatalyticRegisters.CommRing
 /-!
 # Theorem T3: Strict Improvement Over Vinciguerra's 3-Register Powering Frontier
 
-Vinciguerra (`arXiv:2609.18692`, Theorem 2.3) proved `x^5 ∈ RP^{pass}_K(3, 4)`, yielding
-the recursive composition exponent `log_5 4 ≈ 0.861353` for 4-register powering, catalytic
-streaming frequency moments (Corollary 5.1.1), and matrix powering (Theorem 5.2).
+Vinciguerra (`arXiv:2609.18692v1`, Theorem 2.3 at `r = 3`) proved
+`x^5 ∈ RP^{pass}_K(3, 4)` over fields of characteristic zero or prime characteristic greater
+than five. The recursive composition exponent `log_5 4 ≈ 0.861353` occurs in his 4-register
+powering bound (Corollary 4.3.1) and his bounds for catalytic streaming frequency moments
+(Corollary 5.1.1) and matrix powering (Theorem 5.2), under the hypotheses of those results.
 
 We construct five explicit passive-output 3-register catalytic programs (in Vinciguerra's
 literal Definition 2.2 instruction set) with exact integer coefficients:

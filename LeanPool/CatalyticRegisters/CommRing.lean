@@ -99,11 +99,6 @@ def natCast : Nat → R
   | 0 => 0
   | n + 1 => natCast n + 1
 
-/-- Interpret an integer in the ring by its natural magnitude and sign. -/
-def intCast : Int → R
-  | Int.ofNat n => natCast n
-  | Int.negSucc n => -(natCast (n + 1))
-
 /-- Raise a ring element to a natural power, with zeroth power one. -/
 def pow (a : R) : Nat → R
   | 0 => 1
@@ -118,6 +113,36 @@ theorem natCast_add (m n : Nat) : (natCast (m + n) : R) = natCast m + natCast n 
   | succ k ih =>
     change (natCast ((m + k) + 1) : R) = natCast m + (natCast k + 1)
     simp only [natCast, ih, add_assoc]
+
+/-- Interpret a natural number by doubling the cast of its quotient by two. -/
+def natCastBinary (number : Nat) : R :=
+  if number = 0 then 0
+  else
+    let half : R := natCastBinary (number / 2)
+    if number % 2 = 0 then half + half else half + half + 1
+termination_by number
+decreasing_by exact Nat.div_lt_self (by omega) (by decide)
+
+-- Preserve the successor equations used by proofs and use doubling in compiled programs.
+@[csimp] theorem natCast_eq_natCastBinary : @natCast = @natCastBinary := by
+  funext Ring _ number
+  induction number using Nat.strongRecOn with
+  | ind number inductionHypothesis =>
+    rw [natCastBinary]
+    by_cases hzero : number = 0
+    · simp [hzero]
+    have hhalf := inductionHypothesis (number / 2) (Nat.div_lt_self (by omega) (by decide))
+    rw [ite_eq_right hzero, ← hhalf]
+    by_cases heven : number % 2 = 0
+    · have hsplit : number = number / 2 + number / 2 := by omega
+      rw [ite_eq_left heven, ← natCast_add, ← hsplit]
+    · have hsplit : number = number / 2 + number / 2 + 1 := by omega
+      rw [ite_eq_right heven, ← natCast_add, ← natCast_one, ← natCast_add, ← hsplit]
+
+/-- Interpret an integer in the ring by its natural magnitude and sign. -/
+def intCast : Int → R
+  | Int.ofNat n => natCast n
+  | Int.negSucc n => -(natCast (n + 1))
 
 theorem natCast_mul (m n : Nat) : (natCast (m * n) : R) = natCast m * natCast n := by
   induction n with
