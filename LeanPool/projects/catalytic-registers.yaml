@@ -1,0 +1,50 @@
+slug: catalytic-registers
+title: Passive catalytic register programs over finite fields and commutative rings
+summary: Characterizes polynomials computable with two passive catalytic
+  registers over a prime field using digit sums of their formal exponents.
+  It verifies explicit three-register powering programs, composes them into
+  a four-register construction, and proves exact costs and clean restoration
+  for a balanced multilinear product program.
+branch: algebraic complexity theory
+entry_module: LeanPool.CatalyticRegisters
+authors:
+- Alexander S. Donahue
+source:
+  title: Positive-Characteristic Dichotomy and Optimal Three-Register Exponents in Passive Catalytic Register Programs
+  doi: 10.5281/zenodo.24517199
+  url: https://github.com/0thernes/catalytic-register-frontiers/tree/c80125c42956ff17e7d6d56c66d94ee9bb57ae33
+  github_repo: 0thernes/catalytic-register-frontiers
+  commit: c80125c42956ff17e7d6d56c66d94ee9bb57ae33
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- Catalytic.rp_pass_two_iff
+- Catalytic.four_reg_powering_x13
+- Catalytic.balancedProdProg_clean
+main_results:
+- declaration: Catalytic.rp_pass_two_iff
+  informal: For a prime p and input-access budget t ≥ 1, a formal polynomial
+    over the prime field is computable by a clean passive two-register program
+    exactly when each exponent at least two with nonzero coefficient has
+    base-p digit sum at most min(p − 1, t − 1).
+- declaration: Catalytic.four_reg_powering_x13
+  informal: For N ≥ 1, under the stated invertibility conditions on the
+    certificate coefficient and two factorials, the radix-13 construction
+    computes the Nth power with four registers. For ℓ the number of base-13
+    digits of N minus one, three times the access count is less than 104 · 8^ℓ.
+- declaration: Catalytic.balancedProdProg_clean
+  informal: A balanced product of 2^k inputs can be added to an output
+    register while restoring every other register.
+- declaration: Catalytic.balancedOpCount_formula
+  informal: The balanced product program has exactly (7 · 4^k − 4) / 3
+    primitives, including input accesses.
+tags:
+- catalytic-computation
+- register-programs
+- finite-fields
+- arithmetic-complexity
+msc:
+- 68Q17
+- 68Q05
+- 12E20
