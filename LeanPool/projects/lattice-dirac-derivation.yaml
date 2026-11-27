@@ -12,9 +12,8 @@ summary: >-
   non-forward Gordon identity for native-derived on-shell spinors, and
   decomposes the free resolvent into its spectral projectors and pole
   numerators. The project continues to distinguish the exact finite-C19 scalar
-  spectrum from the continuum Clifford factorization. It is a free linearized
-  result, not a proof of an interacting or localized electron, electromagnetic
-  coupling, transport, charge quantization, g = 2, or an absolute MeV scale.
+  spectrum from the continuum Clifford factorization. Its scope is the free
+  linearized theory, including the inherited free transport results.
 branch: mathematical physics
 entry_module: LeanPool.LatticeDiracDerivation
 authors:
@@ -27,7 +26,7 @@ source:
   github_repo: gpartin/LeanDiracDerivation
   commit: 7b2a51cf933798eeb931731609fda0ffa81123fe
   announcement_url: https://github.com/gpartin/LeanDiracDerivation/releases/tag/v3.4.0-research
-  announcement_date: '2026-11-26'
+  announcement_date: '2026-11-27'
 license: MIT
 status: verified
 provenance: mix
@@ -53,13 +52,14 @@ main_results:
     certificates.
 - declaration: LeanDirac.V2.v34_every_spinor_has_unique_two_plus_two_coordinates
   informal: >-
-    Every four-component spinor has unique coordinates in the two positive-
-    frequency and two negative-frequency native-derived spinor sectors under
-    the stated nonzero-energy and positive-branch assumptions.
+    On the mass shell, with nonzero energy and energy plus mass positive,
+    every four-component spinor has unique coordinates in the two-dimensional
+    positive- and negative-frequency sectors.
 - declaration: LeanDirac.V2.v34_positive_covariant_spin_sum
   informal: >-
-    The two normalized positive-frequency spinors have the standard covariant
-    free-spinor completeness sum in the declared native normalization.
+    On the mass shell, with energy plus mass positive, the covariantly
+    normalized positive-frequency spinors sum to half the Dirac momentum
+    slash plus half the mass times the identity.
 - declaration: LeanDirac.V2.v34_momentum_helicity
   informal: >-
     For arbitrary nonzero momentum, the derived helicity operator squares to
@@ -67,14 +67,16 @@ main_results:
     one-half eigenbranches.
 - declaration: LeanDirac.V2.v34_nonforward_gordon_for_native_spinors
   informal: >-
-    Independently chosen incoming and outgoing native-derived positive spinors
-    satisfy the non-forward Gordon identity after both on-shell relations are
-    derived from the existing Hamiltonian branch.
+    For independent incoming and outgoing on-shell momenta with energy plus
+    mass nonzero in each branch, the native-derived spinors satisfy the
+    non-forward Gordon identity. The proof derives the left and right
+    covariant Dirac equations from the existing Hamiltonian branch.
 - declaration: LeanDirac.V2.v34_resolvent_spectral_decomposition
   informal: >-
-    Away from the poles, the free resolvent decomposes into the positive and
-    negative V3.2 spectral projectors, whose pole numerators agree with the
-    corresponding spinor sums after beta conversion.
+    At nonzero on-shell energy, the free resolvent away from its poles
+    decomposes into the two V3.2 spectral projectors. When energy plus mass is
+    positive, the positive-frequency spinor sum equals energy times the
+    positive projector composed on the right with beta.
 - declaration: LeanDirac.V2.v32_no_global_exact_local_oriented_root
   informal: >-
     The continuum-oriented Clifford root cannot be relabeled as an exact
@@ -82,8 +84,8 @@ main_results:
     Brillouin-zone witness separates the two.
 - declaration: LeanDirac.V2.v32_absolute_energy_scale_not_selected
   informal: >-
-    Native rest mass remains 19, while conversion to an absolute physical
-    energy remains an explicit external input rather than a derived MeV value.
+    Physical rest energy is 19 times the supplied conversion factor. The
+    theorem exhibits two choices of factor that give different rest energies.
 tags:
 - mathematical-physics
 - dirac-operator
