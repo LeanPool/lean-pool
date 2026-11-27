@@ -7,6 +7,7 @@ Authors: JD Jones
 /-
 Adapted from JD-Jones-ASES/persistent-sos, commit
 d432ff9a67594cc0fa7a7af1913320b46d2a86db.
+Modified in Lean Pool to separate the larger Schur update checks.
 Original MIT notice (retained under the permission to sublicense):
 
 MIT License
@@ -37,11 +38,15 @@ module
 public import LeanPool.PersistentSOS.MomentBlockFull0Data
 public import LeanPool.PersistentSOS.PSD
 
+import LeanPool.PersistentSOS.MomentBlockFull0UpdatesEarly
+import LeanPool.PersistentSOS.MomentBlockFull0UpdatesLater
+
 /-!
 # Exact moment block certificate
 
-The matrix data is compiled separately so each Schur step can check its
-integer identities against already elaborated entries.
+The larger entrywise update checks compile in independent modules. The PSD
+proofs here infer each pivot from its update theorem, then check positivity
+and first-row symmetry. The auxiliary lemmas retain the original check types.
 -/
 
 @[expose] public section
@@ -143,142 +148,99 @@ theorem momentBlockFull0Stage16_psd : IsPSD (fun i j => (momentBlockFull0Stage16
   · exact momentBlockFull0Stage17_psd
 
 theorem momentBlockFull0Stage15_psd : IsPSD (fun i j => (momentBlockFull0Stage15 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage15 momentBlockFull0Stage16 (certificateInteger0)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage16_psd
+  refine integer_schur_step momentBlockFull0Stage15 momentBlockFull0Stage16 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage15_update)
+    momentBlockFull0Stage16_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage14_psd : IsPSD (fun i j => (momentBlockFull0Stage14 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage14 momentBlockFull0Stage15
-    (241937662857451058764338007389609057488521077140633070297581497740643677390649179167977221)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage15_psd
+  refine integer_schur_step momentBlockFull0Stage14 momentBlockFull0Stage15 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage14_update)
+    momentBlockFull0Stage15_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage13_psd : IsPSD (fun i j => (momentBlockFull0Stage13 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage13 momentBlockFull0Stage14
-    (302282677391569003353895410009431779736279896258953094590784667407429716152511796424)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage14_psd
+  refine integer_schur_step momentBlockFull0Stage13 momentBlockFull0Stage14 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage13_update)
+    momentBlockFull0Stage14_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage12_psd : IsPSD (fun i j => (momentBlockFull0Stage12 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage12 momentBlockFull0Stage13
-    (755056374531704706639560641699264475888561252757247054018662644650894582588403)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage13_psd
+  refine integer_schur_step momentBlockFull0Stage12 momentBlockFull0Stage13 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage12_update)
+    momentBlockFull0Stage13_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage11_psd : IsPSD (fun i j => (momentBlockFull0Stage11 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage11 momentBlockFull0Stage12
-    (2527217969538333548343375792657934772317626846256498137010805719338681588)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage12_psd
+  refine integer_schur_step momentBlockFull0Stage11 momentBlockFull0Stage12 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage11_update)
+    momentBlockFull0Stage12_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage10_psd : IsPSD (fun i j => (momentBlockFull0Stage10 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage10 momentBlockFull0Stage11
-    (34561535069389069592098393609264156370712154364300862953273139676473)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage11_psd
+  refine integer_schur_step momentBlockFull0Stage10 momentBlockFull0Stage11 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage10_update)
+    momentBlockFull0Stage11_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage9_psd : IsPSD (fun i j => (momentBlockFull0Stage9 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage9 momentBlockFull0Stage10
-    (469013774677419966936811159834691249742394614482932476667660686)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage10_psd
+  refine integer_schur_step momentBlockFull0Stage9 momentBlockFull0Stage10 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage9_update)
+    momentBlockFull0Stage10_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage8_psd : IsPSD (fun i j => (momentBlockFull0Stage8 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage8 momentBlockFull0Stage9
-    (6257923582445758747145390762296215429555519566979662217587)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage9_psd
+  refine integer_schur_step momentBlockFull0Stage8 momentBlockFull0Stage9 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage8_update)
+    momentBlockFull0Stage9_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage7_psd : IsPSD (fun i j => (momentBlockFull0Stage7 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage7 momentBlockFull0Stage8
-    (7034453464707846749569596351075403408014983448443661)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage8_psd
+  refine integer_schur_step momentBlockFull0Stage7 momentBlockFull0Stage8 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage7_update)
+    momentBlockFull0Stage8_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage6_psd : IsPSD (fun i j => (momentBlockFull0Stage6 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage6 momentBlockFull0Stage7
-    (1923707158678150201899330964651535171639857294)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage7_psd
+  refine integer_schur_step momentBlockFull0Stage6 momentBlockFull0Stage7 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage6_update)
+    momentBlockFull0Stage7_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage5_psd : IsPSD (fun i j => (momentBlockFull0Stage5 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage5 momentBlockFull0Stage6
-    (446401646662782787320944432891295635868)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage6_psd
+  refine integer_schur_step momentBlockFull0Stage5 momentBlockFull0Stage6 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage5_update)
+    momentBlockFull0Stage6_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage4_psd : IsPSD (fun i j => (momentBlockFull0Stage4 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage4 momentBlockFull0Stage5
-    (37788621552805100777283433380138)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage5_psd
+  refine integer_schur_step momentBlockFull0Stage4 momentBlockFull0Stage5 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage4_update)
+    momentBlockFull0Stage5_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage3_psd : IsPSD (fun i j => (momentBlockFull0Stage3 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage3 momentBlockFull0Stage4 (2203657213483261276564022)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage4_psd
+  refine integer_schur_step momentBlockFull0Stage3 momentBlockFull0Stage4 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage3_update)
+    momentBlockFull0Stage4_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage2_psd : IsPSD (fun i j => (momentBlockFull0Stage2 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage2 momentBlockFull0Stage3 (119627585843864631)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage3_psd
+  refine integer_schur_step momentBlockFull0Stage2 momentBlockFull0Stage3 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage2_update)
+    momentBlockFull0Stage3_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage1_psd : IsPSD (fun i j => (momentBlockFull0Stage1 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage1 momentBlockFull0Stage2 (1000000000)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage2_psd
+  refine integer_schur_step momentBlockFull0Stage1 momentBlockFull0Stage2 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage1_update)
+    momentBlockFull0Stage2_psd
+  all_goals decide
 
 theorem momentBlockFull0Stage0_psd : IsPSD (fun i j => (momentBlockFull0Stage0 i j : ℝ)) := by
-  apply integer_schur_step momentBlockFull0Stage0 momentBlockFull0Stage1 (1)
-  · decide
-  · decide
-  · decide +kernel
-  · decide +kernel
-  · exact momentBlockFull0Stage1_psd
+  refine integer_schur_step momentBlockFull0Stage0 momentBlockFull0Stage1 _
+    ?_ ?_ (by decide +kernel) (by as_aux_lemma => exact momentBlockFull0Stage0_update)
+    momentBlockFull0Stage1_psd
+  all_goals decide
 
 end PersistentSOS

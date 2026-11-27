@@ -7,6 +7,7 @@ Authors: JD Jones
 /-
 Adapted from JD-Jones-ASES/persistent-sos, commit
 d432ff9a67594cc0fa7a7af1913320b46d2a86db.
+Modified in Lean Pool to name the entrywise Schur update condition.
 Original MIT notice (retained under the permission to sublicense):
 
 MIT License
@@ -110,6 +111,11 @@ lemma schur_step {n : ℕ} (A : Fin (n + 1) → Fin (n + 1) → ℝ)
   apply nonneg_of_mul_nonneg_right _ ha
   rw [hscaled]
   exact add_nonneg (mul_nonneg hp.le (hB y)) (sq_nonneg _)
+
+/-- The entrywise integer identity in a fraction-free Schur update. -/
+abbrev IsIntegerSchurUpdate {n : ℕ} (A : Fin (n + 1) → Fin (n + 1) → ℤ)
+    (B : Fin n → Fin n → ℤ) (p : ℤ) : Prop :=
+  ∀ i j, p * B i j = A 0 0 * A i.succ j.succ - A i.succ 0 * A 0 j.succ
 
 /-- Integer identities suffice for a Schur step over the reals. -/
 lemma integer_schur_step {n : ℕ} (A : Fin (n + 1) → Fin (n + 1) → ℤ)

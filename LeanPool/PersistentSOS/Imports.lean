@@ -22,6 +22,8 @@ public import LeanPool.PersistentSOS.MomentBlock6
 public import LeanPool.PersistentSOS.MomentBlock7
 public import LeanPool.PersistentSOS.MomentBlockFull0
 public import LeanPool.PersistentSOS.MomentBlockFull0Data
+public import LeanPool.PersistentSOS.MomentBlockFull0UpdatesEarly
+public import LeanPool.PersistentSOS.MomentBlockFull0UpdatesLater
 public import LeanPool.PersistentSOS.MomentBridge
 public import LeanPool.PersistentSOS.MomentData
 public import LeanPool.PersistentSOS.MomentGeneral
