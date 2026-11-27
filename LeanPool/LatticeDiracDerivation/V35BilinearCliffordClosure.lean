@@ -178,7 +178,7 @@ private theorem sigma_lower_entry (mu nu a b : Fin 4) :
     simp [v34OperatorEntry, v35SigmaLower, gammaSignature, muTime, nuTime]
 
 /-- Discharge a Fierz entry using the proved coordinate formulas. -/
-macro "v35FierzFinish" : tactic =>
+local macro "v35FierzFinish" : tactic =>
   `(tactic|
     simp only [v35FierzEntry, v35_spinor_channel_normalization_eq_quarter,
       v35_tensor_pair_normalization_eq_half, Fin.sum_univ_four, gamma_lower_entry,
@@ -459,6 +459,10 @@ theorem v35_fierz_completeness
     | exact v35_fierz_22 c d | exact v35_fierz_23 c d
     | exact v35_fierz_30 c d | exact v35_fierz_31 c d
     | exact v35_fierz_32 c d | exact v35_fierz_33 c d
+
+/-- Close a Fierz matrix-entry goal using the public completeness theorem. -/
+macro "v35FierzFinish" : tactic =>
+  `(tactic| exact v35_fierz_completeness _ _ _ _)
 
 /-- Certificate for channel counting, derived normalizations, sigma
 antisymmetry, and Fierz completeness. -/
