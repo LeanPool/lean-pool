@@ -5,7 +5,7 @@ Authors: G. D. Partin
 -/
 
 /-
-Adapted from gpartin/LeanDiracDerivation at commit e2161e0936f181d4a5a9d49963a666f7cea42502.
+Adapted from gpartin/LeanDiracDerivation at commit 7b2a51cf933798eeb931731609fda0ffa81123fe.
 Upstream source is dual-licensed under MIT or CC0 1.0; used here under MIT.
 -/
 
@@ -24,13 +24,11 @@ inserted.
 
 @[expose] public section
 
-
-
 namespace LeanDirac.V2
 
 noncomputable section
 
-/-- The V3.2 S pe ct ra lP ro je ct or definition used by this stage. -/
+/-- The signed spectral projector built from the continuum Hamiltonian and on-shell energy. -/
 def v32SpectralProjector
     (sign : ℝ) (mass px py pz energy : ℝ) (z : CubicalCell4) : CubicalCell4 :=
   fun component =>
@@ -38,9 +36,9 @@ def v32SpectralProjector
       (z component + (sign / energy : ℝ) *
         v32ContinuumHamiltonian mass px py pz z component)
 
-/-- The V3.2 P os it iv eP ro je ct or definition used by this stage. -/
+/-- The positive-energy spectral projector. -/
 def v32PositiveProjector := v32SpectralProjector 1
-/-- The V3.2 N eg at iv eP ro je ct or definition used by this stage. -/
+/-- The negative-energy spectral projector. -/
 def v32NegativeProjector := v32SpectralProjector (-1)
 
 theorem v32_projectors_complete
@@ -51,6 +49,23 @@ theorem v32_projectors_complete
   funext component
   simp [v32PositiveProjector, v32NegativeProjector, v32SpectralProjector]
   ring
+
+private theorem v32_hamiltonian_of_spectral_projector
+    (sign mass px py pz energy : ℝ) (z : CubicalCell4) :
+    v32ContinuumHamiltonian mass px py pz
+        (v32SpectralProjector sign mass px py pz energy z) =
+      fun component =>
+        (1 / 2 : ℂ) *
+          (v32ContinuumHamiltonian mass px py pz z component +
+            (sign / energy : ℝ) *
+              v32ContinuumHamiltonian mass px py pz
+                (v32ContinuumHamiltonian mass px py pz z) component) := by
+  funext component
+  fin_cases component <;>
+    simp [v32SpectralProjector, v32ContinuumHamiltonian,
+      cubicalStandardHamiltonian, cubicalStandardSpatial,
+      cubicalStandardBeta, cubicalStandardAlphaX,
+      cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
 
 theorem v32_spectral_projector_idempotent
     (sign mass px py pz energy : ℝ)
@@ -63,19 +78,9 @@ theorem v32_spectral_projector_idempotent
   have hsq := v32_continuum_hamiltonian_square mass px py pz z
   funext component
   have hsqc := congrFun hsq component
-  have hlinear :
-      v32ContinuumHamiltonian mass px py pz
-          (v32SpectralProjector sign mass px py pz energy z) component =
-        (1 / 2 : ℂ) *
-          (v32ContinuumHamiltonian mass px py pz z component +
-            (sign / energy : ℝ) *
-              v32ContinuumHamiltonian mass px py pz
-                (v32ContinuumHamiltonian mass px py pz z) component) := by
-    fin_cases component <;>
-      simp [v32SpectralProjector, v32ContinuumHamiltonian,
-        cubicalStandardHamiltonian, cubicalStandardSpatial,
-        cubicalStandardBeta, cubicalStandardAlphaX,
-        cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+  have hlinear := congrFun
+    (v32_hamiltonian_of_spectral_projector
+      sign mass px py pz energy z) component
   simp only [v32SpectralProjector]
   rw [hlinear, hsqc]
   have hsignC : (sign : ℂ) ^ 2 = 1 := by exact_mod_cast hsign
@@ -127,12 +132,12 @@ theorem v32_projectors_orthogonal
             (1 / energy : ℝ) *
               v32ContinuumHamiltonian mass px py pz
                 (v32ContinuumHamiltonian mass px py pz z) component) := by
-    fin_cases component <;>
-      simp [v32NegativeProjector, v32SpectralProjector,
-        v32ContinuumHamiltonian, cubicalStandardHamiltonian,
-        cubicalStandardSpatial, cubicalStandardBeta,
-        cubicalStandardAlphaX, cubicalStandardAlphaY,
-        cubicalStandardAlphaZ] <;> ring
+    change v32ContinuumHamiltonian mass px py pz
+        (v32SpectralProjector (-1) mass px py pz energy z) component = _
+    rw [congrFun (v32_hamiltonian_of_spectral_projector
+      (-1) mass px py pz energy z) component]
+    push_cast
+    ring
   simp only [v32PositiveProjector, v32NegativeProjector,
     v32SpectralProjector]
   have hlinear' := hlinear
@@ -165,23 +170,13 @@ theorem v32_spectral_projector_is_eigenbranch
   have hsq := v32_continuum_hamiltonian_square mass px py pz z
   funext component
   have hsqc := congrFun hsq component
-  have hlinear :
-      v32ContinuumHamiltonian mass px py pz
-          (v32SpectralProjector sign mass px py pz energy z) component =
-        (1 / 2 : ℂ) *
-          (v32ContinuumHamiltonian mass px py pz z component +
-            (sign / energy : ℝ) *
-              v32ContinuumHamiltonian mass px py pz
-                (v32ContinuumHamiltonian mass px py pz z) component) := by
-    fin_cases component <;>
-      simp [v32SpectralProjector, v32ContinuumHamiltonian,
-        cubicalStandardHamiltonian, cubicalStandardSpatial,
-        cubicalStandardBeta, cubicalStandardAlphaX,
-        cubicalStandardAlphaY, cubicalStandardAlphaZ] <;> ring
+  have hlinear := congrFun
+    (v32_hamiltonian_of_spectral_projector
+      sign mass px py pz energy z) component
   rw [hlinear, hsqc]
   simp only [v32SpectralProjector]
-  have hsignC : (sign : ℂ) ^ 2 = 1 := by exact_mod_cast hsign
-  have henergyC : (energy : ℂ) ^ 2 =
+  have hsignC : (sign : ℂ)^2 = 1 := by exact_mod_cast hsign
+  have henergyC : (energy : ℂ)^2 =
       (v32ContinuumEnergySq mass px py pz : ℂ) := by
     exact_mod_cast henergy
   have hneC : (energy : ℂ) ≠ 0 := by exact_mod_cast hne
@@ -226,7 +221,7 @@ theorem v32_negative_projector_is_negative_branch
     v32_spectral_projector_is_eigenbranch
       (-1) mass px py pz energy (by norm_num) henergy hne z
 
-/-- The V3.2 U ni tP ha se definition used by this stage. -/
+/-- The unit complex phase associated with a real angle. -/
 def v32UnitPhase (angle : ℝ) : ℂ :=
   (Real.cos angle : ℂ) - Complex.I * (Real.sin angle : ℂ)
 
@@ -236,7 +231,7 @@ theorem v32_unit_phase_norm_sq (angle : ℝ) :
     Complex.cos_ofReal_re, Complex.sin_ofReal_re]
   simpa [pow_two] using Real.cos_sq_add_sin_sq angle
 
-/-- The V3.2 B ra nc hE vo lu ti on definition used by this stage. -/
+/-- Time evolution restricted to a chosen signed energy branch. -/
 def v32BranchEvolution
     (sign mass px py pz energy time : ℝ) (z : CubicalCell4) : CubicalCell4 :=
   fun component =>
@@ -259,34 +254,34 @@ theorem v32_projected_density_nonnegative
   unfold cubicalCell4Density
   exact Finset.sum_nonneg (fun component _ => Complex.normSq_nonneg _)
 
-/-- The bundled V3.2 S pe ct ra lP ro je ct or Ce rt if ic at e. -/
+/-- Certificate collecting the spectral-projector and branch-evolution laws. -/
 structure V32SpectralProjectorCertificate : Prop where
   complete : ∀ mass px py pz energy z,
     (fun component =>
       v32PositiveProjector mass px py pz energy z component +
         v32NegativeProjector mass px py pz energy z component) = z
   positiveIdempotent : ∀ mass px py pz energy,
-    energy ^ 2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
+    energy^2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
       v32PositiveProjector mass px py pz energy
           (v32PositiveProjector mass px py pz energy z) =
         v32PositiveProjector mass px py pz energy z
   negativeIdempotent : ∀ mass px py pz energy,
-    energy ^ 2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
+    energy^2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
       v32NegativeProjector mass px py pz energy
           (v32NegativeProjector mass px py pz energy z) =
         v32NegativeProjector mass px py pz energy z
   orthogonal : ∀ mass px py pz energy,
-    energy ^ 2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
+    energy^2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
       v32PositiveProjector mass px py pz energy
           (v32NegativeProjector mass px py pz energy z) = 0
   positiveInvariant : ∀ mass px py pz energy,
-    energy ^ 2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
+    energy^2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
       v32ContinuumHamiltonian mass px py pz
           (v32PositiveProjector mass px py pz energy z) =
         fun component => (energy : ℂ) *
           v32PositiveProjector mass px py pz energy z component
   negativeInvariant : ∀ mass px py pz energy,
-    energy ^ 2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
+    energy^2 = v32ContinuumEnergySq mass px py pz → energy ≠ 0 → ∀ z,
       v32ContinuumHamiltonian mass px py pz
           (v32NegativeProjector mass px py pz energy z) =
         fun component => (-energy : ℂ) *
@@ -310,7 +305,6 @@ theorem v32_spectral_projectors : V32SpectralProjectorCertificate where
   projectedDensityNonnegative := v32_projected_density_nonnegative
   branchEvolutionPreservesDensity :=
     v32_branch_evolution_preserves_projected_density
-
 
 end
 
