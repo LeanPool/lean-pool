@@ -21,7 +21,7 @@ namespace Catalytic
 
 universe u
 
-/-- **Theorem T3a (`x^7 ∈ RP^{pass}_R(3, 5)` whenever `576` is invertible, i.e. `char ≠ 2, 3`).** -/
+/-- **Theorem T3a (`x^7 ∈ RP^{pass}_R(3, 5)` whenever `576` is a unit in `R`).** -/
 theorem three_reg_5call_x7 {R : Type u} [CRing R]
     (inv576 : R) (hinv : inv576 * CRing.intCast 576 = 1) :
     Pass3Prog.accesses (Pass3Prog.scaleOut inv576 prog5Power7) = 5 ∧
@@ -30,7 +30,7 @@ theorem three_reg_5call_x7 {R : Type u} [CRing R]
   ⟨by rw [Pass3Prog.scaleOut_accesses]; exact prog5_x7_accesses,
    fun x o u v => exec3Poly_certifies_monic prog5Power7 7 576 prog5_x7_cert inv576 hinv x o u v⟩
 
-/-- **Theorem T3b (`x^9 ∈ RP^{pass}_R(3, 6)` whenever `382500000` is invertible, i.e. `char ∉ {2,3,5,17}`).** -/
+/-- **Theorem T3b (`x^9 ∈ RP^{pass}_R(3, 6)` whenever `382500000` is a unit in `R`).** -/
 theorem three_reg_6call_x9 {R : Type u} [CRing R]
     (invD : R) (hinv : invD * CRing.intCast 382500000 = 1) :
     Pass3Prog.accesses (Pass3Prog.scaleOut invD prog6Power9) = 6 ∧
