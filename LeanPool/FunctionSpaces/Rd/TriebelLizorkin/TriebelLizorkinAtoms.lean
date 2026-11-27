@@ -245,7 +245,7 @@ theorem IsSmoothAtom.continuous {K : ℕ} {d A : ℝ} {j : ℕ} {c : V} {a : V �
     (ha : IsSmoothAtom univ K d A j c a) : Continuous a :=
   continuousOn_univ.1 ha.contDiffOn.continuousOn
 
-/-- A smooth atom has compact support, in `B̄(c, d 2^(-j))`. -/
+/-- A smooth atom has compact support, in `closedBall(c, d 2^(-j))`. -/
 theorem IsSmoothAtom.hasCompactSupport {Ω : Set V} {K : ℕ} {d A : ℝ} {j : ℕ} {c : V}
     {a : V → ℂ} (ha : IsSmoothAtom Ω K d A j c a) : HasCompactSupport a :=
   HasCompactSupport.intro (isCompact_closedBall c (d / 2 ^ j)) fun x hx =>
@@ -256,7 +256,8 @@ theorem IsSmoothAtom.integrable {K : ℕ} {d A : ℝ} {j : ℕ} {c : V} {a : V �
     (ha : IsSmoothAtom univ K d A j c a) : Integrable a :=
   ha.continuous.integrable_of_hasCompactSupport ha.hasCompactSupport
 
-/-- `∫ |a| ≤ A |B̄(c, d 2^(-j))| = A d^n |B_1| 2^(-jn)` for a smooth atom `a` on `V` with radius
+/-- `∫ |a| ≤ A |closedBall(c, d 2^(-j))| = A d^n |B_1| 2^(-jn)` for a smooth atom `a` on `V`
+with radius
 factor `d ≥ 0`. -/
 theorem IsSmoothAtom.lintegral_enorm_le {K : ℕ} {d A : ℝ} (hd : 0 ≤ d) {j : ℕ} {c : V}
     {a : V → ℂ} (ha : IsSmoothAtom univ K d A j c a) :
@@ -273,7 +274,8 @@ theorem IsSmoothAtom.lintegral_enorm_le {K : ℕ} {d A : ℝ} (hd : 0 ≤ d) {j 
   · rw [ENNReal.toReal_one, div_one, ENNReal.rpow_one]
 
 /-- **Convolution with a series of atoms, term by term**: for a continuous kernel `K` that
-vanishes outside `B̄(0, ρ)`, `ρ ≥ 0`, and smooth atoms `a_m` of level `j` centred at the cells
+vanishes outside `closedBall(0, ρ)`, `ρ ≥ 0`, and smooth atoms `a_m` of level `j` centred at the
+cells
 with radius factor `d ≥ 0`, `K ⋆ (∑_m λ_m a_m) = ∑_m λ_m K ⋆ a_m` at every point. Near each
 point only finitely many atoms meet the support of `y ↦ K(x - y)`. -/
 theorem conv_tsum_atom {K : V → ℂ} (hKc : Continuous K) {ρ : ℝ} (hρ : 0 ≤ ρ)
@@ -308,7 +310,7 @@ theorem conv_tsum_atom {K : V → ℂ} (hKc : Continuous K) {ρ : ℝ} (hρ : 0 
 /-- **Convolution with a series of atoms, bounded term by term**: if `f = ∑_m λ_m a_m` almost
 everywhere, for smooth atoms `a_m` of level `j` centred at the cells with radius factor `d ≥ 0`,
 then `|K ⋆ f(x)| ≤ ∑_m |λ_m| |K ⋆ a_m(x)|` at every point, for a continuous kernel `K` that
-vanishes outside `B̄(0, ρ)`, `ρ ≥ 0`. -/
+vanishes outside `closedBall(0, ρ)`, `ρ ≥ 0`. -/
 theorem enorm_conv_le_tsum_atom {K : V → ℂ} (hKc : Continuous K) {ρ : ℝ} (hρ : 0 ≤ ρ)
     (hKρ : ∀ y, ρ < ‖y‖ → K y = 0) {k : ℕ} {d A : ℝ} (hd : 0 ≤ d) {j : ℕ}
     {coef : (Fin (finrank ℝ V) → ℤ) → ℂ} {a : (Fin (finrank ℝ V) → ℤ) → V → ℂ}

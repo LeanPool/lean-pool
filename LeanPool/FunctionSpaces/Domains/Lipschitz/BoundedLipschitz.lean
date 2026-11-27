@@ -31,7 +31,7 @@ comes with a bound: its quasi-norm on `V` is at most `C` times the intrinsic one
 depending only on `Ω`, `p`, `r`, `s` and `q`
 (`Rd.BoundedLipschitzDomain.exists_besov_extension_le`).
 
-The proof follows Schneider–Vybíral §3: a covering `Ω̄ ⊆ K_0 ∪ ⋃_j K_j` with an inner domain
+The proof follows Schneider–Vybíral §3: a covering `ΩBar ⊆ K_0 ∪ ⋃_j K_j` with an inner domain
 `K_0`, a smooth resolution of unity, and pointwise multipliers.
 
 * The balls shrink: `Γ ⊆ ⋃_j B(c_j, ρ_j - 2ε)` for some `ε > 0`
@@ -39,9 +39,9 @@ The proof follows Schneider–Vybíral §3: a covering `Ω̄ ⊆ K_0 ∪ ⋃_j K
   distance `> 2δ` from `Ωᶜ` (`Rd.BoundedLipschitzDomain.exists_interior_margin`), both by
   compactness; `Ωᶜ` is nonempty in dimension `n ≥ 1`
   (`Rd.BoundedLipschitzDomain.nonempty_compl`). The shrunk balls and the inner patch are bounded
-  open sets that cover `Ω̄` (`Rd.BoundedLipschitzDomain.patch`,
+  open sets that cover `ΩBar` (`Rd.BoundedLipschitzDomain.patch`,
   `Rd.BoundedLipschitzDomain.closure_subset_iUnion_patch`). A property that pastes over finite
-  covers of `Ω̄` thus passes from the patches to `Ω`
+  covers of `ΩBar` thus passes from the patches to `Ω`
   (`Rd.BoundedLipschitzDomain.exists_of_patches`).
 * Local extensions with a bound (`Rd.LocalMeansBump.exists_local_extension_le`) on the boundary
   patches `Ω ∩ B(c_j, ρ_j - 2ε)`, with the cone bump of `Ω_j` rescaled to radius `≤ ε / r`, and on
@@ -424,7 +424,7 @@ theorem isBounded_patch (ε : ℝ) {δ : ℝ} (hδ : 0 ≤ δ) (i : Option (Fin 
   | some j => exact isBounded_ball
 
 omit [FiniteDimensional ℝ V] in
-/-- **The patches cover `Ω̄`** if the shrunk balls cover `Γ` and the points of `Ω` outside them
+/-- **The patches cover `ΩBar`** if the shrunk balls cover `Γ` and the points of `Ω` outside them
 have distance `> 2δ` from `Ωᶜ` (`Rd.BoundedLipschitzDomain.exists_shrink`,
 `Rd.BoundedLipschitzDomain.exists_interior_margin`). -/
 theorem closure_subset_iUnion_patch {ε δ : ℝ}
@@ -446,12 +446,12 @@ theorem closure_subset_iUnion_patch {ε δ : ℝ}
       exact Set.mem_iUnion.2 ⟨none, hδ x hxΩ hxb⟩
 
 /-- **Pasting over the patches**: let `P U C` be a property of a set `U ⊆ V` and a constant
-`C ∈ [0, ∞]` that passes from the sets `Ω ∩ U_i` of every cover `(U_i)_{i ∈ {0, …, N}}` of `Ω̄` by
+`C ∈ [0, ∞]` that passes from the sets `Ω ∩ U_i` of every cover `(U_i)_{i ∈ {0, …, N}}` of `ΩBar` by
 `N + 1` bounded open sets, one for each boundary ball and one inner set (indexed by
 `Option (Fin Ω.N)`), with finite constants, to `Ω`, with a finite constant. If `P` holds with a
 finite constant for every boundary patch `Ω ∩ B(c_j, ρ_j - 2ε)`, `ε > 0`, and for every inner
 patch `Ω ∩ {infDist(·, Ωᶜ) > 2δ}`, `δ > 0`, then it holds for `Ω` with a finite constant: for
-suitable `ε` and `δ` the patches `Rd.BoundedLipschitzDomain.patch` cover `Ω̄`
+suitable `ε` and `δ` the patches `Rd.BoundedLipschitzDomain.patch` cover `ΩBar`
 (`Rd.BoundedLipschitzDomain.exists_shrink`, `Rd.BoundedLipschitzDomain.exists_interior_margin`,
 `Rd.BoundedLipschitzDomain.closure_subset_iUnion_patch`). -/
 theorem exists_of_patches [Nontrivial V] (P : Set V → ℝ≥0∞ → Prop)

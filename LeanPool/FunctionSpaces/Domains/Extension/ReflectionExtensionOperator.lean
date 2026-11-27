@@ -212,7 +212,8 @@ variable (Ω : BoundedLipschitzDomain V)
 
 /-- **The boundary patches by reflection are linear**: for `1 ≤ p ≤ ∞`, `ε ≥ 0` and a smooth `χ`
 with values in `[0, 1]`, closed support in `B(c_j, ρ_j)`, `|∂_{e_i} χ| ≤ d_i` and `χ = 1` near
-`B̄(c_j, ρ_j - 2ε)`, the map `f ↦ E_j(χ f)` (the extension by reflection in the graph domain `Ω_j`)
+`closedBall(c_j, ρ_j - 2ε)`, the map `f ↦ E_j(χ f)` (the extension by reflection in the graph
+domain `Ω_j`)
 is a linear extension of Sobolev functions on `Ω` from `Ω ∩ B(c_j, ρ_j - 2ε)` with the constant
 `Rd.reflectionConst` (`Rd.BoundedLipschitzDomain.exists_hasWeakLineDeriv_reflectionExtension_mul`,
 `Rd.BoundedLipschitzDomain.reflectionExtension_mul_eq_of_mem`). -/

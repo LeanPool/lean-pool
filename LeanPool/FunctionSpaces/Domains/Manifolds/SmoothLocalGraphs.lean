@@ -90,8 +90,9 @@ theorem contDiff_mul_of_tsupport_subset {E : Type*} [NormedAddCommGroup E] [Norm
 
 /-- **The smooth cut-off**: a function `φ` smooth on the ball `B(0, r)` of a finite-dimensional
 real inner product space agrees on `B(0, r/4)` with a smooth Lipschitz function `ψ` on the whole
-space, namely `ψ = b φ` for a smooth bump `b` equal to `1` on `B̄(0, r/4)` and supported in
-`B̄(0, r/2)`. `ψ` is smooth by `Rd.contDiff_mul_of_tsupport_subset` and has compact support, so
+space, namely `ψ = b φ` for a smooth bump `b` equal to `1` on `closedBall(0, r/4)` and supported in
+`closedBall(0, r/2)`. `ψ` is smooth by `Rd.contDiff_mul_of_tsupport_subset` and has compact
+support, so
 it is Lipschitz (Mathlib's `ContDiff.lipschitzWith_of_hasCompactSupport`). -/
 theorem exists_contDiff_lipschitzWith_eqOn_ball {E : Type*} [NormedAddCommGroup E]
     [InnerProductSpace ℝ E] [FiniteDimensional ℝ E] {φ : E → ℝ} {r : ℝ} (hr : 0 < r)

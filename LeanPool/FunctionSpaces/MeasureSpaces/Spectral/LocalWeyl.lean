@@ -16,10 +16,10 @@ Modified for Lean Pool: module names and imports adapted.
 # The local Weyl bound, the Nikolskii inequality and continuity
 
 A continuous spectral basis `(e_i)` on `M` (`ContinuousSpectralBasis`), with continuous basis
-functions `ẽ_i`, satisfies the **local Weyl bound** of dimension `D` with constant `C`
+functions `eTilde_i`, satisfies the **local Weyl bound** of dimension `D` with constant `C`
 (`ContinuousSpectralBasis.LocalWeylBound`) if
 
-`∑_{λ(i) < n} |ẽ_i(x)|² ≤ C n^D`   for every `x ∈ M` and `n ≥ 1`.
+`∑_{λ(i) < n} |eTilde_i(x)|² ≤ C n^D`   for every `x ∈ M` and `n ≥ 1`.
 
 For the Laplace–Beltrami operator of a compact Riemannian manifold of dimension `d` this is
 Hörmander's local Weyl law with `D = d`; on the torus `𝕋^d` it is the count of at most `(2n)^d`
@@ -28,7 +28,7 @@ frequencies of degree `< n` (`Torus.localWeylBound_fourierEigenbasis`).
 * **The Nikolskii inequality from `L_2` to `L_∞`**
   (`ContinuousSpectralBasis.norm_sq_le_of_localWeyl`): for `a` in the span of the basis
   functions of level `< n`, `‖a‖_∞² ≤ C n^D ‖a‖_2²`, by the Cauchy–Schwarz inequality in
-  `a(x) = ∑_i c_i ẽ_i(x)` and Parseval's identity `‖a‖_2² = ∑_i |c_i|²`.
+  `a(x) = ∑_i c_i eTilde_i(x)` and Parseval's identity `‖a‖_2² = ∑_i |c_i|²`.
 * **The Nikolskii inequality for `1 ≤ p ≤ 2`**
   (`ContinuousSpectralBasis.norm_rpow_le_of_localWeyl`): `‖a‖_∞^p ≤ C n^D ‖a‖_p^p`, since
   `‖a‖_2² ≤ ‖a‖_∞^(2-p) ‖a‖_p^p`. For `p > 2` the inequality with `n^(D/p)` does not follow this
@@ -39,7 +39,7 @@ frequencies of degree `< n` (`Torus.localWeylBound_fourierEigenbasis`).
 * **Continuity of `H^s` for `s > D/2`**
   (`ContinuousSpectralBasis.exists_continuous_of_localWeyl`): every `f ∈ L_2(μ)` with
   `∑_i (1 + λ(i))^(2s) |⟨e_i, f⟩|² < ∞` has a bounded continuous representative. The partial
-  sums `S_n f = ∑_{λ(i) < n} ⟨e_i, f⟩ ẽ_i` are continuous
+  sums `S_n f = ∑_{λ(i) < n} ⟨e_i, f⟩ eTilde_i` are continuous
   (`ContinuousSpectralBasis.partialSum`), and on the dyadic levels the Nikolskii inequality and
   the truncation error `‖f - P_n f‖_2 ≤ n^(-s) ‖c‖` give
   `‖S_{2^(k+1)} f - S_{2^k} f‖_∞ ≤ C^(1/2) 2^(D/2) ‖c‖ (2^(D/2 - s))^k`, a geometric series; the
@@ -71,15 +71,15 @@ theorem mem_levelSet {n : ℕ} {i : ι} : i ∈ B.levelSet n ↔ B.level i < n :
   simp [levelSet]
 
 /-- The **local Weyl bound** of dimension `D` with constant `C ≥ 0`:
-`∑_{λ(i) < n} |ẽ_i(x)|² ≤ C n^D` for every point `x` and every `n ≥ 1`. A hypothesis on the
+`∑_{λ(i) < n} |eTilde_i(x)|² ≤ C n^D` for every point `x` and every `n ≥ 1`. A hypothesis on the
 basis; the torus satisfies it (`Torus.localWeylBound_fourierEigenbasis`). -/
 structure LocalWeylBound (D C : ℝ) : Prop where
   /-- The constant is nonnegative. -/
   nonneg : 0 ≤ C
-  /-- `∑_{λ(i) < n} |ẽ_i(x)|² ≤ C n^D` for every `n ≥ 1` and every `x`. -/
+  /-- `∑_{λ(i) < n} |eTilde_i(x)|² ≤ C n^D` for every `n ≥ 1` and every `x`. -/
   le : ∀ n : ℕ, 1 ≤ n → ∀ x : M, ∑ i ∈ B.levelSet n, ‖B.basisFun i x‖ ^ 2 ≤ C * (n : ℝ) ^ D
 
-/-- An element of the span of level `< n` is a combination `∑_{λ(i) < n} c_i ẽ_i`. -/
+/-- An element of the span of level `< n` is a combination `∑_{λ(i) < n} c_i eTilde_i`. -/
 theorem exists_sum_of_mem_basisSpan {n : ℕ} {a : M →ᵇ ℂ} (ha : a ∈ B.basisSpan n) :
     ∃ c : ι → ℂ, a = ∑ i ∈ B.levelSet n, c i • B.basisFun i := by
   classical
@@ -93,7 +93,8 @@ theorem exists_sum_of_mem_basisSpan {n : ℕ} {a : M →ᵇ ℂ} (ha : a ∈ B.b
     _ = _ := Finset.sum_subset hsub fun i _ hi => by simp [hi]
 
 /-- **Parseval's identity for combinations of the basis functions**:
-`‖∑ c_i ẽ_i‖_2² = ∑ |c_i|²` (Mathlib's `OrthogonalFamily.norm_sum` for the orthonormal basis). -/
+`‖∑ c_i eTilde_i‖_2² = ∑ |c_i|²` (Mathlib's `OrthogonalFamily.norm_sum` for the orthonormal
+basis). -/
 theorem norm_toLp_sum_sq (t : Finset ι) (c : ι → ℂ) :
     ‖BoundedContinuousFunction.toLp (E := ℂ) 2 μ ℂ (∑ i ∈ t, c i • B.basisFun i)‖ ^ 2 =
       ∑ i ∈ t, ‖c i‖ ^ 2 := by
@@ -207,7 +208,7 @@ theorem norm_le_of_localWeyl {D C : ℝ} (hW : B.LocalWeylBound D C) {n : ℕ} (
 
 variable (B)
 
-/-- The **partial sum** `S_n f = ∑_{λ(i) < n} ⟨e_i, f⟩ ẽ_i`, a bounded continuous function. -/
+/-- The **partial sum** `S_n f = ∑_{λ(i) < n} ⟨e_i, f⟩ eTilde_i`, a bounded continuous function. -/
 noncomputable def partialSum (n : ℕ) (f : Lp ℂ 2 μ) : M →ᵇ ℂ :=
   ∑ i ∈ B.levelSet n, B.basis.repr f i • B.basisFun i
 

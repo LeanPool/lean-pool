@@ -38,8 +38,8 @@ A smooth function `m` on a real normed space has **symbol growth of order `σ`**
   `m(D) ω_{2^j} = 2^{jσ} (K_j)_{2^j}` with `ω = 𝓕⁻¹ ω̂` (`Rd.fourierMultiplierCLM_schwartzDilate`).
   For a family `(ω_j)` that is constant from some `M` on, with `𝓕ω_M` vanishing outside such an
   annulus, the kernels `K_j` of `𝓕ω_j` (`Rd.symbolBase`) are uniformly Schwartz
-  (`Rd.HasSymbolGrowth.exists_isUniformSchwartz_symbolBase`); for the synthesis kernels `ψ̃_j`
-  this gives `m(D) ψ̃_j = 2^{jσ} (G_j)_{2^j}` with a uniform family `(G_j)`
+  (`Rd.HasSymbolGrowth.exists_isUniformSchwartz_symbolBase`); for the synthesis kernels `ψTilde_j`
+  this gives `m(D) ψTilde_j = 2^{jσ} (G_j)_{2^j}` with a uniform family `(G_j)`
   (`Rd.HasSymbolGrowth.exists_isUniformSchwartz_psiDualS`).
 * **The maximal bound**: convolutions with the dilates `(G_j)_{2^j}` of a uniform family are
   bounded by the Hardy–Littlewood maximal function, uniformly in `j`, with the finite constant
@@ -489,8 +489,9 @@ theorem HasSymbolGrowth.exists_isUniformSchwartz_symbolBase (hm : HasSymbolGrowt
   exact ⟨_, hA.of_forall_ge_eq (N := M) fun j hj => by rw [symbolBase, hω j hj]⟩
 
 /-- **Symbols applied to the synthesis kernels**: for a symbol `m` of order `σ` there is a
-uniformly Schwartz family `(G_j)` with `m(D) ψ̃_j = 2^{jσ} (G_j)_{2^j}` for every `j`, where
-`ψ̃_j = (psiDualBase j)_{2^j}` (`Rd.psiDualS`). The family `psiDualBase` is constant from `2` on,
+uniformly Schwartz family `(G_j)` with `m(D) ψTilde_j = 2^{jσ} (G_j)_{2^j}` for every `j`, where
+`ψTilde_j = (psiDualBase j)_{2^j}` (`Rd.psiDualS`). The family `psiDualBase` is constant from
+`2` on,
 with Fourier transform in `{1/4 ≤ ‖ζ‖ ≤ 4}` (`Rd.mem_annulus_of_fourier_psiDualBase_ne_zero`,
 `Rd.HasSymbolGrowth.exists_isUniformSchwartz_symbolBase`,
 `Rd.fourierMultiplierCLM_schwartzDilate`); the bounds are existential. -/

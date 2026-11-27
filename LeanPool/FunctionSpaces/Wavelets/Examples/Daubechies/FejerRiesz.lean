@@ -31,7 +31,7 @@ Lean the modulus is the norm `‖·‖` of `ℂ`, and `L(e^{iθ})` is
 `(a + a⁻¹)/2 = t`, has exactly one root `a(t)` with `|a(t)| < 1` (`Complex.joukowskyInv`): the
 two roots have product `1`, and a root on the unit circle would give `t = Re a ∈ [-1, 1]`
 (`Complex.exists_joukowsky_root`, `Complex.joukowsky_root_unique`). Uniqueness gives
-`a(t̄) = conj (a(t))` (`Complex.joukowskyInv_conj`). On the unit circle the factor `cos θ - t` of
+`a(tBar) = conj (a(t))` (`Complex.joukowskyInv_conj`). On the unit circle the factor `cos θ - t` of
 `Q` splits into two linear factors: for `z = e^{iθ}`,
 `2 |a| |cos θ - t| = |1 - a z| |1 - ā z|` (`Complex.joukowsky_two_mul_norm_mul_norm_re_sub`).
 
@@ -41,7 +41,7 @@ in `[-1, 1]`, and the roots are invariant under conjugation (`Polynomial.map_con
 product `L₀ = ∏_t (1 - a(t) X)` (`Polynomial.fejerRieszFactor`) has its roots `1/a(t)` outside
 the closed unit disk (`Polynomial.eval_fejerRieszFactor_ne_zero`) and coefficients fixed by
 conjugation, so it is a real polynomial (`Polynomial.exists_map_eq_of_map_conj_eq`). With
-`∏_t |1 - ā(t) z| = ∏_t |1 - a(t̄) z| = ∏_t |1 - a(t) z|` the identity above gives
+`∏_t |1 - ā(t) z| = ∏_t |1 - a(tBar) z| = ∏_t |1 - a(t) z|` the identity above gives
 `Q(cos θ) = K |L₀(e^{iθ})|²` with `K = |c| / ∏_t 2|a(t)| > 0`
 (`Polynomial.exists_eval_cos_eq_mul_norm_sq`). Finally `L = ±√K L₀`, the sign chosen such that
 `L(1) > 0` (`Polynomial.exists_eval_one_pos_of_aeval_ne_zero`); here `L(1) ≠ 0` since `L` has no
@@ -121,7 +121,7 @@ theorem joukowsky_root_ne_zero {a t : ℂ} (h : a ^ 2 - 2 * t * a + 1 = 0) : a �
   rintro rfl
   norm_num at h
 
-/-- If `a² - 2ta + 1 = 0`, then `ā² - 2 t̄ ā + 1 = 0`: conjugation is a ring homomorphism. -/
+/-- If `a² - 2ta + 1 = 0`, then `ā² - 2 tBar ā + 1 = 0`: conjugation is a ring homomorphism. -/
 theorem joukowsky_root_conj {a t : ℂ} (h : a ^ 2 - 2 * t * a + 1 = 0) :
     conj a ^ 2 - 2 * conj t * conj a + 1 = 0 := by
   have := congrArg conj h
@@ -150,9 +150,9 @@ theorem joukowskyInv_eq {a t : ℂ} (ha : ‖a‖ < 1) (h : a ^ 2 - 2 * t * a + 
   have hspec := joukowskyInv_spec ⟨a, ha, h⟩
   joukowsky_root_unique hspec.1 ha hspec.2 h
 
-/-- **The inverse of the Joukowsky map commutes with conjugation**, `a(t̄) = conj (a(t))`, for
+/-- **The inverse of the Joukowsky map commutes with conjugation**, `a(tBar) = conj (a(t))`, for
 every `t ∈ ℂ`: conjugation maps the roots of `a² - 2ta + 1` in the disk to those of
-`a² - 2t̄a + 1`, and the root in the disk is unique. -/
+`a² - 2tBara + 1`, and the root in the disk is unique. -/
 theorem joukowskyInv_conj (t : ℂ) : joukowskyInv (conj t) = conj (joukowskyInv t) := by
   by_cases h : ∃ a : ℂ, ‖a‖ < 1 ∧ a ^ 2 - 2 * t * a + 1 = 0
   · have hspec := joukowskyInv_spec h
@@ -162,7 +162,7 @@ theorem joukowskyInv_conj (t : ℂ) : joukowskyInv (conj t) = conj (joukowskyInv
     rw [joukowskyInv, dite_eq_right h', joukowskyInv, dite_eq_right h, map_zero]
 
 /-- **The factorisation on the unit circle**, algebraic form: if `a² - 2ta + 1 = 0` and
-`z z̄ = 1`, then `2a (Re z - t) = -(1 - a z)(1 - a z̄)`, from `z + z̄ = 2 Re z`. -/
+`z zBar = 1`, then `2a (Re z - t) = -(1 - a z)(1 - a zBar)`, from `z + zBar = 2 Re z`. -/
 theorem joukowsky_two_mul_mul_re_sub {a t z : ℂ} (h : a ^ 2 - 2 * t * a + 1 = 0)
     (hz : z * conj z = 1) : 2 * a * ((z.re : ℂ) - t) = -((1 - a * z) * (1 - a * conj z)) := by
   have h2 : z + conj z = 2 * (z.re : ℂ) := by
@@ -173,7 +173,7 @@ theorem joukowsky_two_mul_mul_re_sub {a t z : ℂ} (h : a ^ 2 - 2 * t * a + 1 = 
 
 /-- **The factorisation on the unit circle.** If `a² - 2ta + 1 = 0` and `|z| = 1`, then
 `2 |a| |Re z - t| = |1 - a z| |1 - ā z|`; for `z = e^{iθ}` the left side contains
-`|cos θ - t|`. Here `|1 - a z̄| = |1 - ā z|` by conjugation. -/
+`|cos θ - t|`. Here `|1 - a zBar| = |1 - ā z|` by conjugation. -/
 theorem joukowsky_two_mul_norm_mul_norm_re_sub {a t z : ℂ} (h : a ^ 2 - 2 * t * a + 1 = 0)
     (hz : ‖z‖ = 1) : 2 * ‖a‖ * ‖(z.re : ℂ) - t‖ = ‖1 - a * z‖ * ‖1 - conj a * z‖ := by
   have hz' : z * conj z = 1 := by
@@ -192,7 +192,7 @@ namespace Polynomial
 /-! ### The complex roots of a real polynomial -/
 
 /-- **The complex roots of a real polynomial are invariant under conjugation**, with
-multiplicities: the multiset `t̄` over the roots `t` of `Q` is the multiset of roots of `Q`. -/
+multiplicities: the multiset `tBar` over the roots `t` of `Q` is the multiset of roots of `Q`. -/
 theorem map_conj_aroots (Q : ℝ[X]) : (Q.aroots ℂ).map conj = Q.aroots ℂ := by
   rw [aroots_def, roots_map_of_injective_of_card_eq_natDegree (RingHom.injective _)
     IsAlgClosed.card_roots_eq_natDegree, Polynomial.map_map]
@@ -200,7 +200,8 @@ theorem map_conj_aroots (Q : ℝ[X]) : (Q.aroots ℂ).map conj = Q.aroots ℂ :=
   exact RingHom.ext fun r => by simp
 
 /-- Conjugation can be dropped inside a function of the complex roots of a real polynomial:
-the multisets `g(t̄)` and `g(t)` over the roots `t` of `Q` agree (`Polynomial.map_conj_aroots`). -/
+the multisets `g(tBar)` and `g(t)` over the roots `t` of `Q` agree
+(`Polynomial.map_conj_aroots`). -/
 theorem map_comp_conj_aroots {M : Type*} (Q : ℝ[X]) (g : ℂ → M) :
     (Q.aroots ℂ).map (fun t => g (conj t)) = (Q.aroots ℂ).map g := by
   calc (Q.aroots ℂ).map (fun t => g (conj t)) = ((Q.aroots ℂ).map conj).map g :=
@@ -269,7 +270,7 @@ theorem natDegree_fejerRieszFactor_le (Q : ℝ[X]) :
     exact card_roots_map_le_natDegree Q
 
 /-- **The Fejér–Riesz factor has coefficients fixed by conjugation**: conjugating the
-coefficients replaces `a(t)` by `conj (a(t)) = a(t̄)` (`Complex.joukowskyInv_conj`), and the roots
+coefficients replaces `a(t)` by `conj (a(t)) = a(tBar)` (`Complex.joukowskyInv_conj`), and the roots
 `t` of `Q` are invariant under conjugation (`Polynomial.map_comp_conj_aroots`). -/
 theorem map_conj_fejerRieszFactor (Q : ℝ[X]) :
     (fejerRieszFactor Q).map (starRingEnd ℂ) = fejerRieszFactor Q := by
@@ -303,7 +304,7 @@ theorem eval_fejerRieszFactor_ne_zero {Q : ℝ[X]} (hQ : ∀ r ∈ Set.Icc (-1 :
   rw [← sub_eq_zero.1 h, norm_one] at h1
   exact lt_irrefl _ h1
 
-/-- **A complex polynomial with coefficients fixed by conjugation is real**: if `P̄ = P`
+/-- **A complex polynomial with coefficients fixed by conjugation is real**: if `PBar = P`
 coefficientwise, then `P` is the image of a real polynomial (each coefficient equals its real
 part; Mathlib's `Polynomial.lifts`). -/
 theorem exists_map_eq_of_map_conj_eq {P : ℂ[X]} (h : P.map (starRingEnd ℂ) = P) :
@@ -318,7 +319,7 @@ theorem exists_map_eq_of_map_conj_eq {P : ℂ[X]} (h : P.map (starRingEnd ℂ) =
 `∏_t 2|a(t)| · ∏_t |cos θ - t| = |L₀(e^{iθ})|²`
 over the complex roots `t` of `Q`: each factor is `|1 - a(t) z| |1 - conj (a(t)) z|` with
 `z = e^{iθ}` (`Complex.joukowsky_two_mul_norm_mul_norm_re_sub`), and
-`∏_t |1 - conj (a(t)) z| = ∏_t |1 - a(t̄) z| = ∏_t |1 - a(t) z|`. -/
+`∏_t |1 - conj (a(t)) z| = ∏_t |1 - a(tBar) z| = ∏_t |1 - a(t) z|`. -/
 theorem prod_two_mul_norm_mul_prod_norm_eq {Q : ℝ[X]}
     (hQ : ∀ r ∈ Set.Icc (-1 : ℝ) 1, 0 < Q.eval r) (θ : ℝ) :
     ((Q.aroots ℂ).map fun t => 2 * ‖Complex.joukowskyInv t‖).prod *

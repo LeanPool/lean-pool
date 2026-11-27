@@ -16,7 +16,7 @@ Modified for Lean Pool: module names and imports adapted.
 # Piecewise polynomials on the circle
 
 On the circle `𝕋 = ℝ/ℤ`, identified with `[0, 1)` through the periodic extension
-`f̃(x) = f(x - ⌊x⌋)`, the dyadic piecewise polynomials are the same functions as on `[0, 1)`,
+`fTilde(x) = f(x - ⌊x⌋)`, the dyadic piecewise polynomials are the same functions as on `[0, 1)`,
 so their scheme is `Interval.ppScheme` in `L_p[0, 1] = L_p(𝕋)`. Only the modulus changes: the
 periodic modulus `ω_r^per(f, t)_p` of `FunctionSpaces.Domains.Interval.Periodic` also sees the knot
 `0 = 1` of the circle.
@@ -106,7 +106,7 @@ theorem isPiecewisePoly_perExt_ppFun {r : ℕ} {Q : ℕ → ℂ[X]} (hQ : ∀ n,
   ⟨perPieces k Q m, perPieces_mem hQ k m, fun _ hx => perExt_ppFun_eq k Q hx⟩
 
 /-- **The local masses of a periodic extension**: `2^k` consecutive pieces of the periodic
-extension `ũ` make up one period, so `∑_{n < 2^k} ∫_{I_{k,n+l}} |ũ|^p ≤ ‖u‖_p^p`. -/
+extension `uTilde` make up one period, so `∑_{n < 2^k} ∫_{I_{k,n+l}} |uTilde|^p ≤ ‖u‖_p^p`. -/
 theorem sum_localMass_perExt_le {u : ℝ → ℂ} (hu : Measurable u) (hp : p ≠ ∞) (k l : ℕ) :
     ∑ n ∈ Finset.range (2 ^ k), localMass p k (perExt u) (n + l) ≤
       eLpNorm u p unitVol ^ p.toReal := by
@@ -132,8 +132,9 @@ theorem sum_localMass_perExt_le {u : ℝ → ℂ} (hu : Measurable u) (hp : p �
     ← setLIntegral_congr Ico_ae_eq_Icc]
   exact setLIntegral_congr_fun measurableSet_Ico fun x hx => by rw [perExt_of_mem u hx]
 
-/-- **Bounded overlap on the circle**: `∑_{n < 2^k} ∑_{l ≤ r} ∫_{I_{k,n+l}} |ũ|^p ≤ (r + 1) ‖u‖_p^p`
-for the periodic extension `ũ`. -/
+/-- **Bounded overlap on the circle**: `∑_{n < 2^k} ∑_{l ≤ r} ∫_{I_{k,n+l}} |uTilde|^p ≤ (r + 1)
+‖u‖_p^p`
+for the periodic extension `uTilde`. -/
 theorem sum_sum_localMass_perExt_le {u : ℝ → ℂ} (hu : Measurable u) (hp : p ≠ ∞) (k r : ℕ) :
     ∑ n ∈ Finset.range (2 ^ k), ∑ l ∈ Finset.range (r + 1), localMass p k (perExt u) (n + l) ≤
       (r + 1) * eLpNorm u p unitVol ^ p.toReal := by

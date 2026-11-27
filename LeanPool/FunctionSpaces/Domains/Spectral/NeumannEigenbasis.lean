@@ -388,8 +388,10 @@ theorem isCompactOperator_neumannEmbedding : IsCompactOperator (neumannEmbedding
 dimension `n ≥ 1` (`Rd.BoundedLipschitzDomain.isCompactOperator_neumannEmbedding`,
 `Rd.neumannEmbedding_injective`, `Rd.denseRange_neumannEmbedding`). -/
 noncomputable def neumannCompactEmbedding :
-    CompactDenseEmbedding (neumannSpace Ω.toOpens)
-      (Lp ℂ 2 (volume.restrict (Ω.toOpens : Set V))) where
+    @CompactDenseEmbedding (neumannSpace Ω.toOpens)
+      (Lp ℂ 2 (volume.restrict (Ω.toOpens : Set V)))
+      (Submodule.normedAddCommGroup (neumannSpace Ω.toOpens))
+      (Submodule.innerProductSpace (neumannSpace Ω.toOpens)) inferInstance inferInstance where
   toCLM := neumannEmbedding Ω.toOpens
   isCompact := Ω.isCompactOperator_neumannEmbedding
   injective := neumannEmbedding_injective

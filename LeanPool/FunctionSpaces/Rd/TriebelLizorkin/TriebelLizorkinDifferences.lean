@@ -509,7 +509,7 @@ theorem enorm_higherDiff_dual_le_mul (L i : ℕ) (h y : V) :
 
 /-- **Differences of the dual kernels for short steps**: for `i ≤ j` and `‖h‖ < 2^(-j)`,
 `|Δ^L_h η_i| ≤ A_L 2^(in) 2^(-(j-i)L) 1_{B(0, (2LR + L + 1) 2^(-i))}`, since `η_i` vanishes
-outside `B̄(0, 2LR 2^(-i))` and the points `y + l h`, `l ≤ L`, move by at most
+outside `closedBall(0, 2LR 2^(-i))` and the points `y + l h`, `l ≤ L`, move by at most
 `L 2^(-j) ≤ L 2^(-i)`. -/
 theorem enorm_higherDiff_dual_le_indicator (L : ℕ) {i j : ℕ} (hij : i ≤ j) {h : V}
     (hh : h ∈ ball (0 : V) (1 / 2 ^ j)) (y : V) :

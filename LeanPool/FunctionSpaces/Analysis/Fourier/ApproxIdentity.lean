@@ -158,8 +158,9 @@ theorem smul_mem_tsupport_of_mem_tsupport_dilate {η : V → ℂ} {c : ℝ} (hc 
   exact h2
 
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
-/-- **Dilated supports shrink**: if the closed support of `η` lies in `B̄(0, R)` and `c > 0`, the
-closed support of `η_c` lies in `B̄(0, R/c)`. -/
+/-- **Dilated supports shrink**: if the closed support of `η` lies in `closedBall(0, R)` and `c
+> 0`, the
+closed support of `η_c` lies in `closedBall(0, R/c)`. -/
 theorem norm_le_of_mem_tsupport_dilate {η : V → ℂ} {R : ℝ}
     (hηR : tsupport η ⊆ Metric.closedBall 0 R) {c : ℝ} (hc : 0 < c) {x : V}
     (hx : x ∈ tsupport (dilate c η)) : ‖x‖ ≤ R / c := by
@@ -171,7 +172,8 @@ theorem norm_le_of_mem_tsupport_dilate {η : V → ℂ} {R : ℝ}
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
 open scoped Pointwise in
 /-- **Dilated supports plus a set lie in a thickening**: if the closed support of `η` lies in
-`B̄(0, R)` and `δ > 0`, then `supp η_{2^n} + S` lies in the `δ`-neighbourhood of `S` for all large
+`closedBall(0, R)` and `δ > 0`, then `supp η_{2^n} + S` lies in the `δ`-neighbourhood of `S` for
+all large
 `n`: once `R / 2^n < δ`, `supp η_{2^n} ⊆ B(0, δ)` (`Rd.norm_le_of_mem_tsupport_dilate`), and
 `B(0, δ) + S` is the `δ`-neighbourhood of `S` (Mathlib's `ball_add_zero`). -/
 theorem eventually_tsupport_dilate_add_subset_thickening {η : V → ℂ} {R δ : ℝ}
@@ -425,7 +427,7 @@ theorem tendsto_apply_apply_of_tendsto {ι E F : Type*} [SeminormedAddCommGroup 
 /-! ### Approximate identities at points of continuity -/
 
 /-- **Approximate identities at points of continuity**: if `Φ` is integrable with `∫ Φ = 1` and
-vanishes outside `B̄(0, R)`, and `F_J(z) → z₀` as `J → ∞` and `z → y`, then
+vanishes outside `closedBall(0, R)`, and `F_J(z) → z₀` as `J → ∞` and `z → y`, then
 `(Φ_{2^J} ⋆ F_J)(z) → z₀` as `J → ∞` and `z → y`: for every `ε > 0` there are `J₀` and `δ > 0`
 with `|(Φ_{2^J} ⋆ F_J)(z) - z₀| < ε` for `J ≥ J₀` and `‖z - y‖ < δ`. Since `∫ Φ_{2^J} = 1`,
 `(Φ_{2^J} ⋆ F_J)(z) - z₀ = ∫ Φ_{2^J}(w) (F_J(z - w) - z₀) dw`, and only `‖w‖ ≤ R 2^(-J)` enters. -/

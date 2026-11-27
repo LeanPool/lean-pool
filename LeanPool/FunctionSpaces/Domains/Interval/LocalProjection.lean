@@ -21,7 +21,7 @@ Modified for Lean Pool: module names and imports adapted.
 The **local projection** of a function `g` on an interval onto the polynomials of degree `< r`
 is computed from the moments of `g`. On `[0, 1]` the pairing `⟨P, Q⟩ = ∫_0^1 P Q` of
 polynomials of degree `< r` is nondegenerate (`Interval.polyPairing_nondegenerate`): pairing `P`
-with its conjugate `P̄` gives `∫_0^1 |P|²`. So the monomial basis `b_i` has a dual basis `d_i`,
+with its conjugate `PBar` gives `∫_0^1 |P|²`. So the monomial basis `b_i` has a dual basis `d_i`,
 `⟨d_i, b_k⟩ = δ_{ik}` (Mathlib's `LinearMap.BilinForm.dualBasis`), and every `P` of degree `< r`
 is `P = ∑_i ⟨P, b_i⟩ d_i` (`Interval.sum_polyPairing_smul_dualPoly`). For any function `g`,
 `Π g = ∑_i (∫_0^1 g b_i) d_i` is therefore a projection onto the polynomials, the
@@ -75,7 +75,7 @@ theorem polyPairing_comm (r : ℕ) (P Q : degreeLT ℂ r) : polyPairing r P Q = 
   simp only [polyPairing_apply, mul_comm]
 
 /-- **The pairing separates points**: if `∫_0^1 P Q = 0` for all `Q`, then `P = 0`; take
-`Q = P̄`, so that `∫_0^1 |P|² = 0`. -/
+`Q = PBar`, so that `∫_0^1 |P|² = 0`. -/
 theorem polyPairing_separatingLeft (r : ℕ) : (polyPairing r).SeparatingLeft := by
   intro P hP
   have hmem : (P : ℂ[X]).map (starRingEnd ℂ) ∈ degreeLT ℂ r :=

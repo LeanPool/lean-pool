@@ -16,15 +16,16 @@ Modified for Lean Pool: module names and imports adapted.
 /-!
 # Periodic functions and the periodic modulus of smoothness
 
-A function `f` on `[0, 1)` extends to the `1`-periodic function `f̃(x) = f(x - ⌊x⌋)`
+A function `f` on `[0, 1)` extends to the `1`-periodic function `fTilde(x) = f(x - ⌊x⌋)`
 (`Interval.perExt`). This identifies functions on the circle `𝕋 = ℝ/ℤ` with functions on
-`[0, 1)`, and `L_p(𝕋)` with `L_p[0, 1]`; working with `f̃` keeps everything on the real line.
+`[0, 1)`, and `L_p(𝕋)` with `L_p[0, 1]`; working with `fTilde` keeps everything on the real line.
 
 The **periodic modulus of smoothness**
-`ω_r^per(f, t)_p = sup_{0 ≤ h ≤ t} ‖Δ_h^r f̃‖_{L_p[0, 1]}` (`Interval.perModulus`)
+`ω_r^per(f, t)_p = sup_{0 ≤ h ≤ t} ‖Δ_h^r fTilde‖_{L_p[0, 1]}` (`Interval.perModulus`)
 differs from the modulus on `[0, 1]` in that its differences wrap around and compare values near
 `1` with values near `0`. It depends only on the class of `f` in `L_p[0, 1]`
-(`Interval.perModulus_congr_ae`), since `f̃` changes only on the integer translates of a null set
+(`Interval.perModulus_congr_ae`), since `fTilde` changes only on the integer translates of a
+null set
 (`Interval.perExt_ae_eq`), and it dominates the modulus on the interval
 (`Interval.modulus_le_perModulus`). The `L_p` norm of a periodic function over a unit interval
 does not depend on the interval (`Interval.lintegral_Icc_periodic`), from Mathlib's integration
@@ -39,7 +40,7 @@ open scoped ENNReal
 
 namespace Interval
 
-/-- The **periodic extension** `f̃(x) = f(x - ⌊x⌋)` of a function `f` on `[0, 1)`. -/
+/-- The **periodic extension** `fTilde(x) = f(x - ⌊x⌋)` of a function `f` on `[0, 1)`. -/
 noncomputable def perExt (f : ℝ → ℂ) (x : ℝ) : ℂ := f (Int.fract x)
 
 /-- The periodic extension has period `1`. -/
@@ -70,7 +71,8 @@ theorem higherDiff_periodic {f : ℝ → ℂ} (hf : Function.Periodic f 1) (r : 
   rw [show x + 1 + k * h = x + k * h + 1 by ring, hf]
 
 /-- **Periodic extensions of almost equal functions**: if `f = g` almost everywhere on `[0, 1]`,
-then `f̃ = g̃` almost everywhere on `ℝ`, since `{f̃ ≠ g̃}` is the union of the integer translates
+then `fTilde = gTilde` almost everywhere on `ℝ`, since `{fTilde ≠ gTilde}` is the union of the
+integer translates
 of `{f ≠ g} ∩ [0, 1)`. -/
 theorem perExt_ae_eq {f g : ℝ → ℂ} (hfg : f =ᵐ[volume.restrict (Icc 0 1)] g) :
     perExt f =ᵐ[volume] perExt g := by
@@ -122,11 +124,12 @@ theorem lintegral_Icc_nat_le {G : ℝ → ℝ≥0∞} (hG : Function.Periodic G 
       _ = ((n + 1 : ℕ) : ℝ≥0∞) * ∫⁻ x in Icc 0 1, G x := by push_cast; ring
 
 /-- The **periodic modulus of smoothness**
-`ω_r^per(f, t)_p = sup_{0 ≤ h ≤ t} ‖Δ_h^r f̃‖_{L_p[0, 1]}` of the periodic extension `f̃`. -/
+`ω_r^per(f, t)_p = sup_{0 ≤ h ≤ t} ‖Δ_h^r fTilde‖_{L_p[0, 1]}` of the periodic extension
+`fTilde`. -/
 noncomputable def perModulus (r : ℕ) (p : ℝ≥0∞) (f : ℝ → ℂ) (t : ℝ) : ℝ≥0∞ :=
   ⨆ (h : ℝ) (_ : h ∈ Icc 0 t), eLpNorm (higherDiff r h (perExt f)) p (volume.restrict (Icc 0 1))
 
-/-- `‖Δ_h^r f̃‖_{L_p[0, 1]} ≤ ω_r^per(f, t)` for `0 ≤ h ≤ t`. -/
+/-- `‖Δ_h^r fTilde‖_{L_p[0, 1]} ≤ ω_r^per(f, t)` for `0 ≤ h ≤ t`. -/
 theorem eLpNorm_higherDiff_le_perModulus {r : ℕ} {p : ℝ≥0∞} {f : ℝ → ℂ} {t h : ℝ}
     (hh : h ∈ Icc 0 t) :
     eLpNorm (higherDiff r h (perExt f)) p (volume.restrict (Icc 0 1)) ≤ perModulus r p f t :=
@@ -179,7 +182,7 @@ theorem perModulus_le {f : ℝ → ℂ} (hf : Measurable f) {p : ℝ≥0∞} (hp
     eLpNorm_perExt_Icc hf hp0 hp']
 
 /-- **The periodic modulus dominates the modulus on `[0, 1]`**: on `[0, 1 - rh)` the differences
-of `f̃` and of `f` agree, since `x, …, x + rh` stay in `[0, 1)`. -/
+of `fTilde` and of `f` agree, since `x, …, x + rh` stay in `[0, 1)`. -/
 theorem modulus_le_perModulus (r : ℕ) (p : ℝ≥0∞) (f : ℝ → ℂ) (t : ℝ) :
     modulus r p 0 1 f t ≤ perModulus r p f t := by
   rw [modulus_eq_iSup_nonneg]
@@ -199,7 +202,7 @@ theorem modulus_le_perModulus (r : ℕ) (p : ℝ≥0∞) (f : ℝ → ℂ) (t : 
   exact (eLpNorm_Icc_mono _ p le_rfl (by linarith)).trans (eLpNorm_higherDiff_le_perModulus hh)
 
 /-- **The modulus of a periodic extension over `n` periods**:
-`ω_r(f̃, t, [0, n])_p ≤ n^(1/p) ω_r^per(f, t)_p`, since `Δ_h^r f̃` is `1`-periodic
+`ω_r(fTilde, t, [0, n])_p ≤ n^(1/p) ω_r^per(f, t)_p`, since `Δ_h^r fTilde` is `1`-periodic
 (`Interval.lintegral_Icc_nat_le`). -/
 theorem modulus_perExt_le {f : ℝ → ℂ} (hf : Measurable f) {p : ℝ≥0∞} (hp0 : p ≠ 0)
     (hp : p ≠ ∞) (r n : ℕ) (t : ℝ) :

@@ -41,7 +41,7 @@ Two kinds of patches satisfy the conditions:
   these sets lie in `O` (`Rd.setOf_lt_infDist_compl_subset`), and so does `x - y` for
   `δ < infDist(x, Oᶜ)` and `‖y‖ ≤ δ` (`Rd.sub_mem_of_lt_infDist_of_norm_le`).
 
-Short steps `-y ∈ K̄`, `‖y‖ ≤ ε`, take `Ω ∩ B(c, ρ - ε)` into `Ω ∩ B(c, ρ)`
+Short steps `-y ∈ KBar`, `‖y‖ ≤ ε`, take `Ω ∩ B(c, ρ - ε)` into `Ω ∩ B(c, ρ)`
 (`Rd.LipschitzGraph.sub_mem_patch_of_mem_closedCone`); this gives the support conditions of all
 cone-supported kernels of small support.
 
@@ -137,7 +137,7 @@ theorem exists_coneBump_radius_le {a ε : ℝ} (ha : 0 ≤ a) (hε : 0 < ε) :
 
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
 /-- **Short steps into the reflected closed cone stay in a patch**: if `x ∈ Ω ∩ B(c, ρ - ε)`,
-`-y ∈ K̄` and `‖y‖ ≤ ε`, then `x - y ∈ Ω ∩ B(c, ρ)` (`Rd.LipschitzGraph.add_mem_of_mem_closedCone`
+`-y ∈ KBar` and `‖y‖ ≤ ε`, then `x - y ∈ Ω ∩ B(c, ρ)` (`Rd.LipschitzGraph.add_mem_of_mem_closedCone`
 and the triangle inequality). -/
 theorem sub_mem_patch_of_mem_closedCone {ε ρ : ℝ} {c x y : V}
     (hx : x ∈ Ω.domain ∩ ball c (ρ - ε)) (hy : -y ∈ Ω.closedCone) (hyR : ‖y‖ ≤ ε) :

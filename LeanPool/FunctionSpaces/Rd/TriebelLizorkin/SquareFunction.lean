@@ -24,7 +24,7 @@ finite (`Rd.squareFunctionConst_ne_top`, `Rd.squareSynthesisConst_ne_top`):
 
 * `‖f‖_{F^0_{p,2}} ≤ Q_{V,p} ‖f‖_p` (`Rd.triebelLizorkinNorm_zero_two_le`, constant
   `Rd.squareFunctionConst`): the analysis bound of the Calderón–Zygmund family `(ψ_j)_j`;
-* `‖f‖_p ≤ Q̃_{V,p} ‖f‖_{F^0_{p,2}}` (`Rd.enorm_le_triebelLizorkinNorm_zero_two`, constant
+* `‖f‖_p ≤ QTilde_{V,p} ‖f‖_{F^0_{p,2}}` (`Rd.enorm_le_triebelLizorkinNorm_zero_two`, constant
   `Rd.squareSynthesisConst`): the reproducing formula
   `∑_{j < J} psiDual_j ⋆ (ψ_j ⋆ f) = ∑_{j < J} Δ_j f` almost everywhere, and these partial
   sums tend to `f` in `L_p` (`Rd.sum_conv_psiDual_blockFun_ae`,
@@ -66,8 +66,8 @@ theorem squareFunctionConst_ne_top {p : ℝ≥0∞} (hp1 : 1 < p) (hp : p ≠ �
     (ENNReal.mul_ne_top ENNReal.ofNat_ne_top (familyHormanderConst_ne_top _))
 
 variable (V) in
-/-- The constant `Q̃_{V,p}` of the **lower square function bound**
-`‖f‖_p ≤ Q̃_{V,p} ‖f‖_{F^0_{p,2}}`: the strong type constant `Rd.czConst` of the
+/-- The constant `QTilde_{V,p}` of the **lower square function bound**
+`‖f‖_p ≤ QTilde_{V,p} ‖f‖_{F^0_{p,2}}`: the strong type constant `Rd.czConst` of the
 Calderón–Zygmund family of the synthesis kernels `psiDual_j`, with overlap `4` and Hörmander
 constant `4 H_{Ã}`, where `Ã = Rd.psiDualBaseBound V` (`Rd.isCZFamily_psiDual`). -/
 noncomputable def squareSynthesisConst (p : ℝ≥0∞) : ℝ≥0∞ :=
@@ -136,7 +136,8 @@ theorem tendsto_eLpNorm_sum_conv_psiDual_blockFun_sub (hp : p ≠ ∞)
 /-! ### The lower bound and `L_p = F^0_{p,2}` -/
 
 /-- **The lower square function bound**: in dimension `n ≥ 1`, for `1 < p < ∞` and
-`f ∈ L_p(V)`, `‖f‖_p ≤ Q̃_{V,p} ‖f‖_{F^0_{p,2}}` with `Q̃_{V,p} = Rd.squareSynthesisConst V p`.
+`f ∈ L_p(V)`, `‖f‖_p ≤ QTilde_{V,p} ‖f‖_{F^0_{p,2}}` with `QTilde_{V,p} =
+Rd.squareSynthesisConst V p`.
 The partial sums `∑_{j < J} Δ_j f` tend to `f` and equal `∑_{j < J} psiDual_j ⋆ (ψ_j ⋆ f)`,
 whose `L_p` norms the synthesis bound of the Calderón–Zygmund family `(psiDual_j)_j` controls. -/
 theorem enorm_le_triebelLizorkinNorm_zero_two [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ ∞)

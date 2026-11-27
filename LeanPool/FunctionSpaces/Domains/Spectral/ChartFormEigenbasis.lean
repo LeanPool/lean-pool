@@ -98,16 +98,21 @@ variable (μ) in
 a bounded linear operator from the chart Sobolev space to `L_2(D_k) × L_2(D_k)^n`. -/
 noncomputable def toNeumannValueGradient (k : Fin A.n) :
     A.chartSobolev μ →L[ℂ] Rd.ValueGradientL2 (A.pieceDomain k).toOpens :=
-  (WithLp.prodContinuousLinearEquiv 2 ℂ _ _).symm.toContinuousLinearMap ∘L
-    ((LpToLpRestrictCLM E ℂ ℂ volume 2 ((A.pieceDomain k).toOpens : Set E) ∘L
-        A.pieceCLM μ Rd.two_ne_top k ∘L A.chartSobolevEmbedding μ).prod
-      ((PiLp.continuousLinearEquiv 2 ℂ _).symm.toContinuousLinearMap ∘L
-        ContinuousLinearMap.pi fun j : Fin (finrank ℝ E) =>
-          Rd.restrictSubsetLp (A.pieceDomain k).toOpens.isOpen.measurableSet
-              (A.pieceDomain_subset_interior k) ∘L
-            PiLp.proj 2 (𝕜 := ℂ) (fun _ : Fin A.n × Fin (finrank ℝ E) =>
-              Lp ℂ 2 (volume.restrict (interior (range I)))) (k, j) ∘L
-            WithLp.sndL 2 ℂ _ _ ∘L (A.chartSobolev μ).subtypeL))
+  let domain := (A.pieceDomain k).toOpens
+  let domainMeasure := volume.restrict (domain : Set E)
+  let value : A.chartSobolev μ →L[ℂ] Lp ℂ 2 domainMeasure :=
+    LpToLpRestrictCLM E ℂ ℂ volume 2 (domain : Set E) ∘L
+      A.pieceCLM μ Rd.two_ne_top k ∘L A.chartSobolevEmbedding μ
+  let coordinate (j : Fin (finrank ℝ E)) : A.chartSobolev μ →L[ℂ] Lp ℂ 2 domainMeasure :=
+    Rd.restrictSubsetLp domain.isOpen.measurableSet (A.pieceDomain_subset_interior k) ∘L
+      PiLp.proj 2 (𝕜 := ℂ) (fun _ : Fin A.n × Fin (finrank ℝ E) =>
+        Lp ℂ 2 (volume.restrict (interior (range I)))) (k, j) ∘L
+      WithLp.sndL 2 ℂ _ _ ∘L (A.chartSobolev μ).subtypeL
+  let gradient : A.chartSobolev μ →L[ℂ] PiLp 2
+      (fun _ : Fin (finrank ℝ E) => Lp ℂ 2 domainMeasure) :=
+    (PiLp.continuousLinearEquiv 2 ℂ _).symm.toContinuousLinearMap ∘L
+      ContinuousLinearMap.pi coordinate
+  (WithLp.prodContinuousLinearEquiv 2 ℂ _ _).symm.toContinuousLinearMap ∘L value.prod gradient
 
 /-- The jets of the `k`-th piece on `D_k` lie in the Neumann space of `D_k`: weak derivatives on
 `O_I` are weak derivatives on `D_k ⊆ O_I` (`Rd.HasWeakLineDeriv.mono`). -/
@@ -224,7 +229,10 @@ is a Besov domain in dimension `n ≥ 1`
 (`Manifold.BesovAtlas.isCompactOperator_chartSobolevEmbedding`,
 `Manifold.BesovAtlas.chartSobolevEmbedding_injective`,
 `Manifold.BesovAtlas.denseRange_chartSobolevEmbedding`). -/
-noncomputable def chartCompactEmbedding : CompactDenseEmbedding (A.chartSobolev μ) (Lp ℂ 2 μ) where
+noncomputable def chartCompactEmbedding :
+    @CompactDenseEmbedding (A.chartSobolev μ) (Lp ℂ 2 μ)
+      (Submodule.normedAddCommGroup (A.chartSobolev μ))
+      (Submodule.innerProductSpace (A.chartSobolev μ)) inferInstance inferInstance where
   toCLM := A.chartSobolevEmbedding μ
   isCompact := A.isCompactOperator_chartSobolevEmbedding
   injective := A.chartSobolevEmbedding_injective

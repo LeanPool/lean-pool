@@ -768,7 +768,7 @@ variable (G : LipschitzGraph V)
 
 /-- **The divergence kernels of a cone-supported bump lie in the reflected closed cone**: for a bump
 of radius `R` supported in `-K`, every dilate `(K_i)_{2^j}` of its divergence kernels is supported
-in `{y : -y ∈ K̄, ‖y‖ ≤ 2R}`. -/
+in `{y : -y ∈ KBar, ‖y‖ ≤ 2R}`. -/
 theorem tsupport_dilate_divKernel_subset {b : LocalMeansBump V} (hb : G.ConeSupported b.toFun)
     (i : Fin (finrank ℝ V)) (j : ℕ) :
     tsupport (dilate (2 ^ j) (b.divKernel i : V → ℂ)) ⊆
@@ -826,7 +826,7 @@ variable (Ω : BoundedLipschitzDomain V)
 omit [MeasurableSpace V] [BorelSpace V] in
 /-- **The cutoff of a boundary patch**: for `ε > 0` and every `j` there is a smooth `χ` with values
 in `[0, 1]`, compact closed support in the boundary ball `B(c_j, ρ_j)` and `χ = 1` near
-`B̄(c_j, ρ_j - 2ε)` (`Rd.exists_contDiff_eventuallyEq_one`). -/
+`closedBall(c_j, ρ_j - 2ε)` (`Rd.exists_contDiff_eventuallyEq_one`). -/
 theorem exists_cutoff_boundary {ε : ℝ} (hε : 0 < ε) (j : Fin Ω.N) :
     ∃ χ : V → ℝ, ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) χ ∧ HasCompactSupport χ ∧
       tsupport χ ⊆ ball (Ω.center j) (Ω.radius j) ∧ (∀ x, χ x ∈ Set.Icc (0 : ℝ) 1) ∧

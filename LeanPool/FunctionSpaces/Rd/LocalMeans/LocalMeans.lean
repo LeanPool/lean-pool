@@ -185,7 +185,7 @@ theorem eLpNorm_kernel_one_le (L j : ℕ) :
       _ = 2 * eLpNorm (momentKernel b.toFun L) 1 volume := by
           rw [b.eLpNorm_scaled_one, b.eLpNorm_scaled_one, two_mul]
 
-/-- The dilated moment kernels vanish outside `B̄(0, L R 2^(-j))`. -/
+/-- The dilated moment kernels vanish outside `closedBall(0, L R 2^(-j))`. -/
 theorem scaled_eq_zero_of_lt (L j : ℕ) {y : V} (hy : L * b.radius / 2 ^ j < ‖y‖) :
     b.scaled L j y = 0 := by
   rw [scaled, dilate, b.momentKernel_eq_zero L, mul_zero]
@@ -193,7 +193,7 @@ theorem scaled_eq_zero_of_lt (L j : ℕ) {y : V} (hy : L * b.radius / 2 ^ j < �
   rw [div_lt_iff₀ (by positivity)] at hy
   linarith
 
-/-- The dual kernels vanish outside `B̄(0, 2 L R 2^(-j))`. -/
+/-- The dual kernels vanish outside `closedBall(0, 2 L R 2^(-j))`. -/
 theorem dual_eq_zero_of_lt (L j : ℕ) {y : V} (hy : 2 * L * b.radius / 2 ^ j < ‖y‖) :
     b.dual L j y = 0 := by
   have hLR : 0 ≤ (L : ℝ) * b.radius := mul_nonneg (Nat.cast_nonneg L) b.radius_nonneg
@@ -594,7 +594,7 @@ end LocalMeansBump
 
 /-- **The mollifier of a bump function**: the normalised smooth bump `f` around `c` (Mathlib's
 `ContDiffBump.normed`), with complex values; it is smooth with compact support in the closed ball
-`B̄(c, r_out)` and has integral `1`. -/
+`closedBall(c, r_out)` and has integral `1`. -/
 noncomputable def bumpMollifier {c : V} (f : ContDiffBump c) : V → ℂ :=
   fun z => ((f.normed volume z : ℝ) : ℂ)
 
@@ -603,7 +603,7 @@ theorem contDiff_bumpMollifier {c : V} (f : ContDiffBump c) :
     ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) (bumpMollifier f) :=
   Complex.ofRealCLM.contDiff.comp (f.contDiff_normed (n := ⊤))
 
-/-- The mollifier of a bump function has its closed support in `B̄(c, r_out)`. -/
+/-- The mollifier of a bump function has its closed support in `closedBall(c, r_out)`. -/
 theorem tsupport_bumpMollifier_subset {c : V} (f : ContDiffBump c) :
     tsupport (bumpMollifier f) ⊆ Metric.closedBall c f.rOut :=
   (tsupport_comp_subset Complex.ofReal_zero _).trans (f.tsupport_normed_eq (μ := volume)).subset
@@ -620,7 +620,8 @@ theorem integral_bumpMollifier {c : V} (f : ContDiffBump c) : ∫ z, bumpMollifi
   rw [integral_complex_ofReal, f.integral_normed, Complex.ofReal_one]
 
 /-- **The bump for local means of a smooth bump function**: the mollifier of a smooth bump `f`
-around `c` with outer radius `r_out` vanishes outside `B̄(c, r_out)`, hence outside the ball of
+around `c` with outer radius `r_out` vanishes outside `closedBall(c, r_out)`, hence outside the
+ball of
 every radius `R ≥ ‖c‖ + r_out` around `0`, since `‖z‖ ≤ ‖z - c‖ + ‖c‖`. -/
 noncomputable def LocalMeansBump.ofContDiffBump {c : V} (f : ContDiffBump c) {R : ℝ}
     (hR : ‖c‖ + f.rOut ≤ R) : LocalMeansBump V where

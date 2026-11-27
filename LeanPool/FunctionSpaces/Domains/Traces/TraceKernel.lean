@@ -19,19 +19,19 @@ Modified for Lean Pool: module names and imports adapted.
 
 Let `Ω` be a bounded Lipschitz domain with boundary `Γ` in a finite-dimensional real inner product
 space `V`, such as `ℝ^d`, with Lebesgue measure, `H^1(Ω)` the Hilbert space of restrictions of
-`H^1(V)`, `H̃^1(Ω)` the closure of the test functions of `Ω` in `H^1(V)` and `H^1_0(Ω)` the
+`H^1(V)`, `HTilde^1(Ω)` the closure of the test functions of `Ω` in `H^1(V)` and `H^1_0(Ω)` the
 closure of their restrictions in `H^1(Ω)`.
 
 * **Mollification in `H^1(V)`**: convergence of the `L_2` functions and of their weak
   derivatives gives convergence in `H^1(V)` (`Rd.tendsto_of_tendsto_toL2`), so the mollified
   `η_c ⋆ U` converge to `U` in `H^1(V)` as `c → ∞` (`Rd.tendsto_of_toL2_eq_convLp`). Mollifying a
   function that vanishes outside a compact set `S` gives Schwartz functions supported in
-  `supp η_c + S` (`Rd.exists_schwartz_eq_conv`), hence elements of `H̃^1(Ω)` when these sets lie
+  `supp η_c + S` (`Rd.exists_schwartz_eq_conv`), hence elements of `HTilde^1(Ω)` when these sets lie
   in `Ω` (`Rd.mem_tildeSpace_of_dilate`, `Rd.mem_tildeSpace_of_isCompact`); the mollifiers are
   normalised bump functions (`Rd.bumpMollifier`).
-* **`H̃^1(Ω)` by supports**: for `U ∈ H^1(V)` vanishing outside an open set `Ω`, the zero
+* **`HTilde^1(Ω)` by supports**: for `U ∈ H^1(V)` vanishing outside an open set `Ω`, the zero
   extension of `U|_Ω` is `U` (`Rd.indicatorLp_toL2_restrictProj`), and on a bounded Lipschitz
-  domain every `U ∈ H^1(V)` vanishing outside `Ω` lies in `H̃^1(Ω)`
+  domain every `U ∈ H^1(V)` vanishing outside `Ω` lies in `HTilde^1(Ω)`
   (`Rd.BoundedLipschitzDomain.mem_tildeSpace_iff`). The
   pieces of `U` near the boundary are pushed into `Ω` by a mollifier supported in the cone of the
   chart (`Rd.LipschitzGraph.coneMollifier`,
@@ -39,11 +39,11 @@ closure of their restrictions in `H^1(Ω)`.
 * **`ker γ = H^1_0(Ω)`** (`Rd.BoundedLipschitzDomain.traceKer_eq_zeroBoundarySpace`, McLean,
   Theorem 3.40): `u ∈ H^1(Ω)` has zero trace iff its zero extension lies in `H^1(V)`
   (`Rd.BoundedLipschitzDomain.memSobolev_indicatorLp_iff_mem_traceKer`), iff the zero extension
-  lies in `H̃^1(Ω)`, iff `u ∈ H^1_0(Ω)`.
+  lies in `HTilde^1(Ω)`, iff `u ∈ H^1_0(Ω)`.
 * **The quotient and the duals**: `H^1(Ω) ⧸ H^1_0(Ω) ≅ H^{1/2}(Γ)` isometrically
   (`Rd.BoundedLipschitzDomain.quotientZeroBoundaryEquivTraceSpace`); its content is
   `ker γ = H^1_0(Ω)`, and the isometry holds by the definition of `H^{1/2}(Γ)` as the orthogonal
-  complement of `ker γ`. Further `H̃^1(Ω) ≅ ker γ`
+  complement of `ker γ`. Further `HTilde^1(Ω) ≅ ker γ`
   (`Rd.BoundedLipschitzDomain.tildeEquivTraceKer`) and `(ker γ)^* ≅ H^{-1}(Ω)`
   (`Rd.BoundedLipschitzDomain.dualTraceKerEquiv`).
 -/
@@ -121,9 +121,10 @@ theorem exists_schwartz_eq_conv {K f : V → ℂ} (hK : ContDiff ℝ ((⊤ : ℕ
     (add_subset_add (subset_tsupport K) (Function.support_subset_iff'.2 hfS)))
     (hKc.isCompact.add hS).isClosed⟩
 
-/-- **Mollified functions in `H̃^1(Ω)`**: let `Ω` be open, `U ∈ H^1(V)` vanishing almost everywhere
+/-- **Mollified functions in `HTilde^1(Ω)`**: let `Ω` be open, `U ∈ H^1(V)` vanishing almost
+everywhere
 outside a compact set `S`, and `η` a smooth function with compact support and `∫ η = 1`. If
-`supp η_{2^n} + S ⊆ Ω` for all large `n`, then `U ∈ H̃^1(Ω)`: the functions `η_{2^n} ⋆ ι U` are
+`supp η_{2^n} + S ⊆ Ω` for all large `n`, then `U ∈ HTilde^1(Ω)`: the functions `η_{2^n} ⋆ ι U` are
 Schwartz functions with compact support in `Ω` (`Rd.exists_schwartz_eq_conv`), hence in the span
 of the test functions (`Rd.ofSchwartz_mem_testSpan`), and they converge to `U` in `H^1(V)`
 (`Rd.tendsto_of_toL2_eq_convLp`). -/
@@ -158,9 +159,9 @@ theorem mem_tildeSpace_of_dilate {Ω : Opens V} {U : H^{1}(V)} {S : Set V} (hS :
     ofSchwartz_mem_testSpan 1 (hwc n) ((hws n).trans hn))
 
 /-- **Mollified functions with compact support in `Ω`**: for an open set `Ω`, every `U ∈ H^1(V)`
-vanishing almost everywhere outside a compact subset `S` of `Ω` lies in `H̃^1(Ω)`. Some
+vanishing almost everywhere outside a compact subset `S` of `Ω` lies in `HTilde^1(Ω)`. Some
 thickening `S_δ` lies in `Ω` (Mathlib's `IsCompact.exists_thickening_subset_open`), and for the
-mollifier of the standard bump `Rd.stdBumpBase`, supported in `B̄(0, 1)`, eventually
+mollifier of the standard bump `Rd.stdBumpBase`, supported in `closedBall(0, 1)`, eventually
 `supp η_{2^n} + S ⊆ S_δ` (`Rd.eventually_tsupport_dilate_add_subset_thickening`,
 `Rd.mem_tildeSpace_of_dilate`). -/
 theorem mem_tildeSpace_of_isCompact {Ω : Opens V} {U : H^{1}(V)} {S : Set V} (hS : IsCompact S)
@@ -184,13 +185,15 @@ noncomputable def coneMollifierBase : ContDiffBump ((1 / 4 : ℝ) • Ω.e) :=
     by have := Ω.coneRadius_pos; linarith⟩
 
 /-- **The cone mollifier**: a smooth function with integral `1` and compact support in the open
-cone `K` of the graph and in `B̄(0, 1/2)` (`Rd.LipschitzGraph.tsupport_coneMollifier_subset`), the
+cone `K` of the graph and in `closedBall(0, 1/2)`
+(`Rd.LipschitzGraph.tsupport_coneMollifier_subset`), the
 mollifier of the bump `Rd.LipschitzGraph.coneMollifierBase`. Convolution with its dilates moves
 the closure of the graph domain into the domain (`Rd.LipschitzGraph.add_mem_of_mem_closure`). -/
 noncomputable def coneMollifier : V → ℂ := bumpMollifier Ω.coneMollifierBase
 
-/-- The cone mollifier is supported in the open cone and in `B̄(0, 1/2)`: its closed support is
-`B̄(e/4, ρ/2) ⊆ B(e/4, ρ) ⊆ K` (`Rd.LipschitzGraph.ball_subset_cone`), and
+/-- The cone mollifier is supported in the open cone and in `closedBall(0, 1/2)`: its closed
+support is
+`closedBall(e/4, ρ/2) ⊆ B(e/4, ρ) ⊆ K` (`Rd.LipschitzGraph.ball_subset_cone`), and
 `‖e/4‖ + ρ/2 ≤ 1/2`. -/
 theorem tsupport_coneMollifier_subset :
     tsupport Ω.coneMollifier ⊆ Ω.cone ∩ closedBall 0 (1 / 2) := by
@@ -212,7 +215,7 @@ theorem tsupport_coneMollifier_subset :
 
 end LipschitzGraph
 
-/-! ### `H̃^1(Ω)` by supports -/
+/-! ### `HTilde^1(Ω)` by supports -/
 
 /-- **The zero extension of the restriction**: for an open `Ω` and `U ∈ H^1(V)` vanishing almost
 everywhere outside `Ω`, the zero extension of the `L_2` function of `U|_Ω ∈ H^1(Ω)` is `ι U`, since
@@ -237,10 +240,11 @@ namespace BoundedLipschitzDomain
 
 variable (Ω : BoundedLipschitzDomain V)
 
-/-- **The local lemma: chart pieces of functions vanishing outside `Ω` lie in `H̃^1(Ω)`**: let
+/-- **The local lemma: chart pieces of functions vanishing outside `Ω` lie in `HTilde^1(Ω)`**: let
 `U ∈ H^1(V)` vanish almost everywhere outside `Ω`, and let `ζ` be a continuous bounded real
 function with closed support in the boundary ball `B_j`. Every `W ∈ H^1(V)` with `ι W = ζ ι U`
-lies in `H̃^1(Ω)`. `W` vanishes outside the compact set `S = Ω̄_j ∩ supp ζ`, since `Ω ∩ B_j` is
+lies in `HTilde^1(Ω)`. `W` vanishes outside the compact set `S = ΩBar_j ∩ supp ζ`, since `Ω ∩
+B_j` is
 the graph domain `Ω_j` inside `B_j`; the cone mollifier of the chart moves `S` into `Ω_j`
 (`Rd.LipschitzGraph.add_mem_of_mem_closure`, `Rd.LipschitzGraph.mem_cone_of_mem_tsupport_dilate`),
 and its small dilates keep it inside `B_j`
@@ -307,12 +311,12 @@ theorem eq_sum_add_of_ae_eq_zero (ψ : Ω.BoundaryPartition) {χ : V → ℝ}
   · rw [map_add, map_sum, h5, Pi.add_apply, h6, h4, h2 hx]
     simp only [h3, h2 hx, mul_zero, Finset.sum_const_zero, add_zero]
 
-/-- **Functions vanishing outside `Ω` lie in `H̃^1(Ω)`**: on a bounded Lipschitz domain, every
+/-- **Functions vanishing outside `Ω` lie in `HTilde^1(Ω)`**: on a bounded Lipschitz domain, every
 `U ∈ H^1(V)` whose `L_2` function vanishes almost everywhere outside `Ω` lies in the closure of the
 test functions of `Ω`. With a resolution of unity `ψ` equal to one near `Γ`
 (`Rd.BoundedLipschitzDomain.exists_boundaryPartition_nhds`) and the interior cut-off `χ`
 (`Rd.BoundedLipschitzDomain.exists_interior_cutoff`), `U = ∑_j ψ_j U + χ U`
-(`Rd.BoundedLipschitzDomain.eq_sum_add_of_ae_eq_zero`); the chart pieces lie in `H̃^1(Ω)` by the
+(`Rd.BoundedLipschitzDomain.eq_sum_add_of_ae_eq_zero`); the chart pieces lie in `HTilde^1(Ω)` by the
 cone mollifiers (`Rd.BoundedLipschitzDomain.mem_tildeSpace_of_mulLp_chart`), the interior piece
 since it vanishes outside a compact subset of `Ω` (`Rd.mem_tildeSpace_of_isCompact`). -/
 theorem mem_tildeSpace_of_ae_eq_zero {U : H^{1}(V)}
@@ -331,11 +335,12 @@ theorem mem_tildeSpace_of_ae_eq_zero {U : H^{1}(V)}
   filter_upwards [mulLp_apply_ae hc hC (toL2 U)] with x hx hxS
   rw [hx, image_eq_zero_of_notMem_tsupport hxS, Complex.ofReal_zero, zero_mul]
 
-/-- **`H̃^1(Ω)` is the space of `H^1(V)` functions vanishing outside `Ω`**: on a bounded Lipschitz
-domain, `U ∈ H^1(V)` lies in `H̃^1(Ω)` iff its `L_2` function vanishes almost everywhere outside
+/-- **`HTilde^1(Ω)` is the space of `H^1(V)` functions vanishing outside `Ω`**: on a bounded
+Lipschitz
+domain, `U ∈ H^1(V)` lies in `HTilde^1(Ω)` iff its `L_2` function vanishes almost everywhere outside
 `Ω` (`Rd.toL2_ae_eq_zero_of_mem_tildeSpace`,
 `Rd.BoundedLipschitzDomain.mem_tildeSpace_of_ae_eq_zero`). Since `Γ` is a null set
-(`Rd.BoundedLipschitzDomain.volume_frontier`), this is `H̃^s(Ω) = H^s_{Ω̄}` of McLean
+(`Rd.BoundedLipschitzDomain.volume_frontier`), this is `HTilde^s(Ω) = H^s_{ΩBar}` of McLean
 (Theorem 3.29) for `s = 1`. -/
 theorem mem_tildeSpace_iff (U : H^{1}(V)) :
     U ∈ tildeSpace 1 Ω.toOpens ↔ ∀ᵐ x ∂volume, x ∉ Ω.carrier → toL2 U x = 0 :=
@@ -344,7 +349,7 @@ theorem mem_tildeSpace_iff (U : H^{1}(V)) :
 /-! ### `ker γ = H^1_0(Ω)` -/
 
 /-- **`H^1_0(Ω) ⊆ ker γ`**: every element of `H^1_0(Ω)` is the restriction `U|_Ω` of some
-`U ∈ H̃^1(Ω)` (`Rd.range_tildeToRestriction`); `U` vanishes outside `Ω`
+`U ∈ HTilde^1(Ω)` (`Rd.range_tildeToRestriction`); `U` vanishes outside `Ω`
 (`Rd.toL2_ae_eq_zero_of_mem_tildeSpace`), so the zero extension of `U|_Ω` is `ι U ∈ W^1_2(V)`
 (`Rd.indicatorLp_toL2_restrictProj`), and its trace vanishes
 (`Rd.BoundedLipschitzDomain.memSobolev_indicatorLp_iff_mem_traceKer`). -/
@@ -361,7 +366,7 @@ theorem zeroBoundarySpace_le_traceKer : zeroBoundarySpace 1 Ω.toOpens ≤ Ω.tr
 
 /-- **`ker γ ⊆ H^1_0(Ω)`**: for `u` in the trace kernel, the zero extension `1_Ω ι u` is the `L_2`
 function of some `U ∈ H^1(V)` (`Rd.BoundedLipschitzDomain.memSobolev_indicatorLp_of_mem_traceKer`,
-`Rd.exists_toL2_eq_of_memSobolev`). `U` vanishes outside `Ω`, so `U ∈ H̃^1(Ω)`
+`Rd.exists_toL2_eq_of_memSobolev`). `U` vanishes outside `Ω`, so `U ∈ HTilde^1(Ω)`
 (`Rd.BoundedLipschitzDomain.mem_tildeSpace_of_ae_eq_zero`), and `u = U|_Ω`
 (`Rd.restrictProj_eq_of_ae_eq`) lies in `H^1_0(Ω)` (`Rd.range_tildeToRestriction`). -/
 theorem traceKer_le_zeroBoundarySpace : Ω.traceKer ≤ zeroBoundarySpace 1 Ω.toOpens := by
@@ -421,7 +426,7 @@ theorem quotientZeroBoundaryEquivTraceSpace_mk (u : Ω.SobolevOne) :
     Submodule.quotientEquivOrthogonal_mk _ _ hx]
   rfl
 
-/-- **`H̃^1(Ω) ≅ ker γ` isometrically**: restriction is an isometry of `H̃^1(Ω)` onto
+/-- **`HTilde^1(Ω) ≅ ker γ` isometrically**: restriction is an isometry of `HTilde^1(Ω)` onto
 `H^1_0(Ω) = ker γ` (`Rd.tildeEquivZeroBoundary`,
 `Rd.BoundedLipschitzDomain.traceKer_eq_zeroBoundarySpace`). -/
 noncomputable def tildeEquivTraceKer : tildeSpace 1 Ω.toOpens ≃ₗᵢ[ℂ] Ω.traceKer :=
@@ -433,7 +438,7 @@ theorem coe_tildeEquivTraceKer_apply (U : tildeSpace 1 Ω.toOpens) :
     (Ω.tildeEquivTraceKer U : Ω.SobolevOne) = restrictProj 1 Ω.toOpens U :=
   rfl
 
-/-- **The element of `H̃^1(Ω)` with restriction `u ∈ ker γ` is `u` itself**, read in `H^1(V)`
+/-- **The element of `HTilde^1(Ω)` with restriction `u ∈ ker γ` is `u` itself**, read in `H^1(V)`
 (`Rd.coe_tildeEquivZeroBoundary_symm_apply`). -/
 theorem coe_tildeEquivTraceKer_symm_apply (u : Ω.traceKer) :
     ((Ω.tildeEquivTraceKer.symm u : tildeSpace 1 Ω.toOpens) : H^{1}(V)) =
@@ -446,7 +451,7 @@ theorem coe_tildeEquivTraceKer_symm_apply (u : Ω.traceKer) :
 `u ↦ [W, u]` for exactly one `W ∈ H^{-1}(Ω)`, with `‖W‖ = ‖ℓ‖`
 (`Rd.BoundedLipschitzDomain.dualTraceKerEquiv_apply`,
 `Rd.BoundedLipschitzDomain.dualTraceKerEquiv_eq_iff`); Riesz on `ker γ`, the isometry
-`Rd.BoundedLipschitzDomain.tildeEquivTraceKer` and the duality `H̃^1(Ω) ≅ H^{-1}(Ω)`
+`Rd.BoundedLipschitzDomain.tildeEquivTraceKer` and the duality `HTilde^1(Ω) ≅ H^{-1}(Ω)`
 (`Rd.tildeEquivRestriction`), as for `Rd.dualZeroBoundaryEquiv`. -/
 noncomputable def dualTraceKerEquiv :
     StrongDual ℂ Ω.traceKer ≃ₗᵢ⋆[ℂ] RestrictionSpace (-1) Ω.toOpens :=

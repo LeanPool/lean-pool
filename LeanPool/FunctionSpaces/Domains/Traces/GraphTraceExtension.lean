@@ -200,8 +200,9 @@ noncomputable def extendCenter (j : ℕ) (c' : Ω.hyperplane) : V :=
 theorem proj_extendCenter (j : ℕ) (c' : Ω.hyperplane) : Ω.proj (Ω.extendCenter j c') = c' := by
   rw [extendCenter, map_add, map_smul, Ω.proj_e, smul_zero, add_zero, Ω.proj_coe]
 
-/-- **The support of extended atoms**: if `a = 0` outside `B̄(c', d 2^(-j))`, then `A = 0` outside
-`B̄(c' + φ_j(c') e, (d (1 + M ‖ρ‖_1) + c + 1) 2^(-j))`. -/
+/-- **The support of extended atoms**: if `a = 0` outside `closedBall(c', d 2^(-j))`, then `A =
+0` outside
+`closedBall(c' + φ_j(c') e, (d (1 + M ‖ρ‖_1) + c + 1) 2^(-j))`. -/
 theorem extendAtom_eq_zero (j : ℕ) {a : Ω.hyperplane → ℂ} {d : ℝ} {c' : Ω.hyperplane}
     (h0 : ∀ y, d / 2 ^ j < ‖y - c'‖ → a y = 0) {x : V}
     (hx : Ω.extendRadius d / 2 ^ j < ‖x - Ω.extendCenter j c'‖) : Ω.extendAtom j a x = 0 := by
@@ -239,7 +240,8 @@ theorem extendAtom_eq_zero (j : ℕ) {a : Ω.hyperplane → ℂ} {d : ℝ} {c' :
   exact absurd hle (not_le.2 hx)
 
 /-- **Extended atoms are regular atoms** of order and exponent `2` on `V`: if `a` is continuous,
-vanishes outside `B̄(c', d 2^(-j))` and `|Δ_h^l a| ≤ A_0 min(1, (2^j ‖h‖)^l)` for `l ≤ 2`, then
+vanishes outside `closedBall(c', d 2^(-j))` and `|Δ_h^l a| ≤ A_0 min(1, (2^j ‖h‖)^l)` for `l ≤
+2`, then
 `A = (a ∘ P) v_j` is a regular atom of level `j` with centre `c' + φ_j(c') e`. -/
 theorem isRegularAtom_extendAtom {p : ℝ≥0∞} (j : ℕ) {a : Ω.hyperplane → ℂ} (hac : Continuous a)
     {d : ℝ} (hd : 0 ≤ d) {c' : Ω.hyperplane} (h0 : ∀ y, d / 2 ^ j < ‖y - c'‖ → a y = 0)

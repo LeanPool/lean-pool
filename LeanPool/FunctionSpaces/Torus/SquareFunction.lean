@@ -24,7 +24,7 @@ two-sided bound of this norm by `‖f‖_p`, with named constants that are prove
 * `‖f‖_{F^0_{p,2}(𝕋^d)} ≤ Q^𝕋_p ‖f‖_p` (`Torus.triebelLizorkinNorm_zero_two_le`, constant
   `Torus.squareFunctionConst`): the analysis bound of the vector-valued singular integrals on the
   torus for the Calderón–Zygmund family `(ψ_j)_j`;
-* `‖f‖_p ≤ Q̃^𝕋_p ‖f‖_{F^0_{p,2}(𝕋^d)}` (`Torus.enorm_le_triebelLizorkinNorm_zero_two`,
+* `‖f‖_p ≤ QTilde^𝕋_p ‖f‖_{F^0_{p,2}(𝕋^d)}` (`Torus.enorm_le_triebelLizorkinNorm_zero_two`,
   constant `Torus.squareSynthesisConst`): the synthesis kernels reproduce the blocks,
   `psiDual_j ⋆ Δ_j f = Δ_j f` (`Torus.econvLp_psiDual_lpBlock`), so
   `∑_{j ∈ s} psiDual_j ⋆ Δ_j f = ∑_{j ∈ s} Δ_j f` almost everywhere
@@ -67,7 +67,7 @@ theorem squareFunctionConst_ne_top {p : ℝ≥0∞} (hp1 : 1 < p) (hp : p ≠ �
     (ENNReal.mul_ne_top ENNReal.ofNat_ne_top (Rd.familyTailConst_ne_top _ _ _))
 
 variable (d) in
-/-- The constant `Q̃^𝕋_p` of the **lower square function bound on the torus**: the constant
+/-- The constant `QTilde^𝕋_p` of the **lower square function bound on the torus**: the constant
 `Torus.periodicCZConst` of the Calderón–Zygmund family of the synthesis kernels `psiDual_j`,
 with overlap `4`, Hörmander constant `4 H_Ã` and far mass bound `2 T_Ã`, where
 `Ã = Rd.psiDualBaseBound` (`Rd.isCZFamily_psiDual`, `Torus.farMass_psiDual_le`). -/
@@ -127,8 +127,8 @@ theorem sum_econv_psiDual_lpBlock_ae (hp : p ≠ ∞) (s : Finset ℕ)
 /-! ### The lower bound and `L_p = F^0_{p,2}` -/
 
 /-- **The lower square function bound on the torus**: for `d ≥ 1`, `1 < p < ∞` and
-`f ∈ L_p(𝕋^d)`, `‖f‖_p ≤ Q̃^𝕋_p ‖f‖_{F^0_{p,2}(𝕋^d)}` with
-`Q̃^𝕋_p = Torus.squareSynthesisConst d p`. The partial sums `∑_{j < J} Δ_j f` tend to `f`
+`f ∈ L_p(𝕋^d)`, `‖f‖_p ≤ QTilde^𝕋_p ‖f‖_{F^0_{p,2}(𝕋^d)}` with
+`QTilde^𝕋_p = Torus.squareSynthesisConst d p`. The partial sums `∑_{j < J} Δ_j f` tend to `f`
 (`Torus.tendsto_sum_lpBlock`) and equal `∑_{j < J} psiDual_j ⋆ Δ_j f`, whose `L_p` norms the
 synthesis bound on the torus (`Torus.eLpNorm_sum_econv_le`) for the family `(psiDual_j)_j`
 controls. -/

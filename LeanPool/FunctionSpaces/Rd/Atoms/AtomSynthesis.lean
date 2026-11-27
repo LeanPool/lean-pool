@@ -27,8 +27,9 @@ outside the ball `B(c, d 2^(-j))` and satisfies, with a constant `C`,
 are regular with `σ = r = 1`, smooth `K`-atoms (`|D^α a| ≤ 2^(j|α|)`, Definition 1.3) with
 `σ = r = K`; both follow from pointwise bounds (`Rd.isRegularAtom_of_pointwise`).
 
-**Synthesis** (`Rd.modNorm_le_coeffNorm`; Schneider–Vybíral, Theorem 2.6 and Corollary 2.8,
-direction ⇐): if the centres of each level have bounded overlap and `F = ∑_j f_j` with the level
+**Synthesis** (`Rd.modNorm_le_coeffNorm`) is the regular-atom analogue of the synthesis
+in Schneider–Vybíral, Theorem 2.6. Their Corollary 2.8 uses Lipschitz atoms and `0 < s < 1`.
+If the centres of each level have bounded overlap and `F = ∑_j f_j` with the level
 sums `f_j = ∑_m λ_{j,m} a_{j,m}`, then for `0 < s < σ`
 
 `‖F‖_p + ‖(2^(ks) ω_r(F, 2^(-k))_p)_k‖_{ℓ_q} ≤ K ‖λ‖_{b^s_{p,q}}`,
@@ -435,8 +436,8 @@ theorem modNormOn_le_coeffNorm {p : ℝ≥0∞} [Fact (1 ≤ p)] (hp : p ≠ ∞
         simp only [atomSynthConst, K0, ENNReal.almostDiagonalConst]
         ring
 
-/-- **Atomic synthesis** (Schneider–Vybíral, Theorem 2.6 and Corollary 2.8, direction ⇐): if the
-centres of the atoms with nonzero coefficients have overlap at most `N` on balls of radius
+/-- **Atomic synthesis** for regular atoms. If the centres of the atoms with nonzero
+coefficients have overlap at most `N` on balls of radius
 `(d + r) 2^(-j)` at every level `j`,
 `F = ∑_j f_j` in `L_p` with the level sums `f_j = ∑_m λ_{j,m} a_{j,m}` of regular atoms of
 exponent `σ` and order `r`, and `0 < s < σ`, then
@@ -550,7 +551,8 @@ theorem eLpNorm_le_of_bound_of_support {α : Type*} [MeasurableSpace α] {μ : M
   refine (eLpNorm_le_of_ae_eNorm_bound hg.restrict (Eventually.of_forall hB)).trans_eq ?_
   rw [Measure.restrict_apply_univ, one_div, smul_eq_mul]
 
-/-- **Atoms on `Ω` from pointwise bounds**: a function that vanishes outside `B̄(c, d 2^(-j))`
+/-- **Atoms on `Ω` from pointwise bounds**: a function that vanishes outside `closedBall(c, d
+2^(-j))`
 with `|a| ≤ A` on `Ω` and `|Δ_h^r a(x)| ≤ A min(1, (2^j ‖h‖)^σ)` at the points `x` whose steps stay
 in `Ω` is a regular atom on `Ω` with the constant `A ((r + 1) d^n |B_1|)^(1/p)`. The support of
 `Δ_h^r a` lies in `r + 1` translated balls. -/
@@ -616,7 +618,7 @@ theorem isRegularAtomOn_of_pointwise {p : ℝ≥0∞} {σ : ℝ} {r : ℕ} {d : 
           mul_le_mul' le_rfl hvol
       _ = _ := by ring
 
-/-- **Atoms from pointwise bounds**: a function that vanishes outside `B̄(c, d 2^(-j))` with
+/-- **Atoms from pointwise bounds**: a function that vanishes outside `closedBall(c, d 2^(-j))` with
 `|a| ≤ A` and `|Δ_h^r a| ≤ A min(1, (2^j ‖h‖)^σ)` is a regular atom with the constant
 `A ((r + 1) d^n |B_1|)^(1/p)`, the case `Ω = V` of `Rd.isRegularAtomOn_of_pointwise`. -/
 theorem isRegularAtom_of_pointwise {p : ℝ≥0∞} {σ : ℝ} {r : ℕ} {d : ℝ} (hd : 0 ≤ d)
@@ -629,7 +631,7 @@ theorem isRegularAtom_of_pointwise {p : ℝ≥0∞} {σ : ℝ} {r : ℕ} {d : �
     (fun h x _ => hdiff h x)
 
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
-/-- **Smooth atoms**: a smooth function vanishing outside `B̄(c, d 2^(-j))` with
+/-- **Smooth atoms**: a smooth function vanishing outside `closedBall(c, d 2^(-j))` with
 `‖D^l a‖ ≤ A 2^(jl)` for `l ≤ r` satisfies the pointwise bounds of `Rd.isRegularAtom_of_pointwise`
 with exponent `σ = r` and the constant `2^r A`: `|Δ_h^r a| ≤ A (2^j ‖h‖)^r` by the
 mean value theorem and `|Δ_h^r a| ≤ 2^r A`. -/

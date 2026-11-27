@@ -336,7 +336,8 @@ theorem BesovDomain.closure_of_convex {U : Set V} (hc : Convex ℝ U) (ho : IsOp
     (hb : Bornology.IsBounded U) (hne : U.Nonempty) : BesovDomain (closure U) :=
   closure_boundedLipschitzDomain (BoundedLipschitzDomain.ofConvex hc ho hb) hc hne
 
-/-- **Closed balls are Besov domains**: for every `c` and `R > 0` the closed ball `B̄(c, R)` is
+/-- **Closed balls are Besov domains**: for every `c` and `R > 0` the closed ball `closedBall(c,
+R)` is
 the closure of the open ball (Mathlib's `closure_ball`), a nonempty bounded open convex set
 (`Rd.BesovDomain.closure_of_convex`). -/
 theorem BesovDomain.closedBall (c : V) {R : ℝ} (hR : 0 < R) :

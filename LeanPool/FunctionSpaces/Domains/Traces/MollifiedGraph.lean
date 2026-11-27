@@ -100,7 +100,7 @@ theorem norm_conv_sub_conv_le {K u : W → ℂ} (hK : Integrable K) {M : ℝ}
         ring
 
 /-- **Convolution moves Lipschitz functions little**: for `∫ K = 1` and `K = 0` outside
-`B̄(0, R)`, `‖(K ⋆ u)(x) - u(x)‖ ≤ M R ‖K‖_1`. -/
+`closedBall(0, R)`, `‖(K ⋆ u)(x) - u(x)‖ ≤ M R ‖K‖_1`. -/
 theorem norm_conv_sub_self_le {K u : W → ℂ} (hK : Integrable K) (h1 : ∫ z, K z = 1) {R : ℝ}
     (hKR : ∀ z, R < ‖z‖ → K z = 0) {M : ℝ} (hM : 0 ≤ M) (hu : ∀ x y, ‖u x - u y‖ ≤ M * ‖x - y‖)
     {x : W} (hint : Integrable (fun z => K z * u (x - z))) :
@@ -122,7 +122,7 @@ theorem norm_conv_sub_self_le {K u : W → ℂ} (hK : Integrable K) (h1 : ∫ z,
         ring
 
 /-- **Second differences of convolutions with Lipschitz functions**: for `K = 0` outside
-`B̄(0, R)`, `‖Δ_h^2 (K ⋆ u)(x)‖ ≤ M (R + 2‖h‖) ‖Δ_h^2 K‖_1`, since
+`closedBall(0, R)`, `‖Δ_h^2 (K ⋆ u)(x)‖ ≤ M (R + 2‖h‖) ‖Δ_h^2 K‖_1`, since
 `Δ_h^2 (K ⋆ u) = (Δ_h^2 K) ⋆ u` and `∫ Δ_h^2 K = 0`. -/
 theorem norm_higherDiff_two_conv_le {K u : W → ℂ} (hK : Integrable K) {R : ℝ}
     (hKR : ∀ z, R < ‖z‖ → K z = 0) {M : ℝ} (hM : 0 ≤ M)
@@ -242,7 +242,7 @@ noncomputable def graphBumpDeriv : ℝ := (Ω.graphBump.derivNorm 2).toReal
 /-- `‖D^2 ρ‖_1 ≥ 0`. -/
 theorem graphBumpDeriv_nonneg : 0 ≤ Ω.graphBumpDeriv := ENNReal.toReal_nonneg
 
-/-- The mollifier vanishes outside `B̄(0, 2 · 2^(-j))`. -/
+/-- The mollifier vanishes outside `closedBall(0, 2 · 2^(-j))`. -/
 theorem graphBump_scaled_eq_zero (j : ℕ) (z : Ω.hyperplane) (hz : 2 / 2 ^ j < ‖z‖) :
     Ω.graphBump.scaled 2 j z = 0 :=
   Ω.graphBump.scaled_eq_zero_of_lt 2 j (by rw [graphBump_radius]; simpa using hz)

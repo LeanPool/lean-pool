@@ -105,7 +105,7 @@ theorem continuous_avgStepIter [TopologicalSpace α] {G : ℝ → α → ℂ}
 with the weight `Φ = δ^(-1) 1_{(0, δ]}` of total mass `1`
 (`MeasureTheory.eLpNorm_integral_kernel_le_of_bound`). -/
 theorem eLpNorm_avg_le [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
-    [SecondCountableTopology α] {K : ℝ → α → ℂ} (hK : Continuous (Function.uncurry K)) {δ : ℝ}
+    {K : ℝ → α → ℂ} (hK : Continuous (Function.uncurry K)) {δ : ℝ}
     (hδ : 0 < δ) {p : ℝ≥0∞} (hp : 1 ≤ p) (hp' : p ≠ ∞) (μ : Measure α) [SFinite μ] :
     eLpNorm (fun x => ((δ : ℂ))⁻¹ * ∫ t in (0 : ℝ)..δ, K t x) p μ ≤
       ⨆ t ∈ Icc 0 δ, eLpNorm (K t) p μ := by
@@ -141,7 +141,7 @@ theorem eLpNorm_avg_le [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurab
 /-- **Iterated averages are bounded by the sup over the steps**:
 `‖avg^m G(σ, ·)‖_{L_p(μ)} ≤ sup_{σ ≤ h ≤ σ + mδ} ‖G(h, ·)‖_{L_p(μ)}`. -/
 theorem eLpNorm_avgStepIter_le [TopologicalSpace α] [MeasurableSpace α] [OpensMeasurableSpace α]
-    [SecondCountableTopology α] {G : ℝ → α → ℂ} (hG : Continuous (Function.uncurry G)) {δ : ℝ}
+    {G : ℝ → α → ℂ} (hG : Continuous (Function.uncurry G)) {δ : ℝ}
     (hδ : 0 < δ) {p : ℝ≥0∞} (hp : 1 ≤ p) (hp' : p ≠ ∞) (μ : Measure α) [SFinite μ] (m : ℕ)
     (σ : ℝ) :
     eLpNorm (avgStepIter m δ G σ) p μ ≤ ⨆ h ∈ Icc σ (σ + m * δ), eLpNorm (G h) p μ := by

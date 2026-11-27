@@ -32,8 +32,8 @@ their kernels, `K ⋆ (L ⋆ f) = (K ⋆ L) ⋆ f` (`Rd.convLp_convLp`, from the
 `Rd.conv_conv_ae`), and are linear in the kernel (`Rd.convLp_sub_kernel`).
 
 **Pointwise
-bounds**: if `|K| ≤ A` and `K = 0` outside `B̄(0, ρ)`, Hölder's inequality on balls gives
-`|(K ⋆ g)(x)| ≤ A |B̄(0,ρ)|^(1-1/p) ‖g‖_p` (`Rd.lintegral_closedBall_le`,
+bounds**: if `|K| ≤ A` and `K = 0` outside `closedBall(0, ρ)`, Hölder's inequality on balls gives
+`|(K ⋆ g)(x)| ≤ A |closedBall(0,ρ)|^(1-1/p) ‖g‖_p` (`Rd.lintegral_closedBall_le`,
 `Rd.enorm_conv_le_of_bound`).
 -/
 
@@ -397,7 +397,8 @@ theorem one_sub_one_div_toReal_nonneg {p : ℝ≥0∞} (hp1 : 1 ≤ p) : 0 ≤ 1
     rw [sub_nonneg, div_le_one (by linarith)]
     exact this
 
-/-- **Hölder's inequality on a ball**: `∫_{B̄(x,ρ)} |g| ≤ |B̄(x,ρ)|^(1-1/p) ‖g‖_p`. -/
+/-- **Hölder's inequality on a ball**: `∫_{closedBall(x,ρ)} |g| ≤ |closedBall(x,ρ)|^(1-1/p)
+‖g‖_p`. -/
 theorem lintegral_closedBall_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {g : V → ℂ}
     (hg : AEStronglyMeasurable g volume) (x : V) (ρ : ℝ) :
     ∫⁻ z in closedBall x ρ, ‖g z‖ₑ ≤
@@ -410,8 +411,8 @@ theorem lintegral_closedBall_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {g : V → ℂ}
   rw [mul_comm]
   exact mul_le_mul' le_rfl (eLpNorm_mono_measure _ Measure.restrict_le_self)
 
-/-- `∫ |K(y)| |g(x - y)| dy ≤ A |B̄(0,ρ)|^(1-1/p) ‖g‖_p` if `|K| ≤ A` and `K = 0` outside
-`B̄(0, ρ)`. -/
+/-- `∫ |K(y)| |g(x - y)| dy ≤ A |closedBall(0,ρ)|^(1-1/p) ‖g‖_p` if `|K| ≤ A` and `K = 0` outside
+`closedBall(0, ρ)`. -/
 theorem lintegral_kernel_mul_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ}
     (hg : AEStronglyMeasurable g volume) {A : ℝ≥0∞} (hK : ∀ y, ‖K y‖ₑ ≤ A) {ρ : ℝ}
     (hKρ : ∀ y, ρ < ‖y‖ → K y = 0) (x : V) :
@@ -436,8 +437,9 @@ theorem lintegral_kernel_mul_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → �
         mul_le_mul' le_rfl (lintegral_closedBall_le hp1 hg x ρ)
     _ = _ := by rw [Measure.addHaar_closedBall_center, mul_assoc]
 
-/-- **Pointwise bound of a convolution**: if `|K| ≤ A` and `K = 0` outside `B̄(0, ρ)`, then
-`|(K ⋆ g)(x)| ≤ A |B̄(0,ρ)|^(1-1/p) ‖g‖_p`, by Hölder's inequality on the ball `B̄(x, ρ)`. -/
+/-- **Pointwise bound of a convolution**: if `|K| ≤ A` and `K = 0` outside `closedBall(0, ρ)`, then
+`|(K ⋆ g)(x)| ≤ A |closedBall(0,ρ)|^(1-1/p) ‖g‖_p`, by Hölder's inequality on the ball
+`closedBall(x, ρ)`. -/
 theorem enorm_conv_le_of_bound {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ}
     (hg : AEStronglyMeasurable g volume) {A : ℝ≥0∞} (hK : ∀ y, ‖K y‖ₑ ≤ A) {ρ : ℝ}
     (hKρ : ∀ y, ρ < ‖y‖ → K y = 0) (x : V) :

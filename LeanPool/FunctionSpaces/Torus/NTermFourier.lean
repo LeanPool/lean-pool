@@ -23,7 +23,7 @@ approximates `f` by combinations `∑_{k ∈ Λ} c_k e_k` of at most `n` monomia
 (`HilbertBasis.memApprox_nTerm_iff`) describes its approximation spaces by the Fourier
 coefficients: for `0 < τ < 2` and `θ = 1/τ - 1/2`,
 
-`f ∈ A^θ_τ(L_2(𝕋^d), n-term)  ⟺  ∑_{k ∈ ℤ^d} |f̂(k)|^τ < ∞`   (`Torus.memApprox_nTerm_iff`).
+`f ∈ A^θ_τ(L_2(𝕋^d), n-term)  ↔  ∑_{k ∈ ℤ^d} |f̂(k)|^τ < ∞`   (`Torus.memApprox_nTerm_iff`).
 
 For `τ = 1` the right side says that the Fourier series of `f` converges absolutely, Stechkin's
 original setting. Linear approximation by the trigonometric polynomials of degree `< n` leads

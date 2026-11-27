@@ -24,9 +24,9 @@ closure is `{x : φ(x) ≤ ⟪x, e⟫}` (`Rd.LipschitzGraph.closure_domain`). Wi
 cone `K = {y : M ‖y - ⟪y, e⟫ e‖ < ⟪y, e⟫}` (`Rd.LipschitzGraph.cone`), `Ω + K ⊆ Ω`
 (`Rd.LipschitzGraph.add_mem`): a step into the cone raises `⟪·, e⟫` faster than `φ`. The cone is
 closed under positive scaling and contains a ball around `e/4`
-(`Rd.LipschitzGraph.ball_subset_cone`). The closed cone `K̄ = {y : M ‖y - ⟪y, e⟫ e‖ ≤ ⟪y, e⟫}`
-(`Rd.LipschitzGraph.closedCone`) is closed under nonnegative scaling, and still `Ω + K̄ ⊆ Ω`
-(`Rd.LipschitzGraph.add_mem_of_mem_closedCone`); for the closure, `Ω̄ + K ⊆ Ω`
+(`Rd.LipschitzGraph.ball_subset_cone`). The closed cone `KBar = {y : M ‖y - ⟪y, e⟫ e‖ ≤ ⟪y, e⟫}`
+(`Rd.LipschitzGraph.closedCone`) is closed under nonnegative scaling, and still `Ω + KBar ⊆ Ω`
+(`Rd.LipschitzGraph.add_mem_of_mem_closedCone`); for the closure, `ΩBar + K ⊆ Ω`
 (`Rd.LipschitzGraph.add_mem_of_mem_closure`). Both rest on `φ(x + y) ≤ φ(x) + M ‖y - ⟪y, e⟫ e‖`
 (`Rd.LipschitzGraph.phi_add_le`). If the closed support of `η` lies in `K`, so does that of every
 dilate `η_c`, `c > 0` (`Rd.LipschitzGraph.mem_cone_of_mem_tsupport_dilate`).
@@ -126,7 +126,7 @@ def domain : Set V := {x | Ω.phi x < inner ℝ x Ω.e}
 /-- The cone `K = {y : M ‖y - ⟪y, e⟫ e‖ < ⟪y, e⟫}`. -/
 def cone : Set V := {y | Ω.M * ‖y - inner ℝ y Ω.e • Ω.e‖ < inner ℝ y Ω.e}
 
-/-- The closed cone `K̄ = {y : M ‖y - ⟪y, e⟫ e‖ ≤ ⟪y, e⟫}`, which contains `K`. -/
+/-- The closed cone `KBar = {y : M ‖y - ⟪y, e⟫ e‖ ≤ ⟪y, e⟫}`, which contains `K`. -/
 def closedCone : Set V := {y | Ω.M * ‖y - inner ℝ y Ω.e • Ω.e‖ ≤ inner ℝ y Ω.e}
 
 /-- The cone lies in the closed cone. -/
@@ -148,7 +148,8 @@ theorem phi_add_le (x y : V) : Ω.phi (x + y) ≤ Ω.phi x + Ω.M * ‖y - inner
   rw [h1]
   linarith [le_abs_self (Ω.phi (x + d) - Ω.phi x)]
 
-/-- **Steps into the closed cone stay in the domain**: `Ω + K̄ ⊆ Ω`, since the domain is defined by
+/-- **Steps into the closed cone stay in the domain**: `Ω + KBar ⊆ Ω`, since the domain is
+defined by
 a strict inequality (`Rd.LipschitzGraph.phi_add_le`). -/
 theorem add_mem_of_mem_closedCone {x y : V} (hx : x ∈ Ω.domain) (hy : y ∈ Ω.closedCone) :
     x + y ∈ Ω.domain := by
@@ -158,7 +159,7 @@ theorem add_mem_of_mem_closedCone {x y : V} (hx : x ∈ Ω.domain) (hy : y ∈ �
   rw [inner_add_left]
   linarith [Ω.phi_add_le x y]
 
-/-- **Steps into the cone stay in the domain**: `Ω + K ⊆ Ω`, the case `K ⊆ K̄` of
+/-- **Steps into the cone stay in the domain**: `Ω + K ⊆ Ω`, the case `K ⊆ KBar` of
 `Rd.LipschitzGraph.add_mem_of_mem_closedCone`. -/
 theorem add_mem {x y : V} (hx : x ∈ Ω.domain) (hy : y ∈ Ω.cone) : x + y ∈ Ω.domain :=
   Ω.add_mem_of_mem_closedCone hx (Ω.cone_subset_closedCone hy)
@@ -200,7 +201,7 @@ theorem lipschitzWith_phi : LipschitzWith ⟨Ω.M, Ω.M_nonneg⟩ Ω.phi :=
 theorem continuous_phi : Continuous Ω.phi :=
   Ω.lipschitzWith_phi.continuous
 
-/-- **Steps into the open cone from the closure stay in the domain**: `Ω̄ + K ⊆ Ω`, since
+/-- **Steps into the open cone from the closure stay in the domain**: `ΩBar + K ⊆ Ω`, since
 `φ(x) ≤ ⟪x, e⟫` on the closure of `Ω` and the cone is defined by a strict inequality
 (`Rd.LipschitzGraph.phi_add_le`). -/
 theorem add_mem_of_mem_closure {x y : V} (hx : x ∈ closure Ω.domain) (hy : y ∈ Ω.cone) :

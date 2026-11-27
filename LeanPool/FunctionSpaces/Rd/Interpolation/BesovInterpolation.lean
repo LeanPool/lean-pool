@@ -25,7 +25,7 @@ For **Besov spaces by differences** of order `r` the couple carries the quasi-no
 `ApproximationScheme.ModulusData.modCouple` of `Rd.bandModulusData`).  For `0 < s₀ < s₁ < r`
 and `s = (1-η)s₀ + ηs₁`,
 
-`f ∈ (B^{s₀}_{p,q₀}, B^{s₁}_{p,q₁})_{η,q} ⟺ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
+`f ∈ (B^{s₀}_{p,q₀}, B^{s₁}_{p,q₁})_{η,q} ↔ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
 
 (Bergh–Löfström, Theorem 6.4.5(1); Triebel 1978, Section 2.4; `Rd.memKMethod_modCouple_iff`),
 and equivalently `‖(2^(js) ‖ψ_j ⋆ f‖_p)_j‖_{ℓ_q} < ∞`

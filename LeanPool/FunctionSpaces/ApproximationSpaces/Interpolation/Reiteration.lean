@@ -35,8 +35,8 @@ The inclusion `⊆` is the class `C_K` (Bergh–Löfström, Definition 3.5.1):
 **Holmstedt's formula** (Holmstedt 1970; Bergh–Löfström, Theorem 3.6.1) in discrete form, with
 `ℓ₁` sums in place of the `ℓ_{q_i}` norms of Theorem 3.6.1, which is enough for the reiteration
 theorem: with `S₀(m) = ∑_{n < m} 2^(-nθ₀) K(2^n, u)` and `S₁(m) = ∑_{n ≥ m} 2^(-nθ₁) K(2^n, u)`
-(`InterpCouple.kSumBelow`, `InterpCouple.kSumAbove`), the K-functional `K̄` of the couple of
-K-spaces satisfies `K̄(2^(m(θ₁-θ₀)), u) ≤ c (S₀(m) + 2^(m(θ₁-θ₀)) S₁(m))`
+(`InterpCouple.kSumBelow`, `InterpCouple.kSumAbove`), the K-functional `KBar` of the couple of
+K-spaces satisfies `KBar(2^(m(θ₁-θ₀)), u) ≤ c (S₀(m) + 2^(m(θ₁-θ₀)) S₁(m))`
 (`InterpCouple.kFunctional_kCouple_le`; the endpoint versions are
 `InterpCouple.kFunctional_leftKCouple_le` and `InterpCouple.kFunctional_rightKCouple_le`).  The
 proof bounds the two discrete K-norms of `u - b` and `b` for every `b` by geometric sums and
@@ -400,7 +400,7 @@ theorem two_rpow_mul_kFunctional_le_kSumAbove (u : U) (m : ℤ) :
 Theorem 3.6.1, in discrete form, with `ℓ₁` sums in place of the `ℓ_{q_i}` norms of
 Theorem 3.6.1, which is enough for the reiteration theorem): for a couple quasi-normed with
 constant `C`, `q₀, q₁ ≥ 1`, `0 < θ₀, θ₁ < 1`, `m ∈ ℤ` and `s = 2^(m(θ₁-θ₀))`, the K-functional
-of the couple of K-spaces satisfies `K̄(s, u) ≤ holmstedtConst C θ₀ θ₁ · (S₀(m) + s S₁(m))`,
+of the couple of K-spaces satisfies `KBar(s, u) ≤ holmstedtConst C θ₀ θ₁ · (S₀(m) + s S₁(m))`,
 with `S₀(m) = ∑_{n < m} 2^(-nθ₀) K(2^n, u)` and `S₁(m) = ∑_{n ≥ m} 2^(-nθ₁) K(2^n, u)`. -/
 theorem kFunctional_kCouple_le (hA : A.IsQuasiNormed C) (hq₀ : 1 ≤ q₀) (hq₁ : 1 ≤ q₁)
     (hθ₀ : 0 < θ₀) (hθ₀' : θ₀ < 1) (hθ₁ : 0 < θ₁) (hθ₁' : θ₁ < 1) (m : ℤ) (u : U) :
@@ -463,7 +463,7 @@ theorem endpointHolmstedtConst_ne_top (hC : C ≠ ∞) (hθ₁ : 0 < θ₁) (hθ
 `ℓ₁` sum in place of the `ℓ_{q₁}` norm of Bergh–Löfström, Theorem 3.6.1, which is enough for
 the reiteration theorem): for a couple quasi-normed with constant `C`, `q₁ ≥ 1`, `0 < θ₁ < 1`,
 `m ∈ ℤ` and `s = 2^(mθ₁)`, the K-functional of `(N₀, ‖·‖_{θ₁,q₁})` satisfies
-`K̄(s, u) ≤ endpointHolmstedtConst C θ₁ · s S₁(m)`, with
+`KBar(s, u) ≤ endpointHolmstedtConst C θ₁ · s S₁(m)`, with
 `S₁(m) = ∑_{n ≥ m} 2^(-nθ₁) K(2^n, u)`. -/
 theorem kFunctional_leftKCouple_le (hA : A.IsQuasiNormed C) (hq₁ : 1 ≤ q₁) (hθ₁ : 0 < θ₁)
     (hθ₁' : θ₁ < 1) (m : ℤ) (u : U) :
@@ -515,7 +515,7 @@ theorem kSumAbove_swap (u : U) (m : ℤ) :
 /-- **Holmstedt's formula for the right endpoint couple**, the upper bound in `ℓ₁` form: for a
 couple quasi-normed with constant `C`, `q₀ ≥ 1`, `0 < θ₀ < 1` and `m ∈ ℤ`, the K-functional of
 `(‖·‖_{θ₀,q₀}, N₁)` satisfies
-`K̄(2^(m(1-θ₀)), u) ≤ endpointHolmstedtConst C (1 - θ₀) · ∑_{n ≤ m} 2^(-nθ₀) K(2^n, u)`, the sum
+`KBar(2^(m(1-θ₀)), u) ≤ endpointHolmstedtConst C (1 - θ₀) · ∑_{n ≤ m} 2^(-nθ₀) K(2^n, u)`, the sum
 being `S₀(m + 1)`.  It is `kFunctional_leftKCouple_le` for the swapped couple
 (`rightKCouple_eq_swap`, `kFunctional_swap`). -/
 theorem kFunctional_rightKCouple_le (hA : A.IsQuasiNormed C) (hq₀ : 1 ≤ q₀) (hθ₀ : 0 < θ₀)

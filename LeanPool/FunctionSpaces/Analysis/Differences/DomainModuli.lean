@@ -231,7 +231,7 @@ theorem lpModulusOn_succ_le (U : Set V) (r : ℕ) (f : Lp ℂ p μ) (k : ℕ) :
 
 omit [μ.IsAddHaarMeasure] in
 /-- `ω_r(f, 2^(-k), U)_p ≤ ω_r(f, 2^(-k))_p` on `L_p`. -/
-theorem lpModulusOn_le_lpModulus [Fact (1 ≤ p)] {U : Set V} (hU : MeasurableSet U) (r : ℕ)
+theorem lpModulusOn_le_lpModulus {U : Set V} (hU : MeasurableSet U) (r : ℕ)
     (f : Lp ℂ p μ) (k : ℕ) : lpModulusOn p U r f k ≤ lpModulus p r f k :=
   modulusOn_le_modulus hU r p _ _
 

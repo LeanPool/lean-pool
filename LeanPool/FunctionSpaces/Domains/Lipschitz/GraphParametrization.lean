@@ -30,8 +30,10 @@ boundary of `Ω` is the graph: `y ∈ ∂Ω` iff `γ(Py) = y` iff `⟪y, e⟫ = 
 is the range of `γ` (`Rd.LipschitzGraph.range_graphMap`).
 
 **Traces of atoms** (`Rd.LipschitzGraph.isRegularAtom_comp_graphMap`): a continuous `a` on `V`
-that vanishes outside `B̄(c, d 2^(-j))`, with `|a| ≤ A` and `|a(x + h) - a(x)| ≤ A min(1, 2^j ‖h‖)`,
-restricts to `a ∘ γ`, which vanishes outside `B̄(Pc, d 2^(-j))` in `H`, with `|a ∘ γ| ≤ A` and
+that vanishes outside `closedBall(c, d 2^(-j))`, with `|a| ≤ A` and `|a(x + h) - a(x)| ≤ A
+min(1, 2^j ‖h‖)`,
+restricts to `a ∘ γ`, which vanishes outside `closedBall(Pc, d 2^(-j))` in `H`, with `|a ∘ γ| ≤
+A` and
 `|a ∘ γ(x' + h') - a ∘ γ(x')| ≤ (1 + M) A min(1, 2^j ‖h'‖)`: a regular atom of order and exponent
 `1` on `H`, as in the proof of Schneider–Vybíral, Theorem 4.2. Only sup bounds enter.
 -/
@@ -242,7 +244,8 @@ theorem range_graphMap : Set.range Ω.graphMap = frontier Ω.domain := by
 variable [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V]
 
 /-- **Traces of atoms** (as in the proof of Schneider–Vybíral, Theorem 4.2): if `a` is continuous,
-vanishes outside `B̄(c, d 2^(-j))`, `|a| ≤ A` and `|a(x + h) - a(x)| ≤ A min(1, 2^j ‖h‖)`, then
+vanishes outside `closedBall(c, d 2^(-j))`, `|a| ≤ A` and `|a(x + h) - a(x)| ≤ A min(1, 2^j
+‖h‖)`, then
 `a ∘ γ` is a regular atom of order and exponent `1` on `H` with centre `Pc`, radius factor `d` and
 constant `(1 + M) A (2 d^(n-1) |B_1|)^(1/p)`, since `γ` is Lipschitz with constant `1 + M`. -/
 theorem isRegularAtom_comp_graphMap {p : ℝ≥0∞} {d : ℝ} (hd : 0 ≤ d) {A : ℝ≥0∞} {j : ℕ} {c : V}

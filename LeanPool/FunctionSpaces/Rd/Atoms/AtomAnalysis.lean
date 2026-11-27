@@ -36,10 +36,12 @@ regular atoms (`Rd.isRegularAtom_cellAtom`).
 The dual kernels `η_j` of a bump satisfy these bounds
 (`Rd.LocalMeansBump.exists_higherDiff_dual_bound`).
 
-**Atomic characterisation** (`Rd.LocalMeansBump.besov_iff_atomic`; Schneider–Vybíral,
-Corollary 2.8, for `p ≥ 1`): for `0 < s < L`, `F ∈ B^s_{p,q}(V)` iff `F = ∑_j ∑_m λ_{j,m} a_{j,m}`
+**Atomic characterisation** (`Rd.LocalMeansBump.besov_iff_atomic`): for `0 < s < L`,
+`F ∈ B^s_{p,q}(V)` iff `F = ∑_j ∑_m λ_{j,m} a_{j,m}`
 with regular atoms of order and exponent `L`, centres of bounded overlap and
-`‖λ‖_{b^s_{p,q}} < ∞`. The atoms of `F` are the cell atoms of `η_j ⋆ (k_j ⋆ F)`
+`‖λ‖_{b^s_{p,q}} < ∞`. This is a regular-atom variant of Schneider–Vybíral
+([arXiv:1201.2280](https://arxiv.org/abs/1201.2280), Theorem 2.6). Their Corollary 2.8 treats
+Lipschitz atoms for `0 < s < 1`. The atoms of `F` here are the cell atoms of `η_j ⋆ (k_j ⋆ F)`
 (`Rd.LocalMeansBump.atomic_decomposition`); their coefficients have
 `‖λ‖_{b^s_{p,q}} = ‖(2^(js) ‖k_j ⋆ F‖_p)_j‖_{ℓ_q}`, the local means quasi-norm.
 -/
@@ -109,7 +111,8 @@ theorem cellCoef_mul_cellAtom {p : ℝ≥0∞} (hp0 : p ≠ 0) {g : V → ℂ} (
     simp
   · rw [cellAtom, ← mul_assoc, mul_inv_cancel₀ h0, one_mul]
 
-/-- The cells have finite volume: `P_{j,m}` lies in the closed ball `B̄(c_{j,m}, n 2^(-j))`. -/
+/-- The cells have finite volume: `P_{j,m}` lies in the closed ball `closedBall(c_{j,m}, n
+2^(-j))`. -/
 theorem volume_cell_ne_top (j : ℕ) (m : Fin (finrank ℝ V) → ℤ) : volume (cell (V := V) j m) ≠ ∞ :=
   ne_top_of_le_ne_top measure_closedBall_lt_top.ne (measure_mono fun _ hx => by
     rw [mem_closedBall, dist_eq_norm]
@@ -179,7 +182,7 @@ theorem tsum_indicator_cell (j : ℕ) (g : V → ℂ) (y : V) :
 
 /-- **Cell decomposition of a convolution, cellwise hypothesis**: `K ⋆ g = ∑_m λ_{j,m} a_{j,m}` at
 every point, with finitely many nonzero terms, for a continuous `K` that vanishes outside
-`B̄(0, ρ)`, as soon as `1_{P_{j,m}} g ∈ L_p` for every cell. -/
+`closedBall(0, ρ)`, as soon as `1_{P_{j,m}} g ∈ L_p` for every cell. -/
 theorem conv_eq_tsum_cellAtom_of_indicator {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ}
     (hKc : Continuous K) {ρ : ℝ} (hρ : 0 ≤ ρ) (hKρ : ∀ y, ρ < ‖y‖ → K y = 0) {j : ℕ}
     (hg : ∀ m, MemLp ((cell j m).indicator g) p volume) (x : V) :
@@ -211,7 +214,7 @@ theorem conv_eq_tsum_cellAtom_of_indicator {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g
     _ = _ := tsum_congr fun m => (cellCoef_mul_cellAtom_of_indicator hp0 (hg m) K x).symm
 
 /-- **Cell decomposition of a convolution**: `K ⋆ g = ∑_m λ_{j,m} a_{j,m}` at every point, with
-finitely many nonzero terms, for a continuous `K` that vanishes outside `B̄(0, ρ)`. -/
+finitely many nonzero terms, for a continuous `K` that vanishes outside `closedBall(0, ρ)`. -/
 theorem conv_eq_tsum_cellAtom {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (hKc : Continuous K)
     {ρ : ℝ} (hρ : 0 ≤ ρ) (hKρ : ∀ y, ρ < ‖y‖ → K y = 0) (hg : MemLp g p volume) (j : ℕ)
     (x : V) :
@@ -226,8 +229,8 @@ theorem continuous_cellAtom {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (
   continuous_const.mul (hKs.continuous_convolution_left (ContinuousLinearMap.mul ℂ ℂ) hKc
     ((hg.indicator (measurableSet_cell j m).nullMeasurableSet).locallyIntegrable hp1))
 
-/-- Cell atoms vanish outside `B̄(c_{j,m}, (ρ + n) 2^(-j))` if `K` vanishes outside
-`B̄(0, ρ 2^(-j))`. -/
+/-- Cell atoms vanish outside `closedBall(c_{j,m}, (ρ + n) 2^(-j))` if `K` vanishes outside
+`closedBall(0, ρ 2^(-j))`. -/
 theorem cellAtom_eq_zero {p : ℝ≥0∞} {K g : V → ℂ} {ρ : ℝ} {j : ℕ}
     (hKρ : ∀ y, ρ / 2 ^ j < ‖y‖ → K y = 0) (m : Fin (finrank ℝ V) → ℤ) {x : V}
     (hx : (ρ + finrank ℝ V) / 2 ^ j < ‖x - cellCenter j m‖) : cellAtom p K j g m x = 0 := by
@@ -246,7 +249,7 @@ theorem cellAtom_eq_zero {p : ℝ≥0∞} {K g : V → ℂ} {ρ : ℝ} {j : ℕ}
       rw [Set.indicator_of_notMem hxy, mul_zero]
   simp only [this, integral_zero, mul_zero]
 
-/-- `|B̄(0, ρ 2^(-j))|^t = (ρ^n |B_1|)^t 2^(-jnt)`. -/
+/-- `|closedBall(0, ρ 2^(-j))|^t = (ρ^n |B_1|)^t 2^(-jnt)`. -/
 theorem volume_closedBall_div_two_pow_rpow {ρ : ℝ} (hρ : 0 ≤ ρ) (j : ℕ) {t : ℝ} (ht : 0 ≤ t) :
     volume (closedBall (0 : V) (ρ / 2 ^ j)) ^ t =
       (ENNReal.ofReal (ρ ^ finrank ℝ V) * volume (ball (0 : V) 1)) ^ t *
@@ -254,7 +257,7 @@ theorem volume_closedBall_div_two_pow_rpow {ρ : ℝ} (hρ : 0 ≤ ρ) (j : ℕ)
   rw [volume_closedBall_div_two_pow hρ j, ENNReal.mul_rpow_of_nonneg _ _ ht,
     ENNReal.dyadicWeight_rpow, neg_mul]
 
-/-- **The scaling of cell atoms**: if `K'` vanishes outside `B̄(0, ρ 2^(-j))` and
+/-- **The scaling of cell atoms**: if `K'` vanishes outside `closedBall(0, ρ 2^(-j))` and
 `|K'| ≤ A 2^(jn)`, then `|λ_{j,m}⁻¹ (K' ⋆ (1_{P_{j,m}} g))(x)| ≤ A (ρ^n |B_1|)^(1-1/p)`:
 the factors `2^(jn)`, `2^(-jn(1-1/p))` and `2^(-jn/p)` cancel. -/
 theorem enorm_inv_cellCoef_mul_conv_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {g : V → ℂ}
@@ -294,7 +297,7 @@ theorem enorm_inv_cellCoef_mul_conv_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {g : V �
         rw [hW, ENNReal.inv_mul_cancel he0 he, mul_one, mul_one]
 
 /-- **Cell atoms are bounded**: `|a_{j,m}| ≤ A (ρ^n |B_1|)^(1-1/p)` if `|K| ≤ A 2^(jn)` and `K`
-vanishes outside `B̄(0, ρ 2^(-j))`. -/
+vanishes outside `closedBall(0, ρ 2^(-j))`. -/
 theorem enorm_cellAtom_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (hg : MemLp g p volume)
     {j : ℕ} (m : Fin (finrank ℝ V) → ℤ) {A : ℝ≥0∞}
     (hK : ∀ y, ‖K y‖ₑ ≤ A * dyadicWeight (finrank ℝ V) j) {ρ : ℝ} (hρ : 0 ≤ ρ)
@@ -304,9 +307,10 @@ theorem enorm_cellAtom_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (hg
   enorm_inv_cellCoef_mul_conv_le hp1 hg m hK hρ hKρ x
 
 /-- **Differences of cell atoms**: if `K` is continuous with `|K| ≤ A 2^(jn)`,
-`|Δ_h^r K| ≤ A 2^(jn) min(1, (2^j ‖h‖)^r)` and `K = 0` outside `B̄(0, ρ 2^(-j))`, then
+`|Δ_h^r K| ≤ A 2^(jn) min(1, (2^j ‖h‖)^r)` and `K = 0` outside `closedBall(0, ρ 2^(-j))`, then
 `|Δ_h^r a_{j,m}| ≤ 2^r A ((ρ + r)^n |B_1|)^(1-1/p) min(1, (2^j ‖h‖)^r)`. For `‖h‖ ≤ 2^(-j)` the
-kernel `Δ_h^r K` of `Δ_h^r a_{j,m}` vanishes outside `B̄(0, (ρ + r) 2^(-j))`; for larger `h` the
+kernel `Δ_h^r K` of `Δ_h^r a_{j,m}` vanishes outside `closedBall(0, (ρ + r) 2^(-j))`; for larger
+`h` the
 bound `2^r sup |a_{j,m}|` suffices. -/
 theorem enorm_higherDiff_cellAtom_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (hKc : Continuous K)
     (hg : MemLp g p volume) {j : ℕ} (m : Fin (finrank ℝ V) → ℤ) {A : ℝ≥0∞} {r : ℕ}
@@ -394,7 +398,7 @@ theorem cellAtomConst_ne_top {p : ℝ≥0∞} (hp1 : 1 ≤ p) {A : ℝ≥0∞} (
 
 /-- **Cell atoms are regular atoms** of order and exponent `r`, with radius factor `ρ + n` and the
 constant `Rd.cellAtomConst`, for a continuous kernel `K` with `|Δ_h^l K| ≤ A 2^(jn) min(1,
-(2^j ‖h‖)^l)` (`l = 0, r`) that vanishes outside `B̄(0, ρ 2^(-j))`. -/
+(2^j ‖h‖)^l)` (`l = 0, r`) that vanishes outside `closedBall(0, ρ 2^(-j))`. -/
 theorem isRegularAtom_cellAtom {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ} (hKc : Continuous K)
     (hg : MemLp g p volume) {j : ℕ} (m : Fin (finrank ℝ V) → ℤ) {A : ℝ≥0∞} {r : ℕ}
     (hK : ∀ y, ‖K y‖ₑ ≤ A * dyadicWeight (finrank ℝ V) j)
@@ -568,8 +572,8 @@ theorem atomic_decomposition (hp : p ≠ ∞) (L r : ℕ) : ∃ C : ℝ≥0∞, 
     simp_rw [Lp.eNorm_def]
 
 include b in
-/-- **Atomic characterisation of Besov spaces** (Schneider–Vybíral, Corollary 2.8, for `p ≥ 1`):
-for `1 ≤ p < ∞`, `0 < s < L` and `1 ≤ q ≤ ∞`, `F ∈ B^s_{p,q}(V)` iff `F = ∑_j f_j` in `L_p` with
+/-- **Atomic characterisation of Besov spaces** with regular atoms and bounded overlap.
+For `1 ≤ p < ∞`, `0 < s < L` and `1 ≤ q ≤ ∞`, `F ∈ B^s_{p,q}(V)` iff `F = ∑_j f_j` in `L_p` with
 `f_j = ∑_m λ_{j,m} a_{j,m}` for regular atoms of order and exponent `L` whose centres have
 bounded overlap, and `‖λ‖_{b^s_{p,q}} < ∞`. The atoms of `F` are its cell atoms
 (`Rd.LocalMeansBump.atomic_decomposition`); the converse is the synthesis

@@ -110,7 +110,7 @@ theorem iUnion_span : (⋃ n, (S.span n : Set H)) = Submodule.span ℂ (Set.rang
     exact Set.mem_iUnion.2 this
 
 /-- The union of the approximants is dense. -/
-theorem closure_iUnion_toScheme [CompleteSpace H] : closure (⋃ n, S.toScheme n) = Set.univ := by
+theorem closure_iUnion_toScheme : closure (⋃ n, S.toScheme n) = Set.univ := by
   have h : (⋃ n, S.toScheme n) = (Submodule.span ℂ (Set.range S.basis) : Set H) := S.iUnion_span
   rw [h, ← Submodule.topologicalClosure_coe, S.basis.dense_span, Submodule.top_coe]
 
@@ -140,7 +140,7 @@ theorem enorm_block_sq (k : ℕ) (f : H) :
 /-- **Coefficient characterisation of `A^s_q`** for a spectral scheme in a Hilbert space: for
 `s > 0`, `f ∈ A^s_q` iff `‖P 1 f‖ + ‖(2^(ks) ‖Δ_k f‖)_k‖_q < ∞`, where
 `‖Δ_k f‖² = ∑_{2^k ≤ lvl i < 2^(k+1)} |⟨e_i, f⟩|²` (`enorm_block_sq`). -/
-theorem memApprox_iff_blockNorm_lt_top [CompleteSpace H] {s : ℝ} (hs : 0 < s) {q : ℝ≥0∞}
+theorem memApprox_iff_blockNorm_lt_top {s : ℝ} (hs : 0 < s) {q : ℝ≥0∞}
     (hq : 1 ≤ q) {f : H} : S.toScheme.MemApprox s q f ↔ S.projectionScheme.blockNorm s q f < ∞ :=
   S.projectionScheme.memApprox_iff_blockNorm_lt_top S.closure_iUnion_toScheme hs hq
 
@@ -175,7 +175,7 @@ theorem tsum_ite_block_eq (s : ℝ) (m : ℕ) :
 
 /-- **`H^s = B^s_{2,2}`** for a spectral scheme: for `s > 0`, `f ∈ A^s_2` if and only if
 `∑_i (1 + lvl i)^(2s) |⟨e_i, f⟩|² < ∞`, i.e. `f` lies in the Sobolev space of order `s`. -/
-theorem memApprox_two_iff [CompleteSpace H] {s : ℝ} (hs : 0 < s) (f : H) :
+theorem memApprox_two_iff {s : ℝ} (hs : 0 < s) (f : H) :
     S.toScheme.MemApprox s 2 f ↔ Memℓp (fun i => (S.weight s i : ℂ) * S.basis.repr f i) 2 := by
   set e : ι → ℝ≥0∞ := fun i => ‖S.basis.repr f i‖ₑ ^ 2
   set Wt : ι → ℝ≥0∞ := fun i => ((1 + S.level i : ℕ) : ℝ≥0∞) ^ (2 * s)

@@ -25,7 +25,8 @@ directions, also for Mathlib's bundled space.
   of order `-s` applied to `h ∈ L_p = F^0_{p,2}`, so `‖u‖_{F^s_{p,2}} ≤ C ‖h‖_p`
   (`Rd.exists_triebelLizorkinNormDistr_le_of_besselPotential_eq`).
 * **`F^s_{p,2} ⊆ H^{s,p}`**: if the blocks of `u` are `L_p` functions `g_j`, the blocks of `J_s u`
-  are `(J_s ψ̃_j) ⋆ g_j` (`Rd.distribBlock_besselPotential`), whose partial sums converge in `L_p`
+  are `(J_s ψTilde_j) ⋆ g_j` (`Rd.distribBlock_besselPotential`), whose partial sums converge in
+  `L_p`
   by the synthesis bound of the Calderón–Zygmund family of the dilated Bessel kernels
   (`Rd.eLpNorm_sum_conv_besselSchwartz_le`, `Rd.exists_tendsto_sum_convLp`); their limit is
   `J_s u` (`Rd.eq_of_tendsto_sum_distribBlock`), so
@@ -87,7 +88,7 @@ theorem exists_tendsto_sum_convLp (hp : p ≠ ∞) {σ : ℝ} {K : ℕ → 𝓢(
 
 /-- **The blocks of a Bessel potential**: for `1 ≤ p < ∞`, real `s` and a tempered distribution
 `u` whose block `Δ_j u` is an `L_p` function `g`, the block `Δ_j(J_s u)` is the `L_p` function
-`(J_s ψ̃_j) ⋆ g` (`Rd.distribBlock_fourierMultiplierCLM_eq_convLp` for the Bessel weight). -/
+`(J_s ψTilde_j) ⋆ g` (`Rd.distribBlock_fourierMultiplierCLM_eq_convLp` for the Bessel weight). -/
 theorem distribBlock_besselPotential (hp : p ≠ ∞) (s : ℝ) {u : 𝓢'(V, ℂ)} {j : ℕ}
     {g : Lp ℂ p (volume : Measure V)} (hg : distribBlock j u = (g : 𝓢'(V, ℂ))) :
     distribBlock j (besselPotential V ℂ s u) =
@@ -131,7 +132,8 @@ theorem exists_triebelLizorkinNormDistr_le_of_besselPotential_eq [Nontrivial V] 
 for `1 < p < ∞` and every real `s` there is a finite constant `C` such that for every tempered
 distribution `u ∈ F^s_{p,2}` the Bessel potential `J_s u` is an `L_p` function `h` with
 `‖h‖_p ≤ C ‖u‖_{F^s_{p,2}}`; the constant is existential. If the blocks of `u` are the `L_p`
-functions `g_j`, the blocks of `J_s u` are `(J_s ψ̃_j) ⋆ g_j` (`Rd.distribBlock_besselPotential`);
+functions `g_j`, the blocks of `J_s u` are `(J_s ψTilde_j) ⋆ g_j`
+(`Rd.distribBlock_besselPotential`);
 their partial sums converge in `L_p` (`Rd.exists_tendsto_sum_convLp`, with the synthesis bound
 `Rd.eLpNorm_sum_conv_besselSchwartz_le` of the Calderón–Zygmund family
 `Rd.exists_isCZFamily_besselBase_psiDualBase`), and the limit is `J_s u`

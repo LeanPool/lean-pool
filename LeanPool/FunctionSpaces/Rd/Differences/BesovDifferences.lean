@@ -26,7 +26,7 @@ inverse inequality `ω_r(a, 2^(-k))_p ≤ C_B 2^(-(k-j) r) ‖a‖_p` for `a ∈
 coincidence theorem for moduli (`ApproximationScheme.ModulusData.memApprox_iff_modNorm_lt_top`)
 gives, for `0 ≤ s < r`:
 
-`f ∈ A^s_q(L_p, (E_k))  ⟺  ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
+`f ∈ A^s_q(L_p, (E_k))  ↔  ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
 
 (`Rd.memApprox_bandScheme_iff_modulus`). With the Littlewood–Paley characterisation
 (`Rd.memApprox_bandScheme_iff`), the three descriptions of `B^s_{p,q}(V)` coincide for `0 < s < r`:

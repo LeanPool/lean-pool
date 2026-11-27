@@ -527,7 +527,7 @@ theorem norm_kernel_le (L j : ℕ) (y : V) :
     refine (norm_sub_le _ _).trans ?_
     nlinarith
 
-/-- The local means kernels vanish outside `B̄(0, 2 L R 2^(-j))`. -/
+/-- The local means kernels vanish outside `closedBall(0, 2 L R 2^(-j))`. -/
 theorem kernel_eq_zero_of_lt (L j : ℕ) {y : V} (hy : 2 * L * b.radius / 2 ^ j < ‖y‖) :
     b.kernel L j y = 0 := by
   have hLR : 0 ≤ (L : ℝ) * b.radius := mul_nonneg (Nat.cast_nonneg L) b.radius_nonneg
@@ -817,7 +817,7 @@ theorem lintegral_Theta_mul_kernel_le_far (L N : ℕ) {i j : ℕ} (hji : j ≤ i
 /-- **The support case**: for `j ≤ i` and every `y`,
 `|(k_j ⋆ Θ_i)(y)| ≤ C 2^(jn) (1 + 2^j ‖y‖)^(-N)` with
 `C = Rd.LocalMeansBump.kernelThetaSupportConst L N`: `k_j` is bounded by `2^(jn)` and supported
-in `B̄(0, 2LR 2^(-j))`, and `Θ_i` has small tails. -/
+in `closedBall(0, 2LR 2^(-j))`, and `Θ_i` has small tails. -/
 theorem enorm_conv_kernel_Theta_le_of_le (L N : ℕ) {i j : ℕ} (hji : j ≤ i) (y : V) :
     ‖conv (b.kernel L j) (Theta i) volume y‖ₑ ≤
       b.kernelThetaSupportConst L N * 2 ^ (j * finrank ℝ V) * ((1 + 2 ^ j * ‖y‖ₑ) ^ N)⁻¹ := by
@@ -1009,7 +1009,7 @@ theorem enorm_psi_le (j N : ℕ) (y : V) :
 /-! ### The cross kernel `ψ_j ⋆ η_i` -/
 
 /-- **Integrals against a kernel of small support**: if `η` vanishes outside
-`B̄(0, ρ 2^(-k))` and `|ψ(z)| ≤ C 2^(kn) (1 + 2^k ‖z‖)^(-N)`, then
+`closedBall(0, ρ 2^(-k))` and `|ψ(z)| ≤ C 2^(kn) (1 + 2^k ‖z‖)^(-N)`, then
 `∫ |η(w)| |ψ(y - w)| dw ≤ ‖η‖_1 C (1 + ρ)^N 2^(kn) (1 + 2^k ‖y‖)^(-N)`, by Peetre's inequality
 `(1 + 2^k ‖y - w‖)^(-N) ≤ (1 + 2^k ‖w‖)^N (1 + 2^k ‖y‖)^(-N)`. -/
 theorem lintegral_mul_peetre_le_of_support {η ψ : V → ℂ} (hη : AEStronglyMeasurable η volume)
@@ -1059,7 +1059,8 @@ theorem lintegral_enorm_dual_le (L i : ℕ) :
   exact b.eLpNorm_dual_one_le L i
 
 /-- **The case `i > j`**: `|(ψ_j ⋆ η_i)(y)| ≤ C 2^(jn) (1 + 2^j ‖y‖)^(-N)` with
-`C = Rd.LocalMeansBump.psiDualSupportConst L N`: `η_i` is supported in `B̄(0, 2LR 2^(-i))`, where
+`C = Rd.LocalMeansBump.psiDualSupportConst L N`: `η_i` is supported in `closedBall(0, 2LR
+2^(-i))`, where
 the Peetre weight at the scale `2^j` changes by at most `(1 + 2LR)^N`. -/
 theorem enorm_conv_psi_dual_le_of_lt (L N : ℕ) {i j : ℕ} (hji : j < i) (y : V) :
     ‖conv (psi j) (b.dual L i) volume y‖ₑ ≤
@@ -1248,7 +1249,7 @@ theorem dualTailConst_ne_top (L L' N : ℕ) : b.dualTailConst L L' N ≠ ∞ :=
 
 /-- For `L' ≥ 1` and `‖w‖ > 4LR 2^(-i)`, the difference `Δ^L'_{-2^(-j') z} η_i(w)` vanishes
 whenever `‖z‖ < 2^j' ‖w‖ / (2L')`: all points `w - l 2^(-j') z`, `l ≤ L'`, then lie outside
-`B̄(0, 2LR 2^(-i))`, where `η_i` vanishes. -/
+`closedBall(0, 2LR 2^(-i))`, where `η_i` vanishes. -/
 theorem higherDiff_dual_eq_zero_of_norm_lt (L L' i j' : ℕ) (hL' : 1 ≤ L') {w : V}
     (hw : 4 * L * b.radius / 2 ^ i < ‖w‖) {z : V} (hz : ‖z‖ < 2 ^ j' * ‖w‖ / (2 * L')) :
     (fwdDiff (-((2 : ℝ) ^ j')⁻¹ • z))^[L'] (b.dual L i) w = 0 := by

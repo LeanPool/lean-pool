@@ -36,7 +36,7 @@ distribution by `⟨ξ⟩^s = (1 + ‖ξ‖²)^{s/2}`, and `f` lies in Mathlib's
 * **`F^s_{p,2} ⊆ H^{s,p}` for every real `s`**
   (`Rd.exists_besselPotential_eq_of_memTriebelLizorkin`), also in Mathlib's bundled space
   (`Rd.exists_enorm_toBesselPotentialSpace_le`): `J_s f` is the `L_p` limit of the synthesis
-  sums `∑_{j < J} (J_s ψ̃_j) ⋆ (ψ_j ⋆ f)` (`Rd.exists_tendsto_sum_conv_blockFun`,
+  sums `∑_{j < J} (J_s ψTilde_j) ⋆ (ψ_j ⋆ f)` (`Rd.exists_tendsto_sum_conv_blockFun`,
   `Rd.besselPotential_eq_of_tendsto`).
 * **`H^{s,p} ⊆ F^s_{p,2}`**: `‖g‖_{F^s_{p,2}} ≤ C ‖J_s g‖_p` for `g ∈ L_p` and every real `s`
   (`Rd.exists_triebelLizorkinNorm_le_of_besselPotential_eq`), and for `s ≥ 0` every `f` with
@@ -382,7 +382,7 @@ theorem eLpNorm_sum_conv_besselSchwartz_le [Nontrivial V] (hp1 : 1 < p) (hp : p 
 real `s` there is a finite constant `C` such that for every `f ∈ F^s_{p,2}(V)` the Bessel
 potential `J_s f` is an `L_p` function `h` with `‖h‖_p ≤ C ‖f‖_{F^s_{p,2}}`; the constant is
 existential. The function `h` is the limit of the synthesis sums
-`∑_{j < J} (J_s ψ̃_j) ⋆ (ψ_j ⋆ f)`, which converge by the synthesis bound of the dilated Bessel
+`∑_{j < J} (J_s ψTilde_j) ⋆ (ψ_j ⋆ f)`, which converge by the synthesis bound of the dilated Bessel
 kernels of `psiDualBase` (`Rd.exists_isCZFamily_besselBase_psiDualBase`,
 `Rd.eLpNorm_sum_conv_besselSchwartz_le`, `Rd.exists_tendsto_sum_conv_blockFun`); the sums
 without `J_s` tend to `f` (`Rd.tendsto_eLpNorm_sum_conv_psiDual_blockFun_sub`), so

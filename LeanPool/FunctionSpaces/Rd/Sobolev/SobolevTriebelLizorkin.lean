@@ -32,10 +32,10 @@ kernels that are proved finite.
   analysis bound of the Calderón–Zygmund families `((η_α)_{2^j})_j` bounds each sum.
 * **`F^m_{p,2} ⊆ W^m_p`** (`Rd.exists_hasWeakLineDeriv_of_memTriebelLizorkin`): for
   `f ∈ F^k_{p,2}(V)` and directions `w ∈ V^k`, the partial sums
-  `∑_{j < J} (∂^w ψ̃_j) ⋆ (ψ_j ⋆ f)` (`Rd.derivSynthesisSum`) are a Cauchy sequence in `L_p`, by
-  the synthesis bound of the Calderón–Zygmund family `((∂^w G̃_j)_{2^j})_j` and the tails of the
+  `∑_{j < J} (∂^w ψTilde_j) ⋆ (ψ_j ⋆ f)` (`Rd.derivSynthesisSum`) are a Cauchy sequence in `L_p`, by
+  the synthesis bound of the Calderón–Zygmund family `((∂^w GTilde_j)_{2^j})_j` and the tails of the
   coefficients `2^{jk} ψ_j ⋆ f` in `L_p(ℓ_2)`. They are the weak derivatives `∂^w` of the
-  reproducing sums `∑_{j < J} ψ̃_j ⋆ (ψ_j ⋆ f) → f`, so their limit `g` is the weak derivative
+  reproducing sums `∑_{j < J} ψTilde_j ⋆ (ψ_j ⋆ f) → f`, so their limit `g` is the weak derivative
   `∂^w f`, with `‖g‖_p ≤ C_w ‖f‖_{F^k_{p,2}}` (`Rd.tlToSobolevConst`). For `k ≤ m`,
   `F^m_{p,2} ⊆ F^k_{p,2}`.
 * **Synthesis sums**: for Schwartz kernels `K_j` with the synthesis bound
@@ -205,7 +205,7 @@ theorem memTriebelLizorkin_of_memSobolev [Nontrivial V] (hp1 : 1 < p) (hp : p �
 
 /-- The constant `C_w = S_{V,p}(4 ((8π)^k ∏_l ‖w_l‖)², 4 H_{Ã^w})` of the bound
 `F^k_{p,2} ⊆ W^k_p` for the directions `w ∈ V^k`: the strong type constant `Rd.czConst` of the
-Calderón–Zygmund family `((∂^w G̃_j)_{2^j})_j` of the rescaled derivatives of the synthesis
+Calderón–Zygmund family `((∂^w GTilde_j)_{2^j})_j` of the rescaled derivatives of the synthesis
 kernels (`Rd.isCZFamily_derivDualFamily`). -/
 noncomputable def tlToSobolevConst (p : ℝ≥0∞) {k : ℕ} (w : Fin k → V) : ℝ≥0∞ :=
   czConst V p (derivDualOverlap w) (4 * familyHormanderConst V (derivDualBound w))
@@ -264,10 +264,10 @@ theorem IsCZFamily.eLpNorm_sum_conv_smul_blockFun_le [Nontrivial V] {θ : ℕ �
 
 /-- **The synthesis bound for derivatives of the synthesis kernels**: in dimension `n ≥ 1`, for
 `1 < p < ∞`, directions `w ∈ V^k`, every finite set `s ⊆ ℕ` and `f ∈ L_p(V)`,
-`‖∑_{j ∈ s} (∂^w ψ̃_j) ⋆ (ψ_j ⋆ f)‖_p ≤ C_w ‖ x ↦ ‖(1_s(j) 2^{jk} (ψ_j ⋆ f)(x))_j‖_{ℓ_2} ‖_p`
-with `C_w = Rd.tlToSobolevConst p w`. Since `∂^w ψ̃_j = 2^{jk} (∂^w G̃_j)_{2^j}`
+`‖∑_{j ∈ s} (∂^w ψTilde_j) ⋆ (ψ_j ⋆ f)‖_p ≤ C_w ‖ x ↦ ‖(1_s(j) 2^{jk} (ψ_j ⋆ f)(x))_j‖_{ℓ_2} ‖_p`
+with `C_w = Rd.tlToSobolevConst p w`. Since `∂^w ψTilde_j = 2^{jk} (∂^w GTilde_j)_{2^j}`
 (`Rd.iteratedLineDerivOp_psiDualS`), this is the synthesis bound of the family
-`((∂^w G̃_j)_{2^j})_j` with the coefficients `2^{jk}`, `|2^{jk}| = 2^{jk}`
+`((∂^w GTilde_j)_{2^j})_j` with the coefficients `2^{jk}`, `|2^{jk}| = 2^{jk}`
 (`Rd.IsCZFamily.eLpNorm_sum_conv_smul_blockFun_le`). -/
 theorem eLpNorm_sum_conv_derivDual_le [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ ∞) {k : ℕ}
     (w : Fin k → V) (s : Finset ℕ) (f : Lp ℂ p (volume : Measure V)) :
@@ -364,8 +364,8 @@ theorem exists_tendsto_sum_conv_blockFun (hp : p ≠ ∞) {σ : ℝ} {K : ℕ �
   exact eLpNorm_lqNorm_ite_blockFun_le _ _ f
 
 omit [Fact (1 ≤ p)] in
-/-- The **partial sums of the derivative** `∂^w f`: `∑_{j < J} (∂^w ψ̃_j) ⋆ (ψ_j ⋆ f)`, the
-derivatives of the reproducing sums `∑_{j < J} ψ̃_j ⋆ (ψ_j ⋆ f)`. -/
+/-- The **partial sums of the derivative** `∂^w f`: `∑_{j < J} (∂^w ψTilde_j) ⋆ (ψ_j ⋆ f)`, the
+derivatives of the reproducing sums `∑_{j < J} ψTilde_j ⋆ (ψ_j ⋆ f)`. -/
 noncomputable def derivSynthesisSum {k : ℕ} (w : Fin k → V) (f : Lp ℂ p (volume : Measure V))
     (J : ℕ) : V → ℂ :=
   fun x => ∑ j ∈ Finset.range J, conv (∂^{w} (psiDualS j) : 𝓢(V, ℂ)) (blockFun j f) volume x
@@ -400,7 +400,7 @@ theorem cauchySeq_toLp_derivSynthesisSum [Nontrivial V] (hp1 : 1 < p) (hp : p �
 
 /-- **The partial sums are weak derivatives**: for `1 ≤ p < ∞`, `w ∈ V^k` and `f ∈ L_p(V)`,
 `Rd.derivSynthesisSum w f J` is the weak derivative `∂^w` of the reproducing sum
-`∑_{j < J} ψ̃_j ⋆ (ψ_j ⋆ f)` on `V` (`Rd.hasWeakLineDeriv_conv` for each term,
+`∑_{j < J} ψTilde_j ⋆ (ψ_j ⋆ f)` on `V` (`Rd.hasWeakLineDeriv_conv` for each term,
 `Rd.HasWeakLineDeriv.sum`). -/
 theorem hasWeakLineDeriv_sum_conv_psiDual (hp : p ≠ ∞) {k : ℕ} (w : Fin k → V)
     (f : Lp ℂ p (volume : Measure V)) (J : ℕ) :

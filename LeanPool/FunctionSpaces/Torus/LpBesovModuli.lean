@@ -28,7 +28,7 @@ For `1 ≤ p < ∞` and an order `r ≥ 1`, the modulus of smoothness `ω_r(f, 2
 Hence, for `0 < s < r` and `1 ≤ q ≤ ∞`, the Besov space `B^s_{p,q}(𝕋^d)` of the trigonometric
 scheme is described by moduli of smoothness (`Torus.memBesov_iff_modNorm_lt_top_lp`):
 
-`f ∈ B^s_{p,q}(𝕋^d) ⟺ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`,
+`f ∈ B^s_{p,q}(𝕋^d) ↔ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`,
 
 with equivalent quasi-norms (`Torus.approxNormDyadic_le_modNorm_lp`,
 `Torus.modNorm_le_approxNormDyadic_lp`).

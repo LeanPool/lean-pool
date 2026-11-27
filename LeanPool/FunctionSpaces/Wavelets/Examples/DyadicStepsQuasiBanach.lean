@@ -51,14 +51,18 @@ With the coincidence theorem for `ρ`-normed couples (`InterpCouple.ModulusData`
 `Haar.stepModulusData` with `ρ = p` and `θ = 1/p`) this gives, for `0 < p ≤ 1`, `q ≠ 0` and
 `0 < s < 1/p` (`Haar.memEMethod_stepCouple_iff_modulus`),
 
-`f ∈ A^s_q(L_p[0, 1], steps)  ⟺  ‖f‖_p + ‖(2^(ks) ω_1(f, 2^(-k), [0, 1])_p)_k‖_{ℓ_q} < ∞`,
+`f ∈ A^s_q(L_p[0, 1], steps)  ↔  ‖f‖_p + ‖(2^(ks) ω_1(f, 2^(-k), [0, 1])_p)_k‖_{ℓ_q} < ∞`,
 
 the Besov space `B^s_{p,q,1}[0, 1]` of the first modulus (P. Oswald, *Approximation by splines in
 the `L_p` metric, `0 < p < 1`*, Math. Nachr. 94 (1980), Theorem 6, in Russian; see Oswald,
 *Haar system as Schauder basis in Besov spaces: The limiting cases for `0 < p ≤ 1`*,
-arXiv:1808.08156, (7)). For `s < 1` it is the Besov space of DeVore–Popov (Trans. Amer. Math. Soc.
-305 (1988), (2.4) with `r = 1`, Theorem 5.1); for `1/p - 1 < s < 1` and `q < ∞` it is also the
-Fourier-analytic `B^s_{p,q}[0, 1]` (Oswald 2018, (2)). For `s > 1`, and for `s = 1` with
+[arXiv:1808.08156](https://arxiv.org/abs/1808.08156), (7), for `p < 1` and `q < ∞`).
+Oswald's later [arXiv:2002.12917](https://arxiv.org/abs/2002.12917), Lemma 1, includes `p = 1`
+and discusses `q = ∞`. The Lean result is the univariate membership equivalence for complex
+functions. For `s < 1` the first-modulus space is the Besov space of DeVore–Popov
+(Trans. Amer. Math. Soc. 305 (1988), (2.4) with `r = 1`, Theorem 5.1). For
+`1/p - 1 < s < 1` and `q < ∞` it is also the Fourier-analytic `B^s_{p,q}[0, 1]`
+(Oswald 2018, (2)). For `s > 1`, and for `s = 1` with
 `q < ∞`, it differs from the space of the second modulus: the line `x ↦ x` has `ω_2 = 0`
 (`Haar.lpModulus_two_idLp`) but `E(2^j, x)_p ≥ 2^(-1/p) 2^(-j)/4`
 (`Haar.le_eFunctional_stepCouple_idLp`), so it lies outside `A^s_q(L_p, steps)`
@@ -570,9 +574,10 @@ theorem eNormDyadic_stepCouple_lt_top_iff_modulus (hp0 : p ≠ 0) (hp1 : p ≤ 1
 `0 < s < 1/p`, `f ∈ L_p[0, 1]` lies in the approximation space `E_{s,q}` of the step couple
 (`A^s_q(L_p, steps)`) iff
 `‖f‖_p + ‖(2^(ks) ω_1(f, 2^(-k), [0, 1])_p)_k‖_{ℓ_q} < ∞`, the space `B^s_{p,q,1}[0, 1]` of the
-first modulus (Oswald 1980, Theorem 6; Oswald 2018, (7)). For `s < 1` this is the Besov space of
-DeVore–Popov (1988), (2.4) with `r = 1` (their Theorem 5.1 at `r = 1`); for `1/p - 1 < s < 1`
-and `q < ∞` it is also the Fourier-analytic `B^s_{p,q}[0, 1]` (Oswald 2018, (2)); for `s > 1`,
+first modulus (Oswald, arXiv:2002.12917, Lemma 1 and the discussion of `q = ∞`).
+For `s < 1` this is the Besov space of DeVore–Popov (1988), (2.4) with `r = 1`
+(their Theorem 5.1 at `r = 1`). For `1/p - 1 < s < 1` and `q < ∞` it is also the
+Fourier-analytic `B^s_{p,q}[0, 1]` (Oswald 2018, (2)). For `s > 1`,
 and for `s = 1` with `q < ∞`, it misses the line `x ↦ x`, whose second modulus vanishes
 (`Haar.not_memEMethod_stepCouple_idLp`). -/
 theorem memEMethod_stepCouple_iff_modulus (hp0 : p ≠ 0) (hp1 : p ≤ 1) (hq0 : q ≠ 0)

@@ -33,12 +33,12 @@ With the decreasing rearrangement `γ*_k` of the coefficients (`TauCeti.decreasi
 For `0 < τ ≤ 2` and `θ = 1/τ - 1/2` this gives the tail bound with constant `1`
 
 `E_n(f) ≤ (n + 1)^(-θ) ‖(γ_i(f))_i‖_{ℓ_τ}`   for every `n ≥ 0`
-(`HilbertBasis.approxError_nTerm_le`; Dũng–Temlyakov–Ullrich, *Hyperbolic Cross Approximation*,
+(`HilbertBasis.approxError_nTerm_le`; Dung–Temlyakov–Ullrich, *Hyperbolic Cross Approximation*,
 Lemma 7.8 in the numbering of arXiv:1601.03978v3), and, for `τ < 2`, through the dyadic blocks
 `2^m (γ*_{2^(m+1)})² ≤ E_{2^m}(f)² ≤ 2 ∑_{l ≥ m} 2^l (γ*_{2^l})²`, the theorem of Stechkin and
 DeVore:
 
-`f ∈ A^θ_τ(nTerm)  ⟺  ∑_i |⟨e_i, f⟩|^τ < ∞`   (`HilbertBasis.memApprox_nTerm_iff`),
+`f ∈ A^θ_τ(nTerm)  ↔  ∑_i |⟨e_i, f⟩|^τ < ∞`   (`HilbertBasis.memApprox_nTerm_iff`),
 
 with the two-sided bound `∑_i γ_i(f)^τ ≤ 4 ‖f‖^τ_{A^θ_τ}` and
 `‖f‖_{A^θ_τ} ≤ C_τ ‖(γ_i(f))_i‖_{ℓ_τ}` for the dyadic quasi-norm
@@ -257,7 +257,7 @@ private theorem approxError_nTerm_sq_le_mul {τ : ℝ} (hτ0 : 0 < τ) (hτ2 : �
 `E_n(f) ≤ (n + 1)^(-θ) (∑_i |⟨e_i, f⟩|^τ)^(1/τ)`. Since `θ ≥ 0`, it gives
 `E_n(f) ≤ n^(-θ) (∑_i |⟨e_i, f⟩|^τ)^(1/τ)` for `n ≥ 1`, and `‖f‖ ≤ (∑_i |⟨e_i, f⟩|^τ)^(1/τ)` at
 `n = 0`. The error `E_n(f)` is the tail of the coefficients from the `(n + 1)`-th largest one
-on, so this is Dũng–Temlyakov–Ullrich, *Hyperbolic Cross Approximation*, Lemma 7.8 (numbering of
+on, so this is Dung–Temlyakov–Ullrich, *Hyperbolic Cross Approximation*, Lemma 7.8 (numbering of
 arXiv:1601.03978v3), with `m = n + 1`. With `S = ∑_i γ_i^τ`, the weak-type bound
 `(n + 1) (γ*_n)^τ ≤ S` turns `E_n(f)² ≤ S (γ*_n)^(2-τ)` into
 `E_n(f)² ≤ (n + 1)^(-2θ) S^(2/τ)`. -/

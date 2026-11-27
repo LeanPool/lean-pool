@@ -24,15 +24,15 @@ provenance_evidence: >-
   Ullrich for the mathematical design and choice of statements.
 main_declarations:
 - Rd.LocalMeansBump.besov_iff_atomic
-- Rd.LocalMeansBump.memTriebelLizorkin_iff_atomic
+- Rd.memTriebelLizorkin_iff_atomic
 - Rd.memSobolev_bessel_iff_memTriebelLizorkinDistr
 - Daubechies.besov_iff_coeff_d4
 - Haar.memEMethod_stepCouple_iff_modulus
 - ApproximationScheme.memKMethod_reiteration
 main_results:
 - declaration: Rd.LocalMeansBump.besov_iff_atomic
-  informal: For finite p at least one, q at least one, and smoothness between zero and the integer atom order, finite Besov difference norm for a fixed local-means bump is equivalent to a regular-atom expansion with bounded overlap and finite coefficient norm.
-- declaration: Rd.LocalMeansBump.memTriebelLizorkin_iff_atomic
+  informal: Given a local-means bump, for finite p at least one, q at least one, and smoothness between zero and the integer atom order, finite Besov difference norm is equivalent to a regular-atom expansion with bounded overlap and finite coefficient norm.
+- declaration: Rd.memTriebelLizorkin_iff_atomic
   informal: For 1 < p < infinity, q > 1, and positive smoothness below the atom order, Triebel–Lizorkin membership is equivalent to an expansion by smooth dyadic atoms with finite coefficient norm.
 - declaration: Rd.memSobolev_bessel_iff_memTriebelLizorkinDistr
   informal: In positive dimension and for 1 < p < infinity, Mathlib's Bessel potential space agrees with the distributional Triebel–Lizorkin space with second index two for every real smoothness.

@@ -456,8 +456,8 @@ end Generic
 
 /-- Restricting every member of a family to a set `S` restricts its pointwise `ℓ_q` norm:
 `‖(1_S g_i(x))_i‖_{ℓ_q} = 1_S(x) ‖(g_i(x))_i‖_{ℓ_q}`. -/
-theorem lqNorm_indicator {α ι : Type*} [MeasurableSpace ι] [Countable ι]
-    [MeasurableSingletonClass ι] (q : ℝ≥0∞) (S : Set α) (g : ι → α → ℝ≥0∞) (x : α) :
+theorem lqNorm_indicator {α ι : Type*} [MeasurableSpace ι] (q : ℝ≥0∞)
+    (S : Set α) (g : ι → α → ℝ≥0∞) (x : α) :
     lqNorm q (fun i => S.indicator (g i) x) =
       S.indicator (fun y => lqNorm q (fun i => g i y)) x := by
   by_cases hx : x ∈ S

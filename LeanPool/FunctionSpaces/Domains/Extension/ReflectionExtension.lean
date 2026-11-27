@@ -640,7 +640,8 @@ theorem exists_hasWeakLineDeriv_reflectionExtension_mul (j : Fin Ω.N) (hp : 1 �
 
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
 /-- **The extension by reflection of a cutoff agrees with the function near the patch**: if
-`χ = 1` near `B̄(c_j, ρ_j - 2ε)` with `ε ≥ 0`, then the extension by reflection of `χ f` in the
+`χ = 1` near `closedBall(c_j, ρ_j - 2ε)` with `ε ≥ 0`, then the extension by reflection of `χ f`
+in the
 graph domain `Ω_j` is `f` on `Ω ∩ B(c_j, ρ_j - 2ε)`, a subset of `Ω_j`
 (`Rd.BoundedLipschitzDomain.inter_ball_eq`, `Rd.LipschitzGraph.reflectionExtension_of_mem`). -/
 theorem reflectionExtension_mul_eq_of_mem (j : Fin Ω.N) {ε : ℝ} (hε : 0 ≤ ε) {χ : V → ℝ}

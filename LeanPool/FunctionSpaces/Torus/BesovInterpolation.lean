@@ -19,7 +19,7 @@ For `1 ≤ p < ∞` and Besov spaces by differences of order `r` on `𝕋^d`, wi
 `ApproximationScheme.ModulusData.modCouple` of `Torus.lpModulusData`), `0 < s₀ < s₁ < r`,
 `0 < η < 1`, `1 ≤ q₀, q₁, q ≤ ∞` and `s = (1-η)s₀ + ηs₁`,
 
-`f ∈ (B^{s₀}_{p,q₀}, B^{s₁}_{p,q₁})_{η,q} ⟺ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
+`f ∈ (B^{s₀}_{p,q₀}, B^{s₁}_{p,q₁})_{η,q} ↔ ‖f‖_p + ‖(2^(ks) ω_r(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞`
 
 (`Torus.memKMethod_modCouple_iff`), and `(L_p, B^{s₁}_{p,q₁})_{η,q} = B^{ηs₁}_{p,q}` by
 differences (`Torus.memKMethod_leftModCouple_iff`).  The approximation spaces of the

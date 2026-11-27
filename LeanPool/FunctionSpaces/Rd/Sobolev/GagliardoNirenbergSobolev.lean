@@ -162,7 +162,7 @@ theorem eLpNorm_le_of_hasCompactSupport_of_hasWeakLineDeriv {p p' : ℝ≥0} (hp
 noncomputable def cutoffBump : ContDiffBump (0 : V) := ⟨1, 2, one_pos, one_lt_two⟩
 
 /-- The **real cut-off** `χ_R(x) = b(x/R)` with the smooth bump `b = Rd.cutoffBump`, written
-`b(R⁻¹ x)`: smooth, with values in `[0, 1]`, equal to `1` on `B̄(0, R)` for `R > 0`. -/
+`b(R⁻¹ x)`: smooth, with values in `[0, 1]`, equal to `1` on `closedBall(0, R)` for `R > 0`. -/
 noncomputable def realCutoff (R : ℝ) (x : V) : ℝ :=
   cutoffBump (V := V) (R⁻¹ • x)
 
@@ -187,7 +187,7 @@ theorem hasCompactSupport_realCutoff {R : ℝ} (hR : R ≠ 0) :
     (Homeomorph.smulOfNeZero R⁻¹ (inv_ne_zero hR))
 
 omit [MeasurableSpace V] [BorelSpace V] in
-/-- The cut-off `χ_R` is `1` on `B̄(0, R)`, `R > 0`. -/
+/-- The cut-off `χ_R` is `1` on `closedBall(0, R)`, `R > 0`. -/
 theorem realCutoff_eq_one {R : ℝ} (hR : 0 < R) {x : V} (hx : ‖x‖ ≤ R) : realCutoff R x = 1 := by
   refine (cutoffBump (V := V)).one_of_mem_closedBall ?_
   rw [Metric.mem_closedBall, dist_zero_right, norm_smul, Real.norm_of_nonneg (inv_nonneg.2 hR.le)]

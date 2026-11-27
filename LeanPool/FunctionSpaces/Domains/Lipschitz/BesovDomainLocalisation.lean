@@ -27,7 +27,8 @@ described on the bounded convex pieces `D = O ∩ B(0, R')`, `R < R'`
 * **Localisation** (`Rd.BesovDomain.modNormOn_lt_top_iff_ballDomain`): for such functions the
   intrinsic quasi-norm `N_Ω` is finite iff `N_D` is finite. One direction is the monotonicity in
   the set (`Rd.modNormOn_mono_set`); for the other, extend from `D`, multiply by a cutoff equal to
-  `1` on `B̄(0, R)` and supported in `B(0, R')`, and restrict to `Ω`. Multiplication by a smooth
+  `1` on `closedBall(0, R)` and supported in `B(0, R')`, and restrict to `Ω`. Multiplication by
+  a smooth
   `χ` with compact support is bounded in the Besov quasi-norm by differences on `V`:
   `N(χ F) ≤ C N(F)` (`Rd.exists_mul_modNorm_le`).
 * **`W^1_2 = B^1_{2,2}`** (`Rd.BesovDomain.exists_hasWeakLineDeriv_iff_modNormOn_lt_top`): such a
@@ -94,7 +95,7 @@ theorem ballDomain_subset (R : ℝ) : (ballDomain Ω R).carrier ⊆ Ω :=
 variable {Ω}
 
 /-- **The cutoff identity**: let `g = 0` almost everywhere outside `B(0, R)`, `F = g` almost
-everywhere on `D = O ∩ B(0, R')`, and let `χ` be `1` on `B̄(0, R)` with closed support in
+everywhere on `D = O ∩ B(0, R')`, and let `χ` be `1` on `closedBall(0, R)` with closed support in
 `B(0, R')`. Then `χ F = g` almost everywhere on `Ω`: on `D` because `χ g = g`, outside
 `B(0, R')` because both sides vanish, and `Ω \ O` is a null set
 (`Rd.BesovDomain.restrict_interior`). -/
@@ -119,7 +120,8 @@ theorem mul_ae_eq_of_ballDomain {p : ℝ≥0∞} {R R' : ℝ} (hR : R ≤ R')
 `1 ≤ q ≤ ∞`, `R < R'` and `g ∈ L_p(V)` vanishing almost everywhere outside `B(0, R)`, if the
 intrinsic quasi-norm `N_D(g)` on the piece `D = O ∩ B(0, R')` is finite, so is `N_Ω(g)`. The piece
 has the extension property (`Rd.BoundedLipschitzDomain.hasBesovExtension`), which gives `F` on `V`
-with `F = g` on `D`; for a smooth cutoff `χ` equal to `1` on `B̄(0, R)` with compact support in
+with `F = g` on `D`; for a smooth cutoff `χ` equal to `1` on `closedBall(0, R)` with compact
+support in
 `B(0, R')` (`Rd.exists_contDiff_eventuallyEq_one`), `χ F` has finite quasi-norm on `V`
 (`Rd.exists_mul_modNorm_le`) and agrees with `g` on `Ω` (`Rd.BesovDomain.mul_ae_eq_of_ballDomain`),
 so `N_Ω(g)` is finite (`Rd.modNormOn_le_modNorm_of_indicatorLp`). -/

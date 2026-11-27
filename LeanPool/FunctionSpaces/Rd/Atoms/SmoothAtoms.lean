@@ -105,7 +105,8 @@ theorem iteratedFDeriv_conv_apply {K g : V → ℂ} (hK : ContDiff ℝ ((⊤ : �
       ((hK.differentiable_iteratedFDeriv (by exact_mod_cast WithTop.coe_lt_top _)) y)]
 
 /-- **Bounds for the derivatives of a convolution**: if `‖D^n K‖ ≤ M` and `K = 0` outside
-`B̄(0, ρ)`, the derivative of order `n` of `c (K ⋆ g)` is bounded through the convolutions with the
+`closedBall(0, ρ)`, the derivative of order `n` of `c (K ⋆ g)` is bounded through the
+convolutions with the
 directional derivatives `(D^n K)(·)(v)`, which satisfy `|(D^n K)(·)(v)| ≤ M ∏ ‖v_i‖`. -/
 theorem norm_iteratedFDeriv_const_mul_conv_le {K g : V → ℂ}
     (hK : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) K) (hKs : HasCompactSupport K)
@@ -355,7 +356,7 @@ theorem isSmoothAtom_zero (Ω : Set V) (K : ℕ) (d : ℝ) {A : ℝ} (hA : 0 ≤
 
 /-! ### Smooth cell atoms -/
 
-/-- **Derivatives of cell atoms**: if `K` is smooth, vanishes outside `B̄(0, ρ 2^(-j))` and
+/-- **Derivatives of cell atoms**: if `K` is smooth, vanishes outside `closedBall(0, ρ 2^(-j))` and
 `‖D^l K‖ ≤ A 2^(j(n+l))`, then `‖D^l a_{j,m}‖ ≤ A 2^(jl) (ρ^n |B_1|)^(1-1/p)`. -/
 theorem norm_iteratedFDeriv_cellAtom_le {p : ℝ≥0∞} (hp1 : 1 ≤ p) {K g : V → ℂ}
     (hK : ContDiff ℝ ((⊤ : ℕ∞) : WithTop ℕ∞) K) (hg : MemLp g p volume) {j : ℕ}

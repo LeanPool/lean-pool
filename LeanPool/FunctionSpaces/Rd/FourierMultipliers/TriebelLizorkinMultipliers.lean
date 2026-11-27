@@ -21,14 +21,14 @@ tempered distributions, every real `s`, `1 < p < ∞` and `1 < q ≤ ∞`, with 
 constant (`Rd.exists_triebelLizorkinNormDistr_fourierMultiplier_le`); on `L_p` functions this is a
 bound for the Triebel–Lizorkin quasi-norm
 (`Rd.exists_triebelLizorkinNorm_le_of_fourierMultiplier_eq`). For a given uniform family `(G_j)`
-with `m(D) ψ̃_j = 2^{jσ} (G_j)_{2^j}` the constant is `C_{n,N} C_{A,0,N} C_{FS}`
+with `m(D) ψTilde_j = 2^{jσ} (G_j)_{2^j}` the constant is `C_{n,N} C_{A,0,N} C_{FS}`
 (`Rd.triebelLizorkinNormDistr_fourierMultiplier_le`), and `m(D)` maps `F^s_{p,q}` into
 `F^{s-σ}_{p,q}` (`Rd.MemTriebelLizorkinDistr.fourierMultiplierCLM`).
 
-The proof is pointwise. Since `𝓕ψ̃_j 𝓕ψ_j = 𝓕ψ_j`, the block of `m(D) u` is the multiplier
-`𝓕(m(D) ψ̃_j)` applied to the block of `u` (`Rd.distribBlock_fourierMultiplierCLM`), so when
-`Δ_j u = g_j ∈ L_p` it is the convolution `(m(D) ψ̃_j) ⋆ g_j`
-(`Rd.distribBlock_fourierMultiplierCLM_eq_convLp`). Here `m(D) ψ̃_j = 2^{jσ} (G_j)_{2^j}` with a
+The proof is pointwise. Since `𝓕ψTilde_j 𝓕ψ_j = 𝓕ψ_j`, the block of `m(D) u` is the multiplier
+`𝓕(m(D) ψTilde_j)` applied to the block of `u` (`Rd.distribBlock_fourierMultiplierCLM`), so when
+`Δ_j u = g_j ∈ L_p` it is the convolution `(m(D) ψTilde_j) ⋆ g_j`
+(`Rd.distribBlock_fourierMultiplierCLM_eq_convLp`). Here `m(D) ψTilde_j = 2^{jσ} (G_j)_{2^j}` with a
 uniform family `(G_j)` (`Rd.HasSymbolGrowth.exists_isUniformSchwartz_psiDualS`), so
 `2^{j(s-σ)} |Δ_j(m(D) u)| ≤ C M(2^{js} |g_j|)` (`Rd.dyadicWeight_mul_enorm_conv_le_maximal`), and
 the Fefferman–Stein inequality (`Rd.eLpNorm_le_of_le_lqNorm_maximal`) finishes.
@@ -49,9 +49,9 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDim
 /-! ### The blocks of a Fourier multiplier -/
 
 /-- **The blocks of a Fourier multiplier**: for `m` of temperate growth and every tempered
-distribution `u`, `Δ_j(m(D) u) = 𝓕(m(D) ψ̃_j)(D) Δ_j u`. Both sides are Fourier multipliers of
+distribution `u`, `Δ_j(m(D) u) = 𝓕(m(D) ψTilde_j)(D) Δ_j u`. Both sides are Fourier multipliers of
 `u` (Mathlib's `TemperedDistribution.fourierMultiplierCLM_fourierMultiplierCLM_apply`), with the
-symbols `m 𝓕ψ_j` and `𝓕ψ_j m 𝓕ψ̃_j`, equal since `𝓕ψ̃_j 𝓕ψ_j = 𝓕ψ_j`
+symbols `m 𝓕ψ_j` and `𝓕ψ_j m 𝓕ψTilde_j`, equal since `𝓕ψTilde_j 𝓕ψ_j = 𝓕ψ_j`
 (`Rd.fourier_psiDual_mul_psi`). -/
 theorem distribBlock_fourierMultiplierCLM (hm : m.HasTemperateGrowth) (u : 𝓢'(V, ℂ)) (j : ℕ) :
     distribBlock j (TemperedDistribution.fourierMultiplierCLM ℂ m u) =
@@ -70,7 +70,7 @@ theorem distribBlock_fourierMultiplierCLM (hm : m.HasTemperateGrowth) (u : 𝓢'
 
 /-- **The blocks of a Fourier multiplier as convolutions**: if `m` has temperate growth,
 `1 ≤ p < ∞` and the block `Δ_j u` of a tempered distribution is an `L_p` function `g`, then
-`Δ_j(m(D) u)` is the `L_p` function `(m(D) ψ̃_j) ⋆ g` (`Rd.distribBlock_fourierMultiplierCLM`,
+`Δ_j(m(D) u)` is the `L_p` function `(m(D) ψTilde_j) ⋆ g` (`Rd.distribBlock_fourierMultiplierCLM`,
 `Rd.fourierMultiplierCLM_fourier_toLp_eq_conv`). -/
 theorem distribBlock_fourierMultiplierCLM_eq_convLp {p : ℝ≥0∞} [Fact (1 ≤ p)] (hp : p ≠ ∞)
     (hm : m.HasTemperateGrowth) {u : 𝓢'(V, ℂ)} {j : ℕ} {g : Lp ℂ p (volume : Measure V)}
@@ -112,11 +112,12 @@ theorem dyadicWeight_mul_enorm_conv_le_maximal {G : ℕ → 𝓢(V, ℂ)} {A : �
 variable {p : ℝ≥0∞} [Fact (1 ≤ p)]
 
 /-- **The multiplier bound for one family of blocks**: for a function `m` of temperate growth
-with `m(D) ψ̃_j = 2^{jσ} (G_j)_{2^j}` and `(G_j)` uniformly Schwartz with bounds `A`, `1 < p < ∞`,
+with `m(D) ψTilde_j = 2^{jσ} (G_j)_{2^j}` and `(G_j)` uniformly Schwartz with bounds `A`, `1 < p
+< ∞`,
 `1 < q ≤ ∞` and `N > n`, if the blocks of `u` are `L_p` functions `g_j`, then
 `‖m(D) u‖_{F^{s-σ}_{p,q}} ≤ C_{n,N} C_{A,0,N} C_{FS} ‖ x ↦ ‖(2^{js} |g_j(x)|)_j‖_{ℓ_q} ‖_p`
 with the Fefferman–Stein constant `C_{FS} = Rd.feffermanSteinConst V p q`. The blocks of
-`m(D) u` are the convolutions `(m(D) ψ̃_j) ⋆ g_j`
+`m(D) u` are the convolutions `(m(D) ψTilde_j) ⋆ g_j`
 (`Rd.distribBlock_fourierMultiplierCLM_eq_convLp`), bounded at almost every point by
 `Rd.dyadicWeight_mul_enorm_conv_le_maximal`, and `Rd.eLpNorm_le_of_le_lqNorm_maximal` applies. -/
 theorem triebelLizorkinNormDistr_fourierMultiplier_le (hp1 : 1 < p) (hp : p ≠ ∞) {q : ℝ≥0∞}

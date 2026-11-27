@@ -39,7 +39,7 @@ with the explicit constant `C_{n,p} = p 2^p 5^n / (p - 1)` (`Rd.maximalConst`). 
 
 Two geometric facts serve the covering arguments: the balls of radius `ρ 2^(-j)` have the volume
 `ρ^n |B_1| 2^(-jn)` (`Rd.volume_ball_div_two_pow`, `Rd.volume_closedBall_div_two_pow`), and a set
-in `B̄(c, ρ)` that meets `B(x, r)` for some `x ∉ B̄(c, 2ρ)` lies in `B(x, 3r)`
+in `closedBall(c, ρ)` that meets `B(x, r)` for some `x ∉ closedBall(c, 2ρ)` lies in `B(x, 3r)`
 (`Metric.subset_ball_three_mul_of_inter_nonempty`).
 -/
 
@@ -50,7 +50,8 @@ open scoped ENNReal Topology
 
 namespace Metric
 
-/-- If a set `Q ⊆ B̄(c, ρ)` meets the ball `B(x, r)` around a point `x ∉ B̄(c, 2ρ)`, then
+/-- If a set `Q ⊆ closedBall(c, ρ)` meets the ball `B(x, r)` around a point `x ∉ closedBall(c,
+2ρ)`, then
 `Q ⊆ B(x, 3r)`: a point of `Q` in the ball forces `r > ρ`, so every point of `Q` lies within
 `r + 2ρ < 3r` of `x`. -/
 theorem subset_ball_three_mul_of_inter_nonempty {α : Type*} [PseudoMetricSpace α] {Q : Set α}
@@ -302,7 +303,7 @@ theorem iUnion_dyadicShell {ρ : ℝ} (hρ : 0 < ρ) : ⋃ i, dyadicShell (V := 
     exact ⟨i, (div_lt_iff₀ hρ).1 hi2, Or.inr ((le_div_iff₀ hρ).1 hi1)⟩
 
 omit [InnerProductSpace ℝ V] [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
-/-- A kernel with the bound `A` on `B̄(0,ρ)` and the bound `A (ρ/‖y‖)^N` outside is at most
+/-- A kernel with the bound `A` on `closedBall(0,ρ)` and the bound `A (ρ/‖y‖)^N` outside is at most
 `A 2^(-iN)` on the shell `i`. -/
 theorem kernel_le_of_mem_dyadicShell {K : V → ℝ≥0∞} {A : ℝ≥0∞} {ρ : ℝ} {N : ℕ} (hρ : 0 < ρ)
     (hK₁ : ∀ y, ‖y‖ ≤ ρ → K y ≤ A)
@@ -352,7 +353,8 @@ theorem tsum_two_inv_pow_mul_two_pow {n N : ℕ} (hN : n ≤ N) :
   simp_rw [hterm]
   rw [ENNReal.tsum_mul_left, ENNReal.tsum_geometric]
 
-/-- **Kernels with a power tail.** If `K ≤ A` on `B̄(0,ρ)` and `K(y) ≤ A (ρ/‖y‖)^N` outside, with
+/-- **Kernels with a power tail.** If `K ≤ A` on `closedBall(0,ρ)` and `K(y) ≤ A (ρ/‖y‖)^N`
+outside, with
 `N > n`, then `∫ K(y) g(x - y) dy ≤ A |B(0,ρ)| 2^n (1 - 2^(-(N-n)))⁻¹ M g(x)` for every
 `g : V → [0, ∞]`. The proof covers `V` by the ball `B(0,2ρ)` and the dyadic shells
 `2^i ρ ≤ ‖y‖ < 2^(i+1) ρ`, `i ≥ 1`, applies the ball bound on each, and sums a geometric
@@ -451,7 +453,8 @@ theorem lintegral_mul_le_maximal_of_one_add_norm {K : V → ℝ≥0∞} {A : ℝ
 
 /-! ### The weighted weak type `(1,1)` -/
 
-/-- For `y ∈ B(b,r)`: `∫_{B̄(b,4r)} w ≤ 5^n |B(0,r)| M w(y)`, since `B̄(b,4r) ⊆ B(y,5r)` and
+/-- For `y ∈ B(b,r)`: `∫_{closedBall(b,4r)} w ≤ 5^n |B(0,r)| M w(y)`, since `closedBall(b,4r) ⊆
+B(y,5r)` and
 `|B(0,5r)| = 5^n |B(0,r)|`. -/
 theorem setLIntegral_closedBall_le_maximal {r : ℝ} (hr : 0 < r) (w : V → ℝ≥0∞) {b y : V}
     (hy : y ∈ ball b r) :
@@ -471,7 +474,8 @@ theorem setLIntegral_closedBall_le_maximal {r : ℝ} (hr : 0 < r) (w : V → ℝ
         ENNReal.ofReal_pow (by norm_num), ENNReal.ofReal_ofNat]
 
 /-- **One ball of the Vitali cover.** If `t |B(0,r)| ≤ ∫_{B(b,r)} g`, then
-`t ∫_{B̄(b,4r)} w ≤ 5^n ∫_{B(b,r)} g M w`: the mass of `w` on the enlarged ball is spread over
+`t ∫_{closedBall(b,4r)} w ≤ 5^n ∫_{B(b,r)} g M w`: the mass of `w` on the enlarged ball is
+spread over
 `B(b,r)` with the weight `g`, at the price of `M w`. -/
 theorem mul_setLIntegral_closedBall_le {r : ℝ} (hr : 0 < r) {g : V → ℝ≥0∞} (w : V → ℝ≥0∞)
     {b : V} {t : ℝ≥0∞} (hI : t * volume (ball (0 : V) r) ≤ ∫⁻ y in ball b r, g y) :
@@ -512,7 +516,7 @@ theorem setOf_lt_maximal_subset (g : V → ℝ≥0∞) (t : ℝ≥0∞) :
 
 /-- **Vitali step.** `t ∫_{E_R} w ≤ 5^n ∫ g M w` for the set `E_R = bigBallSet g t R`: Vitali's
 covering lemma selects countably many disjoint balls `B(b, r_b)` from the balls that define
-`E_R` such that the balls `B̄(b, 4 r_b)` cover `E_R`, and each of them is estimated by
+`E_R` such that the balls `closedBall(b, 4 r_b)` cover `E_R`, and each of them is estimated by
 `Rd.mul_setLIntegral_closedBall_le`. -/
 theorem mul_setLIntegral_bigBallSet_le (g w : V → ℝ≥0∞) (t : ℝ≥0∞) (R : ℝ) :
     t * ∫⁻ x in bigBallSet g t R, w x ≤ 5 ^ finrank ℝ V * ∫⁻ x, g x * maximal w x := by

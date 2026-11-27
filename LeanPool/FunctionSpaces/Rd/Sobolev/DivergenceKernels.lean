@@ -78,7 +78,8 @@ private theorem continuous_fderiv_fst_of_contDiff {E : Type w} [NormedAddCommGro
 /-- **Differentiation under the integral sign** for a jointly `C^1` integrand: if
 `(x, t) ↦ F x t` is `C^1` on `H × ℝ`, then `x ↦ ∫_a^b F x t dt` has the derivative
 `∫_a^b D_x F x₀ t dt` at every `x₀`. The partial derivative is bounded on the compact set
-`B̄(x₀, 1) × [a, b]`, so Mathlib's `intervalIntegral.hasFDerivAt_integral_of_dominated_of_fderiv_le`
+`closedBall(x₀, 1) × [a, b]`, so Mathlib's
+`intervalIntegral.hasFDerivAt_integral_of_dominated_of_fderiv_le`
 applies. -/
 theorem hasFDerivAt_integral_of_contDiff {E : Type w} [NormedAddCommGroup E]
     [NormedSpace ℝ E] {F : H → ℝ → E} (hF : ContDiff ℝ 1 (Function.uncurry F)) (a b : ℝ)
@@ -397,7 +398,7 @@ theorem sum_fderiv_divergenceKernel {ι : Type*} [Fintype ι] (b : OrthonormalBa
 
 /-- The integrand `(x, s) ↦ ⟪w, x⟫ m_{e^s}(x)` of the dilation average is integrable on
 `V × (0, c]` if `m` is continuous and vanishes outside a ball: it is continuous and vanishes
-outside the compact set `B̄(0, R) × [0, c]`. -/
+outside the compact set `closedBall(0, R) × [0, c]`. -/
 theorem integrable_inner_mul_dilate_exp {m : V → ℂ} (hm : Continuous m) {R : ℝ}
     (hR : ∀ z, R < ‖z‖ → m z = 0) (w : V) (c : ℝ) :
     Integrable (Function.uncurry fun (x : V) (s : ℝ) => (inner ℝ w x : ℂ) * dilate (Real.exp s) m x)

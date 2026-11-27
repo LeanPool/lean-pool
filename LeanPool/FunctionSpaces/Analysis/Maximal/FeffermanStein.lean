@@ -52,7 +52,8 @@ variable {V : Type*} [NormedAddCommGroup V] [InnerProductSpace ℝ V] [FiniteDim
 
 /-! ### The maximal function off enlarged sets -/
 
-/-- The integral of `g` over the part of `Q ⊆ B̄(c, ρ)` in `B(x, r)`, for `x ∉ B̄(c, 2ρ)`, is at
+/-- The integral of `g` over the part of `Q ⊆ closedBall(c, ρ)` in `B(x, r)`, for `x ∉
+closedBall(c, 2ρ)`, is at
 most `(⨍_Q g) |Q ∩ B(x, 3r)|`: either the two sets are disjoint, or `Q ⊆ B(x, 3r)`. -/
 theorem setLIntegral_inter_ball_le {Q : Set V} {c x : V} {ρ r : ℝ} (hQ : Q ⊆ closedBall c ρ)
     (h0 : volume Q ≠ 0) (htop : volume Q ≠ ∞) (g : V → ℝ≥0∞) (hx : x ∉ closedBall c (2 * ρ)) :
@@ -64,11 +65,14 @@ theorem setLIntegral_inter_ball_le {Q : Set V} {c x : V} {ρ r : ℝ} (hQ : Q �
     ENNReal.div_mul_cancel h0 htop]
   exact lintegral_mono_set Set.inter_subset_left
 
-/-- **The maximal function off enlarged sets**: let `Q_i ⊆ B̄(c_i, ρ_i)` be countably many
-measurable sets of positive finite measure and `x` a point outside every `B̄(c_i, 2ρ_i)`. Then
-`M(1_{⋃ Q_i} g)(x) ≤ 3^n M g̃(x)` for every `g : V → [0, ∞]`, where `g̃ = ∑_i (⨍_{Q_i} g) 1_{Q_i}`
+/-- **The maximal function off enlarged sets**: let `Q_i ⊆ closedBall(c_i, ρ_i)` be countably many
+measurable sets of positive finite measure and `x` a point outside every `closedBall(c_i,
+2ρ_i)`. Then
+`M(1_{⋃ Q_i} g)(x) ≤ 3^n M gTilde(x)` for every `g : V → [0, ∞]`, where `gTilde = ∑_i (⨍_{Q_i}
+g) 1_{Q_i}`
 replaces `g` on each `Q_i` by its mean. A ball `B(x, r)` that meets `Q_i` has radius `r > ρ_i`
-and `Q_i ⊆ B(x, 3r)`, so `∫_{B(x,r)} 1_{⋃ Q_i} g ≤ ∫_{B(x,3r)} g̃`. The bound holds for arbitrary,
+and `Q_i ⊆ B(x, 3r)`, so `∫_{B(x,r)} 1_{⋃ Q_i} g ≤ ∫_{B(x,3r)} gTilde`. The bound holds for
+arbitrary,
 possibly overlapping sets `Q_i` and every `g`. -/
 theorem maximal_indicator_iUnion_le {ι : Type*} [Countable ι] (Q : ι → Set V) (c : ι → V)
     (ρ : ι → ℝ) (hQ : ∀ i, Q i ⊆ closedBall (c i) (ρ i)) (hm : ∀ i, MeasurableSet (Q i))
@@ -171,7 +175,7 @@ theorem czAverage_self_le (x : V) : czAverage G t G x ≤ 2 ^ finrank ℝ V * t 
 
 /-- **Positivity of the maximal function off `Ω*`**: for `x` outside the enlarged exceptional
 set, `M(1_Ω h)(x) ≤ 3^n M(czAverage h)(x)` for every `h : V → [0, ∞]`, since every maximal big
-cube `Q_{k,m}` lies in `B̄(c_{k,m}, n 2^(-k))` and `Ω*` contains the balls of twice this
+cube `Q_{k,m}` lies in `closedBall(c_{k,m}, n 2^(-k))` and `Ω*` contains the balls of twice this
 radius. -/
 theorem maximal_indicator_czSet_le (h : V → ℝ≥0∞) {x : V} (hx : x ∉ czEnlarged G t) :
     maximal ((czSet G t).indicator h) x ≤ 3 ^ finrank ℝ V * maximal (czAverage G t h) x := by

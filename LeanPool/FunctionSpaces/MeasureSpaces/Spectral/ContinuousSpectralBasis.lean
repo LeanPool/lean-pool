@@ -19,7 +19,7 @@ Modified for Lean Pool: module names and imports adapted.
 Let `M` be a topological space with a finite Borel measure `μ`. A **continuous spectral basis**
 of `L_2(μ)` (`ContinuousSpectralBasis`) is a spectral scheme in `L_2(μ)`, a Hilbert basis `(e_i)`
 with a level `λ : ι → ℕ` and finitely many basis elements of each level, whose elements are the
-`L_2` classes of bounded continuous functions `ẽ_i` (`ContinuousSpectralBasis.basisFun`). The
+`L_2` classes of bounded continuous functions `eTilde_i` (`ContinuousSpectralBasis.basisFun`). The
 model is the eigenbasis of the Laplace–Beltrami operator of a compact Riemannian manifold,
 continuous by elliptic regularity, with `λ(i) = ⌊√λ_i⌋`. The Dirichlet eigenbasis of a bounded
 open set, the Neumann eigenbasis of a bounded Lipschitz domain and the eigenbasis of the chart
@@ -28,7 +28,7 @@ form of a compact manifold are spectral schemes (`Rd.dirichletScheme`,
 and continuity of their elements is elliptic regularity, a later goal. The Fourier basis of the
 torus is a continuous spectral basis (`Torus.fourierEigenbasis`).
 
-The functions `ẽ_i` of level `< n` span the space `basisSpan n` of bounded continuous functions
+The functions `eTilde_i` of level `< n` span the space `basisSpan n` of bounded continuous functions
 (`ContinuousSpectralBasis.basisSpan`), and these spaces form a scheme of functions
 (`ContinuousSpectralBasis.basisScheme`). Its classes in `L_2` are the spectral scheme
 (`ContinuousSpectralBasis.toLp_basisScheme_eq`), so the spectral theory applies:
@@ -55,7 +55,7 @@ variable {M : Type*} [TopologicalSpace M] [MeasurableSpace M] [BorelSpace M]
 
 /-- A **continuous spectral basis** of `L_2(μ)`: a Hilbert basis `(e_i)` of `L_2(μ)` with a level
 `λ : ι → ℕ` that takes each value finitely often (a spectral scheme), together with bounded
-continuous functions `ẽ_i` whose `L_2` classes are the `e_i`. The eigenfunctions of the
+continuous functions `eTilde_i` whose `L_2` classes are the `e_i`. The eigenfunctions of the
 Laplace–Beltrami operator of a compact Riemannian manifold, with the level `⌊√λ⌋` of the
 eigenvalue `λ`, are the model; their continuity is elliptic regularity. On a bounded open set of
 `ℝ^d` the Dirichlet eigenbasis is a spectral scheme (`Rd.dirichletScheme`), and so are the Neumann
@@ -68,14 +68,14 @@ structure ContinuousSpectralBasis (ι : Type*) (μ : Measure M) [IsFiniteMeasure
     extends SpectralScheme ι (Lp ℂ 2 μ) where
   /-- The continuous representatives of the basis elements. -/
   basisFun : ι → (M →ᵇ ℂ)
-  /-- The `L_2` class of `ẽ_i` is the basis element `e_i`. -/
+  /-- The `L_2` class of `eTilde_i` is the basis element `e_i`. -/
   toLp_basisFun : ∀ i, BoundedContinuousFunction.toLp (E := ℂ) 2 μ ℂ (basisFun i) = basis i
 
 namespace ContinuousSpectralBasis
 
 variable {ι : Type*} {μ : Measure M} [IsFiniteMeasure μ] (B : ContinuousSpectralBasis ι μ)
 
-/-- The **span of the continuous basis functions `ẽ_i` of level `< n`**, a space of bounded
+/-- The **span of the continuous basis functions `eTilde_i` of level `< n`**, a space of bounded
 continuous functions. -/
 noncomputable def basisSpan (n : ℕ) : Submodule ℂ (M →ᵇ ℂ) :=
   Submodule.span ℂ (B.basisFun '' {i | B.level i < n})
@@ -88,13 +88,13 @@ theorem basisSpan_zero : B.basisSpan 0 = ⊥ := by simp [basisSpan]
 theorem basisSpan_mono : Monotone B.basisSpan := fun _ _ h =>
   Submodule.span_mono (Set.image_mono fun _ hi => lt_of_lt_of_le hi h)
 
-/-- A basis function `ẽ_i` of level `< n` lies in the span of level `< n`. -/
+/-- A basis function `eTilde_i` of level `< n` lies in the span of level `< n`. -/
 theorem basisFun_mem_basisSpan {n : ℕ} {i : ι} (hi : B.level i < n) :
     B.basisFun i ∈ B.basisSpan n :=
   Submodule.subset_span ⟨i, hi, rfl⟩
 
 /-- The **scheme of the basis functions**: the approximants of complexity `n` are the
-combinations of the continuous basis functions `ẽ_i` of level `< n`. -/
+combinations of the continuous basis functions `eTilde_i` of level `< n`. -/
 noncomputable def basisScheme : FunctionScheme M :=
   ApproximationScheme.ofSubmodules (fun n => (B.basisSpan n).restrictScalars ℝ)
     (by simp) (fun _ _ h => B.basisSpan_mono h)

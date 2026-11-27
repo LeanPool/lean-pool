@@ -16,7 +16,7 @@ Modified for Lean Pool: module names and imports adapted.
 # Splines on the circle and their inverse inequality
 
 On the circle `𝕋 = ℝ/ℤ`, identified with `[0, 1)` through the periodic extension
-`f̃(x) = f(x - ⌊x⌋)`, a **periodic spline of order `r` and level `k`** is a spline on `[0, 1]`
+`fTilde(x) = f(x - ⌊x⌋)`, a **periodic spline of order `r` and level `k`** is a spline on `[0, 1]`
 (`Interval.SplineJoins`) whose last piece also joins the first one across the point `0 = 1` of
 the circle (`Interval.PerJoin`): the first piece moved to `[1, 1 + 2^(-k))` and the last piece
 differ by a multiple of `(x - 1)^(r-1)`. The periodic splines form subspaces `S_k(𝕋)` of

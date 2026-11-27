@@ -59,7 +59,7 @@ variable {X : Type*} [NormedAddCommGroup X] [NormedSpace ℝ X]
 
 /-- The quasi-norm of the **sequence space** `b^s_{p,q}`:
 `‖(2^(j(s - δ)) ‖λ_{j,·}‖_{ℓ_p})_j‖_{ℓ_q}` for coefficients `λ_{j,m}`, `m ∈ M j`. -/
-noncomputable def bNorm (M : ℕ → Type*) [∀ j, Fintype (M j)] [∀ j, MeasurableSpace (M j)]
+noncomputable def bNorm (M : ℕ → Type*) [∀ j, MeasurableSpace (M j)]
     (s δ : ℝ) (p q : ℝ≥0∞)
     (c : ∀ j, M j → ℝ) : ℝ≥0∞ :=
   lqNorm q (fun j => dyadicWeight (s - δ) j * lqNorm p (fun m => ‖c j m‖ₑ))

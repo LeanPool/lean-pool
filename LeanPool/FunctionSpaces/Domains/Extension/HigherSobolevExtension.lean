@@ -617,7 +617,7 @@ dimension `n ≥ 1`, `1 < p < ∞` and `m ∈ ℕ` there is a finite constant `C
 with weak derivatives `g_{k,w} = ∂^{e_w} f ∈ L_p(Ω)` along all words `w` of length `k ≤ m` agrees
 on `Ω` with some `F ∈ W^m_p(V)` whose weak derivatives `G_{k,w} = ∂^{e_w} F` satisfy
 `∑_{k ≤ m} ∑_w ‖G_{k,w}‖_p ≤ C ∑_{k ≤ m} ∑_w ‖g_{k,w}‖_{L_p(Ω)}`. The patches
-`Rd.BoundedLipschitzDomain.patch` cover `Ω̄`
+`Rd.BoundedLipschitzDomain.patch` cover `ΩBar`
 (`Rd.BoundedLipschitzDomain.exists_extendsSobolevOrder_boundary`,
 `Rd.BoundedLipschitzDomain.exists_extendsSobolevOrder_interior`), pasted by
 `Rd.extendsSobolevOrder_of_cover` (`Rd.BoundedLipschitzDomain.exists_of_patches`); for `m = 0`,

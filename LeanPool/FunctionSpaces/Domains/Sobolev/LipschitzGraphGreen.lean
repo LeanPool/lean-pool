@@ -99,7 +99,8 @@ theorem abs_add_inner_le_of_norm_add_smul_le {w : V} (hw : ‖w‖ = 1) {y : V} 
     _ ≤ ‖y + t • w‖ * ‖w‖ := abs_real_inner_le_norm _ _
     _ ≤ R := by rw [hw, mul_one]; exact h
 
-/-- **A function supported in a ball, along a line**: if `tsupport h ⊆ B̄(0, R)` and `w` is a unit
+/-- **A function supported in a ball, along a line**: if `tsupport h ⊆ closedBall(0, R)` and `w`
+is a unit
 vector, then `h(y + t w) = 0` for every `t` outside `[-⟪y, w⟫ - R, -⟪y, w⟫ + R]`. -/
 theorem apply_add_smul_eq_zero_of_notMem_Icc {F : Type*} [Zero F] {h : V → F} {R : ℝ}
     (hR : tsupport h ⊆ closedBall 0 R) {w : V} (hw : ‖w‖ = 1) (y : V) {t : ℝ}
@@ -169,7 +170,7 @@ theorem hasFDerivAt_rayIntegral (hg : ContDiff ℝ 1 g) (hgc : HasCompactSupport
 
 /-- The derivative of the ray integral in a direction `v`:
 `DΨ(y) v = ∫_0^∞ Dg(y + t w) v dt` (Mathlib's `ContinuousLinearMap.integral_apply`). -/
-theorem fderiv_rayIntegral_apply [CompleteSpace E] (hg : ContDiff ℝ 1 g)
+theorem fderiv_rayIntegral_apply (hg : ContDiff ℝ 1 g)
     (hgc : HasCompactSupport g) {w : V} (hw : ‖w‖ = 1) (y v : V) :
     fderiv ℝ (rayIntegral g w) y v = ∫ t in Ioi (0 : ℝ), fderiv ℝ g (y + t • w) v := by
   rw [(hasFDerivAt_rayIntegral hg hgc hw y).fderiv, ContinuousLinearMap.integral_apply
@@ -205,7 +206,8 @@ theorem fderiv_rayIntegral_self [CompleteSpace E] (hg : ContDiff ℝ 1 g)
   rw [h, zero_smul, add_zero, zero_sub]
 
 /-- **The derivative of the ray integral is bounded**: there is `K` with `‖DΨ(y)‖ ≤ K` for every
-`y`; the proof takes `K = C max(2R, 0)` for `‖Dg‖ ≤ C` and `tsupport g ⊆ B̄(0, R)`, since each line
+`y`; the proof takes `K = C max(2R, 0)` for `‖Dg‖ ≤ C` and `tsupport g ⊆ closedBall(0, R)`,
+since each line
 meets the support of `g` in an interval of length at most `2R`. -/
 theorem exists_norm_fderiv_rayIntegral_le (hg : ContDiff ℝ 1 g) (hgc : HasCompactSupport g)
     {w : V} (hw : ‖w‖ = 1) : ∃ K : ℝ, ∀ y, ‖fderiv ℝ (rayIntegral g w) y‖ ≤ K := by
@@ -431,7 +433,8 @@ theorem norm_le_norm_graphMap_add_smul (x' : Ω.hyperplane) (t : ℝ) :
   exact Ω.norm_le_norm_coe_add_smul_e x' _
 
 omit [FiniteDimensional ℝ V] [MeasurableSpace V] [BorelSpace V] in
-/-- If `tsupport h ⊆ B̄(0, R)` and `‖x'‖ > R`, then `h` vanishes on the vertical line through
+/-- If `tsupport h ⊆ closedBall(0, R)` and `‖x'‖ > R`, then `h` vanishes on the vertical line
+through
 `γ(x')`. -/
 theorem apply_graphMap_add_smul_eq_zero_of_norm_lt {F : Type*} [Zero F] {h : V → F} {R : ℝ}
     (hR : tsupport h ⊆ closedBall 0 R) {x' : Ω.hyperplane} (hx : R < ‖x'‖) (t : ℝ) :
@@ -496,7 +499,7 @@ theorem integrable_comp_graphMap {h : V → ℂ} (hh : Continuous h) (hhc : HasC
   simpa using Ω.apply_graphMap_add_smul_eq_zero_of_norm_lt hR hx' 0
 
 /-- `x' ↦ DΨ(γ x') v` is integrable on `H`: it is bounded (`Rd.exists_norm_fderiv_rayIntegral_le`)
-and vanishes for `‖x'‖ > R` when `tsupport g ⊆ B̄(0, R)`. -/
+and vanishes for `‖x'‖ > R` when `tsupport g ⊆ closedBall(0, R)`. -/
 theorem integrable_fderiv_rayIntegral (hg : ContDiff ℝ 1 g) (hgc : HasCompactSupport g)
     (v : V) : Integrable fun x' => fderiv ℝ (rayIntegral g Ω.e) (Ω.graphMap x') v := by
   obtain ⟨R, hR⟩ := hgc.isCompact.isBounded.subset_closedBall 0

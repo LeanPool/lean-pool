@@ -50,15 +50,16 @@ and McLean (Chapter 3), and are Hilbert spaces as well.
 * **Differences in `H^1(V)`**: `‖Δ_v ι U‖_2 ≤ 2π ‖v‖ ‖U‖` (`Rd.norm_fwdDiffL2_toL2_le`), first
   for Schwartz functions, then by density; hence `ω_r(ι U, 2^(-k))_2 ≤ 2^(r-1) 2π 2^(-k) ‖U‖`
   for `r ≥ 1` (`Rd.lpModulus_toL2_le`).
-* **`H̃^s(Ω)` and `H^s_0(Ω)`**: every test function of `Ω` lies in every `H^s(V)` (`Rd.ofTest`),
+* **`HTilde^s(Ω)` and `H^s_0(Ω)`**: every test function of `Ω` lies in every `H^s(V)` (`Rd.ofTest`),
   and every Schwartz function with compact support in `Ω` lies in the span of the test functions
   (`Rd.ofSchwartz_mem_testSpan`).
   `Rd.tildeSpace s Ω` is the closure of the test functions of `Ω` in `H^s(V)`,
   `Rd.zeroBoundarySpace s Ω` the closure of their restrictions in `H^s(Ω)`. For `s = 1` and every
-  open `Ω`, restriction is an isometry of `H̃^1(Ω)` onto `H^1_0(Ω)` (`Rd.tildeEquivZeroBoundary`),
+  open `Ω`, restriction is an isometry of `HTilde^1(Ω)` onto `H^1_0(Ω)`
+  (`Rd.tildeEquivZeroBoundary`),
   and inside `H^1(V)` the two are the same subspace (`Rd.tildeSpace_one_le_orthogonal`,
-  `Rd.coe_tildeEquivZeroBoundary_symm_apply`); the elements of `H̃^1(Ω)` vanish outside `Ω`
-  (`Rd.toL2_ae_eq_zero_of_mem_tildeSpace`). On the whole space, `H̃^s(V) = H^s(V)`
+  `Rd.coe_tildeEquivZeroBoundary_symm_apply`); the elements of `HTilde^1(Ω)` vanish outside `Ω`
+  (`Rd.toL2_ae_eq_zero_of_mem_tildeSpace`). On the whole space, `HTilde^s(V) = H^s(V)`
   (`Rd.tildeSpace_top`).
 -/
 
@@ -486,7 +487,7 @@ theorem weakDeriv_ae_zero_of_mem_vanishOn {W : H^{1}(V)} (hW : W ∈ vanishOn 1 
     g =ᵐ[volume.restrict (Ω : Set V)] 0 :=
   hg.ae_eq_zero_of_ae_eq_zero le_top ((mem_vanishOn_one_iff W).1 hW)
 
-/-! ### Test functions, `H̃^s(Ω)` and `H^s_0(Ω)` -/
+/-! ### Test functions, `HTilde^s(Ω)` and `H^s_0(Ω)` -/
 
 variable (s) in
 /-- **A test function as an element of `H^s(V)`**: a real test function `φ` of `Ω`, as the
@@ -516,17 +517,17 @@ noncomputable def testSpan : Submodule ℂ H^{s}(V) :=
   Submodule.span ℂ (Set.range (ofTest s : 𝓓(Ω, ℝ) → H^{s}(V)))
 
 variable (s Ω) in
-/-- **The space `H̃^s(Ω)`** of Chandler-Wilde, Hewett and Moiola: the closure in `H^s(V)` of the
+/-- **The space `HTilde^s(Ω)`** of Chandler-Wilde, Hewett and Moiola: the closure in `H^s(V)` of the
 test functions of `Ω`, a Hilbert space. -/
 noncomputable def tildeSpace : Submodule ℂ H^{s}(V) :=
   (testSpan s Ω).topologicalClosure
 
 variable (s Ω) in
-/-- `H̃^s(Ω)` is closed in `H^s(V)`. -/
+/-- `HTilde^s(Ω)` is closed in `H^s(V)`. -/
 theorem isClosed_tildeSpace : IsClosed (tildeSpace s Ω : Set H^{s}(V)) :=
   Submodule.isClosed_topologicalClosure _
 
-/-- `H̃^s(Ω)` is complete, as a closed subspace of `H^s(V)`. -/
+/-- `HTilde^s(Ω)` is complete, as a closed subspace of `H^s(V)`. -/
 instance completeSpace_tildeSpace (s : ℝ) (Ω : Opens V) : CompleteSpace (tildeSpace s Ω) :=
   (isClosed_tildeSpace s Ω).completeSpace_coe
 
@@ -624,7 +625,8 @@ theorem ofSchwartz_mem_testSpan {w : 𝓢(V, ℂ)} (hw : HasCompactSupport w)
     ((testSpan s Ω).smul_mem _ (Submodule.subset_span ⟨b, rfl⟩))
 
 variable (s) in
-/-- **`H̃^s(V) = H^s(V)`**: on the whole space, the test functions are dense in `H^s(V)` for every
+/-- **`HTilde^s(V) = H^s(V)`**: on the whole space, the test functions are dense in `H^s(V)` for
+every
 real `s`, since the compactly supported Schwartz functions are dense
 (`Rd.dense_ofSchwartz_hasCompactSupport`) and lie in the span of the test functions
 (`Rd.ofSchwartz_mem_testSpan`). -/
@@ -699,12 +701,12 @@ instance completeSpace_zeroBoundarySpace (s : ℝ) (Ω : Opens V) :
   (isClosed_zeroBoundarySpace s Ω).completeSpace_coe
 
 variable (s Ω) in
-/-- **From `H̃^s(Ω)` to `H^s(Ω)`**: the restriction of the elements of `H̃^s(Ω)` to `Ω`, an
+/-- **From `HTilde^s(Ω)` to `H^s(Ω)`**: the restriction of the elements of `HTilde^s(Ω)` to `Ω`, an
 operator of norm at most `1` with values in `H^s_0(Ω)` (`Rd.range_tildeToRestrictionL_le`). -/
 noncomputable def tildeToRestrictionL : tildeSpace s Ω →L[ℂ] RestrictionSpace s Ω :=
   restrictProj s Ω ∘L (tildeSpace s Ω).subtypeL
 
-/-- The restriction maps `H̃^s(Ω)` into `H^s_0(Ω)`, by continuity of the restriction (Mathlib's
+/-- The restriction maps `HTilde^s(Ω)` into `H^s_0(Ω)`, by continuity of the restriction (Mathlib's
 `map_mem_closure`). -/
 theorem range_tildeToRestrictionL_le :
     (tildeToRestrictionL s Ω).range ≤ zeroBoundarySpace s Ω := by
@@ -716,7 +718,7 @@ theorem range_tildeToRestrictionL_le :
   rw [← SetLike.mem_coe, zeroBoundarySpace, Submodule.topologicalClosure_coe]
   exact map_mem_closure (restrictProj s Ω).continuous hU fun W hW => Submodule.mem_map_of_mem hW
 
-/-- `H^s_0(Ω)` is the closure of the image of `H̃^s(Ω)` under the restriction. -/
+/-- `H^s_0(Ω)` is the closure of the image of `HTilde^s(Ω)` under the restriction. -/
 theorem closure_range_tildeToRestrictionL :
     (tildeToRestrictionL s Ω).range.topologicalClosure = zeroBoundarySpace s Ω := by
   refine le_antisymm (Submodule.topologicalClosure_minimal _ range_tildeToRestrictionL_le
@@ -762,7 +764,8 @@ theorem exists_opens_toL2_ae_eq_zero {U : H^{1}(V)} (hU : U ∈ testSpan 1 Ω) :
   rw [hx]
   exact image_eq_zero_of_notMem_tsupport hxO
 
-/-- **The elements of `H̃^1(Ω)` vanish outside `Ω`**: for every open `Ω` and `U ∈ H̃^1(Ω)`, the
+/-- **The elements of `HTilde^1(Ω)` vanish outside `Ω`**: for every open `Ω` and `U ∈
+HTilde^1(Ω)`, the
 `L_2` function of `U` vanishes almost everywhere outside `Ω`. The `U` with this property form the
 kernel of `U ↦ (ι U)|_{V \ Ω}`, a closed subspace containing the test functions of `Ω`
 (`Rd.exists_opens_toL2_ae_eq_zero`). -/
@@ -843,7 +846,8 @@ theorem norm_restrictProj_of_mem_testSpan {U : H^{1}(V)} (hU : U ∈ testSpan 1 
   rw [h]
   exact norm_le_norm_add_of_mem_testSpan hU hW
 
-/-- **Restriction is isometric on `H̃^1(Ω)`**: for `U ∈ H̃^1(Ω)`, `‖U|_Ω‖ = ‖U‖`, by continuity
+/-- **Restriction is isometric on `HTilde^1(Ω)`**: for `U ∈ HTilde^1(Ω)`, `‖U|_Ω‖ = ‖U‖`, by
+continuity
 from the test functions (`Rd.norm_restrictProj_of_mem_testSpan`). -/
 theorem norm_restrictProj_of_mem_tildeSpace {U : H^{1}(V)} (hU : U ∈ tildeSpace 1 Ω) :
     ‖restrictProj 1 Ω U‖ = ‖U‖ := by
@@ -854,9 +858,9 @@ theorem norm_restrictProj_of_mem_tildeSpace {U : H^{1}(V)} (hU : U ∈ tildeSpac
   exact hU
 
 variable (Ω) in
-/-- **Restriction as an isometry of `H̃^1(Ω)` into `H^1(Ω)`**: for every open set `Ω`, the
-restriction `H̃^1(Ω) → H^1(Ω)` as a linear isometry (`Rd.norm_restrictProj_of_mem_tildeSpace`),
-the case `s = 1` of `H̃^s(Ω) = H^s_0(Ω)`. -/
+/-- **Restriction as an isometry of `HTilde^1(Ω)` into `H^1(Ω)`**: for every open set `Ω`, the
+restriction `HTilde^1(Ω) → H^1(Ω)` as a linear isometry (`Rd.norm_restrictProj_of_mem_tildeSpace`),
+the case `s = 1` of `HTilde^s(Ω) = H^s_0(Ω)`. -/
 noncomputable def tildeToRestriction : tildeSpace 1 Ω →ₗᵢ[ℂ] RestrictionSpace 1 Ω where
   toLinearMap := (tildeToRestrictionL 1 Ω).toLinearMap
   norm_map' U := norm_restrictProj_of_mem_tildeSpace U.2
@@ -866,8 +870,8 @@ theorem tildeToRestriction_apply (U : tildeSpace 1 Ω) :
     tildeToRestriction Ω U = restrictProj 1 Ω U :=
   rfl
 
-/-- **The image of `H̃^1(Ω)` is `H^1_0(Ω)`**: the range of the isometry `tildeToRestriction` is
-closed, since `H̃^1(Ω)` is complete (Mathlib's `Isometry.isClosedEmbedding`), and its closure is
+/-- **The image of `HTilde^1(Ω)` is `H^1_0(Ω)`**: the range of the isometry `tildeToRestriction` is
+closed, since `HTilde^1(Ω)` is complete (Mathlib's `Isometry.isClosedEmbedding`), and its closure is
 `H^1_0(Ω)` (`Rd.closure_range_tildeToRestrictionL`). -/
 theorem range_tildeToRestriction :
     (tildeToRestriction Ω).toLinearMap.range = zeroBoundarySpace 1 Ω := by
@@ -877,10 +881,10 @@ theorem range_tildeToRestriction :
   exact (IsClosed.submodule_topologicalClosure_eq hc).symm
 
 variable (Ω) in
-/-- **`H̃^1(Ω) ≅ H^1_0(Ω)` isometrically, for every open set `Ω`**: the identity
-`H̃^s(Ω) = H^s_0(Ω)` at `s = 1`, with equal norms. McLean (Theorem 3.33) proves
-`H̃^s(Ω) = H^s_0(Ω)` on Lipschitz domains for `s ≥ 0` with `s - 1/2 ∉ ℤ`, in particular for
-`s = 1`, up to equivalence of norms; for `s = 1` restriction is an isometry of `H̃^1(Ω)` onto
+/-- **`HTilde^1(Ω) ≅ H^1_0(Ω)` isometrically, for every open set `Ω`**: the identity
+`HTilde^s(Ω) = H^s_0(Ω)` at `s = 1`, with equal norms. McLean (Theorem 3.33) proves
+`HTilde^s(Ω) = H^s_0(Ω)` on Lipschitz domains for `s ≥ 0` with `s - 1/2 ∉ ℤ`, in particular for
+`s = 1`, up to equivalence of norms; for `s = 1` restriction is an isometry of `HTilde^1(Ω)` onto
 `H^1_0(Ω)` for every open `Ω` (`Rd.tildeToRestriction`, `Rd.range_tildeToRestriction`, Mathlib's
 `LinearIsometry.equivRange`). -/
 noncomputable def tildeEquivZeroBoundary : tildeSpace 1 Ω ≃ₗᵢ[ℂ] zeroBoundarySpace 1 Ω :=
@@ -891,16 +895,16 @@ theorem coe_tildeEquivZeroBoundary_apply (U : tildeSpace 1 Ω) :
     (tildeEquivZeroBoundary Ω U : RestrictionSpace 1 Ω) = restrictProj 1 Ω U :=
   rfl
 
-/-- **`H̃^1(Ω)` lies in `H^1(Ω)`**: every element of `H̃^1(Ω)` is orthogonal to the elements
+/-- **`HTilde^1(Ω)` lies in `H^1(Ω)`**: every element of `HTilde^1(Ω)` is orthogonal to the elements
 vanishing on `Ω`. Restriction is the orthogonal projection onto `H^1(Ω)` and keeps the norm of
-`U ∈ H̃^1(Ω)` (`Rd.norm_restrictProj_of_mem_tildeSpace`), and a vector whose orthogonal
+`U ∈ HTilde^1(Ω)` (`Rd.norm_restrictProj_of_mem_tildeSpace`), and a vector whose orthogonal
 projection has the same norm lies in the subspace (Mathlib's
 `Submodule.mem_iff_norm_starProjection`). -/
 theorem tildeSpace_one_le_orthogonal : tildeSpace 1 Ω ≤ (vanishOn 1 Ω)ᗮ := fun U hU =>
   ((vanishOn 1 Ω)ᗮ.mem_iff_norm_starProjection U).2 (norm_restrictProj_of_mem_tildeSpace hU)
 
-/-- **The element of `H̃^1(Ω)` with restriction `u ∈ H^1_0(Ω)` is `u` itself**: inside `H^1(V)`,
-`H̃^1(Ω)` and `H^1_0(Ω)` are the same subspace, and the inverse of `Rd.tildeEquivZeroBoundary`
+/-- **The element of `HTilde^1(Ω)` with restriction `u ∈ H^1_0(Ω)` is `u` itself**: inside `H^1(V)`,
+`HTilde^1(Ω)` and `H^1_0(Ω)` are the same subspace, and the inverse of `Rd.tildeEquivZeroBoundary`
 is the identity (`Rd.tildeSpace_one_le_orthogonal`, `Rd.restrictProj_coe`). -/
 theorem coe_tildeEquivZeroBoundary_symm_apply (u : zeroBoundarySpace 1 Ω) :
     (((tildeEquivZeroBoundary Ω).symm u : tildeSpace 1 Ω) : H^{1}(V)) =

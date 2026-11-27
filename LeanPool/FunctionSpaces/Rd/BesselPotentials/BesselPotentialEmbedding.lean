@@ -56,8 +56,8 @@ theorem exists_memLp_eq_of_memSobolev_bessel [Nontrivial V] (hp1 : 1 < p) (hp : 
 /-- **`H^{s,p} ↪ L_r` in Mathlib's bundled space**: let `n ≥ 1`, `1 < p < ∞`, `p ≤ r < ∞` and
 `s ≥ n(1/p - 1/r)`. There is a finite constant `C` such that every element `F` of Mathlib's
 `H^{s,p}(V)` is a function `g ∈ L_r(V)` with `‖g‖_r ≤ C ‖F‖_{H^{s,p}}`; the constant is
-existential. For `r = p` it is `Q̃_{V,p} C₀`, from the lower square function bound
-`‖g‖_p ≤ Q̃_{V,p} ‖g‖_{F^0_{p,2}}` (`Rd.enorm_le_triebelLizorkinNorm_zero_two`), and for `p < r`
+existential. For `r = p` it is `QTilde_{V,p} C₀`, from the lower square function bound
+`‖g‖_p ≤ QTilde_{V,p} ‖g‖_{F^0_{p,2}}` (`Rd.enorm_le_triebelLizorkinNorm_zero_two`), and for `p < r`
 it is `K_{V,p,r} C₀` (`Rd.exists_memLp_ae_eq_of_triebelLizorkinNorm_lt_top`), where `C₀` is the
 constant of `H^{s,p} ⊆ F^s_{p,2}` (`Rd.exists_memTriebelLizorkin_toDistr`). -/
 theorem exists_enorm_le_of_besselPotentialSpace [Nontrivial V] (hp1 : 1 < p) (hp : p ≠ ∞)

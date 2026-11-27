@@ -33,7 +33,7 @@ Calderón–Zygmund families of `FunctionSpaces.Rd.Sobolev.DerivativeKernels`.
   (`Torus.eLpNorm_lqNorm_econv_le`) bounds each sum.
 * **`F^m_{p,2} ⊆ W^m_p`** (`Torus.exists_hasWeakLineDeriv_of_memTriebelLizorkin`): for
   `f ∈ F^k_{p,2}(𝕋^d)` and directions `w ∈ (ℝ^d)^k`, the partial sums
-  `∑_{j < J} (∂^w ψ̃_j) ⋆ Δ_j f` (`Torus.derivSynthesisSum`) are the weak derivatives `∂^w` of
+  `∑_{j < J} (∂^w ψTilde_j) ⋆ Δ_j f` (`Torus.derivSynthesisSum`) are the weak derivatives `∂^w` of
   `∑_{j < J} Δ_j f → f`, and a Cauchy sequence in `L_p(𝕋^d)` by the synthesis bound on the torus
   (`Torus.eLpNorm_sum_econv_le`); their limit `g` is `∂^w f`, with `‖g‖_p ≤ C_w ‖f‖_{F^k_{p,2}}`.
 
@@ -242,7 +242,8 @@ theorem memTriebelLizorkin_of_memSobolev [Nonempty d] (hp1 : 1 < p) (hp : p ≠ 
 variable (d) in
 /-- The constant `C_w` of the bound `F^k_{p,2} ⊆ W^k_p` on the torus for the directions
 `w ∈ (ℝ^d)^k`: the constant `Torus.periodicCZConst d p B (4 H_{Ã^w}) (2 T_{Ã^w})` of the
-Calderón–Zygmund family `((∂^w G̃_j)_{2^j})_j` (`Rd.isCZFamily_derivDualFamily`), with the overlap
+Calderón–Zygmund family `((∂^w GTilde_j)_{2^j})_j` (`Rd.isCZFamily_derivDualFamily`), with the
+overlap
 `B = 4 ((8π)^k ∏_l ‖w_l‖)²` (`Rd.derivDualOverlap`) and the far mass bound `2 T_{Ã^w}`
 (`Torus.farMass_derivDualFamily_le`), where `Ã^w = Rd.derivDualBound w`. -/
 noncomputable def tlToSobolevConst (p : ℝ≥0∞) {k : ℕ} (w : Fin k → EuclideanSpace ℝ d) :
@@ -261,8 +262,8 @@ theorem tlToSobolevConst_ne_top (hp1 : 1 < p) (hp : p ≠ ∞) {k : ℕ}
 
 /-- **The synthesis bound for derivatives of the synthesis kernels on the torus**: for `d ≥ 1`,
 `1 < p < ∞`, directions `w ∈ (ℝ^d)^k`, every finite set `s ⊆ ℕ` and `f ∈ L_p(𝕋^d)`,
-`‖∑_{j ∈ s} (∂^w ψ̃_j) ⋆ Δ_j f‖_p ≤ C_w ‖ t ↦ ‖(1_s(j) 2^{jk} (ψ_j ⋆ f)(t))_j‖_{ℓ_2} ‖_p` with
-`C_w = Torus.tlToSobolevConst d p w`. Since `∂^w ψ̃_j = 2^{jk} (∂^w G̃_j)_{2^j}`
+`‖∑_{j ∈ s} (∂^w ψTilde_j) ⋆ Δ_j f‖_p ≤ C_w ‖ t ↦ ‖(1_s(j) 2^{jk} (ψ_j ⋆ f)(t))_j‖_{ℓ_2} ‖_p` with
+`C_w = Torus.tlToSobolevConst d p w`. Since `∂^w ψTilde_j = 2^{jk} (∂^w GTilde_j)_{2^j}`
 (`Rd.iteratedLineDerivOp_psiDualS`), this is the synthesis bound on the torus
 (`Torus.eLpNorm_sum_econv_le`) with the coefficients `1_s(j) 2^{jk} Δ_j f`. -/
 theorem enorm_sum_econvLp_derivDual_le [Nonempty d] (hp1 : 1 < p) (hp : p ≠ ∞) {k : ℕ}
@@ -298,7 +299,7 @@ theorem enorm_sum_econvLp_derivDual_le [Nonempty d] (hp1 : 1 < p) (hp : p ≠ �
     fun j => (Lp.memLp _).const_smul _
 
 /-- The **partial sums of the derivative** `∂^w f` on the torus:
-`∑_{j < J} (∂^w ψ̃_j) ⋆ Δ_j f ∈ L_p(𝕋^d)`, the derivatives of the partial sums
+`∑_{j < J} (∂^w ψTilde_j) ⋆ Δ_j f ∈ L_p(𝕋^d)`, the derivatives of the partial sums
 `∑_{j < J} Δ_j f` (`Torus.hasWeakLineDeriv_sum_lpBlock`). -/
 noncomputable def derivSynthesisSum (hp : p ≠ ∞) {k : ℕ} (w : Fin k → EuclideanSpace ℝ d)
     (f : Lp ℂ p (volume : Measure (UnitAddTorus d))) (J : ℕ) :
@@ -308,7 +309,7 @@ noncomputable def derivSynthesisSum (hp : p ≠ ∞) {k : ℕ} (w : Fin k → Eu
 
 /-- **The partial sums are weak derivatives**: for `1 ≤ p < ∞`, `w ∈ (ℝ^d)^k` and
 `f ∈ L_p(𝕋^d)`, `Torus.derivSynthesisSum hp w f J = ∂^w (∑_{j < J} Δ_j f)`. Each term is
-`∂^w (ψ̃_j ⋆ Δ_j f)` (`Torus.hasWeakLineDeriv_econvLp`), and `ψ̃_j ⋆ Δ_j f = Δ_j f`
+`∂^w (ψTilde_j ⋆ Δ_j f)` (`Torus.hasWeakLineDeriv_econvLp`), and `ψTilde_j ⋆ Δ_j f = Δ_j f`
 (`Torus.econvLp_psiDual_lpBlock`). -/
 theorem hasWeakLineDeriv_sum_lpBlock (hp : p ≠ ∞) {k : ℕ} (w : Fin k → EuclideanSpace ℝ d)
     (f : Lp ℂ p (volume : Measure (UnitAddTorus d))) (J : ℕ) :

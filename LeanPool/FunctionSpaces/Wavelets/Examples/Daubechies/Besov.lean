@@ -30,14 +30,14 @@ Besov spaces `B^s_{p,q}(ℝ)` by the coefficients `⟨f, φ(· - k)⟩` and `⟨
 Bernstein bound `ω_N(φ, t)_p ≤ K t^θ` for `0 < t ≤ 1` (`Daubechies.BernsteinBound`), then for
 `0 < s < θ` and every `f ∈ L_p(ℝ)`
 
-`‖f‖_p + ‖(2^(ks) ω_N(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞  ⟺  ‖f‖_coef < ∞`.
+`‖f‖_p + ‖(2^(ks) ω_N(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞  ↔  ‖f‖_coef < ∞`.
 
 * **Approximation and moduli.** Jackson's inequality `E_{2^k}(f)_p ≤ C_J ω_N(f, 2^(-k))_p`
   (`Daubechies.approxError_scheme_le`) and the inverse inequality
   `ω_N(a, 2^(-k))_p ≤ C_B 2^(-(k-j)θ) ‖a‖_p` for `a ∈ V_j` (`Daubechies.inverse_scheme`) make
   the modulus of smoothness compatible with the Daubechies scheme (`Daubechies.modulusData`), so
   the coincidence theorem `ApproximationScheme.ModulusData.memApprox_iff_modNorm_lt_top` gives
-  `f ∈ A^s_q ⟺ ‖f‖_p + ‖(2^(ks) ω_N(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞` for `0 ≤ s < θ`
+  `f ∈ A^s_q ↔ ‖f‖_p + ‖(2^(ks) ω_N(f, 2^(-k))_p)_k‖_{ℓ_q} < ∞` for `0 ≤ s < θ`
   (`Daubechies.memApprox_scheme_iff_modulus`).
 * **Approximation and coefficients.** The projections `P_j` form a projection scheme with dense
   union (`Daubechies.projectionScheme`, `Daubechies.closure_iUnion_scheme`), so `f ∈ A^s_q` iff
@@ -46,7 +46,7 @@ Bernstein bound `ω_N(φ, t)_p ≤ K t^θ` for `0 < t ≤ 1` (`Daubechies.Bernst
   wavelet expansions of level `j` (`Daubechies.proj_succ_sub_proj`), and their norms are
   comparable with `2^(j(1/2 - 1/p)) ‖(⟨f, ψ_{j,k}⟩)_k‖_{ℓ_p}` (`Daubechies.enorm_block_equiv`);
   likewise `‖P_0 f‖_p` with `‖(⟨f, φ(· - k)⟩)_k‖_{ℓ_p}` (`Daubechies.enorm_proj_zero_equiv`).
-  Hence `f ∈ A^s_q ⟺ ‖f‖_coef < ∞` for `s > 0` (`Daubechies.memApprox_scheme_iff_coeff`).
+  Hence `f ∈ A^s_q ↔ ‖f‖_coef < ∞` for `s > 0` (`Daubechies.memApprox_scheme_iff_coeff`).
 * **Littlewood–Paley.** For `0 < s < min(θ, N)` the coefficient condition is also equivalent
   to the finiteness of the Littlewood–Paley quasi-norm `‖(2^(js) ‖Δ_j f‖_p)_j‖_{ℓ_q}`
   (`Daubechies.littlewoodPaleyNorm_lt_top_iff_coeff`, through

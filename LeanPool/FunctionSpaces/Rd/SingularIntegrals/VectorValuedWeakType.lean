@@ -83,7 +83,8 @@ theorem IsCZFamily.measurable_lqNorm_sub (h : IsCZFamily θ B H) (c : V) :
     ((h.continuous j).comp (continuous_fst.sub continuous_const))).measurable.eNorm) 2
 
 /-- **The bad part off the doubled ball** (scalar mass): for a Calderón–Zygmund family with
-Hörmander constant `H`, a measurable set `Q ⊆ B̄(c, ρ)` and an almost everywhere measurable mass
+Hörmander constant `H`, a measurable set `Q ⊆ closedBall(c, ρ)` and an almost everywhere
+measurable mass
 `m : V → [0, ∞]`,
 `∫_{‖x - c‖ > 2ρ} ∫_Q ‖(θ_j(x - y) - θ_j(x - c))_j‖_{ℓ_2} m(y) dy dx ≤ H ∫_Q m`, by Tonelli's
 theorem (Mathlib's `lintegral_lintegral_swap`) and

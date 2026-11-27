@@ -88,7 +88,7 @@ and let the increments of `f₁` differ from those of `f₂` by at most `δ ‖x
 left inverse `q` on `P` (Mathlib's `Function.invFunOn`), and `f₁ ∘ q` maps `f₂ '' P` onto
 `f₁ '' P` and is `(1 + δ)`-Lipschitz there. -/
 theorem euclideanHausdorffMeasure_image_le_of_near {X Y : Type*} [NormedAddCommGroup X]
-    [MeasurableSpace X] [BorelSpace X] [NormedAddCommGroup Y] [MeasurableSpace Y] [BorelSpace Y]
+    [NormedAddCommGroup Y] [MeasurableSpace Y] [BorelSpace Y]
     {f₁ f₂ : X → Y} {P : Set X} {δ : ℝ} (hδ : 0 ≤ δ)
     (h₂ : ∀ x ∈ P, ∀ y ∈ P, ‖x - y‖ ≤ ‖f₂ x - f₂ y‖)
     (h : ∀ x ∈ P, ∀ y ∈ P, ‖(f₁ x - f₁ y) - (f₂ x - f₂ y)‖ ≤ δ * ‖x - y‖) (d : ℕ) :

@@ -49,7 +49,8 @@ the orthonormal basis `(e_i)` of `Rd.gridBasis` and the dilations `G_c(x) = c^n 
   divergence kernels of the bump (`Rd.LocalMeansBump.higherKernel`,
   `Rd.LocalMeansBump.kernel_succ_eq_sum_higherKernel`). For `m < L` their dyadic dilates form
   Calderón–Zygmund families (`Rd.LocalMeansBump.isCZFamily_higherKernel`); they have compact
-  support (`Rd.LocalMeansBump.hasCompactSupport_higherKernel`), for `L ≥ 1` in `B̄(0, L R)`, and
+  support (`Rd.LocalMeansBump.hasCompactSupport_higherKernel`), for `L ≥ 1` in `closedBall(0, L
+  R)`, and
   in the reflected closed cone for bumps supported in `-K`
   (`Rd.LipschitzGraph.tsupport_dilate_higherKernel_subset`).
 -/
@@ -130,7 +131,7 @@ theorem hasCompactSupport_weightedDilation [ProperSpace V] {a b : ℝ} (hab : a 
 
 /-- The integrand `(x, s) ↦ w(s) G_{e^s}(x)` is integrable on `V × (a, b]` if `w` and `G` are
 continuous and `G` vanishes outside a ball: it is continuous and vanishes outside the compact set
-`B̄(0, R e^{-a}) × [a, b]`. -/
+`closedBall(0, R e^{-a}) × [a, b]`. -/
 theorem integrable_weight_mul_dilate_exp {a b : ℝ} {w : ℝ → ℂ} (hw : Continuous w) {G : V → ℂ}
     (hG : Continuous G) {R : ℝ} (hR : ∀ z, R < ‖z‖ → G z = 0) :
     Integrable (Function.uncurry fun (x : V) (s : ℝ) => w s * dilate (Real.exp s) G x)
@@ -984,7 +985,7 @@ variable (Ω : LipschitzGraph V)
 
 /-- **The higher divergence kernels of a cone-supported bump lie in the reflected closed cone**:
 for a bump of radius `R` supported in `-K` and `L ≥ 1`, every dilate `(K_i)_{2^j}` of its higher
-divergence kernels is supported in `{y : -y ∈ K̄, ‖y‖ ≤ L R}`
+divergence kernels is supported in `{y : -y ∈ KBar, ‖y‖ ≤ L R}`
 (`Rd.LipschitzGraph.coneSupported_higherDivKernel`). -/
 theorem tsupport_dilate_higherKernel_subset {b : LocalMeansBump V} (hb : Ω.ConeSupported b.toFun)
     {L m : ℕ} (hL : 1 ≤ L) (i : Fin m → Fin (finrank ℝ V)) (j : ℕ) :

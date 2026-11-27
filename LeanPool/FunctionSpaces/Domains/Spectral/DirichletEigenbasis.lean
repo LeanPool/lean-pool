@@ -138,7 +138,7 @@ theorem isCompactOperator_dirichletEmbedding (hΩ : Bornology.IsBounded (Ω : Se
   (isCompactOperator_restrictL2 hΩ).comp_clm _
 
 /-- The elements of `H^1_0(Ω)` vanish outside `Ω`: inside `H^1(V)` they are elements of
-`H̃^1(Ω)` (`Rd.coe_tildeEquivZeroBoundary_symm_apply`), whose `L_2` functions vanish almost
+`HTilde^1(Ω)` (`Rd.coe_tildeEquivZeroBoundary_symm_apply`), whose `L_2` functions vanish almost
 everywhere outside `Ω` (`Rd.toL2_ae_eq_zero_of_mem_tildeSpace`). -/
 theorem toL2_ae_eq_zero_of_mem_zeroBoundarySpace (u : zeroBoundarySpace 1 Ω) :
     ∀ᵐ x ∂volume, x ∉ (Ω : Set V) → toL2 ((u : RestrictionSpace 1 Ω) : H^{1}(V)) x = 0 := by
