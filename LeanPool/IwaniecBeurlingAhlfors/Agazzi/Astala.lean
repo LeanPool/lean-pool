@@ -11,10 +11,15 @@ public import LeanPool.IwaniecBeurlingAhlfors.Agazzi.Corollary2.Norm
 public import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.BeurlingAhlfors.Beltrami
 
 /-!
-# Astala's theorem from Corollary 2 (TeX line 325)
+# Quasiregular extension of Astala's higher-integrability result
 
 "Corollary 2 implies the sharp higher integrability of derivatives of quasiconformal maps in the
 plane, originally obtained by complex-analytical methods in [Astala1994]."
+
+Corollary 1.2 of K. Astala, *Area distortion of quasiconformal mappings*,
+Acta Math. 173 (1994), 37–60, gives the sharp exponent for quasiconformal homeomorphisms.
+Here `astala` extends the derivative-integrability conclusion to quasiregular maps by applying
+Bojarski's criterion to the sharp Beurling–Ahlfors norm from Corollary 2 of Agazzi et al.
 
 Let `Ω ⊆ ℂ` be open and `0 ≤ k < 1`. A map `f ∈ W^{1,2}_loc (Ω)` with `|∂_zbar f| ≤ k |∂f|` almost
 everywhere in `Ω` is `K`-quasiregular, `K = (1 + k) / (1 − k)`; the `K`-quasiconformal maps are the
@@ -23,8 +28,7 @@ homeomorphic ones. With the weak partial derivatives `fx`, `fy` of `f`, `∂f = 
 
 * `astala`: `Df ∈ L^p_loc (Ω)`, that is `fx, fy ∈ L^p_loc (Ω)`, for every `p ≥ 2` with
   `k (p − 1) < 1`, that is `2 ≤ p < 1 + 1/k = 2K / (K − 1)` (every `p ≥ 2` if `k = 0`). This is the
-  theorem of K. Astala, *Area distortion of quasiconformal mappings*, Acta Math. 173 (1994), 37–60,
-  in the form Corollary 2 gives it.
+  quasiregular extension of Astala's Corollary 1.2.
 * `astala_sharp`: the exponent is sharp. For `K > 1`, the radial stretch `f (z) = z |z|^{1/K − 1}`
   is a homeomorphism of `ℂ` in `W^{1,2}_loc (ℂ)` with `|∂_zbar f| = k |∂f|` off `0`,
   `k = (K − 1) / (K + 1)`, so it is `K`-quasiconformal, while `∂_x f ∉ L^{2K/(K−1)}` on every disc
@@ -145,7 +149,7 @@ private theorem memLpLoc_apply {Ω : Set ℂ} {Df : ℂ → ℂ →L[ℝ] ℂ} {
     (h : HarmonicAnalysis.MemLpLoc Df p Ω) (v : ℂ) : MemLpLoc (fun z => Df z v) p Ω :=
   fun K hKΩ hK => (ContinuousLinearMap.apply ℝ ℂ v).comp_memLp' (h K hKΩ hK)
 
-/-- **Astala's theorem, from Corollary 2** (TeX line 325; K. Astala, Acta Math. 173 (1994)):
+/-- **Quasiregular extension of Astala's Corollary 1.2** (Acta Math. 173 (1994)):
 let `Ω ⊆ ℂ` be open, `0 ≤ k < 1`, and `f ∈ W^{1,2}_loc (Ω)` with the weak partial derivatives
 `fx`, `fy` and `|∂_zbar f| ≤ k |∂f|` almost everywhere in `Ω` (`∂_zbar f = (fx + i fy)/2`,
 `∂f = (fx − i fy)/2`: `f` is `K`-quasiregular, `K = (1 + k)/(1 − k)`). Then `Df ∈ L^p_loc (Ω)` for
