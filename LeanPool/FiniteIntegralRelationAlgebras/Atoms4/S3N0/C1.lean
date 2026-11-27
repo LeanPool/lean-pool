@@ -1,0 +1,63 @@
+/-
+Copyright (c) 2026 Chris Henson. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Chris Henson
+-/
+
+module
+
+public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Eval
+
+/-! Generated certificate (see `certgen`): symmetry class 1 of type (3, 0). -/
+
+@[expose] public section
+
+namespace RACert.S3N0.C1
+
+open RACert RACert.Problem
+
+/-- The counting problem of this class. -/
+def P : Problem where
+  s := 3
+  n := 0
+  perm := [0, 1, 3, 2]
+  pinv := [0, 1, 3, 2]
+  V := 6
+  cls := [[[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+    [[0, 1, 0, 0], [1, 2, 3, 3], [0, 3, 4, 5], [0, 3, 5, 4]],
+    [[0, 0, 1, 0], [0, 3, 4, 5], [1, 4, 6, 7], [0, 5, 7, 7]],
+    [[0, 0, 0, 1], [0, 3, 5, 4], [0, 5, 7, 7], [1, 4, 7, 6]]]
+  reps := [21, 22, 26, 27, 42, 43]
+  path := [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 0, 0, 3], [0, 1, 0, 0], [0, 11, 1, 3]],
+    [[0, 0, 0, 0], [0, 2, 17, 81], [0, 2, 0, 0], [0, 10, 1, 19]],
+    [[0, 0, 0, 0], [0, 19, 17, 139], [0, 2, 2, 11], [0, 19, 3, 3]]]
+  quads := [85, 86, 90, 91, 102, 103, 106, 107, 110, 170, 171, 175, 187]
+  wit := [[[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]],
+    [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 0, 0, 3], [0, 6, 0, 0], [0, 27, 3, 3]],
+    [[0, 0, 0, 0], [0, 5, 0, 0], [0, 21, 0, 0], [0, 21, 0, 91]],
+    [[0, 0, 0, 0], [0, 23, 3, 3], [0, 22, 22, 3], [0, 87, 3, 3]]],
+    [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 1, 1, 2], [0, 1, 1, 1], [0, 6, 6, 7]],
+    [[0, 0, 0, 0], [0, 5, 2, 2], [0, 9, 0, 0], [0, 21, 6, 0]],
+    [[0, 0, 0, 0], [0, 5, 5, 11], [0, 9, 5, 0], [0, 39, 7, 7]]],
+    [[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]],
+    [[0, 0, 0, 0], [0, 7, 1, 7], [0, 1, 1, 27], [0, 7, 7, 7]],
+    [[0, 0, 0, 0], [0, 9, 2, 23], [0, 9, 1, 1], [0, 39, 1, 23]],
+    [[0, 0, 0, 0], [0, 23, 11, 11], [0, 87, 3, 27], [0, 39, 3, 3]]]]
+
+theorem check : P.check = true := by decide +kernel
+
+theorem rows : P.checkRows = true := by decide +kernel
+
+theorem total : P.sumLeaves 6 0 1 = 26 := by decide +kernel
+
+/-- The number of lawful cycle sets invariant under the symmetry of this class. -/
+theorem count : fixCountL 3 0 [0, 1, 3, 2] = 26 :=
+  fixCountL_of_total (P := P) check rows (by decide +kernel) (by decide +kernel) total
+
+end RACert.S3N0.C1

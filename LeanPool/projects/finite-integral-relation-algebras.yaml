@@ -1,0 +1,59 @@
+slug: finite-integral-relation-algebras
+title: Enumeration of finite integral relation algebras through seven atoms
+summary: Classifies finite integral relation algebras by lawful atom cycles and verifies the
+  published isomorphism-class counts using Burnside's lemma and kernel-checked Boolean
+  counting certificates. The reference table is Peter Jipsen's compilation, which follows
+  the ordering of Roger Maddux's earlier list.
+branch: algebraic logic
+entry_module: LeanPool.FiniteIntegralRelationAlgebras
+authors:
+- Chris Henson
+source:
+  title: List of small integral relation algebras
+  authors:
+  - Peter Jipsen
+  url: https://www1.chapman.edu/~jipsen/gap/ramaddux.html
+  github_repo: chenson2018/finite-integral-ra
+  commit: 5620a22cc48127b592bca85b1aaf013e55d4f6df
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_one
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_two
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_three
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_four
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_five
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_six
+- FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_seven
+main_results:
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_one
+  informal: There is one isomorphism class of finite integral relation
+    algebras with exactly one atom.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_two
+  informal: There are 2 isomorphism classes of finite integral relation
+    algebras with exactly two atoms.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_three
+  informal: There are 10 isomorphism classes of finite integral relation
+    algebras with exactly three atoms.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_four
+  informal: There are 102 isomorphism classes of finite integral relation
+    algebras with exactly four atoms.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_five
+  informal: There are 4,412 isomorphism classes of finite integral relation
+    algebras with exactly five atoms.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_six
+  informal: There are 4,886,349 isomorphism classes of finite integral relation
+    algebras with exactly six atoms.
+- declaration: FiniteIntegralRelationAlgebras.RelationAlgebra.IntegralAtom.IsoClass.card_ofAtoms_seven
+  informal: There are 344,809,166,311 isomorphism classes of finite integral relation
+    algebras with exactly seven atoms.
+tags:
+- relation-algebras
+- enumeration
+- isomorphism-classes
+- proof-certificates
+msc:
+- 03G15
+- 05A15
+- 68V20
