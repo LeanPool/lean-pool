@@ -3,13 +3,15 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145PhysicalTraceResidue
 
 /-!
 C145: actual counting trace separates the ordinary H2 fiber through five modes.
-Compile-free source proposal: no elaboration or axiom audit executed here.
 
 The algebraic kernel permits arbitrary injective real residual rates, including
 one zero rate. The accepted X^2 P argument supplies the trace-polynomial zero.

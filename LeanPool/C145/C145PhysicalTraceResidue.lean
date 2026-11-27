@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145EightAffineFamilies
@@ -11,7 +14,6 @@ public import Mathlib.Algebra.Polynomial.BigOperators
 
 /-!
 C145: literal physical counting trace on the actual ordinary H2 residue fiber.
-Frozen compile-free source: no elaboration, compiler, or axiom audit executed.
 
 Coordinates are z=X 0, x=X 1, y=X 2; Res i j k uses [-rate k,-rate i,-rate j].
 The oriented di is product_h!=i (rate h-rate i). All divisions are totalized.

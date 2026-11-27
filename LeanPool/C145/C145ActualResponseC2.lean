@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145DelayKernelTransfer
@@ -23,9 +26,8 @@ public import Mathlib.Analysis.Normed.Operator.Basic
 public import Mathlib.Analysis.Normed.Operator.ContinuousLinearMap
 
 /-!
-C145 exact U1 compile-free construction. Status UNKNOWN_UNCOMPILED.
-All eight unchanged frozen U1 targets have candidate proof bodies below.
-No elaboration, kernel, source-fidelity acceptance, or axiom verdict is asserted.
+# The local response and its first two derivatives
+
 The nonlinear solution is constructed by a local inverse and linked to the ODE
 by FTC in both directions; the ordinary second derivative is derived explicitly.
 -/

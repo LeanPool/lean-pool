@@ -7,8 +7,15 @@ license: Apache-2.0
 source:
   url: https://github.com/VanGogh7777/c145-lean/blob/75d25568c084c8aab4faee30bd94905a6d20c3ad/paper/C145_v0.6.pdf
   github_repo: VanGogh7777/c145-lean
+  commit: 75d25568c084c8aab4faee30bd94905a6d20c3ad
 status: verified
-summary: Formalizes the C145 v0.6 original-graph inverse and one explicit six-vertex identification.
+summary: >-
+  Identifies a weighted graph Laplacian and signed port up to simultaneous vertex relabeling
+  from the first and mixed second terminal response derivatives in all smooth temporal
+  directions at one positive horizon. The general result assumes a common known positive
+  decay, connected symmetric nonnegative weighted graphs, cyclic ports, and a separation,
+  spectral-band and contraction criterion on the source. The project also identifies one
+  explicit six-vertex source under a separate set of assumptions.
 branch: main
 main_declarations:
   - C145.PaperActualResponse.selected_response_theoremA_graph
@@ -16,9 +23,19 @@ main_declarations:
 main_results:
   - declaration: C145.PaperActualResponse.selected_response_theoremA_graph
     source_ref: "C145 v0.6, Theorem 1 (§2.1, p. 2; Theorem A in Lean) and Appendix D (pp. 14–15)"
-    informal: Theorem 1 determines the source graph and signed port up to simultaneous relabeling.
+    informal: >-
+      For connected symmetric nonnegative weighted graphs with a common known positive decay
+      and cyclic ports, equality of the first and mixed second terminal response derivatives
+      in all smooth temporal directions determines the source Laplacian and signed port up to
+      one vertex relabeling, when the source satisfies the stated separation, spectral-band
+      and contraction criterion.
   - declaration: C145N6Frame.literal_N6_original_graph_identification
     source_ref: "C145 v0.6, §10 (pp. 10–11), explicit six-vertex source"
-    informal: The verified explicit six-vertex source is identified against the stated competitors.
+    informal: >-
+      The explicit six-vertex source has the same Laplacian and signed port up to a vertex
+      relabeling as any connected symmetric nonnegative weighted competitor with a cyclic
+      port, the same known decay, and matching first and mixed second terminal derivatives
+      of actual responses continuous at zero. A zero competitor diagonal also gives equality
+      of the full weight matrices under that relabeling.
 msc: ['93B30', '05C50']
 tags: [graph identification, inverse problems, reaction diffusion]

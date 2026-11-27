@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145ThreePlaneFactor
@@ -20,7 +23,7 @@ public import Mathlib.Tactic.Order
 
 /-!
 C145 ordinary residual H2: actual finite numerator, regular positive data,
-and the n <= 3 injection join. Compile-free source proposal only.
+and injectivity when n <= 3.
 
 Coordinates are z=X 0, x=X 1, y=X 2, exactly as in C145ThreePlaneFactor.
 E i j k means the x-input, y-input, z-output coefficient. All three slots

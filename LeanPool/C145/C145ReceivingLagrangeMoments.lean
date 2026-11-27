@@ -3,13 +3,15 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145CompleteOrdinaryH2Kernel
 
 /-!
 C145: actual receiving Lagrange moments of the unique admissible H2 quotient.
-Frozen compile-free source proposal. No elaboration or acceptance is claimed.
 
 All accepted definitions and sources are imported unchanged. Coordinates are
 z=X 0, x=X 1, y=X 2; gridResidue rates R i j k evaluates R at

@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145SixFixedProducts
@@ -10,7 +13,7 @@ public import LeanPool.C145.C145PhysicalFrame
 
 /-!
 DRE6 Lemma 4.1: actual weighted physical necessity and exact whole-H2-fiber
-affinity. Compile-free source proposal: no elaboration or kernel verdict.
+affinity.
 All Pair sums include the ground output and the literal weights 1 / a(r)^2.
 Power inputs range only over Fin n; v0 is not a ground mode. Real division
 is totalized in the algebra. Nonzero overlaps enter physical necessity;

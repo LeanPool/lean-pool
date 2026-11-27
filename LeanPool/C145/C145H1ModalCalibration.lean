@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145H2NumeratorData
@@ -20,7 +23,6 @@ public import Mathlib.Tactic.Ring
 
 /-!
 C145: literal finite H1 data determine visible simple positive modes.
-Compile-free source proposal; no elaboration or axiom printer has been run.
 
 The two finite sizes start unrelated. Each rate family's injection, positive
 rates, and each residue's nonvanishing are explicit source-class assumptions.

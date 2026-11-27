@@ -3,13 +3,15 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145H2GridResidueInverse
 
 /-!
 C145: complete ordinary, unshifted, fully symmetric residual H2 kernel.
-Compile-free source proposal; no elaboration or verification verdict.
 
 The imported actual numerator, Box, regular response, grid inverse and
 three-plane factorization are used unchanged. Coordinates are z=X 0,

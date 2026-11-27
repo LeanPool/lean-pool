@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145SmallPhysicalTraceSeparation
@@ -17,7 +20,6 @@ public import Mathlib.Tactic.Ring
 
 /-!
 C145: actual finite-coordinate multiplication and one derived vertex permutation.
-Compile-free source proposal; no elaboration or axiom-printer execution here.
 
 All sums retain every vertex/mode in Fin (n+1), including the ground and n=0.
 Column orthonormality derives row completeness. Literal cubic equality derives

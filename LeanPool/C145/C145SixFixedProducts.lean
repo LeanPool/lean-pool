@@ -3,13 +3,15 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145ReceivingLagrangeMoments
 
 /-!
 DRE6 Lemma 3.1 on the actual complete ordinary residual H2 kernel.
-Compile-free source proposal; no elaboration or verification verdict.
 The receiving moments are those of V = gridResidue rates R, never Res rates R.
 Only rate injectivity is used in the actual kernel joins. Positivity occurs
 solely in the positive-data corollaries. Ground extension is literally zero

@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import Mathlib.Algebra.MvPolynomial.Equiv
@@ -19,7 +22,6 @@ public import Mathlib.Tactic.Ring
 /-!
 Concrete ordinary three-plane factor interface for C145.
 
-Compile-free candidate: no elaboration or kernel-verification claim is made.
 The indexing is z = X 0, x = X 1, y = X 2. The factors have the exact
 DRE4/DRE6 signs. This module starts from a polynomial plane identity;
 it does not yet construct a response numerator or prove a tensor kernel.

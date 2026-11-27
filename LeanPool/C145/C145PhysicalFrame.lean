@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import Mathlib.Basic.Real.Basic
@@ -13,8 +16,7 @@ public import Mathlib.Tactic.FieldSimp
 public import Mathlib.Tactic.Ring
 
 /-!
-Compile-free source proposal for C145, Original--DRE6+CRITIC1.
-No compiler, dependency query, or axiom-printer execution has been performed.
+# Physical frames
 
 `Fin (n + 1)` indexes both vertices and modes. Mode zero is retained in every
 contraction, even when `n = 0`. These are finite counting-metric identities.

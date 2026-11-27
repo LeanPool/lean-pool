@@ -3,6 +3,9 @@ Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Mark Gladden
 -/
+
+/- Modified from the C145 v0.6 release for Lean Pool's pinned toolchain. -/
+
 module
 
 public import LeanPool.C145.C145H2NumeratorData
@@ -10,7 +13,7 @@ public import Mathlib.Algebra.Polynomial.Eval.Degree
 
 /-!
 C145 ordinary H2: actual fixed-three-variable grid unisolvence and the
-literal numerator/residue inverse. Compile-free source proposal only.
+literal numerator/residue inverse.
 
 The public polynomial domain is the accepted support predicate Box n F.
 The n=0 case is retained separately. Coordinates remain z=X 0, x=X 1,
