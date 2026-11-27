@@ -1,0 +1,159 @@
+/-
+Copyright (c) 2026 Physical Superintelligence PBC. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: David Turturean
+-/
+-- Adapted by Lean Pool for its pinned Lean and Mathlib versions.
+module
+
+public import LeanPool.VacuumBellSeparation.FreeField.MainReduction
+public import LeanPool.VacuumBellSeparation.FreeField.Isotony
+
+/-!
+# Microcausality, stage A: the algebraic reduction
+
+Stage A of the microcausality proof: two local algebras commute as
+soon as the imaginary part of the one-particle inner product `⟨κF, κG⟩` vanishes for all real test
+functions `F`, `G` supported in the two regions.  No analysis is involved.
+
+* `oneParticleInner_swap`: `⟨κG, κF⟩ = conj ⟨κF, κG⟩`;
+* `FreeFieldVacuum.weyl_mul_comm_of_im_eq_zero`: `Im ⟨κF, κG⟩ = 0` implies `W(F)W(G) = W(G)W(F)`
+  (the Weyl relations applied twice, and `F + G = G + F`);
+* `mul_star_comm_of_mem_unitary`, `commute_union_star_of_subset_unitary`: commutation of unitary
+  operators passes to their adjoints;
+* `commuting_generatedVNA_of_commute`: if every element of `S₁ ∪ S₁*` commutes with every element
+  of `S₂ ∪ S₂*`, the generated von Neumann algebras commute
+  (`S₂ ∪ S₂* ⊆ S₁'`, hence `generatedVNA S₂ ⊆ S₁' = (generatedVNA S₁)'`);
+* `commuting_localAlgebra_of_im_eq_zero`, `locality_of_im_eq_zero`: the reduction of `Locality`
+  (`FreeField/MainReduction.lean`) to `Im ⟨κ_μ F, κ_μ G⟩ = 0` for `F` supported in the unit double
+  cone at the origin and `G` in the unit double cone at `s 𝐞₁`, `s > 2`.
+-/
+
+@[expose] public section
+
+open scoped InnerProductSpace ComplexConjugate
+open MeasureTheory
+
+open scoped Pointwise
+
+namespace VacuumBellSeparation
+
+/-! ### Symmetry of the one-particle inner product -/
+
+/-- `⟨κ_m G, κ_m F⟩ = conj ⟨κ_m F, κ_m G⟩` (the weight of the inner product is real). -/
+theorem oneParticleInner_swap (m : ℝ) (F G : RealTestFunction) :
+    oneParticleInner m G F = conj (oneParticleInner m F G) := by
+  unfold oneParticleInner
+  rw [← integral_conj]
+  refine integral_congr_ae (Filter.Eventually.of_forall fun p => ?_)
+  simp only [map_mul, Complex.conj_conj, Complex.conj_ofReal]
+  ring
+
+/-- `Im ⟨κ_m G, κ_m F⟩ = -Im ⟨κ_m F, κ_m G⟩`. -/
+theorem oneParticleInner_swap_im (m : ℝ) (F G : RealTestFunction) :
+    (oneParticleInner m G F).im = -(oneParticleInner m F G).im := by
+  rw [oneParticleInner_swap, Complex.conj_im]
+
+variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
+
+/-! ### Commutation of Weyl operators -/
+
+/-- If `Im ⟨κ_m F, κ_m G⟩ = 0`, the Weyl operators commute: `W(F) W(G) = W(G) W(F)`. -/
+theorem FreeFieldVacuum.weyl_mul_comm_of_im_eq_zero {m : ℝ} (V : FreeFieldVacuum m H)
+    {F G : RealTestFunction} (h : (oneParticleInner m F G).im = 0) :
+    V.weyl F * V.weyl G = V.weyl G * V.weyl F := by
+  have h' : (oneParticleInner m G F).im = 0 := by
+    rw [oneParticleInner_swap_im, h, neg_zero]
+  have hFG : F + G = G + F := Subtype.ext (add_comm F.1 G.1)
+  rw [V.weyl_mul F G, V.weyl_mul G F, h, h', hFG]
+
+/-! ### Commutation with adjoints -/
+
+/-- If `A` commutes with a unitary `B`, then `A` commutes with `B*`. -/
+theorem mul_star_comm_of_mem_unitary {A B : H →L[ℂ] H} (hB : B ∈ unitary (H →L[ℂ] H))
+    (h : A * B = B * A) : A * star B = star B * A := by
+  have h1 : star B * B = 1 := Unitary.star_mul_self_of_mem hB
+  have h2 : B * star B = 1 := Unitary.mul_star_self_of_mem hB
+  calc A * star B = star B * B * A * star B := by rw [h1, one_mul]
+    _ = star B * (B * A) * star B := by rw [mul_assoc (star B) B A]
+    _ = star B * (A * B) * star B := by rw [h]
+    _ = star B * A * (B * star B) := by simp only [mul_assoc]
+    _ = star B * A := by rw [h2, mul_one]
+
+/-- If every element of a set `S₁` of unitaries commutes with every element of a set `S₂` of
+unitaries, then every element of `S₁ ∪ S₁*` commutes with every element of `S₂ ∪ S₂*`. -/
+theorem commute_union_star_of_subset_unitary {S₁ S₂ : Set (H →L[ℂ] H)}
+    (hU₁ : S₁ ⊆ unitary (H →L[ℂ] H)) (hU₂ : S₂ ⊆ unitary (H →L[ℂ] H))
+    (h : ∀ A ∈ S₁, ∀ B ∈ S₂, A * B = B * A) :
+    ∀ A ∈ S₁ ∪ star S₁, ∀ B ∈ S₂ ∪ star S₂, A * B = B * A := by
+  intro A hA B hB
+  rcases hA with hA | hA <;> rcases hB with hB | hB
+  · exact h A hA B hB
+  · have hB' : star B ∈ S₂ := Set.mem_star.1 hB
+    have h1 := mul_star_comm_of_mem_unitary (hU₂ hB') (h A hA (star B) hB')
+    rwa [star_star] at h1
+  · have hA' : star A ∈ S₁ := Set.mem_star.1 hA
+    have h1 := mul_star_comm_of_mem_unitary (hU₁ hA') (h (star A) hA' B hB).symm
+    rw [star_star] at h1
+    exact h1.symm
+  · have hA' : star A ∈ S₁ := Set.mem_star.1 hA
+    have hB' : star B ∈ S₂ := Set.mem_star.1 hB
+    have h1 : star (star A * star B) = star (star B * star A) :=
+      congrArg star (h (star A) hA' (star B) hB')
+    simp only [star_mul, star_star] at h1
+    exact h1.symm
+
+/-! ### Commutation of generated von Neumann algebras -/
+
+/-- If every element of `S₁ ∪ S₁*` commutes with every element of `S₂ ∪ S₂*`, the von Neumann
+algebras generated by `S₁` and `S₂` commute: `S₁ ∪ S₁* ⊆ S₂'`, so every element of
+`generatedVNA S₂ = S₂''` lies in `S₁'`, which commutes with `generatedVNA S₁ = S₁''`. -/
+theorem commuting_generatedVNA_of_commute {S₁ S₂ : Set (H →L[ℂ] H)}
+    (h : ∀ A ∈ S₁ ∪ star S₁, ∀ B ∈ S₂ ∪ star S₂, A * B = B * A) :
+    Commuting (generatedVNA S₁) (generatedVNA S₂) := by
+  intro A hA B hB
+  have h1 : ∀ a ∈ S₁ ∪ star S₁, a ∈ commutantOf S₂ := by
+    intro a ha
+    rw [mem_commutantOf_iff, Set.mem_centralizer_iff]
+    intro b hb
+    exact (h a ha b hb).symm
+  have hB' : B ∈ commutantOf S₁ := by
+    rw [generatedVNA, VonNeumannAlgebra.mem_commutant_iff] at hB
+    rw [mem_commutantOf_iff, Set.mem_centralizer_iff]
+    intro a ha
+    exact hB a (h1 a ha)
+  rw [generatedVNA, VonNeumannAlgebra.mem_commutant_iff] at hA
+  exact (hA B hB').symm
+
+/-! ### The reduction of locality -/
+
+/-- The local algebras of two regions commute if `Im ⟨κ_m F, κ_m G⟩ = 0` for all real test
+functions `F` supported in the first region and `G` supported in the second. -/
+theorem commuting_localAlgebra_of_im_eq_zero {m : ℝ} (V : FreeFieldVacuum m H)
+    {O₁ O₂ : Set Spacetime}
+    (h : ∀ F G : RealTestFunction, tsupport F.1 ⊆ O₁ → tsupport G.1 ⊆ O₂ →
+      (oneParticleInner m F G).im = 0) :
+    Commuting (localAlgebra V O₁) (localAlgebra V O₂) := by
+  unfold localAlgebra
+  apply commuting_generatedVNA_of_commute
+  apply commute_union_star_of_subset_unitary
+  · rintro T ⟨F, -, rfl⟩
+    exact V.weyl_mem_unitary F
+  · rintro T ⟨G, -, rfl⟩
+    exact V.weyl_mem_unitary G
+  · rintro A ⟨F, hF, rfl⟩ B ⟨G, hG, rfl⟩
+    exact V.weyl_mul_comm_of_im_eq_zero (h F G hF hG)
+
+/-- **Reduction of `Locality` to the one-particle inner product**: if
+`Im ⟨κ_μ F, κ_μ G⟩ = 0` for every mass `μ > 0`, every `s > 2` and all real test functions `F`
+supported in the unit double cone at the origin and `G` supported in the unit double cone at
+`s 𝐞₁`, then `Locality` holds. -/
+theorem locality_of_im_eq_zero
+    (h : ∀ μ s : ℝ, 0 < μ → 2 < s → ∀ F G : RealTestFunction,
+      tsupport F.1 ⊆ doubleCone 0 1 → tsupport G.1 ⊆ doubleCone (0, s • e₁) 1 →
+      (oneParticleInner μ F G).im = 0) :
+    Locality := by
+  intro μ s hμ hs H _ _ _ V
+  exact commuting_localAlgebra_of_im_eq_zero V (h μ s hμ hs)
+
+end VacuumBellSeparation

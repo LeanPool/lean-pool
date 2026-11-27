@@ -1,0 +1,71 @@
+slug: vacuum-bell-separation
+title: Vacuum Bell correlation at large spacelike separation
+summary: >-
+  For the massive real free scalar field in 3+1 dimensions, the vacuum Bell
+  correlation of two fixed bounded regions equals the classical bound once
+  one region is translated sufficiently far along a fixed spacelike vector.
+  Double cones of equal radius admit a separation-to-radius threshold
+  independent of the positive mass. The development includes Weyl systems,
+  local von Neumann algebras, a construction of the free-field vacuum, and a
+  proof that the algebra of a nonempty open region is noncommutative.
+branch: mathematical physics
+entry_module: LeanPool.VacuumBellSeparation
+authors:
+- David Turturean
+source:
+  title: The vacuum Bell correlation of the massive free scalar field attains the classical bound for bounded regions beyond a finite separation
+  url: https://github.com/physical-superintelligence/oqp-batch-2026/tree/7049357c42a8fe85262da08fdc10d57b4d9e67a0/oqp12-vacuum-bell-correlations
+  github_repo: physical-superintelligence/oqp-batch-2026
+  commit: 7049357c42a8fe85262da08fdc10d57b4d9e67a0
+  announcement_url: https://psi.inc/research/oqp-batch-2026/
+  announcement_date: '2026-10-23'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  Physical Superintelligence PBC directed the AI agents that wrote the Lean
+  formalization and holds copyright in the source. The upstream NOTICE
+  credits Claude Opus 5.5 and GPT-6-Astra for the Lean development and David
+  Turturean for responsibility for the paper.
+main_declarations:
+- VacuumBellSeparation.OQP12.theorem_1_1
+- VacuumBellSeparation.OQP12.corollary_1_2
+- VacuumBellSeparation.OQP12.no_chsh_violation_far_apart
+- VacuumBellSeparation.OQP12.no_chsh_violation_far_apart_uniform
+- VacuumBellSeparation.OQP12.freeFieldVacuum_exists
+- VacuumBellSeparation.OQP12.localAlgebra_open_nonabelian
+main_results:
+- declaration: VacuumBellSeparation.OQP12.theorem_1_1
+  informal: >-
+    One constant greater than two gives a sufficient separation-to-radius
+    ratio for the normalized vacuum CHSH supremum of equal-radius double
+    cones to be one, for every positive mass.
+- declaration: VacuumBellSeparation.OQP12.corollary_1_2
+  informal: >-
+    For two bounded regions and a fixed spacelike vector, the normalized
+    supremum equals one beyond a translation threshold.
+- declaration: VacuumBellSeparation.OQP12.no_chsh_violation_far_apart
+  informal: >-
+    Beyond that threshold the unnormalized CHSH expression for any four
+    local self-adjoint contractions has absolute value at most two.
+- declaration: VacuumBellSeparation.OQP12.no_chsh_violation_far_apart_uniform
+  informal: >-
+    A single threshold suffices uniformly over all spatial translation
+    directions for a given pair of bounded regions and positive mass.
+- declaration: VacuumBellSeparation.OQP12.freeFieldVacuum_exists
+  informal: >-
+    For every positive mass there exists a complex Hilbert space carrying a
+    free-field vacuum Weyl system.
+- declaration: VacuumBellSeparation.OQP12.localAlgebra_open_nonabelian
+  informal: >-
+    The local von Neumann algebra of every nonempty open spacetime region
+    contains two noncommuting operators.
+tags:
+- quantum-field-theory
+- bell-inequalities
+- operator-algebras
+- free-scalar-field
+msc:
+- 81T05
+- 81P40
+- 46L60
