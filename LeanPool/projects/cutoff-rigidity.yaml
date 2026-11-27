@@ -18,6 +18,9 @@ summary: >-
   weighted volume, the negative diffusion generator on smooth compactly
   supported functions has a symmetric nonnegative dense core in L².
   Its Friedrichs resolvent and semigroup preserve almost-everywhere nonnegativity.
+  On a complete connected manifold the constant one has zero closed energy.
+  The semigroup fixes it, preserves functions between zero and one almost
+  everywhere, and preserves the integral against the weighted volume.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -51,6 +54,11 @@ main_declarations:
 - CutoffRigidity.Riemann.Diff.diffFormData
 - CutoffRigidity.Riemann.Diff.diffusion_resolvent_nonneg
 - CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg
+- CutoffRigidity.Riemann.Diff.oneL2_mem_diffusion_form_zero_energy
+- CutoffRigidity.Riemann.Diff.diffusion_resolvent_one
+- CutoffRigidity.Riemann.Diff.diffusion_semigroup_one
+- CutoffRigidity.Riemann.Diff.diffusion_semigroup_mapsTo_zero_one
+- CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -126,6 +134,27 @@ main_results:
   informal: >-
     At every nonnegative time, the Friedrichs semigroup for the same
     weighted diffusion generator preserves almost-everywhere nonnegativity.
+- declaration: CutoffRigidity.Riemann.Diff.oneL2_mem_diffusion_form_zero_energy
+  informal: >-
+    On a complete connected smooth Riemannian manifold with finite smooth
+    weighted volume, the constant one belongs to the closed Friedrichs form
+    domain of the negative weighted diffusion generator and has zero energy.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_resolvent_one
+  informal: >-
+    In the same complete connected setting, the resolvent for a positive
+    parameter sends the constant one to the constant inverse parameter.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_semigroup_one
+  informal: >-
+    The Friedrichs semigroup fixes one at every nonnegative time in the
+    complete connected setting.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_semigroup_mapsTo_zero_one
+  informal: >-
+    In the complete connected setting the semigroup maps the L² order interval
+    from zero to one into itself at every nonnegative time.
+- declaration: CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral
+  informal: >-
+    On the same complete connected manifold, integration against the finite
+    weighted volume is invariant under the semigroup on every L² vector.
 tags:
 - curvature
 - spectral-gap
