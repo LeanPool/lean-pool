@@ -10,13 +10,14 @@ module
 public import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.BeurlingAhlfors.Basic
 public import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.FourierMultiplier.Extension
 public import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.Sobolev.Mollify
-public import Mathlib.Analysis.Normed.Operator.Extend
+public import TauCeti.Analysis.Complex.Wirtinger.Beurling.Basic
 import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.BeurlingAhlfors.CompactSupport
 import Mathlib.Analysis.Calculus.ContDiff.Convolution
 import Mathlib.MeasureTheory.Function.ConvergenceInMeasure
 import Mathlib.MeasureTheory.Function.LpSpace.Complete
 import Mathlib.MeasureTheory.Integral.Bochner.ContinuousLinearMap
 import Mathlib.MeasureTheory.Integral.Lebesgue.DominatedConvergence
+import TauCeti.Analysis.Distribution.TemperedDistribution.Lp
 
 /-!
 # The Beurling–Ahlfors transform on `L² (ℂ)`
@@ -25,8 +26,7 @@ import Mathlib.MeasureTheory.Integral.Lebesgue.DominatedConvergence
 `L² (ℂ)`, the extension of `𝓑` from the Schwartz functions:
 
 * `HarmonicAnalysis.beurlingL2_toLp`: `𝓑 f = beurlingPow 1 f` for Schwartz `f`;
-* `HarmonicAnalysis.norm_beurlingL2_le`: `‖𝓑‖_{L² → L²} ≤ 1`, from
-  `HarmonicAnalysis.beurlingPowNorm_one_two_le` (`‖𝓑‖₂ ≤ 1` on Schwartz functions, by Plancherel);
+* `HarmonicAnalysis.norm_beurlingL2_le`: `‖𝓑‖_{L² → L²} ≤ 1`, from Tau Ceti's operator bound;
 * `HarmonicAnalysis.eLpNorm_beurlingL2_two_le`: `‖𝓑 u‖₂ ≤ ‖u‖₂`, with `eLpNorm`;
 * `HarmonicAnalysis.eLpNorm_beurlingL2_le`: on `L² ∩ L^p`, `‖𝓑 u‖_p ≤ ‖𝓑‖_p ‖u‖_p`, `1 ≤ p < ∞`,
   where `‖𝓑‖_p = beurlingPowNorm 1 p` is the norm on Schwartz functions: the operator on `L²`
@@ -43,8 +43,8 @@ with
 `‖∂u‖₂ ≤ ‖∂_zbar u‖₂` for smooth compactly supported `u`; by Plancherel for Schwartz functions,
 `‖∂u‖₂ = ‖π i (conj ξ) 𝓕u‖₂ = ‖π i ξ 𝓕u‖₂ = ‖∂_zbar u‖₂`.
 
-`beurlingL2`: the extension (`LinearMap.extendOfNorm`) of `f ↦ 𝓑 f` from the Schwartz functions,
-which are dense in `L²`, with the bound `‖𝓑 f‖₂ ≤ ‖f‖₂`.
+`beurlingL2` is Tau Ceti's spectral multiplier. Its agreement with the integral formula on
+Schwartz inputs follows by identifying the inverse Fourier transforms in tempered distributions.
 
 `eLpNorm_beurlingL2_le`: `u ∈ L² ∩ L^p` is the limit, in `L²` and in `L^p` at once, of smooth
 compactly supported functions, the mollifications `ρ_k ⋆ (1_{B_R} u)` of truncations
@@ -109,56 +109,40 @@ theorem memLp_beurlingPow_one_two (f : 𝓢(ℂ, ℂ)) : MemLp (beurlingPow 1 f)
     (beurlingPowNorm_one_two_le.trans_lt ENNReal.one_lt_top).ne f
   rwa [ENNReal.ofReal_ofNat] at h
 
+/-- Tau Ceti's Beurling–Ahlfors transform on complex-valued `L²` functions. -/
+abbrev beurlingL2 : Lp ℂ 2 (volume : Measure ℂ) →L[ℂ] Lp ℂ 2 (volume : Measure ℂ) :=
+  TauCeti.beurlingL2 ℂ
+
 /-- `𝓑` on the Schwartz functions, as a linear map into `L² (ℂ)`. -/
-def beurlingSchwartzToL2 : 𝓢(ℂ, ℂ) →ₗ[ℂ] Lp ℂ 2 (volume : Measure ℂ) where
-  toFun f := (memLp_beurlingPow_one_two f).toLp _
-  map_add' f g := by
-    rw [← MemLp.toLp_add]
-    refine MemLp.toLp_congr _ _ (ae_of_all _ fun x => ?_)
-    simp only [beurlingPow, fourierMultiplier_add (measurable_beurlingSymbol.pow_const 1)
-      ⟨1, fun ξ => by simpa using norm_beurlingSymbol_le ξ⟩ f g, Pi.add_apply]
-  map_smul' a f := by
-    rw [RingHom.id_apply, ← MemLp.toLp_const_smul]
-    refine MemLp.toLp_congr _ _ (ae_of_all _ fun x => ?_)
-    simp only [beurlingPow, fourierMultiplier_smul, Pi.smul_apply]
-
-/-- The Beurling–Ahlfors transform `𝓑` on `L² (ℂ)`: the bounded operator that extends `𝓑` from the
-Schwartz functions (`HarmonicAnalysis.beurlingL2_toLp`). -/
-def beurlingL2 : Lp ℂ 2 (volume : Measure ℂ) →L[ℂ] Lp ℂ 2 (volume : Measure ℂ) :=
-  beurlingSchwartzToL2.extendOfNorm (SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure ℂ)).toLinearMap
-
-/-- The Schwartz functions are dense in `L²`. -/
-private lemma bl2_denseRange :
-    DenseRange (SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure ℂ)).toLinearMap :=
-  SchwartzMap.denseRange_toLpCLM ENNReal.ofNat_ne_top
-
-/-- `‖𝓑 f‖₂ ≤ ‖f‖₂` for Schwartz `f`, in `L²`. -/
-private lemma bl2_norm_le (f : 𝓢(ℂ, ℂ)) :
-    ‖beurlingSchwartzToL2 f‖ ≤
-      1 * ‖(SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure ℂ)).toLinearMap f‖ := by
-  have h1 : ‖beurlingSchwartzToL2 f‖ = (eLpNorm (beurlingPow 1 f) 2 volume).toReal :=
-    Lp.norm_toLp _ (memLp_beurlingPow_one_two f)
-  have h2 : ‖(SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure ℂ)).toLinearMap f‖ =
-      (eLpNorm f 2 volume).toReal := SchwartzMap.norm_toLp
-  rw [h1, h2, one_mul]
-  refine ENNReal.toReal_mono (f.memLp 2 volume).eLpNorm_ne_top ?_
-  have h := eLpNorm_fourierMultiplier_le (fun ξ => beurlingSymbol ξ ^ 1) 2 f
-  rw [ENNReal.ofReal_ofNat] at h
-  calc eLpNorm (beurlingPow 1 f) 2 volume ≤ beurlingPowNorm 1 2 * eLpNorm f 2 volume := h
-    _ ≤ 1 * eLpNorm f 2 volume := by gcongr; exact beurlingPowNorm_one_two_le
-    _ = eLpNorm f 2 volume := one_mul _
+def beurlingSchwartzToL2 : 𝓢(ℂ, ℂ) →ₗ[ℂ] Lp ℂ 2 (volume : Measure ℂ) :=
+  beurlingL2.toLinearMap.comp (SchwartzMap.toLpCLM ℂ ℂ 2 (volume : Measure ℂ)).toLinearMap
 
 /-- `𝓑 f = beurlingPow 1 f` for Schwartz `f`. -/
 theorem beurlingL2_toLp (f : 𝓢(ℂ, ℂ)) :
     beurlingL2 (f.toLp 2) =ᵐ[volume] beurlingPow 1 f := by
-  have h : beurlingL2 (f.toLp 2) = beurlingSchwartzToL2 f :=
-    LinearMap.extendOfNorm_eq bl2_denseRange ⟨1, bl2_norm_le⟩ f
-  rw [h]
-  exact (memLp_beurlingPow_one_two f).coeFn_toLp
+  let product : Lp ℂ 2 (volume : Measure ℂ) := TauCeti.beurlingSymbolLinf • 𝓕 (f.toLp 2)
+  have hproduct : product =ᵐ[volume] fun ξ => beurlingSymbol ξ • 𝓕 (f : ℂ → ℂ) ξ := by
+    dsimp only [product]
+    rw [SchwartzMap.toLp_fourier_eq]
+    filter_upwards [Lp.coeFn_lpSMul (r := 2) TauCeti.beurlingSymbolLinf ((𝓕 f).toLp 2),
+      TauCeti.coeFn_beurlingSymbolLinf, (𝓕 f).coeFn_toLp 2] with ξ hmul hsymbol hfourier
+    rw [hmul, Pi.smul_apply', hsymbol, hfourier, SchwartzMap.fourier_coe]
+    by_cases hξ : ξ = 0
+    · simp [hξ, TauCeti.beurlingSymbol_zero, beurlingSymbol]
+    rw [(eq_div_iff hξ).2 (TauCeti.beurlingSymbol_mul ξ), beurlingSymbol]
+  have hintegrable : Integrable (fun ξ => beurlingSymbol ξ • 𝓕 (f : ℂ → ℂ) ξ) :=
+    integrable_smul_fourier measurable_beurlingSymbol ⟨1, norm_beurlingSymbol_le⟩ f
+  change ⇑(TauCeti.beurlingL2 ℂ (f.toLp 2)) =ᵐ[volume] beurlingPow 1 f
+  rw [TauCeti.beurlingL2_def, Lp.fourierMultiplierCLM_apply]
+  simpa only [beurlingPow, fourierMultiplier, pow_one] using
+    (Lp.ae_eq_of_toTemperedDistribution_apply_eq (𝓕⁻ product)
+      (continuous_fourierMultiplier beurlingSymbol f).locallyIntegrable fun φ => by
+        rw [← Lp.fourierInv_toTemperedDistribution_eq]
+        exact Lp.fourierInv_toTemperedDistribution_apply _ hintegrable hproduct φ)
 
 /-- `‖𝓑‖_{L² → L²} ≤ 1`. -/
 theorem norm_beurlingL2_le : ‖beurlingL2‖ ≤ 1 :=
-  LinearMap.opNorm_extendOfNorm_le bl2_denseRange zero_le_one bl2_norm_le
+  TauCeti.norm_beurlingL2_le
 
 /-! ### Mollifiers and truncations -/
 

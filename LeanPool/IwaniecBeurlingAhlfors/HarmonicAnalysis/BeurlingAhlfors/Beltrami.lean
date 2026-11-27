@@ -21,11 +21,11 @@ import Mathlib.MeasureTheory.Function.LpSpace.Complete
 `k ‖𝓑‖_p < 1`. If `f ∈ W^{1,2}_loc (Ω)` and `|∂_zbar f| ≤ k |∂f|` almost everywhere in `Ω` (`f` is
 `K`-quasiregular, `K = (1 + k) / (1 − k)`), then `Df ∈ L^p_loc (Ω)`.
 
-This is T. Iwaniec's argument (*Extremal inequalities in Sobolev spaces and quasiconformal
-mappings*, Z. Anal. Anwendungen 1 (1982); as presented in K. Astala, T. Iwaniec and G. Martin,
-*Elliptic partial differential equations and quasiconformal mappings in the plane*, Princeton
-University Press, 2009, Chapters 13–14). Neither source was read; the argument is the standard
-one, as follows.
+The multiplier-norm criterion is due to B. Bojarski (Mat. Sb. 43(85), 1957, 451–503).
+It is stated by O. Lehto (*Remarks on the integrability of the derivatives of quasiconformal
+mappings*, 1965, equation (1)) and by T. Iwaniec (*Extremal inequalities in Sobolev spaces and
+quasiconformal mappings*, 1982, equation (5)). The proof below uses a cut-off and the Neumann
+series.
 
 ## Proof
 
@@ -243,7 +243,7 @@ private theorem bel_memLp_of_eq {k p : ℝ} (hk : 0 ≤ k) (hk1 : k < 1) (hp : 1
     _ ≤ (1 - r)⁻¹ * H := liminf_le_of_frequently_le' (Frequently.of_forall fun n => hSP' _)
     _ < ⊤ := ENNReal.mul_lt_top (ENNReal.inv_lt_top.2 (tsub_pos_of_lt hr)) hh
 
-/-- **Iwaniec (1982)**: if `k ‖𝓑‖_p < 1`, `0 ≤ k < 1`, `2 ≤ p`, then every
+/-- **Bojarski's integrability criterion**: if `k ‖𝓑‖_p < 1`, `0 ≤ k < 1`, `2 ≤ p`, then every
 `f ∈ W^{1,2}_loc (Ω)` with `|∂_zbar f| ≤ k |∂f|` almost everywhere in the open set `Ω` has
 `Df ∈ L^p_loc (Ω)`. -/
 theorem memLpLoc_of_beltrami {Ω : Set ℂ} (hΩ : IsOpen Ω) {k p : ℝ} (hk : 0 ≤ k) (hk1 : k < 1)

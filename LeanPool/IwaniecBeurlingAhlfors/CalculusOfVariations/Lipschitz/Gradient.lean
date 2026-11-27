@@ -130,20 +130,8 @@ lemma rd_volume_unitCube (m : ℕ) : volume (unitCube m) = 1 := by
 
 /-- The entries of the gradient of a `K`-Lipschitz map are bounded by `K`. -/
 theorem cv_grad_abs_le {φ : (Fin m → ℝ) → Fin d → ℝ} {K : NNReal} (hφ : LipschitzWith K φ)
-    (x : Fin m → ℝ) (i : Fin d) (k : Fin m) : |grad φ x i k| ≤ K := by
-  have hφi : LipschitzWith K (fun y => φ y i) := by
-    have := (LipschitzWith.eval (α := fun _ : Fin d => ℝ) i).comp hφ
-    rw [one_mul] at this
-    exact this
-  change |fderiv ℝ (fun y => φ y i) x (Pi.single k 1)| ≤ K
-  calc |fderiv ℝ (fun y => φ y i) x (Pi.single k 1)|
-      ≤ ‖fderiv ℝ (fun y => φ y i) x‖ * ‖(Pi.single k 1 : Fin m → ℝ)‖ :=
-        (fderiv ℝ (fun y => φ y i) x).le_opNorm _
-    _ ≤ K * 1 := by
-        gcongr
-        · exact norm_fderiv_le_of_lipschitz ℝ hφi
-        · simp [Pi.norm_single]
-    _ = K := mul_one _
+    (x : Fin m → ℝ) (i : Fin d) (k : Fin m) : |grad φ x i k| ≤ K :=
+  rd_grad_abs_le hφ x i k
 
 /-- The gradient, as a map to `Fin d → Fin m → ℝ`, is measurable. -/
 theorem cv_measurable_grad (φ : (Fin m → ℝ) → Fin d → ℝ) :

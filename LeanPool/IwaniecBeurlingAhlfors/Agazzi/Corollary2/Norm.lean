@@ -10,6 +10,7 @@ module
 public import LeanPool.IwaniecBeurlingAhlfors.Agazzi.Quasiconvex
 public import LeanPool.IwaniecBeurlingAhlfors.Agazzi.External.BaernsteinMontgomerySmith.RemarkB
 public import LeanPool.IwaniecBeurlingAhlfors.Agazzi.External.Lehto.LowerBound
+public import LeanPool.IwaniecBeurlingAhlfors.HarmonicAnalysis.BeurlingAhlfors.L2
 import LeanPool.IwaniecBeurlingAhlfors.CalculusOfVariations.Quasiconvex.Domain
 
 /-!
@@ -100,12 +101,7 @@ theorem le_pStar (p : ℝ) : p ≤ pStar p := le_max_left _ _
 
 /-- `α_p = p (1 − 1/p*)^{p−1} > 0` for `1 < p`. -/
 theorem alpha_pos {p : ℝ} (hp : 1 < p) : 0 < alpha p := by
-  have h1 : 1 < pStar p := lt_of_lt_of_le hp (le_pStar p)
-  have h2 : 0 < 1 - 1 / pStar p := by
-    rw [sub_pos, div_lt_one (by linarith)]
-    exact h1
-  rw [alpha, bms_pStar_eq]
-  exact mul_pos (by linarith) (Real.rpow_pos_of_pos h2 _)
+  exact External.BaernsteinMontgomerySmith.alpha_pos hp
 
 /-- `B_p (0) = 0`. -/
 theorem burkholderB_zero (p : ℝ) : burkholderB p 0 = 0 := by
@@ -387,5 +383,17 @@ theorem corollary2_norm {p : ℝ} (hp : 1 < p) : beurlingNorm p = ENNReal.ofReal
   refine le_antisymm (beurlingNorm_le hp) ?_
   rw [beurlingNorm_eq_beurlingPowNorm]
   exact External.Lehto.lowerBound hp
+
+/-- The sharp norm of Tau Ceti's Beurling–Ahlfors operator on complex-valued `L^p`. -/
+theorem corollary2_norm_tauCeti {p : ℝ} (hp : 1 < p) [Fact (1 ≤ ENNReal.ofReal p)] :
+    ‖TauCeti.beurlingLp (F := ℂ) (ENNReal.ofReal p)
+      (by
+        rw [← ENNReal.ofReal_one]
+        exact (ENNReal.ofReal_lt_ofReal_iff (by linarith)).mpr hp)
+      ENNReal.ofReal_ne_top‖ₑ = ENNReal.ofReal (pStar p - 1) := by
+  rw [← corollary2_norm hp, beurlingNorm_eq_beurlingPowNorm]
+  apply HarmonicAnalysis.enorm_eq_multiplierNorm
+  intro f
+  exact (TauCeti.beurlingLp_toLp _ _ f).trans (HarmonicAnalysis.beurlingL2_toLp f)
 
 end Agazzi

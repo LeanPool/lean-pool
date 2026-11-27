@@ -32,16 +32,11 @@ homeomorphic ones. With the weak partial derivatives `fx`, `fy` of `f`, `∂f = 
 
 ## Proof
 
-`astala`: the derivation of T. Iwaniec (*Extremal inequalities in Sobolev spaces and quasiconformal
-mappings*, Z. Anal. Anwendungen 1 (1982); see K. Astala, T. Iwaniec and G. Martin, *Elliptic partial
-differential equations and quasiconformal mappings in the plane*, Princeton, 2009, Chapters 13–14),
-from Corollary 2 (b), `‖𝒮‖_p = p* − 1 = p − 1` for `p ≥ 2` (`corollary2_norm`): since
-`k ‖𝒮‖_p = k (p − 1) < 1`, the package `HarmonicAnalysis` gives `Df ∈ L^p_loc (Ω)`
+`astala`: Corollary 2 (b) gives `‖𝒮‖_p = p* − 1 = p − 1` for `p ≥ 2` (`corollary2_norm`).
+Since `k ‖𝒮‖_p = k (p − 1) < 1`, Bojarski's integrability criterion gives `Df ∈ L^p_loc (Ω)`
 (`HarmonicAnalysis.memLpLoc_of_beltrami`: a cut-off `g = η f`, `∂g = 𝒮 ∂_zbar g`, and a Neumann
-series
-for `∂_zbar g − μ 𝒮 ∂_zbar g = h` on `L^p`, compared with the `L²` solution). Neither source was
-read. The
-weak partial derivatives give the package's weak derivative `Df (z) v = v.re fx (z) + v.im fy (z)`.
+series for `∂_zbar g − μ 𝒮 ∂_zbar g = h` on `L^p`, compared with the `L²` solution). The weak
+partial derivatives give the weak derivative `Df (z) v = v.re fx (z) + v.im fy (z)`.
 
 `astala_sharp`: the radial stretch with exponent `α = 1/K`, in the package
 (`HarmonicAnalysis.Complex.RadialStretch`): `∂f = ((1 + α)/2) |z|^{α − 1}`,
@@ -156,7 +151,7 @@ let `Ω ⊆ ℂ` be open, `0 ≤ k < 1`, and `f ∈ W^{1,2}_loc (Ω)` with the w
 `∂f = (fx − i fy)/2`: `f` is `K`-quasiregular, `K = (1 + k)/(1 − k)`). Then `Df ∈ L^p_loc (Ω)` for
 every `p ≥ 2` with `k (p − 1) < 1`, that is `2 ≤ p < 1 + 1/k = 2K/(K − 1)`.
 
-Proof: Iwaniec's derivation (see the module docstring), from `‖𝒮‖_p = p − 1`, Corollary 2 (b). -/
+Proof: apply Bojarski's criterion with `‖𝒮‖_p = p − 1` from Corollary 2 (b). -/
 theorem astala {Ω : Set ℂ} (hΩ : IsOpen Ω) {k p : ℝ} (hk : 0 ≤ k) (hk1 : k < 1) (hp : 2 ≤ p)
     (hpk : k * (p - 1) < 1) {f fx fy : ℂ → ℂ} (hf : MemW12Loc Ω f fx fy)
     (hbel : ∀ᵐ z ∂(volume.restrict Ω),

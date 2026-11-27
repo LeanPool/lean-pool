@@ -14,7 +14,6 @@ public import Mathlib.Analysis.Matrix.MeasurableSpace
 public import Mathlib.Analysis.Matrix.Normed
 public import Mathlib.Data.EReal.Basic
 public import Mathlib.Data.EReal.Operations
-public import Mathlib.Data.List.TFAE
 public import Mathlib.LinearAlgebra.BilinearMap
 public import Mathlib.LinearAlgebra.Matrix.Determinant.Basic
 public import Mathlib.LinearAlgebra.Matrix.Rank
