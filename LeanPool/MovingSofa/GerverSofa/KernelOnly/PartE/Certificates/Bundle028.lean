@@ -18,7 +18,7 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle007
 -/
 
 -- Try the fixed-point residual test before exact replay.
-attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.decidableRejectedFast
+attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.BinaryGrid.decidableRejected
 
 @[expose] public section
 
