@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 import runpy
 from pathlib import Path
 
@@ -164,6 +165,22 @@ def _plan(
     return json.loads(capsys.readouterr().out)
 
 
+def _assert_greedy_balance(shards: list[list[str]], costs: dict[str, float]) -> None:
+    """No shard exceeds the mean load by more than its cheapest project.
+
+    Greedy assignment gives each project to the least loaded shard, which
+    holds at most the mean at that moment, and a shard's last project is its
+    cheapest. Unlike a fixed ratio to the mean, this holds for every pool,
+    including one whose costliest project outweighs the mean shard: the pool's
+    contents change in PRs that do not run this test.
+    """
+    loads = [math.fsum(costs[name] for name in names) for names in shards]
+    mean = math.fsum(loads) / len(loads)
+    for names, load in zip(shards, loads):
+        cheapest = min(costs[name] for name in names)
+        assert load - cheapest <= mean * (1 + 1e-9), names
+
+
 def test_cold_plan_covers_pool_in_balanced_shards(
     monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
@@ -172,11 +189,28 @@ def test_cold_plan_covers_pool_in_balanced_shards(
     shards = plan["matrix"]["include"]
     assert plan["mode"] == "sharded"
     assert len(shards) == plan["shard_count"] == PLANNER["MAX_SHARDS"]
-    projects = [name for shard in shards for name in shard["projects"].split()]
-    assert sorted(projects) == sorted(PLANNER["unit_sources"]())
-    loads = plan["shard_seconds"]
-    assert len(loads) == len(shards)
-    assert max(loads) <= 1.25 * sum(loads) / len(loads)
+    members = [shard["projects"].split() for shard in shards]
+    sources = PLANNER["unit_sources"]()
+    assert sorted(name for names in members for name in names) == sorted(sources)
+    costs = PLANNER["predicted_costs"](sources)
+    reported = plan["shard_seconds"]
+    assert len(reported) == len(shards)
+    for names, seconds in zip(members, reported):
+        assert abs(seconds - math.fsum(costs[name] for name in names)) <= 1
+    _assert_greedy_balance(members, costs)
+
+
+def test_balance_bound_holds_when_one_project_outweighs_a_shard() -> None:
+    """LeanPool #1035: one import cost more than 1.25 times the mean shard."""
+    costs = {"Dominant": 44_000.0, "MovingSofa": 21_000.0}
+    costs |= {f"Light{index:03d}": 700.0 for index in range(400)}
+    shards = PLANNER["assign_shards"](costs, 14)
+    loads = [load for load, _ in shards]
+    assert max(loads) > 1.25 * sum(loads) / len(loads)
+    assert [names for _, names in shards if "Dominant" in names] == [["Dominant"]]
+    _assert_greedy_balance([names for _, names in shards], costs)
+    with pytest.raises(AssertionError):
+        _assert_greedy_balance([["Dominant", "MovingSofa"], ["Light000"]], costs)
 
 
 def test_checker_input_change_fans_validation_out_over_the_pool(

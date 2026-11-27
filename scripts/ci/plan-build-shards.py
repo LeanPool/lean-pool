@@ -48,8 +48,9 @@ import sys
 from pathlib import Path
 
 # Shards also validate their projects, so a whole-pool run is bounded by its
-# slowest shard. Beyond this the costliest project (MovingSofa, about 350
-# CPU-minutes cold) fills a shard alone and more shards stop helping.
+# slowest shard. Beyond this the costliest project fills a shard alone and
+# more shards stop helping (MovingSofa, about 350 CPU-minutes cold, when this
+# was set; FiniteIntegralRelationAlgebras, about 730, since 2026-11-27).
 MAX_SHARDS = 14
 FILES_PER_SHARD = 250
 # Below either threshold a serial build is already fast; sharding would
@@ -161,6 +162,15 @@ def project_costs(
         return {name: float(size) for name, size in source_bytes.items()}
 
 
+def predicted_costs(sources: dict[str, list[Path]]) -> dict[str, float]:
+    """Predict every unit's build cost from its sources and the measurements."""
+    source_bytes = {
+        name: sum(path.stat().st_size for path in paths)
+        for name, paths in sources.items()
+    }
+    return project_costs(source_bytes, load_measured_costs())
+
+
 def dirty_projects(changed_files: list[str], known: set[str]) -> set[str]:
     """Projects whose directory or umbrella module appears in the diff."""
     dirty: set[str] = set()
@@ -197,11 +207,7 @@ def sharded_plan(
     sources: dict[str, list[Path]], targets: set[str], shard_count: int, reason: str
 ) -> dict:
     """Bin-pack `targets` into cost-balanced shards and describe the plan."""
-    source_bytes = {
-        name: sum(path.stat().st_size for path in paths)
-        for name, paths in sources.items()
-    }
-    costs = project_costs(source_bytes, load_measured_costs())
+    costs = predicted_costs(sources)
     shards = assign_shards({name: costs[name] for name in targets}, shard_count)
     return {
         "mode": "sharded",
