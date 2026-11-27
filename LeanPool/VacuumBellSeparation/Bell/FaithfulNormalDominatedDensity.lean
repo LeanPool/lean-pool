@@ -28,9 +28,6 @@ open scoped ComplexOrder Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance faithfulDensity_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 -- Carry out the norm-dual argument on an abstract Hilbert representation;
 -- only its proved transport data are specialized to the concrete GNS space.
 private theorem dominatedApprox_of_transport

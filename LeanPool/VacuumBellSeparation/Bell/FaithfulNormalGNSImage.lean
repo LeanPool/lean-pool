@@ -27,9 +27,6 @@ open scoped Topology ComplexOrder InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance faithfulImage_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- The image of the ORIGINAL WOT unit ball is exactly the LITERAL GNS-range
 unit ball. The reverse inclusion uses the genuine faithful C-star isometry. -/
 theorem gns_unitBall_image_eq_of_faithful

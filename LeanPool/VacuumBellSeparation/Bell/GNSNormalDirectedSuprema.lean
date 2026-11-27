@@ -29,9 +29,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance gns_normal_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 -- Cache the canonical completed GNS structures locally; no extra structure
 -- or hypothesis is introduced, and downstream instance search is unchanged.
 /-- Normed additive group of the completed GNS Hilbert space used for directed limits. -/

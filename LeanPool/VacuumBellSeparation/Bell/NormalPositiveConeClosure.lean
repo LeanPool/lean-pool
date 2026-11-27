@@ -28,9 +28,6 @@ open scoped ComplexOrder Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance normal_cone_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 theorem isNormalFunctional_of_norm_approximation (M : VonNeumannAlgebra H)
     (f : StrongDual ℂ M.toStarSubalgebra)
     (hf : ∀ X : M.toStarSubalgebra, 0 ≤ X → 0 ≤ f X)

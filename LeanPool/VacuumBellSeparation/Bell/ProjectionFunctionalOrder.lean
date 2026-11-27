@@ -34,9 +34,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance projectionOrder_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Actual projections in M, with a uniform norm error. The number of summands
 is positive; no assertion about a nonexistent average with zero terms is made. -/
 theorem exists_projection_average_near_positive_contraction (M : VonNeumannAlgebra H)
@@ -151,7 +148,6 @@ theorem positiveFunctional_re_le_of_projections (M : VonNeumannAlgebra H)
     (φ ψ : M.toStarSubalgebra →ₚ[ℂ] ℂ)
     (hφψ : ∀ p : M.toStarSubalgebra, IsStarProjection p → (φ p).re ≤ (ψ p).re)
     (a : M.toStarSubalgebra) (ha : 0 ≤ a) : (φ a).re ≤ (ψ a).re := by
-  let : IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
   let f : M.toStarSubalgebra →L[ℝ] ℝ := Complex.reCLM.comp
     ((PositiveContinuousLinearMap.ofClass φ).toContinuousLinearMap.restrictScalars ℝ)
   let g : M.toStarSubalgebra →L[ℝ] ℝ := Complex.reCLM.comp

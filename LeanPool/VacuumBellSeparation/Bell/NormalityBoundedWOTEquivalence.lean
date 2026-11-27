@@ -26,9 +26,6 @@ open scoped Topology ComplexOrder InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance normalEquivalence_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Every positive directed supremum lies in one original bounded WOT ball.
 Continuity there gives the exact real least-upper-bound normality predicate. -/
 theorem isNormalFunctional_of_continuous_boundedWOT

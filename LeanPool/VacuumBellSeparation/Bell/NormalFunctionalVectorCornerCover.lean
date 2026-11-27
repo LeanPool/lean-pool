@@ -25,9 +25,6 @@ open scoped Topology ComplexOrder InnerProductSpace BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance vectorCornerCover_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- The nonzero-corner theorem, applied in the remaining complement, forces
 the maximal orthogonal family to have actual strong sum equal to one. -/
 theorem exists_orthogonal_vector_corner_cover (M : VonNeumannAlgebra H)

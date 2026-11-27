@@ -33,9 +33,6 @@ open scoped Topology ComplexOrder InnerProductSpace BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance separatingDensity_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Domination is tested on every positive element of the original algebra. -/
 def dominatedPositiveDualMonoid (M : VonNeumannAlgebra H)
     (φ : M.toStarSubalgebra →ₚ[ℂ] ℂ) : AddSubmonoid (StrongDual ℂ M.toStarSubalgebra) where

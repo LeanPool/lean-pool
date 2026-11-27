@@ -26,9 +26,6 @@ open scoped ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance domination_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 theorem isNormalFunctional_of_positive_domination (M : VonNeumannAlgebra H)
     (φ ψ : M.toStarSubalgebra →ₚ[ℂ] ℂ) (hn : IsNormalFunctional M φ)
     (C : ℝ) (hC : 0 ≤ C)

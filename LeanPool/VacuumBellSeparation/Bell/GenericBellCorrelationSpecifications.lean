@@ -9,13 +9,10 @@ module
 public import LeanPool.VacuumBellSeparation.Bell.GenericBellCorrelationDefs
 
 /-!
-Proposition specifications, not theorem declarations or assumptions. The two genericity
-specifications are not proved in this library; the other three are proved in
-`Bell/GenericBellCorrelationContinuity.lean` (`bellContinuityAndBounds_specification`) and
-`Bell/GenericBellCorrelationCompatibility.lean` (`jointBellQuantityCompatibility_specification`,
-`observableOrderCompatibility_specification`). HC00 Proposition 1 concerns unit
-vectors; the normal-state conclusion additionally uses representation transfer.
-Neither conclusion asserts Bell violation in the particular vacuum state.
+Continuity, bounds, and comparison statements for the joint-algebra Bell quantity.
+`Bell/GenericBellCorrelationContinuity.lean` proves `bellContinuityAndBounds_specification`.
+`Bell/GenericBellCorrelationCompatibility.lean` proves
+`jointBellQuantityCompatibility_specification` and `observableOrderCompatibility_specification`.
 -/
 
 @[expose] public section
@@ -26,19 +23,6 @@ namespace VacuumBellSeparation.Bipartite.HC00
 open scoped ComplexOrder
 
 variable {H : Type u} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
-
-/-- HC00 Proposition 1, p. 4, in the original Hilbert space. -/
-def VectorBellGenericitySpecification : Prop :=
-  ∀ A B : VonNeumannAlgebra H,
-    Commuting A B → HasSchliederProperty A B → IsInfiniteType A → IsInfiniteType B →
-      IsOpen (bellCorrelatedVectors A B) ∧ Dense (bellCorrelatedVectors A B)
-
-/-- HC00 p. 4, paragraph immediately after Proposition 1, together with p. 3
-openness. Density is in the norm topology on ALL normal states of the joint VNA. -/
-def NormalStateBellGenericitySpecification : Prop :=
-  ∀ A B : VonNeumannAlgebra H,
-    Commuting A B → HasSchliederProperty A B → IsInfiniteType A → IsInfiniteType B →
-      IsOpen (bellCorrelatedNormalStates A B) ∧ Dense (bellCorrelatedNormalStates A B)
 
 /-- HC00 p. 3: continuity and bounds on all states, not only normal states.
 These are useful prerequisites, not hidden conditions defining a state. -/

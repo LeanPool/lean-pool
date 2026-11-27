@@ -28,9 +28,6 @@ open scoped Topology ComplexOrder BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance projectionSup_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- The finite sum statement in the actual algebra subtype. -/
 theorem isStarProjection_finite_sum_vna (M : VonNeumannAlgebra H) {ι : Type*}
     (P : ι → M.toStarSubalgebra) (hp : ∀ i, IsStarProjection (P i))

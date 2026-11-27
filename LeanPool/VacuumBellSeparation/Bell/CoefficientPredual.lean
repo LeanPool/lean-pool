@@ -27,9 +27,6 @@ open scoped Topology InnerProductSpace ComplexOrder BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance coefficient_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Continuous linear functional which evaluates a matrix coefficient on the algebra. -/
 def matrixCoefficientDual (M : VonNeumannAlgebra H) (x y : H) :
     StrongDual ℂ M.toStarSubalgebra :=

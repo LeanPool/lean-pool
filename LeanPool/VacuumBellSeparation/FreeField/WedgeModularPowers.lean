@@ -8,7 +8,7 @@ module
 
 public import LeanPool.VacuumBellSeparation.FreeField.WedgePolarResolvent
 public import LeanPool.VacuumBellSeparation.FreeField.UnitaryResolventPowers
-public import LeanPool.VacuumBellSeparation.FreeField.SourcePowerRangeWitness
+public import LeanPool.VacuumBellSeparation.FreeField.SourceModularPowers
 
 /-!
 # Original wedge source powers and the full physical exponential domain

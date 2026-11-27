@@ -28,9 +28,6 @@ open scoped Topology ComplexOrder InnerProductSpace BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance dominatedCorner_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- A strict comparison on r produces a nonzero subcorner on which the
 inequality is reversed for all positive observables. The vector is arbitrary;
 normality is used only at the actual arbitrary orthogonal supremum. -/

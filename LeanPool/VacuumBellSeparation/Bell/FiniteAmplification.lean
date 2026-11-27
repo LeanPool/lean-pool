@@ -6,7 +6,7 @@ Authors: David Turturean
 -- Adapted by Lean Pool for its pinned Lean and Mathlib versions.
 module
 
-public import LeanPool.VacuumBellSeparation.Bell.BicommutantOrbit
+public import Mathlib.Analysis.InnerProductSpace.Adjoint
 public import Mathlib.Analysis.InnerProductSpace.PiL2
 
 /-!

@@ -28,9 +28,6 @@ variable {H K : Type*}
   [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
   [NormedAddCommGroup K] [InnerProductSpace ℂ K] [CompleteSpace K]
 
-instance normalTransport_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 theorem vnaStarEquiv_le_iff (M : VonNeumannAlgebra H) (N : VonNeumannAlgebra K)
     (e : M.toStarSubalgebra ≃⋆ₐ[ℂ] N.toStarSubalgebra) {a b : M.toStarSubalgebra} :
     e a ≤ e b ↔ a ≤ b :=

@@ -72,9 +72,6 @@ end CStar
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance unitMass_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- A bound by a finite nonnegative multiple gives a strictly positive
 coefficient below one. The reference need not have unit mass here. -/
 theorem exists_small_dual_domination (M : VonNeumannAlgebra H)

@@ -29,9 +29,6 @@ open scoped Topology ComplexOrder InnerProductSpace BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance finiteApproximation_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Normality of the actual functional, not a representation assumption,
 makes complementary projection mass vanish along an arbitrary exhaustion. -/
 theorem normalFunctional_projection_lost_mass_tendsto_zero

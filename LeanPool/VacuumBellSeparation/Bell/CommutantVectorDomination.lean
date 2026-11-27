@@ -31,9 +31,6 @@ open scoped InnerProductSpace ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance commutant_vector_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- The actual vector functional, bundled with its full dual norm. -/
 def vectorDual (M : VonNeumannAlgebra H) (x : H) : StrongDual ℂ M.toStarSubalgebra :=
   (PositiveContinuousLinearMap.ofClass (vectorPositiveLinearMap M x)).toContinuousLinearMap

@@ -9,7 +9,7 @@ module
 public import LeanPool.VacuumBellSeparation.Bell.GNSIsometricRealization
 public import LeanPool.VacuumBellSeparation.Bell.VectorFunctionalNormal
 public import LeanPool.VacuumBellSeparation.Bell.StateExtension
-public import Mathlib.Analysis.InnerProductSpace.PiL2
+public import LeanPool.VacuumBellSeparation.Bell.FiniteAmplification
 public import Mathlib.Algebra.BigOperators.Pi
 
 /-!
@@ -31,8 +31,7 @@ variable (ι : Type*) [Fintype ι]
 /-- The continuous operator applying T separately to every coordinate. -/
 def finiteDiagonalOperator (T : H →L[ℂ] H) :
     PiLp 2 (fun _ : ι => H) →L[ℂ] PiLp 2 (fun _ : ι => H) :=
-  (PiLp.continuousLinearEquiv 2 ℂ (fun _ : ι => H)).symm.toContinuousLinearMap.comp
-    (ContinuousLinearMap.pi fun i => T.comp (PiLp.proj 2 (fun _ : ι => H) i))
+  finiteAmplification ι T
 
 omit [CompleteSpace H] [Fintype ι] in
 @[simp] theorem finiteDiagonalOperator_apply (T : H →L[ℂ] H)
@@ -41,53 +40,13 @@ omit [CompleteSpace H] [Fintype ι] in
 
 /-- The diagonal amplification is an actual unital star-algebra homomorphism. -/
 def finiteDiagonalStarAlgHom : (H →L[ℂ] H) →⋆ₐ[ℂ]
-    (PiLp 2 (fun _ : ι => H) →L[ℂ] PiLp 2 (fun _ : ι => H)) where
-  toFun := finiteDiagonalOperator ι
-  map_zero' := by
-    apply ContinuousLinearMap.ext
-    intro x
-    apply PiLp.ext
-    intro i
-    rfl
-  map_one' := by
-    apply ContinuousLinearMap.ext
-    intro x
-    apply PiLp.ext
-    intro i
-    rfl
-  map_add' T S := by
-    apply ContinuousLinearMap.ext
-    intro x
-    apply PiLp.ext
-    intro i
-    rfl
-  map_mul' T S := by
-    apply ContinuousLinearMap.ext
-    intro x
-    apply PiLp.ext
-    intro i
-    rfl
-  commutes' c := by
-    apply ContinuousLinearMap.ext
-    intro x
-    apply PiLp.ext
-    intro i
-    rfl
-  map_star' T := by
-    change finiteDiagonalOperator ι (star T) = (finiteDiagonalOperator ι T).adjoint
-    apply (ContinuousLinearMap.eq_adjoint_iff _ _).mpr
-    intro x y
-    simp only [PiLp.inner_apply, finiteDiagonalOperator_apply,
-      ContinuousLinearMap.star_eq_adjoint]
-    exact Finset.sum_congr rfl fun i _ => T.adjoint_inner_left (y i) (x i)
+    (PiLp 2 (fun _ : ι => H) →L[ℂ] PiLp 2 (fun _ : ι => H)) :=
+  finiteAmplificationHom ι
 
 @[simp] theorem finiteDiagonalStarAlgHom_apply (T : H →L[ℂ] H) :
     finiteDiagonalStarAlgHom (H := H) ι T = finiteDiagonalOperator ι T := rfl
 
 variable {ι}
-
-instance finiteVector_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
 
 /-- Literal finite sum of original-H vector functionals. -/
 def finiteVectorFunctional (M : VonNeumannAlgebra H) (ξ : ι → H) :

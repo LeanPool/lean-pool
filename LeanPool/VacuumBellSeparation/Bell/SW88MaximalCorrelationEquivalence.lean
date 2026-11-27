@@ -29,9 +29,6 @@ open scoped ComplexOrder Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance theorem21_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Package the constructed faithful state in the exact normal-state carrier. -/
 theorem exists_faithful_mem_normalStateSpace [SeparableSpace H] [Nontrivial H]
     (M : VonNeumannAlgebra H) :

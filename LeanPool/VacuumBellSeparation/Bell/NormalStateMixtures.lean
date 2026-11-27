@@ -78,9 +78,6 @@ end CStar
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance mixture_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Order-normality supplies the real expectation limit on the directed set itself. -/
 theorem positiveFunctional_real_tendsto_of_normal (M : VonNeumannAlgebra H)
     (φ : M.toStarSubalgebra →ₚ[ℂ] ℂ) (hn : IsNormalFunctional M φ)

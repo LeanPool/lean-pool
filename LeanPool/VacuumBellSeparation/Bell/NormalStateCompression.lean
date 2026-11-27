@@ -29,9 +29,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance compression_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Concrete conjugation preserves the actual supremum of a directed positive set. -/
 theorem isLUB_compression_image_positive (M : VonNeumannAlgebra H)
     (q : M.toStarSubalgebra) {s : Set M.toStarSubalgebra}

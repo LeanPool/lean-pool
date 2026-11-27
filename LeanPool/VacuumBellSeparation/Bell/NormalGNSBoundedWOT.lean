@@ -29,9 +29,6 @@ open scoped Topology ComplexOrder InnerProductSpace ComplexConjugate
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance normalWOT_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- No global-WOT continuity is asserted: the domain is the actual bounded ball. -/
 theorem continuous_vnaWOTBall_eval_of_positive_normal
     (M : VonNeumannAlgebra H) (R : ℝ)

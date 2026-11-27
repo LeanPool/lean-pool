@@ -39,17 +39,6 @@ the existing explicit predicate. No sequential or vector-state restriction is us
 abbrev NormalStateSpace (M : VonNeumannAlgebra H) :=
   {φ : StrongDual ℂ M.toStarSubalgebra // IsNormalStateFunctional M φ}
 
-/-- Literal Schlieder property. Commutation is a separate hypothesis. -/
-def HasSchliederProperty (A B : VonNeumannAlgebra H) : Prop :=
-  ∀ X ∈ A, ∀ Y ∈ B, X * Y = 0 → X = 0 ∨ Y = 0
-
-/-- The identity of A is equivalent IN A to a proper subprojection: the
-partial isometry has initial projection 1 and final projection different from 1.
-This asks for a proper isometry, not two orthogonal isometries with initial 1;
-it does not replace infinite type by nonabelianity or by infinite dimension. -/
-def IsInfiniteType (A : VonNeumannAlgebra H) : Prop :=
-  ∃ V : H →L[ℂ] H, V ∈ A ∧ star V * V = 1 ∧ V * star V ≠ 1
-
 /-- HC00's normalized CHSH values, evaluated entirely in the joint algebra.
 Each observable is a self-adjoint contraction in its original local algebra.
 For a linear state, moving the factor 1/2 outside its absolute value is exact. -/

@@ -9,7 +9,7 @@ module
 public import LeanPool.VacuumBellSeparation.FreeField.ShiftedWedgeModularGraph
 public import LeanPool.VacuumBellSeparation.FreeField.SourceModularResolvent
 public import LeanPool.VacuumBellSeparation.FreeField.UnitaryResolventPowers
-public import LeanPool.VacuumBellSeparation.FreeField.SourcePowerRangeWitness
+public import LeanPool.VacuumBellSeparation.FreeField.SourceModularPowers
 public import LeanPool.VacuumBellSeparation.FreeField.ModularWeightInclusion
 
 /-!

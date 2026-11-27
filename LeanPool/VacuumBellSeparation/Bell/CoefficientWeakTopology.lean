@@ -26,9 +26,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance coefficientWeak_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Bilinear evaluation pairing between the algebra and its coefficient predual. -/
 def coefficientPairing (M : VonNeumannAlgebra H) :
     M.toStarSubalgebra →ₗ[ℂ] (coefficientPredual M) →ₗ[ℂ] ℂ where

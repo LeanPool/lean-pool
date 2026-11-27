@@ -69,9 +69,6 @@ end CStar
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance finiteCompression_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- A finite family of vector-realized corners gives a vector-sum realization
 of the FULL compression, even when its cross expectations are nonzero. -/
 theorem exists_finite_vector_sum_compression (M : VonNeumannAlgebra H)

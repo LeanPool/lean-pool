@@ -27,9 +27,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance coefficientState_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Coefficient state space with underlying type `{f : coefficientPredual M // IsStateFunctional M
 f.1}`. -/
 abbrev CoefficientStateSpace (M : VonNeumannAlgebra H) :=

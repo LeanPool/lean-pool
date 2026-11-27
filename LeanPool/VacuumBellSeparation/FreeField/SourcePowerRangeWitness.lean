@@ -6,12 +6,12 @@ Authors: David Turturean
 -- Adapted by Lean Pool for its pinned Lean and Mathlib versions.
 module
 
-public import LeanPool.VacuumBellSeparation.FreeField.SourceModularPowers
+public import LeanPool.VacuumBellSeparation.FreeField.SourceModularResolvent
+public import LeanPool.VacuumBellSeparation.Gaussian.NormalizedDensityPowers
 
 /-!
 # A whole-source range witness without a bounded-region premise
 
-This extracts the bounded Gram algebra used by sourceModularPower_apply_sqrt.
 The explicit witness uses only nonnegative CFC powers, and requires neither
 injectivity nor an inverse of the Gram operator. It therefore also applies
 to the original unbounded halfspace source completion.
@@ -24,6 +24,21 @@ namespace VacuumBellSeparation
 open ContinuousLinearMap
 
 variable {m : ℝ} (hm : 0 < m) (U : Set (EuclideanSpace ℝ (Fin 3)))
+
+/-- The bounded source weight, made from the actual positive Gram operators. -/
+noncomputable def sourceModularWeight (c : ℝ) :
+    ComplexSourceHilbert hm U →L[ℂ] ComplexSourceHilbert hm U :=
+  sourceGram hm U ^ (1 / 2 - c) * conjugateSourceGram hm U ^ c
+
+theorem one_sub_sourceModularResolvent :
+    1 - sourceModularResolvent hm U = (1 / 2 : ℝ) • conjugateSourceGram hm U := by
+  rw [sourceModularResolvent, conjugateSourceGram_eq_two_sub, smul_sub]
+  have htwo : (1 / 2 : ℝ) • (2 : ComplexSourceHilbert hm U →L[ℂ] ComplexSourceHilbert hm U) = 1
+    := by
+    rw [show (2 : ComplexSourceHilbert hm U →L[ℂ] ComplexSourceHilbert hm U) =
+      (2 : ℝ) • 1 by norm_num [two_smul], smul_smul]
+    norm_num
+  rw [htwo]
 
 theorem sourceModularWeight_range_witness {c : ℝ} (hc : 0 ≤ c) (hc2 : c ≤ 1 / 2)
     (z : ComplexSourceHilbert hm U) :

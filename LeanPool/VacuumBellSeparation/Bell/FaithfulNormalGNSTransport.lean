@@ -26,9 +26,6 @@ open scoped ComplexOrder InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance faithfulTransport_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Composition algebra of bounded operators on the completed GNS Hilbert space. -/
 local instance faithfulTransportGNSOperatorAlgebra (M : VonNeumannAlgebra H)
     (φ : M.toStarSubalgebra →ₚ[ℂ] ℂ) : Algebra ℂ (φ.GNS →L[ℂ] φ.GNS) :=

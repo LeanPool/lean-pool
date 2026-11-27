@@ -6,6 +6,7 @@ Authors: David Turturean
 -- Adapted by Lean Pool for its pinned Lean and Mathlib versions.
 module
 
+public import LeanPool.VacuumBellSeparation.Bell.BicommutantOrbit
 public import LeanPool.VacuumBellSeparation.Bell.FiniteAmplification
 
 /-!

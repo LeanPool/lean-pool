@@ -9,11 +9,9 @@ module
 public import LeanPool.VacuumBellSeparation.FreeField.Defs
 
 /-!
-Inactive definition proposal for HC00, arXiv:math-ph/9909013v3, Section III.
-No result is assumed by these definitions. This file is not a proof module.
-All function closures below use the ordinary product topology on complex-valued
-functions on the JOINT algebra: convergence is at each joint observable.
-The separate normality condition is preservation of positive directed suprema.
+Joint von Neumann algebras and their state functionals, following HC00,
+arXiv:math-ph/9909013v3, Section III. A positive functional is normal when
+it preserves positive directed suprema.
 -/
 
 @[expose] public section
@@ -68,25 +66,6 @@ algebras. -/
 def IsNormalProductState (A B : VonNeumannAlgebra H)
     (f : (jointAlgebra A B).toStarSubalgebra → ℂ) : Prop :=
   IsNormalStateFunctional (jointAlgebra A B) f ∧ HasProductFactorization A B f
-
-/-- The topology here is pointwise convergence on ALL elements of the joint
-algebra. For bounded linear functionals this is sigma(M*, M), the weak-star
-state topology in HC00; it is not a norm closure or the weak topology of M*.
-The equivalence with the pinned WeakDual presentation is not proved in this library. -/
-noncomputable def weakStarProductHull (A B : VonNeumannAlgebra H) :
-    Set ((jointAlgebra A B).toStarSubalgebra → ℂ) :=
-  closure (convexHull ℝ {f | IsNormalProductState A B f})
-
-/-- HC00 separability: only normal states in the indicated weak-star hull. -/
-def IsWeakStarSeparable (A B : VonNeumannAlgebra H)
-    (f : (jointAlgebra A B).toStarSubalgebra → ℂ) : Prop :=
-  IsNormalStateFunctional (jointAlgebra A B) f ∧ f ∈ weakStarProductHull A B
-
-/-- A normal state excluded from that hull. Nonstates and singular states are
-not declared entangled merely because they fail the separability predicate. -/
-def IsWeakStarEntangled (A B : VonNeumannAlgebra H)
-    (f : (jointAlgebra A B).toStarSubalgebra → ℂ) : Prop :=
-  IsNormalStateFunctional (jointAlgebra A B) f ∧ f ∉ weakStarProductHull A B
 
 /-- The actual vector functional restricted to M, with mathlib's inner product
 linear in its second argument. The unit-vector premise belongs to its proofs. -/

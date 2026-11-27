@@ -31,9 +31,6 @@ open scoped ComplexOrder Topology
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance faithfulMaximal_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Normalized dominated states are dense for an actual faithful normal state.
 The topology is the inherited full continuous-dual norm on NormalStateSpace. -/
 theorem normalState_mem_closure_dominated_of_faithful

@@ -89,13 +89,15 @@ theorem isClosed_vonNeumannAlgebra (M : VonNeumannAlgebra H) :
   rw [← M.centralizer_centralizer]
   exact Set.isClosed_centralizer _
 
+instance vonNeumannAlgebra_starSubalgebra_isClosed (M : VonNeumannAlgebra H) :
+    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) :=
+  isClosed_vonNeumannAlgebra M
+
 /-- In particular, every state on a von Neumann algebra extends to `B(H)`.
 This applies to the algebra containing the two local algebras of Theorem 3.1. -/
 theorem exists_state_extension_vonNeumann (M : VonNeumannAlgebra H)
     (f : M.toStarSubalgebra →ₚ[ℂ] ℂ) (hf : f 1 = 1) :
     ∃ ω : State H, ∀ x : M.toStarSubalgebra, ω x = f x := by
-  let : IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) :=
-    isClosed_vonNeumannAlgebra M
   exact exists_state_extension M.toStarSubalgebra f hf
 
 end VacuumBellSeparation

@@ -14,10 +14,8 @@ public import Mathlib.Analysis.SpecialFunctions.Exp
 /-!
 # Literal scalar summation constants in the spatial estimates
 
-These are the full six-index geometric sum, the full cubic-geometric
-series, and the uniform exponential envelope used in the forward and
-reverse spatial arguments. They are scalar estimates only; no weighted
-source moment or kernel coefficient bound is assumed or concluded.
+The six-index geometric sum and the uniform exponential envelope used
+in the forward and reverse spatial arguments.
 -/
 
 @[expose] public section
@@ -39,21 +37,6 @@ theorem hasSum_six_moment_geometric :
   have hs := h.summable.mul_of_nonneg h.summable (fun _ => by positivity) (fun _ => by positivity)
   have hp := h.mul h hs
   simpa only [← pow_add, show (8 : ℝ) * 8 = 64 by norm_num] using hp
-
-theorem hasSum_cubic_geometric_fiftyTwo :
-    HasSum (fun n : ℕ => ((n : ℝ) + 1) ^ 3 * (1 / 2 : ℝ) ^ n) 52 := by
-  have hn : ‖(1 / 2 : ℝ)‖ < 1 := by norm_num
-  have h1 : HasSum (fun n : ℕ => (n : ℝ) * (1 / 2 : ℝ) ^ n) 2 := by
-    convert hasSum_coe_mul_geometric_of_norm_lt_one hn using 1; norm_num
-  have h2 : HasSum (fun n : ℕ => (n : ℝ) ^ 2 * (1 / 2 : ℝ) ^ n) 6 := by
-    convert hasSum_sq_mul_geometric_of_norm_lt_one hn using 1; norm_num
-  have h3 : HasSum (fun n : ℕ => (n : ℝ) ^ 3 * (1 / 2 : ℝ) ^ n) 26 := by
-    convert hasSum_pow_mul_geometric_of_norm_lt_one 3 hn using 1
-    norm_num [Finset.sum_range_succ, Nat.stirlingSecond]
-  convert ((h3.add (h2.mul_left 3)).add (h1.mul_left 3)).add hasSum_geometric_two using 1
-  · funext n
-    ring
-  · norm_num
 
 theorem spatial_polynomial_exp_bound {x : ℝ} (hx : 0 ≤ x) :
     (1 + x) ^ 2 * Real.exp (-x / 8) ≤ 256 := by

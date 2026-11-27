@@ -35,9 +35,6 @@ open scoped Topology ComplexOrder InnerProductSpace BigOperators
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance faithfulSeries_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Finite positive sums preserve all directed positive suprema. -/
 theorem positiveFunctional_finset_sum_isNormal (M : VonNeumannAlgebra H)
     {ι : Type*} (F : Finset ι) (φ : ι → M.toStarSubalgebra →ₚ[ℂ] ℂ)

@@ -28,9 +28,6 @@ open scoped Topology ComplexOrder
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance cornerProjectionOrder_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Finite positive spectral averages supported by the original projection p. -/
 theorem exists_subprojection_average_near (M : VonNeumannAlgebra H)
     (p : M.toStarSubalgebra) (hp : IsStarProjection p)

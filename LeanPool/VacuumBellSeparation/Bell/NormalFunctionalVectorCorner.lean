@@ -26,9 +26,6 @@ open scoped ComplexOrder InnerProductSpace
 
 variable {H : Type*} [NormedAddCommGroup H] [InnerProductSpace ℂ H] [CompleteSpace H]
 
-instance vectorCorner_vna_closed (M : VonNeumannAlgebra H) :
-    IsClosed (M.toStarSubalgebra : Set (H →L[ℂ] H)) := isClosed_vonNeumannAlgebra M
-
 /-- Corner domination is transported to actual compression on the full
 algebra, so the bounded vector-RN theorem applies without a new corner carrier. -/
 theorem exists_vector_of_supported_corner_domination (M : VonNeumannAlgebra H)

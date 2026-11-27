@@ -4,10 +4,11 @@ summary: >-
   For the massive real free scalar field in 3+1 dimensions, the vacuum Bell
   correlation of two fixed bounded regions equals the classical bound once
   one region is translated sufficiently far along a fixed spacelike vector.
-  Double cones of equal radius admit a separation-to-radius threshold
-  independent of the positive mass. The development includes Weyl systems,
-  local von Neumann algebras, a construction of the free-field vacuum, and a
-  proof that the algebra of a nonempty open region is noncommutative.
+  For equal-radius double cones separated along the first spatial axis at
+  the same time, one separation-to-radius threshold works for every positive
+  mass. The development includes Weyl systems, local von Neumann algebras,
+  a construction of the free-field vacuum, and a proof that the algebra of
+  a nonempty open region is noncommutative.
 branch: mathematical physics
 entry_module: LeanPool.VacuumBellSeparation
 authors:
@@ -37,9 +38,10 @@ main_declarations:
 main_results:
 - declaration: VacuumBellSeparation.OQP12.theorem_1_1
   informal: >-
-    One constant greater than two gives a sufficient separation-to-radius
-    ratio for the normalized vacuum CHSH supremum of equal-radius double
-    cones to be one, for every positive mass.
+    One constant greater than two suffices for every positive mass. For
+    equal-radius double cones with simultaneous centers at the origin and
+    on the first spatial axis, the normalized vacuum CHSH supremum is one
+    once their spatial distance reaches that constant times their radius.
 - declaration: VacuumBellSeparation.OQP12.corollary_1_2
   informal: >-
     For two bounded regions and a fixed spacelike vector, the normalized
