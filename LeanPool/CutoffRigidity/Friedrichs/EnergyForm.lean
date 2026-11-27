@@ -226,6 +226,20 @@ lemma norm_adjoint_ι_le (u : H) : ‖ContinuousLinearMap.adjoint S.ι u‖ ≤ 
     rw [ContinuousLinearMap.adjoint.norm_map]; exact S.opNorm_ι_le
   nlinarith [norm_nonneg u, norm_nonneg (ContinuousLinearMap.adjoint S.ι u)]
 
+/-- A vector of zero closed energy is fixed by the unit-parameter resolvent. -/
+theorem R_apply_of_energy_eq_zero (u : S.Q) (hu : S.E u u = 0) : S.R (u : H) = u := by
+  obtain ⟨v, rfl⟩ := S.qEquiv.surjective u
+  rw [E_eq, real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq, sub_eq_zero] at hu
+  have hadj : ContinuousLinearMap.adjoint S.ι (S.ι v) = v := by
+    have hnorm := S.norm_adjoint_ι_le (S.ι v)
+    have hsq := pow_le_pow_left₀ (norm_nonneg _) hnorm 2
+    have hdiff : ‖v - ContinuousLinearMap.adjoint S.ι (S.ι v)‖ ^ 2 ≤ 0 := by
+      rw [norm_sub_sq_real, ContinuousLinearMap.adjoint_inner_right, real_inner_self_eq_norm_sq,
+        hu]
+      linarith only [hsq]
+    exact (sub_eq_zero.mp (norm_eq_zero.mp ((sq_nonpos_iff _).mp hdiff))).symm
+  rw [qEquiv_apply, R_apply, hadj]
+
 lemma R_le_one (u : H) : inner ℝ (S.R u) u ≤ inner ℝ u u := by
   rw [inner_R, real_inner_self_eq_norm_sq, real_inner_self_eq_norm_sq]
   have := S.norm_adjoint_ι_le u

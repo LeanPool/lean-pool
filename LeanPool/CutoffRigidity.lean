@@ -8,6 +8,7 @@ module
 public import LeanPool.CutoffRigidity.ConvexInteractionTheorem
 public import LeanPool.CutoffRigidity.EuclideanGaussianSplitting
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionConservativity
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionPositivity
 public import LeanPool.CutoffRigidity.GaussianTransport.RiemannianLowerBound
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
@@ -31,7 +32,12 @@ Main declarations: `CutoffRigidity.normalized_convexInteraction_theorem`,
   `CutoffRigidity.Riemann.Diff.FormData.resolvent_fixed_of_comparison`,
   `CutoffRigidity.Riemann.Diff.diffFormData`,
   `CutoffRigidity.Riemann.Diff.diffusion_resolvent_nonneg`,
-  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg`
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_nonneg`,
+  `CutoffRigidity.Riemann.Diff.oneL2_mem_diffusion_form_zero_energy`,
+  `CutoffRigidity.Riemann.Diff.diffusion_resolvent_one`,
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_one`,
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_mapsTo_zero_one`,
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral`
 Tags: curvature, spectral-gap, gaussian-factorization, gibbs-measures
 MSC: 60J60, 47D07, 53C21
 -/
