@@ -21,7 +21,7 @@ public import LeanPool.CatalyticRegisters.ThreeRegisterBreakthrough
 /-!
 # Passive catalytic register programs over finite fields and commutative rings
 
-Source: url:https://github.com/0thernes/catalytic-register-frontiers/tree/c80125c42956ff17e7d6d56c66d94ee9bb57ae33
+Source: url:https://github.com/0thernes/catalytic-register-frontiers/blob/c80125c42956ff17e7d6d56c66d94ee9bb57ae33/dist/Donahue_2026_catalytic_register_frontiers.pdf
 Authors: Alexander S. Donahue
 Status: verified
 Main declarations: `Catalytic.rp_pass_two_iff`, `Catalytic.four_reg_powering_x13`,
