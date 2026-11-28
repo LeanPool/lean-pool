@@ -9,6 +9,7 @@ Authors: Chris Henson
 module
 
 public import LeanPool.FiniteIntegralRelationAlgebras.Atoms7.S4N1.C0.Columns
+import LeanPool.FiniteIntegralRelationAlgebras.Cert.SegmentReplay
 
 /-! The values of the generated certificate are paired with kernel checks. -/
 
@@ -1351,8 +1352,15 @@ private theorem sumOK6 :
 private noncomputable def seg : List (ℕ × ℕ) :=
   seg0 ++ (seg1 ++ (seg2 ++ (seg3 ++ (seg4 ++ (seg5 ++ (seg6))))))
 
+private theorem orbitSegmentChecked :
+    SegmentReplay.checkSegment 26 48 23577968 23583852 orbitColumns seg = true := by
+  decide +kernel
+
 private theorem segOK : checkSeg 26 perms 23577968 23583852 seg = true :=
-  checkSeg_of_columns orbitGroupSize orbitColumnsChecked (by decide +kernel)
+  checkSeg_of_columns orbitGroupSize orbitColumnsChecked (by
+    as_aux_lemma =>
+      exact SegmentReplay.checkSegUsingColumns_of_checkSegment grpOK orbitGroupSize
+        orbitColumnsChecked orbitSegmentChecked)
 
 theorem total : OrbitSeg 26 perms (P.leaf (20 + 4)) 23577968 23583852 282432 3541966464 :=
   OrbitSeg.of_checkSum segOK (by decide +kernel)
