@@ -3,6 +3,8 @@ Copyright (c) 2026 Zayn Blore. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Zayn Blore
 -/
+
+/- Lean Pool adapted the import path for the valuation module. -/
 module
 
 public import LeanPool.KochenSpecker.Valuation
