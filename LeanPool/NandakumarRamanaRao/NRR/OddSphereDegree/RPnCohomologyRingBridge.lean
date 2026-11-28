@@ -16,8 +16,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.RPnTopClassAlphaP
 
 Defines explicit interfaces for maps from the actual mod-two cohomology of `RP n` to the model
 `F₂[α]/(αⁿ⁺¹)` and derives nonvanishing and truncation consequences for cup powers. This module is
-an intermediate model-comparison API; the final unconditional odd-degree proof uses the direct
-cohomology-dimension-vanishing route.
+a model-comparison API. The odd-degree result `oddMap_degree_odd_final` remains conditional on
+two inputs that this project does not prove.
 -/
 
 @[expose] public section
@@ -123,12 +123,10 @@ theorem rpAlpha_power_eq_zero_iff {n : ℕ} (e : RPnCohomologyRingModelEmbedding
     rw [e.toRPnCohomologyToModelHom.map_cupPow k, map_zero,
       (modelAlpha_pow_eq_zero_iff n k).2 h]
 
-/-- **Conditional final-theorem package, in the actual cohomology.** Given the
+/-- **The top cup power is fixed and nonzero.** Given the
 bridge `Φ` and a degree-one class `α = Φ.alpha` fixed by the pullback of a
 descended odd self-map `fbar = inducedOnRP f hf`, the top cup power `αⁿ ∈ Hⁿ(RPⁿ; F₂)`
-is simultaneously **fixed** by `fbar^*` and **nonzero**. This is exactly the
-shape consumed by the final odd-degree comparison: `fbar^*(α) = α` forces
-`fbar^*(αⁿ) = αⁿ`, while `αⁿ ≠ 0` makes that identity nontrivial. -/
+is simultaneously **fixed** by `fbar^*` and **nonzero**. -/
 theorem rpAlpha_power_top_fixed_ne_zero {n : ℕ} (Φ : RPnCohomologyToModelHom n)
     (f : C(Sphere n, Sphere n)) (hf : IsOddMap f)
     (ha : (inducedOnRPPullback f hf 1).hom Φ.alpha = Φ.alpha) :

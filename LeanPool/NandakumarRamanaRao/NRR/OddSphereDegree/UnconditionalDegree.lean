@@ -17,8 +17,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.ModTwoDegreeCompa
 
 Packages positive-dimensional sphere orientation data and a singular prism operator into
 `SphereDegreeSetup`, then exposes degree, composition, homeomorphism, antipodal, and homotopy
-invariance APIs from that setup. Unconditional instances of both fields are constructed later
-and re-exported through `SphereOddDegree.Final`.
+invariance APIs from that setup. The orientation data is constructed by
+`sphereOrientationPosUnconditional`.
 -/
 
 @[expose] public section

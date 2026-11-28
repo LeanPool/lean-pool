@@ -51,8 +51,7 @@ abbrev helperBranch880Conditions.{u_1, u_2} : Prop :=
     ⟩ : Fin ett.rounds); (↑jSlot : ℕ) + (1 : ℕ) = ETTFirstAppearanceIndex ett v hvFinal → (
     ∀ (i : Fin (ett.rounds + (1 : ℕ))), (0 : ℕ) < (↑i : ℕ) → TreeSequenceInitialSegment
         (ett.series.data.tree i.castSucc) (ett.series.data.tree i.succ)) →
-    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma) (p0 : ℕ) (indices0 : Fin (p0 +
-        (1 : ℕ)) → Fin ett.rounds),
+    ∀ (trace : ExtensionBaseRestorationTrace ett v hvFinal sigma),
     let rho1 : PartialEdgeColoring E k := trace.coloring (Fin.last trace.steps);
         IsProperEdgeColoring G rho1 → IsOneEdgeUncolored rho1 e0 → StableColoringBeforeVertex T v
         hvFinal (TashkinovStoredColors ett.series.data jSlot.castSucc) (ett.series.data.coloring
@@ -71,13 +70,9 @@ abbrev helperBranch880Conditions.{u_1, u_2} : Prop :=
         jSlot.castSucc) S seed → TashkinovAugmentationSequence rho1 S seed) → (
     ∀ {A B C : TreeSequence G e0}, TreeSequenceInitialSegment A C → TreeSequenceInitialSegment B C
         → A.length ≤ B.length → TreeSequenceInitialSegment A B) →
-    let supportColors : Finset (Fin k) := Finset.univ.biUnion fun (a : Fin (p0 + (1 : ℕ))) ↦
-        ett.series.data.stored (indices0 a).succ; (0 : ℕ) < (↑jSlot : ℕ) →
+    (0 : ℕ) < (↑jSlot : ℕ) →
     ∃ (TjPrime : TreeSequence G e0), TashkinovClosure rho1 seed TjPrime ∧
-        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) ∧
-    let awayMissing : Finset (Fin k) := ((TreeSequenceVertexSet TjPrime).erase v).biUnion fun (x :
-        V) ↦ MissingColors G rho1 x; (awayMissing ∩ supportColors : Finset (Fin k)).Nonempty ∨
-        (awayMissing ∩ supportColors : Finset (Fin k)) = ∅
+        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime)
 
 /-- Dependent contract shared by the extension base proof modules.
 

@@ -754,11 +754,9 @@ abbrev helperContinuation14753Conditions.{u_1, u_2} : Prop :=
     let supportColors : Finset (Fin k) := Finset.univ.biUnion fun (a : Fin (p0 + (1 : ℕ))) ↦
         ett.series.data.stored (indices0 a).succ;
     ∀ (TjPrime : TreeSequence G e0), TashkinovClosure rho1 seed TjPrime →
-        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) → (
-    let awayMissing : Finset (Fin k) := ((TreeSequenceVertexSet TjPrime).erase v).biUnion fun (x :
-        V) ↦ MissingColors G rho1 x; (awayMissing ∩ supportColors : Finset (Fin k)).Nonempty ∨
-        (awayMissing ∩ supportColors : Finset (Fin k)) = ∅) → TreeSequenceInitialSegment seed
-        TjPrime → v ∈ TreeSequenceVertexSet TjPrime → indices0 (Fin.last p0) = q → (
+        ColoredVertexSetElementary G rho1 (TreeSequenceVertexSet TjPrime) →
+        TreeSequenceInitialSegment seed TjPrime → v ∈ TreeSequenceVertexSet TjPrime →
+        indices0 (Fin.last p0) = q → (
     ∀ (a : Fin (p0 + (1 : ℕ))), ett.series.data.chosenVertex (indices0 a).succ = some v) → (
     ∀ (a : Fin (p0 + (1 : ℕ))), ett.series.data.kind (indices0 a).succ = some
         TashkinovExtensionKind.PE) → (
@@ -1562,10 +1560,10 @@ theorem helper_branch_880.{u_1, u_2} :
     helperBranch880Conditions.{u_1, u_2} := by
   classical
   intro V E _ _ _ _ G k e0 input T generating ett hMP hpositive hlower v sigma this q hqTerminal
-      hvFinal hfirstUpper hfirstPositive jSlot hjSlot stepSegment trace p0 indices0 rho1
+      hvFinal hfirstUpper hfirstPositive jSlot hjSlot stepSegment trace rho1
       hrho1Proper hrho1One hb1Rho terminalPosition hterminalAt hterminalPositionPositive
       hterminalPositionBound seed hjTreeIndex hseedTj segmentVertexBefore transportSeedRoute
-      commonPrefix supportColors hjPositive
+      commonPrefix hjPositive
   let Tprevious : TreeSequence G e0 :=
     ett.series.data.tree jSlot.castSucc.castSucc
   have hpreviousTj : TreeSequenceInitialSegment Tprevious
@@ -1688,9 +1686,8 @@ theorem helper_branch_880.{u_1, u_2} :
       · simpa [hkindLower] using hkind
       · simpa [hconnectingLower] using hconnecting
       · simpa [htreeLower] using hadjoin
-  obtain ⟨TjPrime, corr, hclosure, hcorrMP, hprimeElementary,
-      hcaseSplit⟩ :=
-    ExtensionBaseClosure lower rho1 seed v supportColors
+  obtain ⟨TjPrime, corr, hclosure, hcorrMP, hprimeElementary⟩ :=
+    ExtensionBaseClosure lower rho1 seed
       (by
         change TreeSequenceInitialSegment
           (lower.series.data.tree nLower.castSucc) seed
@@ -1710,7 +1707,7 @@ theorem helper_branch_880.{u_1, u_2} :
         unfold ColoredVertexSetElementary
         intro x hx y hy hxy
         exact hpackCorr.1 hx hy hxy)
-  exact ⟨TjPrime, hclosure, hprimeElementary, hcaseSplit⟩
+  exact ⟨TjPrime, hclosure, hprimeElementary⟩
 
 theorem helper_continuation_1011.{u_1, u_2} :
     open scoped Classical in

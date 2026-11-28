@@ -3406,9 +3406,14 @@ theorem helper_continuation_14753.{u_1, u_2} :
       hb2Missing hb2TreeEdges hb3EdgeEffects hb4Interchange terminalPosition hterminalAt
       hterminalPositionPositive hterminalPositionBound seed hjTreeIndex hseedTj hseedTerminal
       hTjQ hseedVertexBefore segmentVertexBefore transportSeedRoute commonPrefix supportColors
-      TjPrime hclosure hprimeElementary hcaseSplit hseedPrime hterminalPrime hqLast hsupport0
+      TjPrime hclosure hprimeElementary hseedPrime hterminalPrime hqLast hsupport0
       hkind0 hstored0 hterminalIntersection hdeltaAvoidsTj hb1Tj hcaseOnePrepared
-  rcases hcaseSplit with hcaseOne | hcaseTwo
+  obtain hcaseOne | hcaseTwo :
+      (((TreeSequenceVertexSet TjPrime).erase v).biUnion (fun x => MissingColors G rho1 x) ∩
+        supportColors).Nonempty ∨
+      ((TreeSequenceVertexSet TjPrime).erase v).biUnion (fun x => MissingColors G rho1 x) ∩
+        supportColors = ∅ :=
+    (Finset.eq_empty_or_nonempty _).symm
   · obtain ⟨u, huPrime, b, traceB, huOutside, hinvariantB,
         hclaim44⟩ := hcaseOnePrepared hcaseOne
     let rho2 : PartialEdgeColoring E k :=
@@ -3811,27 +3816,22 @@ theorem helper_continuation_14264.{u_1, u_2} :
     exact hBC.of_common_extension hAC hlen
   let supportColors := Finset.univ.biUnion fun a : Fin (p0 + 1) =>
     ett.series.data.stored (indices0 a).succ
-  obtain ⟨TjPrime, hclosure, hprimeElementary, hcaseSplit⟩ :
+  obtain ⟨TjPrime, hclosure, hprimeElementary⟩ :
       ∃ TjPrime : TreeSequence G e0,
         TashkinovClosure rho1 seed TjPrime ∧
           ColoredVertexSetElementary G rho1
-            (TreeSequenceVertexSet TjPrime) ∧
-          (let awayMissing :=
-            ((TreeSequenceVertexSet TjPrime).erase v).biUnion
-              fun x => MissingColors G rho1 x
-           (awayMissing ∩ supportColors).Nonempty ∨
-             awayMissing ∩ supportColors = ∅) := by
+            (TreeSequenceVertexSet TjPrime) := by
     by_cases hjPositive : 0 < jSlot.val
     · exact @helper_branch_5591 (@V) (@E) inferInstance inferInstance  inferInstance
         (@G) (@k) (@e0) (@input) (@T) (@generating) (@ett) (@hMP) (@hpositive) (@hlower) (@v)
         (@sigma) (@hqTerminal) (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@hjSlot)
-        (@stepSegment) (@trace) (@p0) (@indices0) (@hrho1Proper) (@hrho1One) (@hb1Rho)
+        (@stepSegment) (@trace) (@hrho1Proper) (@hrho1One) (@hb1Rho)
         (@terminalPosition) (@hterminalAt) (@hterminalPositionPositive) (@hterminalPositionBound)
         (@hjTreeIndex) (@hseedTj) (@segmentVertexBefore) (@transportSeedRoute) (@commonPrefix)
         (@hjPositive)
     · exact @helper_branch_1907 (@V) (@E) inferInstance inferInstance inferInstance (@G) (@k)
         (@e0) (@input) (@T) (@generating) (@ett) (@hpositive) (@v) (@sigma) (@hqTerminal)
-        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@hjSlot) (@trace) (@p0) (@indices0)
+        (@hvFinal) (@hfirstUpper) (@hfirstPositive) (@hjSlot) (@trace)
         (@hrho1Proper) (@hrho1One) (@terminalPosition) (@hterminalPositionPositive)
         (@hterminalPositionBound) (@hseedTj) (by assumption) (@commonPrefix) (@hjPositive)
   have hseedPrime : TreeSequenceInitialSegment seed TjPrime :=
@@ -3956,7 +3956,7 @@ theorem helper_continuation_14264.{u_1, u_2} :
       (@hterminalAt) (@hterminalPositionPositive) (@hterminalPositionBound) (@hjTreeIndex)
       (@hseedTj) (@hseedTerminal) (@hTjQ) (@hseedVertexBefore) (@segmentVertexBefore)
       (@transportSeedRoute) (@commonPrefix) (@TjPrime) (@hclosure) (@hprimeElementary)
-      (@hcaseSplit) (@hseedPrime) (@hterminalPrime) (@hqLast) (@hsupport0) (@hkind0) (@hstored0)
+      (@hseedPrime) (@hterminalPrime) (@hqLast) (@hsupport0) (@hkind0) (@hstored0)
       (@hterminalIntersection) (@hdeltaAvoidsTj) (@hb1Tj) (@hcaseOnePrepared)
 theorem helper_continuation_13931.{u_1, u_2} :
     helperContinuation13931Conditions.{u_1, u_2} := by

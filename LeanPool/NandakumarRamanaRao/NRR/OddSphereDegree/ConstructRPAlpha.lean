@@ -16,8 +16,8 @@ public import LeanPool.NandakumarRamanaRao.NRR.OddSphereDegree.MonodromyCharacte
 Uses the mod-two Kronecker equivalence to turn a linear functional on
 `H₁(RPⁿ; F₂)` into a class of `H¹(RPⁿ; F₂)` and proves naturality under
 descended odd sphere maps. The structure `MonodromyFunctional n` isolates the
-homology functional and its invariance property. The canonical instance used by
-the final proof is constructed later in `RPnMonodromyFunctional`.
+homology functional and its invariance property. This project does not construct
+an instance of it.
 -/
 
 @[expose] public section
@@ -67,7 +67,7 @@ theorem inducedOnRPPullback_rpAlphaOfFunctional (n : ℕ)
 
 /-- A mod-two functional on `H₁(RPⁿ; F₂)` together with invariance under the
 homology pushforward of every descended odd map. This is the interface used to
-construct the degree-one class; `RPnMonodromyFunctional` supplies the canonical
+construct the degree-one class `rpAlpha`; this project does not construct an
 instance. -/
 structure MonodromyFunctional (n : ℕ) where
   /-- The `ZMod 2`-valued functional on `H₁(RPⁿ; F₂)`. -/
