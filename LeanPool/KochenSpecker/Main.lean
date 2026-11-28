@@ -12,8 +12,8 @@ public import LeanPool.KochenSpecker.Cabello18
 # The Kochen–Specker theorem
 
 Kochen and Specker’s original obstruction (Theorem 1 of *The Problem of Hidden Variables in
-Quantum Mechanics*) rules out a homomorphism from a finite partial Boolean algebra
-constructed in real dimension three.
+Quantum Mechanics*) constructs a finite partial Boolean algebra of subspaces of `ℝ³`
+with no homomorphism to the two-element Boolean algebra.
 
 This development proves a vector-valuation formulation over `ℝ` and `ℂ` in every finite
 dimension `d ≥ 3`: no Boolean map on vectors marks exactly one vector of each orthonormal basis.
