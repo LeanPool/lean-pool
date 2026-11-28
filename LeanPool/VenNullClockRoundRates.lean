@@ -15,6 +15,7 @@ Mark Gladden is the responsible maintainer. AI produced the Lean proofs under hi
 
 Lean source: VanGogh7777/c196-lean, matching-rates subproject.
 Commit: f14c11cca549acba4a3fcf832e7af005d2afd8ee
+Split and Mask source: VanGogh7777/c196-lean, commit 53b4baa78554a9a734b8a187c86e99fe01bd66f7.
 -/
 
 module
@@ -40,6 +41,13 @@ public import LeanPool.VenNullClockRoundRates.VenRateUpperPositive
 public import LeanPool.VenNullClockRoundRates.VenRateUpperRoundRates
 public import LeanPool.VenNullClockRoundRates.VenRateUpperStrips
 public import LeanPool.VenNullClockRoundRates.VenRateUpperTaylor
+public import LeanPool.VenNullClockRoundRates.LocalMask
+public import LeanPool.VenNullClockRoundRates.LocalMaskAngular
+public import LeanPool.VenNullClockRoundRates.LocalMaskGram
+public import LeanPool.VenNullClockRoundRates.LocalMaskModel
+public import LeanPool.VenNullClockRoundRates.LocalMaskSphereModel
+public import LeanPool.VenNullClockRoundRates.ThreeRead
+public import LeanPool.VenNullClockRoundRates.ThreeReadModel
 
 /-!
 # Matching masking rates for two-layer scans on normalized round area
@@ -48,7 +56,8 @@ Source: url:https://github.com/VanGogh7777/c196-lean/blob/4f45e33dc5376b362e1360
 Authors: Mark Gladden
 Status: verified
 Main declarations: `VenRateUpper.matching_round_class_rates`,
-  `VenRateUpper.smooth_round_common_profile_error`
+  `VenRateUpper.smooth_round_common_profile_error`, `VenSplit.split_certificate`,
+  `VenSplit.split_integral`, `VenSplit.reading_error`, `VenMask.sphere_local_masking`
 Tags: inverse problems, spherical measure, moment cancellation, Laplace transforms
 MSC: 28A25, 44A10
 -/

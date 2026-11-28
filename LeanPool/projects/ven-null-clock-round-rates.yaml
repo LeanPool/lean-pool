@@ -15,10 +15,16 @@ summary: >-
   control strengths and a positive separation scale at most one. The broad class permits
   two independently chosen profiles with individual integral budgets. The smooth witness
   uses one ambient-smooth profile at a fixed nonaligned angle, with a pointwise floor and cap.
+  Also proves a calibrated three-read certificate under a supplied projection-moment law
+  and exact finite-menu matching near a nonaligned reference angle.
 branch: main
 main_declarations:
   - VenRateUpper.matching_round_class_rates
   - VenRateUpper.smooth_round_common_profile_error
+  - VenSplit.split_certificate
+  - VenSplit.split_integral
+  - VenSplit.reading_error
+  - VenMask.sphere_local_masking
 main_results:
   - declaration: VenRateUpper.matching_round_class_rates
     source_ref: "C196 v0.3, §5, p. 5, Eqs. (33)–(34)"
@@ -33,5 +39,26 @@ main_results:
       At fixed positive control strengths and any fixed nonaligned angle, every
       sufficiently large budget M admits one smooth profile for both hypotheses,
       satisfying 2 ≤ w_M ≤ M everywhere and giving error at most exp(−c log M log log M).
+  - declaration: VenSplit.split_certificate
+    source_ref: "C196 v0.3, Theorem 4, p. 4, Eqs. (24)–(28)"
+    informal: >-
+      For a probability measure with the supplied projection-moment law, c² ≤ 1 and t > 0,
+      use one profile w ≥ 1 and integrable reads at (2t, 0), (t, t), and (0, 2t). The theorem
+      proves the explicit split margin, alignment equivalence, and 4ε/8ε decision implications.
+  - declaration: VenSplit.split_integral
+    source_ref: "C196 v0.3, Theorem 4, p. 4, Eq. (27)"
+    informal: >-
+      Under the stated three-read integrability conditions, represents the calibrated split as
+      the shared-profile-weighted integral of the squared difference of the exponential factors.
+  - declaration: VenSplit.reading_error
+    source_ref: "C196 v0.3, Theorem 4, p. 4, Eq. (28)"
+    informal: >-
+      Three errors bounded in absolute value by ε give split error at most 4ε.
+  - declaration: VenMask.sphere_local_masking
+    source_ref: "C196 v0.3, Proposition 7, p. 6, Eq. (35)"
+    informal: >-
+      For a finite open-positive measure on the unit sphere, a fixed nonaligned reference angle,
+      a constant reference profile above one, and distinct controls, every sufficiently nearby
+      angle admits an explicit exponential-sum profile above one with all menu reads exactly matched.
 msc: ['28A25', '44A10']
 tags: [inverse problems, spherical measure, moment cancellation, Laplace transforms]
