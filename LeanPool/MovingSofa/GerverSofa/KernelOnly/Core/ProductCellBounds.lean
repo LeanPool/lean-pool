@@ -191,4 +191,59 @@ theorem sound {threshold : ℚ} {scaledThreshold : ℤ} {first second : RatInter
       ExactReplay.oneI.lo) (mul_lo_le yCovered cosCovered)
   exact ⟨lowerU.trans_le uBound, lowerV.trans_le vBound⟩
 
+/-- The endpoints of the inner interval lie in the outer interval. -/
+abbrev GridInterval.Covers (outer inner : GridInterval) : Prop :=
+  outer.lo ≤ inner.lo ∧ inner.lo ≤ inner.hi ∧ inner.hi ≤ outer.hi
+
+private theorem minProduct_le (left value right factor : ℤ)
+    (low : left ≤ value) (high : value ≤ right) :
+    min (left * factor) (right * factor) ≤ value * factor := by
+  rcases le_or_gt 0 factor with nonnegative | negative
+  · exact (min_le_left _ _).trans (mul_le_mul_of_nonneg_right low nonnegative)
+  · exact (min_le_right _ _).trans (mul_le_mul_of_nonpos_right high negative.le)
+
+private theorem GridInterval.productLower_mono {outer inner factor : GridInterval}
+    (covered : outer.Covers inner) : outer.productLower factor ≤ inner.productLower factor := by
+  have regrouped : outer.productLower factor =
+      min (min (outer.lo * factor.lo) (outer.hi * factor.lo))
+        (min (outer.lo * factor.hi) (outer.hi * factor.hi)) := by
+    unfold productLower
+    ac_rfl
+  rw [regrouped, productLower]
+  simp only [le_min_iff]
+  exact ⟨⟨(min_le_left _ _).trans (minProduct_le _ _ _ _ covered.1
+      (covered.2.1.trans covered.2.2)),
+    (min_le_right _ _).trans (minProduct_le _ _ _ _ covered.1
+      (covered.2.1.trans covered.2.2))⟩,
+    ⟨(min_le_left _ _).trans (minProduct_le _ _ _ _
+      (covered.1.trans covered.2.1) covered.2.2),
+      (min_le_right _ _).trans (minProduct_le _ _ _ _
+        (covered.1.trans covered.2.1) covered.2.2)⟩⟩
+
+private theorem GridInterval.sub_covers_second (first : GridInterval)
+    {outer inner : GridInterval} (ordered : first.lo ≤ first.hi)
+    (covered : outer.Covers inner) : (first.sub outer).Covers (first.sub inner) :=
+  ⟨sub_le_sub_left covered.2.2 _, sub_le_sub ordered covered.2.1,
+    sub_le_sub_left covered.1 _⟩
+
+private theorem imageLower_mono {wideX wideY narrowX narrowY : GridInterval}
+    (x : wideX.Covers narrowX) (y : wideY.Covers narrowY) (cosine sine : GridInterval) :
+    imageLower wideX wideY cosine sine ≤ imageLower narrowX narrowY cosine sine := by
+  unfold imageLower
+  exact add_le_add (add_le_add_right (GridInterval.productLower_mono x) _)
+    (GridInterval.productLower_mono y)
+
+/-- A product-cell check for a covering rectangle certifies each covered second contact. -/
+theorem passes_of_second_covered (threshold : ℤ)
+    (first inner outer : GridInterval × GridInterval) (cosine sine : GridInterval)
+    (firstOrdered : first.1.lo ≤ first.1.hi ∧ first.2.lo ≤ first.2.hi)
+    (covered : outer.1.Covers inner.1 ∧ outer.2.Covers inner.2)
+    (checked : passes threshold first outer cosine sine = true) :
+    passes threshold first inner cosine sine = true := by
+  have x := first.1.sub_covers_second firstOrdered.1 covered.1
+  have y := first.2.sub_covers_second firstOrdered.2 covered.2
+  simp only [passes, decide_eq_true_eq] at checked ⊢
+  exact ⟨checked.1.trans_le (imageLower_mono x y cosine sine),
+    checked.2.trans_le (imageLower_mono x y sine.neg cosine)⟩
+
 end GerverSofa.PartB.ProductCellBounds

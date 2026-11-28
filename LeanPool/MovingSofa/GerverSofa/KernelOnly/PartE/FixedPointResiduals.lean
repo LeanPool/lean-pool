@@ -1053,6 +1053,212 @@ inconclusive. -/
     isTrue (by exact rejected_of_check cell checked)
   else decidableRejectedFast cell
 
+/-! ## Binary grid arithmetic for kernel replay -/
+
+namespace ShiftedGrid
+
+/-- Test whether an integer is nonnegative by inspecting its constructor. -/
+def nonnegative : Int → Bool
+  | .ofNat _ => true
+  | .negSucc _ => false
+
+private theorem nonnegative_spec (value : Int) : nonnegative value = true ↔ 0 ≤ value := by
+  cases value <;> simp [nonnegative]
+
+/-- Test strict positivity without subtracting the two sides of a comparison. -/
+def positive : Int → Bool
+  | .ofNat n => n != 0
+  | .negSucc _ => false
+
+private theorem positive_spec (value : Int) : positive value = true ↔ 0 < value := by
+  cases value <;> simp [positive, Nat.pos_iff_ne_zero]
+
+-- Comparing the magnitudes directly avoids constructing an integer difference in the kernel.
+/-- Compare signed endpoints by comparing their natural magnitudes. -/
+def endpointLE : Int → Int → Bool
+  | .ofNat a, .ofNat b => Nat.ble a b
+  | .negSucc a, .negSucc b => Nat.ble b a
+  | .negSucc _, .ofNat _ => true
+  | .ofNat _, .negSucc _ => false
+
+private theorem endpointLE_spec (a b : Int) : endpointLE a b = true ↔ a ≤ b := by
+  cases a <;> cases b <;> simp [endpointLE] <;> omega
+
+/-- Select the lower of two endpoints for a product enclosure. -/
+def lowerEndpoint (a b : ℤ) : ℤ := bif endpointLE a b then a else b
+
+/-- Select the higher of two endpoints for a product enclosure. -/
+def upperEndpoint (a b : ℤ) : ℤ := bif endpointLE a b then b else a
+
+private theorem lowerEndpoint_eq (a b : ℤ) : lowerEndpoint a b = SI.imin a b := by
+  simp only [lowerEndpoint, SI.imin, Bool.cond_eq_ite, endpointLE_spec]
+
+private theorem upperEndpoint_eq (a b : ℤ) : upperEndpoint a b = SI.imax a b := by
+  simp only [upperEndpoint, SI.imax, Bool.cond_eq_ite, endpointLE_spec]
+
+/-- Round a product down at its lower endpoint and up at its upper endpoint. -/
+def round (lo hi : ℤ) : SI := ⟨lo >>> (30 : Nat), -((-hi) >>> (30 : Nat))⟩
+
+private theorem shift_eq (value : ℤ) : value >>> (30 : Nat) = value / denominator := by
+  rw [Int.shiftRight_eq_div_pow]
+  rfl
+
+/-- Multiply on the binary grid when the right interval is nonnegative. -/
+def mulRight (left right : SI) : SI :=
+  round
+    (left.lo * (bif nonnegative left.lo then right.lo else right.hi))
+    (left.hi * (bif nonnegative left.hi then right.hi else right.lo))
+
+private theorem mulRight_eq (left right : SI) :
+    mulRight left right = mulNonnegativeRight left right := by
+  simp only [mulRight, round, shift_eq, mulNonnegativeRight, Bool.cond_eq_ite, nonnegative_spec]
+
+private theorem mulRight_lower_nonnegative {left right : SI}
+    (leftNonneg : 0 ≤ left.lo) (rightNonneg : 0 ≤ right.lo) : 0 ≤ (mulRight left right).lo := by
+  rw [mulRight_eq]
+  change 0 ≤ left.lo * (if 0 ≤ left.lo then right.lo else right.hi) / denominator
+  rw [ite_eq_left leftNonneg]
+  exact Int.ediv_nonneg (mul_nonneg leftNonneg rightNonneg) (by decide)
+
+/-- Multiply on the binary grid with shifts for outward rounding. -/
+def mul (left right : SI) : SI :=
+  bif nonnegative right.lo then mulRight left right
+  else bif nonnegative left.lo then mulRight right left
+  else
+    let ll := left.lo * right.lo
+    let lh := left.lo * right.hi
+    let hl := left.hi * right.lo
+    let hh := left.hi * right.hi
+    round (lowerEndpoint (lowerEndpoint ll lh) (lowerEndpoint hl hh))
+      (upperEndpoint (upperEndpoint ll lh) (upperEndpoint hl hh))
+
+private theorem mul_eq (left right : SI) : mul left right = BinaryGrid.mul left right := by
+  simp only [mul, BinaryGrid.mul, Bool.cond_eq_ite, nonnegative_spec, mulRight_eq,
+    round, lowerEndpoint_eq, upperEndpoint_eq, shift_eq, mulFull]
+
+/-- Evaluate a polynomial using the two-product rule for a nonnegative input. -/
+def horner (coefficients : List SI) (input : SI) : SI :=
+  coefficients.foldr (fun coefficient value => SI.add coefficient (mulRight value input))
+    (point 0)
+
+private theorem mulRight_eq_mul (left right : SI) (nonnegative : 0 ≤ right.lo) :
+    mulRight left right = BinaryGrid.mul left right := by
+  rw [mulRight_eq, BinaryGrid.mul, ite_eq_left nonnegative]
+
+private theorem horner_eq (coefficients : List SI) (input : SI) (nonnegative : 0 ≤ input.lo) :
+    horner coefficients input = BinaryGrid.horner coefficients input := by
+  induction coefficients with
+  | nil => rfl
+  | cons coefficient tail ih =>
+    change SI.add coefficient (mulRight (horner tail input) input) =
+      SI.add coefficient (BinaryGrid.mul (BinaryGrid.horner tail input) input)
+    rw [ih, mulRight_eq_mul _ _ nonnegative]
+
+/-- The upper endpoint of the Taylor error enclosure.
+For nonnegative upper endpoints through `796018440` (about 0.74135 radians),
+the scaled eleventh-power term rounds down to zero. -/
+def radius (upper : ℤ) : ℤ :=
+  bif endpointLE upper 796018440 then 1 else (remainder upper).hi
+
+private theorem radius_eq (upper : ℤ) (nonnegative : 0 ≤ upper) :
+    radius upper = (remainder upper).hi := by
+  simp only [radius, Bool.cond_eq_ite, endpointLE_spec]
+  split
+  next bounded =>
+    have positive : 0 < remainderDenominator := by decide
+    have upperBound : upper ^ 11 / remainderDenominator ≤ 0 :=
+      (Int.ediv_le_ediv positive (pow_le_pow_left₀ nonnegative bounded 11)).trans
+        (by decide +kernel)
+    have lowerBound : 0 ≤ upper ^ 11 / remainderDenominator :=
+      Int.ediv_nonneg (pow_nonneg nonnegative _) positive.le
+    change 1 = upper ^ 11 / remainderDenominator + 1
+    rw [le_antisymm upperBound lowerBound, zero_add]
+  next => rfl
+
+/-- Replay the binary-grid Taylor enclosure for an ordered nonnegative argument. -/
+def trig (input : SI) : SI × SI :=
+  let square := mulRight input input
+  let radius := radius input.hi
+  let error : SI := ⟨-radius, radius⟩
+  (SI.add (horner cosineCoefficients square) error,
+    SI.add (mulRight (horner sineCoefficients square) input) error)
+
+private theorem trig_eq (input : SI) (nonnegative : 0 ≤ input.lo)
+    (ordered : input.lo ≤ input.hi) : trig input = BinaryGrid.trig input := by
+  have squareNonnegative := mulRight_lower_nonnegative nonnegative nonnegative
+  unfold trig BinaryGrid.trig
+  dsimp only
+  rw [horner_eq _ _ squareNonnegative, horner_eq _ _ squareNonnegative,
+    mulRight_eq_mul _ _ nonnegative, mulRight_eq_mul _ _ nonnegative,
+    radius_eq _ (nonnegative.trans ordered)]
+  rfl
+
+/-- Scale the interval on the binary grid, using shifts for the two dyadic fractions
+in the residual formulas. -/
+def scale (value : ℚ) (interval : SI) : SI :=
+  let lo := value.num * interval.lo
+  let hi := value.num * interval.hi
+  match value.den with
+  | 1 => ⟨lo, hi⟩
+  | 2 => ⟨lo >>> (1 : Nat), -((-hi) >>> (1 : Nat))⟩
+  | 4 => ⟨lo >>> (2 : Nat), -((-hi) >>> (2 : Nat))⟩
+  | _ => scaleNonnegative value interval
+
+private theorem scale_eq (value : ℚ) (interval : SI) :
+    scale value interval = scaleNonnegative value interval := by
+  unfold scale
+  dsimp only
+  split
+  next eq =>
+    simp [scaleNonnegative, SI.divn, eq]
+  next eq =>
+    simp [Int.shiftRight_eq_div_pow, scaleNonnegative, SI.divn, eq]
+  next eq =>
+    simp [Int.shiftRight_eq_div_pow, scaleNonnegative, SI.divn, eq]
+  next => rfl
+
+/-- Test whether the interval lies strictly on one side of zero. -/
+def separated (interval : SI) : Bool :=
+  !nonnegative interval.hi || positive interval.lo
+
+private theorem separated_eq (interval : SI) : separated interval = excludesZero interval := by
+  apply Bool.eq_iff_iff.mpr
+  simp only [separated, excludesZero, Bool.or_eq_true, Bool.not_eq_true',
+    ← Bool.not_eq_true, nonnegative_spec, not_le, positive_spec, decide_eq_true_eq]
+
+/-- Compute the binary-grid rejection check using the specialized operations. -/
+def rejects (cell : AngleCell) : Bool :=
+  let phi := ofRat cell.phiI
+  let theta := ofRat cell.thetaI
+  bif positive phi.lo && positive theta.lo then
+    let phiTrig := trig phi
+    let thetaTrig := trig theta
+    let bounds := residualsFromGrid point (ofRat kernelPiInterval) scale
+      mul phi theta phiTrig.1 phiTrig.2 thetaTrig.1 thetaTrig.2
+    separated bounds.1 || separated bounds.2
+  else false
+
+private theorem rejects_eq (cell : AngleCell) : rejects cell = BinaryGrid.rejects cell := by
+  unfold rejects BinaryGrid.rejects
+  simp only [Bool.cond_eq_ite, Bool.and_eq_true, positive_spec]
+  split
+  next positive =>
+    have mulFunction : mul = BinaryGrid.mul := funext fun a => funext (mul_eq a)
+    have scaleFunction : scale = scaleNonnegative := funext fun a => funext (scale_eq a)
+    simp only [trig_eq _ positive.1.le (ofRat_encloses _).ordered,
+      trig_eq _ positive.2.le (ofRat_encloses _).ordered, scaleFunction, mulFunction,
+      separated_eq]
+  next => rfl
+
+/-- Decide closed rejections with the exact binary-grid check and its existing finer fallback. -/
+@[instance_reducible] def decidableRejected (cell : AngleCell) :
+    Decidable (cell.rejected = true) :=
+  if checked : rejects cell = true then
+    isTrue (by exact BinaryGrid.rejected_of_check cell (rejects_eq cell ▸ checked))
+  else decidableRejectedFast cell
+
+end ShiftedGrid
+
 end BinaryGrid
 
 end GerverSofa.PartE.FixedPointResiduals

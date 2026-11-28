@@ -6135,11 +6135,40 @@ private def blockRow (block : Fin 4) (offset : Fin 16) : Cell :=
 private abbrev BlockPasses (block : Fin 4) : Prop :=
   ∀ offset : Fin 16, RoundedRowPasses (blockRow block offset)
 
--- Release the kernel's reduction cache between blocks.
-private theorem roundedBlock0 : BlockPasses 0 := by decide +kernel
-private theorem roundedBlock1 : BlockPasses 1 := by decide +kernel
-private theorem roundedBlock2 : BlockPasses 2 := by decide +kernel
-private theorem roundedBlock3 : BlockPasses 3 := by decide +kernel
+-- A single rectangle contains the rounded path for every possible second cell.
+private def roundedPathBox : ProductCellBounds.GridInterval × ProductCellBounds.GridInterval :=
+  (⟨-125663, 1029⟩, ⟨-8, 68400⟩)
+
+private theorem roundedPathBox_covers : ∀ j : Cell,
+    roundedPathBox.1.Covers (roundedCell j).1 ∧
+      roundedPathBox.2.Covers (roundedCell j).2.1 := by
+  decide +kernel
+
+private theorem roundedPathBox_passes : ∀ i : Cell,
+    ProductCellBounds.passes scaledTarget ((roundedCell i).1, (roundedCell i).2.1)
+      roundedPathBox (roundedCell i).2.2.1 (roundedCell i).2.2.2 = true := by
+  decide +kernel
+
+private theorem roundedBlock_from_box (block : Fin 4) : BlockPasses block := by
+  intro offset j
+  let i := blockRow block offset
+  have ordered := roundedPathBox_covers i
+  exact ProductCellBounds.passes_of_second_covered scaledTarget
+    ((roundedCell i).1, (roundedCell i).2.1) ((roundedCell j).1, (roundedCell j).2.1)
+    roundedPathBox (roundedCell i).2.2.1 (roundedCell i).2.2.2
+    ⟨ordered.1.2.1, ordered.2.2.1⟩ (roundedPathBox_covers j) (roundedPathBox_passes i)
+
+private theorem roundedBlock0 : BlockPasses 0 := by
+  as_aux_lemma => exact roundedBlock_from_box 0
+
+private theorem roundedBlock1 : BlockPasses 1 := by
+  as_aux_lemma => exact roundedBlock_from_box 1
+
+private theorem roundedBlock2 : BlockPasses 2 := by
+  as_aux_lemma => exact roundedBlock_from_box 2
+
+private theorem roundedBlock3 : BlockPasses 3 := by
+  as_aux_lemma => exact roundedBlock_from_box 3
 
 private theorem roundedBlocksPass (block : Fin 4) : BlockPasses block := by
   fin_cases block

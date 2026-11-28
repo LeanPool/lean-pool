@@ -11,6 +11,7 @@ public import LeanPool.MovingSofa.Development.Geometry.Applications.Development0
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development002
 public import LeanPool.MovingSofa.Development.Geometry.Applications.Development003
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
+public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateReplay
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.CapAreaCertificate
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development001
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.Development002

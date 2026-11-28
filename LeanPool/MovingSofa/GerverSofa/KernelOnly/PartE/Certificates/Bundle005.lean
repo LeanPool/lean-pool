@@ -16,8 +16,9 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch028`.
 -/
 
--- Try the binary-grid enclosure first for closed cell rejections.
-attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.BinaryGrid.decidableRejected
+-- Replay closed rejections with the exact shift-based binary-grid evaluator.
+attribute [local instance 1100]
+  GerverSofa.PartE.FixedPointResiduals.BinaryGrid.ShiftedGrid.decidableRejected
 
 @[expose] public section
 
