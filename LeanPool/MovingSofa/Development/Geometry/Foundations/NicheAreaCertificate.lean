@@ -6,6 +6,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
+import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateReplay
 import Mathlib.Tactic.NormNum
 import LeanPool.MovingSofa.KernelCertificate -- shake: keep
 
@@ -39,6 +40,22 @@ private theorem rowSumZ_halves (row : ℕ) :
     ← List.sum_eq_foldl, List.range_eq_range']
   change ((List.range' 0 (32 + 32)).map (rectAreaZ row)).sum = _
   rw [← List.range'_append_1, List.map_append, List.sum_append]
+
+private def rectangleBlockReplay (row start length : ℕ) : ℤ :=
+  ((List.range' start length).map (AreaReplay.rectangle row)).sum
+
+private theorem rectangleBlockReplay_eq (row start length : ℕ) :
+    rectangleBlockReplay row start length = rectangleBlock row start length := by
+  have row_eq : AreaReplay.rectangle row = rectAreaZ row :=
+    funext (AreaReplay.rectangle_eq row)
+  simp only [rectangleBlockReplay, rectangleBlock, row_eq]
+
+@[instance_reducible] private def decideRectangleBlock (row start length : ℕ) (expected : ℤ) :
+    Decidable (rectangleBlock row start length = expected) :=
+  decidable_of_iff (rectangleBlockReplay row start length = expected)
+    (by rw [rectangleBlockReplay_eq])
+
+attribute [local instance 1100] decideRectangleBlock
 
 private theorem nicheRow0First : rectangleBlock 0 0 32 =
     8845072297334670692780361894254852519218486529319646026 := by gerver_kernel_decide

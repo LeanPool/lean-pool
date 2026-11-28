@@ -6,6 +6,7 @@ Authors: Dean Cureton, The Moving Sofa contributors
 module
 
 public import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateInputs
+import LeanPool.MovingSofa.Development.Geometry.Foundations.AreaCertificateReplay
 import Mathlib.Tactic.NormNum
 
 /-!
@@ -67,6 +68,18 @@ private theorem blockSum_split (summand : ℕ → ℤ) :
     blockSum_append _ 384 64 191, blockSum_append _ 448 64 127,
     blockSum_append _ 512 64 63]
   simp only [Nat.reduceAdd, add_assoc]
+
+private def replayLower (index : ℕ) : ℤ := (AreaReplay.cross index).lo
+
+private theorem replayLower_eq : replayLower = capLower := by
+  funext index
+  rw [replayLower, capLower, AreaReplay.cross_eq]
+
+@[instance_reducible] private def decideBlock (start length : ℕ) (expected : ℤ) :
+    Decidable (blockSum capLower start length = expected) :=
+  decidable_of_iff (blockSum replayLower start length = expected) (by rw [replayLower_eq])
+
+attribute [local instance 1100] decideBlock
 
 private theorem capBlock0 : blockSum capLower 0 64 = -333692128541 := by
   decide +kernel

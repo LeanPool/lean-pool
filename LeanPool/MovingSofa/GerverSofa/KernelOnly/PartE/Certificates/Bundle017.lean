@@ -15,8 +15,9 @@ public import LeanPool.MovingSofa.GerverSofa.KernelOnly.Core.Bundle005
 * `GerverSofa.KernelOnly.PartE.Certificates.Batch030`.
 -/
 
--- Try the fixed-point residual test before exact replay.
-attribute [local instance 1100] GerverSofa.PartE.FixedPointResiduals.BinaryGrid.decidableRejected
+-- Replay closed rejections with the exact shift-based binary-grid evaluator.
+attribute [local instance 1100]
+  GerverSofa.PartE.FixedPointResiduals.BinaryGrid.ShiftedGrid.decidableRejected
 
 @[expose] public section
 
