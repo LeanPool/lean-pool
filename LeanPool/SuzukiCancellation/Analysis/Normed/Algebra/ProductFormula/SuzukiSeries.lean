@@ -4,7 +4,8 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Foresight Quantum
 -/
 
-/- Modified for Lean Pool: staged the coefficient certificates and narrowed imports. -/
+/- Modified for Lean Pool: staged the coefficient certificates with Boolean
+row checks and narrowed imports. -/
 
 module
 
@@ -14,11 +15,11 @@ public import LeanPool.SuzukiCancellation.Analysis.Normed.Algebra.ProductFormula
 public import LeanPool.SuzukiCancellation.Algebra.Lie.BCH.SuzukiTerms
 import Mathlib.Algebra.Algebra.Rat
 import Mathlib.Algebra.Module.Rat
-import Mathlib.Tactic.FinCases
+import Mathlib.Tactic.FinCases -- shake: keep
 import Mathlib.Tactic.IntervalCases
-import Mathlib.Tactic.Module
-import Mathlib.Tactic.NormNum
-import Mathlib.Tactic.Ring
+import Mathlib.Tactic.Module -- shake: keep
+import Mathlib.Tactic.NormNum -- shake: keep
+import Mathlib.Tactic.Ring -- shake: keep
 
 /-!
 # Quintic Suzuki coefficient matching
@@ -64,20 +65,19 @@ private def tableExpFrom : List ParamTable → (ℕ → ParamTable) → ℕ → 
       CoeffWordTable.smul (60 ^ i / Nat.factorial i : ℕ)
         (CoeffWordTable.mul (tablePow t i) (tableExpFrom ts tail (n - i))))
 
+private lemma tableExpFrom_append (front back : List ParamTable)
+    (tail : ℕ → ParamTable) (n : ℕ) :
+    tableExpFrom (front ++ back) tail n = tableExpFrom front (tableExpFrom back tail) n := by
+  induction front generalizing n with
+  | nil => rfl
+  | cons t ts ih => simp only [List.cons_append, tableExpFrom, ih]
+
 private def tableExp (ts : List ParamTable) (n : ℕ) : ParamTable :=
   tableExpFrom ts (fun i ↦ if i = 0 then CoeffWordTable.unit else []) n
 
 private lemma tableExp_append (front back : List ParamTable) (n : ℕ) :
-    tableExp (front ++ back) n = tableExpFrom front (tableExp back) n := by
-  induction front generalizing n with
-  | nil => rfl
-  | cons t ts ih =>
-    change tableExp (t :: (ts ++ back)) n = _
-    simp only [tableExp, tableExpFrom]
-    have h (i : ℕ) :
-        tableExpFrom (ts ++ back) (fun j ↦ if j = 0 then CoeffWordTable.unit else []) i =
-          tableExpFrom ts (tableExp back) i := ih i
-    simp only [h]
+    tableExp (front ++ back) n = tableExpFrom front (tableExp back) n :=
+  tableExpFrom_append front back _ n
 
 /-- Grouping the last five factors before multiplying the first six factors
 bounds the certificate's kernel reduction cost. -/
@@ -444,11 +444,334 @@ private def argumentExpTable : ℕ → ParamTable
     ([some 1, some 1, some 1, some 1, some 1], 207360000)]
   | _ => []
 
+/-- Grouped coefficients of the last eight factors, through degree five.
+The last three factors of the six-factor prefix are applied to the already
+checked five-factor tail. -/
+private def argumentSuffixTable : ℕ → ParamTable
+  | 0 => [([], 1)]
+  | 1 => [([none, some 0], -180),
+    ([none, some 1], -120),
+    ([some 0], 120),
+    ([some 1], 120)]
+  | 2 => [([none, none, some 0, some 0], 16200),
+    ([none, none, some 0, some 1], 14400),
+    ([none, none, some 1, some 0], 7200),
+    ([none, none, some 1, some 1], 7200),
+    ([none, some 0, some 0], -21600),
+    ([none, some 0, some 1], -21600),
+    ([none, some 1, some 0], -14400),
+    ([none, some 1, some 1], -14400),
+    ([some 0, some 0], 7200),
+    ([some 0, some 1], 7200),
+    ([some 1, some 0], 7200),
+    ([some 1, some 1], 7200)]
+  | 3 => [([none, none, none, some 0, some 0, some 0], -972000),
+    ([none, none, none, some 0, some 0, some 1], 3456000),
+    ([none, none, none, some 0, some 1, some 0], -9504000),
+    ([none, none, none, some 0, some 1, some 1], -9504000),
+    ([none, none, none, some 1, some 0, some 0], 4104000),
+    ([none, none, none, some 1, some 0, some 1], 17280000),
+    ([none, none, none, some 1, some 1, some 0], -9072000),
+    ([none, none, none, some 1, some 1, some 1], -288000),
+    ([none, none, some 0, some 0, some 0], 1944000),
+    ([none, none, some 0, some 0, some 1], -1512000),
+    ([none, none, some 0, some 1, some 0], 8640000),
+    ([none, none, some 0, some 1, some 1], 8640000),
+    ([none, none, some 1, some 0, some 0], -2592000),
+    ([none, none, some 1, some 0, some 1], -12960000),
+    ([none, none, some 1, some 1, some 0], 7776000),
+    ([none, none, some 1, some 1, some 1], 864000),
+    ([none, some 0, some 0, some 0], -1296000),
+    ([none, some 0, some 0, some 1], -432000),
+    ([none, some 0, some 1, some 0], -3024000),
+    ([none, some 0, some 1, some 1], -3024000),
+    ([none, some 1, some 0, some 1], 2592000),
+    ([none, some 1, some 1, some 0], -2592000),
+    ([none, some 1, some 1, some 1], -864000),
+    ([some 0, some 0, some 0], 288000),
+    ([some 0, some 0, some 1], 216000),
+    ([some 0, some 1, some 0], 432000),
+    ([some 0, some 1, some 1], 432000),
+    ([some 1, some 0, some 0], 216000),
+    ([some 1, some 1, some 0], 432000),
+    ([some 1, some 1, some 1], 288000)]
+  | 4 => [([none, none, none, none, some 0, some 0, some 0, some 0], 43740000),
+    ([none, none, none, none, some 0, some 0, some 0, some 1], -743040000),
+    ([none, none, none, none, some 0, some 0, some 1, some 0], 1607040000),
+    ([none, none, none, none, some 0, some 0, some 1, some 1], 1607040000),
+    ([none, none, none, none, some 0, some 1, some 0, some 0], -751680000),
+    ([none, none, none, none, some 0, some 1, some 0, some 1], -3110400000),
+    ([none, none, none, none, some 0, some 1, some 1, some 0], 1607040000),
+    ([none, none, none, none, some 0, some 1, some 1, some 1], 34560000),
+    ([none, none, none, none, some 1, some 0, some 0, some 0], 4320000),
+    ([none, none, none, none, some 1, some 0, some 0, some 1], -518400000),
+    ([none, none, none, none, some 1, some 0, some 1, some 0], 1036800000),
+    ([none, none, none, none, some 1, some 0, some 1, some 1], 1036800000),
+    ([none, none, none, none, some 1, some 1, some 0, some 0], -505440000),
+    ([none, none, none, none, some 1, some 1, some 0, some 1], -2073600000),
+    ([none, none, none, none, some 1, some 1, some 1, some 0], 1054080000),
+    ([none, none, none, none, some 1, some 1, some 1, some 1], 8640000),
+    ([none, none, none, some 0, some 0, some 0, some 0], -116640000),
+    ([none, none, none, some 0, some 0, some 0, some 1], 764640000),
+    ([none, none, none, some 0, some 0, some 1, some 0], -1607040000),
+    ([none, none, none, some 0, some 0, some 1, some 1], -1607040000),
+    ([none, none, none, some 0, some 1, some 0, some 0], 259200000),
+    ([none, none, none, some 0, some 1, some 0, some 1], 2903040000),
+    ([none, none, none, some 0, some 1, some 1, some 0], -2384640000),
+    ([none, none, none, some 0, some 1, some 1, some 1], -622080000),
+    ([none, none, none, some 1, some 0, some 0, some 0], 233280000),
+    ([none, none, none, some 1, some 0, some 0, some 1], 907200000),
+    ([none, none, none, some 1, some 0, some 1, some 0], -311040000),
+    ([none, none, none, some 1, some 0, some 1, some 1], -311040000),
+    ([none, none, none, some 1, some 1, some 0, some 0], 103680000),
+    ([none, none, none, some 1, some 1, some 0, some 1], 2125440000),
+    ([none, none, none, some 1, some 1, some 1, some 0], -1382400000),
+    ([none, none, none, some 1, some 1, some 1, some 1], -34560000),
+    ([none, none, some 0, some 0, some 0, some 0], 116640000),
+    ([none, none, some 0, some 0, some 0, some 1], -246240000),
+    ([none, none, some 0, some 0, some 1, some 0], 635040000),
+    ([none, none, some 0, some 0, some 1, some 1], 635040000),
+    ([none, none, some 0, some 1, some 0, some 0], 155520000),
+    ([none, none, some 0, some 1, some 0, some 1], -933120000),
+    ([none, none, some 0, some 1, some 1, some 0], 1244160000),
+    ([none, none, some 0, some 1, some 1, some 1], 518400000),
+    ([none, none, some 1, some 0, some 0, some 0], -155520000),
+    ([none, none, some 1, some 0, some 0, some 1], -466560000),
+    ([none, none, some 1, some 0, some 1, some 0], -155520000),
+    ([none, none, some 1, some 0, some 1, some 1], -155520000),
+    ([none, none, some 1, some 1, some 0, some 0], 155520000),
+    ([none, none, some 1, some 1, some 0, some 1], -777600000),
+    ([none, none, some 1, some 1, some 1, some 0], 673920000),
+    ([none, none, some 1, some 1, some 1, some 1], 51840000),
+    ([none, some 0, some 0, some 0, some 0], -51840000),
+    ([none, some 0, some 0, some 0, some 1], 12960000),
+    ([none, some 0, some 0, some 1, some 0], -129600000),
+    ([none, some 0, some 0, some 1, some 1], -129600000),
+    ([none, some 0, some 1, some 0, some 0], -90720000),
+    ([none, some 0, some 1, some 0, some 1], 103680000),
+    ([none, some 0, some 1, some 1, some 0], -285120000),
+    ([none, some 0, some 1, some 1, some 1], -155520000),
+    ([none, some 1, some 0, some 0, some 0], 17280000),
+    ([none, some 1, some 0, some 0, some 1], 77760000),
+    ([none, some 1, some 0, some 1, some 0], 51840000),
+    ([none, some 1, some 0, some 1, some 1], 51840000),
+    ([none, some 1, some 1, some 0, some 0], -77760000),
+    ([none, some 1, some 1, some 0, some 1], 103680000),
+    ([none, some 1, some 1, some 1, some 0], -155520000),
+    ([none, some 1, some 1, some 1, some 1], -34560000),
+    ([some 0, some 0, some 0, some 0], 8640000),
+    ([some 0, some 0, some 0, some 1], 4320000),
+    ([some 0, some 0, some 1, some 0], 12960000),
+    ([some 0, some 0, some 1, some 1], 12960000),
+    ([some 0, some 1, some 0, some 0], 12960000),
+    ([some 0, some 1, some 1, some 0], 25920000),
+    ([some 0, some 1, some 1, some 1], 17280000),
+    ([some 1, some 0, some 0, some 0], 4320000),
+    ([some 1, some 1, some 0, some 0], 12960000),
+    ([some 1, some 1, some 1, some 0], 17280000),
+    ([some 1, some 1, some 1, some 1], 8640000)]
+  | 5 => [([none, none, none, none, none, some 0, some 0, some 0, some 0, some 0], -1574640000),
+    ([none, none, none, none, none, some 0, some 0, some 0, some 0, some 1], 79574400000),
+    ([none, none, none, none, none, some 0, some 0, some 0, some 1, some 0], -184550400000),
+    ([none, none, none, none, none, some 0, some 0, some 0, some 1, some 1], -184550400000),
+    ([none, none, none, none, none, some 0, some 0, some 1, some 0, some 0], 132192000000),
+    ([none, none, none, none, none, some 0, some 0, some 1, some 0, some 1], 335923200000),
+    ([none, none, none, none, none, some 0, some 0, some 1, some 1, some 0], -71539200000),
+    ([none, none, none, none, none, some 0, some 0, some 1, some 1, some 1], 64281600000),
+    ([none, none, none, none, none, some 0, some 1, some 0, some 0, some 0], -43027200000),
+    ([none, none, none, none, none, some 0, some 1, some 0, some 0, some 1], 149299200000),
+    ([none, none, none, none, none, some 0, some 1, some 0, some 1, some 0], -410572800000),
+    ([none, none, none, none, none, some 0, some 1, some 0, some 1, some 1], -410572800000),
+    ([none, none, none, none, none, some 0, some 1, some 1, some 0, some 0], 132192000000),
+    ([none, none, none, none, none, some 0, some 1, some 1, some 0, some 1], 709171200000),
+    ([none, none, none, none, none, some 0, some 1, some 1, some 1, some 0], -433382400000),
+    ([none, none, none, none, none, some 0, some 1, some 1, some 1, some 1], -48729600000),
+    ([none, none, none, none, none, some 1, some 0, some 0, some 0, some 0], 10562400000),
+    ([none, none, none, none, none, some 1, some 0, some 0, some 0, some 1], -26956800000),
+    ([none, none, none, none, none, some 1, some 0, some 0, some 1, some 0], 24883200000),
+    ([none, none, none, none, none, some 1, some 0, some 0, some 1, some 1], 24883200000),
+    ([none, none, none, none, none, some 1, some 0, some 1, some 0, some 0], 87091200000),
+    ([none, none, none, none, none, some 1, some 0, some 1, some 0, some 1], -223948800000),
+    ([none, none, none, none, none, some 1, some 0, some 1, some 1, some 0], 398131200000),
+    ([none, none, none, none, none, some 1, some 0, some 1, some 1, some 1], 190771200000),
+    ([none, none, none, none, none, some 1, some 1, some 0, some 0, some 0], -42768000000),
+    ([none, none, none, none, none, some 1, some 1, some 0, some 0, some 1], 118195200000),
+    ([none, none, none, none, none, some 1, some 1, some 0, some 1, some 0], -348364800000),
+    ([none, none, none, none, none, some 1, some 1, some 0, some 1, some 1], -348364800000),
+    ([none, none, none, none, none, some 1, some 1, some 1, some 0, some 0], 96940800000),
+    ([none, none, none, none, none, some 1, some 1, some 1, some 0, some 1], 315187200000),
+    ([none, none, none, none, none, some 1, some 1, some 1, some 1, some 0], -110419200000),
+    ([none, none, none, none, none, some 1, some 1, some 1, some 1, some 1], -207360000),
+    ([none, none, none, none, some 0, some 0, some 0, some 0, some 0], 5248800000),
+    ([none, none, none, none, some 0, some 0, some 0, some 0, some 1], -111909600000),
+    ([none, none, none, none, some 0, some 0, some 0, some 1, some 0], 220838400000),
+    ([none, none, none, none, some 0, some 0, some 0, some 1, some 1], 220838400000),
+    ([none, none, none, none, some 0, some 0, some 1, some 0, some 0], -90201600000),
+    ([none, none, none, none, some 0, some 0, some 1, some 0, some 1], -391910400000),
+    ([none, none, none, none, some 0, some 0, some 1, some 1, some 0], 211507200000),
+    ([none, none, none, none, some 0, some 0, some 1, some 1, some 1], 10368000000),
+    ([none, none, none, none, some 0, some 1, some 0, some 0, some 0], 14515200000),
+    ([none, none, none, none, some 0, some 1, some 0, some 0, some 1], -245721600000),
+    ([none, none, none, none, some 0, some 1, some 0, some 1, some 0], 379468800000),
+    ([none, none, none, none, some 0, some 1, some 0, some 1, some 1], 379468800000),
+    ([none, none, none, none, some 0, some 1, some 1, some 0, some 0], -90201600000),
+    ([none, none, none, none, some 0, some 1, some 1, some 0, some 1], -870912000000),
+    ([none, none, none, none, some 0, some 1, some 1, some 1, some 0], 586828800000),
+    ([none, none, none, none, some 0, some 1, some 1, some 1, some 1], 66355200000),
+    ([none, none, none, none, some 1, some 0, some 0, some 0, some 0], -13996800000),
+    ([none, none, none, none, some 1, some 0, some 0, some 0, some 1], 15033600000),
+    ([none, none, none, none, some 1, some 0, some 0, some 1, some 0], -24883200000),
+    ([none, none, none, none, some 1, some 0, some 0, some 1, some 1], -24883200000),
+    ([none, none, none, none, some 1, some 0, some 1, some 0, some 0], -74649600000),
+    ([none, none, none, none, some 1, some 0, some 1, some 0, some 1], 261273600000),
+    ([none, none, none, none, some 1, some 0, some 1, some 1, some 0], -410572800000),
+    ([none, none, none, none, some 1, some 0, some 1, some 1, some 1], -186624000000),
+    ([none, none, none, none, some 1, some 1, some 0, some 0, some 0], 28512000000),
+    ([none, none, none, none, some 1, some 1, some 0, some 0, some 1], -191289600000),
+    ([none, none, none, none, some 1, some 1, some 0, some 1, some 0], 360806400000),
+    ([none, none, none, none, some 1, some 1, some 0, some 1, some 1], 360806400000),
+    ([none, none, none, none, some 1, some 1, some 1, some 0, some 0], -80870400000),
+    ([none, none, none, none, some 1, some 1, some 1, some 0, some 1], -408499200000),
+    ([none, none, none, none, some 1, some 1, some 1, some 1, some 0], 175219200000),
+    ([none, none, none, none, some 1, some 1, some 1, some 1, some 1], 1036800000),
+    ([none, none, none, some 0, some 0, some 0, some 0, some 0], -6998400000),
+    ([none, none, none, some 0, some 0, some 0, some 0, some 1], 59875200000),
+    ([none, none, none, some 0, some 0, some 0, some 1, some 0], -103420800000),
+    ([none, none, none, some 0, some 0, some 0, some 1, some 1], -103420800000),
+    ([none, none, none, some 0, some 0, some 1, some 0, some 0], 1555200000),
+    ([none, none, none, some 0, some 0, some 1, some 0, some 1], 177292800000),
+    ([none, none, none, some 0, some 0, some 1, some 1, some 0], -174182400000),
+    ([none, none, none, some 0, some 0, some 1, some 1, some 1], -57024000000),
+    ([none, none, none, some 0, some 1, some 0, some 0, some 1], 139968000000),
+    ([none, none, none, some 0, some 1, some 0, some 1, some 0], -118195200000),
+    ([none, none, none, some 0, some 1, some 0, some 1, some 1], -118195200000),
+    ([none, none, none, some 0, some 1, some 1, some 0, some 0], -21772800000),
+    ([none, none, none, some 0, some 1, some 1, some 0, some 1], 398131200000),
+    ([none, none, none, some 0, some 1, some 1, some 1, some 0], -333849600000),
+    ([none, none, none, some 0, some 1, some 1, some 1, some 1], -53913600000),
+    ([none, none, none, some 1, some 0, some 0, some 0, some 0], 13996800000),
+    ([none, none, none, some 1, some 0, some 0, some 0, some 1], 10886400000),
+    ([none, none, none, some 1, some 0, some 0, some 1, some 0], 20217600000),
+    ([none, none, none, some 1, some 0, some 0, some 1, some 1], 20217600000),
+    ([none, none, none, some 1, some 0, some 1, some 0, some 0], 34214400000),
+    ([none, none, none, some 1, some 0, some 1, some 0, some 1], -99532800000),
+    ([none, none, none, some 1, some 0, some 1, some 1, some 0], 167961600000),
+    ([none, none, none, some 1, some 0, some 1, some 1, some 1], 78796800000),
+    ([none, none, none, some 1, some 1, some 0, some 0, some 0], -9331200000),
+    ([none, none, none, some 1, some 1, some 0, some 0, some 1], 111974400000),
+    ([none, none, none, some 1, some 1, some 0, some 1, some 0], -127526400000),
+    ([none, none, none, some 1, some 1, some 0, some 1, some 1], -127526400000),
+    ([none, none, none, some 1, some 1, some 1, some 0, some 0], 3110400000),
+    ([none, none, none, some 1, some 1, some 1, some 0, some 1], 201139200000),
+    ([none, none, none, some 1, some 1, some 1, some 1, some 0], -111974400000),
+    ([none, none, none, some 1, some 1, some 1, some 1, some 1], -2073600000),
+    ([none, none, some 0, some 0, some 0, some 0, some 0], 4665600000),
+    ([none, none, some 0, some 0, some 0, some 0, some 1], -14126400000),
+    ([none, none, some 0, some 0, some 0, some 1, some 0], 24624000000),
+    ([none, none, some 0, some 0, some 0, some 1, some 1], 24624000000),
+    ([none, none, some 0, some 0, some 1, some 0, some 0], 12830400000),
+    ([none, none, some 0, some 0, some 1, some 0, some 1], -37324800000),
+    ([none, none, some 0, some 0, some 1, some 1, some 0], 62985600000),
+    ([none, none, some 0, some 0, some 1, some 1, some 1], 29548800000),
+    ([none, none, some 0, some 1, some 0, some 0, some 0], 3110400000),
+    ([none, none, some 0, some 1, some 0, some 0, some 1], -34214400000),
+    ([none, none, some 0, some 1, some 0, some 1, some 0], 12441600000),
+    ([none, none, some 0, some 1, some 0, some 1, some 1], 12441600000),
+    ([none, none, some 0, some 1, some 1, some 0, some 0], 31104000000),
+    ([none, none, some 0, some 1, some 1, some 0, some 1], -80870400000),
+    ([none, none, some 0, some 1, some 1, some 1, some 0], 99532800000),
+    ([none, none, some 0, some 1, some 1, some 1, some 1], 24883200000),
+    ([none, none, some 1, some 0, some 0, some 0, some 0], -6220800000),
+    ([none, none, some 1, some 0, some 0, some 0, some 1], -8812800000),
+    ([none, none, some 1, some 0, some 0, some 1, some 0], -9331200000),
+    ([none, none, some 1, some 0, some 0, some 1, some 1], -9331200000),
+    ([none, none, some 1, some 0, some 1, some 0, some 0], -10886400000),
+    ([none, none, some 1, some 0, some 1, some 0, some 1], 12441600000),
+    ([none, none, some 1, some 0, some 1, some 1, some 0], -34214400000),
+    ([none, none, some 1, some 0, some 1, some 1, some 1], -18662400000),
+    ([none, none, some 1, some 1, some 0, some 0, some 0], 4147200000),
+    ([none, none, some 1, some 1, some 0, some 0, some 1], -29548800000),
+    ([none, none, some 1, some 1, some 0, some 1, some 0], 15552000000),
+    ([none, none, some 1, some 1, some 0, some 1, some 1], 15552000000),
+    ([none, none, some 1, some 1, some 1, some 0, some 0], 13996800000),
+    ([none, none, some 1, some 1, some 1, some 0, some 1], -45619200000),
+    ([none, none, some 1, some 1, some 1, some 1, some 0], 36288000000),
+    ([none, none, some 1, some 1, some 1, some 1, some 1], 2073600000),
+    ([none, some 0, some 0, some 0, some 0, some 0], -1555200000),
+    ([none, some 0, some 0, some 0, some 0, some 1], 1036800000),
+    ([none, some 0, some 0, some 0, some 1, some 0], -3369600000),
+    ([none, some 0, some 0, some 0, some 1, some 1], -3369600000),
+    ([none, some 0, some 0, some 1, some 0, some 0], -3888000000),
+    ([none, some 0, some 0, some 1, some 0, some 1], 3110400000),
+    ([none, some 0, some 0, some 1, some 1, some 0], -10886400000),
+    ([none, some 0, some 0, some 1, some 1, some 1], -6220800000),
+    ([none, some 0, some 1, some 0, some 0, some 0], -1814400000),
+    ([none, some 0, some 1, some 0, some 0, some 1], 3110400000),
+    ([none, some 0, some 1, some 1, some 0, some 0], -8553600000),
+    ([none, some 0, some 1, some 1, some 0, some 1], 6220800000),
+    ([none, some 0, some 1, some 1, some 1, some 0], -15552000000),
+    ([none, some 0, some 1, some 1, some 1, some 1], -5702400000),
+    ([none, some 1, some 0, some 0, some 0, some 0], 777600000),
+    ([none, some 1, some 0, some 0, some 0, some 1], 1555200000),
+    ([none, some 1, some 0, some 0, some 1, some 0], 1555200000),
+    ([none, some 1, some 0, some 0, some 1, some 1], 1555200000),
+    ([none, some 1, some 0, some 1, some 0, some 0], 1555200000),
+    ([none, some 1, some 0, some 1, some 1, some 0], 3110400000),
+    ([none, some 1, some 0, some 1, some 1, some 1], 2073600000),
+    ([none, some 1, some 1, some 0, some 0, some 0], -1555200000),
+    ([none, some 1, some 1, some 0, some 0, some 1], 3110400000),
+    ([none, some 1, some 1, some 1, some 0, some 0], -4665600000),
+    ([none, some 1, some 1, some 1, some 0, some 1], 4147200000),
+    ([none, some 1, some 1, some 1, some 1, some 0], -6220800000),
+    ([none, some 1, some 1, some 1, some 1, some 1], -1036800000),
+    ([some 0, some 0, some 0, some 0, some 0], 207360000),
+    ([some 0, some 0, some 0, some 0, some 1], 64800000),
+    ([some 0, some 0, some 0, some 1, some 0], 259200000),
+    ([some 0, some 0, some 0, some 1, some 1], 259200000),
+    ([some 0, some 0, some 1, some 0, some 0], 388800000),
+    ([some 0, some 0, some 1, some 1, some 0], 777600000),
+    ([some 0, some 0, some 1, some 1, some 1], 518400000),
+    ([some 0, some 1, some 0, some 0, some 0], 259200000),
+    ([some 0, some 1, some 1, some 0, some 0], 777600000),
+    ([some 0, some 1, some 1, some 1, some 0], 1036800000),
+    ([some 0, some 1, some 1, some 1, some 1], 518400000),
+    ([some 1, some 0, some 0, some 0, some 0], 64800000),
+    ([some 1, some 1, some 0, some 0, some 0], 259200000),
+    ([some 1, some 1, some 1, some 0, some 0], 518400000),
+    ([some 1, some 1, some 1, some 1, some 0], 518400000),
+    ([some 1, some 1, some 1, some 1, some 1], 207360000)]
+  | _ => []
+
+private def argumentSuffix (n : ℕ) : ParamTable :=
+  if n ≤ 5 then argumentSuffixTable n
+  else tableExpFrom ((argumentTables.take 6).drop 3) argumentTail n
+
+private lemma argumentSuffix_eq :
+    argumentSuffix = tableExpFrom ((argumentTables.take 6).drop 3) argumentTail := by
+  funext n
+  delta argumentSuffix
+  by_cases hn : n ≤ 5
+  · rw [ite_eq_left hn]
+    interval_cases n <;> apply eq_of_beq <;> decide +kernel
+  · exact ite_eq_right hn
+
+/-- Compare the staged rows with Boolean equality to keep the kernel check from
+constructing an equality proof for each row. -/
+private lemma argumentExpTable_beq (n : ℕ) (hn : n ≤ 5) :
+    (argumentExpTable n == tableExpFrom (argumentTables.take 6) argumentTail n) = true := by
+  have hsplit := tableExpFrom_append ((argumentTables.take 6).take 3)
+    ((argumentTables.take 6).drop 3) argumentTail n
+  rw [List.take_append_drop, ← argumentSuffix_eq] at hsplit
+  rw [hsplit]
+  interval_cases n <;> decide +kernel
+
 private lemma argumentExpTable_eq (n : ℕ) (hn : n ≤ 5) :
     argumentExpTable n = tableExp argumentTables n := by
   calc
     argumentExpTable n = tableExpFrom (argumentTables.take 6) argumentTail n := by
-      interval_cases n <;> decide +kernel
+      -- Retain the equality certificate for each individual degree.
+      interval_cases n <;> as_aux_lemma =>
+        exact eq_of_beq (argumentExpTable_beq _ (by decide))
     _ = tableExp argumentTables n := by
       rw [argumentTail_eq, ← tableExp_append, List.take_append_drop]
 
