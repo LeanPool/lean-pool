@@ -1,0 +1,51 @@
+slug: read-l1
+title: Read's invariant-subspace counterexample on complex ℓ¹
+summary: >-
+  Constructs a bounded linear operator on the complex Banach space ℓ¹ with
+  no nontrivial closed invariant subspace. The proof follows Wiesław Śliwa's
+  explicit form of Charles Read's construction. It verifies a concrete
+  growth sequence, constructs the operator first on finitely supported
+  sequences, and proves that every nonzero vector is cyclic. The development
+  includes the bounded extension from coordinate images, polynomial
+  truncation estimates, and the finite-rank projections used in the proof.
+branch: functional analysis
+entry_module: LeanPool.ReadL1
+authors:
+  - Zayn Blore
+source:
+  title: An explicit example concerning the invariant subspace problem for Banach spaces
+  doi: 10.1216/RMJ-2010-40-2-627
+  read_doi: 10.1112/blms/17.4.305
+  url: https://github.com/zblore/fc-read-l1/tree/e8f632e26409119168b0b57c3e20ab0510c1a914
+  github_repo: zblore/fc-read-l1
+  commit: e8f632e26409119168b0b57c3e20ab0510c1a914
+  announcement_url: https://leanprover.zulipchat.com/#narrow/channel/583339-AI-authored-projects/topic/Read.27s.20operator.20on.20.E2.84.93.C2.B9/near/642205346
+  announcement_date: '2026-11-20T12:45:17Z'
+  palomar_url: https://palomar-registry.org/entry.html?id=PALOMAR-2026-11-19-000030
+  statement_url: https://github.com/google-deepmind/formal-conjectures/blob/40a8592cb6f7e96cb9a8275d96bb3e013feeb1dc/FormalConjectures/Wikipedia/InvariantSubspaceProblem.lean
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: Zayn Blore reports using Claude Code to draft the Lean proofs.
+main_declarations:
+  - ReadL1.invariant_subspace_problem_l1
+  - ReadL1.norm_readOp_le
+  - ReadL1.theorem7Hyp_dRead
+main_results:
+  - declaration: ReadL1.invariant_subspace_problem_l1
+    informal: >-
+      A bounded complex-linear operator on ℓ¹ has no closed invariant
+      subspace other than zero and the whole space.
+  - declaration: ReadL1.norm_readOp_le
+    informal: >-
+      Under the construction's growth inequalities, the operator extending
+      Śliwa's rule for the finitely supported vectors has norm at most eight.
+  - declaration: ReadL1.theorem7Hyp_dRead
+    informal: A concrete sequence satisfies all the growth inequalities used in the cyclicity proof.
+tags:
+  - banach-spaces
+  - operator-theory
+  - invariant-subspaces
+msc:
+  - 47A15
+  - 46B45
