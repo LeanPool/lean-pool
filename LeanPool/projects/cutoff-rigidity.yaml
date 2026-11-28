@@ -20,7 +20,9 @@ summary: >-
   Its Friedrichs resolvent and semigroup preserve almost-everywhere nonnegativity.
   On a complete connected manifold the constant one has zero closed energy.
   The semigroup fixes it, preserves functions between zero and one almost
-  everywhere, and preserves the integral against the weighted volume.
+  everywhere, and preserves the integral against the weighted volume. Given
+  continuous representatives of the positive-time L² outputs, the semigroup
+  is represented by Markov kernels that compose and preserve weighted volume.
 branch: probability theory
 entry_module: LeanPool.CutoffRigidity
 authors:
@@ -59,6 +61,11 @@ main_declarations:
 - CutoffRigidity.Riemann.Diff.diffusion_semigroup_one
 - CutoffRigidity.Riemann.Diff.diffusion_semigroup_mapsTo_zero_one
 - CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral
+- CutoffRigidity.L2Kernel.HasContinuousRepresentatives.locally_bounded
+- CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_integral
+- CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_add
+- CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_markov
+- CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_invariant
 main_results:
 - declaration: CutoffRigidity.normalized_convexInteraction_theorem
   informal: >-
@@ -155,6 +162,24 @@ main_results:
   informal: >-
     On the same complete connected manifold, integration against the finite
     weighted volume is invariant under the semigroup on every L² vector.
+- declaration: CutoffRigidity.L2Kernel.HasContinuousRepresentatives.locally_bounded
+  informal: >-
+    For a bounded L² operator with continuous range representatives, on a
+    locally compact Hausdorff space with full-support measure, the supremum
+    on any compact set of an output representative is bounded by a constant
+    times the norm of the input.
+- declaration: CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_integral
+  informal: >-
+    Assuming continuous representatives at positive times, integration against
+    the weighted Friedrichs transition recovers the continuous L² output.
+- declaration: CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_add
+  informal: Under the same regularity input, the transition kernels compose in time.
+- declaration: CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_markov
+  informal: >-
+    On a complete connected manifold, these kernels have probability
+    transitions at every nonnegative time.
+- declaration: CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_invariant
+  informal: Weighted volume is invariant under these kernels on a complete connected manifold.
 tags:
 - curvature
 - spectral-gap

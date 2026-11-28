@@ -3,12 +3,14 @@ Copyright (c) 2026 Djalil Chafaï. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Djalil Chafaï
 -/
+
 module
 
 public import LeanPool.CutoffRigidity.ConvexInteractionTheorem
 public import LeanPool.CutoffRigidity.EuclideanGaussianSplitting
 public import LeanPool.CutoffRigidity.Friedrichs.FormContraction
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionConservativity
+public import LeanPool.CutoffRigidity.Friedrichs.DiffusionTransitionKernel
 public import LeanPool.CutoffRigidity.Friedrichs.DiffusionPositivity
 public import LeanPool.CutoffRigidity.GaussianTransport.RiemannianLowerBound
 public import LeanPool.CutoffRigidity.RiemannianSplitting.Extra.SplitPotential
@@ -37,7 +39,12 @@ Main declarations: `CutoffRigidity.normalized_convexInteraction_theorem`,
   `CutoffRigidity.Riemann.Diff.diffusion_resolvent_one`,
   `CutoffRigidity.Riemann.Diff.diffusion_semigroup_one`,
   `CutoffRigidity.Riemann.Diff.diffusion_semigroup_mapsTo_zero_one`,
-  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral`
+  `CutoffRigidity.Riemann.Diff.diffusion_semigroup_preserves_integral`,
+  `CutoffRigidity.L2Kernel.HasContinuousRepresentatives.locally_bounded`,
+  `CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_integral`,
+  `CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_add`,
+  `CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_markov`,
+  `CutoffRigidity.Riemann.Diff.diffusionTransitionKernel_invariant`
 Tags: curvature, spectral-gap, gaussian-factorization, gibbs-measures
 MSC: 60J60, 47D07, 53C21
 -/
