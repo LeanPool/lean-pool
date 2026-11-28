@@ -9,7 +9,7 @@ module
 public import Init
 
 /-!
-  Lightweight finite-universe monotone fixpoint helper (pure Lean 4, no Mathlib needed).
+  Deduplication and monotone fixed-point iteration on finite lists.
   The iteration is a computable function. Its soundness proof (`fixpoint_sound`) is
   choice-free; its convergence proof (`fixpoint_closed`) depends on `Classical.choice`.
 -/
@@ -17,6 +17,40 @@ public import Init
 @[expose] public section
 
 namespace FormalLinguistics
+
+/-- Deduplicate a finite universe by keeping the last occurrence of each element. -/
+def dedupList [DecidableEq α] : List α → List α
+  | [] => []
+  | a :: t =>
+    let r := dedupList t
+    if a ∈ r then r else a :: r
+
+theorem mem_dedupList [DecidableEq α] {x : α} {l : List α} :
+    x ∈ dedupList l ↔ x ∈ l := by
+  induction l with
+  | nil => simp [dedupList]
+  | cons a t ih =>
+    simp only [dedupList]
+    split
+    · next h =>
+      rw [ih]
+      constructor
+      · intro hx; exact List.mem_cons_of_mem a hx
+      · intro hx
+        rcases List.mem_cons.mp hx with rfl | ht
+        · exact ih.mp h
+        · exact ht
+    · next h =>
+      simp [ih]
+
+theorem nodup_dedupList [DecidableEq α] (l : List α) : (dedupList l).Nodup := by
+  induction l with
+  | nil => exact List.nodup_nil
+  | cons a t ih =>
+    simp only [dedupList]
+    split
+    · exact ih
+    · next h => exact List.nodup_cons.mpr ⟨h, ih⟩
 
 /-- If `l1` has no duplicates and every element of `l1` lies in `l2`, then `l1.length ≤ l2.length`. -/
 theorem nodup_length_le [DecidableEq α] {l1 l2 : List α}

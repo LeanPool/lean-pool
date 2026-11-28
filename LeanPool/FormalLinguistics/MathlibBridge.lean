@@ -13,8 +13,8 @@ public import Mathlib.Computability.ContextFreeGrammar
 # Context-free languages in Mathlib
 
 The list of productions used by the grammar transformations has the same language semantics as
-Mathlib's finite set of productions. The equivalences for basic categorial grammars and Lambek
-grammars can therefore be used with `Language.IsContextFree`.
+Mathlib's finite set of productions. The equivalences for basic categorial grammars and
+product Lambek grammars with a primitive goal can be used with `Language.IsContextFree`.
 -/
 
 @[expose] public section
@@ -145,7 +145,8 @@ theorem bar_hillel_gaifman_shamir_isContextFree {T : Type} (L : Language T) :
   classical
   exact (bar_hillel_gaifman_shamir (· ∈ L)).trans ((contextFree_iff L).and Iff.rfl)
 
-/-- Product Lambek grammars recognize precisely the epsilon-free context-free languages. -/
+/-- Product Lambek grammars with a primitive goal recognize precisely the epsilon-free
+context-free languages. -/
 theorem chomsky_pentus_isContextFree {T : Type} (L : Language T) :
     IsLambekLang (· ∈ L) ↔ L.IsContextFree ∧ [] ∉ L := by
   classical

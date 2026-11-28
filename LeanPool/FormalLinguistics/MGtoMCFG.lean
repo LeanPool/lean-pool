@@ -8,12 +8,16 @@ module
 
 public import LeanPool.FormalLinguistics.MCFG
 public import LeanPool.FormalLinguistics.MG
-public import LeanPool.FormalLinguistics.CNF
+public import LeanPool.FormalLinguistics.Fixpoint
 
 /-!
-  Direction 1 of Michaelis (1998, 2001) & Harkema (2001):
-  Every Minimalist Grammar (Stabler & Keenan 2003) has a weakly equivalent
-  Linear Non-Erasing Multiple Context-Free Grammar (MCFG / LCFRS).
+# Translating minimalist grammars to linear context-free rewriting systems
+
+Michaelis, *Derivational Minimalism Is Mildly Context–Sensitive* (LACL 1998,
+doi:10.1007/3-540-45738-0_11), proves the forward language inclusion.
+The construction here adapts it to the chain-based presentation used in this
+development. The connection to Stabler and Keenan (2003), §2.3, is formalized in
+`MGOriginal.lean`.
 
   Key idea (after Michaelis 1998, Sect. 4, who fixes an enumeration of the licensees
   and indexes the components of each nonterminal by it):
@@ -3188,8 +3192,8 @@ theorem mgToMCFG_complete [DecidableEq Base] [DecidableEq Lic]
   | @move2 s t f f' γ δ' ms1 ms2 h1 hsmcNew ih1 =>
     exact mgToMCFG_move2_complete h1 hsmcNew ih1
 
-/-- **Michaelis Theorem (1998, 2001) — Direction 1 (`MG → MCFG`)**:
-    Every Minimalist Grammar has a weakly equivalent Linear Non-Erasing MCFG (LCFRS). -/
+/-- Michaelis’s forward construction (LACL 1998), adapted to the chain-based presentation.
+The constructed linear non-erasing MCFG generates the same strings as the input grammar. -/
 theorem mgToMCFG_lang [DecidableEq Base] [DecidableEq Lic]
     (G : MG Base Lic T) (w : List T) :
     (mgToMCFG G).Lang w ↔ G.Lang w := by

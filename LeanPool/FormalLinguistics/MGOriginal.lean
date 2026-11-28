@@ -9,55 +9,27 @@ module
 public import LeanPool.FormalLinguistics.MGMCFGEquiv
 
 /-!
-  Minimalist Grammars exactly as stated by Stabler & Keenan (2003), and their
-  equivalence with the invariant-carrying presentation used in `MG.lean`.
+# Stabler–Keenan rules and the invariant-carrying presentation
 
-  `MG.Derives` (in `MG.lean`) differs from the textbook definition in two ways:
+`DerivesSK` is a chain-based presentation of the merge and move rules in Stabler
+and Keenan, *Structural similarity within and among languages* (2003), §2.
+It keeps category names and licensing features in separate types and uses
+the nonempty feature lists specified by `MG.lex_nonempty` for lexical items.
 
-    1. The Shortest Move Constraint is imposed as an invariant on every derived
-       expression (`merge2`, `merge3`, `move2` all carry an `SMC` premise),
-       whereas Stabler & Keenan impose it only as a side condition on `move`:
-       "none of the other chains has `-f` as its first feature".
-    2. `merge3` and `move2` require the remaining feature string of the mover to
-       begin with a licensee, whereas Stabler & Keenan only require it to be
-       non-empty.
+`merge` may introduce movers with any nonempty remaining feature sequence.
+`move` applies when no other chain starts with the requested licensee. The
+head's feature sequence may be empty after removing the selected feature.
+The invariant-carrying `MG.Derives` additionally requires movers to start
+with a licensee and imposes the shortest-move constraint on all derived
+expressions. The two presentations yield the same complete strings.
 
-  This file defines `MG.DerivesSK`, which follows Stabler & Keenan literally.
-  The rules were checked against Stabler & Keenan (2003), p. 347, whose
-  `merge1`–`merge3`, `move1`–`move2` and (SMC) are the constructors below, and
-  against Harkema (2000), "A recognizer for minimalist grammars" (IWPT),
-  §3.2.2, whose six inference rules correspond to them as follows:
+Harkema’s *A Recognizer for Minimalist Grammars* (2000), §3.2.2, splits
+`merge3` into lexical- and derived-selector cases. His other merge and move
+cases correspond to `merge1`, `merge2`, `move1`, and `move2` here.
 
-      Harkema Merge-1          ↦ `merge1`
-      Harkema Merge-2 (δ ≠ ε)  ↦ `merge3` with a lexical selector
-      Harkema Merge-3          ↦ `merge2`
-      Harkema Merge-4 (δ ≠ ε)  ↦ `merge3` with a derived selector
-      Harkema Move-1           ↦ `move1`
-      Harkema Move-2 (δ ≠ ε)   ↦ `move2`
-
-  with Harkema's side condition on Move ("if `γⱼ` is one of the other chains,
-  then the first feature of `γⱼ` is not `-f`") rendered as
-  `∀ c ∈ ms1 ++ ms2, c.headLic ≠ some f`.
-
-  Three minor differences from Stabler & Keenan remain. They index all four
-  kinds of feature by a single set `base`, whereas `MG` keeps category names
-  (`Base`) and licensing features (`Lic`) in separate types, as in Stabler
-  (1997); their grammars are the special case `Base = Lic`. Their lexical items
-  may have an empty feature string, which `MG.lex_nonempty` excludes, and their
-  merge/move rules require the remaining feature string `γ` of the head chain
-  to be non-empty (`γ ∈ F⁺`), whereas `DerivesSK` permits `γ = []`; in both
-  cases, an empty head-chain feature string matches the premise of no rule and
-  is not a complete expression, so the generated language is unaffected.
-
-  We prove:
-
-    • `MG.derives_iff_SK_and_smc`:
-        `Derives G e ↔ DerivesSK G e ∧ SMC e.movers`
-      i.e. `Derives` derives exactly the Stabler–Keenan expressions whose
-      movers satisfy the SMC invariant.
-    • `MG.langSK_iff_lang`: both presentations generate the same string language.
-    • `michaelis_harkema_equivalence_SK`: the main `L(MG) = L(MCFG)` theorem,
-      restated for the literal Stabler–Keenan definition.
+The language-equivalence result following the rule comparison concerns the
+chain-based grammar in this file. See Stabler and Keenan (2003), §2.3,
+for weak generative capacity.
 -/
 
 @[expose] public section
@@ -68,8 +40,7 @@ namespace MG
 
 variable {Base Lic T : Type}
 
-/-- Derivable expressions of a Minimalist Grammar, following Stabler & Keenan (2003)
-    literally: `merge` has no SMC condition and admits any non-empty remaining
+/-- Derivable expressions of a Minimalist Grammar, based on Stabler and Keenan (2003): `merge` has no SMC condition and admits any non-empty remaining
     feature string `δ` on the selected phrase; `move` applies only when no *other*
     mover has `-f` as its first feature (the Shortest Move Constraint). -/
 inductive DerivesSK (G : MG Base Lic T) : MGExpr Base Lic T → Prop where
@@ -200,7 +171,7 @@ theorem smc_insert {ms1 ms2 : List (MGChain Base Lic T)} {c : MGChain Base Lic T
 /-! ### The two presentations coincide -/
 
 /-- Every expression derivable in the invariant-carrying presentation is derivable
-    under the literal Stabler–Keenan rules. -/
+    under the `DerivesSK` rules. -/
 theorem Derives.toSK {G : MG Base Lic T} {e : MGExpr Base Lic T} (h : Derives G e) :
     DerivesSK G e := by
   induction h with
@@ -256,7 +227,7 @@ theorem langSK_iff_lang (G : MG Base Lic T) (w : List T) :
 
 end MG
 
-/-! ### Main theorem for the literal Stabler–Keenan definition -/
+/-! ### Main theorem for the Stabler–Keenan presentation -/
 
 /-- Language class of finite Minimalist Grammars under the literal
     Stabler–Keenan (2003) definition. -/
