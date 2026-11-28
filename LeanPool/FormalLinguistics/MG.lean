@@ -17,8 +17,10 @@ public import Init
     • Structure-building operations: `lex`, `merge1`, `merge2`, `merge3`, `move1`, `move2`.
 
   The SMC is built into the rules as an invariant of every derived expression.
-  Stabler & Keenan impose it on `move` only; `MGOriginal.lean` states their rules
-  literally and proves that both presentations generate the same languages.
+  Stabler and Keenan (2003, §2, Definition 1) impose it on `move` only.
+  The formalized variant uses nonempty lexical feature lists and a distinguished
+  basic category as its goal. `MGOriginal.lean` presents the rules without
+  the extra invariant on `merge` and proves language equivalence for this variant.
 -/
 
 @[expose] public section
@@ -74,6 +76,7 @@ structure MG (Base Lic T : Type) where
   start : Base
   /-- Finite list of lexical strings paired with nonempty feature sequences. -/
   lexicon : List (List T × List (MGFeature Base Lic))
+  /-- The formalized variant requires each lexical entry to have at least one feature. -/
   lex_nonempty : ∀ entry, entry ∈ lexicon → entry.2 ≠ []
 
 namespace MG

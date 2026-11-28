@@ -420,7 +420,8 @@ def nullPred (G : BinCFG N T) (s : List N) (A : N) : Bool :=
 
 /-- Compute the nullability fixed point by bounded iteration over the finite symbol list. -/
 def nullableList (G : BinCFG N T) : List N :=
-  iterN (stepFilter (allNTs G) (nullPred G)) (allNTs G).length []
+  let nonterminals := allNTs G
+  iterN (stepFilter nonterminals (nullPred G)) nonterminals.length []
 
 theorem nullPred_mono (G : BinCFG N T) :
     ∀ s1 s2, (∀ x, x ∈ s1 → x ∈ s2) → ∀ x, nullPred G s1 x = true → nullPred G s2 x = true := by
@@ -497,16 +498,17 @@ theorem nullableList_complete {G : BinCFG N T} {A : N} (h : BinCFG.Yield G A [])
     exact ⟨(X, Y, Z), hb, ⟨rfl, hY⟩, hZ⟩
 
 /-- Remove empty productions, adding unary rules when a binary child can disappear. -/
-def toNoEps (G : BinCFG N T) : NoEpsCFG N T where
-  start := G.start
-  termRules := G.termRules
-  unitRules :=
-    G.unitRules ++
-    (G.binRules.filterMap fun (A, B, C) =>
-      if B ∈ nullableList G then some (A, C) else none) ++
-    (G.binRules.filterMap fun (A, B, C) =>
-      if C ∈ nullableList G then some (A, B) else none)
-  binRules := G.binRules
+def toNoEps (G : BinCFG N T) : NoEpsCFG N T :=
+  let nullable := nullableList G
+  { start := G.start
+    termRules := G.termRules
+    unitRules :=
+      G.unitRules ++
+      (G.binRules.filterMap fun (A, B, C) =>
+        if B ∈ nullable then some (A, C) else none) ++
+      (G.binRules.filterMap fun (A, B, C) =>
+        if C ∈ nullable then some (A, B) else none)
+    binRules := G.binRules }
 
 theorem toNoEps_sound {G : BinCFG N T} {A : N} {w : List T}
     (h : NoEpsCFG.Yield (toNoEps G) A w) : BinCFG.Yield G A w ∧ w ≠ [] := by
@@ -616,7 +618,8 @@ def allNTs (G : NoEpsCFG N T) : List N :=
 
 /-- Enumerate ordered pairs of nonterminals that can participate in a unary path. -/
 def allPairs (G : NoEpsCFG N T) : List (N × N) :=
-  dedupList ((allNTs G).flatMap fun A => (allNTs G).map fun B => (A, B))
+  let nonterminals := allNTs G
+  dedupList (nonterminals.flatMap fun A => nonterminals.map fun B => (A, B))
 
 /-- Test whether a pair is reflexive, a direct unary rule, or reachable by extending a known path.
 -/
@@ -627,7 +630,8 @@ def unitPred (G : NoEpsCFG N T) (s : List (N × N)) (p : N × N) : Bool :=
 
 /-- Compute all unary paths by bounded finite fixed-point iteration. -/
 def unitReach (G : NoEpsCFG N T) : List (N × N) :=
-  iterN (stepFilter (allPairs G) (unitPred G)) (allPairs G).length []
+  let pairs := allPairs G
+  iterN (stepFilter pairs (unitPred G)) pairs.length []
 
 theorem unitPred_mono (G : NoEpsCFG N T) :
     ∀ s1 s2, (∀ x, x ∈ s1 → x ∈ s2) → ∀ x, unitPred G s1 x = true → unitPred G s2 x = true := by
