@@ -1,0 +1,75 @@
+slug: formal-mathfin
+title: Pricing measures, market models and coherent risk
+summary: >-
+  A common market and contract framework for finite-state asset pricing,
+  binomial pricing, normalized call price realization, and coherent risk.
+  The library develops filtered probability and martingale tools, a contract
+  language with measurable payoffs, and pricing and risk results for several
+  model families.
+branch: mathematical finance and probability
+entry_module: LeanPool.MathFin
+authors:
+- Raphael Coelho
+- Robert Martin
+- Yang Ye
+- Alfredo Garcia
+- Aleksey Salkutsan
+source:
+  title: A Formally Verified Library of Mathematical Finance in Lean 4
+  authors:
+  - Raphael Coelho
+  arxiv: '2606.01356'
+  url: https://github.com/formal-applied-math/formal-mathfin/tree/55e29a93e75f10b40f61f45c78a6058b2938045f
+  github_repo: formal-applied-math/formal-mathfin
+  commit: 55e29a93e75f10b40f61f45c78a6058b2938045f
+  announcement_url: https://github.com/formal-applied-math/formal-mathfin/releases/tag/v2.0.0
+  announcement_date: '2026-11-11T23:35:05Z'
+license: Apache-2.0
+status: verified
+provenance: mix
+provenance_evidence: >-
+  The upstream formalization.yaml documents human proof authoring with Claude
+  Code assistance, agent-authored contributions, and manually authored proofs.
+main_declarations:
+- MathFin.Market.noArbitrage_iff_exists_isPricingMeasure_of_finite
+- MathFin.Contracts.Binomial.price_pay_eq_binomialPrice_of_isPricingMeasure
+- MathFin.exists_market_of_isNormalizedCallPrice
+- MathFin.Rates.price_pay_vasicekMarket
+- MathFin.coherentRisk_isLUB
+main_results:
+- declaration: MathFin.Market.noArbitrage_iff_exists_isPricingMeasure_of_finite
+  informal: >-
+    On a finite sample space with a finite reference measure that charges every
+    state, absence of arbitrage for one asset on a finite trading grid is
+    equivalent to the existence of a pricing measure for the sampled
+    deflated prices.
+- declaration: MathFin.Contracts.Binomial.price_pay_eq_binomialPrice_of_isPricingMeasure
+  informal: >-
+    In the binomial model with positive initial spot, a positive time step,
+    the no-arbitrage parameters and maturity on the trading grid, every
+    pricing measure gives the binomial price to a payoff depending only
+    on the terminal asset value.
+- declaration: MathFin.exists_market_of_isNormalizedCallPrice
+  informal: >-
+    Each normalized call price function is realized in a one-period market
+    with unit numeraire, a nonnegative asset of forward one, and a pricing
+    measure that reproduces the call price at each positive strike.
+- declaration: MathFin.Rates.price_pay_vasicekMarket
+  informal: >-
+    In the Vasicek market with measurable Brownian coordinates and a positive
+    mean-reversion coefficient, the value of a terminal unit payment under
+    the reference probability measure agrees with the affine bond formula.
+- declaration: MathFin.coherentRisk_isLUB
+  informal: >-
+    On a finite state space, a coherent risk measure equals the least upper
+    bound of expected loss over the probability vectors that assign
+    nonpositive expectation to every acceptable position.
+tags:
+- mathematical-finance
+- discrete-time-martingales
+- asset-pricing
+- risk-measures
+msc:
+- 91G20
+- 91G70
+- 60G44
