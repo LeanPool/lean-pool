@@ -5,7 +5,7 @@ Authors: Mark Gladden
 -/
 
 /-
-Upstream NOTICE for the matching-rates subproject
+Upstream NOTICE for the matching-rates, Split, and Mask formalizations
 
 C196 v0.3 manuscript and Lean formalization
 Copyright 2026 Mark Gladden

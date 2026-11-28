@@ -1,8 +1,10 @@
 /-
 Copyright (c) 2026 Mark Gladden. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
-Authors: Mark Gladden
+Authors: AbPh project (AI-generated Lean proofs)
 -/
+
+-- Modified for Lean Pool: adapted the imports and reused the shared sphere model.
 
 module
 
