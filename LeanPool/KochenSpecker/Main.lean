@@ -11,9 +11,12 @@ public import LeanPool.KochenSpecker.Cabello18
 /-!
 # The Kochen–Specker theorem
 
-**Theorem** (Kochen and Specker, 1967). In a Hilbert space of dimension `d ≥ 3`, real or
-complex, no map `v` from vectors to `{true, false}` is `true` on exactly one vector of every
-orthonormal basis.
+Kochen and Specker’s original obstruction (Theorem 1 of *The Problem of Hidden Variables in
+Quantum Mechanics*) rules out a homomorphism from a finite partial Boolean algebra
+constructed in real dimension three.
+
+This development proves a vector-valuation formulation over `ℝ` and `ℂ` in every finite
+dimension `d ≥ 3`: no Boolean map on vectors marks exactly one vector of each orthonormal basis.
 
 * Dimension three is `Peres.not_isValuation_three` (Peres's 33 rays, a kernel-checked case split).
 * `IsValuation.exists_subspace` restricts a valuation in dimension `d + 1` to the orthogonal
@@ -47,14 +50,15 @@ theorem noValuation_four : NoValuation.{u} 𝕜 4 := by
   set φ := ((stdOrthonormalBasis 𝕜 E).reindex (finCongr hE)).repr
   exact Cabello.not_isValuation_four _ (hv.map φ)
 
-/-- **The Kochen–Specker theorem** in every inner product space of dimension `d ≥ 3` over `ℝ` or
-`ℂ` (any `RCLike 𝕜`). -/
+/-- The vector-valuation obstruction in every inner product space of dimension `d ≥ 3`
+over `ℝ` or `ℂ` (any `RCLike 𝕜`). -/
 theorem not_isValuation {E : Type*} [NormedAddCommGroup E] [InnerProductSpace 𝕜 E] {d : ℕ}
     (hd : 3 ≤ d) (hE : finrank 𝕜 E = d) (v : E → Bool) : ¬ IsValuation 𝕜 d v :=
   noValuation_three.of_le (by norm_num) hd E hE v
 
-/-- **The Kochen–Specker theorem.** For `d ≥ 3` and `𝕜 = ℝ` or `ℂ`, no map from `𝕜ᵈ` to
-`Bool` is `true` on exactly one vector of every orthonormal basis. -/
+/-- The vector-valuation formulation of the Kochen–Specker theorem in `𝕜ᵈ`. For `d ≥ 3`
+and `𝕜 = ℝ` or `ℂ`, every Boolean map fails to mark exactly one vector in some
+orthonormal basis. -/
 theorem kochen_specker {d : ℕ} (hd : 3 ≤ d) :
     ¬ ∃ v : EuclideanSpace 𝕜 (Fin d) → Bool,
       ∀ b : OrthonormalBasis (Fin d) 𝕜 (EuclideanSpace 𝕜 (Fin d)), ∃! i, v (b i) = true :=
