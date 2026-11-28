@@ -1,0 +1,44 @@
+slug: kochen-specker
+title: The Kochen–Specker theorem in every finite dimension
+summary: Rules out Boolean valuations that mark exactly one vector in each
+  orthonormal basis of a real or complex inner product space of dimension at
+  least three. The proof checks a case-split certificate for Peres's rays,
+  propagates nonexistence by restriction to orthogonal complements, and includes
+  a second proof from Cabello's parity construction beginning in dimension four.
+branch: mathematical physics
+entry_module: LeanPool.KochenSpecker
+authors:
+- Zayn Blore
+source:
+  title: The Problem of Hidden Variables in Quantum Mechanics
+  doi: 10.1512/iumj.1968.17.17004
+  url: https://github.com/zblore/kochen-specker-lean/tree/a9f552a11188809b15ba14ef2db5a2a8ecd3c83b
+  github_repo: zblore/kochen-specker-lean
+  commit: a9f552a11188809b15ba14ef2db5a2a8ecd3c83b
+license: Apache-2.0
+status: verified
+provenance: AI
+main_declarations:
+- KochenSpecker.kochen_specker
+- KochenSpecker.not_isValuation
+- KochenSpecker.kochen_specker_of_four_le
+main_results:
+- declaration: KochenSpecker.kochen_specker
+  informal: In Euclidean dimension d ≥ 3 over an RCLike field, no Boolean map
+    marks exactly one vector in each orthonormal basis.
+  source_ref: Kochen and Specker, Theorem 1, for the real dimension-three obstruction; Peres, DOI 10.1088/0305-4470/24/4/003, for the 33-ray configuration.
+- declaration: KochenSpecker.not_isValuation
+  informal: The same nonexistence holds in any inner product space of finite
+    dimension d ≥ 3 over an RCLike field.
+  source_ref: Imported formalization, with the dimension-three certificate propagated by orthogonal-complement restriction.
+- declaration: KochenSpecker.kochen_specker_of_four_le
+  informal: Cabello's four-dimensional configuration yields the Euclidean
+    nonexistence result for every d ≥ 4 by a parity argument and dimension propagation.
+  source_ref: Cabello, Estebaranz, and García-Alcaine, DOI 10.1016/0375-9601(96)00134-X, for the four-dimensional configuration.
+tags:
+- contextuality
+- inner-product-spaces
+- finite-certificates
+msc:
+- 81P13
+- 46C05
