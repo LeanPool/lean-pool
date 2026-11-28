@@ -321,6 +321,45 @@ lemma eight_sq_le_seqA_succ (h : GrowthHyp d) {k : ℕ} (hk : 1 ≤ k) :
   have : seqB d k ≤ k * seqB d k := Nat.le_mul_of_pos_left _ hk
   nlinarith
 
+private theorem nrm_xPow_succ_I_last (h : GrowthHyp d) {n r i : ℕ}
+    (hr1 : 1 ≤ r) (hrn : r < n) (hi : i = r * seqA d n + seqV d (n - r - 1)) :
+    nrm (xPow d (i + 1)) ≤ alpha ^ (-(Real.sqrt (seqA d (n - r)) / 4)) := by
+  have hP := h.toPartitionHyp
+  have ha := h.one_le_a n
+  have hab := h.a_small n (by omega)
+  have hvs := h.v_small n (n - r - 1) (by omega)
+  have e3 : 8 * n * seqA d n = 8 * (n * seqA d n) := by ring
+  have e2 : (n - 1) * seqA d n + seqA d n = n * seqA d n := by
+    rw [← Nat.succ_mul, Nat.succ_eq_add_one, Nat.sub_add_cancel (by omega)]
+  have ha'n : seqA d (n - r) ≤ seqA d n := seqA_mono h (by omega) (by omega)
+  rcases Nat.lt_or_ge r (n - 1) with hr | hr
+  · -- `i + 1 ∈ Jₙ,ᵣ₊₁`.
+    have hJ : (⟨n, r + 1, .J⟩ : Block).Mem d (i + 1) := by
+      refine ⟨by dsimp; omega, by dsimp; omega, ?_, ?_⟩ <;> dsimp only
+      · simp only [Nat.add_sub_cancel, show n - (r + 1) = n - r - 1 by omega]; omega
+      · rw [Nat.add_mul, one_mul]; omega
+    refine (nrm_xPow_J_le hP hJ ?_).trans (rpow_neg_sqrt_anti (by exact_mod_cast ha'n))
+    have : (8 * (seqV d (n - r - 1) + 1) : ℝ) < seqA d n := by exact_mod_cast hvs
+    rw [hi]; push_cast; nlinarith
+  · -- `r = n - 1`: `i + 1 = (n - 1)aₙ + 1 ∈ Lₙ,₁`.
+    have hrn1 : r = n - 1 := by omega
+    have hv0 : seqV d (n - r - 1) = 0 := by rw [show n - r - 1 = 0 by omega, seqV_zero]
+    have hL : (⟨n, 1, .L⟩ : Block).Mem d (i + 1) := by
+      refine ⟨le_rfl, by dsimp; omega, ?_, ?_⟩ <;> dsimp only
+      · simp only [Nat.sub_self, zero_mul, add_zero]; rw [hi, hv0, hrn1]; omega
+      · rw [one_mul, hi, hv0, hrn1]; omega
+    refine (nrm_xPow_L_le h hL ?_).trans (rpow_neg_sqrt_anti ?_)
+    · have : (8 * (n * seqA d n) : ℝ) < seqB d n := by exact_mod_cast (e3 ▸ hab)
+      have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (show 1 ≤ n by omega)
+      have ha1 : (1 : ℝ) ≤ seqA d n := by exact_mod_cast ha
+      rw [hi, hv0, hrn1]; push_cast
+      rw [Nat.cast_sub (by omega)]; push_cast
+      nlinarith
+    · have : seqA d (n - r) ≤ seqB d n := by
+        have : seqA d n ≤ n * seqA d n := Nat.le_mul_of_pos_left _ (by omega)
+        omega
+      exact_mod_cast this
+
 /-- **Case 2.2° (Remark 3):** at the last index of `Iₙ,ᵣ`, `‖T fᵢ‖ ≤ 1/aₙ₋ᵣ`. Here
 `T fᵢ = aₙ₋ᵣ (xⁱ⁺¹ - xʲ)` with `j = i + 1 - aₙ`; both powers are tiny, and `aₙ₋ᵣ₊₁ ≥ 8aₙ₋ᵣ²`. -/
 lemma nrm_shiftImage_I_last (h : GrowthHyp d) {n r i : ℕ}
@@ -341,35 +380,7 @@ lemma nrm_shiftImage_I_last (h : GrowthHyp d) {n r i : ℕ}
   have ha'1 : 1 ≤ n - r := by omega
   have ha'n : a' ≤ seqA d n := seqA_mono h ha'1 (by omega)
   set s' := alpha ^ (-(Real.sqrt a' / 4)) with hs'
-  -- (A) `‖xⁱ⁺¹‖ ≤ s'`.
-  have hA : nrm (xPow d (i + 1)) ≤ s' := by
-    rcases Nat.lt_or_ge r (n - 1) with hr | hr
-    · -- `i + 1 ∈ Jₙ,ᵣ₊₁`.
-      have hJ : (⟨n, r + 1, .J⟩ : Block).Mem d (i + 1) := by
-        refine ⟨by dsimp; omega, by dsimp; omega, ?_, ?_⟩ <;> dsimp only
-        · simp only [Nat.add_sub_cancel, show n - (r + 1) = n - r - 1 by omega]; omega
-        · rw [Nat.add_mul, one_mul]; omega
-      refine (nrm_xPow_J_le hP hJ ?_).trans (rpow_neg_sqrt_anti (by exact_mod_cast ha'n))
-      have : (8 * (seqV d (n - r - 1) + 1) : ℝ) < seqA d n := by exact_mod_cast hvs
-      rw [hi]; push_cast; nlinarith
-    · -- `r = n - 1`: `i + 1 = (n - 1)aₙ + 1 ∈ Lₙ,₁`.
-      have hrn1 : r = n - 1 := by omega
-      have hv0 : seqV d (n - r - 1) = 0 := by rw [show n - r - 1 = 0 by omega, seqV_zero]
-      have hL : (⟨n, 1, .L⟩ : Block).Mem d (i + 1) := by
-        refine ⟨le_rfl, by dsimp; omega, ?_, ?_⟩ <;> dsimp only
-        · simp only [Nat.sub_self, zero_mul, add_zero]; rw [hi, hv0, hrn1]; omega
-        · rw [one_mul, hi, hv0, hrn1]; omega
-      refine (nrm_xPow_L_le h hL ?_).trans (rpow_neg_sqrt_anti ?_)
-      · have : (8 * (n * seqA d n) : ℝ) < seqB d n := by exact_mod_cast (e3 ▸ hab)
-        have hn1 : (1 : ℝ) ≤ n := by exact_mod_cast (show 1 ≤ n by omega)
-        have ha1 : (1 : ℝ) ≤ seqA d n := by exact_mod_cast ha
-        rw [hi, hv0, hrn1]; push_cast
-        rw [Nat.cast_sub (by omega)]; push_cast
-        nlinarith
-      · have : a' ≤ seqB d n := by
-          have : seqA d n ≤ n * seqA d n := Nat.le_mul_of_pos_left _ (by omega)
-          omega
-        exact_mod_cast this
+  have hA : nrm (xPow d (i + 1)) ≤ s' := nrm_xPow_succ_I_last h hr1 hrn hi
   -- (B) `‖xʲ‖ ≤ 2/aₙ₋ᵣ₊₁ + s'`, `j = i + 1 - aₙ = (r - 1)aₙ + vₙ₋ᵣ₋₁ + 1`.
   set j := i + 1 - seqA d n with hj
   have hjv : j = (r - 1) * seqA d n + seqV d (n - r - 1) + 1 := by omega
