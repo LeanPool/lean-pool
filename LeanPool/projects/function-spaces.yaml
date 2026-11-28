@@ -1,0 +1,54 @@
+slug: function-spaces
+title: Characterizations of Besov, Triebel–Lizorkin and Sobolev spaces
+summary: >-
+  Formalizes characterizations of function spaces by finite differences, local
+  means, atoms, wavelet coefficients and best approximation. The development
+  includes approximation schemes, real interpolation, and extensions and traces
+  on domains, as well as concrete results on Euclidean space and the torus.
+branch: functional analysis
+entry_module: LeanPool.FunctionSpaces
+authors:
+- Mario Ullrich
+source:
+  url: https://github.com/mario-ullrich/Lean-FunctionSpaces/blob/d8b2b349567adb7ad049d517dec50bff4165e606/README.md
+  github_repo: mario-ullrich/Lean-FunctionSpaces
+  commit: d8b2b349567adb7ad049d517dec50bff4165e606
+  completion_url: https://github.com/mario-ullrich/Lean-FunctionSpaces/commit/d8b2b349567adb7ad049d517dec50bff4165e606
+  completion_date: '2026-11-20'
+  completion_time: '2026-11-20T09:11:57Z'
+license: Apache-2.0
+status: verified
+provenance: AI
+provenance_evidence: >-
+  The upstream README credits Claude Code for the Lean formalization and Mario
+  Ullrich for the mathematical design and choice of statements.
+main_declarations:
+- Rd.LocalMeansBump.besov_iff_atomic
+- Rd.memTriebelLizorkin_iff_atomic
+- Rd.memSobolev_bessel_iff_memTriebelLizorkinDistr
+- Daubechies.besov_iff_coeff_d4
+- Haar.memEMethod_stepCouple_iff_modulus
+- ApproximationScheme.memKMethod_reiteration
+main_results:
+- declaration: Rd.LocalMeansBump.besov_iff_atomic
+  informal: Given a local-means bump, for finite p at least one, q at least one, and smoothness between zero and the integer atom order, finite Besov difference norm is equivalent to a regular-atom expansion with bounded overlap and finite coefficient norm.
+- declaration: Rd.memTriebelLizorkin_iff_atomic
+  informal: For 1 < p < infinity, q > 1, and positive smoothness below the atom order, Triebel–Lizorkin membership is equivalent to an expansion by smooth dyadic atoms with finite coefficient norm.
+- declaration: Rd.memSobolev_bessel_iff_memTriebelLizorkinDistr
+  informal: In positive dimension and for 1 < p < infinity, Mathlib's Bessel potential space agrees with the distributional Triebel–Lizorkin space with second index two for every real smoothness.
+- declaration: Daubechies.besov_iff_coeff_d4
+  informal: For complex-valued Lp functions on the real line with 1 ≤ p < infinity, q ≥ 1 and 0 < s < 2 − log₂(1 + √3), the Besov difference norm is finite exactly when the combined norm of the D4 scaling and wavelet coefficients is finite.
+- declaration: Haar.memEMethod_stepCouple_iff_modulus
+  informal: For 0 < p ≤ 1, positive q and 0 < s < 1/p, approximation by dyadic steps in Lp on the unit interval characterizes the space given by the first-order modulus of smoothness.
+- declaration: ApproximationScheme.memKMethod_reiteration
+  informal: The continuous real K-method satisfies the reiteration formula for a bounded linear map at two distinct interior interpolation parameters, an interior outer parameter, and exponents at least one.
+tags:
+- approximation-theory
+- functional-analysis
+- harmonic-analysis
+- real-interpolation
+- wavelets
+msc:
+- '46E35'
+- '46B70'
+- '42C40'
