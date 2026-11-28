@@ -2,7 +2,7 @@ slug: formal-mathfin
 title: Pricing measures, market models and coherent risk
 summary: >-
   A common market and contract framework for finite-state asset pricing,
-  binomial pricing, normalized call price realization, and coherent risk.
+  binomial pricing, fixed-maturity call price realization, and coherent risk.
   The library develops filtered probability and martingale tools, a contract
   language with measurable payoffs, and pricing and risk results for several
   model families.
@@ -39,26 +39,29 @@ main_declarations:
 main_results:
 - declaration: MathFin.Market.noArbitrage_iff_exists_isPricingMeasure_of_finite
   informal: >-
-    On a finite sample space with a finite reference measure that charges every
-    state, absence of arbitrage for one asset on a finite trading grid is
-    equivalent to the existence of a pricing measure for the sampled
-    deflated prices.
+    On a nonempty finite sample space with measurable singletons and a finite
+    reference measure that charges every state, absence of arbitrage for one
+    asset on a finite trading grid is equivalent to the existence of a pricing
+    measure for the sampled deflated prices.
 - declaration: MathFin.Contracts.Binomial.price_pay_eq_binomialPrice_of_isPricingMeasure
   informal: >-
-    In the binomial model with positive initial spot, a positive time step,
-    the no-arbitrage parameters and maturity on the trading grid, every
-    pricing measure gives the binomial price to a payoff depending only
-    on the terminal asset value.
+    In the binomial model with positive initial spot and time step,
+    no-arbitrage parameters and maturity on the trading grid, every pricing
+    measure gives the binomial price to a single payment at maturity whose
+    contract-language payoff depends only on terminal spot on every scenario.
 - declaration: MathFin.exists_market_of_isNormalizedCallPrice
   informal: >-
-    Each normalized call price function is realized in a one-period market
-    with unit numeraire, a nonnegative asset of forward one, and a pricing
-    measure that reproduces the call price at each positive strike.
+    Each normalized call price function is realized at maturity one in a
+    market with unit numeraire and a nonnegative terminal asset whose delivery
+    price is one. Its pricing measure reproduces the call price at every
+    positive strike.
 - declaration: MathFin.Rates.price_pay_vasicekMarket
   informal: >-
     In the Vasicek market with measurable Brownian coordinates and a positive
-    mean-reversion coefficient, the value of a terminal unit payment under
-    the reference probability measure agrees with the affine bond formula.
+    mean-reversion coefficient, the stochastic bank-account numeraire is
+    built from the Wiener-integral representation of the integrated rate.
+    The reference probability measure gives the affine bond price for a unit
+    payment at maturity.
 - declaration: MathFin.coherentRisk_isLUB
   informal: >-
     On a finite state space, a coherent risk measure equals the least upper

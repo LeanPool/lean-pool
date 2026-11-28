@@ -22,10 +22,9 @@ convergence under uniform integrability
 (`Submartingale.tendsto_eLpNorm_one_limitProcess`). It does **not** contain
 the classical L² statement: an L²-bounded martingale converges in L²-norm.
 
-This file proves it, and the route is the point: the uniform-integrability
-input is manufactured from this library's own **Doob L² maximal inequality**
-(`MeasureTheory.Martingale.eLpNorm_norm_runMax_le`,
-`Probability/Discrete/DoobLpMaximalInequality.lean`):
+This file obtains uniform integrability from a square-integrable envelope.
+Its finite-time bound is Tau Ceti's Doob inequality
+`MeasureTheory.Martingale.eLpNorm_partialSups_norm_le`, used at `p = 2`.
 
 1. the running maxima `ω ↦ max_{k ≤ n} ‖f k ω‖` are uniformly L²-bounded by
    `2R` (Doob at `p = 2`);
@@ -34,7 +33,7 @@ input is manufactured from this library's own **Doob L² maximal inequality**
    case of `MeasureTheory.LpDominator`, shared with
    `LpContinuousMartingaleConvergence`;
 3. a single L² dominator makes the family uniformly integrable in L²
-   (Degenne's `uniformIntegrable_of_dominated_singleton`);
+   (`MemLp.uniformIntegrable_of_eNorm_le` in Tau Ceti);
 4. Vitali (`tendsto_Lp_finite_of_tendsto_ae`) upgrades the a.e. convergence
    to L²-norm convergence.
 
@@ -64,10 +63,9 @@ open scoped NNReal ENNReal Topology
 /-- **L² martingale convergence** (Saporito, Theorem 2.5.1, L² form). A
 martingale bounded in L² converges to `ℱ.limitProcess f μ` almost everywhere
 **and** in L²-norm. The a.e. half is Mathlib's upcrossing-based convergence;
-the L² half is new: this library's Doob L² maximal inequality supplies an L²
-envelope dominating every `f n` (`MeasureTheory.LpDominator`), that single
-dominator makes the family uniformly integrable in L², and Vitali's convergence
-theorem closes the argument. -/
+an L² envelope from Tau Ceti's Doob bound dominates every `f n`
+(`MeasureTheory.LpDominator`). The envelope gives uniform integrability in L²,
+and Vitali's convergence theorem gives L² convergence. -/
 theorem martingale_ae_tendsto_and_eLpNorm_two_tendsto
     {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω} [IsFiniteMeasure μ]
     {ℱ : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {R : ℝ≥0}

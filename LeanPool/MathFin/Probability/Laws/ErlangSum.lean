@@ -18,8 +18,7 @@ Mathlib has the Gamma and exponential distributions (`gammaMeasure`,
 `expMeasure = gammaMeasure 1`) but **no convolution identity** for them: there
 is no lemma computing `gammaMeasure a r ∗ expMeasure r`, and consequently no
 proof that the sum of `n` iid `Exp(r)` waiting times is `Erlang(n, r)`
-(Saporito, Theorem 3.3.8 — the distribution of the `n`-th arrival time of a
-Poisson process).
+(Saporito, Appendix B.2).
 
 This file proves both, from the densities up.
 
@@ -42,7 +41,7 @@ holds for every real `a > 0` by completing the constant.
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 3.3.8
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Appendix B.2, p. 178
 
 ## Tags
 
@@ -261,7 +260,7 @@ theorem map_sum_iidExp [IsProbabilityMeasure μ] {r : ℝ} (hr : 0 < r)
       push_cast
       ring
 
-/-- **Theorem 3.3.8 (sum of `n` iid exponentials is Erlang).** The `n`-th
+/-- **Erlang law for a sum of iid exponentials** (Saporito, Appendix B.2). The `n`-th
 arrival time of a `Poisson(r)` process — the sum of `n ≥ 1` iid `Exp(r)`
 interarrival times — has the `Erlang(n, r) = gammaMeasure n r` law. Proved
 from the densities up via the Gamma convolution identity; no part of the

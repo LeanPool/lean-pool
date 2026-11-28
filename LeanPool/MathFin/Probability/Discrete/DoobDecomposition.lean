@@ -20,14 +20,16 @@ the predictable part, `predictablePart f ℱ μ 0 = 0` — and two "essential
 uniqueness" lemmas (`martingalePart_add_ae_eq`, `predictablePart_add_ae_eq`).
 It never packages them as the textbook theorem.
 
-This file assembles the pieces into the **Doob decomposition theorem**
-(Saporito, Theorem 2.2.12): every adapted integrable process `f : ℕ → Ω → E`
-on a filtered measure space decomposes as
+This file assembles the **Doob decomposition for adapted integrable processes**.
+For `f : ℕ → Ω → E` on a filtered measure space, the decomposition is
 
   `f = M + A`,  `M` a martingale,  `A` predictable with `A 0 = 0`,
 
 and the decomposition is unique in the a.e. sense: any other such pair
 `(M', A')` satisfies `M' n =ᵐ[μ] M n` and `A' n =ᵐ[μ] A n` at every time `n`.
+
+Saporito's Theorem 2.2.12 states the submartingale case, where the predictable
+compensator is also nondecreasing.
 
 Predictability is encoded as in Mathlib's uniqueness lemmas: the shifted
 process `n ↦ A (n + 1)` is `ℱ`-strongly-adapted, i.e. `A (n + 1)` is
@@ -46,7 +48,7 @@ compensator is a.e. nonincreasing and constant on the continuation region.
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 2.2.12
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 2.2.12 (submartingale case)
 
 ## Tags
 
@@ -78,7 +80,7 @@ theorem doob_decomposition_unique [SigmaFiniteFiltration μ ℱ]
   exact ⟨(martingalePart_add_ae_eq hM hA hA0 hA_int n).symm,
          (predictablePart_add_ae_eq hM hA hA0 hA_int n).symm⟩
 
-/-- **Doob decomposition theorem** (Saporito, Theorem 2.2.12). Every adapted
+/-- **Doob decomposition for adapted processes.** Every adapted
 integrable process `f : ℕ → Ω → E` decomposes as `f = M + A` where `M` is a
 martingale and `A` is predictable with `A 0 = 0`; the decomposition is unique
 up to a.e. equality at every time. The witnesses are Mathlib's

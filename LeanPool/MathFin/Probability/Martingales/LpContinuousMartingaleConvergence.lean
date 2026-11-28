@@ -48,22 +48,22 @@ surely to an integrable `M_∞`; for `p > 1` it also converges in `L^p`.
   `lp_continuous_martingale_tendstoInMeasure`. The increment martingale
   `Y_n(s) := M(n + s) − M(n)` is built on `shiftedFiltration 𝓕 n` via
   `Martingale.sub` of a shifted process and a constant; right-continuity
-  transfers from `M`. Degenne's `maximal_ineq_norm` bounds the running max,
+  transfers from `M`. The Tau Ceti bound via `maximal_ineq_norm` controls the running max,
   the eLpNorm-triangle + Hölder gives `‖M_(n+1) − M_n‖_1 → 0`, and
-  `rightCont_iSup_ofReal_ne_top` gives `BddAbove` a.s. for the running max.
+  Tau Ceti's `Martingale.ae_iSup_eNorm_lt_top` gives an a.s. bound for the running max.
   A `Nat.floor` set-inclusion argument then closes the conclusion modulo a
   μ-null set. The combined natural-a.s. + real-in-measure form is
   `lp_continuous_martingale_full`.
 
   Step 5 (`p > 1`, natural-time `L^p` convergence): proved as
-  `lp_continuous_martingale_tendsto_eLpNorm_at_naturals`. Doob's `L^p`
-  maximal inequality (`MeasureTheory.maximal_ineq_Lp`) bounds the running max;
+  `lp_continuous_martingale_tendsto_eLpNorm_at_naturals`. Tau Ceti's Doob
+  inequality `Martingale.eLpNorm_partialSups_norm_le` bounds the running max;
   monotone convergence (`lintegral_iSup'`) lifts it to the infinite sup
   `S ω := ⨆_k ‖N_k ω‖ₑ`, yielding `MemLp ((S ω).toReal) p` — the envelope
   dominator `MeasureTheory.LpDominator.dominator`, shared with
-  `L2MartingaleConvergence`. Degenne's
-  `uniformIntegrable_of_dominated_singleton`
-  (`BrownianMotion.StochasticIntegral.UniformIntegrable`) then gives
+  `L2MartingaleConvergence`. The domination lemma
+  `MemLp.uniformIntegrable_of_eNorm_le` from
+  `TauCeti.MeasureTheory.Function.UniformIntegrable` then gives
   `UniformIntegrable (discreteSample M) (ofReal p) μ`, and Mathlib's Vitali
   (`tendsto_Lp_finite_of_tendsto_ae`) closes it.
 
@@ -488,8 +488,7 @@ private lemma sup_increment_measure_tendsto_zero
   rw [← mul_assoc, inv_mul_cancel₀ hε.ne', one_mul]
 
 /-- The norm of the increment trajectory on `[0, 1]` is `BddAbove` a.s.,
-using `Martingale.submartingale_norm` and Degenne's continuous-time Doob L^p
-maximal lemma `Submartingale.rightCont_iSup_ofReal_ne_top`. -/
+by Tau Ceti's continuous-time bound `Martingale.ae_iSup_eNorm_lt_top`. -/
 private lemma incrementProc_bddAbove_ae
     {μ : Measure Ω} [IsFiniteMeasure μ] {𝓕 : Filtration ℝ mΩ}
     {M : ℝ → Ω → ℝ} (hM : Martingale M 𝓕 μ)

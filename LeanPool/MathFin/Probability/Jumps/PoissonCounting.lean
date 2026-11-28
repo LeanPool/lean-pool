@@ -13,11 +13,10 @@ public import Mathlib.Probability.Distributions.Poisson.Basic
 /-!
 # The Poisson marginal law from the arrival-time construction
 
-Saporito, Theorem 3.3.5: the counting process built from iid `Exp(r)`
-interarrival times has `Poisson(r·t)` one-time marginals. This is the
-construction route the textbook itself uses to *build* the Poisson process —
-and none of it is in Mathlib: there is no counting process, no link between
-arrival times and counts, and no Gamma-CDF difference identity.
+Saporito's Theorem 3.3.5 states the Poisson marginal law and derives
+it from infinitesimal transition probabilities. Here the counting process is
+constructed from iid `Exp(r)` interarrival times and its marginal law follows
+from the arrival-time identities.
 
 This file derives the marginal from the construction:
 
@@ -38,11 +37,11 @@ This file derives the marginal from the construction:
 
 * `PoissonCounting.map_count_eq_poissonMeasure` — for iid `Exp(r)`
   interarrivals and the counting process they generate,
-  `N t ∼ Poisson(r·t)` (Theorem 3.3.5, fully derived).
+  `N t ∼ Poisson(r·t)` by the arrival-time derivation.
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 3.3.5
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 3.3.5 (the marginal law)
 
 ## Tags
 
@@ -193,10 +192,10 @@ lemma integral_gammaPDFReal_one (ht : 0 ≤ t) :
 
 variable {Ω : Type*} {mΩ : MeasurableSpace Ω} {μ : Measure Ω}
 
-/-- **Theorem 3.3.5 (Poisson marginal law), fully derived from the arrival
-construction.** Let `ξ i` be iid `Exp(rate)` interarrival times and `N` the
-counting process they generate (`N t = k` iff the `k`-th arrival has happened
-by `t` but the `(k+1)`-st has not). Then `N t ∼ Poisson(rate · t)`.
+/-- **Poisson marginal law from interarrival times.** Let `ξ i` be iid `Exp(rate)`
+interarrival times and `N` the counting process they generate. Then `N t = k`
+exactly when the `k`-th arrival has happened by `t` and the `(k+1)`-st has not,
+and `N t ∼ Poisson(rate · t)`.
 
 The proof composes the Erlang law of the arrival times (the Gamma convolution
 identity) with the Gamma-CDF difference identity. -/

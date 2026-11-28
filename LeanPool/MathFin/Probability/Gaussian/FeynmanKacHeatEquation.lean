@@ -16,13 +16,12 @@ public import Mathlib.Probability.BrownianMotion.Basic
 /-!
 # Feynman–Kac for the heat equation
 
-For a process `B : ℝ → Ω → ℝ` with `B 0 = 0` a.s. and Gaussian increments
-`B t − B s ∼ N(0, t − s)` and a bounded continuous `g : ℝ → ℝ`, the function
-
-  `u(t, x) := E[g(x + B_t)]`
-
-satisfies the heat equation `∂_t u − (1/2) ∂²_x u = 0` on `t > 0`, with
-boundary condition `u(0, x) = g(x)` (Saporito Theorem 9.2.1).
+This file constructs the heat flow as a Gaussian convolution. It identifies
+the convolution with `E[g(x + B_t)]` when the law of `B_t` is centered Gaussian
+with variance `t`, and verifies the heat equation for the payoff growth bounds
+in the derivative lemmas. At time zero the expectation is `g(x)` when
+`B 0 = 0` almost surely. Saporito's Theorem 9.2.1 starts from a unique
+bounded classical solution and gives its expectation representation.
 
 This proof does **not** use Itô calculus. The mechanism is:
 
@@ -56,7 +55,8 @@ This proof does **not** use Itô calculus. The mechanism is:
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 9.2.1
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 9.2.1,
+  representation of a bounded classical solution
 
 ## Tags
 
@@ -274,9 +274,8 @@ identity on the derivative values from `hasDerivAt_heatKernel_t` and
 `hasDerivAt_heatKernel_y_y`.
 
 The load-bearing kernel-side input to the **heat equation for `u`** `∂_t u = ½ ∂_xx u`:
-consumed by `feynmanU_heat_equation` below and, through it, by the Black–Scholes-PDE
-keystone `sc-bs-pde-feynman-kac`. The only remaining benchmark gap on `sc-thm-9.2.1`
-is the fully-general continuous-`g` PDE + uniqueness, not this kernel identity. -/
+used by `feynmanU_heat_equation` and the Black–Scholes PDE proof in
+`Models/BlackScholes/PDEFromFeynmanKac.lean`. -/
 private lemma heatKernel_t_eq_half_y_y {t : ℝ} (ht : 0 < t) (y : ℝ) :
     heatKernel t y * (y ^ 2 - t) / (2 * t ^ 2)
       = (1 / 2) * (heatKernel t y * (y ^ 2 - t) / t ^ 2) := by

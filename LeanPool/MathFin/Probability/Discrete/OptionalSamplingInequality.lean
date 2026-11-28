@@ -21,13 +21,12 @@ Mathlib's `Martingale.stoppedValue_ae_eq_condExp_of_le` is the optional
 sampling **equality** for martingales: for stopping times `σ ≤ τ` with `τ`
 bounded, `f_σ =ᵐ μ[f_τ | ℱ_σ]`. For submartingales it provides only the
 **expectation-form** inequality (`Submartingale.expected_stoppedValue_mono`).
-The conditional-expectation-form inequality — Saporito, Theorem 2.3.6 —
+The conditional-expectation inequality for submartingales is
 
   `stoppedValue f σ ≤ᵐ[μ] μ[stoppedValue f τ | ℱ_σ]`
 
-is absent. This file derives it, and the derivation *is* the textbook
-conceptual picture: **optional sampling inequality = optional sampling
-equality + monotone compensator**, through the Doob decomposition
+The proof uses the Doob decomposition to combine the optional sampling
+equality with the monotonicity of the compensator
 `f = M + A` (Mathlib's `martingalePart` / `predictablePart`, used directly; their
 existence-and-uniqueness statement is `Probability/Discrete/DoobDecomposition.lean`):
 
@@ -39,9 +38,7 @@ existence-and-uniqueness statement is `Probability/Discrete/DoobDecomposition.le
   property), so `A_σ ≤ A_τ` pathwise and `condExp_mono` gives the
   inequality on the compensator side.
 
-Adding the two statements yields the theorem. The submartingale inequality is
-thus exhibited as the shadow of the martingale equality under the upward
-drift `A` — nothing else.
+Adding the two statements yields the conditional inequality.
 
 ## Main results
 
@@ -52,18 +49,16 @@ drift `A` — nothing else.
 `snellEnvelope` (`Probability/Discrete/SnellEnvelope.lean`) at `X = univ`:
 `𝔼[Z_τ | 𝓕_σ] ≤ U_σ` for stopping times `σ ≤ τ ≤ N`.
 
-The Degenne `BrownianMotion` package now **proves** a `⊓`-form sibling,
-`Submartingale.stoppedValue_min_ae_le_condExp_nat`
-(`BrownianMotion/StochasticIntegral/OptionalSampling.lean`), and by the same
-Doob-decomposition route — strictly more generally than this file: `τ ⊓ σ` instead of a
-`σ ≤ τ` hypothesis, `∀ᵐ ω, τ ω ≤ k` instead of `∀ ω`, and a general ordered codomain
-instead of `ℝ`. So this derivation is no longer an upstream-donation candidate, and
-delegating to upstream is an open upgrade (its general-index version is still `sorry`,
-the `ℕ`-indexed one is not).
+Degenne's discrete-time `Submartingale.stoppedValue_min_ae_le_condExp_nat`
+proves the conditional inequality by the same decomposition. It uses `τ ⊓ σ`,
+an almost-sure bound on `τ`, and a general ordered codomain.
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 2.3.6
+* R. Degenne, `BrownianMotion/StochasticIntegral/OptionalSampling.lean` at commit
+  `497e5e2a`, the discrete-time conditional inequality.
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 2.3.6, background on
+  the unconditional expectation equality for a martingale at one stopping time.
 
 ## Tags
 
@@ -80,7 +75,7 @@ open MeasureTheory ProbabilityTheory Filter
 variable {Ω : Type*} {m0 : MeasurableSpace Ω} {μ : Measure Ω}
   {ℱ : Filtration ℕ m0} {f : ℕ → Ω → ℝ} {τ σ : Ω → ℕ∞} {n : ℕ}
 
-/-- **Optional sampling inequality** (Saporito, Theorem 2.3.6): for a
+/-- **Conditional optional sampling inequality** (Degenne, discrete time). For a
 submartingale `f` and stopping times `σ ≤ τ` with `τ ≤ n` bounded,
 
   `stoppedValue f σ ≤ᵐ[μ] μ[stoppedValue f τ | ℱ_σ]`.

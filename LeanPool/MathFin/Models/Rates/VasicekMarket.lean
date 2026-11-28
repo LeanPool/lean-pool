@@ -14,11 +14,10 @@ public import LeanPool.MathFin.Pricing.Market
 /-!
 # The Vasicek bond market
 
-The first `Market` of the library with a stochastic numéraire: the Vasicek short rate, the bank
-account `N_t = exp ∫₀ᵗ r` as numéraire, and the zero-coupon bond of maturity `T` as the traded
-asset (`Rates.vasicekMarket`). The reference measure `μ` is read as the pricing measure: the model
-is specified risk-neutrally (the drift `θ` and the short-rate dynamics are those under the pricing
-measure), and no physical measure is constructed.
+The Vasicek bond market uses a stochastic bank-account numéraire built from the
+Wiener-integral integrated-rate formula. The zero-coupon bond of maturity `T` is the
+traded asset (`Rates.vasicekMarket`). The model uses the reference measure `μ` as its pricing
+measure. The drift `θ` and short-rate dynamics are specified under that measure.
 
 The information is the natural filtration of the Brownian motion `B`. The short rate and the
 integrated rate are Wiener integrals, that is, classes in `L²(μ)`, which are `𝓕_t`-measurable only
@@ -34,8 +33,8 @@ deflated asset frozen at `T` is `P(t∧T, T) / N_{t∧T}`.
 
 ## Main definitions
 
-* `MathFin.Rates.vasicekBankAccount`: the bank account `exp ∫₀ᵗ r`, through the `𝓕_t`-measurable
-  representative of the integrated rate.
+* `MathFin.Rates.vasicekBankAccount`: the exponential of the `𝓕_t`-measurable
+  representative of the Wiener-integral integrated-rate formula.
 * `MathFin.Rates.vasicekShortRate`: the short rate `r_t`, through the `𝓕_t`-measurable
   representative of its diffusion term.
 * `MathFin.Rates.vasicekBondPriceRep`: the bond price `A(T − t) exp(−B(T − t) r_t)`.
@@ -44,8 +43,8 @@ deflated asset frozen at `T` is `P(t∧T, T) / N_{t∧T}`.
 ## Main results
 
 * `MathFin.Rates.isPricingMeasure_vasicekMarket`: the reference measure prices the market at the
-  horizon `T`: the deflated bond frozen at `T` is `𝔼[exp(−∫₀ᵀ r) | 𝓕_t∧T]`
-  (`vasicekBondPrice_condExp`), a Doob martingale.
+  horizon `T`. The deflated bond frozen at `T` is the conditional expectation of the
+  terminal discount from `vasicekIntegratedRate` (`vasicekBondPrice_condExp`), a Doob martingale.
 * `MathFin.Rates.price_pay_vasicekMarket`: the market price of one unit paid at `T` is the Vasicek
   bond price `A(T) exp(−B(T) r₀)`.
 
@@ -73,7 +72,7 @@ variable {Ω : Type*} [mΩ : MeasurableSpace Ω] {μ : Measure Ω} {B : ℝ≥0 
   [IsProbabilityMeasure μ] (hB : IsPreBrownianReal B μ) (hBm : ∀ s, Measurable (B s))
   (r₀ θ σ : ℝ) {κ : ℝ} (hκ : 0 < κ)
 
-/-- **The bank account** `exp ∫₀ᵗ r`, through the `𝓕_t`-measurable representative
+/-- **The bank account** through the `𝓕_t`-measurable representative
 `μ[∫₀ᵗ r | 𝓕_t]` of the integrated rate. -/
 noncomputable def vasicekBankAccount (t : ℝ≥0) (ω : Ω) : ℝ :=
   Real.exp (μ[vasicekIntegratedRate hB r₀ θ σ hκ t | natFiltration hBm t] ω)
@@ -123,8 +122,8 @@ lemma vasicekIntegratedRate_zero_ae :
   rw [vasicekIntegratedRate, h, hω]
   simp [vasicekIntegratedMean, vasicekBondB]
 
-/-- The bank account is almost surely `exp ∫₀ᵗ r`: the Wiener integral is almost surely its own
-`𝓕_t`-measurable representative. -/
+/-- The bank account is almost surely the exponential of the Wiener-form integrated rate.
+The Wiener integral agrees almost surely with its `𝓕_t`-measurable representative. -/
 lemma vasicekBankAccount_ae_eq (t : ℝ≥0) :
     vasicekBankAccount hB hBm r₀ θ σ hκ t
       =ᵐ[μ] fun ω ↦ Real.exp (vasicekIntegratedRate hB r₀ θ σ hκ t ω) :=
@@ -208,7 +207,7 @@ theorem isPricingMeasure_vasicekMarket (T : ℝ≥0) :
 
 /-- **The market price of one unit paid at `T` is the Vasicek bond price** `A(T) exp(−B(T) r₀)`,
 under the reference measure, the pricing measure of `isPricingMeasure_vasicekMarket`: the value
-of the unit payment with the stochastic deflator `N₀/N_T = exp(−∫₀ᵀ r)` (almost surely). -/
+of the unit payment with the stochastic deflator `N₀/N_T` built from the Wiener kernel. -/
 theorem price_pay_vasicekMarket (T : ℝ≥0) :
     (vasicekMarket hB hBm r₀ θ σ hκ T).price μ (.pay T (.const 1))
       = vasicekBondA θ σ κ (T : ℝ) * Real.exp (-(vasicekBondB κ (T : ℝ) * r₀)) := by

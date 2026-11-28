@@ -36,7 +36,10 @@ satisfies them (`bivariateGaussianHyp_bivariateNormalLaw`), giving `E[X | Y] = r
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem B.1.3(2)
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem B.1.3(2), p. 177.
+  The printed coefficient uses `Σ_XX` in the numerator. The proof here uses the
+  cross-covariance `Σ_XY`, giving the coefficient `Σ_XY Σ_YY⁻¹` before specializing
+  to the scalar case.
 
 ## Tags
 

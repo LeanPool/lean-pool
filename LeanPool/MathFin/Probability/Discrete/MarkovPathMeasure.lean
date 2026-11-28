@@ -13,10 +13,11 @@ public import Mathlib.Probability.Kernel.IonescuTulcea.Traj
 public import Mathlib.Probability.ProbabilityMassFunction.Basic
 
 /-!
-# The path distribution of a Markov chain (Saporito Theorem 1.1.2)
+# The path distribution of a constructed Markov chain
 
-The textbook statement: a Markov chain with initial distribution `λ` and
-one-step transition law `P` assigns to every finite path the probability
+The forward direction of Saporito's Theorem 1.1.2 gives finite-path
+factorization from the Markov property. For the time-homogeneous construction
+in this file with initial law `λ` and transition law `P`, the factors give
 
   `P(X₀ = i₀, …, X_n = i_n) = λ(i₀) · ∏_{k<n} P(i_k, i_{k+1})`.
 
@@ -48,7 +49,7 @@ the canonical Mathlib carrier for discrete laws.
 
 ## Main results
 
-* `markovPathMeasure_cylinder` — **Theorem 1.1.2**: cylinder probabilities
+* `markovPathMeasure_cylinder` — cylinder probabilities of the constructed chain
   factor as `init(path 0) · ∏_{k<n} P(path k)(path (k+1))`, derived from
   the construction.
 
@@ -57,7 +58,8 @@ the law of i.i.d. coin flips, and writes the CRR binomial price as an expectatio
 
 ## References
 
-* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 1.1.2
+* [Y. F. Saporito, *Stochastic Processes*][Saporito], Theorem 1.1.2,
+  finite-path factorization direction
 
 ## Tags
 
@@ -197,7 +199,7 @@ lemma markovPathMeasure_cylinder_succ (init : PMF ι) (P : ι → PMF ι)
       = (P (path n)).toMeasure from rfl]
   exact PMF.toMeasure_apply_singleton _ _ (measurableSet_singleton _)
 
-/-- **Path distribution of a Markov chain (Saporito Theorem 1.1.2).** Under
+/-- **Finite-path factorization for the constructed chain.** Under
 the Ionescu–Tulcea law of the chain `(init, P)`, every finite-path
 probability factors as the initial probability times the product of one-step
 transition probabilities:
