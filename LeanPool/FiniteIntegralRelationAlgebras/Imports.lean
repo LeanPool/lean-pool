@@ -1362,6 +1362,7 @@ public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Popcount
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Prim
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Problem
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.SegmentColumns
+public import LeanPool.FiniteIntegralRelationAlgebras.Cert.SegmentReplay
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Side
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.Sym
 public import LeanPool.FiniteIntegralRelationAlgebras.Cert.SymOrbit
